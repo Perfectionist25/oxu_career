@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% if saved %}{% trans "Вакансия сохранена" %}{% else %}{% trans "Вакансия удалена из сохраненных" %}{% endif %} | OXU Career{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center p-5">
+                    <!-- Иконка -->
+                    <div class="mb-4">
+                        {% if saved %}
+                        <div class="icon-success">
+                            <i class="fas fa-bookmark fa-4x text-warning"></i>
+                        </div>
+                        {% else %}
+                        <div class="icon-remove">
+                            <i class="far fa-bookmark fa-4x text-muted"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Заголовок -->
+                    <h2 class="h4 mb-3">
+                        {% if saved %}
+                        {% trans "Вакансия сохранена!" %}
+                        {% else %}
+                        {% trans "Вакансия удалена из сохраненных" %}
+                        {% endif %}
+                    </h2>
+
+                    <!-- Описание -->
+                    <p class="text-muted mb-4">
+                        {% if saved %}
+                        {% trans "Вы сохранили вакансию" %} "<strong>{{ job.title }}</strong>" {% trans "в свой список избранных." %}
+                        {% else %}
+                        {% trans "Вы удалили вакансию" %} "<strong>{{ job.title }}</strong>" {% trans "из своего списка избранных." %}
+                        {% endif %}
+                    </p>
+
+                    <!-- Информация о вакансии -->
+                    <div class="card bg-light mb-4">
+                        <div class="card-body text-start">
+                            <div class="d-flex align-items-center mb-3">
+                                {% if job.company.logo %}
+                                <img src="{{ job.company.logo.url }}" alt="{{ job.company.name }}" 
+                                     class="rounded me-3" style="width: 40px; height: 40px; object-fit: contain;">
+                                {% endif %}
+                                <div>
+                                    <h6 class="mb-1">{{ job.title }}</h6>
+                                    <small class="text-muted">{{ job.company.name }}</small>
+                                </div>
+                            </div>
+                            <div class="row small text-muted">
+                                <div class="col-6">
+                                    <i class="fas fa-map-marker-alt me-1"></i>
+                                    {{ job.location }}
+                                </div>
+                                <div class="col-6">
+                                    <i class="fas fa-briefcase me-1"></i>
+                                    {{ job.get_employment_type_display }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Кнопки действий -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-center">
+                        {% if saved %}
+                        <a href="{% url 'jobs:saved_jobs' %}" class="btn btn-primary">
+                            <i class="fas fa-bookmark me-2"></i>
+                            {% trans "Перейти к сохраненным" %}
+                        </a>
+                        {% else %}
+                        <button type="button" class="btn btn-outline-primary" onclick="window.history.back()">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            {% trans "Вернуться назад" %}
+                        </button>
+                        {% endif %}
+                        
+                        <a href="{% url 'jobs:job_detail' job.pk %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-eye me-2"></i>
+                            {% trans "Посмотреть вакансию" %}
+                        </a>
+                    </div>
+
+                    <!-- Дополнительная информация -->
+                    <div class="mt-4 small text-muted">
+                        {% if saved %}
+                        <p class="mb-1">
+                            <i class="fas fa-info-circle me-1"></i>
+                            {% trans "Вы можете просмотреть все сохраненные вакансии в своем профиле." %}
+                        </p>
+                        {% else %}
+                        <p class="mb-1">
+                            <i class="fas fa-info-circle me-1"></i>
+                            {% trans "Вы всегда можете сохранить эту вакансию снова." %}
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Быстрые ссылки -->
+            <div class="text-center mt-4">
+                <div class="btn-group" role="group">
+                    <a href="{% url 'jobs:job_list' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-search me-1"></i>
+                        {% trans "Все вакансии" %}
+                    </a>
+                    <a href="{% url 'jobs:company_detail' job.company.pk %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-building me-1"></i>
+                        {% trans "Вакансии компании" %}
+                    </a>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'jobs:saved_jobs' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-bookmark me-1"></i>
+                        {% trans "Мои сохраненные" %}
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.icon-success {
+    animation: bounce 0.6s ease-in-out;
+}
+
+.icon-remove {
+    animation: fadeOut 0.6s ease-in-out;
+}
+
+@keyframes bounce {
+    0%, 20%, 60%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    80% {
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+}
+
+.btn {
+    border-radius: 8px;
+    padding: 10px 20px;
+}
+
+.bg-light {
+    background-color: #f8f9fa !important;
+}
+</style>
+{% endblock %}

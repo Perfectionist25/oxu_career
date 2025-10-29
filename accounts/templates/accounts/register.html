@@ -1,0 +1,400 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <!-- Registration Card -->
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-5">
+                    <!-- Header -->
+                    <div class="text-center mb-4">
+                        <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+                            <i class="fas fa-user-plus fa-2x text-white"></i>
+                        </div>
+                        <h2 class="fw-bold text-dark mb-2">Ro'yxatdan o'tish</h2>
+                        <p class="text-muted">Yangi hisob yarating va karyera imkoniyatlaridan foydalaning</p>
+                    </div>
+
+                    <!-- Registration Form -->
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger d-flex align-items-center" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            {{ form.non_field_errors }}
+                        </div>
+                        {% endif %}
+
+                        <div class="row">
+                            <!-- First Name -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.first_name.id_for_label }}" class="form-label fw-semibold">
+                                    <i class="fas fa-user me-2 text-primary"></i>Ism
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0">
+                                        <i class="fas fa-user text-muted"></i>
+                                    </span>
+                                    <input type="text" 
+                                           name="{{ form.first_name.name }}" 
+                                           id="{{ form.first_name.id_for_label }}" 
+                                           class="form-control {% if form.first_name.errors %}is-invalid{% endif %}" 
+                                           placeholder="Ismingiz"
+                                           value="{{ form.first_name.value|default:'' }}">
+                                </div>
+                                {% if form.first_name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.first_name.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Last Name -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.last_name.id_for_label }}" class="form-label fw-semibold">
+                                    Familiya
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0">
+                                        <i class="fas fa-user text-muted"></i>
+                                    </span>
+                                    <input type="text" 
+                                           name="{{ form.last_name.name }}" 
+                                           id="{{ form.last_name.id_for_label }}" 
+                                           class="form-control {% if form.last_name.errors %}is-invalid{% endif %}" 
+                                           placeholder="Familyangiz"
+                                           value="{{ form.last_name.value|default:'' }}">
+                                </div>
+                                {% if form.last_name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.last_name.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Username -->
+                        <div class="mb-3">
+                            <label for="{{ form.username.id_for_label }}" class="form-label fw-semibold">
+                                <i class="fas fa-at me-2 text-primary"></i>Foydalanuvchi nomi
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="fas fa-user-circle text-muted"></i>
+                                </span>
+                                <input type="text" 
+                                       name="{{ form.username.name }}" 
+                                       id="{{ form.username.id_for_label }}" 
+                                       class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
+                                       placeholder="Foydalanuvchi nomingiz"
+                                       value="{{ form.username.value|default:'' }}">
+                            </div>
+                            <div class="form-text">Faqat harflar, raqamlar va @/./+/-/_ belgilari.</div>
+                            {% if form.username.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.username.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold">
+                                <i class="fas fa-envelope me-2 text-primary"></i>Elektron pochta
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="fas fa-envelope text-muted"></i>
+                                </span>
+                                <input type="email" 
+                                       name="{{ form.email.name }}" 
+                                       id="{{ form.email.id_for_label }}" 
+                                       class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
+                                       placeholder="sizning@email.uz"
+                                       value="{{ form.email.value|default:'' }}">
+                            </div>
+                            {% if form.email.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.email.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Password -->
+                        <div class="mb-3">
+                            <label for="{{ form.password1.id_for_label }}" class="form-label fw-semibold">
+                                <i class="fas fa-key me-2 text-primary"></i>Parol
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="fas fa-lock text-muted"></i>
+                                </span>
+                                <input type="password" 
+                                       name="{{ form.password1.name }}" 
+                                       id="{{ form.password1.id_for_label }}" 
+                                       class="form-control {% if form.password1.errors %}is-invalid{% endif %}" 
+                                       placeholder="Parol yarating">
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword1">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            {% if form.password1.help_text %}
+                            <div class="form-text">
+                                {{ form.password1.help_text }}
+                            </div>
+                            {% endif %}
+                            {% if form.password1.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.password1.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div class="mb-4">
+                            <label for="{{ form.password2.id_for_label }}" class="form-label fw-semibold">
+                                Parolni tasdiqlash
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="fas fa-lock text-muted"></i>
+                                </span>
+                                <input type="password" 
+                                       name="{{ form.password2.name }}" 
+                                       id="{{ form.password2.id_for_label }}" 
+                                       class="form-control {% if form.password2.errors %}is-invalid{% endif %}" 
+                                       placeholder="Parolni takrorlang">
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword2">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            {% if form.password2.help_text %}
+                            <div class="form-text">
+                                {{ form.password2.help_text }}
+                            </div>
+                            {% endif %}
+                            {% if form.password2.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.password2.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- User Type Selection -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-user-tag me-2 text-primary"></i>Hisob turi
+                            </label>
+                            <div class="row">
+                                <div class="col-md-6 mb-2">
+                                    <div class="form-check card border p-3 h-100 user-type-card">
+                                        <input class="form-check-input" type="radio" name="user_type" id="student" value="student" checked>
+                                        <label class="form-check-label fw-semibold" for="student">
+                                            <i class="fas fa-graduation-cap me-2 text-primary"></i>Talaba/Bitiruvchi
+                                        </label>
+                                        <small class="text-muted d-block mt-1">Ish qidirish va rezyume yaratish</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <div class="form-check card border p-3 h-100 user-type-card">
+                                        <input class="form-check-input" type="radio" name="user_type" id="employer" value="employer">
+                                        <label class="form-check-label fw-semibold" for="employer">
+                                            <i class="fas fa-briefcase me-2 text-primary"></i>Ish beruvchi
+                                        </label>
+                                        <small class="text-muted d-block mt-1">Vakansiyalar e'lon qilish va ishchilar qidirish</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Terms and Conditions -->
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input {% if form.terms.errors %}is-invalid{% endif %}" 
+                                       type="checkbox" 
+                                       name="terms" 
+                                       id="terms" 
+                                       required>
+                                <label class="form-check-label text-muted small" for="terms">
+                                    Men <a href="#" class="text-primary">foydalanish shartlari</a> va 
+                                    <a href="#" class="text-primary">maxfiylik siyosati</a> bilan tanishdim va roziman
+                                </label>
+                                {% if form.terms.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.terms.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary btn-lg w-100 py-3 mb-4">
+                            <i class="fas fa-user-plus me-2"></i>Ro'yxatdan o'tish
+                        </button>
+                    </form>
+
+                    <!-- Divider -->
+                    <div class="position-relative text-center mb-4">
+                        <hr>
+                        <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small">
+                            Yoki
+                        </span>
+                    </div>
+
+                    <!-- Social Registration -->
+                    <div class="text-center mb-4">
+                        <p class="text-muted small mb-3">Ijtimoiy tarmoqlar orqali ro'yxatdan o'tish</p>
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="#" class="btn btn-outline-primary btn-sm p-2">
+                                <i class="fab fa-google"></i>
+                            </a>
+                            <a href="#" class="btn btn-outline-primary btn-sm p-2">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="btn btn-outline-primary btn-sm p-2">
+                                <i class="fab fa-telegram"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Login Link -->
+                    <div class="text-center">
+                        <p class="text-muted mb-0">
+                            Allaqachon hisobingiz bormi?
+                            <a href="{% url 'accounts:login' %}" class="text-primary text-decoration-none fw-semibold">
+                                Tizimga kirish
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Benefits Section -->
+            <div class="row mt-4 text-center">
+                <div class="col-md-4 mb-3">
+                    <div class="d-flex flex-column align-items-center">
+                        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center mb-2" style="width: 50px; height: 50px;">
+                            <i class="fas fa-briefcase text-white"></i>
+                        </div>
+                        <h6 class="fw-bold mb-1">Ish toping</h6>
+                        <small class="text-muted">1000+ vakansiyalar</small>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="d-flex flex-column align-items-center">
+                        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center mb-2" style="width: 50px; height: 50px;">
+                            <i class="fas fa-file-alt text-white"></i>
+                        </div>
+                        <h6 class="fw-bold mb-1">Rezyume yarating</h6>
+                        <small class="text-muted">Professional shablonlar</small>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="d-flex flex-column align-items-center">
+                        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center mb-2" style="width: 50px; height: 50px;">
+                            <i class="fas fa-chart-line text-white"></i>
+                        </div>
+                        <h6 class="fw-bold mb-1">Karyera quring</h6>
+                        <small class="text-muted">Maslahat va treninglar</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    transition: transform 0.3s ease;
+}
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+}
+
+.btn-primary {
+    background-color: #012152;
+    border-color: #012152;
+}
+.btn-primary:hover {
+    background-color: #012d6e;
+    border-color: #012d6e;
+}
+
+.form-control:focus {
+    border-color: #012152;
+    box-shadow: 0 0 0 0.2rem rgba(1, 33, 82, 0.25);
+}
+
+.user-type-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+.user-type-card:hover {
+    border-color: #012152 !important;
+}
+.user-type-card .form-check-input:checked ~ * {
+    color: #012152;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle password visibility
+    function setupPasswordToggle(toggleId, inputId) {
+        const toggle = document.getElementById(toggleId);
+        const input = document.getElementById(inputId);
+        
+        if (toggle && input) {
+            toggle.addEventListener('click', function() {
+                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                input.setAttribute('type', type);
+                this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+            });
+        }
+    }
+
+    setupPasswordToggle('togglePassword1', '{{ form.password1.id_for_label }}');
+    setupPasswordToggle('togglePassword2', '{{ form.password2.id_for_label }}');
+
+    // User type card selection
+    const userTypeCards = document.querySelectorAll('.user-type-card');
+    userTypeCards.forEach(card => {
+        card.addEventListener('click', function() {
+            const radio = this.querySelector('input[type="radio"]');
+            if (radio) {
+                radio.checked = true;
+                userTypeCards.forEach(c => c.classList.remove('border-primary'));
+                this.classList.add('border-primary');
+            }
+        });
+    });
+
+    // Add loading state to form submission
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function() {
+            const submitButton = this.querySelector('button[type="submit"]');
+            if (submitButton) {
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Ro\'yxatdan o\'tilmoqda...';
+                submitButton.disabled = true;
+            }
+        });
+    }
+
+    // Real-time password strength check
+    const password1 = document.getElementById('{{ form.password1.id_for_label }}');
+    if (password1) {
+        password1.addEventListener('input', function() {
+            // Add password strength indicator logic here
+        });
+    }
+});
+</script>
+{% endblock %}

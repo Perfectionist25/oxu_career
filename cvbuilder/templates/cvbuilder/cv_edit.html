@@ -1,0 +1,459 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Rezyumeni tahrirlash - {{ cv.title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Основная информация -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-edit me-2"></i>
+                        Rezyumeni tahrirlash: {{ cv.title }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Сообщения -->
+                    {% if messages %}
+                    <div class="mb-4">
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Основная форма резюме -->
+                    <form method="post" enctype="multipart/form-data" id="cvForm">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.title.id_for_label }}" class="form-label">
+                                        <i class="fas fa-heading me-1"></i>Rezyume sarlavhasi *
+                                    </label>
+                                    {{ form.title }}
+                                    {% if form.title.errors %}
+                                    <div class="text-danger small">{{ form.title.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.template.id_for_label }}" class="form-label">
+                                        <i class="fas fa-palette me-1"></i>Shablon
+                                    </label>
+                                    {{ form.template }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.full_name.id_for_label }}" class="form-label">
+                                        <i class="fas fa-user me-1"></i>To'liq ism *
+                                    </label>
+                                    {{ form.full_name }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.profession.id_for_label }}" class="form-label">
+                                        <i class="fas fa-briefcase me-1"></i>Mutaxassislik *
+                                    </label>
+                                    {{ form.profession }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.email.id_for_label }}" class="form-label">
+                                        <i class="fas fa-envelope me-1"></i>Email *
+                                    </label>
+                                    {{ form.email }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.phone.id_for_label }}" class="form-label">
+                                        <i class="fas fa-phone me-1"></i>Telefon
+                                    </label>
+                                    {{ form.phone }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.location.id_for_label }}" class="form-label">
+                                <i class="fas fa-map-marker-alt me-1"></i>Manzil
+                            </label>
+                            {{ form.location }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.summary.id_for_label }}" class="form-label">
+                                <i class="fas fa-file-alt me-1"></i>Qisqacha ma'lumot
+                            </label>
+                            {{ form.summary }}
+                            <div class="form-text">O'zingiz va karyerangiz haqida qisqacha ma'lumot</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.photo.id_for_label }}" class="form-label">
+                                <i class="fas fa-camera me-1"></i>Profil rasmi
+                            </label>
+                            {{ form.photo }}
+                            {% if cv.photo %}
+                            <div class="mt-2">
+                                <img src="{{ cv.photo.url }}" alt="Current photo" class="img-thumbnail" style="max-height: 100px;">
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Социальные сети -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.linkedin.id_for_label }}" class="form-label">
+                                        <i class="fab fa-linkedin me-1"></i>LinkedIn
+                                    </label>
+                                    {{ form.linkedin }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.github.id_for_label }}" class="form-label">
+                                        <i class="fab fa-github me-1"></i>GitHub
+                                    </label>
+                                    {{ form.github }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.portfolio.id_for_label }}" class="form-label">
+                                        <i class="fas fa-globe me-1"></i>Portfolio
+                                    </label>
+                                    {{ form.portfolio }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.status.id_for_label }}" class="form-label">
+                                        <i class="fas fa-eye me-1"></i>Holati
+                                    </label>
+                                    {{ form.status }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save me-1"></i>Saqlash
+                            </button>
+                            <a href="{% url 'cvbuilder:cv_detail' cv.pk %}" class="btn btn-outline-primary">
+                                <i class="fas fa-eye me-1"></i>Ko'rish
+                            </a>
+                            <a href="{% url 'cvbuilder:cv_list' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-1"></i>Ortga
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Боковая панель с дополнительными разделами -->
+        <div class="col-lg-4">
+            <!-- Образование -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-graduation-cap me-2"></i>Ta'lim
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-outline-info btn-sm w-100 mb-3" 
+                            data-bs-toggle="modal" data-bs-target="#educationModal">
+                        <i class="fas fa-plus me-1"></i>Ta'lim qo'shish
+                    </button>
+                    
+                    {% if cv.educations.all %}
+                    <div class="list-group list-group-flush">
+                        {% for edu in cv.educations.all %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ edu.degree }}</strong><br>
+                                <small>{{ edu.institution }}</small>
+                            </div>
+                            <div class="btn-group btn-group-sm">
+                                <a href="#" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="#" class="btn btn-outline-danger btn-sm">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center mb-0">Ta'lim ma'lumotlari qo'shilmagan</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Опыт работы -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <h6 class="mb-0">
+                        <i class="fas fa-briefcase me-2"></i>Ish tajribasi
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-outline-warning btn-sm w-100 mb-3" 
+                            data-bs-toggle="modal" data-bs-target="#experienceModal">
+                        <i class="fas fa-plus me-1"></i>Tajriba qo'shish
+                    </button>
+                    
+                    {% if cv.experiences.all %}
+                    <div class="list-group list-group-flush">
+                        {% for exp in cv.experiences.all %}
+                        <div class="list-group-item">
+                            <strong>{{ exp.position }}</strong><br>
+                            <small>{{ exp.company }}</small><br>
+                            <small class="text-muted">{{ exp.start_date }} - {{ exp.end_date|default:"Hozirgacha" }}</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center mb-0">Ish tajribasi qo'shilmagan</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Навыки -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-code me-2"></i>Ko'nikmalar
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-outline-success btn-sm w-100 mb-3" 
+                            data-bs-toggle="modal" data-bs-target="#skillModal">
+                        <i class="fas fa-plus me-1"></i>Ko'nikma qo'shish
+                    </button>
+                    
+                    {% if cv.skills.all %}
+                    <div class="d-flex flex-wrap gap-1">
+                        {% for skill in cv.skills.all %}
+                        <span class="badge bg-success">{{ skill.name }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center mb-0">Ko'nikmalar qo'shilmagan</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальные окна для добавления связанных данных -->
+
+<!-- Модальное окно для образования -->
+<div class="modal fade" id="educationModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">Ta'lim ma'lumotlari qo'shish</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{% url 'cvbuilder:add_education' cv.pk %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    {{ education_form.as_p }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                    <button type="submit" class="btn btn-info">Qo'shish</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для опыта работы -->
+<div class="modal fade" id="experienceModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title">Ish tajribasi qo'shish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{% url 'cvbuilder:add_experience' cv.pk %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    {{ experience_form.as_p }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                    <button type="submit" class="btn btn-warning">Qo'shish</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для навыков -->
+<div class="modal fade" id="skillModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Ko'nikma qo'shish</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{% url 'cvbuilder:add_skill' cv.pk %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    {{ skill_form.as_p }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                    <button type="submit" class="btn btn-success">Qo'shish</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Дополнительные модальные окна для других разделов -->
+<!-- Проекты, языки, сертификаты и т.д. -->
+
+<style>
+.form-label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+}
+
+.card-header {
+    border-radius: 10px 10px 0 0 !important;
+}
+
+.btn {
+    border-radius: 6px;
+}
+
+.list-group-item {
+    border: none;
+    padding: 0.75rem 0;
+}
+
+.badge {
+    font-size: 0.8em;
+    padding: 0.4em 0.6em;
+}
+
+/* Стили для форм редактирования резюме */
+.cv-edit-form input,
+.cv-edit-form textarea,
+.cv-edit-form select {
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    padding: 0.5rem 0.75rem;
+}
+
+.cv-edit-form input:focus,
+.cv-edit-form textarea:focus,
+.cv-edit-form select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.form-text {
+    font-size: 0.875em;
+    color: #6c757d;
+}
+
+/* Анимации для модальных окон */
+.modal.fade .modal-dialog {
+    transform: translate(0, -50px);
+    transition: transform 0.3s ease-out;
+}
+
+.modal.show .modal-dialog {
+    transform: none;
+}
+
+/* Стили для списков */
+.list-group-item:hover {
+    background-color: #f8f9fa;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+}
+</style>
+
+<script>
+// Автоматическое сохранение формы при изменении
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('cvForm');
+    const inputs = form.querySelectorAll('input, textarea, select');
+    let saveTimeout;
+    
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(() => {
+                // Можно добавить автосохранение через AJAX
+                console.log('Form changed - ready for autosave');
+            }, 2000);
+        });
+    });
+    
+    // Подтверждение перед уходом со страницы
+    window.addEventListener('beforeunload', function(e) {
+        const formData = new FormData(form);
+        let hasChanges = false;
+        
+        for (let [key, value] of formData.entries()) {
+            if (value !== '') {
+                hasChanges = true;
+                break;
+            }
+        }
+        
+        if (hasChanges) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
+});
+</script>
+{% endblock %}

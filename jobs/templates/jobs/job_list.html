@@ -1,0 +1,494 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-5 fw-bold text-primary mb-3">{% trans "Vakansiyalar va Stajirovkalar" %}</h1>
+            <p class="lead text-muted">{% trans "O'zingizga mos karyera imkoniyatlarini toping va yangi bosqichni boshlang" %}</p>
+        </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="card border-0 shadow-sm mb-5">
+        <div class="card-body p-4">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="fas fa-search text-muted"></i>
+                        </span>
+                        <input type="text" 
+                               class="form-control" 
+                               id="searchInput" 
+                               placeholder="{% trans 'Lavozim, kompaniya yoki kalit so\'zlar...' %}">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="typeFilter">
+                        <option value="">{% trans "Barcha turdagi ishlar" %}</option>
+                        <option value="full_time">{% trans "To'liq kunlik" %}</option>
+                        <option value="part_time">{% trans "Yarim kunlik" %}</option>
+                        <option value="internship">{% trans "Stajirovka" %}</option>
+                        <option value="remote">{% trans "Uzoq ish" %}</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="categoryFilter">
+                        <option value="">{% trans "Barcha sohalar" %}</option>
+                        {% for industry in industries %}
+                        <option value="{{ industry.name }}">{{ industry.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-select" id="experienceFilter">
+                        <option value="">{% trans "Tajriba" %}</option>
+                        <option value="intern">{% trans "Stajyor" %}</option>
+                        <option value="junior">{% trans "Yosh mutaxassis" %}</option>
+                        <option value="middle">{% trans "Mutaxassis" %}</option>
+                        <option value="senior">{% trans "Katta mutaxassis" %}</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Advanced Filters Toggle -->
+            <div class="mt-3">
+                <button class="btn btn-link p-0 text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#advancedFilters">
+                    <i class="fas fa-sliders-h me-1"></i>{% trans "Qo'shimcha filtrlarni ko'rsatish" %}
+                </button>
+            </div>
+            
+            <!-- Advanced Filters -->
+            <div class="collapse mt-3" id="advancedFilters">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">{% trans "Ish turi" %}</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="remoteWork">
+                            <label class="form-check-label" for="remoteWork">{% trans "Uzoq ish" %}</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="fullTime">
+                            <label class="form-check-label" for="fullTime">{% trans "To'liq kunlik" %}</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">{% trans "Maosh" %}</label>
+                        <select class="form-select" id="salaryFilter">
+                            <option value="">{% trans "Maosh oralig'i" %}</option>
+                            <option value="0-3000000">3,000,000 so'm gacha</option>
+                            <option value="3000000-6000000">3-6 million so'm</option>
+                            <option value="6000000-10000000">6-10 million so'm</option>
+                            <option value="10000000+">10 million so'mdan yuqori</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">{% trans "Sana" %}</label>
+                        <select class="form-select" id="dateFilter">
+                            <option value="">{% trans "Har qanday vaqt" %}</option>
+                            <option value="today">{% trans "Bugun" %}</option>
+                            <option value="week">{% trans "Oxirgi 7 kun" %}</option>
+                            <option value="month">{% trans "Oxirgi 30 kun" %}</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">&nbsp;</label>
+                        <button class="btn btn-outline-secondary w-100" onclick="clearFilters()">
+                            <i class="fas fa-redo me-1"></i>{% trans "Filtrlarni tozalash" %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="fw-bold text-dark mb-0">{% trans "Topilgan vakansiyalar" %}</h4>
+                    <p class="text-muted mb-0" id="resultsCount">
+                        {% if jobs %}
+                            {{ jobs|length }} {% trans "ta vakansiya topildi" %}
+                        {% else %}
+                            {% trans "Vakansiyalar topilmadi" %}
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <span class="text-muted small">{% trans "Saralash:" %}</span>
+                    <select class="form-select form-select-sm w-auto" id="sortSelect">
+                        <option value="newest">{% trans "Yangi" %}</option>
+                        <option value="relevant">{% trans "Muvofiqlik" %}</option>
+                        <option value="salary">{% trans "Maosh" %}</option>
+                        <option value="deadline">{% trans "Muddut" %}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if jobs %}
+    <!-- Jobs Grid -->
+    <div class="row g-4" id="jobsContainer">
+        {% for job in jobs %}
+        <div class="col-xl-6 job-item" 
+             data-title="{{ job.title.lower }}" 
+             data-company="{{ job.company.name.lower }}" 
+             data-type="{{ job.employment_type|default:'' }}" 
+             data-category="{{ job.company.industry.name|default:'' }}"
+             data-experience="{{ job.experience_level|default:'' }}"
+             data-salary="{{ job.salary_min|default:0 }}"
+             data-remote="{{ job.remote_work|yesno:'true,false' }}">
+            <div class="card border-0 shadow-sm h-100 job-card">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-start">
+                        <!-- Company Logo -->
+                        <div class="flex-shrink-0 me-3">
+                            {% if job.company.logo %}
+                                <img src="{{ job.company.logo.url }}" alt="{{ job.company.name }}" class="rounded" width="60" height="60" style="object-fit: cover;">
+                            {% else %}
+                                <div class="bg-primary rounded d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-building text-white"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Job Details -->
+                        <div class="flex-grow-1">
+                            <!-- Job Header -->
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h5 class="fw-bold text-dark mb-1">{{ job.title }}</h5>
+                                    <h6 class="text-primary mb-2">{{ job.company.name }}</h6>
+                                </div>
+                                <div class="d-flex gap-1">
+                                    <button class="btn btn-outline-secondary btn-sm" onclick="toggleBookmark({{ job.id }})">
+                                        <i class="far fa-bookmark"></i>
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm" onclick="shareJob({{ job.id }})">
+                                        <i class="fas fa-share-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Job Badges -->
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                {% if job.employment_type == 'internship' %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-graduation-cap me-1"></i>{% trans "Stajirovka" %}
+                                </span>
+                                {% else %}
+                                <span class="badge bg-primary">
+                                    <i class="fas fa-briefcase me-1"></i>{{ job.get_employment_type_display }}
+                                </span>
+                                {% endif %}
+                                
+                                {% if job.remote_work %}
+                                <span class="badge bg-warning text-dark">
+                                    <i class="fas fa-laptop-house me-1"></i>{% trans "Uzoq ish" %}
+                                </span>
+                                {% endif %}
+                                
+                                {% if job.is_urgent %}
+                                <span class="badge bg-danger">
+                                    <i class="fas fa-bolt me-1"></i>{% trans "Shoshilinch" %}
+                                </span>
+                                {% endif %}
+                                
+                                {% if job.is_featured %}
+                                <span class="badge bg-info">{% trans "Tavsiya etilgan" %}</span>
+                                {% endif %}
+                            </div>
+
+                            <!-- Job Info -->
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <div class="d-flex align-items-center text-muted small">
+                                        <i class="fas fa-map-marker-alt me-2"></i>
+                                        <span>{{ job.location }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="d-flex align-items-center text-muted small">
+                                        <i class="fas fa-clock me-2"></i>
+                                        <span>{{ job.created_at|timesince }} {% trans "oldin" %}</span>
+                                    </div>
+                                </div>
+                                {% if job.salary_min or job.salary_max %}
+                                <div class="col-6">
+                                    <div class="d-flex align-items-center text-success small fw-bold">
+                                        <i class="fas fa-money-bill-wave me-2"></i>
+                                        <span>{{ job.salary_range }}</span>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                <div class="col-6">
+                                    <div class="d-flex align-items-center text-muted small">
+                                        <i class="fas fa-briefcase me-2"></i>
+                                        <span>{{ job.get_experience_level_display }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Job Description -->
+                            {% if job.short_description %}
+                            <p class="text-muted small mb-3">{{ job.short_description|truncatewords:20 }}</p>
+                            {% endif %}
+
+                            <!-- Deadline -->
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar-times me-1"></i>
+                                    {% trans "Muddut:" %} 
+                                    {% if job.expires_at %}
+                                        {{ job.expires_at|date:"d.m.Y" }}
+                                    {% else %}
+                                        {% trans "Aniqlanmagan" %}
+                                    {% endif %}
+                                </small>
+                                <a href="{% url 'jobs:job_detail' job.id %}" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-eye me-1"></i>{% trans "Batafsil" %}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Load More Button -->
+    <div class="text-center mt-5">
+        <button class="btn btn-outline-primary" id="loadMoreBtn">
+            <i class="fas fa-refresh me-2"></i>{% trans "Ko'proq vakansiyalarni yuklash" %}
+        </button>
+    </div>
+
+    {% else %}
+    <!-- Empty State -->
+    <div class="text-center py-5">
+        <div class="mb-4">
+            <i class="fas fa-briefcase fa-4x text-muted mb-3"></i>
+            <h4 class="text-muted">{% trans "Vakansiyalar topilmadi" %}</h4>
+            <p class="text-muted">{% trans "Qidiruv shartlarini o'zgartirib ko'ring yoki yangi vakansiyalar paydo bo'lishini kuting" %}</p>
+        </div>
+        <div class="d-flex justify-content-center gap-3">
+            <button class="btn btn-primary" onclick="clearFilters()">
+                <i class="fas fa-redo me-2"></i>{% trans "Filtrlarni tozalash" %}
+            </button>
+            <button class="btn btn-outline-primary" onclick="subscribeToNotifications()">
+                <i class="fas fa-bell me-2"></i>{% trans "Yangi vakansiyalar haqida xabar olish" %}
+            </button>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Quick Stats -->
+    <div class="row mt-5 pt-5 border-top">
+        <div class="col-md-3 text-center">
+            <div class="h3 fw-bold text-primary mb-1">{{ stats.total_jobs }}+</div>
+            <small class="text-muted">{% trans "Jami vakansiyalar" %}</small>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="h3 fw-bold text-primary mb-1">{{ stats.internships_count }}+</div>
+            <small class="text-muted">{% trans "Stajirovkalar" %}</small>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="h3 fw-bold text-primary mb-1">{{ stats.companies_count }}+</div>
+            <small class="text-muted">{% trans "Hamkor kompaniyalar" %}</small>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="h3 fw-bold text-primary mb-1">{{ stats.success_stories }}+</div>
+            <small class="text-muted">{% trans "Muvaffaqiyatli ishga joylashganlar" %}</small>
+        </div>
+    </div>
+</div>
+
+<style>
+.job-card {
+    transition: all 0.3s ease;
+    border-radius: 12px;
+}
+.job-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+}
+
+.badge {
+    font-size: 0.7em;
+}
+
+.btn-primary {
+    background-color: #012152;
+    border-color: #012152;
+}
+.btn-primary:hover {
+    background-color: #012d6e;
+    border-color: #012d6e;
+}
+
+.card {
+    border-radius: 12px;
+}
+
+#advancedFilters {
+    border-top: 1px solid #dee2e6;
+    padding-top: 1rem;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const typeFilter = document.getElementById('typeFilter');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const experienceFilter = document.getElementById('experienceFilter');
+    const salaryFilter = document.getElementById('salaryFilter');
+    const dateFilter = document.getElementById('dateFilter');
+    const remoteWork = document.getElementById('remoteWork');
+    const fullTime = document.getElementById('fullTime');
+    const sortSelect = document.getElementById('sortSelect');
+    const jobItems = document.querySelectorAll('.job-item');
+
+    function filterJobs() {
+        const searchTerm = searchInput.value.toLowerCase();
+        let visibleCount = 0;
+
+        jobItems.forEach(item => {
+            const title = item.getAttribute('data-title');
+            const company = item.getAttribute('data-company');
+            const type = item.getAttribute('data-type');
+            const category = item.getAttribute('data-category');
+            const experience = item.getAttribute('data-experience');
+            const salary = item.getAttribute('data-salary');
+            const isRemote = item.getAttribute('data-remote');
+
+            const matchesSearch = title.includes(searchTerm) || company.includes(searchTerm);
+            const matchesType = !typeFilter.value || type === typeFilter.value;
+            const matchesCategory = !categoryFilter.value || category === categoryFilter.value;
+            const matchesExperience = !experienceFilter.value || experience === experienceFilter.value;
+            const matchesSalary = !salaryFilter.value || salary === salaryFilter.value;
+            const matchesRemote = !remoteWork.checked || isRemote === 'true';
+
+            if (matchesSearch && matchesType && matchesCategory && matchesExperience && matchesSalary && matchesRemote) {
+                item.style.display = 'block';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        // Update results count
+        document.getElementById('resultsCount').textContent = `${visibleCount} ta vakansiya topildi`;
+    }
+
+    function sortJobs() {
+        const container = document.getElementById('jobsContainer');
+        const items = Array.from(jobItems).filter(item => item.style.display !== 'none');
+        
+        items.sort((a, b) => {
+            const sortBy = sortSelect.value;
+            
+            switch(sortBy) {
+                case 'newest':
+                    return 0; // Would need creation date data attribute
+                case 'salary':
+                    const aSalary = parseInt(a.getAttribute('data-salary')) || 0;
+                    const bSalary = parseInt(b.getAttribute('data-salary')) || 0;
+                    return bSalary - aSalary;
+                case 'deadline':
+                    // Would need deadline date for sorting
+                    return 0;
+                case 'relevant':
+                default:
+                    return 0;
+            }
+        });
+
+        // Re-append sorted items
+        items.forEach(item => container.appendChild(item));
+    }
+
+    // Event listeners
+    searchInput.addEventListener('input', filterJobs);
+    typeFilter.addEventListener('change', filterJobs);
+    categoryFilter.addEventListener('change', filterJobs);
+    experienceFilter.addEventListener('change', filterJobs);
+    salaryFilter.addEventListener('change', filterJobs);
+    dateFilter.addEventListener('change', filterJobs);
+    remoteWork.addEventListener('change', filterJobs);
+    fullTime.addEventListener('change', filterJobs);
+    sortSelect.addEventListener('change', sortJobs);
+
+    // Clear filters
+    window.clearFilters = function() {
+        searchInput.value = '';
+        typeFilter.value = '';
+        categoryFilter.value = '';
+        experienceFilter.value = '';
+        salaryFilter.value = '';
+        dateFilter.value = '';
+        remoteWork.checked = false;
+        fullTime.checked = false;
+        sortSelect.value = 'newest';
+        filterJobs();
+    };
+
+    // Subscribe to notifications
+    window.subscribeToNotifications = function() {
+        alert('Siz yangi vakansiyalar haqida xabardor bo\'lasiz!');
+    };
+
+    // Share job functionality
+    window.shareJob = function(jobId) {
+        const jobUrl = `/jobs/${jobId}/`;
+        if (navigator.share) {
+            navigator.share({
+                title: 'Vakansiya - OXU Career',
+                url: jobUrl,
+            });
+        } else {
+            navigator.clipboard.writeText(window.location.origin + jobUrl).then(() => {
+                alert('Vakansiya havolasi buferga nusxalandi!');
+            });
+        }
+    };
+
+    // Bookmark functionality
+    window.toggleBookmark = function(jobId) {
+        const button = event.target.closest('button');
+        const icon = button.querySelector('i');
+        
+        if (icon.classList.contains('far')) {
+            icon.classList.remove('far');
+            icon.classList.add('fas', 'text-warning');
+            // Add to bookmarks API call
+        } else {
+            icon.classList.remove('fas', 'text-warning');
+            icon.classList.add('far');
+            // Remove from bookmarks API call
+        }
+    };
+
+    // Load more functionality
+    document.getElementById('loadMoreBtn')?.addEventListener('click', function() {
+        this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Yuklanmoqda...';
+        // Simulate API call
+        setTimeout(() => {
+            this.innerHTML = '<i class="fas fa-check me-2"></i>Barcha vakansiyalar yuklandi';
+            this.disabled = true;
+        }, 1500);
+    });
+
+    // Initialize
+    filterJobs();
+});
+</script>
+{% endblock %}

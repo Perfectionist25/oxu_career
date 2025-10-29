@@ -1,0 +1,306 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+<div class="container py-5">
+  <!-- Hero Section -->
+  <section class="text-center mb-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <h1 class="display-5 fw-bold text-primary mb-4">{% trans "OXU Career Center-ga xush kelibsiz" %}</h1>
+        <p class="lead mb-4">{% trans "Kelajagingizni biz bilan quring. Sizga orzu qilgan ishingizni topishda va kasbiy ko'nikmalaringizni rivojlantirishda yordam beramiz." %}</p>
+        <div class="d-flex justify-content-center flex-wrap gap-3">
+          <a href="{% url 'jobs:list' %}" class="btn btn-primary btn-lg px-4 py-3">
+            <i class="fas fa-briefcase me-2"></i>{% trans "Ish o'rinlarini topish" %}
+          </a>
+          <a href="{% url 'cvbuilder:cv_create' %}" class="btn btn-outline-primary btn-lg px-4 py-3">
+            <i class="fas fa-file-alt me-2"></i>{% trans "Rezyume yaratish" %}
+          </a>
+        </div>
+        
+        <!-- Quick Stats -->
+        <div class="row mt-5 pt-4 border-top">
+          <div class="col-md-3 col-6">
+            <div class="h4 fw-bold text-primary mb-1">{{ stats.alumni_count|default:"1000" }}+</div>
+            <small class="text-muted">{% trans "Bitiruvchilar" %}</small>
+          </div>
+          <div class="col-md-3 col-6">
+            <div class="h4 fw-bold text-primary mb-1">{{ stats.jobs_count|default:"150" }}+</div>
+            <small class="text-muted">{% trans "Aktiv vakansiyalar" %}</small>
+          </div>
+          <div class="col-md-3 col-6">
+            <div class="h4 fw-bold text-primary mb-1">{{ stats.companies_count|default:"50" }}+</div>
+            <small class="text-muted">{% trans "Hamkor kompaniyalar" %}</small>
+          </div>
+          <div class="col-md-3 col-6">
+            <div class="h4 fw-bold text-primary mb-1">{{ stats.resources_count|default:"200" }}+</div>
+            <small class="text-muted">{% trans "Karyera resurslari" %}</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="row align-items-center mb-5 py-4">
+    <div class="col-lg-6 mb-4 mb-lg-0">
+      <h2 class="fw-bold text-dark mb-4">{% trans "Nima uchun aynan biz?" %}</h2>
+      
+      <div class="feature-item d-flex mb-4 p-3 rounded hover-card">
+        <div class="feature-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-4" style="width: 60px; height: 60px;">
+          <i class="fas fa-user-check fa-lg"></i>
+        </div>
+        <div>
+          <h5 class="fw-bold text-dark mb-2">{% trans "Shaxsiy yondashuv" %}</h5>
+          <p class="text-muted mb-0">{% trans "Har bir talaba va bitiruvchi uchun individual maslahat va yo'naltirish" %}</p>
+        </div>
+      </div>
+      
+      <div class="feature-item d-flex mb-4 p-3 rounded hover-card">
+        <div class="feature-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-4" style="width: 60px; height: 60px;">
+          <i class="fas fa-handshake fa-lg"></i>
+        </div>
+        <div>
+          <h5 class="fw-bold text-dark mb-2">{% trans "Keng hamkorlar tarmog'i" %}</h5>
+          <p class="text-muted mb-0">{% trans "Turli sohalardagi etakchi kompaniyalar bilan mustahkam hamkorlik" %}</p>
+        </div>
+      </div>
+      
+      <div class="feature-item d-flex mb-4 p-3 rounded hover-card">
+        <div class="feature-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-4" style="width: 60px; height: 60px;">
+          <i class="fas fa-tools fa-lg"></i>
+        </div>
+        <div>
+          <h5 class="fw-bold text-dark mb-2">{% trans "Zamonaviy resurslar" %}</h5>
+          <p class="text-muted mb-0">{% trans "Karyerangizni rivojlantirish uchun barcha zamonaviy resurslar" %}</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-lg-6">
+      <div class="position-relative">
+        <img src="{% static 'img/oxu_group.jpg' %}" alt="Career Center" class="img-fluid rounded shadow-lg">
+        <div class="position-absolute bottom-0 start-0 bg-primary text-white p-3 rounded-end">
+          <h5 class="mb-0">{% trans "Biz bilan karyera quring!" %}</h5>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Links -->
+  <section class="mb-5 py-4">
+    <h2 class="text-center fw-bold text-dark mb-5">{% trans "Tezkor kirish" %}</h2>
+    <div class="row g-4">
+      <div class="col-xl-3 col-md-6">
+        <div class="card border-0 shadow-sm h-100 quick-link-card">
+          <div class="card-body text-center p-4">
+            <div class="text-primary mb-3">
+              <i class="fas fa-briefcase fa-3x"></i>
+            </div>
+            <h5 class="card-title fw-bold text-dark mb-3">{% trans "Ish o'rinlari" %}</h5>
+            <p class="card-text text-muted small mb-4">{% trans "Etakchi kompaniyalarning dolzarb takliflari va stajirovka imkoniyatlari" %}</p>
+            <a href="{% url 'jobs:list' %}" class="btn btn-primary w-100">
+              {% trans "Ko'rish" %} <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-xl-3 col-md-6">
+        <div class="card border-0 shadow-sm h-100 quick-link-card">
+          <div class="card-body text-center p-4">
+            <div class="text-primary mb-3">
+              <i class="fas fa-users fa-3x"></i>
+            </div>
+            <h5 class="card-title fw-bold text-dark mb-3">{% trans "Bitiruvchilar tarmog'i" %}</h5>
+            <p class="card-text text-muted small mb-4">{% trans "Kuchli bitiruvchilar jamoasiga qo'shiling va tarmoq quring" %}</p>
+            <a href="{% url 'alumni:list' %}" class="btn btn-primary w-100">
+              {% trans "Qo'shilish" %} <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-xl-3 col-md-6">
+        <div class="card border-0 shadow-sm h-100 quick-link-card">
+          <div class="card-body text-center p-4">
+            <div class="text-primary mb-3">
+              <i class="fas fa-book-open fa-3x"></i>
+            </div>
+            <h5 class="card-title fw-bold text-dark mb-3">{% trans "Karyera resurslari" %}</h5>
+            <p class="card-text text-muted small mb-4">{% trans "Intervyu, rezyume va kasbiy rivojlanish uchun foydali materiallar" %}</p>
+            <a href="{% url 'resources:list' %}" class="btn btn-primary w-100">
+              {% trans "O'rganish" %} <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-xl-3 col-md-6">
+        <div class="card border-0 shadow-sm h-100 quick-link-card">
+          <div class="card-body text-center p-4">
+            <div class="text-primary mb-3">
+              <i class="fas fa-calendar-check fa-3x"></i>
+            </div>
+            <h5 class="card-title fw-bold text-dark mb-3">{% trans "Tadbirlar" %}</h5>
+            <p class="card-text text-muted small mb-4">{% trans "Kasbiy rivojlanish va tarmoq qurish uchun tadbirlar" %}</p>
+            <a href="{% url 'events:list' %}" class="btn btn-primary w-100">
+              {% trans "Ishtirok etish" %} <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Latest Jobs Preview -->
+  <section class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="fw-bold text-dark">{% trans "So'ngi vakansiyalar" %}</h2>
+      <a href="{% url 'jobs:list' %}" class="btn btn-outline-primary">
+        {% trans "Barchasini ko'rish" %} <i class="fas fa-arrow-right ms-2"></i>
+      </a>
+    </div>
+    <div class="row g-3">
+      {% for job in latest_jobs|slice:":6" %}
+      <div class="col-lg-4 col-md-6">
+        <div class="card h-100 job-preview-card">
+          <div class="card-body">
+            <h6 class="card-title fw-bold">{{ job.title }}</h6>
+            <p class="card-text text-muted small mb-2">{{ job.company.name }}</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="badge bg-primary">{{ job.get_employment_type_display }}</span>
+              <small class="text-muted">{{ job.created_at|timesince }}</small>
+            </div>
+          </div>
+          <div class="card-footer bg-transparent py-2">
+            <a href="{% url 'jobs:job_detail' job.pk %}" class="btn btn-sm btn-outline-primary w-100">
+              {% trans "Batafsil" %}
+            </a>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-12">
+        <div class="alert alert-info text-center">
+          {% trans "Hozircha vakansiyalar mavjud emas" %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Upcoming Events -->
+  <section class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="fw-bold text-dark">{% trans "Yaqinlashayotgan tadbirlar" %}</h2>
+      <a href="{% url 'events:list' %}" class="btn btn-outline-primary">
+        {% trans "Barcha tadbirlar" %} <i class="fas fa-arrow-right ms-2"></i>
+      </a>
+    </div>
+    <div class="row g-3">
+      {% for event in upcoming_events|slice:":3" %}
+      <div class="col-lg-4 col-md-6">
+        <div class="card h-100 event-preview-card">
+          {% if event.thumbnail %}
+          <img src="{{ event.thumbnail.url }}" class="card-img-top" alt="{{ event.title }}" style="height: 160px; object-fit: cover;">
+          {% endif %}
+          <div class="card-body">
+            <h6 class="card-title fw-bold">{{ event.title }}</h6>
+            <p class="card-text text-muted small">{{ event.short_description|truncatewords:15 }}</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <small class="text-muted">
+                <i class="fas fa-calendar me-1"></i>{{ event.start_date|date:"d.m.Y" }}
+              </small>
+              <small class="text-muted">
+                <i class="fas fa-map-marker-alt me-1"></i>{{ event.location }}
+              </small>
+            </div>
+          </div>
+          <div class="card-footer bg-transparent py-2">
+            <a href="{% url 'events:event_detail' event.slug %}" class="btn btn-sm btn-outline-primary w-100">
+              {% trans "Ko'rish" %}
+            </a>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-12">
+        <div class="alert alert-info text-center">
+          {% trans "Yaqinlashayotgan tadbirlar mavjud emas" %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Partners Section -->
+  <section class="text-center mb-5">
+    <h3 class="fw-bold text-dark mb-4">{% trans "Bizning ishonchli hamkorlarimiz" %}</h3>
+    <div class="row align-items-center justify-content-center g-4">
+      <div class="col-6 col-md-3 col-lg-2">
+        <img src="{% static 'img/partner1.png' %}" alt="Partner 1" class="img-fluid grayscale partner-logo">
+      </div>
+      <div class="col-6 col-md-3 col-lg-2">
+        <img src="{% static 'img/partner2.png' %}" alt="Partner 2" class="img-fluid grayscale partner-logo">
+      </div>
+      <div class="col-6 col-md-3 col-lg-2">
+        <img src="{% static 'img/partner3.png' %}" alt="Partner 3" class="img-fluid grayscale partner-logo">
+      </div>
+      <div class="col-6 col-md-3 col-lg-2">
+        <img src="{% static 'img/partner4.png' %}" alt="Partner 4" class="img-fluid grayscale partner-logo">
+      </div>
+      <div class="col-6 col-md-3 col-lg-2">
+        <img src="{% static 'img/partner5.png' %}" alt="Partner 5" class="img-fluid grayscale partner-logo">
+      </div>
+    </div>
+  </section>
+</div>
+
+<style>
+.quick-link-card {
+  transition: all 0.3s ease;
+}
+.quick-link-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+}
+
+.hover-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.hover-card:hover {
+  background-color: #f8f9fa;
+  transform: translateX(5px);
+}
+
+.feature-icon {
+  flex-shrink: 0;
+}
+
+.partner-logo {
+  transition: all 0.3s ease;
+  opacity: 0.7;
+  filter: grayscale(100%);
+}
+.partner-logo:hover {
+  opacity: 1;
+  filter: grayscale(0%);
+  transform: scale(1.05);
+}
+
+.grayscale {
+  filter: grayscale(100%);
+}
+
+.job-preview-card, .event-preview-card {
+  transition: all 0.3s ease;
+}
+.job-preview-card:hover, .event-preview-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+</style>
+{% endblock %}

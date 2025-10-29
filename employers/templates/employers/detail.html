@@ -1,0 +1,449 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-start">
+                <div class="d-flex align-items-start">
+                    <!-- Company Logo -->
+                    <div class="flex-shrink-0 me-4">
+                        {% if employer.logo %}
+                            <img src="{{ employer.logo.url }}" alt="{{ employer.name }}" class="rounded shadow" width="120" height="120" style="object-fit: cover;">
+                        {% else %}
+                            <div class="bg-primary rounded d-flex align-items-center justify-content-center" style="width: 120px; height: 120px;">
+                                <i class="fas fa-building fa-3x text-white"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Company Info -->
+                    <div class="flex-grow-1">
+                        <h1 class="display-6 fw-bold text-dark mb-2">{{ employer.name }}</h1>
+                        {% if employer.industry %}
+                        <div class="mb-3">
+                            <span class="badge bg-primary fs-6">{{ employer.industry }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="d-flex flex-wrap gap-4 mb-3">
+                            {% if employer.employees_count %}
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-users text-primary me-2"></i>
+                                <span class="text-muted">{{ employer.employees_count }} xodim</span>
+                            </div>
+                            {% endif %}
+                            
+                            {% if employer.founded_year %}
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-calendar text-primary me-2"></i>
+                                <span class="text-muted">{{ employer.founded_year }} yildan</span>
+                            </div>
+                            {% endif %}
+                            
+                            {% if employer.location %}
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                                <span class="text-muted">{{ employer.location }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="d-flex gap-2">
+                    {% if employer.website %}
+                    <a href="{{ employer.website }}" target="_blank" class="btn btn-outline-primary">
+                        <i class="fas fa-globe me-2"></i>Veb sayt
+                    </a>
+                    {% endif %}
+                    <button class="btn btn-outline-secondary" onclick="shareCompany()">
+                        <i class="fas fa-share-alt me-2"></i>Ulashish
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Company Description -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h4 class="fw-bold text-dark mb-0">
+                        <i class="fas fa-info-circle me-2 text-primary"></i>
+                        Kompaniya haqida
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <p class="lead">{{ employer.description|linebreaks }}</p>
+                    
+                    <!-- Company Highlights -->
+                    {% if employer.highlights %}
+                    <div class="row mt-4">
+                        {% for highlight in employer.highlights %}
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check text-success me-3"></i>
+                                <span>{{ highlight }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Company Culture -->
+            {% if employer.culture %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h4 class="fw-bold text-dark mb-0">
+                        <i class="fas fa-users me-2 text-primary"></i>
+                        Kompaniya madaniyati
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <p>{{ employer.culture|linebreaks }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Contact Information -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 py-3">
+                    <h4 class="fw-bold text-dark mb-0">
+                        <i class="fas fa-envelope me-2 text-primary"></i>
+                        Bog'lanish
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold text-muted">Elektron pochta</label>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-envelope text-primary me-3"></i>
+                                <a href="mailto:{{ employer.contact_email }}" class="text-decoration-none">{{ employer.contact_email }}</a>
+                            </div>
+                        </div>
+                        
+                        {% if employer.phone %}
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold text-muted">Telefon</label>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-phone text-primary me-3"></i>
+                                <a href="tel:{{ employer.phone }}" class="text-decoration-none">{{ employer.phone }}</a>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if employer.address %}
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold text-muted">Manzil</label>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-map-marker-alt text-primary me-3"></i>
+                                <span>{{ employer.address }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if employer.website %}
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold text-muted">Veb sayt</label>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-globe text-primary me-3"></i>
+                                <a href="{{ employer.website }}" target="_blank" class="text-decoration-none">Saytga o'tish</a>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Quick Stats -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="fas fa-chart-bar me-2 text-primary"></i>
+                        Statistika
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <div class="h3 fw-bold text-primary mb-1">{{ jobs|length }}</div>
+                        <small class="text-muted">Aktiv vakansiyalar</small>
+                    </div>
+                    
+                    {% if employer.avg_salary %}
+                    <div class="text-center mb-3">
+                        <div class="h4 fw-bold text-success mb-1">{{ employer.avg_salary }}</div>
+                        <small class="text-muted">O'rtacha maosh</small>
+                    </div>
+                    {% endif %}
+                    
+                    {% if employer.rating %}
+                    <div class="text-center">
+                        <div class="h4 fw-bold text-warning mb-1">{{ employer.rating }}/5</div>
+                        <small class="text-muted">Reyting</small>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Social Media -->
+            {% if employer.social_media %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="fas fa-hashtag me-2 text-primary"></i>
+                        Ijtimoiy tarmoqlar
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-center gap-3">
+                        {% for platform, url in employer.social_media.items %}
+                        <a href="{{ url }}" target="_blank" class="btn btn-outline-primary btn-sm p-2">
+                            <i class="fab fa-{{ platform }}"></i>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Similar Companies -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="fas fa-building me-2 text-primary"></i>
+                        O'xshash kompaniyalar
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% for similar in similar_companies %}
+                    <div class="d-flex align-items-center mb-3">
+                        {% if similar.logo %}
+                            <img src="{{ similar.logo.url }}" alt="{{ similar.name }}" class="rounded me-3" width="40" height="40" style="object-fit: cover;">
+                        {% else %}
+                            <div class="bg-light rounded d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                <i class="fas fa-building text-muted"></i>
+                            </div>
+                        {% endif %}
+                        <div class="flex-grow-1">
+                            <h6 class="fw-bold mb-0">{{ similar.name }}</h6>
+                            <small class="text-muted">{{ similar.industry }}</small>
+                        </div>
+                        <a href="{% url 'employers:detail' similar.id %}" class="btn btn-outline-primary btn-sm">Ko'rish</a>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted text-center mb-0">Hozircha o'xshash kompaniyalar mavjud emas</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Jobs Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold text-dark mb-0">
+                    <i class="fas fa-briefcase me-2 text-primary"></i>
+                    {{ employer.name }} vakansiyalari
+                </h3>
+                <span class="badge bg-primary fs-6">{{ jobs|length }} ta vakansiya</span>
+            </div>
+
+            {% if jobs %}
+            <div class="row g-4">
+                {% for job in jobs %}
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm h-100 job-card">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h5 class="fw-bold text-dark mb-2">{{ job.title }}</h5>
+                                    <div class="d-flex flex-wrap gap-2 mb-2">
+                                        {% if job.job_type %}
+                                        <span class="badge bg-light text-dark">{{ job.job_type }}</span>
+                                        {% endif %}
+                                        {% if job.salary %}
+                                        <span class="badge bg-success">{{ job.salary }}</span>
+                                        {% endif %}
+                                        {% if job.is_remote %}
+                                        <span class="badge bg-info">Uzoq ish</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% if job.is_featured %}
+                                <span class="badge bg-warning text-dark">
+                                    <i class="fas fa-star me-1"></i>Tavsiya etiladi
+                                </span>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="d-flex text-muted small mb-2">
+                                    <i class="fas fa-map-marker-alt me-2"></i>
+                                    <span>{{ job.location|default:employer.location }}</span>
+                                </div>
+                                {% if job.experience %}
+                                <div class="d-flex text-muted small mb-2">
+                                    <i class="fas fa-briefcase me-2"></i>
+                                    <span>{{ job.experience }} tajriba</span>
+                                </div>
+                                {% endif %}
+                                <div class="d-flex text-muted small">
+                                    <i class="fas fa-clock me-2"></i>
+                                    <span>{{ job.created_at|timesince }} oldin</span>
+                                </div>
+                            </div>
+
+                            {% if job.description %}
+                            <p class="text-muted small mb-3">{{ job.description|truncatewords:20 }}</p>
+                            {% endif %}
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="{% url 'jobs:detail' job.id %}" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-eye me-1"></i>Batafsil
+                                </a>
+                                <button class="btn btn-outline-secondary btn-sm" onclick="saveJob({{ job.id }})">
+                                    <i class="far fa-bookmark me-1"></i>Saqlash
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <!-- Empty Jobs State -->
+            <div class="text-center py-5">
+                <i class="fas fa-briefcase fa-4x text-muted mb-3"></i>
+                <h4 class="text-muted">Hozircha vakansiyalar mavjud emas</h4>
+                <p class="text-muted">Kompaniya yangi vakansiyalarni tez orada e'lon qiladi</p>
+                <button class="btn btn-outline-primary" onclick="notifyWhenAvailable()">
+                    <i class="fas fa-bell me-2"></i>Vakansiya paydo bo'lganda bildirish
+                </button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.job-card {
+    transition: all 0.3s ease;
+}
+.job-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1) !important;
+}
+
+.card {
+    border-radius: 12px;
+}
+
+.badge {
+    font-size: 0.75em;
+}
+
+.btn-primary {
+    background-color: #012152;
+    border-color: #012152;
+}
+.btn-primary:hover {
+    background-color: #012d6e;
+    border-color: #012d6e;
+}
+</style>
+
+<script>
+// Share company functionality
+function shareCompany() {
+    if (navigator.share) {
+        navigator.share({
+            title: '{{ employer.name }} - OXU Career',
+            text: '{{ employer.description|truncatewords:15 }}',
+            url: window.location.href,
+        })
+        .then(() => console.log('Muvaffaqiyatli ulashildi'))
+        .catch((error) => console.log('Ulashishda xatolik', error));
+    } else {
+        // Fallback: copy to clipboard
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            alert('Havola buferga nusxalandi! Endi uni ulashishingiz mumkin.');
+        });
+    }
+}
+
+// Save job functionality
+function saveJob(jobId) {
+    // Add API call to save job
+    fetch(`/api/jobs/${jobId}/save/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show success message
+            const button = event.target;
+            const originalHTML = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check me-1"></i>Saqlandi';
+            button.classList.remove('btn-outline-secondary');
+            button.classList.add('btn-success');
+            
+            setTimeout(() => {
+                button.innerHTML = originalHTML;
+                button.classList.remove('btn-success');
+                button.classList.add('btn-outline-secondary');
+            }, 2000);
+        }
+    })
+    .catch(error => {
+        console.error('Xatolik:', error);
+        alert('Vakansiyani saqlashda xatolik yuz berdi');
+    });
+}
+
+// Notify when jobs available
+function notifyWhenAvailable() {
+    const employerId = {{ employer.id }};
+    // Add subscription logic here
+    alert('Siz {{ employer.name }} kompaniyasining yangi vakansiyalari haqida xabardor bo\'lasiz!');
+}
+
+// Add smooth scrolling for better UX
+document.addEventListener('DOMContentLoaded', function() {
+    // Add scroll to jobs section if URL has hash
+    if (window.location.hash === '#jobs') {
+        document.querySelector('.row.mt-5').scrollIntoView({
+            behavior: 'smooth'
+        });
+    }
+    
+    // Add loading states for buttons
+    const buttons = document.querySelectorAll('button, a.btn');
+    buttons.forEach(button => {
+        button.addEventListener('click', function() {
+            if (this.classList.contains('btn-primary') || this.classList.contains('btn-success')) {
+                this.style.opacity = '0.8';
+                setTimeout(() => {
+                    this.style.opacity = '1';
+                }, 300);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

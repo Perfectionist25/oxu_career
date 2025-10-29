@@ -1,0 +1,409 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="display-6 fw-bold text-primary mb-2">Rezyume Ko'rinishi</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'cvbuilder:cv_list' %}" class="text-decoration-none">Rezyumelarim</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Ko'rish</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'cvbuilder:edit_cv' cv.id %}" class="btn btn-outline-primary">
+                        <i class="fas fa-edit me-2"></i>Tahrirlash
+                    </a>
+                    <a href="{% url 'cvbuilder:cv_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Ortga
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Main CV Preview -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-4">
+                    <!-- CV Header -->
+                    <div class="text-center mb-4 pb-4 border-bottom">
+                        <h2 class="fw-bold text-dark mb-2">{{ cv.full_name|default:"Ism Familiya" }}</h2>
+                        {% if cv.position %}
+                        <h4 class="text-primary mb-3">{{ cv.position }}</h4>
+                        {% endif %}
+                        
+                        <div class="row justify-content-center">
+                            {% if cv.email %}
+                            <div class="col-auto">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-envelope text-primary me-2"></i>
+                                    <span>{{ cv.email }}</span>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if cv.phone %}
+                            <div class="col-auto">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-phone text-primary me-2"></i>
+                                    <span>{{ cv.phone }}</span>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if cv.address %}
+                            <div class="col-auto">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                                    <span>{{ cv.address }}</span>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Professional Summary -->
+                    {% if cv.professional_summary %}
+                    <div class="mb-4">
+                        <h5 class="fw-bold text-primary mb-3 border-bottom pb-2">
+                            <i class="fas fa-user-tie me-2"></i>Professional Tavsif
+                        </h5>
+                        <p class="text-dark">{{ cv.professional_summary|linebreaks }}</p>
+                    </div>
+                    {% endif %}
+
+                    <div class="row">
+                        <!-- Left Column -->
+                        <div class="col-md-6">
+                            <!-- Education -->
+                            {% if cv.education %}
+                            <div class="mb-4">
+                                <h5 class="fw-bold text-primary mb-3">
+                                    <i class="fas fa-graduation-cap me-2"></i>Ta'lim
+                                </h5>
+                                <div class="ps-3">
+                                    {% if cv.degree %}
+                                    <h6 class="fw-bold text-dark mb-1">{{ cv.degree }}</h6>
+                                    {% endif %}
+                                    {% if cv.institution %}
+                                    <p class="text-muted mb-1">{{ cv.institution }}</p>
+                                    {% endif %}
+                                    {% if cv.graduation_year %}
+                                    <small class="text-muted">{{ cv.graduation_year }} yil</small>
+                                    {% endif %}
+                                    <p class="mt-2">{{ cv.education|linebreaks }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <!-- Skills -->
+                            {% if cv.skills %}
+                            <div class="mb-4">
+                                <h5 class="fw-bold text-primary mb-3">
+                                    <i class="fas fa-tools me-2"></i>Ko'nikmalar
+                                </h5>
+                                <div class="d-flex flex-wrap gap-2 ps-3">
+                                    {% for skill in cv.skills_list %}
+                                    <span class="badge bg-primary">{{ skill }}</span>
+                                    {% empty %}
+                                    <p>{{ cv.skills|linebreaks }}</p>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <!-- Languages -->
+                            {% if cv.languages %}
+                            <div class="mb-4">
+                                <h5 class="fw-bold text-primary mb-3">
+                                    <i class="fas fa-language me-2"></i>Tillar
+                                </h5>
+                                <div class="ps-3">
+                                    {% for language in cv.languages_list %}
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <span class="fw-semibold">{{ language.name }}</span>
+                                        {% if language.level %}
+                                        <span class="badge bg-secondary">{{ language.level }}</span>
+                                        {% endif %}
+                                    </div>
+                                    {% empty %}
+                                    <p>{{ cv.languages|linebreaks }}</p>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="col-md-6">
+                            <!-- Work Experience -->
+                            {% if cv.experience %}
+                            <div class="mb-4">
+                                <h5 class="fw-bold text-primary mb-3">
+                                    <i class="fas fa-briefcase me-2"></i>Ish Tajribasi
+                                </h5>
+                                <div class="ps-3">
+                                    <p>{{ cv.experience|linebreaks }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <!-- Achievements -->
+                            {% if cv.achievements %}
+                            <div class="mb-4">
+                                <h5 class="fw-bold text-primary mb-3">
+                                    <i class="fas fa-trophy me-2"></i>Yutuqlar
+                                </h5>
+                                <div class="ps-3">
+                                    <p>{{ cv.achievements|linebreaks }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <!-- Additional Information -->
+                            {% if cv.interests or cv.certifications %}
+                            <div class="mb-4">
+                                <h5 class="fw-bold text-primary mb-3">
+                                    <i class="fas fa-star me-2"></i>Qo'shimcha Ma'lumot
+                                </h5>
+                                <div class="ps-3">
+                                    {% if cv.certifications %}
+                                    <h6 class="fw-semibold text-dark mb-2">Sertifikatlar:</h6>
+                                    <p class="mb-3">{{ cv.certifications|linebreaks }}</p>
+                                    {% endif %}
+                                    
+                                    {% if cv.interests %}
+                                    <h6 class="fw-semibold text-dark mb-2">Qiziqishlar:</h6>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        {% for interest in cv.interests_list %}
+                                        <span class="badge bg-light text-dark border">{{ interest }}</span>
+                                        {% empty %}
+                                        <p>{{ cv.interests|linebreaks }}</p>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Template Info -->
+                    <div class="mt-4 pt-4 border-top">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <small class="text-muted">
+                                    <strong>Shablon:</strong> {{ cv.get_template_choice_display }}
+                                </small>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <small class="text-muted">
+                                    <strong>Yaratilgan:</strong> {{ cv.created_at|date:"d.m.Y H:i" }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar - Actions & QR -->
+        <div class="col-lg-4">
+            <!-- Actions Card -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="fas fa-download me-2 text-primary"></i>
+                        Yuklab olish
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-file-pdf fa-3x text-danger mb-3"></i>
+                        <h6 class="fw-bold text-dark">PDF formatida</h6>
+                        <p class="text-muted small">Professional ko'rinishda saqlang</p>
+                    </div>
+                    <a href="{% url 'cvbuilder:export_pdf' cv.id %}" class="btn btn-danger w-100 mb-2" target="_blank">
+                        <i class="fas fa-download me-2"></i>PDF Yuklab olish
+                    </a>
+                    <small class="text-muted">Yuqori sifatli chop etish uchun</small>
+                </div>
+            </div>
+
+            <!-- QR Code Card -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="fas fa-qrcode me-2 text-primary"></i>
+                        QR Kod
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <img src="{% url 'cvbuilder:generate_qr' cv.id %}" alt="QR Code" class="img-fluid rounded border" style="max-width: 200px;">
+                    </div>
+                    <p class="text-muted small mb-0">
+                        Ushbu QR kod orqali rezyumega tez kirish
+                    </p>
+                </div>
+            </div>
+
+            <!-- Share Card -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="fas fa-share-alt me-2 text-primary"></i>
+                        Ulashish
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary btn-sm" onclick="copyToClipboard()">
+                            <i class="fas fa-link me-2"></i>Havolani nusxalash
+                        </button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="shareCV()">
+                            <i class="fas fa-share me-2"></i>Ijtimoiy tarmoqlarda ulashish
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Print View Notice -->
+    <div class="alert alert-info mt-4" role="alert">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-info-circle me-2"></i>
+            <div>
+                <strong>Eslatma:</strong> PDF formatida yuklab olingan rezyume chop etish uchun moslashtirilgan. 
+                <a href="{% url 'cvbuilder:export_pdf' cv.id %}" class="alert-link">PDF ni yuklab oling</a> va professional ko'rinishga ega bo'ling.
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+}
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.badge {
+    font-size: 0.8em;
+    padding: 0.5em 0.75em;
+}
+
+.breadcrumb {
+    background: transparent;
+    padding: 0;
+}
+
+.border-bottom {
+    border-color: #e9ecef !important;
+}
+</style>
+
+<script>
+// Copy link to clipboard
+function copyToClipboard() {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
+        // Show success message
+        const originalText = event.target.innerHTML;
+        event.target.innerHTML = '<i class="fas fa-check me-2"></i>Nusxalandi!';
+        event.target.classList.remove('btn-outline-primary');
+        event.target.classList.add('btn-success');
+        
+        setTimeout(() => {
+            event.target.innerHTML = originalText;
+            event.target.classList.remove('btn-success');
+            event.target.classList.add('btn-outline-primary');
+        }, 2000);
+    }).catch(err => {
+        console.error('Nusxalashda xatolik: ', err);
+        alert('Havolani nusxalashda xatolik yuz berdi');
+    });
+}
+
+// Share CV functionality
+function shareCV() {
+    if (navigator.share) {
+        navigator.share({
+            title: 'Mening rezyumem - {{ cv.full_name }}',
+            text: '{{ cv.position }} - {{ cv.professional_summary|truncatewords:10 }}',
+            url: window.location.href,
+        })
+        .then(() => console.log('Muvaffaqiyatli ulashildi'))
+        .catch((error) => console.log('Ulashishda xatolik', error));
+    } else {
+        // Fallback for browsers that don't support Web Share API
+        copyToClipboard();
+        alert('Havola buferga nusxalandi. Endi uni ijtimoiy tarmoqlarda ulashishingiz mumkin.');
+    }
+}
+
+// Process skills and languages lists
+document.addEventListener('DOMContentLoaded', function() {
+    // Process skills into badges
+    const skillsElements = document.querySelectorAll('.badge.bg-primary');
+    skillsElements.forEach(badge => {
+        const text = badge.textContent;
+        if (text && text.includes(',')) {
+            badge.parentNode.innerHTML = '';
+            const skills = text.split(',').map(skill => skill.trim()).filter(skill => skill);
+            skills.forEach(skill => {
+                const newBadge = document.createElement('span');
+                newBadge.className = 'badge bg-primary me-1 mb-1';
+                newBadge.textContent = skill;
+                badge.parentNode.appendChild(newBadge);
+            });
+        }
+    });
+
+    // Process languages
+    const languagesText = '{{ cv.languages }}';
+    if (languagesText && languagesText.includes(',')) {
+        const languagesContainer = document.querySelector('.col-md-6 .ps-3');
+        if (languagesContainer) {
+            languagesContainer.innerHTML = '';
+            const languages = languagesText.split(',').map(lang => lang.trim()).filter(lang => lang);
+            languages.forEach(language => {
+                const [name, level] = language.split(':').map(part => part.trim());
+                const langDiv = document.createElement('div');
+                langDiv.className = 'd-flex justify-content-between align-items-center mb-1';
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'fw-semibold';
+                nameSpan.textContent = name || language;
+                
+                const levelSpan = document.createElement('span');
+                levelSpan.className = 'badge bg-secondary';
+                levelSpan.textContent = level || 'Intermediate';
+                
+                langDiv.appendChild(nameSpan);
+                if (level) {
+                    langDiv.appendChild(levelSpan);
+                }
+                
+                languagesContainer.appendChild(langDiv);
+            });
+        }
+    }
+});
+
+// Print functionality
+function printCV() {
+    window.print();
+}
+</script>
+{% endblock %}

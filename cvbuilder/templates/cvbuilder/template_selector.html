@@ -1,0 +1,365 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-5 fw-bold text-primary mb-3">Rezyume Shablonini Tanlang</h1>
+            <p class="lead text-muted">Karyerangizga mos professional shablonni tanlang va bir necha daqiqada rezyumeningizni yarating</p>
+            
+            <!-- Progress Steps -->
+            <div class="row justify-content-center mt-4">
+                <div class="col-lg-8">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="text-center">
+                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 40px; height: 40px;">
+                                <span class="text-white fw-bold">1</span>
+                            </div>
+                            <small class="fw-semibold">Shablon tanlash</small>
+                        </div>
+                        <div class="flex-grow-1 border-top border-2 border-light mx-2"></div>
+                        <div class="text-center">
+                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 40px; height: 40px;">
+                                <span class="text-muted fw-bold">2</span>
+                            </div>
+                            <small class="text-muted">Ma'lumotlarni kiritish</small>
+                        </div>
+                        <div class="flex-grow-1 border-top border-2 border-light mx-2"></div>
+                        <div class="text-center">
+                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 40px; height: 40px;">
+                                <span class="text-muted fw-bold">3</span>
+                            </div>
+                            <small class="text-muted">Yuklab olish</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Template Categories -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-center flex-wrap gap-2">
+                <button class="btn btn-outline-primary active" data-filter="all">
+                    <i class="fas fa-th me-2"></i>Barchasi
+                </button>
+                <button class="btn btn-outline-primary" data-filter="modern">
+                    <i class="fas fa-bolt me-2"></i>Zamonaviy
+                </button>
+                <button class="btn btn-outline-primary" data-filter="professional">
+                    <i class="fas fa-briefcase me-2"></i>Professional
+                </button>
+                <button class="btn btn-outline-primary" data-filter="creative">
+                    <i class="fas fa-paint-brush me-2"></i>Ijodiy
+                </button>
+                <button class="btn btn-outline-primary" data-filter="minimal">
+                    <i class="fas fa-minimize me-2"></i>Minimal
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Templates Grid -->
+    <div class="row g-4" id="templates-container">
+        {% for template in templates %}
+        <div class="col-xl-4 col-lg-6 col-md-6 template-item" data-category="{{ template.category }}">
+            <div class="card border-0 shadow-sm h-100 template-card">
+                <div class="card-body p-4 d-flex flex-column">
+                    <!-- Template Preview -->
+                    <div class="template-preview bg-light rounded text-center mb-4 p-4">
+                        <i class="fas fa-file-alt fa-3x text-primary mb-3"></i>
+                        <h6 class="fw-bold text-dark">{{ template.name }}</h6>
+                    </div>
+                    
+                    <!-- Template Info -->
+                    <div class="flex-grow-1">
+                        <h5 class="card-title fw-bold text-dark mb-3">{{ template.name }}</h5>
+                        <p class="card-text text-muted mb-3">{{ template.description }}</p>
+                        
+                        <!-- Template Features -->
+                        <div class="mb-3">
+                            {% for feature in template.features %}
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-check text-success me-2 small"></i>
+                                <small class="text-muted">{{ feature }}</small>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <!-- Template Stats -->
+                        <div class="d-flex justify-content-between text-muted small mb-3">
+                            <span>
+                                <i class="fas fa-download me-1"></i>
+                                {{ template.downloads }} marta
+                            </span>
+                            <span>
+                                <i class="fas fa-star me-1"></i>
+                                {{ template.rating }}/5
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Button -->
+                    <a href="{% url 'cvbuilder:create_cv' template.id %}" class="btn btn-primary w-100 mt-auto">
+                        <i class="fas fa-check me-2"></i>Tanlash
+                    </a>
+                </div>
+                
+                <!-- Popular Badge -->
+                {% if template.is_popular %}
+                <div class="position-absolute top-0 start-0">
+                    <span class="badge bg-warning text-dark m-2">
+                        <i class="fas fa-fire me-1"></i>Mashhur
+                    </span>
+                </div>
+                {% endif %}
+                
+                <!-- New Badge -->
+                {% if template.is_new %}
+                <div class="position-absolute top-0 end-0">
+                    <span class="badge bg-success m-2">
+                        <i class="fas fa-star me-1"></i>Yangi
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <!-- Empty State -->
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="fas fa-file-alt fa-4x text-muted mb-3"></i>
+                <h4 class="text-muted">Hozircha shablonlar mavjud emas</h4>
+                <p class="text-muted">Tez orada yangi shablonlar qo'shiladi</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Comparison Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 py-4">
+                    <h3 class="fw-bold text-dark text-center mb-0">Shablonlarni solishtirish</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-borderless">
+                            <thead>
+                                <tr>
+                                    <th class="border-0"></th>
+                                    <th class="text-center border-0">
+                                        <div class="fw-bold text-primary">Zamonaviy</div>
+                                        <small class="text-muted">Yosh mutaxassislar uchun</small>
+                                    </th>
+                                    <th class="text-center border-0">
+                                        <div class="fw-bold text-primary">Professional</div>
+                                        <small class="text-muted">Korporativ ish uchun</small>
+                                    </th>
+                                    <th class="text-center border-0">
+                                        <div class="fw-bold text-primary">Ijodiy</div>
+                                        <small class="text-muted">Dizayn va marketing uchun</small>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="fw-semibold">Mobil moslashuvchan</td>
+                                    <td class="text-center"><i class="fas fa-check text-success"></i></td>
+                                    <td class="text-center"><i class="fas fa-check text-success"></i></td>
+                                    <td class="text-center"><i class="fas fa-check text-success"></i></td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-semibold">PDF formatida</td>
+                                    <td class="text-center"><i class="fas fa-check text-success"></i></td>
+                                    <td class="text-center"><i class="fas fa-check text-success"></i></td>
+                                    <td class="text-center"><i class="fas fa-check text-success"></i></td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-semibold">Rangli dizayn</td>
+                                    <td class="text-center"><i class="fas fa-check text-success"></i></td>
+                                    <td class="text-center"><i class="fas fa-times text-muted"></i></td>
+                                    <td class="text-center"><i class="fas fa-check text-success"></i></td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-semibold">Ikki ustunli</td>
+                                    <td class="text-center"><i class="fas fa-check text-success"></i></td>
+                                    <td class="text-center"><i class="fas fa-times text-muted"></i></td>
+                                    <td class="text-center"><i class="fas fa-check text-success"></i></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="row mt-5">
+        <div class="col-lg-8 mx-auto">
+            <div class="text-center mb-4">
+                <h3 class="fw-bold text-dark">Tez-tez so'raladigan savollar</h3>
+            </div>
+            <div class="accordion" id="faqAccordion">
+                <div class="accordion-item border-0 shadow-sm mb-3">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                            Qaysi shablonni tanlashim kerak?
+                        </button>
+                    </h2>
+                    <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Sohangizga qarab shablon tanlang. Texnik sohalar uchun professional, kreativ sohalar uchun esa ijodiy shablonlar tavsiya etiladi.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item border-0 shadow-sm mb-3">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                            Shablondan keyin o'zgartirish mumkinmi?
+                        </button>
+                    </h2>
+                    <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Ha, istalgan vaqt rezyumeningizni tahrirlashingiz yoki boshqa shablonga o'zgartirishingiz mumkin.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item border-0 shadow-sm">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                            Rezyumeni qayta yuklab olish mumkinmi?
+                        </button>
+                    </h2>
+                    <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Ha, yaratilgan rezyumelaringizni istalgan vaqt PDF formatida qayta yuklab olishingiz mumkin.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.template-card {
+    transition: all 0.3s ease;
+    border-radius: 12px;
+}
+.template-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+}
+
+.template-preview {
+    transition: all 0.3s ease;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.template-card:hover .template-preview {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+}
+
+.btn-outline-primary.active {
+    background-color: #012152;
+    border-color: #012152;
+    color: white;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #012152;
+    color: white;
+}
+.accordion-button:focus {
+    border-color: #012152;
+    box-shadow: 0 0 0 0.2rem rgba(1, 33, 82, 0.25);
+}
+
+.badge {
+    font-size: 0.7em;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Template filtering
+    const filterButtons = document.querySelectorAll('[data-filter]');
+    const templateItems = document.querySelectorAll('.template-item');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Update active button
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            const filter = this.getAttribute('data-filter');
+            
+            // Filter templates
+            templateItems.forEach(item => {
+                if (filter === 'all' || item.getAttribute('data-category') === filter) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    // Add hover effects with delay
+    templateItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.style.transition = 'all 0.3s ease';
+        });
+    });
+
+    // Add template preview functionality
+    const templateCards = document.querySelectorAll('.template-card');
+    templateCards.forEach(card => {
+        card.addEventListener('click', function(e) {
+            if (!e.target.closest('a')) {
+                const link = this.querySelector('a.btn-primary');
+                if (link) {
+                    link.click();
+                }
+            }
+        });
+    });
+
+    // Add search functionality
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.className = 'form-control form-control-lg';
+    searchInput.placeholder = 'Shablonlarni qidirish...';
+    searchInput.style.maxWidth = '400px';
+    searchInput.style.margin = '0 auto 2rem auto';
+    
+    const categoriesSection = document.querySelector('.row.mb-4');
+    if (categoriesSection) {
+        categoriesSection.parentNode.insertBefore(searchInput, categoriesSection);
+        
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            templateItems.forEach(item => {
+                const templateName = item.querySelector('.card-title').textContent.toLowerCase();
+                const templateDesc = item.querySelector('.card-text').textContent.toLowerCase();
+                
+                if (templateName.includes(searchTerm) || templateDesc.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    }
+});
+</script>
+{% endblock %}

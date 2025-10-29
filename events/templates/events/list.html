@@ -1,0 +1,403 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-5 fw-bold text-primary mb-3">Tadbirlar</h1>
+            <p class="lead text-muted">Karyera rivojlanishi, treninglar va networking tadbirlarida qatnashing</p>
+        </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="card border-0 shadow-sm mb-5">
+        <div class="card-body p-4">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="fas fa-search text-muted"></i>
+                        </span>
+                        <input type="text" 
+                               class="form-control" 
+                               id="searchInput" 
+                               placeholder="Tadbir nomi bo'yicha qidirish...">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="typeFilter">
+                        <option value="">Barcha turdagi tadbirlar</option>
+                        <option value="workshop">Workshop</option>
+                        <option value="seminar">Seminar</option>
+                        <option value="conference">Konferensiya</option>
+                        <option value="networking">Networking</option>
+                        <option value="career_fair">Karyera ko'rgazmasi</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="statusFilter">
+                        <option value="upcoming">Kutilayotgan tadbirlar</option>
+                        <option value="archived">O'tgan tadbirlar</option>
+                        <option value="all">Barcha tadbirlar</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Events Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold text-dark mb-0">
+                    <i class="fas fa-rocket me-2 text-primary"></i>
+                    Kutilayotgan Tadbirlar
+                </h2>
+                <span class="badge bg-primary fs-6">{{ upcoming|length }} ta tadbir</span>
+            </div>
+
+            {% if upcoming %}
+            <div class="row g-4" id="upcomingEvents">
+                {% for event in upcoming %}
+                <div class="col-xl-4 col-lg-6 event-item" data-type="{{ event.event_type|default:'' }}" data-status="upcoming">
+                    <div class="card border-0 shadow-sm h-100 event-card">
+                        <div class="card-body p-4">
+                            <!-- Event Image -->
+                            {% if event.image %}
+                            <div class="event-image mb-3">
+                                <img src="{{ event.image.url }}" alt="{{ event.title }}" class="rounded w-100" style="height: 180px; object-fit: cover;">
+                            </div>
+                            {% else %}
+                            <div class="bg-light rounded text-center mb-3 p-4" style="height: 180px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-calendar-alt fa-3x text-primary"></i>
+                            </div>
+                            {% endif %}
+
+                            <!-- Event Status -->
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                {% if event.event_type %}
+                                <span class="badge bg-info">{{ event.event_type }}</span>
+                                {% endif %}
+                                {% if event.is_featured %}
+                                <span class="badge bg-warning text-dark">
+                                    <i class="fas fa-star me-1"></i>Tavsiya etiladi
+                                </span>
+                                {% endif %}
+                            </div>
+
+                            <!-- Event Title -->
+                            <h5 class="fw-bold text-dark mb-2">{{ event.title }}</h5>
+
+                            <!-- Event Details -->
+                            <div class="mb-3">
+                                <div class="d-flex text-muted small mb-2">
+                                    <i class="fas fa-calendar me-2"></i>
+                                    <span>{{ event.date|date:"d.m.Y" }}</span>
+                                </div>
+                                <div class="d-flex text-muted small mb-2">
+                                    <i class="fas fa-clock me-2"></i>
+                                    <span>{{ event.date|date:"H:i" }} da boshlanadi</span>
+                                </div>
+                                <div class="d-flex text-muted small">
+                                    <i class="fas fa-map-marker-alt me-2"></i>
+                                    <span>
+                                        {{ event.location }}
+                                        {% if event.is_online %}
+                                        <span class="text-success"> (Onlayn)</span>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Event Description -->
+                            {% if event.description %}
+                            <p class="text-muted small mb-3">{{ event.description|truncatewords:15 }}</p>
+                            {% endif %}
+
+                            <!-- Registration Info -->
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                {% if event.capacity %}
+                                <small class="text-muted">
+                                    <i class="fas fa-users me-1"></i>
+                                    {{ event.registered_count|default:0 }}/{{ event.capacity }}
+                                </small>
+                                {% endif %}
+                                {% if event.is_free %}
+                                <span class="badge bg-success">Bepul</span>
+                                {% endif %}
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'events:detail' event.id %}" class="btn btn-outline-primary btn-sm flex-fill">
+                                    <i class="fas fa-eye me-1"></i>Batafsil
+                                </a>
+                                {% if event.registration_link %}
+                                <a href="{{ event.registration_link }}" target="_blank" class="btn btn-primary btn-sm flex-fill">
+                                    <i class="fas fa-user-plus me-1"></i>Ro'yxatdan o'tish
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <!-- Empty Upcoming Events -->
+            <div class="text-center py-5">
+                <i class="fas fa-calendar-times fa-4x text-muted mb-3"></i>
+                <h4 class="text-muted">Hozircha kutilayotgan tadbirlar yo'q</h4>
+                <p class="text-muted">Yangi tadbirlar tez orada e'lon qilinadi</p>
+                <button class="btn btn-outline-primary" onclick="subscribeToNotifications()">
+                    <i class="fas fa-bell me-2"></i>Yangi tadbirlar haqida xabar olish
+                </button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Archived Events Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold text-dark mb-0">
+                    <i class="fas fa-archive me-2 text-secondary"></i>
+                    O'tgan Tadbirlar
+                </h2>
+                <span class="badge bg-secondary fs-6">{{ archived|length }} ta tadbir</span>
+            </div>
+
+            {% if archived %}
+            <div class="row g-4" id="archivedEvents">
+                {% for event in archived %}
+                <div class="col-xl-4 col-lg-6 event-item" data-type="{{ event.event_type|default:'' }}" data-status="archived">
+                    <div class="card border-0 shadow-sm h-100 event-card">
+                        <div class="card-body p-4">
+                            <!-- Event Image -->
+                            {% if event.image %}
+                            <div class="event-image mb-3">
+                                <img src="{{ event.image.url }}" alt="{{ event.title }}" class="rounded w-100" style="height: 150px; object-fit: cover; opacity: 0.7;">
+                            </div>
+                            {% else %}
+                            <div class="bg-light rounded text-center mb-3 p-4" style="height: 150px; display: flex; align-items: center; justify-content: center; opacity: 0.7;">
+                                <i class="fas fa-history fa-3x text-muted"></i>
+                            </div>
+                            {% endif %}
+
+                            <!-- Event Status -->
+                            <div class="mb-2">
+                                <span class="badge bg-secondary">
+                                    <i class="fas fa-check-circle me-1"></i>Yakunlangan
+                                </span>
+                                {% if event.event_type %}
+                                <span class="badge bg-info ms-1">{{ event.event_type }}</span>
+                                {% endif %}
+                            </div>
+
+                            <!-- Event Title -->
+                            <h5 class="fw-bold text-dark mb-2">{{ event.title }}</h5>
+
+                            <!-- Event Details -->
+                            <div class="mb-3">
+                                <div class="d-flex text-muted small mb-2">
+                                    <i class="fas fa-calendar me-2"></i>
+                                    <span>{{ event.date|date:"d.m.Y" }}</span>
+                                </div>
+                                <div class="d-flex text-muted small">
+                                    <i class="fas fa-map-marker-alt me-2"></i>
+                                    <span>{{ event.location }}</span>
+                                </div>
+                            </div>
+
+                            <!-- Event Description -->
+                            {% if event.description %}
+                            <p class="text-muted small mb-3">{{ event.description|truncatewords:12 }}</p>
+                            {% endif %}
+
+                            <!-- Action Buttons -->
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'events:detail' event.id %}" class="btn btn-outline-secondary btn-sm flex-fill">
+                                    <i class="fas fa-eye me-1"></i>Ko'rish
+                                </a>
+                                {% if event.materials_link %}
+                                <a href="{{ event.materials_link }}" target="_blank" class="btn btn-outline-primary btn-sm flex-fill">
+                                    <i class="fas fa-download me-1"></i>Materiallar
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <!-- Empty Archived Events -->
+            <div class="text-center py-4">
+                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">O'tgan tadbirlar arxivi bo'sh</h5>
+                <p class="text-muted">Birinchilardan bo'lib yangi tadbirlarda qatnashing</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Statistics Section -->
+    <div class="row mt-5 pt-5 border-top">
+        <div class="col-md-3 text-center">
+            <div class="h3 fw-bold text-primary mb-1">{{ stats.total_events }}</div>
+            <small class="text-muted">Jami tadbirlar</small>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="h3 fw-bold text-primary mb-1">{{ stats.upcoming_events }}</div>
+            <small class="text-muted">Kutilayotgan</small>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="h3 fw-bold text-primary mb-1">{{ stats.participants_count }}+</div>
+            <small class="text-muted">Ishtirokchilar</small>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="h3 fw-bold text-primary mb-1">{{ stats.organizers_count }}+</div>
+            <small class="text-muted">Tashkilotchilar</small>
+        </div>
+    </div>
+</div>
+
+<style>
+.event-card {
+    transition: all 0.3s ease;
+    border-radius: 12px;
+}
+.event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+}
+
+.badge {
+    font-size: 0.7em;
+}
+
+.btn-primary {
+    background-color: #012152;
+    border-color: #012152;
+}
+.btn-primary:hover {
+    background-color: #012d6e;
+    border-color: #012d6e;
+}
+
+.card {
+    border-radius: 12px;
+}
+
+.event-image {
+    border-radius: 8px;
+    overflow: hidden;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const typeFilter = document.getElementById('typeFilter');
+    const statusFilter = document.getElementById('statusFilter');
+    const eventItems = document.querySelectorAll('.event-item');
+
+    function filterEvents() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const typeValue = typeFilter.value;
+        const statusValue = statusFilter.value;
+
+        eventItems.forEach(item => {
+            const title = item.querySelector('.card-title')?.textContent.toLowerCase() || '';
+            const type = item.getAttribute('data-type');
+            const status = item.getAttribute('data-status');
+
+            const matchesSearch = title.includes(searchTerm);
+            const matchesType = !typeValue || type === typeValue;
+            const matchesStatus = statusValue === 'all' || status === statusValue;
+
+            if (matchesSearch && matchesType && matchesStatus) {
+                item.style.display = 'block';
+                
+                // Show/hide section headers based on visible items
+                const section = item.closest('.row');
+                const visibleItems = section.querySelectorAll('.event-item[style="display: block"]');
+                if (visibleItems.length === 0) {
+                    section.style.display = 'none';
+                } else {
+                    section.style.display = 'block';
+                }
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        // Show empty state if no events match
+        const visibleEvents = document.querySelectorAll('.event-item[style="display: block"]');
+        const emptyStates = document.querySelectorAll('.text-center.py-5, .text-center.py-4');
+        
+        if (visibleEvents.length === 0) {
+            emptyStates.forEach(state => state.style.display = 'block');
+        } else {
+            emptyStates.forEach(state => state.style.display = 'none');
+        }
+    }
+
+    // Event listeners
+    searchInput.addEventListener('input', filterEvents);
+    typeFilter.addEventListener('change', filterEvents);
+    statusFilter.addEventListener('change', filterEvents);
+
+    // Subscribe to notifications
+    window.subscribeToNotifications = function() {
+        // Implement notification subscription logic
+        alert('Siz yangi tadbirlar haqida xabardor bo\'lasiz!');
+    };
+
+    // Add loading animation
+    document.querySelectorAll('.event-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A') return;
+            
+            const link = this.querySelector('a[href*="detail"]');
+            if (link) {
+                link.click();
+            }
+        });
+    });
+
+    // Initialize filters
+    filterEvents();
+});
+
+// Add countdown for upcoming events
+function updateUpcomingEventsCountdown() {
+    const upcomingEvents = document.querySelectorAll('[data-status="upcoming"]');
+    
+    upcomingEvents.forEach(eventItem => {
+        const eventDate = new Date(eventItem.querySelector('.fa-calendar').parentNode.textContent.trim());
+        const now = new Date();
+        const diff = eventDate - now;
+        
+        if (diff > 0) {
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            if (days <= 7) { // Show countdown for events within a week
+                const countdownElement = eventItem.querySelector('.event-countdown');
+                if (!countdownElement) {
+                    const countdown = document.createElement('div');
+                    countdown.className = 'event-countdown badge bg-warning mt-2';
+                    countdown.textContent = `${days} kun qoldi`;
+                    eventItem.querySelector('.card-body').appendChild(countdown);
+                }
+            }
+        }
+    });
+}
+
+// Update countdown every hour
+setInterval(updateUpcomingEventsCountdown, 3600000);
+updateUpcomingEventsCountdown(); // Initial call
+</script>
+{% endblock %}

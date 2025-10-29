@@ -1,0 +1,120 @@
+{% load static %}
+
+<!-- Footer -->
+<footer class="text-white pt-5 pb-4" style="background-color: #012152;">
+  <div class="container">
+    <div class="row w-100">
+      <!-- Foydali havolalar -->
+      <div class="col-lg-4 col-md-6 mb-4">
+        <h5 class="text-light fw-bold mb-4">Foydali havolalar</h5>
+        <ul class="list-unstyled">
+          <li class="mb-2">
+            <a href="http://dtm.uz" class="text-light text-decoration-none d-flex align-items-center">
+              <i class="fas fa-external-link-alt me-2 small"></i>
+              Davlat test markazi
+            </a>
+          </li>
+          <li class="mb-2">
+            <a href="https://yoshlardaftari.uz" class="text-light text-decoration-none d-flex align-items-center">
+              <i class="fas fa-external-link-alt me-2 small"></i>
+              Yoshlar daftari
+            </a>
+          </li>
+          <li class="mb-2">
+            <a href="https://id.egov.uz" class="text-light text-decoration-none d-flex align-items-center">
+              <i class="fas fa-external-link-alt me-2 small"></i>
+              Yagona identifikatsiya tizimi
+            </a>
+          </li>
+          <li class="mb-2">
+            <a href="https://gov.uz" class="text-light text-decoration-none d-flex align-items-center">
+              <i class="fas fa-external-link-alt me-2 small"></i>
+              O'zbekiston Respublikasi Hukumat portali
+            </a>
+          </li>
+          <li class="mb-2">
+            <a href="https://president.uz" class="text-light text-decoration-none d-flex align-items-center">
+              <i class="fas fa-external-link-alt me-2 small"></i>
+              O'zbekiston Respublikasi Prezidenti matbuot xizmati
+            </a>
+          </li>
+          <li class="mb-2">
+            <a href="https://my.gov.uz" class="text-light text-decoration-none d-flex align-items-center">
+              <i class="fas fa-external-link-alt me-2 small"></i>
+              Yagona interaktiv davlat xizmatlari portali
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Manzil -->
+      <div class="col-lg-4 col-md-6 mb-4">
+        <h5 class="text-light fw-bold mb-4">Manzil</h5>
+        <div class="d-flex align-items-start mb-3">
+          <i class="fas fa-map-marker-alt text-light me-3 mt-1"></i>
+          <p class="text-light mb-0">
+            Buxoro sh., MFY "Yangibod",<br>
+            G'ijduvon ko'chasi, 74-uy
+          </p>
+        </div>
+        <!-- Xarita -->
+        <div class="rounded shadow overflow-hidden">
+          <iframe class="w-100" height="200" frameborder="0" style="border:0" allowfullscreen
+                  src="https://www.google.com/maps/embed/v1/place?q=Bukhara&zoom=14&key=YOUR_API_KEY">
+          </iframe>
+        </div>
+      </div>
+
+      <!-- Bog'lanish -->
+      <div class="col-lg-4 col-md-6 mb-4">
+        <h5 class="text-light fw-bold mb-4">Bog'lanish</h5>
+        <div class="d-flex align-items-center mb-3">
+          <i class="fas fa-phone text-light me-3"></i>
+          <div>
+            <a href="tel:+998553050009" class="text-light text-decoration-none">
+              +998 55 305 00 09
+            </a>
+          </div>
+        </div>
+        <div class="d-flex align-items-center mb-4">
+          <i class="fas fa-envelope text-light me-3"></i>
+          <div>
+            <a href="mailto:info@oxu.uz" class="text-light text-decoration-none">
+              info@oxu.uz
+            </a>
+          </div>
+        </div>
+        
+        <!-- Ijtimoiy tarmoqlar -->
+        <h6 class="text-light fw-bold mb-3">Ijtimoiy tarmoqlar</h6>
+        <div class="d-flex gap-2">
+          <a href="https://t.me/Oxu_uz" class="btn btn-outline-light btn-sm p-2">
+            <i class="fab fa-telegram"></i>
+          </a>
+          <a href="https://www.instagram.com/oxu_uz/" class="btn btn-outline-light btn-sm p-2">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="https://www.facebook.com/people/Osiyo-Xalqaro-Universiteti/100088012691808/?sk=about" class="btn btn-outline-light btn-sm p-2">
+            <i class="fab fa-facebook"></i>
+          </a>
+          <a href="https://www.youtube.com/@Osiyo.Xalqaro.Universiteti." class="btn btn-outline-light btn-sm p-2">
+            <i class="fab fa-youtube"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Logo va nusxa huquqi -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center pt-4 border-top border-light">
+      <a class="navbar-brand d-flex align-items-center text-decoration-none mb-3 mb-md-0" href="/">
+        <img style="width: 60px;" src="{% static 'img/logo1.png' %}" alt="OXU Logo" class="me-3">
+        <span class="fw-bold text-white">
+          OXU <br> <small>Career</small>
+        </span>
+      </a>
+      <small class="text-light text-center text-md-end">
+        © {% now 'Y' %} Barcha huquqlar himoyalangan. Osiyo Xalqaro Universiteti
+      </small>
+    </div>
+  </div>
+</footer>

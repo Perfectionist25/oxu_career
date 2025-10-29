@@ -1,0 +1,349 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-5 fw-bold text-primary mb-3">Aloqa</h1>
+            <p class="lead text-muted">Biz bilan bog'laning va savollaringizga javob oling. Sizga yordam berishdan mamnunmiz!</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Contact Information -->
+        <div class="col-lg-4 mb-5">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold text-dark mb-4">
+                        <i class="fas fa-info-circle me-2 text-primary"></i>
+                        Kontakt ma'lumotlari
+                    </h4>
+                    
+                    <!-- Address -->
+                    <div class="d-flex mb-4">
+                        <div class="flex-shrink-0">
+                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <i class="fas fa-map-marker-alt text-white"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="fw-bold text-dark mb-1">Manzil</h6>
+                            <p class="text-muted mb-0">
+                                Buxoro sh., Yangibod MFY,<br>
+                                G'ijduvon ko'chasi, 74-uy
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Phone -->
+                    <div class="d-flex mb-4">
+                        <div class="flex-shrink-0">
+                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <i class="fas fa-phone text-white"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="fw-bold text-dark mb-1">Telefon</h6>
+                            <p class="text-muted mb-0">
+                                <a href="tel:+998553050009" class="text-decoration-none text-muted">+998 55 305 00 09</a>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Email -->
+                    <div class="d-flex mb-4">
+                        <div class="flex-shrink-0">
+                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <i class="fas fa-envelope text-white"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="fw-bold text-dark mb-1">Elektron pochta</h6>
+                            <p class="text-muted mb-0">
+                                <a href="mailto:info@oxu.uz" class="text-decoration-none text-muted">info@oxu.uz</a>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Working Hours -->
+                    <div class="d-flex mb-4">
+                        <div class="flex-shrink-0">
+                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <i class="fas fa-clock text-white"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="fw-bold text-dark mb-1">Ish vaqtlari</h6>
+                            <p class="text-muted mb-0">
+                                Dushanba - Juma: 9:00 - 18:00<br>
+                                Shanba - Yakshanba: Dam olish kuni
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Social Media -->
+                    <div class="mt-4">
+                        <h6 class="fw-bold text-dark mb-3">Ijtimoiy tarmoqlar</h6>
+                        <div class="d-flex gap-3">
+                            <a href="https://t.me/Oxu_uz" class="btn btn-outline-primary btn-sm p-2">
+                                <i class="fab fa-telegram"></i>
+                            </a>
+                            <a href="https://www.instagram.com/oxu_uz/" class="btn btn-outline-primary btn-sm p-2">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="https://www.facebook.com/people/Osiyo-Xalqaro-Universiteti/100088012691808/" class="btn btn-outline-primary btn-sm p-2">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="https://www.youtube.com/@Osiyo.Xalqaro.Universiteti." class="btn btn-outline-primary btn-sm p-2">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold text-dark mb-4">
+                        <i class="fas fa-paper-plane me-2 text-primary"></i>
+                        Xabar yuborish
+                    </h4>
+                    
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger d-flex align-items-center" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            {{ form.non_field_errors }}
+                        </div>
+                        {% endif %}
+
+                        <div class="row">
+                            <!-- Name -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.name.id_for_label }}" class="form-label fw-semibold">
+                                    <i class="fas fa-user me-2 text-primary"></i>Ismingiz
+                                </label>
+                                <input type="text" 
+                                       name="{{ form.name.name }}" 
+                                       id="{{ form.name.id_for_label }}" 
+                                       class="form-control {% if form.name.errors %}is-invalid{% endif %}" 
+                                       placeholder="Ismingizni kiriting"
+                                       value="{{ form.name.value|default:'' }}">
+                                {% if form.name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.name.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Email -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold">
+                                    <i class="fas fa-envelope me-2 text-primary"></i>Elektron pochta
+                                </label>
+                                <input type="email" 
+                                       name="{{ form.email.name }}" 
+                                       id="{{ form.email.id_for_label }}" 
+                                       class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
+                                       placeholder="sizning@email.uz"
+                                       value="{{ form.email.value|default:'' }}">
+                                {% if form.email.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.email.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Subject -->
+                        <div class="mb-3">
+                            <label for="{{ form.subject.id_for_label }}" class="form-label fw-semibold">
+                                <i class="fas fa-tag me-2 text-primary"></i>Mavzu
+                            </label>
+                            <select name="{{ form.subject.name }}" 
+                                    id="{{ form.subject.id_for_label }}" 
+                                    class="form-select {% if form.subject.errors %}is-invalid{% endif %}">
+                                <option value="">Mavzuni tanlang</option>
+                                <option value="career" {% if form.subject.value == "career" %}selected{% endif %}>Karyera masalalari</option>
+                                <option value="partnership" {% if form.subject.value == "partnership" %}selected{% endif %}>Hamkorlik</option>
+                                <option value="technical" {% if form.subject.value == "technical" %}selected{% endif %}>Texnik yordam</option>
+                                <option value="general" {% if form.subject.value == "general" %}selected{% endif %}>Umumiy savollar</option>
+                                <option value="other" {% if form.subject.value == "other" %}selected{% endif %}>Boshqa</option>
+                            </select>
+                            {% if form.subject.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.subject.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Message -->
+                        <div class="mb-4">
+                            <label for="{{ form.message.id_for_label }}" class="form-label fw-semibold">
+                                <i class="fas fa-comment me-2 text-primary"></i>Xabar
+                            </label>
+                            <textarea name="{{ form.message.name }}" 
+                                      id="{{ form.message.id_for_label }}" 
+                                      class="form-control {% if form.message.errors %}is-invalid{% endif %}" 
+                                      rows="6" 
+                                      placeholder="Xabaringizni batafsil yozing...">{{ form.message.value|default:'' }}</textarea>
+                            {% if form.message.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.message.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary btn-lg w-100 py-3">
+                            <i class="fas fa-paper-plane me-2"></i>Xabarni yuborish
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="fas fa-map-marked-alt me-2 text-primary"></i>
+                        Bizning manzil
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="ratio ratio-16x9">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3073.987676501845!2d64.4038593153722!3d39.648933979462!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3f50060e6595c85f%3A0x8f5cf7b7e7b7e7b7!2sBukhara%2C%20Uzbekistan!5e0!3m2!1sen!2s!4v1234567890123!5m2!1sen!2s" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="fas fa-question-circle me-2 text-primary"></i>
+                        Tez-tez so'raladigan savollar
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item border-0">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    Karyera markazi qanday xizmatlar ko'rsatadi?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Biz talaba va bitiruvchilarga ish qidirish, rezyume yaratish, intervyuga tayyorgarlik va karyera maslahatlari kabi xizmatlarni taklif etamiz.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item border-0">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    Mentorlik dasturiga qanday qo'shilish mumkin?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Mentor bo'lish uchun "Bitiruvchilar" bo'limidagi profilizingizda mentorlik imkoniyatini yoqishingiz yoki biz bilan to'g'ridan-to'g'ri bog'laning.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item border-0">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    Ish beruvchi sifatida qanday ro'yxatdan o'tish mumkin?
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Ro'yxatdan o'tish jarayonida "Ish beruvchi" hisob turini tanlang va kompaniya ma'lumotlarini to'ldiring.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    transition: transform 0.3s ease;
+}
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.btn-primary {
+    background-color: #012152;
+    border-color: #012152;
+}
+.btn-primary:hover {
+    background-color: #012d6e;
+    border-color: #012d6e;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #012152;
+    box-shadow: 0 0 0 0.2rem rgba(1, 33, 82, 0.25);
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #012152;
+    color: white;
+}
+.accordion-button:focus {
+    border-color: #012152;
+    box-shadow: 0 0 0 0.2rem rgba(1, 33, 82, 0.25);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add loading state to form submission
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function() {
+            const submitButton = this.querySelector('button[type="submit"]');
+            if (submitButton) {
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Yuborilmoqda...';
+                submitButton.disabled = true;
+            }
+        });
+    }
+
+    // Smooth scroll to form on error
+    {% if form.errors %}
+    document.querySelector('form').scrollIntoView({
+        behavior: 'smooth'
+    });
+    {% endif %}
+});
+</script>
+{% endblock %}

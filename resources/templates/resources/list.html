@@ -1,0 +1,388 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-5 fw-bold text-primary mb-3">Karyera Resurslari</h1>
+            <p class="lead text-muted">Professional rivojlanishingiz uchun foydali materiallar, shablonlar va qo'llanmalar</p>
+        </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="card border-0 shadow-sm mb-5">
+        <div class="card-body p-4">
+            <form method="get" class="row g-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="fas fa-search text-muted"></i>
+                        </span>
+                        <input type="text" 
+                               name="search" 
+                               class="form-control" 
+                               placeholder="Resurslarni qidirish..." 
+                               value="{{ request.GET.search }}">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <select name="category" class="form-select">
+                        <option value="">Barcha kategoriyalar</option>
+                        <option value="resume" {% if request.GET.category == "resume" %}selected{% endif %}>Rezyume shablonlari</option>
+                        <option value="interview" {% if request.GET.category == "interview" %}selected{% endif %}>Intervyuga tayyorgarlik</option>
+                        <option value="video" {% if request.GET.category == "video" %}selected{% endif %}>O'quv videolar</option>
+                        <option value="podcast" {% if request.GET.category == "podcast" %}selected{% endif %}>Podkastlar</option>
+                        <option value="guide" {% if request.GET.category == "guide" %}selected{% endif %}>Onlayn qo'llanmalar</option>
+                        <option value="motivation" {% if request.GET.category == "motivation" %}selected{% endif %}>Motivatsiya</option>
+                        <option value="skills" {% if request.GET.category == "skills" %}selected{% endif %}>Ko'nikmalarni rivojlantirish</option>
+                        <option value="career" {% if request.GET.category == "career" %}selected{% endif %}>Karyera rejalashtirish</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-filter me-2"></i>Filtrlash
+                    </button>
+                </div>
+            </form>
+            
+            <!-- Quick Category Filters -->
+            <div class="mt-4 pt-3 border-top">
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="?category=resume" class="btn btn-outline-primary btn-sm {% if request.GET.category == 'resume' %}active{% endif %}">
+                        <i class="fas fa-file-alt me-1"></i>Rezyume
+                    </a>
+                    <a href="?category=interview" class="btn btn-outline-primary btn-sm {% if request.GET.category == 'interview' %}active{% endif %}">
+                        <i class="fas fa-comments me-1"></i>Intervyu
+                    </a>
+                    <a href="?category=video" class="btn btn-outline-primary btn-sm {% if request.GET.category == 'video' %}active{% endif %}">
+                        <i class="fas fa-video me-1"></i>Videolar
+                    </a>
+                    <a href="?category=podcast" class="btn btn-outline-primary btn-sm {% if request.GET.category == 'podcast' %}active{% endif %}">
+                        <i class="fas fa-podcast me-1"></i>Podkastlar
+                    </a>
+                    <a href="?category=guide" class="btn btn-outline-primary btn-sm {% if request.GET.category == 'guide' %}active{% endif %}">
+                        <i class="fas fa-book me-1"></i>Qo'llanmalar
+                    </a>
+                    <a href="?category=skills" class="btn btn-outline-primary btn-sm {% if request.GET.category == 'skills' %}active{% endif %}">
+                        <i class="fas fa-tools me-1"></i>Ko'nikmalar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="fw-bold text-dark mb-0">Topilgan resurslar</h4>
+                    <p class="text-muted mb-0">
+                        {% if resources %}
+                            {{ resources|length }} ta material topildi
+                        {% else %}
+                            Materiallar topilmadi
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <span class="text-muted small">Saralash:</span>
+                    <select class="form-select form-select-sm w-auto" onchange="location = this.value;">
+                        <option value="?sort=newest">Yangi</option>
+                        <option value="?sort=popular">Mashhur</option>
+                        <option value="?sort=downloads">Yuklab olishlar</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if resources %}
+    <!-- Resources Grid -->
+    <div class="row g-4">
+        {% for res in resources %}
+        <div class="col-xl-4 col-lg-6">
+            <div class="card border-0 shadow-sm h-100 resource-card">
+                <div class="card-body p-4 d-flex flex-column">
+                    <!-- Resource Header -->
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <span class="badge bg-primary mb-2">{{ res.get_category_display }}</span>
+                            <h5 class="fw-bold text-dark mb-2">{{ res.title }}</h5>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="#" onclick="shareResource('{{ res.title }}', '{{ request.build_absolute_uri }}')">
+                                        <i class="fas fa-share-alt me-2"></i>Ulashish
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#" onclick="addToFavorites({{ res.id }})">
+                                        <i class="far fa-bookmark me-2"></i>Saqlash
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Resource Description -->
+                    <p class="text-muted flex-grow-1">{{ res.description|truncatewords:25 }}</p>
+
+                    <!-- Resource Stats -->
+                    <div class="d-flex justify-content-between text-muted small mb-3">
+                        <span>
+                            <i class="fas fa-download me-1"></i>
+                            {{ res.download_count|default:0 }} marta
+                        </span>
+                        <span>
+                            <i class="fas fa-eye me-1"></i>
+                            {{ res.view_count|default:0 }}
+                        </span>
+                        <span>
+                            <i class="fas fa-clock me-1"></i>
+                            {{ res.created_at|timesince }} oldin
+                        </span>
+                    </div>
+
+                    <!-- Resource Actions -->
+                    <div class="d-flex gap-2">
+                        {% if res.file %}
+                        <a href="{{ res.file.url }}" download class="btn btn-primary btn-sm flex-fill" onclick="trackDownload({{ res.id }})">
+                            <i class="fas fa-download me-1"></i>Yuklab olish
+                        </a>
+                        {% endif %}
+                        
+                        {% if res.link %}
+                        <a href="{{ res.link }}" target="_blank" class="btn btn-outline-primary btn-sm flex-fill">
+                            <i class="fas fa-external-link-alt me-1"></i>Ko'rish
+                        </a>
+                        {% endif %}
+                        
+                        {% if not res.file and not res.link %}
+                        <button class="btn btn-outline-secondary btn-sm flex-fill" disabled>
+                            <i class="fas fa-info-circle me-1"></i>Mavjud emas
+                        </button>
+                        {% endif %}
+                    </div>
+
+                    <!-- File Info -->
+                    {% if res.file %}
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            <i class="fas fa-file me-1"></i>
+                            {{ res.get_file_extension|upper }} • {{ res.get_file_size }}
+                        </small>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Load More -->
+    <div class="text-center mt-5">
+        <button class="btn btn-outline-primary" id="loadMoreBtn">
+            <i class="fas fa-refresh me-2"></i>Ko'proq resurslarni yuklash
+        </button>
+    </div>
+
+    {% else %}
+    <!-- Empty State -->
+    <div class="text-center py-5">
+        <div class="mb-4">
+            <i class="fas fa-folder-open fa-4x text-muted mb-3"></i>
+            <h4 class="text-muted">Resurslar topilmadi</h4>
+            <p class="text-muted">Qidiruv shartlarini o'zgartirib ko'ring yoki boshqa kategoriyani tanlang</p>
+        </div>
+        <a href="{% url 'resources:list' %}" class="btn btn-primary">
+            <i class="fas fa-redo me-2"></i>Barcha resurslarni ko'rish
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Featured Resources -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold text-dark mb-0">
+                    <i class="fas fa-fire me-2 text-warning"></i>
+                    Mashhur Resurslar
+                </h3>
+            </div>
+            
+            <div class="row g-4">
+                {% for featured in featured_resources %}
+                <div class="col-md-6">
+                    <div class="card border-warning border-2 shadow-sm h-100">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-start">
+                                <div class="flex-shrink-0 me-3">
+                                    <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                        <i class="fas fa-crown text-white"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <span class="badge bg-warning text-dark mb-2">Mashhur</span>
+                                    <h5 class="fw-bold text-dark mb-2">{{ featured.title }}</h5>
+                                    <p class="text-muted small mb-3">{{ featured.description|truncatewords:15 }}</p>
+                                    <div class="d-flex gap-2">
+                                        {% if featured.file %}
+                                        <a href="{{ featured.file.url }}" download class="btn btn-warning btn-sm">
+                                            <i class="fas fa-download me-1"></i>Yuklab olish
+                                        </a>
+                                        {% endif %}
+                                        <span class="text-warning small">
+                                            <i class="fas fa-download me-1"></i>{{ featured.download_count|default:0 }}+
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="row mt-5 pt-5 border-top">
+        <div class="col-md-3 text-center">
+            <div class="h3 fw-bold text-primary mb-1">{{ stats.total_resources }}+</div>
+            <small class="text-muted">Jami resurslar</small>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="h3 fw-bold text-primary mb-1">{{ stats.total_downloads }}+</div>
+            <small class="text-muted">Yuklab olishlar</small>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="h3 fw-bold text-primary mb-1">{{ stats.categories_count }}+</div>
+            <small class="text-muted">Kategoriyalar</small>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="h3 fw-bold text-primary mb-1">{{ stats.active_users }}+</div>
+            <small class="text-muted">Faol foydalanuvchilar</small>
+        </div>
+    </div>
+</div>
+
+<style>
+.resource-card {
+    transition: all 0.3s ease;
+    border-radius: 12px;
+}
+.resource-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+}
+
+.badge {
+    font-size: 0.7em;
+}
+
+.btn-primary {
+    background-color: #012152;
+    border-color: #012152;
+}
+.btn-primary:hover {
+    background-color: #012d6e;
+    border-color: #012d6e;
+}
+
+.card {
+    border-radius: 12px;
+}
+
+.dropdown-toggle::after {
+    display: none;
+}
+</style>
+
+<script>
+// Share resource functionality
+function shareResource(title, url) {
+    if (navigator.share) {
+        navigator.share({
+            title: title + ' - OXU Career',
+            text: 'Ushbu resursni ko\'rib chiqing',
+            url: url,
+        })
+        .then(() => console.log('Resurs muvaffaqiyatli ulashildi'))
+        .catch((error) => console.log('Ulashishda xatolik', error));
+    } else {
+        navigator.clipboard.writeText(url).then(() => {
+            alert('Resurs havolasi buferga nusxalandi!');
+        });
+    }
+}
+
+// Add to favorites functionality
+function addToFavorites(resourceId) {
+    // Simulate API call
+    const button = event.target.closest('.dropdown-item');
+    const originalHTML = button.innerHTML;
+    
+    button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saqlanmoqda...';
+    
+    setTimeout(() => {
+        button.innerHTML = '<i class="fas fa-check me-2"></i>Saqlangan!';
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+        }, 2000);
+    }, 1000);
+}
+
+// Track download functionality
+function trackDownload(resourceId) {
+    // Send analytics data
+    fetch(`/api/resources/${resourceId}/track-download/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+        }
+    }).catch(error => console.error('Download tracking error:', error));
+}
+
+// Load more functionality
+document.getElementById('loadMoreBtn')?.addEventListener('click', function() {
+    const button = this;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Yuklanmoqda...';
+    button.disabled = true;
+    
+    // Simulate API call
+    setTimeout(() => {
+        button.innerHTML = '<i class="fas fa-check me-2"></i>Barcha resurslar yuklandi';
+        button.classList.remove('btn-outline-primary');
+        button.classList.add('btn-success');
+    }, 1500);
+});
+
+// Add smooth animations
+document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.resource-card');
+    cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+        card.classList.add('animate__animated', 'animate__fadeInUp');
+    });
+});
+
+// Quick filter functionality
+document.querySelectorAll('.btn-outline-primary.btn-sm').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        if (this.classList.contains('active')) {
+            e.preventDefault();
+            window.location.href = '{% url "resources:list" %}';
+        }
+    });
+});
+</script>
+
+<!-- Add Animate.css for animations -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+{% endblock %}

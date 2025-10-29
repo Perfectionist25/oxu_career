@@ -1,0 +1,373 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-5 fw-bold text-primary mb-3">Ish Beruvchilar</h1>
+            <p class="lead text-muted">Eng yaxshi kompaniyalar bilan tanishing va karyera imkoniyatlarini toping</p>
+        </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="card border-0 shadow-sm mb-5">
+        <div class="card-body p-4">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="fas fa-search text-muted"></i>
+                        </span>
+                        <input type="text" 
+                               class="form-control" 
+                               id="searchInput" 
+                               placeholder="Kompaniya nomi bo'yicha qidirish...">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="industryFilter">
+                        <option value="">Barcha sohalar</option>
+                        <option value="technology">Texnologiya</option>
+                        <option value="finance">Moliya</option>
+                        <option value="healthcare">Sog'liqni saqlash</option>
+                        <option value="education">Ta'lim</option>
+                        <option value="retail">Chakana savdo</option>
+                        <option value="manufacturing">Ishlab chiqarish</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="partnerFilter">
+                        <label class="form-check-label fw-semibold" for="partnerFilter">
+                            Faqat hamkorlar
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="fw-bold text-dark mb-0">Kompaniyalar</h4>
+                    <p class="text-muted mb-0">
+                        {% if employers %}
+                            Jami: {{ employers|length }} ta kompaniya
+                        {% else %}
+                            Kompaniyalar topilmadi
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <span class="text-muted small">Saralash:</span>
+                    <select class="form-select form-select-sm w-auto" id="sortSelect">
+                        <option value="name">Ism bo'yicha</option>
+                        <option value="jobs">Vakansiyalar soni</option>
+                        <option value="rating">Reyting</option>
+                        <option value="newest">Yangi</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if employers %}
+    <!-- Employers Grid -->
+    <div class="row g-4" id="employersContainer">
+        {% for emp in employers %}
+        <div class="col-xl-4 col-lg-6 col-md-6 employer-item" 
+             data-name="{{ emp.name.lower }}" 
+             data-industry="{{ emp.industry|default:'' }}" 
+             data-partner="{{ emp.is_partner|yesno:'true,false' }}">
+            <div class="card border-0 shadow-sm h-100 employer-card">
+                <div class="card-body p-4">
+                    <!-- Employer Header -->
+                    <div class="d-flex align-items-start mb-3">
+                        <div class="flex-shrink-0 me-3">
+                            {% if emp.logo %}
+                                <img src="{{ emp.logo.url }}" alt="{{ emp.name }}" class="rounded" width="60" height="60" style="object-fit: cover;">
+                            {% else %}
+                                <div class="bg-primary rounded d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-building fa-lg text-white"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h5 class="fw-bold text-dark mb-1">{{ emp.name }}</h5>
+                                {% if emp.is_partner %}
+                                <span class="badge bg-warning text-dark">
+                                    <i class="fas fa-handshake me-1"></i>Hamkor
+                                </span>
+                                {% endif %}
+                            </div>
+                            
+                            {% if emp.industry %}
+                            <span class="badge bg-light text-dark mb-2">{{ emp.industry }}</span>
+                            {% endif %}
+                            
+                            <div class="d-flex text-muted small">
+                                <i class="fas fa-briefcase me-2"></i>
+                                <span>{{ emp.job_count|default:0 }} ta vakansiya</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Employer Description -->
+                    {% if emp.description %}
+                    <p class="text-muted small mb-3">{{ emp.description|truncatewords:15 }}</p>
+                    {% endif %}
+
+                    <!-- Employer Stats -->
+                    <div class="mb-3">
+                        {% if emp.employees_count %}
+                        <div class="d-flex text-muted small mb-1">
+                            <i class="fas fa-users me-2"></i>
+                            <span>{{ emp.employees_count }} xodim</span>
+                        </div>
+                        {% endif %}
+                        
+                        {% if emp.location %}
+                        <div class="d-flex text-muted small mb-1">
+                            <i class="fas fa-map-marker-alt me-2"></i>
+                            <span>{{ emp.location }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        {% if emp.rating %}
+                        <div class="d-flex text-muted small">
+                            <i class="fas fa-star me-2"></i>
+                            <span>{{ emp.rating }}/5 reyting</span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'employers:detail' emp.id %}" class="btn btn-outline-primary btn-sm flex-fill">
+                            <i class="fas fa-eye me-1"></i>Profilni ko'rish
+                        </a>
+                        {% if emp.job_count %}
+                        <a href="{% url 'jobs:list' %}?employer={{ emp.id }}" class="btn btn-primary btn-sm flex-fill">
+                            <i class="fas fa-briefcase me-1"></i>Vakansiyalar
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Featured Partners Section -->
+    {% if featured_partners %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold text-dark mb-0">
+                    <i class="fas fa-crown me-2 text-warning"></i>
+                    Faol Hamkorlar
+                </h3>
+                <span class="badge bg-warning fs-6">Premium</span>
+            </div>
+            
+            <div class="row g-4">
+                {% for partner in featured_partners %}
+                <div class="col-lg-6">
+                    <div class="card border-warning border-2 shadow-sm h-100">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0 me-3">
+                                    {% if partner.logo %}
+                                        <img src="{{ partner.logo.url }}" alt="{{ partner.name }}" class="rounded" width="70" height="70" style="object-fit: cover;">
+                                    {% else %}
+                                        <div class="bg-warning rounded d-flex align-items-center justify-content-center" style="width: 70px; height: 70px;">
+                                            <i class="fas fa-crown fa-2x text-white"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h5 class="fw-bold text-dark mb-1">{{ partner.name }}</h5>
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="fas fa-star me-1"></i>Premium
+                                        </span>
+                                    </div>
+                                    <p class="text-muted small mb-2">{{ partner.description|truncatewords:10 }}</p>
+                                    <div class="d-flex gap-2">
+                                        <a href="{% url 'employers:detail' partner.id %}" class="btn btn-outline-warning btn-sm">
+                                            Profil
+                                        </a>
+                                        <a href="{% url 'jobs:list' %}?employer={{ partner.id }}" class="btn btn-warning btn-sm">
+                                            {{ partner.job_count }} vakansiya
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <!-- Empty State -->
+    <div class="text-center py-5">
+        <div class="mb-4">
+            <i class="fas fa-building fa-4x text-muted mb-3"></i>
+            <h4 class="text-muted">Kompaniyalar topilmadi</h4>
+            <p class="text-muted">Qidiruv shartlarini o'zgartirib ko'ring yoki keyinroq qayta urinib ko'ring.</p>
+        </div>
+        <button class="btn btn-primary" onclick="clearFilters()">
+            <i class="fas fa-redo me-2"></i>Filtrlarni tozalash
+        </button>
+    </div>
+    {% endif %}
+
+    <!-- Industry Stats -->
+    <div class="row mt-5 pt-5 border-top">
+        <div class="col-12 text-center mb-4">
+            <h3 class="fw-bold text-dark">Sohalar bo'yicha statistika</h3>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="h3 fw-bold text-primary mb-1">{{ stats.technology|default:0 }}</div>
+            <small class="text-muted">Texnologiya</small>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="h3 fw-bold text-primary mb-1">{{ stats.finance|default:0 }}</div>
+            <small class="text-muted">Moliya</small>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="h3 fw-bold text-primary mb-1">{{ stats.healthcare|default:0 }}</div>
+            <small class="text-muted">Sog'liqni saqlash</small>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="h3 fw-bold text-primary mb-1">{{ stats.education|default:0 }}</div>
+            <small class="text-muted">Ta'lim</small>
+        </div>
+    </div>
+</div>
+
+<style>
+.employer-card {
+    transition: all 0.3s ease;
+    border-radius: 12px;
+}
+.employer-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+}
+
+.badge {
+    font-size: 0.7em;
+}
+
+.btn-primary {
+    background-color: #012152;
+    border-color: #012152;
+}
+.btn-primary:hover {
+    background-color: #012d6e;
+    border-color: #012d6e;
+}
+
+.card {
+    border-radius: 12px;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const industryFilter = document.getElementById('industryFilter');
+    const partnerFilter = document.getElementById('partnerFilter');
+    const sortSelect = document.getElementById('sortSelect');
+    const employerItems = document.querySelectorAll('.employer-item');
+
+    function filterEmployers() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const industryValue = industryFilter.value;
+        const partnerOnly = partnerFilter.checked;
+
+        employerItems.forEach(item => {
+            const name = item.getAttribute('data-name');
+            const industry = item.getAttribute('data-industry');
+            const isPartner = item.getAttribute('data-partner') === 'true';
+
+            const matchesSearch = name.includes(searchTerm);
+            const matchesIndustry = !industryValue || industry === industryValue;
+            const matchesPartner = !partnerOnly || isPartner;
+
+            if (matchesSearch && matchesIndustry && matchesPartner) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
+    function sortEmployers() {
+        const container = document.getElementById('employersContainer');
+        const items = Array.from(employerItems).filter(item => item.style.display !== 'none');
+        
+        items.sort((a, b) => {
+            const sortBy = sortSelect.value;
+            
+            switch(sortBy) {
+                case 'name':
+                    return a.getAttribute('data-name').localeCompare(b.getAttribute('data-name'));
+                case 'jobs':
+                    const aJobs = parseInt(a.querySelector('.fa-briefcase').parentNode.textContent) || 0;
+                    const bJobs = parseInt(b.querySelector('.fa-briefcase').parentNode.textContent) || 0;
+                    return bJobs - aJobs;
+                case 'rating':
+                    const aRating = parseFloat(a.querySelector('.fa-star')?.parentNode?.textContent) || 0;
+                    const bRating = parseFloat(b.querySelector('.fa-star')?.parentNode?.textContent) || 0;
+                    return bRating - aRating;
+                case 'newest':
+                default:
+                    return 0; // Would need creation date data attribute
+            }
+        });
+
+        // Re-append sorted items
+        items.forEach(item => container.appendChild(item));
+    }
+
+    // Event listeners
+    searchInput.addEventListener('input', filterEmployers);
+    industryFilter.addEventListener('change', filterEmployers);
+    partnerFilter.addEventListener('change', filterEmployers);
+    sortSelect.addEventListener('change', sortEmployers);
+
+    // Clear filters function
+    window.clearFilters = function() {
+        searchInput.value = '';
+        industryFilter.value = '';
+        partnerFilter.checked = false;
+        sortSelect.value = 'name';
+        filterEmployers();
+    };
+
+    // Initialize
+    filterEmployers();
+});
+
+// Add loading animation
+document.querySelectorAll('.employer-card').forEach(card => {
+    card.addEventListener('click', function() {
+        this.style.opacity = '0.7';
+        setTimeout(() => {
+            this.style.opacity = '1';
+        }, 300);
+    });
+});
+</script>
+{% endblock %}

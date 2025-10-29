@@ -1,0 +1,296 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-lg-3 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-user fa-2x text-white"></i>
+                        </div>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-1">{{ profile.user.get_full_name|default:profile.user.username }}</h5>
+                    <span class="badge bg-primary">{{ profile.get_role_display }}</span>
+                    
+                    <div class="mt-4">
+                        <div class="list-group list-group-flush">
+                            <a href="#profile" class="list-group-item list-group-item-action border-0 active">
+                                <i class="fas fa-user me-2"></i>Shaxsiy ma'lumotlar
+                            </a>
+                            <a href="#resumes" class="list-group-item list-group-item-action border-0">
+                                <i class="fas fa-file-alt me-2"></i>Mening rezyumelarim
+                            </a>
+                            <a href="#applications" class="list-group-item list-group-item-action border-0">
+                                <i class="fas fa-briefcase me-2"></i>Arizalar
+                            </a>
+                            <a href="#settings" class="list-group-item list-group-item-action border-0">
+                                <i class="fas fa-cog me-2"></i>Sozlamalar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9">
+            <!-- Welcome Card -->
+            <div class="card border-0 bg-primary text-white shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h4 class="fw-bold mb-2">Xush kelibsiz, {{ profile.user.first_name|default:profile.user.username }}!</h4>
+                            <p class="mb-0">Shaxsiy kabinetingizda barcha faoliyatingizni kuzatishingiz mumkin</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <i class="fas fa-chart-line fa-3x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Information -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="fas fa-user-circle me-2 text-primary"></i>
+                        Shaxsiy ma'lumotlar
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted small">Foydalanuvchi nomi</label>
+                            <p class="fw-bold text-dark">{{ profile.user.username }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted small">Rol</label>
+                            <p class="fw-bold">
+                                <span class="badge bg-primary">{{ profile.get_role_display }}</span>
+                            </p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted small">Ism</label>
+                            <p class="fw-bold text-dark">{{ profile.user.first_name|default:"Ko'rsatilmagan" }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted small">Familiya</label>
+                            <p class="fw-bold text-dark">{{ profile.user.last_name|default:"Ko'rsatilmagan" }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted small">Elektron pochta</label>
+                            <p class="fw-bold text-dark">{{ profile.user.email|default:"Ko'rsatilmagan" }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted small">Ro'yxatdan o'tgan sana</label>
+                            <p class="fw-bold text-dark">{{ profile.user.date_joined|date:"d.m.Y" }}</p>
+                        </div>
+                    </div>
+                    <a href="{% url 'accounts:profile_edit' %}" class="btn btn-primary">
+                        <i class="fas fa-edit me-2"></i>Ma'lumotlarni tahrirlash
+                    </a>
+                </div>
+            </div>
+
+            <!-- Role Specific Content -->
+            {% if profile.role == 'student' %}
+            <!-- Student Dashboard -->
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="text-primary mb-3">
+                                <i class="fas fa-file-alt fa-3x"></i>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-3">Mening rezyumelarim</h5>
+                            <p class="text-muted small mb-4">Yaratilgan rezyumelaringizni boshqaring va yangilarini yarating</p>
+                            <a href="{% url 'cvbuilder:cv_list' %}" class="btn btn-primary w-100">
+                                Ko'rish <i class="fas fa-arrow-right ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="text-primary mb-3">
+                                <i class="fas fa-briefcase fa-3x"></i>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-3">Ish arizalari</h5>
+                            <p class="text-muted small mb-4">Yuborilgan arizalaringiz holatini kuzatishingiz mumkin</p>
+                            <a href="{% url 'jobs:my_applications' %}" class="btn btn-outline-primary w-100">
+                                Ko'rish <i class="fas fa-arrow-right ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats for Student -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card border-0 bg-light shadow-sm">
+                        <div class="card-body text-center py-3">
+                            <div class="h4 fw-bold text-primary mb-1">{{ stats.resumes_count }}</div>
+                            <small class="text-muted">Rezyume</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 bg-light shadow-sm">
+                        <div class="card-body text-center py-3">
+                            <div class="h4 fw-bold text-primary mb-1">{{ stats.applications_count }}</div>
+                            <small class="text-muted">Ariza</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 bg-light shadow-sm">
+                        <div class="card-body text-center py-3">
+                            <div class="h4 fw-bold text-primary mb-1">{{ stats.interviews_count }}</div>
+                            <small class="text-muted">Intervyu</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 bg-light shadow-sm">
+                        <div class="card-body text-center py-3">
+                            <div class="h4 fw-bold text-primary mb-1">{{ stats.saved_jobs }}</div>
+                            <small class="text-muted">Saqlangan ish</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% elif profile.role == 'employer' %}
+            <!-- Employer Dashboard -->
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="text-primary mb-3">
+                                <i class="fas fa-briefcase fa-3x"></i>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-3">Vakansiyalarim</h5>
+                            <p class="text-muted small mb-4">E'lon qilingan vakansiyalaringizni boshqaring</p>
+                            <a href="{% url 'jobs:employer_jobs' %}" class="btn btn-primary w-100">
+                                Boshqarish <i class="fas fa-arrow-right ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="text-primary mb-3">
+                                <i class="fas fa-users fa-3x"></i>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-3">Arizalar</h5>
+                            <p class="text-muted small mb-4">Kelgan arizalarni ko'rib chiqish va boshqarish</p>
+                            <a href="{% url 'jobs:employer_applications' %}" class="btn btn-outline-primary w-100">
+                                Ko'rish <i class="fas fa-arrow-right ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats for Employer -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card border-0 bg-light shadow-sm">
+                        <div class="card-body text-center py-3">
+                            <div class="h4 fw-bold text-primary mb-1">{{ stats.active_jobs }}</div>
+                            <small class="text-muted">Aktiv vakansiya</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 bg-light shadow-sm">
+                        <div class="card-body text-center py-3">
+                            <div class="h4 fw-bold text-primary mb-1">{{ stats.total_applications }}</div>
+                            <small class="text-muted">Jami ariza</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 bg-light shadow-sm">
+                        <div class="card-body text-center py-3">
+                            <div class="h4 fw-bold text-primary mb-1">{{ stats.new_applications }}</div>
+                            <small class="text-muted">Yangi ariza</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 bg-light shadow-sm">
+                        <div class="card-body text-center py-3">
+                            <div class="h4 fw-bold text-primary mb-1">{{ stats.interviews_scheduled }}</div>
+                            <small class="text-muted">Intervyu</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Recent Activity -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="fas fa-history me-2 text-primary"></i>
+                        So'nggi faoliyat
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_activities %}
+                        <div class="list-group list-group-flush">
+                            {% for activity in recent_activities %}
+                            <div class="list-group-item border-0 px-0">
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-light rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                        <i class="fas fa-{{ activity.icon }} text-primary"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="fw-bold mb-1">{{ activity.title }}</h6>
+                                        <p class="text-muted small mb-0">{{ activity.description }}</p>
+                                    </div>
+                                    <small class="text-muted">{{ activity.time }}</small>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">Hozircha faoliyat mavjud emas</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    transition: all 0.3s ease;
+}
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+}
+
+.list-group-item.active {
+    background-color: #012152 !important;
+    border-color: #012152 !important;
+}
+
+.badge {
+    font-size: 0.75em;
+}
+</style>
+{% endblock %}

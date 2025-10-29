@@ -1,0 +1,258 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <!-- Карточка подтверждения удаления -->
+            <div class="card border-0 shadow-lg">
+                <!-- Заголовок с иконкой -->
+                <div class="card-header bg-danger text-white text-center py-4">
+                    <div class="mb-3">
+                        <i class="fas fa-exclamation-triangle fa-3x"></i>
+                    </div>
+                    <h2 class="h3 fw-bold mb-0">Rezyumeni O'chirish</h2>
+                </div>
+
+                <!-- Тело карточки -->
+                <div class="card-body p-5 text-center">
+                    <!-- Информация о резюме -->
+                    <div class="alert alert-light border mb-4">
+                        <div class="d-flex align-items-center">
+                            {% if cv.photo %}
+                            <img src="{{ cv.photo.url }}" alt="{{ cv.full_name }}" 
+                                 class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                            {% else %}
+                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                 style="width: 60px; height: 60px;">
+                                <i class="fas fa-user fa-lg"></i>
+                            </div>
+                            {% endif %}
+                            <div class="text-start">
+                                <h5 class="fw-bold text-dark mb-1">{{ cv.full_name|default:"Ism kiritilmagan" }}</h5>
+                                <p class="text-muted mb-1">{{ cv.profession|default:"Kasb kiritilmagan" }}</p>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    Yaratilgan: {{ cv.created_at|date:"d.m.Y" }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Предупреждающее сообщение -->
+                    <div class="alert alert-warning border-warning mb-4">
+                        <div class="d-flex">
+                            <i class="fas fa-exclamation-circle fa-lg text-warning me-3 mt-1"></i>
+                            <div class="text-start">
+                                <h6 class="fw-bold text-warning mb-2">Diqqat!</h6>
+                                <p class="mb-0">
+                                    Siz <strong>"{{ cv.title }}"</strong> rezyumesini o'chirmoqchisiz. 
+                                    Bu amalni ortga qaytarib bo'lmaydi.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Детали удаления -->
+                    <div class="bg-light rounded p-3 mb-4">
+                        <h6 class="fw-bold text-dark mb-3">O'chiriladigan ma'lumotlar:</h6>
+                        <div class="row text-start small">
+                            <div class="col-md-6 mb-2">
+                                <i class="fas fa-briefcase text-danger me-2"></i>
+                                Ish tajribasi: <strong>{{ cv.experiences.count }} ta</strong>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <i class="fas fa-graduation-cap text-danger me-2"></i>
+                                Ta'lim: <strong>{{ cv.educations.count }} ta</strong>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <i class="fas fa-code text-danger me-2"></i>
+                                Ko'nikmalar: <strong>{{ cv.skills.count }} ta</strong>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <i class="fas fa-project-diagram text-danger me-2"></i>
+                                Loyihalar: <strong>{{ cv.projects.count }} ta</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Форма подтверждения -->
+                    <form method="post" class="mb-4">
+                        {% csrf_token %}
+                        <div class="d-grid gap-3">
+                            <button type="submit" class="btn btn-danger btn-lg py-3">
+                                <i class="fas fa-trash-alt me-2"></i>
+                                HA, Rezyumeni O'chirish
+                            </button>
+                            
+                            <a href="{% url 'cvbuilder:cv_list' %}" class="btn btn-outline-secondary btn-lg py-3">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                Bekor Qilish va Ortga Qaytish
+                            </a>
+                        </div>
+                    </form>
+
+                    <!-- Дополнительная информация -->
+                    <div class="text-muted small">
+                        <p class="mb-0">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Agar shubhangiz bo'lsa, rezyumeni arxivlashni tavsiya qilamiz
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Футер карточки -->
+                <div class="card-footer bg-light text-center py-3">
+                    <small class="text-muted">
+                        <i class="fas fa-shield-alt me-1"></i>
+                        Ma'lumotlaringiz xavfsizligi biz uchun muhim
+                    </small>
+                </div>
+            </div>
+
+            <!-- Альтернативные действия -->
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-body text-center">
+                    <h6 class="fw-bold text-dark mb-3">Muqobil variantlar</h6>
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <a href="{% url 'cvbuilder:cv_edit' cv.pk %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-edit me-1"></i>Rezyumeni Tahrirlash
+                        </a>
+                        <a href="{% url 'cvbuilder:cv_duplicate' cv.pk %}" class="btn btn-outline-success btn-sm">
+                            <i class="fas fa-copy me-1"></i>Nusxa Olish
+                        </a>
+                        <a href="{% url 'cvbuilder:cv_detail' cv.pk %}" class="btn btn-outline-info btn-sm">
+                            <i class="fas fa-eye me-1"></i>Ko'rib Chiqish
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.card-header {
+    border-bottom: none;
+}
+
+.btn {
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    border: none;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #c82333, #a71e2a);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+}
+
+.btn-outline-secondary {
+    border: 2px solid #6c757d;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    transform: translateY(-2px);
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+}
+
+.bg-light {
+    background-color: #f8f9fa !important;
+}
+
+.shadow-lg {
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+}
+
+.shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+
+/* Анимации */
+.card {
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .card-body {
+        padding: 2rem !important;
+    }
+    
+    .btn-lg {
+        padding: 0.75rem 1.5rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Подтверждение при отправке формы
+    const form = document.querySelector('form');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    
+    let isSubmitting = false;
+    
+    form.addEventListener('submit', function(e) {
+        if (!isSubmitting) {
+            e.preventDefault();
+            
+            // Показать дополнительное подтверждение
+            if (confirm('Bu amalni ortga qaytarib bo\'lmaydi. Rostan ham davom etmoqchimisiz?')) {
+                isSubmitting = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>O\'chirilmoqda...';
+                submitBtn.disabled = true;
+                form.submit();
+            }
+        }
+    });
+
+    // Анимация появления
+    const cards = document.querySelectorAll('.card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'all 0.5s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 200);
+    });
+
+    // Подсветка кнопки удаления при наведении
+    submitBtn.addEventListener('mouseenter', function() {
+        this.style.transform = 'scale(1.05)';
+    });
+    
+    submitBtn.addEventListener('mouseleave', function() {
+        this.style.transform = 'scale(1)';
+    });
+});
+</script>
+{% endblock %}

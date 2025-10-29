@@ -1,0 +1,177 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ request.LANGUAGE_CODE|default:'ru' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}OXU Career Center{% endblock %}</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- JavaScript (переместить вниз) -->
+</head>
+<body>
+
+{% include '_inc/nav.html' %}
+
+<!-- Сообщения -->
+<div class="container mt-3">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+{% include '_inc/foot.html' %}
+
+<!-- JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+{% block extra_js %}{% endblock %}
+
+</body>
+
+<style>
+    .header-top {
+        background-color: #012152;
+        padding: 8px 0;
+        font-size: 14px;
+        color: white;
+    }
+    
+    .header-middle {
+        padding: 15px 0;
+        background-color: #012d6e;
+    }
+    
+    .header-bottom {
+        background-color: #012152;
+        color: white;
+        padding: 12px 0;
+    }
+    
+    .logo {
+        font-weight: bold;
+        font-size: 24px;
+        color: white;
+    }
+    
+    .contact-info a {
+        color: white;
+        text-decoration: none;
+        margin-right: 15px;
+        font-size: 14px;
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    .contact-info a:hover {
+        color: rgba(255, 255, 255, 0.8);
+    }
+    
+    .contact-info i {
+        margin-right: 5px;
+        color: white;
+    }
+    
+    .language-selector {
+        margin-left: 20px;
+    }
+    
+    .language-selector a {
+        color: white;
+        text-decoration: none;
+        margin-right: 10px;
+    }
+    
+    .language-selector a.active {
+        color: white;
+        font-weight: bold;
+        text-decoration: underline;
+    }
+    
+    .nav-link {
+        color: white !important;
+        font-weight: 500;
+        transition: 1s;
+        border-radius: 30px;
+        border: 1px solid #012152;
+        margin: 10px;
+    }
+    
+    .nav-link:hover {
+        background-color: #012d6e;
+        border: 1px solid white;
+    }
+    
+    .social-icons {
+        display: flex;
+        align-items: center;
+    }
+    
+    .social-icons a {
+        margin-right: 10px;
+    }
+    
+    .government-links {
+        text-align: center;
+    }
+    
+    .government-links a {
+        color: white;
+        text-decoration: none;
+        font-size: 14px;
+        display: block;
+        margin-bottom: 5px;
+    }
+    
+    .government-links a:hover {
+        text-decoration: underline;
+    }
+
+    /* Дополнительные стили для контента */
+    .main-content {
+        min-height: calc(100vh - 200px);
+        padding: 20px 0;
+    }
+
+    /* Стили для карточек */
+    .resource-card, .job-card, .event-card {
+        transition: transform 0.2s;
+        margin-bottom: 20px;
+    }
+
+    .resource-card:hover, .job-card:hover, .event-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    /* Адаптивность */
+    @media (max-width: 768px) {
+        .nav-link {
+            margin: 5px;
+            text-align: center;
+        }
+        
+        .contact-info a {
+            display: block;
+            margin-bottom: 5px;
+        }
+    }
+</style>
+
+</html>

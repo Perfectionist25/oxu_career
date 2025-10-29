@@ -1,0 +1,284 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-5 fw-bold text-primary mb-3">Mening Rezyumelarim</h1>
+            <p class="lead text-muted">Barcha yaratilgan rezyumelaringizni boshqaring va yangilarini yarating</p>
+        </div>
+    </div>
+
+    <!-- Actions Bar -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold text-dark mb-0">Rezyumelar ro'yxati</h4>
+            <p class="text-muted mb-0">
+                {% if cvs %}
+                    Jami: {{ cvs|length }} ta rezyume
+                {% else %}
+                    Hozircha rezyume mavjud emas
+                {% endif %}
+            </p>
+        </div>
+        <a href="{% url 'cvbuilder:cv_create' %}" class="btn btn-primary">  <!-- Исправлено -->
+            <i class="fas fa-plus me-2"></i>Yangi Rezyume
+        </a>
+    </div>
+
+    {% if cvs %}
+    <!-- CVs Grid -->
+    <div class="row g-4">
+        {% for cv in cvs %}
+        <div class="col-xl-4 col-lg-6 col-md-6">
+            <div class="card border-0 shadow-sm h-100 cv-card">
+                <div class="card-body p-4">
+                    <!-- CV Header -->
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h5 class="fw-bold text-dark mb-1">{{ cv.full_name|default:"Ism kiritilmagan" }}</h5>
+                            <p class="text-primary fw-semibold mb-1">{{ cv.profession|default:"Kasb kiritilmagan" }}</p>  <!-- Исправлено: position → profession -->
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'cvbuilder:cv_detail' cv.id %}">  <!-- Исправлено -->
+                                        <i class="fas fa-eye me-2"></i>Ko'rish
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'cvbuilder:cv_edit' cv.id %}">  <!-- Исправлено -->
+                                        <i class="fas fa-edit me-2"></i>Tahrirlash
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="{% url 'cvbuilder:cv_delete' cv.id %}" onclick="return confirm('Haqiqatan ham ushbu rezyumeni o\'chirmoqchimisiz?')">  <!-- Исправлено -->
+                                        <i class="fas fa-trash me-2"></i>O'chirish
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- CV Details -->
+                    <div class="mb-3">
+                        <div class="d-flex text-muted small mb-2">
+                            <i class="fas fa-envelope me-2"></i>
+                            <span>{{ cv.email|default:"Email kiritilmagan" }}</span>
+                        </div>
+                        <div class="d-flex text-muted small mb-2">
+                            <i class="fas fa-phone me-2"></i>
+                            <span>{{ cv.phone|default:"Telefon kiritilmagan" }}</span>
+                        </div>
+                        <div class="d-flex text-muted small">
+                            <i class="fas fa-calendar me-2"></i>
+                            <span>Yaratilgan: {{ cv.created_at|date:"d.m.Y" }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Professional Summary Preview -->
+                    {% if cv.summary %}  <!-- Исправлено: professional_summary → summary -->
+                    <div class="mb-3">
+                        <p class="text-muted small mb-0">{{ cv.summary|truncatechars:30 }}</p>
+                    </div>
+                    {% endif %}
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'cvbuilder:cv_detail' cv.id %}" class="btn btn-outline-primary btn-sm flex-fill">  <!-- Исправлено -->
+                            <i class="fas fa-eye me-1"></i>Ko'rish
+                        </a>
+                        <a href="{% url 'cvbuilder:cv_edit' cv.id %}" class="btn btn-outline-secondary btn-sm flex-fill">  <!-- Исправлено -->
+                            <i class="fas fa-edit me-1"></i>Tahrirlash
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- CV Footer -->
+                <div class="card-footer bg-transparent border-0 pt-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            {% if cv.updated_at != cv.created_at %}
+                            <div class="subtitle is-6 m-3">Yangilangan:    {{ cv.updated_at|date:"d.m.Y" }}</div>
+                            {% else %}
+                            <div class="subtitle is-6 m-3">
+                                Yangi yaratilgan
+                            </div>
+                            {% endif %}
+                        </small>
+                        <a href="{% url 'cvbuilder:cv_export_pdf' cv.id %}" class="btn btn-primary btn-sm">  <!-- Исправлено -->
+                            <i class="fas fa-download me-1"></i>PDF
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Bulk Actions -->
+    <div class="card border-0 shadow-sm mt-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="fw-bold text-dark mb-1">Tezkor amallar</h6>
+                    <small class="text-muted">Barcha rezyumelaringiz ustida amallar bajarish</small>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-download me-1"></i>Barchasini yuklab olish
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-print me-1"></i>Barchasini chop etish
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- Empty State -->
+    <div class="text-center py-5">
+        <div class="mb-4">
+            <i class="fas fa-file-alt fa-4x text-muted mb-3"></i>
+            <h4 class="text-muted">Hozircha rezyume mavjud emas</h4>
+            <p class="text-muted">Birinchi rezyumeningizni yarating va karyera imkoniyatlarini oching</p>
+        </div>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="{% url 'cvbuilder:cv_create' %}" class="btn btn-primary btn-lg">  <!-- Исправлено -->
+                <i class="fas fa-plus me-2"></i>Yangi Rezyume Yaratish
+            </a>
+            <a href="{% url 'cvbuilder:template_preview' 1 %}" class="btn btn-outline-primary btn-lg">  <!-- Исправлено (нужно указать существующий template_id) -->
+                <i class="fas fa-magic me-2"></i>Shablonlarni Ko'rish
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Quick Stats -->
+    {% if cvs %}
+    <div class="row mt-5 pt-5 border-top">
+        <div class="col-md-3 text-center">
+            <div class="h4 fw-bold text-primary mb-1">{{ cvs|length }}</div>
+            <small class="text-muted">Jami rezyumeler</small>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="h4 fw-bold text-primary mb-1">
+                {% now "d.m.Y" as today %}
+                {% with recent_cvs=cvs|dictsortreversed:"created_at"|slice:":7" %}
+                    {{ recent_cvs|length }}
+                {% endwith %}
+            </div>
+            <small class="text-muted">Oxirgi 7 kunda</small>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="h4 fw-bold text-primary mb-1">
+                {% with unique_templates=cvs|dictsort:"template"|join:", " %}
+                    {{ unique_templates|length }}
+                {% endwith %}
+            </div>
+            <small class="text-muted">Foydalanilgan shablonlar</small>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="h4 fw-bold text-primary mb-1">0</div>  <!-- Можно добавить поле downloads в модель CV -->
+            <small class="text-muted">Yuklab olingan</small>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.cv-card {
+    transition: all 0.3s ease;
+}
+.cv-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+}
+
+.dropdown-toggle::after {
+    display: none;
+}
+
+.btn-primary {
+    background-color: #012152;
+    border-color: #012152;
+}
+.btn-primary:hover {
+    background-color: #012d6e;
+    border-color: #012d6e;
+}
+
+.card {
+    border-radius: 12px;
+}
+
+/* Стили для статусов резюме */
+.status-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 0.7em;
+    padding: 0.25em 0.5em;
+}
+
+.status-published { background-color: #28a745; color: white; }
+.status-draft { background-color: #ffc107; color: black; }
+.status-archived { background-color: #6c757d; color: white; }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add confirmation for delete actions
+    const deleteLinks = document.querySelectorAll('a[href*="delete"]');
+    deleteLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            if (!confirm('Haqiqatan ham ushbu rezyumeni o\'chirmoqchimisiz? Bu amalni ortga qaytarib bo\'lmaydi.')) {
+                e.preventDefault();
+            }
+        });
+    });
+
+    // Add search functionality
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.className = 'form-control mb-3';
+    searchInput.placeholder = 'Rezyumelarni qidirish...';
+    searchInput.style.maxWidth = '300px';
+    
+    const actionsBar = document.querySelector('.d-flex.justify-content-between.align-items-center.mb-4');
+    if (actionsBar) {
+        actionsBar.parentNode.insertBefore(searchInput, actionsBar.nextSibling);
+        
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const cvCards = document.querySelectorAll('.cv-card');
+            
+            cvCards.forEach(card => {
+                const cvName = card.querySelector('h5').textContent.toLowerCase();
+                const cvProfession = card.querySelector('.text-primary').textContent.toLowerCase();
+                const cvEmail = card.querySelector('.fa-envelope').parentNode.textContent.toLowerCase();
+                
+                if (cvName.includes(searchTerm) || cvProfession.includes(searchTerm) || cvEmail.includes(searchTerm)) {
+                    card.parentNode.style.display = 'block';
+                } else {
+                    card.parentNode.style.display = 'none';
+                }
+            });
+        });
+    }
+
+    // Add status badges
+    const cvCards = document.querySelectorAll('.cv-card');
+    cvCards.forEach(card => {
+        // Здесь можно добавить бейджи статусов, если нужно
+        // Например: card.querySelector('.card-body').insertAdjacentHTML('afterbegin', '<span class="status-badge status-published">Published</span>');
+    });
+});
+</script>
+{% endblock %}

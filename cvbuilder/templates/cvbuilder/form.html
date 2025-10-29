@@ -1,0 +1,452 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-5 fw-bold text-primary mb-3">Yangi rezyume yaratish</h1>
+            <p class="lead text-muted">Professional rezyumeningizni yarating va karyera imkoniyatlarini oching</p>
+            
+            <!-- Progress Steps -->
+            <div class="row justify-content-center mt-4">
+                <div class="col-lg-8">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="text-center">
+                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 40px; height: 40px;">
+                                <span class="text-white fw-bold">1</span>
+                            </div>
+                            <small class="fw-semibold">Ma'lumotlar</small>
+                        </div>
+                        <div class="flex-grow-1 border-top border-2 border-primary mx-2"></div>
+                        <div class="text-center">
+                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 40px; height: 40px;">
+                                <span class="text-muted fw-bold">2</span>
+                            </div>
+                            <small class="text-muted">Ko'rib chiqish</small>
+                        </div>
+                        <div class="flex-grow-1 border-top border-2 border-light mx-2"></div>
+                        <div class="text-center">
+                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 40px; height: 40px;">
+                                <span class="text-muted fw-bold">3</span>
+                            </div>
+                            <small class="text-muted">Yuklab olish</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Main Form -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <form method="post" novalidate id="cvForm">
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger d-flex align-items-center" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            {{ form.non_field_errors }}
+                        </div>
+                        {% endif %}
+
+                        <!-- Personal Information Section -->
+                        <div class="mb-5">
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                    <i class="fas fa-user text-white"></i>
+                                </div>
+                                <h4 class="fw-bold text-dark mb-0">Shaxsiy ma'lumotlar</h4>
+                            </div>
+                            
+                            <div class="row">
+                                {% for field in form %}
+                                    {% if field.name in 'full_name,email,phone,address,position' %}
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
+                                            {% if field.name == 'full_name' %}
+                                                <i class="fas fa-user me-2 text-primary"></i>To'liq ism
+                                            {% elif field.name == 'email' %}
+                                                <i class="fas fa-envelope me-2 text-primary"></i>Elektron pochta
+                                            {% elif field.name == 'phone' %}
+                                                <i class="fas fa-phone me-2 text-primary"></i>Telefon
+                                            {% elif field.name == 'address' %}
+                                                <i class="fas fa-map-marker-alt me-2 text-primary"></i>Manzil
+                                            {% elif field.name == 'position' %}
+                                                <i class="fas fa-briefcase me-2 text-primary"></i>Lavozim
+                                            {% else %}
+                                                {{ field.label }}
+                                            {% endif %}
+                                        </label>
+                                        <input type="{{ field.field.widget.input_type }}" 
+                                               name="{{ field.name }}" 
+                                               id="{{ field.id_for_label }}" 
+                                               class="form-control {% if field.errors %}is-invalid{% endif %}" 
+                                               placeholder="{% if field.name == 'full_name' %}Ism familiyangiz{% elif field.name == 'email' %}sizning@email.uz{% elif field.name == 'phone' %}+998 XX XXX XX XX{% elif field.name == 'address' %}Yashash manzilingiz{% elif field.name == 'position' %}Ishlavotgan lavozimingiz{% endif %}" 
+                                               value="{{ field.value|default:'' }}">
+                                        {% if field.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ field.errors }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Professional Summary -->
+                        <div class="mb-5">
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                    <i class="fas fa-file-alt text-white"></i>
+                                </div>
+                                <h4 class="fw-bold text-dark mb-0">Professional ma'lumot</h4>
+                            </div>
+                            
+                            {% for field in form %}
+                                {% if field.name == 'summary' or field.name == 'professional_summary' %}
+                                <div class="mb-3">
+                                    <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
+                                        <i class="fas fa-briefcase me-2 text-primary"></i>Professional tavsif
+                                    </label>
+                                    <textarea name="{{ field.name }}" 
+                                              id="{{ field.id_for_label }}" 
+                                              class="form-control {% if field.errors %}is-invalid{% endif %}" 
+                                              rows="4" 
+                                              placeholder="O'zingiz va kasbiy ko'nikmalaringiz haqida qisqacha ma'lumot...">{{ field.value|default:'' }}</textarea>
+                                    {% if field.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ field.errors }}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text">Qisqa va tushunarli tavsif yozing (100-200 so'z)</div>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <!-- Education Section -->
+                        <div class="mb-5">
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                    <i class="fas fa-graduation-cap text-white"></i>
+                                </div>
+                                <h4 class="fw-bold text-dark mb-0">Ta'lim</h4>
+                            </div>
+                            
+                            {% for field in form %}
+                                {% if field.name in 'education,degree,institution,graduation_year' %}
+                                <div class="mb-3">
+                                    <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
+                                        {% if field.name == 'education' %}
+                                            <i class="fas fa-university me-2 text-primary"></i>Ta'lim ma'lumotlari
+                                        {% elif field.name == 'degree' %}
+                                            <i class="fas fa-certificate me-2 text-primary"></i>Daraja
+                                        {% elif field.name == 'institution' %}
+                                            <i class="fas fa-school me-2 text-primary"></i>O'quv muassasasi
+                                        {% elif field.name == 'graduation_year' %}
+                                            <i class="fas fa-calendar me-2 text-primary"></i>Bitirgan yili
+                                        {% endif %}
+                                    </label>
+                                    {% if field.name == 'education' %}
+                                        <textarea name="{{ field.name }}" 
+                                                  id="{{ field.id_for_label }}" 
+                                                  class="form-control {% if field.errors %}is-invalid{% endif %}" 
+                                                  rows="3" 
+                                                  placeholder="Ta'lim ma'lumotlaringizni kiriting...">{{ field.value|default:'' }}</textarea>
+                                    {% else %}
+                                        <input type="{{ field.field.widget.input_type }}" 
+                                               name="{{ field.name }}" 
+                                               id="{{ field.id_for_label }}" 
+                                               class="form-control {% if field.errors %}is-invalid{% endif %}" 
+                                               placeholder="{% if field.name == 'degree' %}Masalan: Bakalavr{% elif field.name == 'institution' %}O'qigan oliy o'quv muassasangiz{% elif field.name == 'graduation_year' %}YYYY{% endif %}" 
+                                               value="{{ field.value|default:'' }}">
+                                    {% endif %}
+                                    {% if field.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ field.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <!-- Work Experience -->
+                        <div class="mb-5">
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                    <i class="fas fa-briefcase text-white"></i>
+                                </div>
+                                <h4 class="fw-bold text-dark mb-0">Ish tajribasi</h4>
+                            </div>
+                            
+                            {% for field in form %}
+                                {% if field.name in 'experience,skills,achievements' %}
+                                <div class="mb-3">
+                                    <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
+                                        {% if field.name == 'experience' %}
+                                            <i class="fas fa-history me-2 text-primary"></i>Ish tajribasi
+                                        {% elif field.name == 'skills' %}
+                                            <i class="fas fa-tools me-2 text-primary"></i>Ko'nikmalar
+                                        {% elif field.name == 'achievements' %}
+                                            <i class="fas fa-trophy me-2 text-primary"></i>Yutuqlar
+                                        {% endif %}
+                                    </label>
+                                    <textarea name="{{ field.name }}" 
+                                              id="{{ field.id_for_label }}" 
+                                              class="form-control {% if field.errors %}is-invalid{% endif %}" 
+                                              rows="3" 
+                                              placeholder="{% if field.name == 'experience' %}Ish tajribangiz haqida ma'lumot...{% elif field.name == 'skills' %}Texnik va soft ko'nikmalaringizni vergul bilan ajrating...{% elif field.name == 'achievements' %}Kasbiy yutuqlaringiz...{% endif %}">{{ field.value|default:'' }}</textarea>
+                                    {% if field.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ field.errors }}
+                                    </div>
+                                    {% endif %}
+                                    {% if field.name == 'skills' %}
+                                    <div class="form-text">Masalan: Python, Django, JavaScript, Liderlik, Kommunikatsiya</div>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <!-- Additional Fields -->
+                        {% for field in form %}
+                            {% if field.name not in 'full_name,email,phone,address,position,summary,professional_summary,education,degree,institution,graduation_year,experience,skills,achievements' %}
+                            <div class="mb-3">
+                                <label for="{{ field.id_for_label }}" class="form-label fw-semibold">{{ field.label }}</label>
+                                {% if field.field.widget.input_type == 'textarea' %}
+                                    <textarea name="{{ field.name }}" 
+                                              id="{{ field.id_for_label }}" 
+                                              class="form-control {% if field.errors %}is-invalid{% endif %}" 
+                                              rows="3">{{ field.value|default:'' }}</textarea>
+                                {% else %}
+                                    <input type="{{ field.field.widget.input_type }}" 
+                                           name="{{ field.name }}" 
+                                           id="{{ field.id_for_label }}" 
+                                           class="form-control {% if field.errors %}is-invalid{% endif %}" 
+                                           value="{{ field.value|default:'' }}">
+                                {% endif %}
+                                {% if field.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ field.errors }}
+                                </div>
+                                {% endif %}
+                                {% if field.help_text %}
+                                <div class="form-text">{{ field.help_text }}</div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+
+                        <!-- Form Actions -->
+                        <div class="d-flex justify-content-between align-items-center pt-4 border-top">
+                            <a href="{% url 'cvbuilder:template_selector' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Ortga qaytish
+                            </a>
+                            <div class="d-flex gap-3">
+                                <button type="button" class="btn btn-outline-primary" id="previewBtn">
+                                    <i class="fas fa-eye me-2"></i>Oldindan ko'rish
+                                </button>
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="fas fa-save me-2"></i>Saqlash va ko'rish
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar - Tips & Progress -->
+        <div class="col-lg-4">
+            <!-- Tips Card -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="fas fa-lightbulb me-2 text-primary"></i>
+                        Foydali maslahatlar
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex mb-3">
+                        <i class="fas fa-check text-success me-2 mt-1"></i>
+                        <small class="text-muted">Ma'lumotlarni aniq va to'g'ri kiriting</small>
+                    </div>
+                    <div class="d-flex mb-3">
+                        <i class="fas fa-check text-success me-2 mt-1"></i>
+                        <small class="text-muted">Professional tavsifni qisqa va tushunarli yozing</small>
+                    </div>
+                    <div class="d-flex mb-3">
+                        <i class="fas fa-check text-success me-2 mt-1"></i>
+                        <small class="text-muted">Ko'nikmalarni vergul bilan ajrating</small>
+                    </div>
+                    <div class="d-flex mb-3">
+                        <i class="fas fa-check text-success me-2 mt-1"></i>
+                        <small class="text-muted">Yutuqlaringizni raqamlar bilan tasdiqlang</small>
+                    </div>
+                    <div class="d-flex">
+                        <i class="fas fa-check text-success me-2 mt-1"></i>
+                        <small class="text-muted">Grammatik xatolardan ehtiyot bo'ling</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Card -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="fas fa-chart-line me-2 text-primary"></i>
+                        To'ldirish darajasi
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="progress mb-3" style="height: 10px;">
+                        <div class="progress-bar bg-primary" role="progressbar" style="width: 0%;" id="progressBar"></div>
+                    </div>
+                    <small class="text-muted" id="progressText">Formani to'ldirish: 0%</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    transition: transform 0.3s ease;
+}
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    padding: 0.75rem 1rem;
+}
+.form-control:focus, .form-select:focus {
+    border-color: #012152;
+    box-shadow: 0 0 0 0.2rem rgba(1, 33, 82, 0.25);
+}
+
+.btn-primary {
+    background-color: #012152;
+    border-color: #012152;
+    border-radius: 8px;
+}
+.btn-primary:hover {
+    background-color: #012d6e;
+    border-color: #012d6e;
+}
+
+.progress {
+    border-radius: 10px;
+}
+.progress-bar {
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Form progress calculation
+    function updateProgress() {
+        const form = document.getElementById('cvForm');
+        const inputs = form.querySelectorAll('input, textarea, select');
+        let filledCount = 0;
+        
+        inputs.forEach(input => {
+            if (input.type !== 'hidden' && input.value.trim() !== '') {
+                filledCount++;
+            }
+        });
+        
+        const progress = Math.min(100, Math.round((filledCount / inputs.length) * 100));
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        
+        if (progressBar && progressText) {
+            progressBar.style.width = progress + '%';
+            progressText.textContent = `Formani to'ldirish: ${progress}%`;
+        }
+    }
+
+    // Add input event listeners
+    const formInputs = document.querySelectorAll('#cvForm input, #cvForm textarea, #cvForm select');
+    formInputs.forEach(input => {
+        input.addEventListener('input', updateProgress);
+        input.addEventListener('change', updateProgress);
+    });
+
+    // Initialize progress
+    updateProgress();
+
+    // Preview button functionality
+    const previewBtn = document.getElementById('previewBtn');
+    if (previewBtn) {
+        previewBtn.addEventListener('click', function() {
+            // Simple form validation before preview
+            const form = document.getElementById('cvForm');
+            let isValid = true;
+            
+            formInputs.forEach(input => {
+                if (input.hasAttribute('required') && !input.value.trim()) {
+                    isValid = false;
+                    input.classList.add('is-invalid');
+                }
+            });
+            
+            if (isValid) {
+                // Add actual preview functionality here
+                alert('Rezyume oldindan ko\'rinishi tayyorlanmoqda...');
+            } else {
+                alert('Iltimos, barcha majburiy maydonlarni to\'ldiring');
+            }
+        });
+    }
+
+    // Form submission loading state
+    const form = document.getElementById('cvForm');
+    if (form) {
+        form.addEventListener('submit', function() {
+            const submitButton = this.querySelector('button[type="submit"]');
+            if (submitButton) {
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saqlanmoqda...';
+                submitButton.disabled = true;
+            }
+        });
+    }
+
+    // Auto-save draft functionality
+    let autoSaveTimer;
+    formInputs.forEach(input => {
+        input.addEventListener('input', function() {
+            clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(() => {
+                // Add auto-save functionality here
+                console.log('Avtosaqlash...');
+            }, 3000);
+        });
+    });
+
+    // Character counter for textareas
+    const textareas = document.querySelectorAll('textarea');
+    textareas.forEach(textarea => {
+        const counter = document.createElement('div');
+        counter.className = 'form-text text-end';
+        counter.textContent = `Belgilar: ${textarea.value.length}`;
+        textarea.parentNode.appendChild(counter);
+        
+        textarea.addEventListener('input', function() {
+            counter.textContent = `Belgilar: ${this.value.length}`;
+        });
+    });
+});
+</script>
+{% endblock %}

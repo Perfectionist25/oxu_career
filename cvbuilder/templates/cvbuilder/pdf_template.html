@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page {
+            margin: 20mm;
+            size: A4;
+        }
+        
+        body {
+            font-family: 'DejaVu Sans', 'Arial Unicode MS', 'Arial', sans-serif;
+            padding: 30px;
+            color: #222;
+            line-height: 1.5;
+            font-size: 12px;
+            background: #ffffff;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #012152;
+        }
+
+        .name {
+            color: #012152;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .position {
+            color: #666;
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .section {
+            margin-bottom: 18px;
+            page-break-inside: avoid;
+        }
+
+        .section-title {
+            color: #012152;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #e0e0e0;
+            text-transform: uppercase;
+        }
+
+        .section-content {
+            padding-left: 10px;
+        }
+
+        .two-column {
+            display: flex;
+            gap: 30px;
+        }
+
+        .column {
+            flex: 1;
+        }
+
+        .item {
+            margin-bottom: 12px;
+            page-break-inside: avoid;
+        }
+
+        .item-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .item-subtitle {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 3px;
+            font-size: 11px;
+        }
+
+        .item-date {
+            color: #888;
+            font-size: 10px;
+            margin-bottom: 3px;
+        }
+
+        .item-description {
+            color: #444;
+            text-align: justify;
+        }
+
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 5px;
+        }
+
+        .skill-tag {
+            background: #f0f0f0;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        .languages-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .language-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .language-level {
+            color: #666;
+            font-size: 10px;
+        }
+
+        /* Print optimizations */
+        @media print {
+            body {
+                padding: 0;
+            }
+            
+            .section {
+                page-break-inside: avoid;
+            }
+            
+            .no-break {
+                page-break-inside: avoid;
+            }
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+            color: #888;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <div class="header">
+        <div class="name">{{ cv.full_name|default:"Ism Familiya" }}</div>
+        {% if cv.position %}
+        <div class="position">{{ cv.position }}</div>
+        {% endif %}
+        
+        <div class="contact-info">
+            {% if cv.email %}
+            <div class="contact-item">
+                <span>📧</span>
+                <span>{{ cv.email }}</span>
+            </div>
+            {% endif %}
+            
+            {% if cv.phone %}
+            <div class="contact-item">
+                <span>📱</span>
+                <span>{{ cv.phone }}</span>
+            </div>
+            {% endif %}
+            
+            {% if cv.address %}
+            <div class="contact-item">
+                <span>📍</span>
+                <span>{{ cv.address }}</span>
+            </div>
+            {% endif %}
+            
+            {% if cv.linkedin %}
+            <div class="contact-item">
+                <span>💼</span>
+                <span>{{ cv.linkedin }}</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Two Column Layout -->
+    <div class="two-column">
+        <!-- Left Column -->
+        <div class="column">
+            <!-- Professional Summary -->
+            {% if cv.professional_summary %}
+            <div class="section no-break">
+                <div class="section-title">Professional Tavsif</div>
+                <div class="section-content">
+                    <div class="item-description">{{ cv.professional_summary|linebreaks }}</div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Work Experience -->
+            {% if cv.experience %}
+            <div class="section">
+                <div class="section-title">Ish Tajribasi</div>
+                <div class="section-content">
+                    <div class="item-description">{{ cv.experience|linebreaks }}</div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Education -->
+            {% if cv.education %}
+            <div class="section">
+                <div class="section-title">Ta'lim</div>
+                <div class="section-content">
+                    <div class="item">
+                        {% if cv.degree %}
+                        <div class="item-title">{{ cv.degree }}</div>
+                        {% endif %}
+                        
+                        {% if cv.institution %}
+                        <div class="item-subtitle">{{ cv.institution }}</div>
+                        {% endif %}
+                        
+                        {% if cv.graduation_year %}
+                        <div class="item-date">{{ cv.graduation_year }} yil</div>
+                        {% endif %}
+                        
+                        <div class="item-description">{{ cv.education|linebreaks }}</div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Achievements -->
+            {% if cv.achievements %}
+            <div class="section">
+                <div class="section-title">Yutuqlar</div>
+                <div class="section-content">
+                    <div class="item-description">{{ cv.achievements|linebreaks }}</div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Right Column -->
+        <div class="column">
+            <!-- Skills -->
+            {% if cv.skills %}
+            <div class="section no-break">
+                <div class="section-title">Ko'nikmalar</div>
+                <div class="section-content">
+                    <div class="skills-list">
+                        {% for skill in cv.skills_list %}
+                        <span class="skill-tag">{{ skill }}</span>
+                        {% empty %}
+                        <div class="item-description">{{ cv.skills|linebreaks }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Languages -->
+            {% if cv.languages %}
+            <div class="section">
+                <div class="section-title">Tillarni bilish</div>
+                <div class="section-content">
+                    <div class="languages-list">
+                        {% for language in cv.languages_list %}
+                        <div class="language-item">
+                            <span class="item-title">{{ language.name }}</span>
+                            {% if language.level %}
+                            <span class="language-level">({{ language.level }})</span>
+                            {% endif %}
+                        </div>
+                        {% empty %}
+                        <div class="item-description">{{ cv.languages|linebreaks }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Certifications -->
+            {% if cv.certifications %}
+            <div class="section">
+                <div class="section-title">Sertifikatlar</div>
+                <div class="section-content">
+                    <div class="item-description">{{ cv.certifications|linebreaks }}</div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Projects -->
+            {% if cv.projects %}
+            <div class="section">
+                <div class="section-title">Loyihalar</div>
+                <div class="section-content">
+                    <div class="item-description">{{ cv.projects|linebreaks }}</div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Interests -->
+            {% if cv.interests %}
+            <div class="section">
+                <div class="section-title">Qiziqishlar</div>
+                <div class="section-content">
+                    <div class="skills-list">
+                        {% for interest in cv.interests_list %}
+                        <span class="skill-tag">{{ interest }}</span>
+                        {% empty %}
+                        <div class="item-description">{{ cv.interests|linebreaks }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Additional Sections (Full Width) -->
+    {% if cv.references %}
+    <div class="section">
+        <div class="section-title">Ma'lumot beruvchilar</div>
+        <div class="section-content">
+            <div class="item-description">{{ cv.references|linebreaks }}</div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Footer -->
+    <div class="footer">
+        Ushbu rezyume OXU Career Center platformasida yaratilgan • {{ cv.created_at|date:"d.m.Y" }}
+    </div>
+
+    <script>
+    // Function to process skills string into list
+    function processSkills() {
+        const skillsElements = document.querySelectorAll('.skills-list');
+        skillsElements.forEach(element => {
+            const skillsText = element.textContent;
+            if (skillsText && skillsText.includes(',')) {
+                element.innerHTML = '';
+                const skills = skillsText.split(',').map(skill => skill.trim()).filter(skill => skill);
+                skills.forEach(skill => {
+                    const tag = document.createElement('span');
+                    tag.className = 'skill-tag';
+                    tag.textContent = skill;
+                    element.appendChild(tag);
+                });
+            }
+        });
+    }
+
+    // Function to process languages
+    function processLanguages() {
+        const languagesElements = document.querySelectorAll('.languages-list');
+        languagesElements.forEach(element => {
+            const languagesText = element.textContent;
+            if (languagesText && (languagesText.includes(',') || languagesText.includes(':'))) {
+                element.innerHTML = '';
+                const languages = languagesText.split(',').map(lang => lang.trim()).filter(lang => lang);
+                languages.forEach(language => {
+                    const [name, level] = language.split(':').map(part => part.trim());
+                    const item = document.createElement('div');
+                    item.className = 'language-item';
+                    
+                    const nameSpan = document.createElement('span');
+                    nameSpan.className = 'item-title';
+                    nameSpan.textContent = name;
+                    item.appendChild(nameSpan);
+                    
+                    if (level) {
+                        const levelSpan = document.createElement('span');
+                        levelSpan.className = 'language-level';
+                        levelSpan.textContent = `(${level})`;
+                        item.appendChild(levelSpan);
+                    }
+                    
+                    element.appendChild(item);
+                });
+            }
+        });
+    }
+
+    // Function to process interests
+    function processInterests() {
+        const interestsElements = document.querySelectorAll('.skills-list');
+        interestsElements.forEach(element => {
+            const interestsText = element.textContent;
+            if (interestsText && interestsText.includes(',') && element.closest('.section-title').textContent.includes('Qiziqishlar')) {
+                element.innerHTML = '';
+                const interests = interestsText.split(',').map(interest => interest.trim()).filter(interest => interest);
+                interests.forEach(interest => {
+                    const tag = document.createElement('span');
+                    tag.className = 'skill-tag';
+                    tag.textContent = interest;
+                    element.appendChild(tag);
+                });
+            }
+        });
+    }
+
+    // Run processing functions when document is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        processSkills();
+        processLanguages();
+        processInterests();
+    });
+    </script>
+</body>
+</html>

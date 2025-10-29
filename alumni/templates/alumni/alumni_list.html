@@ -1,0 +1,305 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-5 fw-bold text-primary mb-3">Bitiruvchilar Tarmog'i</h1>
+            <p class="lead text-muted">Osiyo Xalqaro Universiteti bitiruvchilari bilan bog'laning va karyera imkoniyatlarini kashf eting</p>
+        </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="card border-0 shadow-sm mb-5">
+        <div class="card-body p-4">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">
+                        <i class="fas fa-university me-2 text-primary"></i>Fakultet
+                    </label>
+                    <select name="faculty" class="form-select">
+                        <option value="">Barcha fakultetlar</option>
+                        <option value="Dasturiy injiniring" {% if request.GET.faculty == "Dasturiy injiniring" %}selected{% endif %}>Dasturiy injiniring</option>
+                        <option value="Iqtisodiyot" {% if request.GET.faculty == "Iqtisodiyot" %}selected{% endif %}>Iqtisodiyot</option>
+                        <option value="Boshqaruv" {% if request.GET.faculty == "Boshqaruv" %}selected{% endif %}>Boshqaruv</option>
+                        <option value="Huquqshunoslik" {% if request.GET.faculty == "Huquqshunoslik" %}selected{% endif %}>Huquqshunoslik</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">
+                        <i class="fas fa-graduation-cap me-2 text-primary"></i>Bitirgan yili
+                    </label>
+                    <select name="year" class="form-select">
+                        <option value="">Barcha yillar</option>
+                        {% for year in years %}
+                        <option value="{{ year }}" {% if request.GET.year == year %}selected{% endif %}>{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">
+                        <i class="fas fa-briefcase me-2 text-primary"></i>Kasb
+                    </label>
+                    <input type="text" 
+                           name="profession" 
+                           class="form-control" 
+                           placeholder="Kasb bo'yicha qidirish"
+                           value="{{ request.GET.profession }}">
+                </div>
+                
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">
+                        <i class="fas fa-building me-2 text-primary"></i>Kompaniya
+                    </label>
+                    <input type="text" 
+                           name="company" 
+                           class="form-control" 
+                           placeholder="Kompaniya nomi"
+                           value="{{ request.GET.company }}">
+                </div>
+                
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check">
+                            <input class="form-check-input" 
+                                   type="checkbox" 
+                                   name="mentors" 
+                                   id="mentors" 
+                                   {% if request.GET.mentors %}checked{% endif %}>
+                            <label class="form-check-label fw-semibold" for="mentors">
+                                Faqat mentorlar
+                            </label>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="fas fa-search me-2"></i>Qidirish
+                            </button>
+                            <a href="{% url 'alumni:list' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-redo me-2"></i>Tozalash
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Results Summary -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold text-dark mb-0">Bitiruvchilar</h4>
+            <p class="text-muted mb-0">
+                {% if alumni %}
+                    {{ alumni.paginator.count }} ta natija topildi
+                {% else %}
+                    Natija topilmadi
+                {% endif %}
+            </p>
+        </div>
+        
+        <div class="d-flex align-items-center gap-3">
+            <span class="text-muted small">Saralash:</span>
+            <select class="form-select form-select-sm w-auto" onchange="location = this.value;">
+                <option value="?sort=name">Ism bo'yicha</option>
+                <option value="?sort=year">Bitirgan yili</option>
+                <option value="?sort=recent">Eng yangi</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Alumni Grid -->
+    {% if alumni %}
+    <div class="row g-4">
+        {% for alum in alumni %}
+        <div class="col-xl-4 col-lg-6 col-md-6">
+            <div class="card border-0 shadow-sm h-100 alumni-card">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-start mb-3">
+                        <div class="flex-shrink-0">
+                            {% if alum.photo %}
+                                <img src="{{ alum.photo.url }}" alt="{{ alum.name }}" class="rounded-circle" width="60" height="60" style="object-fit: cover;">
+                            {% else %}
+                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-user-graduate fa-lg text-white"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h5 class="fw-bold text-dark mb-1">{{ alum.name }}</h5>
+                            <p class="text-primary fw-semibold mb-1">{{ alum.profession }}</p>
+                            <p class="text-muted small mb-0">
+                                <i class="fas fa-building me-1"></i>{{ alum.company }}
+                            </p>
+                        </div>
+                        {% if alum.is_mentor %}
+                        <span class="badge bg-success">
+                            <i class="fas fa-hands-helping me-1"></i>Mentor
+                        </span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex text-muted small mb-2">
+                            <i class="fas fa-university me-2"></i>
+                            <span>{{ alum.faculty }}</span>
+                        </div>
+                        <div class="d-flex text-muted small">
+                            <i class="fas fa-graduation-cap me-2"></i>
+                            <span>{{ alum.graduation_year }} yil</span>
+                        </div>
+                    </div>
+                    
+                    {% if alum.bio %}
+                    <p class="text-muted small mb-3">{{ alum.bio|truncatewords:20 }}</p>
+                    {% endif %}
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{% url 'alumni_detail' alum.id %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-eye me-1"></i>Profilni ko'rish
+                        </a>
+                        
+                        <div class="d-flex gap-2">
+                            {% if alum.linkedin %}
+                            <a href="{{ alum.linkedin }}" target="_blank" class="text-primary">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            {% endif %}
+                            {% if alum.email %}
+                            <a href="mailto:{{ alum.email }}" class="text-primary">
+                                <i class="fas fa-envelope"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if alumni.has_other_pages %}
+    <nav class="mt-5">
+        <ul class="pagination justify-content-center">
+            {% if alumni.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ alumni.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in alumni.paginator.page_range %}
+                {% if alumni.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if alumni.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ alumni.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <!-- Empty State -->
+    <div class="text-center py-5">
+        <div class="mb-4">
+            <i class="fas fa-users fa-4x text-muted mb-3"></i>
+            <h4 class="text-muted">Bitiruvchilar topilmadi</h4>
+            <p class="text-muted">Qidiruv shartlarini o'zgartirib ko'ring yoki keyinroq qayta urinib ko'ring.</p>
+        </div>
+        <a href="{% url 'alumni:list' %}" class="btn btn-primary">
+            <i class="fas fa-redo me-2"></i>Barcha bitiruvchilarni ko'rish
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Stats Section -->
+    <div class="row mt-5 pt-5 border-top">
+        <div class="col-md-3 text-center">
+            <div class="h2 fw-bold text-primary mb-1">{{ total_alumni }}+</div>
+            <small class="text-muted">Jami bitiruvchilar</small>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="h2 fw-bold text-primary mb-1">{{ mentor_count }}+</div>
+            <small class="text-muted">Faol mentorlar</small>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="h2 fw-bold text-primary mb-1">{{ companies_count }}+</div>
+            <small class="text-muted">Kompaniyalar</small>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="h2 fw-bold text-primary mb-1">{{ countries_count }}+</div>
+            <small class="text-muted">Mamlakatlar</small>
+        </div>
+    </div>
+</div>
+
+<style>
+.alumni-card {
+    transition: all 0.3s ease;
+}
+.alumni-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+}
+
+.page-link {
+    color: #012152;
+    border-color: #dee2e6;
+}
+.page-link:hover {
+    color: #012152;
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+}
+.page-item.active .page-link {
+    background-color: #012152;
+    border-color: #012152;
+}
+
+.badge {
+    font-size: 0.7em;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add loading state to search form
+    const searchForm = document.querySelector('form');
+    if (searchForm) {
+        searchForm.addEventListener('submit', function() {
+            const submitButton = this.querySelector('button[type="submit"]');
+            if (submitButton) {
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Qidirilmoqda...';
+                submitButton.disabled = true;
+            }
+        });
+    }
+
+    // Auto-submit filters when changed
+    const filters = document.querySelectorAll('select[name="faculty"], select[name="year"], input[name="mentors"]');
+    filters.forEach(filter => {
+        filter.addEventListener('change', function() {
+            this.form.submit();
+        });
+    });
+});
+</script>
+{% endblock %}

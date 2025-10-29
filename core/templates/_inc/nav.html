@@ -1,0 +1,361 @@
+{% load static %}
+
+<!-- Верхняя часть хэдэра -->
+<div class="header-top">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-4">
+                <div class="contact-info">
+                    <a href="#">
+                        Joylashuv <i class="fas fa-map-marker-alt m-1"></i> Buxoroda
+                    </a>
+                    <a href="tel:+998555050009">
+                        <i class="fas fa-phone"></i> +998 55 505 00 09
+                    </a>
+                    <a href="mailto:info@oxu.uz">
+                        <i class="fas fa-envelope"></i> info@oxu.uz
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-4 government-links">
+                <a href="#"><strong>O'zbekiston Respublikasi hukumat portali</strong></a>
+                <a href="#"><strong>Davlat test markazi</strong></a>
+                <a href="#"><strong>Yoshlar daftari</strong></a>
+            </div>
+            <div class="col-md-4">
+                <div class="d-flex justify-content-end align-items-center">
+                    <div class="social-icons me-3">
+                        <a href="#"><i style="font-size: larger;" class="fab fa-instagram text-white"></i></a>
+                        <a href="#"><i style="font-size: larger;" class="fab fa-telegram text-white"></i></a>
+                        <a href="#"><i style="font-size: larger;" class="fab fa-facebook text-white"></i></a>
+                        <a href="#"><i style="font-size: larger;" class="fab fa-youtube text-white"></i></a>
+                    </div>
+                    <div class="language-selector">
+                        <a href="#" class="active"><img width="36" src="{% static 'img/uzb.png' %}" alt="UZB"></a>
+                        <a href="#" class="active"><img width="36" src="{% static 'img/ru.png' %}" alt="RU"></a>
+                        <a href="#" class="active"><img width="36" src="{% static 'img/uk.png' %}" alt="EN"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Средняя часть хэдэра -->
+<div class="header-middle">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="d-flex">
+                    <a style="text-decoration: none;" href="/">
+                        <img width="70" src="{% static 'img/logo1.png' %}" alt="Logo" class="me-3">
+                    </a>
+                    <a style="text-decoration: none;" href="/">
+                        <div class="logo">OXU <br> Career</div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6 text-end">
+                <img width="230" src="{% static 'img/study.svg' %}" alt="None">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Нижняя часть хэдэра -->
+<div style="position: sticky; top: 0; z-index: 1;" class="header-bottom mb-3 p-3">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <!-- Кнопка меню для мобильных -->
+            <button class="btn btn-primary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+                <i class="fas fa-bars me-2"></i>Menu
+            </button>
+
+            <!-- Основное меню для десктопов -->
+            <ul class="nav justify-content-center d-none d-lg-flex">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Bosh sahifa</a>
+                </li>
+                
+                <!-- Dropdown для Университета -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Universitet
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="https://oxu.uz/university">Universitet haqida</a></li>
+                        <li><a class="dropdown-item" href="#">Fakultetlar</a></li>
+                        <li><a class="dropdown-item" href="#">Ta'lim yo'nalishlari</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Qabul</a></li>
+                        <li><a class="dropdown-item" href="#">Stipendiyalar</a></li>
+                    </ul>
+                </li>
+                
+                <!-- Dropdown для Ресурсов -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Resurslar
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'resources:list' %}">Barcha resurslar</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Darsliklar</a></li>
+                        <li><a class="dropdown-item" href="#">Video darslar</a></li>
+                        <li><a class="dropdown-item" href="#">Onlayn kurslar</a></li>
+                        <li><a class="dropdown-item" href="#">Masalalar to'plami</a></li>
+                    </ul>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'events:list' %}">Tadbirlar</a>
+                </li>
+                
+                <!-- Dropdown для Вакансий -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Vakansiyalar
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'jobs:list' %}">Barcha vakansiyalar</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Stajirovkalar</a></li>
+                        <li><a class="dropdown-item" href="#">To'liq kunlik ish</a></li>
+                        <li><a class="dropdown-item" href="#">Yarim kunlik ish</a></li>
+                        <li><a class="dropdown-item" href="#">Uzoq ish</a></li>
+                    </ul>
+                </li>
+                
+                <!-- Dropdown для Резюме -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Rezyume
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'cvbuilder:cv_list' %}">Mening rezyumelarim</a></li>
+                        <li><a class="dropdown-item" href="{% url 'cvbuilder:cv_create' %}">Rezyume yaratish</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Shablonlar</a></li>
+                        <li><a class="dropdown-item" href="#">Statistika</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <!-- Правая часть с пользовательскими кнопками -->
+            <div class="d-flex align-items-center">
+                {% if user.is_authenticated %}
+                <div class="dropdown">
+                    <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user me-1"></i>Mening profilim
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profil</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Sozlamalar</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'accounts:logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Chiqish</a></li>
+                    </ul>
+                </div>
+                {% else %}
+                <div class="d-flex gap-2">
+                    <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary btn-sm">Kirish</a>
+                    <a href="{% url 'accounts:signup' %}" class="btn btn-primary btn-sm">Ro'yxatdan o'tish</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Мобильное меню (Offcanvas) -->
+<div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="mobileMenuLabel">
+            <img width="40" src="{% static 'img/logo1.png' %}" alt="Logo" class="me-2">
+            OXU Career
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="list-group list-group-flush">
+            <a href="/" class="list-group-item list-group-item-action border-0">
+                <i class="fas fa-home me-2"></i>Bosh sahifa
+            </a>
+            
+            <a class="list-group-item list-group-item-action border-0" data-bs-toggle="collapse" href="#universityMobile">
+                <i class="fas fa-university me-2"></i>Universitet
+                <i class="fas fa-chevron-down float-end mt-1"></i>
+            </a>
+            <div class="collapse" id="universityMobile">
+                <div class="list-group list-group-flush ms-3">
+                    <a href="https://oxu.uz/university" class="list-group-item list-group-item-action border-0">Universitet haqida</a>
+                    <a href="#" class="list-group-item list-group-item-action border-0">Fakultetlar</a>
+                    <a href="#" class="list-group-item list-group-item-action border-0">Ta'lim yo'nalishlari</a>
+                    <a href="#" class="list-group-item list-group-item-action border-0">Qabul</a>
+                    <a href="#" class="list-group-item list-group-item-action border-0">Stipendiyalar</a>
+                </div>
+            </div>
+            
+            <a class="list-group-item list-group-item-action border-0" data-bs-toggle="collapse" href="#resourcesMobile">
+                <i class="fas fa-book me-2"></i>Resurslar
+                <i class="fas fa-chevron-down float-end mt-1"></i>
+            </a>
+            <div class="collapse" id="resourcesMobile">
+                <div class="list-group list-group-flush ms-3">
+                    <a href="{% url 'resources:list' %}" class="list-group-item list-group-item-action border-0">Barcha resurslar</a>
+                    <a href="#" class="list-group-item list-group-item-action border-0">Darsliklar</a>
+                    <a href="#" class="list-group-item list-group-item-action border-0">Video darslar</a>
+                    <a href="#" class="list-group-item list-group-item-action border-0">Onlayn kurslar</a>
+                    <a href="#" class="list-group-item list-group-item-action border-0">Masalalar to'plami</a>
+                </div>
+            </div>
+            
+            <a href="{% url 'events:list' %}" class="list-group-item list-group-item-action border-0">
+                <i class="fas fa-calendar-alt me-2"></i>Tadbirlar
+            </a>
+            
+            <a class="list-group-item list-group-item-action border-0" data-bs-toggle="collapse" href="#jobsMobile">
+                <i class="fas fa-briefcase me-2"></i>Vakansiyalar
+                <i class="fas fa-chevron-down float-end mt-1"></i>
+            </a>
+            <div class="collapse" id="jobsMobile">
+                <div class="list-group list-group-flush ms-3">
+                    <a href="{% url 'jobs:list' %}" class="list-group-item list-group-item-action border-0">Barcha vakansiyalar</a>
+                    <a href="#" class="list-group-item list-group-item-action border-0">Stajirovkalar</a>
+                    <a href="#" class="list-group-item list-group-item-action border-0">To'liq kunlik ish</a>
+                    <a href="#" class="list-group-item list-group-item-action border-0">Yarim kunlik ish</a>
+                    <a href="#" class="list-group-item list-group-item-action border-0">Uzoq ish</a>
+                </div>
+            </div>
+            
+            <a class="list-group-item list-group-item-action border-0" data-bs-toggle="collapse" href="#cvMobile">
+                <i class="fas fa-file-alt me-2"></i>Rezyume
+                <i class="fas fa-chevron-down float-end mt-1"></i>
+            </a>
+            <div class="collapse" id="cvMobile">
+                <div class="list-group list-group-flush ms-3">
+                    <a href="{% url 'cvbuilder:cv_list' %}" class="list-group-item list-group-item-action border-0">Mening rezyumelarim</a>
+                    <a href="{% url 'cvbuilder:cv_create' %}" class="list-group-item list-group-item-action border-0">Rezyume yaratish</a>
+                    <a href="#" class="list-group-item list-group-item-action border-0">Shablonlar</a>
+                    <a href="#" class="list-group-item list-group-item-action border-0">Statistika</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4 pt-3 border-top">
+            {% if user.is_authenticated %}
+            <div class="d-grid gap-2">
+                <a href="#" class="btn btn-outline-primary">
+                    <i class="fas fa-user me-2"></i>Mening profilim
+                </a>
+                <a href="{% url 'accounts:logout' %}" class="btn btn-outline-danger">
+                    <i class="fas fa-sign-out-alt me-2"></i>Chiqish
+                </a>
+            </div>
+            {% else %}
+            <div class="d-grid gap-2">
+                <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary">Kirish</a>
+                <a href="{% url 'accounts:signup' %}" class="btn btn-primary">Ro'yxatdan o'tish</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+/* Стили для нижнего хедера */
+.header-bottom {
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-bottom: 1px solid #e9ecef;
+}
+
+.nav-link {
+    color: #333 !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: #012152 !important;
+    background-color: rgba(1, 33, 82, 0.05);
+}
+
+/* Стили для dropdown */
+.dropdown-toggle::after {
+    border-top: 0.3em solid;
+    border-right: 0.3em solid transparent;
+    border-left: 0.3em solid transparent;
+    margin-left: 0.5em;
+    transition: transform 0.3s ease;
+}
+
+.dropdown-toggle[aria-expanded="true"]::after {
+    transform: rotate(180deg);
+}
+
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    min-width: 200px;
+}
+
+.dropdown-item {
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    margin: 0.125rem 0;
+    transition: all 0.3s ease;
+    color: #333;
+}
+
+.dropdown-item:hover {
+    background-color: #012152;
+    color: white;
+}
+
+/* Мобильное меню */
+.offcanvas-header {
+    border-bottom: 1px solid #e9ecef;
+}
+
+.list-group-item {
+    padding: 0.75rem 1rem;
+    color: #333;
+    border: none;
+}
+
+.list-group-item[data-bs-toggle="collapse"] .fa-chevron-down {
+    transition: transform 0.3s ease;
+}
+
+.list-group-item[data-bs-toggle="collapse"][aria-expanded="true"] .fa-chevron-down {
+    transform: rotate(180deg);
+}
+
+/* Адаптивность */
+@media (max-width: 991.98px) {
+    .header-bottom {
+        padding: 0.75rem 0;
+    }
+    
+    .d-lg-none .btn {
+        padding: 0.5rem 1rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .header-bottom .container {
+        padding: 0 15px;
+    }
+    
+    .d-flex.justify-content-between {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+}
+</style>

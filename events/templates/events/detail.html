@@ -1,0 +1,466 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+    <!-- Navigation -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'events:list' %}" class="text-decoration-none">Barcha Tadbirlar</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ event.title|truncatewords:3 }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Event Header -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h1 class="display-6 fw-bold text-dark mb-3">{{ event.title }}</h1>
+                            
+                            <!-- Event Status Badge -->
+                            <div class="mb-3">
+                                {% if event.is_upcoming %}
+                                <span class="badge bg-success fs-6">
+                                    <i class="fas fa-clock me-1"></i>Kutilayotgan
+                                </span>
+                                {% elif event.is_ongoing %}
+                                <span class="badge bg-primary fs-6">
+                                    <i class="fas fa-play-circle me-1"></i>Davom etmoqda
+                                </span>
+                                {% else %}
+                                <span class="badge bg-secondary fs-6">
+                                    <i class="fas fa-check-circle me-1"></i>Yakunlangan
+                                </span>
+                                {% endif %}
+                                
+                                {% if event.event_type %}
+                                <span class="badge bg-info fs-6 ms-2">{{ event.event_type }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-secondary" onclick="shareEvent()">
+                                <i class="fas fa-share-alt"></i>
+                            </button>
+                            <button class="btn btn-outline-danger" onclick="toggleBookmark()" id="bookmarkBtn">
+                                <i class="far fa-bookmark"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Event Description -->
+                    <div class="mb-4">
+                        <p class="lead">{{ event.description|linebreaks }}</p>
+                    </div>
+
+                    <!-- Event Details Grid -->
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center p-3 bg-light rounded">
+                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                    <i class="fas fa-calendar-alt text-white"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold text-dark mb-1">Sana va Vaqt</h6>
+                                    <p class="mb-0">{{ event.date|date:"d.m.Y" }}<br>
+                                    <small class="text-muted">{{ event.date|date:"H:i" }} da boshlanadi</small></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center p-3 bg-light rounded">
+                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                    <i class="fas fa-map-marker-alt text-white"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold text-dark mb-1">Manzil</h6>
+                                    <p class="mb-0">{{ event.location }}<br>
+                                    {% if event.is_online %}
+                                    <small class="text-success">Onlayn tadbir</small>
+                                    {% else %}
+                                    <small class="text-muted">Offlayn tadbir</small>
+                                    {% endif %}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% if event.duration %}
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center p-3 bg-light rounded">
+                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                    <i class="fas fa-clock text-white"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold text-dark mb-1">Davomiylik</h6>
+                                    <p class="mb-0">{{ event.duration }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if event.capacity %}
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center p-3 bg-light rounded">
+                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                    <i class="fas fa-users text-white"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold text-dark mb-1">Ishhtirokchilar</h6>
+                                    <p class="mb-0">{{ event.registered_count }}/{{ event.capacity }}<br>
+                                    <small class="text-muted">Ro'yxatdan o'tgan</small></p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Agenda -->
+            {% if event.agenda %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h4 class="fw-bold text-dark mb-0">
+                        <i class="fas fa-list-alt me-2 text-primary"></i>
+                        Tadbir Dasturi
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        {% for item in event.agenda_items %}
+                        <div class="timeline-item d-flex">
+                            <div class="timeline-time flex-shrink-0 me-4">
+                                <span class="badge bg-primary">{{ item.time }}</span>
+                            </div>
+                            <div class="timeline-content flex-grow-1">
+                                <h6 class="fw-bold text-dark mb-1">{{ item.title }}</h6>
+                                {% if item.speaker %}
+                                <p class="text-muted small mb-1">{{ item.speaker }}</p>
+                                {% endif %}
+                                <p class="text-muted small mb-0">{{ item.description }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Speakers Section -->
+            {% if event.speakers %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h4 class="fw-bold text-dark mb-0">
+                        <i class="fas fa-microphone me-2 text-primary"></i>
+                        Dokladchilar
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        {% for speaker in event.speakers %}
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0 me-3">
+                                    {% if speaker.photo %}
+                                    <img src="{{ speaker.photo.url }}" alt="{{ speaker.name }}" class="rounded-circle" width="60" height="60" style="object-fit: cover;">
+                                    {% else %}
+                                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                        <i class="fas fa-user text-white"></i>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="fw-bold text-dark mb-1">{{ speaker.name }}</h6>
+                                    <p class="text-muted small mb-1">{{ speaker.position }}</p>
+                                    <p class="text-muted small mb-0">{{ speaker.company }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- What You'll Learn -->
+            {% if event.learning_outcomes %}
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 py-3">
+                    <h4 class="fw-bold text-dark mb-0">
+                        <i class="fas fa-graduation-cap me-2 text-primary"></i>
+                        O'rganasiz
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for outcome in event.learning_outcomes %}
+                        <div class="col-md-6 mb-2">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check text-success me-2"></i>
+                                <span>{{ outcome }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Registration Card -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="fas fa-ticket-alt me-2 text-primary"></i>
+                        Ro'yxatdan o'tish
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    {% if event.is_upcoming %}
+                        {% if event.registration_link %}
+                        <div class="mb-3">
+                            <i class="fas fa-calendar-check fa-3x text-primary mb-3"></i>
+                            <h6 class="fw-bold text-dark">Tadbirda ishtirok eting</h6>
+                            <p class="text-muted small">Qo'shimcha ma'lumot olish uchun ro'yxatdan o'ting</p>
+                        </div>
+                        
+                        <a href="{{ event.registration_link }}" target="_blank" class="btn btn-primary w-100 mb-2">
+                            <i class="fas fa-user-plus me-2"></i>Ro'yxatdan o'tish
+                        </a>
+                        
+                        {% if event.capacity and event.registered_count %}
+                        <div class="progress mb-3" style="height: 8px;">
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                 style="width: {% widthratio event.registered_count event.capacity 100 %}%;">
+                            </div>
+                        </div>
+                        <small class="text-muted">
+                            {{ event.registered_count }}/{{ event.capacity }} joy band qilingan
+                        </small>
+                        {% endif %}
+                        {% else %}
+                        <div class="mb-3">
+                            <i class="fas fa-info-circle fa-3x text-warning mb-3"></i>
+                            <h6 class="fw-bold text-dark">Ro'yxatdan o'tish yopilgan</h6>
+                            <p class="text-muted small">Keyingi tadbirlarimizni kuzatib boring</p>
+                        </div>
+                        {% endif %}
+                    {% elif event.is_ongoing %}
+                    <div class="mb-3">
+                        <i class="fas fa-play-circle fa-3x text-primary mb-3"></i>
+                        <h6 class="fw-bold text-dark">Tadbir davom etmoqda</h6>
+                        <p class="text-muted small">Hozirda tadbir jarayonida</p>
+                    </div>
+                    <button class="btn btn-outline-primary w-100" disabled>
+                        <i class="fas fa-eye me-2"></i>Kuzatish
+                    </button>
+                    {% else %}
+                    <div class="mb-3">
+                        <i class="fas fa-check-circle fa-3x text-secondary mb-3"></i>
+                        <h6 class="fw-bold text-dark">Tadbir yakunlangan</h6>
+                        <p class="text-muted small">Keyingi tadbirlarimizni kuzatib boring</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Organizer Info -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="fas fa-user-friends me-2 text-primary"></i>
+                        Tashkilotchi
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        {% if event.organizer.logo %}
+                        <img src="{{ event.organizer.logo.url }}" alt="{{ event.organizer.name }}" class="rounded me-3" width="50" height="50" style="object-fit: cover;">
+                        {% else %}
+                        <div class="bg-primary rounded d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                            <i class="fas fa-building text-white"></i>
+                        </div>
+                        {% endif %}
+                        <div>
+                            <h6 class="fw-bold mb-0">{{ event.organizer.name }}</h6>
+                            <small class="text-muted">Tadbir tashkilotchisi</small>
+                        </div>
+                    </div>
+                    <a href="{% url 'employers:detail' event.organizer.id %}" class="btn btn-outline-primary btn-sm w-100">
+                        Profilni ko'rish
+                    </a>
+                </div>
+            </div>
+
+            <!-- Share Event -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="fas fa-share-alt me-2 text-primary"></i>
+                        Ulashish
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary btn-sm" onclick="copyEventLink()">
+                            <i class="fas fa-link me-2"></i>Havolani nusxalash
+                        </button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="shareEvent()">
+                            <i class="fas fa-share me-2"></i>Ijtimoiy tarmoqlarda ulashish
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+}
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.timeline-item {
+    padding: 1rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+.timeline-item:last-child {
+    border-bottom: none;
+}
+
+.badge {
+    font-size: 0.75em;
+}
+
+.btn-primary {
+    background-color: #012152;
+    border-color: #012152;
+}
+.btn-primary:hover {
+    background-color: #012d6e;
+    border-color: #012d6e;
+}
+
+.progress {
+    border-radius: 10px;
+}
+</style>
+
+<script>
+// Share event functionality
+function shareEvent() {
+    if (navigator.share) {
+        navigator.share({
+            title: '{{ event.title }} - OXU Career',
+            text: '{{ event.description|truncatewords:15 }}',
+            url: window.location.href,
+        })
+        .then(() => console.log('Tadbir muvaffaqiyatli ulashildi'))
+        .catch((error) => console.log('Ulashishda xatolik', error));
+    } else {
+        copyEventLink();
+    }
+}
+
+// Copy event link to clipboard
+function copyEventLink() {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+        // Show success message
+        const button = event.target;
+        const originalHTML = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check me-2"></i>Nusxalandi!';
+        button.classList.remove('btn-outline-primary');
+        button.classList.add('btn-success');
+        
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.classList.remove('btn-success');
+            button.classList.add('btn-outline-primary');
+        }, 2000);
+    }).catch(err => {
+        console.error('Nusxalashda xatolik: ', err);
+        alert('Havolani nusxalashda xatolik yuz berdi');
+    });
+}
+
+// Bookmark event functionality
+function toggleBookmark() {
+    const button = document.getElementById('bookmarkBtn');
+    const isBookmarked = button.classList.contains('btn-danger');
+    
+    if (isBookmarked) {
+        button.classList.remove('btn-danger');
+        button.classList.add('btn-outline-danger');
+        button.innerHTML = '<i class="far fa-bookmark"></i>';
+        // Remove from bookmarks API call
+    } else {
+        button.classList.remove('btn-outline-danger');
+        button.classList.add('btn-danger');
+        button.innerHTML = '<i class="fas fa-bookmark"></i>';
+        // Add to bookmarks API call
+    }
+}
+
+// Add to calendar functionality
+function addToCalendar() {
+    // Implement calendar integration
+    alert('Tadbir kalendaringizga qo\'shilmoqda...');
+}
+
+// Countdown timer for upcoming events
+{% if event.is_upcoming %}
+function updateCountdown() {
+    const eventDate = new Date('{{ event.date|date:"c" }}');
+    const now = new Date();
+    const diff = eventDate - now;
+    
+    if (diff > 0) {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        
+        const countdownElement = document.getElementById('countdown');
+        if (countdownElement) {
+            countdownElement.innerHTML = `${days} kun ${hours} soat ${minutes} daqiqa`;
+        }
+    }
+}
+
+// Update countdown every minute
+setInterval(updateCountdown, 60000);
+updateCountdown(); // Initial call
+{% endif %}
+
+// Smooth scrolling for better UX
+document.addEventListener('DOMContentLoaded', function() {
+    // Add loading states for buttons
+    const buttons = document.querySelectorAll('button, a.btn');
+    buttons.forEach(button => {
+        button.addEventListener('click', function() {
+            if (!this.disabled) {
+                this.style.opacity = '0.8';
+                setTimeout(() => {
+                    this.style.opacity = '1';
+                }, 300);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

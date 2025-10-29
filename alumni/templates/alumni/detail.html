@@ -1,0 +1,334 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+    <!-- Back Button -->
+    <div class="mb-4">
+        <a href="{% url 'alumni_list' %}" class="btn btn-outline-primary">
+            <i class="fas fa-arrow-left me-2"></i>Bitiruvchilar ro'yxatiga qaytish
+        </a>
+    </div>
+
+    <div class="row">
+        <!-- Main Profile Section -->
+        <div class="col-lg-8">
+            <!-- Profile Header -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-3 text-center mb-3 mb-md-0">
+                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center mx-auto" style="width: 120px; height: 120px;">
+                                {% if alum.photo %}
+                                    <img src="{{ alum.photo.url }}" alt="{{ alum.name }}" class="rounded-circle w-100 h-100 object-fit-cover">
+                                {% else %}
+                                    <i class="fas fa-user-graduate fa-3x text-white"></i>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h1 class="fw-bold text-dark mb-2">{{ alum.name }}</h1>
+                                    <h5 class="text-primary mb-3">{{ alum.profession }}</h5>
+                                    
+                                    <div class="d-flex flex-wrap gap-3 mb-3">
+                                        {% if alum.is_mentor %}
+                                        <span class="badge bg-success fs-6">
+                                            <i class="fas fa-hands-helping me-1"></i>Mentor
+                                        </span>
+                                        {% endif %}
+                                        <span class="badge bg-primary fs-6">
+                                            <i class="fas fa-building me-1"></i>{{ alum.company }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                        <i class="fas fa-share-alt"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#"><i class="fab fa-linkedin me-2"></i>LinkedIn</a></li>
+                                        <li><a class="dropdown-item" href="#"><i class="fab fa-telegram me-2"></i>Telegram</a></li>
+                                        <li><a class="dropdown-item" href="#"><i class="fas fa-envelope me-2"></i>Email</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bio Section -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="fas fa-user-circle me-2 text-primary"></i>
+                        Shaxsiy ma'lumotlar
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="lead">{{ alum.bio|linebreaks }}</p>
+                </div>
+            </div>
+
+            <!-- Career Journey -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="fas fa-briefcase me-2 text-primary"></i>
+                        Karyera yo'li
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-primary"></div>
+                            <div class="timeline-content">
+                                <h6 class="fw-bold">{{ alum.graduation_year }} - Osiyo Xalqaro Universiteti</h6>
+                                <p class="text-muted mb-0">{{ alum.faculty }} fakulteti tamomlagan</p>
+                            </div>
+                        </div>
+                        {% if alum.career_events %}
+                            {% for event in alum.career_events %}
+                            <div class="timeline-item">
+                                <div class="timeline-marker bg-success"></div>
+                                <div class="timeline-content">
+                                    <h6 class="fw-bold">{{ event.year }} - {{ event.position }}</h6>
+                                    <p class="text-muted mb-0">{{ event.company }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Quick Info -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="fas fa-info-circle me-2 text-primary"></i>
+                        Qisqa ma'lumot
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-graduation-cap text-primary me-3"></i>
+                            <div>
+                                <small class="text-muted d-block">Bitirgan yili</small>
+                                <strong>{{ alum.graduation_year }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-university text-primary me-3"></i>
+                            <div>
+                                <small class="text-muted d-block">Fakultet</small>
+                                <strong>{{ alum.faculty }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-briefcase text-primary me-3"></i>
+                            <div>
+                                <small class="text-muted d-block">Kasb</small>
+                                <strong>{{ alum.profession }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-building text-primary me-3"></i>
+                            <div>
+                                <small class="text-muted d-block">Kompaniya</small>
+                                <strong>{{ alum.company }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if alum.location %}
+                    <div class="mb-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-map-marker-alt text-primary me-3"></i>
+                            <div>
+                                <small class="text-muted d-block">Manzil</small>
+                                <strong>{{ alum.location }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if alum.email %}
+                    <div class="mb-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-envelope text-primary me-3"></i>
+                            <div>
+                                <small class="text-muted d-block">Email</small>
+                                <strong><a href="mailto:{{ alum.email }}" class="text-decoration-none">{{ alum.email }}</a></strong>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if alum.linkedin %}
+                    <div class="mb-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fab fa-linkedin text-primary me-3"></i>
+                            <div>
+                                <small class="text-muted d-block">LinkedIn</small>
+                                <strong><a href="{{ alum.linkedin }}" target="_blank" class="text-decoration-none">Profilga o'tish</a></strong>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Mentor Section -->
+            {% if alum.is_mentor %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-success text-white border-0 py-3">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-hands-helping me-2"></i>
+                        Mentor
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-3">Ushbu bitiruvchi talabalar va yosh mutaxassislarga maslahat berishga tayyor.</p>
+                    <button class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#contactModal">
+                        <i class="fas fa-envelope me-2"></i>Murojaat qilish
+                    </button>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Skills -->
+            {% if alum.skills %}
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="fas fa-star me-2 text-primary"></i>
+                        Ko'nikmalar
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for skill in alum.skills %}
+                        <span class="badge bg-light text-dark border">{{ skill }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Contact Modal -->
+<div class="modal fade" id="contactModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">{{ alum.name }} bilan bog'lanish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="contactForm">
+                    <div class="mb-3">
+                        <label class="form-label">Xabar mavzusi</label>
+                        <input type="text" class="form-control" placeholder="Murojaatingiz mavzusini yozing">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Xabar matni</label>
+                        <textarea class="form-control" rows="4" placeholder="Xabaringizni bu yerda yozing..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                <button type="button" class="btn btn-primary">Xabarni yuborish</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+.timeline-item {
+    position: relative;
+    margin-bottom: 25px;
+}
+.timeline-marker {
+    position: absolute;
+    left: -30px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 0 0 3px var(--bs-primary);
+}
+.timeline-content {
+    padding-left: 15px;
+}
+.timeline-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: -22px;
+    top: 20px;
+    bottom: -25px;
+    width: 2px;
+    background-color: #e9ecef;
+}
+
+.card {
+    transition: transform 0.3s ease;
+}
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.badge {
+    font-size: 0.8em;
+    padding: 0.5em 0.75em;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Share functionality
+    const shareButtons = document.querySelectorAll('.dropdown-item');
+    shareButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const platform = this.querySelector('i').className;
+            // Add actual share functionality here
+            alert('Ulashish funksiyasi ishga tushadi');
+        });
+    });
+
+    // Contact form handling
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Add form submission logic here
+            alert('Xabar yuborildi!');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('contactModal'));
+            modal.hide();
+        });
+    }
+});
+</script>
+{% endblock %}

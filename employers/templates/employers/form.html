@@ -1,0 +1,482 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-5 fw-bold text-primary mb-3">
+                {% if employer %}
+                    Kompaniya Ma'lumotlarini Tahrirlash
+                {% else %}
+                    Yangi Kompaniya Qo'shish
+                {% endif %}
+            </h1>
+            <p class="lead text-muted">
+                {% if employer %}
+                    Kompaniya profilingizni yangilang va yangi ma'lumotlarni kiriting
+                {% else %}
+                    Kompaniya profilingizni yarating va vakansiyalarni e'lon qilishni boshlang
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-5">
+                    <form method="post" enctype="multipart/form-data" novalidate id="employerForm">
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger d-flex align-items-center" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            {{ form.non_field_errors }}
+                        </div>
+                        {% endif %}
+
+                        <!-- Basic Information Section -->
+                        <div class="mb-5">
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                    <i class="fas fa-building text-white"></i>
+                                </div>
+                                <h4 class="fw-bold text-dark mb-0">Asosiy Ma'lumotlar</h4>
+                            </div>
+
+                            <div class="row">
+                                <!-- Company Name -->
+                                <div class="col-md-6 mb-4">
+                                    <label for="{{ form.name.id_for_label }}" class="form-label fw-semibold">
+                                        <i class="fas fa-signature me-2 text-primary"></i>Kompaniya Nomi *
+                                    </label>
+                                    <input type="text" 
+                                           name="{{ form.name.name }}" 
+                                           id="{{ form.name.id_for_label }}" 
+                                           class="form-control {% if form.name.errors %}is-invalid{% endif %}" 
+                                           placeholder="Kompaniya nomini kiriting"
+                                           value="{{ form.name.value|default:'' }}"
+                                           required>
+                                    {% if form.name.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.name.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Industry -->
+                                <div class="col-md-6 mb-4">
+                                    <label for="{{ form.industry.id_for_label }}" class="form-label fw-semibold">
+                                        <i class="fas fa-industry me-2 text-primary"></i>Soha *
+                                    </label>
+                                    <select name="{{ form.industry.name }}" 
+                                            id="{{ form.industry.id_for_label }}" 
+                                            class="form-select {% if form.industry.errors %}is-invalid{% endif %}"
+                                            required>
+                                        <option value="">Sohani tanlang</option>
+                                        <option value="technology" {% if form.industry.value == "technology" %}selected{% endif %}>Texnologiya</option>
+                                        <option value="finance" {% if form.industry.value == "finance" %}selected{% endif %}>Moliya</option>
+                                        <option value="healthcare" {% if form.industry.value == "healthcare" %}selected{% endif %}>Sog'liqni saqlash</option>
+                                        <option value="education" {% if form.industry.value == "education" %}selected{% endif %}>Ta'lim</option>
+                                        <option value="retail" {% if form.industry.value == "retail" %}selected{% endif %}>Chakana savdo</option>
+                                        <option value="manufacturing" {% if form.manufacturing.value == "manufacturing" %}selected{% endif %}>Ishlab chiqarish</option>
+                                        <option value="other" {% if form.industry.value == "other" %}selected{% endif %}>Boshqa</option>
+                                    </select>
+                                    {% if form.industry.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.industry.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Company Description -->
+                            <div class="mb-4">
+                                <label for="{{ form.description.id_for_label }}" class="form-label fw-semibold">
+                                    <i class="fas fa-file-alt me-2 text-primary"></i>Kompaniya Tavsifi *
+                                </label>
+                                <textarea name="{{ form.description.name }}" 
+                                          id="{{ form.description.id_for_label }}" 
+                                          class="form-control {% if form.description.errors %}is-invalid{% endif %}" 
+                                          rows="5" 
+                                          placeholder="Kompaniya faoliyati, maqsadlari va qadriyatlarini tavsiflang..."
+                                          required>{{ form.description.value|default:'' }}</textarea>
+                                {% if form.description.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.description.errors }}
+                                </div>
+                                {% endif %}
+                                <div class="form-text">Kompaniyangizni jozibador va aniq tavsiflang (minimum 100 belgi)</div>
+                            </div>
+                        </div>
+
+                        <!-- Contact Information Section -->
+                        <div class="mb-5">
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                    <i class="fas fa-address-card text-white"></i>
+                                </div>
+                                <h4 class="fw-bold text-dark mb-0">Kontakt Ma'lumotlari</h4>
+                            </div>
+
+                            <div class="row">
+                                <!-- Contact Email -->
+                                <div class="col-md-6 mb-4">
+                                    <label for="{{ form.contact_email.id_for_label }}" class="form-label fw-semibold">
+                                        <i class="fas fa-envelope me-2 text-primary"></i>Elektron Pochta *
+                                    </label>
+                                    <input type="email" 
+                                           name="{{ form.contact_email.name }}" 
+                                           id="{{ form.contact_email.id_for_label }}" 
+                                           class="form-control {% if form.contact_email.errors %}is-invalid{% endif %}" 
+                                           placeholder="contact@kompaniya.uz"
+                                           value="{{ form.contact_email.value|default:'' }}"
+                                           required>
+                                    {% if form.contact_email.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.contact_email.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Phone -->
+                                <div class="col-md-6 mb-4">
+                                    <label for="{{ form.phone.id_for_label }}" class="form-label fw-semibold">
+                                        <i class="fas fa-phone me-2 text-primary"></i>Telefon
+                                    </label>
+                                    <input type="tel" 
+                                           name="{{ form.phone.name }}" 
+                                           id="{{ form.phone.id_for_label }}" 
+                                           class="form-control {% if form.phone.errors %}is-invalid{% endif %}" 
+                                           placeholder="+998 XX XXX XX XX"
+                                           value="{{ form.phone.value|default:'' }}">
+                                    {% if form.phone.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.phone.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Website -->
+                                <div class="col-md-6 mb-4">
+                                    <label for="{{ form.website.id_for_label }}" class="form-label fw-semibold">
+                                        <i class="fas fa-globe me-2 text-primary"></i>Veb Sayt
+                                    </label>
+                                    <input type="url" 
+                                           name="{{ form.website.name }}" 
+                                           id="{{ form.website.id_for_label }}" 
+                                           class="form-control {% if form.website.errors %}is-invalid{% endif %}" 
+                                           placeholder="https://kompaniya.uz"
+                                           value="{{ form.website.value|default:'' }}">
+                                    {% if form.website.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.website.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Location -->
+                                <div class="col-md-6 mb-4">
+                                    <label for="{{ form.location.id_for_label }}" class="form-label fw-semibold">
+                                        <i class="fas fa-map-marker-alt me-2 text-primary"></i>Manzil
+                                    </label>
+                                    <input type="text" 
+                                           name="{{ form.location.name }}" 
+                                           id="{{ form.location.id_for_label }}" 
+                                           class="form-control {% if form.location.errors %}is-invalid{% endif %}" 
+                                           placeholder="Shahar, tuman"
+                                           value="{{ form.location.value|default:'' }}">
+                                    {% if form.location.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.location.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Information Section -->
+                        <div class="mb-5">
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                    <i class="fas fa-chart-line text-white"></i>
+                                </div>
+                                <h4 class="fw-bold text-dark mb-0">Qo'shimcha Ma'lumotlar</h4>
+                            </div>
+
+                            <div class="row">
+                                <!-- Employees Count -->
+                                <div class="col-md-6 mb-4">
+                                    <label for="{{ form.employees_count.id_for_label }}" class="form-label fw-semibold">
+                                        <i class="fas fa-users me-2 text-primary"></i>Xodimlar Soni
+                                    </label>
+                                    <select name="{{ form.employees_count.name }}" 
+                                            id="{{ form.employees_count.id_for_label }}" 
+                                            class="form-select {% if form.employees_count.errors %}is-invalid{% endif %}">
+                                        <option value="">Tanlang</option>
+                                        <option value="1-10" {% if form.employees_count.value == "1-10" %}selected{% endif %}>1-10</option>
+                                        <option value="11-50" {% if form.employees_count.value == "11-50" %}selected{% endif %}>11-50</option>
+                                        <option value="51-200" {% if form.employees_count.value == "51-200" %}selected{% endif %}>51-200</option>
+                                        <option value="201-500" {% if form.employees_count.value == "201-500" %}selected{% endif %}>201-500</option>
+                                        <option value="501-1000" {% if form.employees_count.value == "501-1000" %}selected{% endif %}>501-1000</option>
+                                        <option value="1000+" {% if form.employees_count.value == "1000+" %}selected{% endif %}>1000+</option>
+                                    </select>
+                                    {% if form.employees_count.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.employees_count.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Founded Year -->
+                                <div class="col-md-6 mb-4">
+                                    <label for="{{ form.founded_year.id_for_label }}" class="form-label fw-semibold">
+                                        <i class="fas fa-calendar me-2 text-primary"></i>Tashkil Topgan Yili
+                                    </label>
+                                    <input type="number" 
+                                           name="{{ form.founded_year.name }}" 
+                                           id="{{ form.founded_year.id_for_label }}" 
+                                           class="form-control {% if form.founded_year.errors %}is-invalid{% endif %}" 
+                                           placeholder="YYYY"
+                                           min="1900"
+                                           max="{% now 'Y' %}"
+                                           value="{{ form.founded_year.value|default:'' }}">
+                                    {% if form.founded_year.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.founded_year.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Company Culture -->
+                            <div class="mb-4">
+                                <label for="{{ form.culture.id_for_label }}" class="form-label fw-semibold">
+                                    <i class="fas fa-users me-2 text-primary"></i>Kompaniya Madaniyati
+                                </label>
+                                <textarea name="{{ form.culture.name }}" 
+                                          id="{{ form.culture.id_for_label }}" 
+                                          class="form-control {% if form.culture.errors %}is-invalid{% endif %}" 
+                                          rows="3" 
+                                          placeholder="Kompaniya madaniyati, qadriyatlari va ish muhitini tavsiflang...">{{ form.culture.value|default:'' }}</textarea>
+                                {% if form.culture.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.culture.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Logo Upload Section -->
+                        <div class="mb-5">
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                    <i class="fas fa-camera text-white"></i>
+                                </div>
+                                <h4 class="fw-bold text-dark mb-0">Kompaniya Logosi</h4>
+                            </div>
+
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <label for="{{ form.logo.id_for_label }}" class="form-label fw-semibold">
+                                        <i class="fas fa-upload me-2 text-primary"></i>Logo Yuklash
+                                    </label>
+                                    <input type="file" 
+                                           name="{{ form.logo.name }}" 
+                                           id="{{ form.logo.id_for_label }}" 
+                                           class="form-control {% if form.logo.errors %}is-invalid{% endif %}" 
+                                           accept="image/*">
+                                    {% if form.logo.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.logo.errors }}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text">Ruxsat etilgan formatlar: JPG, PNG, SVG. Maksimal hajm: 5MB</div>
+                                </div>
+                                
+                                <div class="col-md-6 text-center">
+                                    {% if employer and employer.logo %}
+                                    <div class="current-logo">
+                                        <p class="fw-semibold mb-2">Joriy logo:</p>
+                                        <img src="{{ employer.logo.url }}" alt="Current logo" class="rounded shadow" style="max-width: 150px; max-height: 100px;">
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="d-flex justify-content-between align-items-center pt-4 border-top">
+                            <a href="{% if employer %}{% url 'employers:detail' employer.id %}{% else %}{% url 'employers:list' %}{% endif %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Bekor qilish
+                            </a>
+                            <div class="d-flex gap-3">
+                                <button type="button" class="btn btn-outline-primary" id="previewBtn">
+                                    <i class="fas fa-eye me-2"></i>Oldindan ko'rish
+                                </button>
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="fas fa-save me-2"></i>
+                                    {% if employer %}Saqlash{% else %}Yaratish{% endif %}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+}
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    padding: 0.75rem 1rem;
+}
+.form-control:focus, .form-select:focus {
+    border-color: #012152;
+    box-shadow: 0 0 0 0.2rem rgba(1, 33, 82, 0.25);
+}
+
+.btn-primary {
+    background-color: #012152;
+    border-color: #012152;
+    border-radius: 8px;
+}
+.btn-primary:hover {
+    background-color: #012d6e;
+    border-color: #012d6e;
+}
+
+.current-logo img {
+    object-fit: contain;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Form validation and character counters
+    const descriptionTextarea = document.getElementById('{{ form.description.id_for_label }}');
+    if (descriptionTextarea) {
+        const counter = document.createElement('div');
+        counter.className = 'form-text text-end mt-1';
+        counter.textContent = `Belgilar: ${descriptionTextarea.value.length}`;
+        descriptionTextarea.parentNode.appendChild(counter);
+        
+        descriptionTextarea.addEventListener('input', function() {
+            counter.textContent = `Belgilar: ${this.value.length}`;
+            
+            // Show warning if too short
+            if (this.value.length < 100 && this.value.length > 0) {
+                counter.classList.add('text-warning');
+                counter.innerHTML += ' - <i class="fas fa-exclamation-triangle"></i> Minimal 100 belgi';
+            } else {
+                counter.classList.remove('text-warning');
+            }
+        });
+    }
+
+    // Logo preview
+    const logoInput = document.getElementById('{{ form.logo.id_for_label }}');
+    if (logoInput) {
+        logoInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Check file size (5MB limit)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Fayl hajmi 5MB dan oshmasligi kerak');
+                    this.value = '';
+                    return;
+                }
+                
+                // Check file type
+                const validTypes = ['image/jpeg', 'image/png', 'image/svg+xml'];
+                if (!validTypes.includes(file.type)) {
+                    alert('Faqat JPG, PNG yoki SVG formatidagi fayllar ruxsat etilgan');
+                    this.value = '';
+                    return;
+                }
+                
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.createElement('div');
+                    preview.className = 'logo-preview mt-3 text-center';
+                    preview.innerHTML = `
+                        <p class="fw-semibold mb-2">Yangi logo:</p>
+                        <img src="${e.target.result}" alt="Logo preview" class="rounded shadow" style="max-width: 150px; max-height: 100px;">
+                    `;
+                    
+                    const existingPreview = document.querySelector('.logo-preview');
+                    if (existingPreview) {
+                        existingPreview.remove();
+                    }
+                    
+                    logoInput.parentNode.appendChild(preview);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // Form submission loading state
+    const form = document.getElementById('employerForm');
+    if (form) {
+        form.addEventListener('submit', function() {
+            const submitButton = this.querySelector('button[type="submit"]');
+            if (submitButton) {
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saqlanmoqda...';
+                submitButton.disabled = true;
+            }
+        });
+    }
+
+    // Preview button functionality
+    const previewBtn = document.getElementById('previewBtn');
+    if (previewBtn) {
+        previewBtn.addEventListener('click', function() {
+            // Simple validation before preview
+            const requiredFields = form.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.classList.add('is-invalid');
+                }
+            });
+            
+            if (isValid) {
+                // Create preview in new tab or modal
+                alert('Kompaniya profilining oldindan ko\'rinishi tayyorlanmoqda...');
+                // Here you would typically open a modal or new tab with the preview
+            } else {
+                alert('Iltimos, barcha majburiy maydonlarni to\'ldiring');
+            }
+        });
+    }
+
+    // Auto-save draft functionality
+    let autoSaveTimer;
+    const formInputs = form.querySelectorAll('input, textarea, select');
+    formInputs.forEach(input => {
+        input.addEventListener('input', function() {
+            clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(() => {
+                // Add auto-save functionality here
+                console.log('Avtosaqlash...');
+            }, 3000);
+        });
+    });
+});
+</script>
+{% endblock %}
