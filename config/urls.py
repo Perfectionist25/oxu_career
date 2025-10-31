@@ -6,6 +6,8 @@ from django.views.generic import RedirectView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # Django i18n endpoints (set language)
+    path('i18n/', include('django.conf.urls.i18n')),
 
     path('', include(('core.urls', 'core'), namespace='core')),
     path('jobs/', include(('jobs.urls', 'jobs'), namespace='jobs')),

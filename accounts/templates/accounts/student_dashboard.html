@@ -1,0 +1,208 @@
+<!-- templates/accounts/student_dashboard.html -->
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Talaba kabineti" %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Заголовок и приветствие -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 fw-bold text-primary mb-1">{% trans "Shaxsiy kabinet" %}</h1>
+                    <p class="text-muted mb-0">
+                        {% trans "Xush kelibsiz" %}, <strong>{{ user.get_full_name|default:user.username }}</strong>!
+                    </p>
+                </div>
+                <div class="text-end">
+                    <small class="text-muted d-block">{% trans "Oxirgi faollik" %}:</small>
+                    <small class="text-muted">{{ user.last_activity|default:user.date_joined|timesince }} {% trans "oldin" %}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Статистика -->
+    <div class="row mb-5">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 bg-primary text-white shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h4 class="fw-bold mb-0">{{ stats.resumes_created|default:0 }}</h4>
+                            <small>{% trans "Yaratilgan rezyumelar" %}</small>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-file-alt fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 bg-success text-white shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h4 class="fw-bold mb-0">{{ stats.jobs_applied|default:0 }}</h4>
+                            <small>{% trans "Ariza berilgan ishlar" %}</small>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-briefcase fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 bg-info text-white shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h4 class="fw-bold mb-0">{{ stats.profile_views|default:0 }}</h4>
+                            <small>{% trans "Profil ko'rishlar" %}</small>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-eye fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 bg-warning text-dark shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h4 class="fw-bold mb-0">{{ student_profile.gpa|default:"-" }}</h4>
+                            <small>{% trans "O'rtacha baho" %}</small>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-chart-line fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Быстрые действия -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h4 class="fw-bold text-dark mb-4">{% trans "Tezkor amallar" %}</h4>
+            <div class="row g-3">
+                <div class="col-xl-2 col-md-4 col-6">
+                    <a href="{% url 'cvbuilder:cv_create' %}" class="btn btn-primary w-100 h-100 py-3">
+                        <i class="fas fa-plus fa-2x mb-2"></i>
+                        <div>{% trans "Yangi rezyume" %}</div>
+                    </a>
+                </div>
+                <div class="col-xl-2 col-md-4 col-6">
+                    <a href="{% url 'jobs:list' %}" class="btn btn-success w-100 h-100 py-3">
+                        <i class="fas fa-search fa-2x mb-2"></i>
+                        <div>{% trans "Ish qidirish" %}</div>
+                    </a>
+                </div>
+                <div class="col-xl-2 col-md-4 col-6">
+                    <a href="{% url 'accounts:student_profile_update' %}" class="btn btn-info w-100 h-100 py-3">
+                        <i class="fas fa-user-edit fa-2x mb-2"></i>
+                        <div>{% trans "Profilni yangilash" %}</div>
+                    </a>
+                </div>
+                <div class="col-xl-2 col-md-4 col-6">
+                    <a href="{% url 'resources:list' %}" class="btn btn-warning w-100 h-100 py-3">
+                        <i class="fas fa-book-open fa-2x mb-2"></i>
+                        <div>{% trans "Resurslar" %}</div>
+                    </a>
+                </div>
+                <div class="col-xl-2 col-md-4 col-6">
+                    <a href="{% url 'events:list' %}" class="btn btn-secondary w-100 h-100 py-3">
+                        <i class="fas fa-calendar-alt fa-2x mb-2"></i>
+                        <div>{% trans "Tadbirlar" %}</div>
+                    </a>
+                </div>
+                <div class="col-xl-2 col-md-4 col-6">
+                    <a href="{% url 'accounts:notifications' %}" class="btn btn-dark w-100 h-100 py-3">
+                        <i class="fas fa-bell fa-2x mb-2"></i>
+                        <div>{% trans "Xabarlar" %}</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Информация о профиле -->
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="fw-bold mb-0">{% trans "Profil ma'lumotlari" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>{% trans "Fakultet" %}:</strong> {{ student_profile.faculty|default:"-" }}</p>
+                            <p><strong>{% trans "Mutaxassislik" %}:</strong> {{ student_profile.specialty|default:"-" }}</p>
+                            <p><strong>{% trans "Ta'lim darajasi" %}:</strong> {{ student_profile.get_education_level_display|default:"-" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>{% trans "Istagan lavozim" %}:</strong> {{ student_profile.desired_position|default:"-" }}</p>
+                            <p><strong>{% trans "Ish turi" %}:</strong> {{ student_profile.get_work_type_display|default:"-" }}</p>
+                            <p><strong>{% trans "Bitirish yili" %}:</strong> {{ student_profile.graduation_year|default:"-" }}</p>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <a href="{% url 'accounts:student_profile_update' %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-edit me-1"></i>{% trans "Profilni tahrirlash" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="fw-bold mb-0">{% trans "So'nggi faollik" %}</h5>
+                </div>
+                <div class="card-body">
+                    {% for activity in recent_activities|slice:":5" %}
+                    <div class="d-flex align-items-start mb-3">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-{{ activity.activity_type|default:'circle' }} text-primary"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <small class="d-block text-muted">{{ activity.created_at|timesince }} {% trans "oldin" %}</small>
+                            <small class="text-dark">{{ activity.description }}</small>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted mb-0">{% trans "Hozircha faollik mavjud emas" %}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.btn {
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.card {
+    border-radius: 12px;
+}
+</style>
+{% endblock %}

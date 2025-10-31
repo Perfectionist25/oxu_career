@@ -1,4 +1,6 @@
+<!-- templates/_inc/nav.html -->
 {% load static %}
+{% load i18n %}
 
 <!-- Верхняя часть хэдэра -->
 <div class="header-top">
@@ -62,211 +64,210 @@
     </div>
 </div>
 
-<!-- Нижняя часть хэдэра -->
+<!-- Нижняя часть хэдэра с навигацией -->
 <div style="position: sticky; top: 0; z-index: 1;" class="header-bottom mb-3 p-3">
     <div class="container">
         <div class="d-flex justify-content-between align-items-center">
-            <!-- Кнопка меню для мобильных -->
-            <button class="btn btn-primary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
-                <i class="fas fa-bars me-2"></i>Menu
-            </button>
-
-            <!-- Основное меню для десктопов -->
-            <ul class="nav justify-content-center d-none d-lg-flex">
+            <!-- Основное меню -->
+            <ul class="nav">
                 <li class="nav-item">
                     <a class="nav-link" href="/">Bosh sahifa</a>
                 </li>
-                
-                <!-- Dropdown для Университета -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Universitet
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="https://oxu.uz/university">Universitet haqida</a></li>
-                        <li><a class="dropdown-item" href="#">Fakultetlar</a></li>
-                        <li><a class="dropdown-item" href="#">Ta'lim yo'nalishlari</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#">Qabul</a></li>
-                        <li><a class="dropdown-item" href="#">Stipendiyalar</a></li>
-                    </ul>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://oxu.uz/university">Universitet</a>
                 </li>
-                
-                <!-- Dropdown для Ресурсов -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Resurslar
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="{% url 'resources:list' %}">Barcha resurslar</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#">Darsliklar</a></li>
-                        <li><a class="dropdown-item" href="#">Video darslar</a></li>
-                        <li><a class="dropdown-item" href="#">Onlayn kurslar</a></li>
-                        <li><a class="dropdown-item" href="#">Masalalar to'plami</a></li>
-                    </ul>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'resources:list' %}">Resurslar</a>
                 </li>
-                
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'events:list' %}">Tadbirlar</a>
                 </li>
-                
-                <!-- Dropdown для Вакансий -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Vakansiyalar
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="{% url 'jobs:list' %}">Barcha vakansiyalar</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#">Stajirovkalar</a></li>
-                        <li><a class="dropdown-item" href="#">To'liq kunlik ish</a></li>
-                        <li><a class="dropdown-item" href="#">Yarim kunlik ish</a></li>
-                        <li><a class="dropdown-item" href="#">Uzoq ish</a></li>
-                    </ul>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'jobs:list' %}">Vakansiyalar</a>
                 </li>
                 
-                <!-- Dropdown для Резюме -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Rezyume
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="{% url 'cvbuilder:cv_list' %}">Mening rezyumelarim</a></li>
-                        <li><a class="dropdown-item" href="{% url 'cvbuilder:cv_create' %}">Rezyume yaratish</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#">Shablonlar</a></li>
-                        <li><a class="dropdown-item" href="#">Statistika</a></li>
-                    </ul>
-                </li>
+                {% if user.is_authenticated %}
+                    {% if user.is_student %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'cvbuilder:cv_list' %}">Mening rezyumelarim</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'cvbuilder:cv_create' %}">Rezyume yaratish</a>
+                    </li>
+                    {% elif user.is_employer %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'jobs:my_jobs' %}">Mening vakansiyalarim</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'jobs:job_create' %}">Vakansiya qo'shish</a>
+                    </li>
+                    {% elif user.is_admin or user.is_main_admin %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:admin_dashboard' %}">Admin panel</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:user_management' %}">Foydalanuvchilar</a>
+                    </li>
+                    {% endif %}
+                {% endif %}
             </ul>
 
-            <!-- Правая часть с пользовательскими кнопками -->
-            <div class="d-flex align-items-center">
+            <!-- Кнопки входа/профиля -->
+            <div class="d-flex align-items-center gap-2">
                 {% if user.is_authenticated %}
-                <div class="dropdown">
-                    <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-user me-1"></i>Mening profilim
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profil</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Sozlamalar</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="{% url 'accounts:logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Chiqish</a></li>
-                    </ul>
-                </div>
+                    <!-- Авторизованный пользователь -->
+                    <div class="dropdown">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button" 
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user me-1"></i>
+                            {{ user.get_full_name|default:user.username }}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <!-- Дашборд в зависимости от типа пользователя -->
+                            {% if user.is_student %}
+                            <li>
+                                <a class="dropdown-item" href="{% url 'accounts:student_dashboard' %}">
+                                    <i class="fas fa-tachometer-alt me-2"></i>Shaxsiy kabinet
+                                </a>
+                            </li>
+                            {% elif user.is_employer %}
+                            <li>
+                                <a class="dropdown-item" href="{% url 'accounts:employer_dashboard' %}">
+                                    <i class="fas fa-building me-2"></i>Kompaniya kabineti
+                                </a>
+                            </li>
+                            {% elif user.is_admin or user.is_main_admin %}
+                            <li>
+                                <a class="dropdown-item" href="{% url 'accounts:admin_dashboard' %}">
+                                    <i class="fas fa-cogs me-2"></i>Admin panel
+                                </a>
+                            </li>
+                            {% endif %}
+                            
+                            <!-- Общие ссылки -->
+                            <li>
+                                <a class="dropdown-item" href="{% url 'accounts:profile_view' %}">
+                                    <i class="fas fa-user-edit me-2"></i>Profil
+                                </a>
+                            </li>
+                            <li>
+    <a class="dropdown-item" href="{% url 'accounts:notifications' %}">
+        <i class="fas fa-bell me-2"></i>Xabarlar
+        {% if user.unread_notifications_count > 0 %}
+        <span class="badge bg-danger float-end">{{ user.unread_notifications_count }}</span>
+        {% endif %}
+    </a>
+</li>
+                            <li><hr class="dropdown-divider"></li>
+                            
+                            <!-- Дополнительные действия для админов -->
+                            {% if user.is_main_admin %}
+                            <li>
+                                <a class="dropdown-item" href="{% url 'accounts:create_admin_account' %}">
+                                    <i class="fas fa-user-plus me-2"></i>Yangi admin
+                                </a>
+                            </li>
+                            {% endif %}
+                            
+                            {% if user.is_admin or user.is_main_admin %}
+                            <li>
+                                <a class="dropdown-item" href="{% url 'accounts:create_employer_account' %}">
+                                    <i class="fas fa-building me-2"></i>Yangi ish beruvchi
+                                </a>
+                            </li>
+                            {% endif %}
+                            
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Chiqish
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 {% else %}
-                <div class="d-flex gap-2">
-                    <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary btn-sm">Kirish</a>
-                    <a href="{% url 'accounts:signup' %}" class="btn btn-primary btn-sm">Ro'yxatdan o'tish</a>
-                </div>
+                    <!-- Неавторизованный пользователь - кнопки входа -->
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" 
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-sign-in-alt me-1"></i>Kirish
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="{% url 'accounts:hemis_login' %}">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-graduation-cap text-success me-2"></i>
+                                        <div>
+                                            <div class="fw-bold">Talaba sifatida</div>
+                                            <small class="text-muted">Hemis orqali kirish</small>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'accounts:employer_login' %}">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-building text-primary me-2"></i>
+                                        <div>
+                                            <div class="fw-bold">Ish beruvchi sifatida</div>
+                                            <small class="text-muted">Kompaniya akkaunti</small>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'accounts:admin_login' %}">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-user-shield text-warning me-2"></i>
+                                        <div>
+                                            <div class="fw-bold">Admin sifatida</div>
+                                            <small class="text-muted">Tizim ma'muriyati</small>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 {% endif %}
             </div>
         </div>
     </div>
 </div>
 
-<!-- Мобильное меню (Offcanvas) -->
-<div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="mobileMenuLabel">
-            <img width="40" src="{% static 'img/logo1.png' %}" alt="Logo" class="me-2">
-            OXU Career
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body">
-        <div class="list-group list-group-flush">
-            <a href="/" class="list-group-item list-group-item-action border-0">
-                <i class="fas fa-home me-2"></i>Bosh sahifa
-            </a>
-            
-            <a class="list-group-item list-group-item-action border-0" data-bs-toggle="collapse" href="#universityMobile">
-                <i class="fas fa-university me-2"></i>Universitet
-                <i class="fas fa-chevron-down float-end mt-1"></i>
-            </a>
-            <div class="collapse" id="universityMobile">
-                <div class="list-group list-group-flush ms-3">
-                    <a href="https://oxu.uz/university" class="list-group-item list-group-item-action border-0">Universitet haqida</a>
-                    <a href="#" class="list-group-item list-group-item-action border-0">Fakultetlar</a>
-                    <a href="#" class="list-group-item list-group-item-action border-0">Ta'lim yo'nalishlari</a>
-                    <a href="#" class="list-group-item list-group-item-action border-0">Qabul</a>
-                    <a href="#" class="list-group-item list-group-item-action border-0">Stipendiyalar</a>
-                </div>
-            </div>
-            
-            <a class="list-group-item list-group-item-action border-0" data-bs-toggle="collapse" href="#resourcesMobile">
-                <i class="fas fa-book me-2"></i>Resurslar
-                <i class="fas fa-chevron-down float-end mt-1"></i>
-            </a>
-            <div class="collapse" id="resourcesMobile">
-                <div class="list-group list-group-flush ms-3">
-                    <a href="{% url 'resources:list' %}" class="list-group-item list-group-item-action border-0">Barcha resurslar</a>
-                    <a href="#" class="list-group-item list-group-item-action border-0">Darsliklar</a>
-                    <a href="#" class="list-group-item list-group-item-action border-0">Video darslar</a>
-                    <a href="#" class="list-group-item list-group-item-action border-0">Onlayn kurslar</a>
-                    <a href="#" class="list-group-item list-group-item-action border-0">Masalalar to'plami</a>
-                </div>
-            </div>
-            
-            <a href="{% url 'events:list' %}" class="list-group-item list-group-item-action border-0">
-                <i class="fas fa-calendar-alt me-2"></i>Tadbirlar
-            </a>
-            
-            <a class="list-group-item list-group-item-action border-0" data-bs-toggle="collapse" href="#jobsMobile">
-                <i class="fas fa-briefcase me-2"></i>Vakansiyalar
-                <i class="fas fa-chevron-down float-end mt-1"></i>
-            </a>
-            <div class="collapse" id="jobsMobile">
-                <div class="list-group list-group-flush ms-3">
-                    <a href="{% url 'jobs:list' %}" class="list-group-item list-group-item-action border-0">Barcha vakansiyalar</a>
-                    <a href="#" class="list-group-item list-group-item-action border-0">Stajirovkalar</a>
-                    <a href="#" class="list-group-item list-group-item-action border-0">To'liq kunlik ish</a>
-                    <a href="#" class="list-group-item list-group-item-action border-0">Yarim kunlik ish</a>
-                    <a href="#" class="list-group-item list-group-item-action border-0">Uzoq ish</a>
-                </div>
-            </div>
-            
-            <a class="list-group-item list-group-item-action border-0" data-bs-toggle="collapse" href="#cvMobile">
-                <i class="fas fa-file-alt me-2"></i>Rezyume
-                <i class="fas fa-chevron-down float-end mt-1"></i>
-            </a>
-            <div class="collapse" id="cvMobile">
-                <div class="list-group list-group-flush ms-3">
-                    <a href="{% url 'cvbuilder:cv_list' %}" class="list-group-item list-group-item-action border-0">Mening rezyumelarim</a>
-                    <a href="{% url 'cvbuilder:cv_create' %}" class="list-group-item list-group-item-action border-0">Rezyume yaratish</a>
-                    <a href="#" class="list-group-item list-group-item-action border-0">Shablonlar</a>
-                    <a href="#" class="list-group-item list-group-item-action border-0">Statistika</a>
-                </div>
-            </div>
-        </div>
-        
-        <div class="mt-4 pt-3 border-top">
-            {% if user.is_authenticated %}
-            <div class="d-grid gap-2">
-                <a href="#" class="btn btn-outline-primary">
-                    <i class="fas fa-user me-2"></i>Mening profilim
-                </a>
-                <a href="{% url 'accounts:logout' %}" class="btn btn-outline-danger">
-                    <i class="fas fa-sign-out-alt me-2"></i>Chiqish
-                </a>
-            </div>
-            {% else %}
-            <div class="d-grid gap-2">
-                <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary">Kirish</a>
-                <a href="{% url 'accounts:signup' %}" class="btn btn-primary">Ro'yxatdan o'tish</a>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-</div>
-
 <style>
-/* Стили для нижнего хедера */
-.header-bottom {
+.header-top {
+    background-color: #012152 !important;
+    padding: 8px 0;
+    color: white;
+}
+
+.header-top a {
+    color: white;
+    text-decoration: none;
+    margin-right: 20px;
+    font-size: 14px;
+}
+
+.header-top a:hover {
+    color: #f8f9fa;
+}
+
+.header-middle {
+    background-color: #012d6e !important;
+    padding: 15px 0;
     background: white;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.header-bottom {
+    background-color: #012152 !important;
     border-bottom: 1px solid #e9ecef;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    line-height: 1.2;
 }
 
 .nav-link {
@@ -275,87 +276,107 @@
     padding: 0.5rem 1rem;
     border-radius: 0.375rem;
     transition: all 0.3s ease;
-    position: relative;
 }
 
-.nav-link:hover,
-.nav-link.active {
-    color: #012152 !important;
+.nav-link:hover {
     background-color: rgba(1, 33, 82, 0.05);
 }
 
-/* Стили для dropdown */
-.dropdown-toggle::after {
-    border-top: 0.3em solid;
-    border-right: 0.3em solid transparent;
-    border-left: 0.3em solid transparent;
-    margin-left: 0.5em;
-    transition: transform 0.3s ease;
-}
-
-.dropdown-toggle[aria-expanded="true"]::after {
-    transform: rotate(180deg);
+.btn {
+    border-radius: 8px;
+    padding: 8px 16px;
 }
 
 .dropdown-menu {
+    border-radius: 10px;
     border: none;
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    border-radius: 0.5rem;
-    padding: 0.5rem;
-    min-width: 200px;
+    min-width: 250px;
 }
 
 .dropdown-item {
-    padding: 0.5rem 1rem;
-    border-radius: 0.25rem;
-    margin: 0.125rem 0;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin: 2px 8px;
     transition: all 0.3s ease;
-    color: #333;
+    background-color: white !important;
 }
 
 .dropdown-item:hover {
-    background-color: #012152;
+    background-color: #012152 !important;
     color: white;
 }
 
-/* Мобильное меню */
-.offcanvas-header {
-    border-bottom: 1px solid #e9ecef;
+.contact-info a {
+    display: inline-flex;
+    align-items: center;
 }
 
-.list-group-item {
-    padding: 0.75rem 1rem;
-    color: #333;
-    border: none;
+.contact-info i {
+    margin-right: 5px;
 }
 
-.list-group-item[data-bs-toggle="collapse"] .fa-chevron-down {
+.government-links {
+    text-align: center;
+}
+
+.government-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 13px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.government-links a:hover {
+    text-decoration: underline;
+}
+
+.social-icons a {
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.social-icons a:hover {
+    opacity: 1;
+}
+
+.language-selector img {
+    border-radius: 0.25rem;
     transition: transform 0.3s ease;
+    border: 2px solid transparent;
 }
 
-.list-group-item[data-bs-toggle="collapse"][aria-expanded="true"] .fa-chevron-down {
-    transform: rotate(180deg);
+.language-selector img:hover {
+    transform: scale(1.05);
+    border-color: rgba(255,255,255,0.3);
 }
 
 /* Адаптивность */
-@media (max-width: 991.98px) {
-    .header-bottom {
-        padding: 0.75rem 0;
+@media (max-width: 768px) {
+    .nav-link {
+        margin: 5px;
+        text-align: center;
     }
     
-    .d-lg-none .btn {
-        padding: 0.5rem 1rem;
-    }
-}
-
-@media (max-width: 575.98px) {
-    .header-bottom .container {
-        padding: 0 15px;
+    .contact-info a {
+        display: block;
+        margin-bottom: 5px;
     }
     
-    .d-flex.justify-content-between {
+    .government-links a {
+        display: block;
+        margin: 5px 0;
+    }
+    
+    .header-bottom .container > .d-flex {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .nav {
         flex-wrap: wrap;
-        gap: 10px;
+        justify-content: center;
     }
 }
 </style>

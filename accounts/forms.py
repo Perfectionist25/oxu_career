@@ -1,206 +1,58 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth import get_user_model
+from .models import CustomUser, EmployerProfile, StudentProfile, AdminProfile
 
-User = get_user_model()
-
-from .models import UserSkill
-
-
-class UserRegistrationForm(UserCreationForm):
-    """Form for user registration"""
-    
-    email = forms.EmailField(
-        required=True,
-        widget=forms.EmailInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'elektron@pochta.uz'
-        })
-    )
-    first_name = forms.CharField(
-        max_length=30,
-        required=True,
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': _('Ismingiz')
-        })
-    )
-    last_name = forms.CharField(
-        max_length=30,
-        required=True,
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': _('Familyangiz')
-        })
-    )
-    user_type = forms.ChoiceField(
-        choices=User.USER_TYPE_CHOICES if hasattr(User, 'USER_TYPE_CHOICES') else [],
-        widget=forms.Select(attrs={'class': 'form-select'}),
-        label=_('Hisob turi'),
-        initial='student'
-    )
+class EmployerRegistrationForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+    first_name = forms.CharField(max_length=30, required=True)
+    last_name = forms.CharField(max_length=30, required=True)
 
     class Meta:
-        model = User
+        model = CustomUser
         fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2']
-        widgets = {
-            'username': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': _('Foydalanuvchi nomi')
-            }),
-        }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in self.fields:
-            if field not in ['user_type']:
-                self.fields[field].widget.attrs.update({'class': 'form-control'})
+class EmployerProfileForm(forms.ModelForm):
+    class Meta:
+        model = EmployerProfile
+        fields = [
+            'company_name', 'company_logo', 'company_description',
+            'company_email', 'company_phone', 'company_website',
+            'company_linkedin', 'company_telegram', 'company_size',
+            'industry', 'founded_year', 'headquarters'
+        ]
 
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if User.objects.filter(email=email).exists():
-            raise forms.ValidationError(_('Ushbu email allaqachon ro\'yxatdan o\'tgan.'))
-        return email
+class StudentProfileForm(forms.ModelForm):
+    class Meta:
+        model = StudentProfile
+        fields = [
+            'desired_position', 'desired_salary', 'work_type'
+        ]
 
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.email = self.cleaned_data['email']
-        user.first_name = self.cleaned_data['first_name']
-        user.last_name = self.cleaned_data['last_name']
-        
-        if hasattr(user, 'user_type'):
-            user.user_type = self.cleaned_data.get('user_type', 'student')
-        
-        if commit:
-            user.save()
-        return user
+class AdminProfileForm(forms.ModelForm):
+    username = forms.CharField(max_length=150)
+    email = forms.EmailField()
+    first_name = forms.CharField(max_length=30)
+    last_name = forms.CharField(max_length=30)
+    password1 = forms.CharField(widget=forms.PasswordInput)
+    password2 = forms.CharField(widget=forms.PasswordInput)
 
+    class Meta:
+        model = AdminProfile
+        fields = [
+            'username', 'email', 'first_name', 'last_name', 'password1', 'password2',
+            'can_manage_students', 'can_manage_employers', 'can_manage_jobs',
+            'can_manage_resumes', 'can_view_statistics'
+        ]
+
+    def clean_password2(self):
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError(_("Parollar mos kelmadi"))
+        return password2
 
 class UserUpdateForm(forms.ModelForm):
-    """Form for updating user information"""
-    
-    email = forms.EmailField(
-        required=True,
-        widget=forms.EmailInput(attrs={'class': 'form-control'})
-    )
-
     class Meta:
-        model = User
-        fields = ['first_name', 'last_name', 'email']
-        widgets = {
-            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
-        }
-
-
-class ProfileForm(forms.ModelForm):
-    """Form for updating user profile"""
-    
-    class Meta:
-        model = User
-        fields = [
-            'phone_number', 'bio', 'date_of_birth', 'country', 'city', 'address',
-            'organization', 'position', 'website', 'linkedin', 'github',
-            'avatar', 'resume', 'email_notifications', 'job_alerts', 'newsletter'
-        ]
-        widgets = {
-            'bio': forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 4,
-                'placeholder': _('O\'zingiz haqingizda qisqacha ma\'lumot...')
-            }),
-            'date_of_birth': forms.DateInput(attrs={
-                'class': 'form-control',
-                'type': 'date'
-            }),
-            'phone_number': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': '+998 XX XXX XX XX'
-            }),
-            'country': forms.Select(attrs={'class': 'form-select'}),
-            'city': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': _('Shahar')
-            }),
-            'address': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': _('To\'liq manzil')
-            }),
-            'organization': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': _('Tashkilot nomi')
-            }),
-            'position': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': _('Lavozimingiz')
-            }),
-            'website': forms.URLInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'https://example.uz'
-            }),
-            'linkedin': forms.URLInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'https://linkedin.com/in/username'
-            }),
-            'github': forms.URLInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'https://github.com/username'
-            }),
-            'avatar': forms.FileInput(attrs={'class': 'form-control'}),
-            'resume': forms.FileInput(attrs={'class': 'form-control'}),
-            'email_notifications': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'job_alerts': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'newsletter': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-        }
-        labels = {
-            'phone_number': _('Telefon raqami'),
-            'bio': _('Bio'),
-            'date_of_birth': _('Tug\'ilgan sana'),
-            'country': _('Mamlakat'),
-            'city': _('Shahar'),
-            'address': _('Manzil'),
-            'organization': _('Tashkilot'),
-            'position': _('Lavozim'),
-            'website': _('Veb sayt'),
-            'linkedin': _('LinkedIn'),
-            'github': _('GitHub'),
-            'avatar': _('Profil rasmi'),
-            'resume': _('Rezyume'),
-            'email_notifications': _('Email bildirishnomalari'),
-            'job_alerts': _('Ish bildirishnomalari'),
-            'newsletter': _('Yangiliklar'),
-        }
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)
-        super().__init__(*args, **kwargs)
-
-    def clean_phone_number(self):
-        phone_number = self.cleaned_data.get('phone_number')
-        # Add phone number validation if needed
-        return phone_number
-
-
-class SkillForm(forms.ModelForm):
-    """Form for user skills"""
-    
-    class Meta:
-        model = UserSkill
-        fields = ['skill', 'proficiency', 'years_of_experience', 'is_primary']
-        widgets = {
-            'skill': forms.Select(attrs={'class': 'form-select'}),
-            'proficiency': forms.Select(attrs={'class': 'form-select'}),
-            'years_of_experience': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'min': 0,
-                'max': 50
-            }),
-            'is_primary': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-        }
-        labels = {
-            'skill': _('Ko\'nikma'),
-            'proficiency': _('Bilim darajasi'),
-            'years_of_experience': _('Tajriba yillari'),
-            'is_primary': _('Asosiy ko\'nikma'),
-        }
+        model = CustomUser
+        fields = ['first_name', 'last_name', 'phone_number', 'email', 'bio', 'avatar']

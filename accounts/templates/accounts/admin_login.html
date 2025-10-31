@@ -1,0 +1,60 @@
+<!-- templates/accounts/admin_login.html -->
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Admin sifatida kirish" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <img src="{% static 'img/logo1.png' %}" alt="OXU Career" width="80" class="mb-3">
+                        <h3 class="fw-bold text-primary">{% trans "Admin paneliga kirish" %}</h3>
+                        <p class="text-muted">{% trans "Tizim ma'muriyati" %}</p>
+                    </div>
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="username" class="form-label">{% trans "Foydalanuvchi nomi" %}</label>
+                            <input type="text" name="username" class="form-control form-control-lg" 
+                                   id="username" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="password" class="form-label">{% trans "Parol" %}</label>
+                            <input type="password" name="password" class="form-control form-control-lg" 
+                                   id="password" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
+                            <i class="fas fa-lock me-2"></i>{% trans "Kirish" %}
+                        </button>
+                    </form>
+
+                    <div class="text-center">
+                        <p class="mb-2">
+                            <small class="text-muted">
+                                {% trans "Boshqa kirish usullari:" %}
+                            </small>
+                        </p>
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="{% url 'accounts:hemis_login' %}" class="btn btn-outline-primary btn-sm">
+                                {% trans "Talaba" %}
+                            </a>
+                            <a href="{% url 'accounts:employer_login' %}" class="btn btn-outline-primary btn-sm">
+                                {% trans "Ish beruvchi" %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

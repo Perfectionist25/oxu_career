@@ -1,11 +1,11 @@
 {% load static %}
 {% load i18n %}
 <!DOCTYPE html>
-<html lang="{{ request.LANGUAGE_CODE|default:'ru' }}">
+<html lang="{{ request.LANGUAGE_CODE|default:'uz' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}OXU Career Center{% endblock %}</title>
+    <title>{% block title %}{% trans "OXU Career Center" %}{% endblock %}</title>
     
     <!-- CSS -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
@@ -15,7 +15,7 @@
     
     <!-- JavaScript (переместить вниз) -->
 </head>
-<body>
+<body style="background-color: white !important;">
 
 {% include '_inc/nav.html' %}
 
@@ -46,32 +46,37 @@
 </body>
 
 <style>
+    .body *{
+        color: white !important;
+    }
+
     .header-top {
-        background-color: #012152;
+        background-color: var(--header-top-bg);
         padding: 8px 0;
         font-size: 14px;
-        color: white;
+        color: var(--header-text);
     }
     
     .header-middle {
         padding: 15px 0;
-        background-color: #012d6e;
+        background-color: var(--header-middle-bg);
+        color: var(--header-text);
     }
     
     .header-bottom {
-        background-color: #012152;
-        color: white;
+        background-color: var(--header-bottom-bg);
+        color: var(--header-text);
         padding: 12px 0;
     }
     
     .logo {
         font-weight: bold;
         font-size: 24px;
-        color: white;
+        color: var(--header-text);
     }
     
     .contact-info a {
-        color: white;
+        color: var(--header-text);
         text-decoration: none;
         margin-right: 15px;
         font-size: 14px;
@@ -79,44 +84,36 @@
         align-items: center;
     }
     
-    .contact-info a:hover {
-        color: rgba(255, 255, 255, 0.8);
-    }
+    .contact-info a:hover { color: rgba(255, 255, 255, 0.85); }
     
-    .contact-info i {
-        margin-right: 5px;
-        color: white;
-    }
+    .contact-info i { margin-right: 5px; color: var(--header-text); }
     
     .language-selector {
         margin-left: 20px;
     }
     
     .language-selector a {
-        color: white;
+        color: var(--header-text);
         text-decoration: none;
         margin-right: 10px;
     }
     
     .language-selector a.active {
-        color: white;
+        color: var(--header-text);
         font-weight: bold;
         text-decoration: underline;
     }
     
     .nav-link {
-        color: white !important;
+        color: var(--nav-text) !important;
         font-weight: 500;
         transition: 1s;
         border-radius: 30px;
-        border: 1px solid #012152;
+        border: 1px solid transparent;
         margin: 10px;
     }
     
-    .nav-link:hover {
-        background-color: #012d6e;
-        border: 1px solid white;
-    }
+    .nav-link:hover { background-color: var(--nav-hover-bg); border: 1px solid var(--nav-hover-bg); }
     
     .social-icons {
         display: flex;
@@ -132,7 +129,7 @@
     }
     
     .government-links a {
-        color: white;
+        color: var(--header-text);
         text-decoration: none;
         font-size: 14px;
         display: block;

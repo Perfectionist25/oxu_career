@@ -1,33 +1,50 @@
+# accounts/urls.py
 from django.urls import path
 from . import views
 
 app_name = 'accounts'
 
 urlpatterns = [
-    # Authentication
-    path('register/', views.RegisterView.as_view(), name='register'),
-    path('login/', views.login_view, name='login'),
+    # Authentication URLs
+    path('hemis-login/', views.hemis_login, name='hemis_login'),
+    path('hemis-callback/', views.hemis_callback, name='hemis_callback'),
+    path('employer-login/', views.employer_login, name='employer_login'),
+    path('admin-login/', views.admin_login, name='admin_login'),
     path('logout/', views.logout_view, name='logout'),
     
-    # Profile
-    path('dashboard/', views.DashboardView.as_view(), name='dashboard'),
-    path('profile/', views.ProfileDetailView.as_view(), name='profile'),
-    path('profile/edit/', views.ProfileUpdateView.as_view(), name='profile_edit'),
-    path('profile/<int:pk>/', views.ProfileDetailView.as_view(), name='profile_detail'),
+    # Home and redirects
+    path('', views.home_redirect, name='home_redirect'),
+    path('home/', views.home, name='home'),
     
-    # Notifications
-    path('notifications/', views.notification_list, name='notifications'),
-    path('notifications/<int:pk>/read/', views.mark_notification_read, name='mark_notification_read'),
+    # Dashboard URLs
+    path('student/dashboard/', views.student_dashboard, name='student_dashboard'),
+    path('employer/dashboard/', views.employer_dashboard, name='employer_dashboard'),
+    path('admin/dashboard/', views.admin_dashboard, name='admin_dashboard'),
     
-    # Activity
-    path('activity/', views.activity_log, name='activity_log'),
+    # Profile URLs
+    path('profile/', views.profile_view, name='profile_view'),
+    path('profile/<int:user_id>/', views.profile_view, name='profile_detail'),
+    path('student/profile/update/', views.student_profile_update, name='student_profile_update'),
+    path('employer/profile/update/', views.employer_profile_update, name='employer_profile_update'),
     
-    # Skills
-    path('skills/', views.skill_list, name='skill_list'),
-    path('skills/add/', views.add_skill, name='add_skill'),
-    path('skills/<int:pk>/remove/', views.remove_skill, name='remove_skill'),
+    # Account Creation (Admin only)
+    path('admin/create-employer/', views.create_employer_account, name='create_employer_account'),
+    path('admin/create-admin/', views.create_admin_account, name='create_admin_account'),
     
-    # AJAX endpoints
-    path('api/notification-settings/', views.update_notification_settings, name='update_notification_settings'),
-    path('api/unread-notifications/', views.get_unread_notification_count, name='unread_notification_count'),
+    # User Management (Admin only)
+    path('admin/users/', views.user_management, name='user_management'),
+    path('admin/users/<int:user_id>/', views.user_detail, name='user_detail'),
+    path('admin/users/<int:user_id>/toggle-status/', views.toggle_user_status, name='toggle_user_status'),
+    
+    # Notification URLs
+    path('notifications/', views.notifications, name='notifications'),
+    path('notifications/<int:notification_id>/read/', views.mark_notification_read, name='mark_notification_read'),
+    path('notifications/mark-all-read/', views.mark_all_notifications_read, name='mark_all_notifications_read'),
+    
+    # API URLs
+    path('api/user-stats/', views.user_stats_api, name='user_stats_api'),
+    
+    # Legacy URLs (для обратной совместимости - можно удалить позже)
+    path('login/', views.hemis_login, name='login'),  # Перенаправление на hemis-login
+    path('register/', views.hemis_login, name='register'),  # Перенаправление на hemis-login
 ]

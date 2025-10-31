@@ -1,0 +1,4575 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-30 10:09+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: .\accounts\admin.py:17
+msgid "Personal Info"
+msgstr ""
+
+#: .\accounts\admin.py:21 .\core\templates\_inc\nav.html:11
+#: .\employers\forms.py:120 .\employers\forms.py:200 .\employers\models.py:142
+#: .\employers\models.py:263 .\events\admin.py:56 .\events\admin.py:172
+#: .\events\forms.py:90 .\events\forms.py:216 .\events\models.py:64
+#: .\events\models.py:241 .\jobs\forms.py:134 .\jobs\forms.py:261
+#: .\jobs\models.py:117 .\jobs\models.py:265
+msgid "Location"
+msgstr "Joylashuv"
+
+#: .\accounts\admin.py:22
+msgid "Professional Info"
+msgstr ""
+
+#: .\accounts\admin.py:26 .\core\templates\_inc\nav.html:175
+#: .\events\admin.py:74
+msgid "Settings"
+msgstr ""
+
+#: .\accounts\admin.py:29 .\employers\admin.py:38 .\employers\admin.py:63
+#: .\employers\admin.py:99 .\employers\admin.py:128 .\employers\admin.py:212
+#: .\employers\models.py:212 .\employers\models.py:266 .\events\models.py:91
+#: .\events\models.py:164 .\jobs\admin.py:48 .\jobs\admin.py:94
+#: .\jobs\admin.py:141 .\jobs\admin.py:227 .\jobs\admin.py:270
+#: .\jobs\models.py:218
+msgid "Status"
+msgstr ""
+
+#: .\accounts\admin.py:33 .\employers\admin.py:57
+msgid "Permissions"
+msgstr ""
+
+#: .\accounts\admin.py:37
+msgid "Important dates"
+msgstr ""
+
+#: .\accounts\forms.py:26
+msgid "Ismingiz"
+msgstr ""
+
+#: .\accounts\forms.py:34
+msgid "Familyangiz"
+msgstr ""
+
+#: .\accounts\forms.py:40
+msgid "Hisob turi"
+msgstr ""
+
+#: .\accounts\forms.py:50
+msgid "Foydalanuvchi nomi"
+msgstr ""
+
+#: .\accounts\forms.py:63
+msgid "Ushbu email allaqachon ro'yxatdan o'tgan."
+msgstr ""
+
+#: .\accounts\forms.py:111
+msgid "O'zingiz haqingizda qisqacha ma'lumot..."
+msgstr ""
+
+#: .\accounts\forms.py:124 .\accounts\forms.py:161 .\alumni\models.py:163
+msgid "Shahar"
+msgstr ""
+
+#: .\accounts\forms.py:128
+msgid "To'liq manzil"
+msgstr ""
+
+#: .\accounts\forms.py:132
+msgid "Tashkilot nomi"
+msgstr ""
+
+#: .\accounts\forms.py:136
+msgid "Lavozimingiz"
+msgstr ""
+
+#: .\accounts\forms.py:157
+msgid "Telefon raqami"
+msgstr ""
+
+#: .\accounts\forms.py:158 .\accounts\models.py:46 .\alumni\models.py:166
+msgid "Bio"
+msgstr ""
+
+#: .\accounts\forms.py:159
+msgid "Tug'ilgan sana"
+msgstr ""
+
+#: .\accounts\forms.py:160 .\alumni\models.py:162
+msgid "Mamlakat"
+msgstr ""
+
+#: .\accounts\forms.py:162 .\alumni\models.py:42 .\alumni\models.py:403
+#: .\alumni\models.py:517
+msgid "Manzil"
+msgstr ""
+
+#: .\accounts\forms.py:163
+msgid "Tashkilot"
+msgstr ""
+
+#: .\accounts\forms.py:164 .\alumni\models.py:144 .\alumni\models.py:387
+msgid "Lavozim"
+msgstr ""
+
+#: .\accounts\forms.py:165 .\alumni\models.py:33
+msgid "Veb sayt"
+msgstr ""
+
+#: .\accounts\forms.py:166 .\accounts\models.py:94 .\alumni\models.py:158
+#: .\employers\models.py:49 .\events\forms.py:179 .\events\models.py:205
+#: .\jobs\forms.py:229 .\jobs\models.py:50
+msgid "LinkedIn"
+msgstr ""
+
+#: .\accounts\forms.py:167 .\accounts\models.py:99 .\alumni\models.py:206
+msgid "GitHub"
+msgstr ""
+
+#: .\accounts\forms.py:168 .\alumni\models.py:171
+msgid "Profil rasmi"
+msgstr ""
+
+#: .\accounts\forms.py:169 .\alumni\models.py:177 .\alumni\models.py:484
+msgid "Rezyume"
+msgstr ""
+
+#: .\accounts\forms.py:170
+msgid "Email bildirishnomalari"
+msgstr ""
+
+#: .\accounts\forms.py:171
+msgid "Ish bildirishnomalari"
+msgstr ""
+
+#: .\accounts\forms.py:172 .\alumni\models.py:589
+msgid "Yangiliklar"
+msgstr ""
+
+#: .\accounts\forms.py:202 .\alumni\models.py:79
+msgid "Ko'nikma"
+msgstr ""
+
+#: .\accounts\forms.py:203
+msgid "Bilim darajasi"
+msgstr ""
+
+#: .\accounts\forms.py:204 .\alumni\models.py:198
+msgid "Tajriba yillari"
+msgstr ""
+
+#: .\accounts\forms.py:205
+msgid "Asosiy ko'nikma"
+msgstr ""
+
+#: .\accounts\models.py:14
+msgid "Student"
+msgstr ""
+
+#: .\accounts\models.py:15
+msgid "Alumni"
+msgstr ""
+
+#: .\accounts\models.py:16 .\employers\models.py:232
+msgid "Employer"
+msgstr ""
+
+#: .\accounts\models.py:17
+msgid "Staff"
+msgstr ""
+
+#: .\accounts\models.py:18
+msgid "Faculty"
+msgstr ""
+
+#: .\accounts\models.py:19 .\alumni\models.py:181 .\alumni\models.py:329
+msgid "Mentor"
+msgstr ""
+
+#: .\accounts\models.py:26
+msgid "User Type"
+msgstr ""
+
+#: .\accounts\models.py:33
+msgid "Phone Number"
+msgstr ""
+
+#: .\accounts\models.py:39
+msgid "Date of Birth"
+msgstr ""
+
+#: .\accounts\models.py:53
+msgid "Avatar"
+msgstr ""
+
+#: .\accounts\models.py:59
+msgid "Country"
+msgstr ""
+
+#: .\accounts\models.py:65
+msgid "City"
+msgstr ""
+
+#: .\accounts\models.py:71
+msgid "Address"
+msgstr ""
+
+#: .\accounts\models.py:78 .\events\forms.py:174 .\events\forms.py:296
+#: .\events\models.py:200
+msgid "Organization"
+msgstr ""
+
+#: .\accounts\models.py:84 .\employers\forms.py:58 .\employers\models.py:80
+msgid "Position"
+msgstr ""
+
+#: .\accounts\models.py:89 .\employers\forms.py:36 .\employers\models.py:36
+#: .\events\forms.py:178 .\events\models.py:204 .\jobs\forms.py:221
+#: .\jobs\models.py:38
+msgid "Website"
+msgstr ""
+
+#: .\accounts\models.py:107 .\employers\models.py:207 .\jobs\models.py:209
+msgid "Resume"
+msgstr ""
+
+#: .\accounts\models.py:113
+msgid "Email Notifications"
+msgstr ""
+
+#: .\accounts\models.py:118 .\jobs\models.py:280
+msgid "Job Alerts"
+msgstr ""
+
+#: .\accounts\models.py:123
+msgid "Newsletter"
+msgstr ""
+
+#: .\accounts\models.py:129
+msgid "Verified"
+msgstr ""
+
+#: .\accounts\models.py:135
+msgid "Verification Token"
+msgstr ""
+
+#: .\accounts\models.py:140
+msgid "Profile Views"
+msgstr ""
+
+#: .\accounts\models.py:145
+msgid "Resume Views"
+msgstr ""
+
+#: .\accounts\models.py:151
+msgid "Last Activity"
+msgstr ""
+
+#: .\accounts\models.py:159 .\accounts\models.py:222 .\accounts\models.py:270
+#: .\accounts\models.py:331 .\accounts\models.py:437 .\employers\models.py:78
+#: .\events\models.py:160 .\events\models.py:269 .\events\models.py:308
+#: .\jobs\models.py:239 .\jobs\models.py:260 .\resources\models.py:138
+#: .\resources\models.py:163 .\resources\models.py:178
+#: .\resources\models.py:194
+msgid "User"
+msgstr ""
+
+#: .\accounts\models.py:160
+msgid "Users"
+msgstr ""
+
+#: .\accounts\models.py:208
+msgid "Verify your email for OXU University"
+msgstr ""
+
+#: .\accounts\models.py:228
+msgid "Token"
+msgstr ""
+
+#: .\accounts\models.py:233 .\accounts\models.py:297 .\accounts\models.py:361
+msgid "Created At"
+msgstr ""
+
+#: .\accounts\models.py:237 .\employers\forms.py:129 .\employers\models.py:162
+#: .\jobs\forms.py:153 .\jobs\models.py:157
+msgid "Expires At"
+msgstr ""
+
+#: .\accounts\models.py:241
+msgid "Email Verification"
+msgstr ""
+
+#: .\accounts\models.py:242
+msgid "Email Verifications"
+msgstr ""
+
+#: .\accounts\models.py:257
+msgid "Login"
+msgstr ""
+
+#: .\accounts\models.py:258
+msgid "Profile View"
+msgstr ""
+
+#: .\accounts\models.py:259
+msgid "Resume View"
+msgstr ""
+
+#: .\accounts\models.py:260 .\employers\models.py:221 .\jobs\models.py:229
+msgid "Job Application"
+msgstr ""
+
+#: .\accounts\models.py:261 .\resources\models.py:168
+msgid "Resource Download"
+msgstr ""
+
+#: .\accounts\models.py:262 .\events\models.py:184
+msgid "Event Registration"
+msgstr ""
+
+#: .\accounts\models.py:263
+msgid "Profile Update"
+msgstr ""
+
+#: .\accounts\models.py:264
+msgid "Password Change"
+msgstr ""
+
+#: .\accounts\models.py:276
+msgid "Activity Type"
+msgstr ""
+
+#: .\accounts\models.py:281 .\accounts\models.py:412 .\employers\forms.py:35
+#: .\employers\models.py:35 .\events\forms.py:19 .\events\forms.py:85
+#: .\events\forms.py:212 .\events\models.py:11 .\events\models.py:54
+#: .\events\models.py:233 .\jobs\forms.py:220 .\jobs\models.py:11
+#: .\jobs\models.py:37 .\resources\forms.py:20 .\resources\forms.py:92
+#: .\resources\forms.py:175 .\resources\forms.py:221 .\resources\forms.py:255
+#: .\resources\models.py:11 .\resources\models.py:58 .\resources\models.py:193
+#: .\resources\models.py:242 .\resources\models.py:270
+msgid "Description"
+msgstr ""
+
+#: .\accounts\models.py:287 .\resources\models.py:165
+msgid "IP Address"
+msgstr ""
+
+#: .\accounts\models.py:292
+msgid "User Agent"
+msgstr ""
+
+#: .\accounts\models.py:301
+msgid "User Activity"
+msgstr ""
+
+#: .\accounts\models.py:302
+msgid "User Activities"
+msgstr ""
+
+#: .\accounts\models.py:320 .\jobs\models.py:279
+msgid "Job Alert"
+msgstr ""
+
+#: .\accounts\models.py:321
+msgid "Application Update"
+msgstr ""
+
+#: .\accounts\models.py:322 .\accounts\models.py:346
+msgid "Message"
+msgstr ""
+
+#: .\accounts\models.py:323
+msgid "System Notification"
+msgstr ""
+
+#: .\accounts\models.py:324
+msgid "Event Notification"
+msgstr ""
+
+#: .\accounts\models.py:325
+msgid "Security Notification"
+msgstr ""
+
+#: .\accounts\models.py:337
+msgid "Notification Type"
+msgstr ""
+
+#: .\accounts\models.py:342 .\employers\forms.py:233 .\employers\models.py:295
+#: .\resources\forms.py:90 .\resources\models.py:57
+msgid "Title"
+msgstr ""
+
+#: .\accounts\models.py:351 .\employers\models.py:215
+msgid "Read"
+msgstr ""
+
+#: .\accounts\models.py:356
+msgid "Related URL"
+msgstr ""
+
+#: .\accounts\models.py:365
+msgid "Notification"
+msgstr ""
+
+#: .\accounts\models.py:366
+msgid "Notifications"
+msgstr ""
+
+#: .\accounts\models.py:393
+msgid "Technical Skills"
+msgstr ""
+
+#: .\accounts\models.py:394
+msgid "Soft Skills"
+msgstr ""
+
+#: .\accounts\models.py:395
+msgid "Languages"
+msgstr ""
+
+#: .\accounts\models.py:396
+msgid "Certifications"
+msgstr ""
+
+#: .\accounts\models.py:401
+msgid "Skill Name"
+msgstr ""
+
+#: .\accounts\models.py:407 .\events\forms.py:86 .\events\models.py:56
+#: .\resources\forms.py:93 .\resources\models.py:60
+msgid "Category"
+msgstr ""
+
+#: .\accounts\models.py:416 .\accounts\models.py:443
+msgid "Skill"
+msgstr ""
+
+#: .\accounts\models.py:417 .\jobs\admin.py:88
+msgid "Skills"
+msgstr ""
+
+#: .\accounts\models.py:428 .\resources\models.py:43
+msgid "Beginner"
+msgstr ""
+
+#: .\accounts\models.py:429 .\resources\models.py:44
+msgid "Intermediate"
+msgstr ""
+
+#: .\accounts\models.py:430 .\resources\models.py:45
+msgid "Advanced"
+msgstr ""
+
+#: .\accounts\models.py:431
+msgid "Expert"
+msgstr ""
+
+#: .\accounts\models.py:450
+msgid "Proficiency Level"
+msgstr ""
+
+#: .\accounts\models.py:455
+msgid "Years of Experience"
+msgstr ""
+
+#: .\accounts\models.py:460
+msgid "Primary Skill"
+msgstr ""
+
+#: .\accounts\models.py:464
+msgid "User Skill"
+msgstr ""
+
+#: .\accounts\models.py:465
+msgid "User Skills"
+msgstr ""
+
+#: .\accounts\models.py:483
+msgid "User registration completed"
+msgstr ""
+
+#: .\accounts\models.py:491
+msgid "Welcome to OXU University!"
+msgstr ""
+
+#: .\accounts\models.py:492
+msgid ""
+"Thank you for registering with OXU University. We're excited to have you on "
+"board!"
+msgstr ""
+
+#: .\accounts\templates\accounts\login.html:16
+#: .\accounts\templates\accounts\login.html:94
+#: .\core\templates\_inc\nav.html:182 .\core\templates\_inc\nav.html:278
+msgid "Sign in"
+msgstr "Kirish"
+
+#: .\accounts\templates\accounts\login.html:17
+msgid "Access your personal dashboard"
+msgstr ""
+
+#: .\accounts\templates\accounts\login.html:34
+msgid "Username"
+msgstr ""
+
+#: .\accounts\templates\accounts\login.html:44
+msgid "Enter your username"
+msgstr ""
+
+#: .\accounts\templates\accounts\login.html:57
+msgid "Password"
+msgstr ""
+
+#: .\accounts\templates\accounts\login.html:67
+msgid "Enter your password"
+msgstr ""
+
+#: .\accounts\templates\accounts\login.html:84
+msgid "Remember me"
+msgstr ""
+
+#: .\accounts\templates\accounts\login.html:88
+msgid "Forgot password?"
+msgstr ""
+
+#: .\accounts\templates\accounts\login.html:102
+msgid "Or"
+msgstr ""
+
+#: .\accounts\templates\accounts\login.html:108
+msgid "Sign in with social networks"
+msgstr ""
+
+#: .\accounts\templates\accounts\login.html:125
+msgid "Don't have an account?"
+msgstr ""
+
+#: .\accounts\templates\accounts\login.html:127
+#: .\core\templates\_inc\nav.html:183 .\core\templates\_inc\nav.html:279
+msgid "Sign up"
+msgstr "Ro‘yxatdan o‘tish"
+
+#: .\accounts\templates\accounts\login.html:140
+msgid "Secure"
+msgstr ""
+
+#: .\accounts\templates\accounts\login.html:146
+msgid "Fast"
+msgstr ""
+
+#: .\accounts\templates\accounts\login.html:152
+msgid "Reliable"
+msgstr ""
+
+#: .\accounts\views.py:33
+msgid "Muvaffaqiyatli ro'yxatdan o'tdingiz!"
+msgstr ""
+
+#: .\accounts\views.py:55
+msgid "User logged in"
+msgstr ""
+
+#: .\accounts\views.py:60
+msgid "Xush kelibsiz!"
+msgstr ""
+
+#: .\accounts\views.py:64
+msgid "Login yoki parol noto'g'ri"
+msgstr ""
+
+#: .\accounts\views.py:73
+msgid "Tizimdan chiqdingiz"
+msgstr ""
+
+#: .\accounts\views.py:121
+msgid "Profil muvaffaqiyatli yangilandi!"
+msgstr ""
+
+#: .\accounts\views.py:127
+msgid "Profile updated"
+msgstr ""
+
+#: .\accounts\views.py:180
+msgid "Ko'nikma qo'shildi!"
+msgstr ""
+
+#: .\accounts\views.py:193
+msgid "Ko'nikma o'chirildi!"
+msgstr ""
+
+#: .\accounts\views.py:208
+msgid "Sozlamalar saqlandi"
+msgstr ""
+
+#: .\accounts\views.py:210
+msgid "Xato yuz berdi"
+msgstr ""
+
+#: .\alumni\feeds.py:18
+msgid "OXU Alumni - So'ngi yangiliklar"
+msgstr ""
+
+#: .\alumni\feeds.py:20
+msgid "OXU bitiruvchilari assotsiatsiyasining so'ngi yangiliklari"
+msgstr ""
+
+#: .\alumni\feeds.py:53
+msgid "OXU Alumni - So'ngi vakansiyalar"
+msgstr ""
+
+#: .\alumni\feeds.py:55
+msgid "OXU bitiruvchilari uchun so'ngi ish vakansiyalari"
+msgstr ""
+
+#: .\alumni\feeds.py:93
+msgid "OXU Alumni - Kelgusi tadbirlar"
+msgstr ""
+
+#: .\alumni\feeds.py:95
+msgid "OXU bitiruvchilari uchun kelgusi tadbirlar"
+msgstr ""
+
+#: .\alumni\feeds.py:130
+msgid "OXU Alumni - Barcha yangilanishlar"
+msgstr ""
+
+#: .\alumni\feeds.py:132
+msgid "OXU bitiruvchilari portalidagi barcha yangilanishlar"
+msgstr ""
+
+#: .\alumni\models.py:14
+msgid "IT va Texnologiya"
+msgstr ""
+
+#: .\alumni\models.py:15
+msgid "Moliya va Bank"
+msgstr ""
+
+#: .\alumni\models.py:16
+msgid "Ta'lim"
+msgstr ""
+
+#: .\alumni\models.py:17
+msgid "Sog'liqni saqlash"
+msgstr ""
+
+#: .\alumni\models.py:18
+msgid "Ishlab chiqarish"
+msgstr ""
+
+#: .\alumni\models.py:19
+msgid "Chakana savdo"
+msgstr ""
+
+#: .\alumni\models.py:20
+msgid "Energetika"
+msgstr ""
+
+#: .\alumni\models.py:21
+msgid "Telekommunikatsiya"
+msgstr ""
+
+#: .\alumni\models.py:22
+msgid "Konsalting"
+msgstr ""
+
+#: .\alumni\models.py:23
+msgid "Boshqa"
+msgstr ""
+
+#: .\alumni\models.py:26
+msgid "Kompaniya nomi"
+msgstr ""
+
+#: .\alumni\models.py:30 .\alumni\models.py:153
+msgid "Soha"
+msgstr ""
+
+#: .\alumni\models.py:32 .\alumni\models.py:75 .\alumni\models.py:429
+#: .\alumni\models.py:509
+msgid "Tavsif"
+msgstr ""
+
+#: .\alumni\models.py:38
+msgid "Logotip"
+msgstr ""
+
+#: .\alumni\models.py:40 .\alumni\models.py:319 .\events\forms.py:177
+#: .\events\models.py:203
+msgid "Email"
+msgstr ""
+
+#: .\alumni\models.py:41 .\alumni\models.py:157 .\alumni\models.py:322
+msgid "Telefon"
+msgstr ""
+
+#: .\alumni\models.py:43
+msgid "Xodimlar soni"
+msgstr ""
+
+#: .\alumni\models.py:44
+msgid "Asos solingan yil"
+msgstr ""
+
+#: .\alumni\models.py:46
+msgid "Tasdiqlangan"
+msgstr ""
+
+#: .\alumni\models.py:47 .\alumni\models.py:313 .\alumni\models.py:438
+#: .\alumni\models.py:535
+msgid "Faol"
+msgstr ""
+
+#: .\alumni\models.py:53 .\alumni\models.py:150 .\alumni\models.py:391
+msgid "Kompaniya"
+msgstr ""
+
+#: .\alumni\models.py:54
+msgid "Kompaniyalar"
+msgstr ""
+
+#: .\alumni\models.py:63
+msgid "Texnik ko'nikmalar"
+msgstr ""
+
+#: .\alumni\models.py:64
+msgid "Yumshoq ko'nikmalar"
+msgstr ""
+
+#: .\alumni\models.py:65
+msgid "Tillarni bilish"
+msgstr ""
+
+#: .\alumni\models.py:66
+msgid "Kasbiy ko'nikmalar"
+msgstr ""
+
+#: .\alumni\models.py:69
+msgid "Ko'nikma nomi"
+msgstr ""
+
+#: .\alumni\models.py:73 .\alumni\models.py:570
+msgid "Kategoriya"
+msgstr ""
+
+#: .\alumni\models.py:80 .\alumni\models.py:189
+msgid "Ko'nikmalar"
+msgstr ""
+
+#: .\alumni\models.py:93
+msgid "Dasturiy injiniring"
+msgstr ""
+
+#: .\alumni\models.py:94
+msgid "Iqtisodiyot"
+msgstr ""
+
+#: .\alumni\models.py:95
+msgid "Boshqaruv"
+msgstr ""
+
+#: .\alumni\models.py:96
+msgid "Huquqshunoslik"
+msgstr ""
+
+#: .\alumni\models.py:97
+msgid "Filologiya"
+msgstr ""
+
+#: .\alumni\models.py:98
+msgid "Chet tillari"
+msgstr ""
+
+#: .\alumni\models.py:99
+msgid "Jurnalistika"
+msgstr ""
+
+#: .\alumni\models.py:100
+msgid "Xalqaro munosabatlar"
+msgstr ""
+
+#: .\alumni\models.py:104
+msgid "Bakalavr"
+msgstr ""
+
+#: .\alumni\models.py:105
+msgid "Magistr"
+msgstr ""
+
+#: .\alumni\models.py:106 .\jobs\models.py:100
+msgid "PhD"
+msgstr ""
+
+#: .\alumni\models.py:107
+msgid "Doktorant"
+msgstr ""
+
+#: .\alumni\models.py:116
+msgid "Foydalanuvchi"
+msgstr ""
+
+#: .\alumni\models.py:118
+msgid "To'liq ism"
+msgstr ""
+
+#: .\alumni\models.py:119 .\alumni\models.py:559 .\events\models.py:97
+#: .\resources\models.py:92
+msgid "Slug"
+msgstr ""
+
+#: .\alumni\models.py:123
+msgid "Bitirgan yili"
+msgstr ""
+
+#: .\alumni\models.py:124
+msgid "YYYY formatida"
+msgstr ""
+
+#: .\alumni\models.py:129
+msgid "Fakultet"
+msgstr ""
+
+#: .\alumni\models.py:135
+msgid "Daraja"
+msgstr ""
+
+#: .\alumni\models.py:140
+msgid "Mutaxassislik"
+msgstr ""
+
+#: .\alumni\models.py:152
+msgid "Kasb"
+msgstr ""
+
+#: .\alumni\models.py:156
+msgid "Elektron pochta"
+msgstr ""
+
+#: .\alumni\models.py:159
+msgid "Shaxsiy veb sayt"
+msgstr ""
+
+#: .\alumni\models.py:182
+msgid "Profil ko'rinadi"
+msgstr ""
+
+#: .\alumni\models.py:183
+msgid "Kontakt ma'lumotlarini ko'rsatish"
+msgstr ""
+
+#: .\alumni\models.py:193
+msgid "Mutaxassislik sohalarini vergul bilan ajrating"
+msgstr ""
+
+#: .\alumni\models.py:194
+msgid "Mutaxassislik sohalari"
+msgstr ""
+
+#: .\alumni\models.py:199
+msgid "Yangi imkoniyatlar qidirmoqda"
+msgstr ""
+
+#: .\alumni\models.py:202
+msgid "Telegram"
+msgstr ""
+
+#: .\alumni\models.py:203 .\employers\models.py:50 .\events\forms.py:180
+#: .\events\models.py:206 .\jobs\forms.py:230 .\jobs\models.py:51
+msgid "Twitter"
+msgstr ""
+
+#: .\alumni\models.py:204 .\employers\models.py:51 .\jobs\forms.py:231
+#: .\jobs\models.py:52
+msgid "Facebook"
+msgstr ""
+
+#: .\alumni\models.py:205
+msgid "Instagram"
+msgstr ""
+
+#: .\alumni\models.py:209
+msgid "Profil ko'rishlar"
+msgstr ""
+
+#: .\alumni\models.py:212 .\alumni\models.py:298 .\alumni\models.py:359
+#: .\alumni\models.py:450 .\alumni\models.py:537 .\alumni\models.py:584
+#: .\alumni\models.py:625
+msgid "Yaratilgan sana"
+msgstr ""
+
+#: .\alumni\models.py:213 .\alumni\models.py:360 .\alumni\models.py:451
+#: .\alumni\models.py:487 .\alumni\models.py:538 .\alumni\models.py:585
+msgid "Yangilangan sana"
+msgstr ""
+
+#: .\alumni\models.py:216
+msgid "Bitiruvchi"
+msgstr ""
+
+#: .\alumni\models.py:217 .\core\templates\home.html:26
+msgid "Bitiruvchilar"
+msgstr ""
+
+#: .\alumni\models.py:273 .\alumni\models.py:312
+msgid "Kutilmoqda"
+msgstr ""
+
+#: .\alumni\models.py:274
+msgid "Qabul qilindi"
+msgstr ""
+
+#: .\alumni\models.py:275
+msgid "Rad etildi"
+msgstr ""
+
+#: .\alumni\models.py:276
+msgid "Bloklangan"
+msgstr ""
+
+#: .\alumni\models.py:283
+msgid "Kimdan"
+msgstr ""
+
+#: .\alumni\models.py:289
+msgid "Kimga"
+msgstr ""
+
+#: .\alumni\models.py:295 .\alumni\models.py:341 .\alumni\models.py:477
+msgid "Holat"
+msgstr ""
+
+#: .\alumni\models.py:297 .\alumni\models.py:343 .\alumni\models.py:628
+msgid "Xabar"
+msgstr ""
+
+#: .\alumni\models.py:299
+msgid "Javob berilgan sana"
+msgstr ""
+
+#: .\alumni\models.py:302
+msgid "Bog'lanish"
+msgstr ""
+
+#: .\alumni\models.py:303
+msgid "Bog'lanishlar"
+msgstr ""
+
+#: .\alumni\models.py:314
+msgid "Yakunlangan"
+msgstr ""
+
+#: .\alumni\models.py:315
+msgid "Bekor qilingan"
+msgstr ""
+
+#: .\alumni\models.py:320
+msgid "Video qo'ng'iroq"
+msgstr ""
+
+#: .\alumni\models.py:321
+msgid "Shaxsan"
+msgstr ""
+
+#: .\alumni\models.py:335
+msgid "Menti"
+msgstr ""
+
+#: .\alumni\models.py:344
+msgid "Kutilayotgan davomiylik"
+msgstr ""
+
+#: .\alumni\models.py:349
+msgid "Muloqot usuli"
+msgstr ""
+
+#: .\alumni\models.py:351
+msgid "Boshlanish sanasi"
+msgstr ""
+
+#: .\alumni\models.py:352
+msgid "Tugash sanasi"
+msgstr ""
+
+#: .\alumni\models.py:355
+msgid "Menti fikri"
+msgstr ""
+
+#: .\alumni\models.py:356
+msgid "Mentor fikri"
+msgstr ""
+
+#: .\alumni\models.py:357
+msgid "Reyting (1-5)"
+msgstr ""
+
+#: .\alumni\models.py:363
+msgid "Mentorlik"
+msgstr ""
+
+#: .\alumni\models.py:364
+msgid "Mentorliklar"
+msgstr ""
+
+#: .\alumni\models.py:373
+msgid "To'liq stavka"
+msgstr ""
+
+#: .\alumni\models.py:374
+msgid "Yarim stavka"
+msgstr ""
+
+#: .\alumni\models.py:375
+msgid "Kontrakt"
+msgstr ""
+
+#: .\alumni\models.py:376 .\jobs\templates\jobs\job_list.html:35
+#: .\jobs\templates\jobs\job_list.html:184
+msgid "Stajirovka"
+msgstr ""
+
+#: .\alumni\models.py:377 .\alumni\models.py:404
+msgid "Masofaviy ish"
+msgstr ""
+
+#: .\alumni\models.py:396
+msgid "E'lon qilgan"
+msgstr ""
+
+#: .\alumni\models.py:401 .\jobs\templates\jobs\job_list.html:69
+msgid "Ish turi"
+msgstr ""
+
+#: .\alumni\models.py:412
+msgid "Minimal maosh"
+msgstr ""
+
+#: .\alumni\models.py:419
+msgid "Maksimal maosh"
+msgstr ""
+
+#: .\alumni\models.py:425
+msgid "Valyuta"
+msgstr ""
+
+#: .\alumni\models.py:430
+msgid "Talablar"
+msgstr ""
+
+#: .\alumni\models.py:431
+msgid "Afzalliklar"
+msgstr ""
+
+#: .\alumni\models.py:434
+msgid "Aloqa emaili"
+msgstr ""
+
+#: .\alumni\models.py:435
+msgid "Ariza uchun havola"
+msgstr ""
+
+#: .\alumni\models.py:439
+msgid "Muddati"
+msgstr ""
+
+#: .\alumni\models.py:440 .\alumni\models.py:582
+msgid "Ko'rishlar soni"
+msgstr ""
+
+#: .\alumni\models.py:454 .\alumni\models.py:471
+msgid "Vakansiya"
+msgstr ""
+
+#: .\alumni\models.py:455
+msgid "Vakansiyalar"
+msgstr ""
+
+#: .\alumni\models.py:464
+msgid "Ariza yuborilgan"
+msgstr ""
+
+#: .\alumni\models.py:465
+msgid "Ko'rib chiqilgan"
+msgstr ""
+
+#: .\alumni\models.py:466
+msgid "Intervyu"
+msgstr ""
+
+#: .\alumni\models.py:467
+msgid "Rad etilgan"
+msgstr ""
+
+#: .\alumni\models.py:468
+msgid "Qabul qilingan"
+msgstr ""
+
+#: .\alumni\models.py:472
+msgid "Arizachi"
+msgstr ""
+
+#: .\alumni\models.py:479
+msgid "Xat"
+msgstr ""
+
+#: .\alumni\models.py:486
+msgid "Ariza vaqti"
+msgstr ""
+
+#: .\alumni\models.py:490
+msgid "Ish arizasi"
+msgstr ""
+
+#: .\alumni\models.py:491
+msgid "Ish arizalari"
+msgstr ""
+
+#: .\alumni\models.py:500
+msgid "Tarmoq tadbiri"
+msgstr ""
+
+#: .\alumni\models.py:501
+msgid "Trening"
+msgstr ""
+
+#: .\alumni\models.py:502
+msgid "Konferensiya"
+msgstr ""
+
+#: .\alumni\models.py:503 .\events\models.py:28
+msgid "Seminar"
+msgstr ""
+
+#: .\alumni\models.py:504
+msgid "Karyera yarmarkasi"
+msgstr ""
+
+#: .\alumni\models.py:505
+msgid "Uchrashuv"
+msgstr ""
+
+#: .\alumni\models.py:508 .\alumni\models.py:558
+msgid "Sarlavha"
+msgstr ""
+
+#: .\alumni\models.py:513
+msgid "Tadbir turi"
+msgstr ""
+
+#: .\alumni\models.py:515 .\jobs\templates\jobs\job_list.html:90
+msgid "Sana"
+msgstr ""
+
+#: .\alumni\models.py:516
+msgid "Vaqt"
+msgstr ""
+
+#: .\alumni\models.py:521
+msgid "Tashkilotchi"
+msgstr ""
+
+#: .\alumni\models.py:525
+msgid "Ro'yxatdan o'tish talab qilinadi"
+msgstr ""
+
+#: .\alumni\models.py:526
+msgid "Maksimal ishtirokchilar"
+msgstr ""
+
+#: .\alumni\models.py:531
+msgid "Ishtirokchilar"
+msgstr ""
+
+#: .\alumni\models.py:541
+msgid "Tadbir"
+msgstr ""
+
+#: .\alumni\models.py:542 .\alumni\models.py:554 .\core\templates\home.html:146
+msgid "Tadbirlar"
+msgstr ""
+
+#: .\alumni\models.py:551
+msgid "Bitiruvchilar yangiliklari"
+msgstr ""
+
+#: .\alumni\models.py:552
+msgid "Karyera yangiliklari"
+msgstr ""
+
+#: .\alumni\models.py:553
+msgid "Ta'lim yangiliklari"
+msgstr ""
+
+#: .\alumni\models.py:555
+msgid "Imkoniyatlar"
+msgstr ""
+
+#: .\alumni\models.py:560
+msgid "Mazmuni"
+msgstr ""
+
+#: .\alumni\models.py:564
+msgid "Muallif"
+msgstr ""
+
+#: .\alumni\models.py:576
+msgid "Rasm"
+msgstr ""
+
+#: .\alumni\models.py:578
+msgid "Teglar"
+msgstr ""
+
+#: .\alumni\models.py:581
+msgid "Nashr etilgan"
+msgstr ""
+
+#: .\alumni\models.py:588
+msgid "Yangilik"
+msgstr ""
+
+#: .\alumni\models.py:606
+msgid "Yuboruvchi"
+msgstr ""
+
+#: .\alumni\models.py:612
+msgid "Qabul qiluvchi"
+msgstr ""
+
+#: .\alumni\models.py:614
+msgid "Mavzu"
+msgstr ""
+
+#: .\alumni\models.py:615
+msgid "Xabar matni"
+msgstr ""
+
+#: .\alumni\models.py:616
+msgid "O'qilgan"
+msgstr ""
+
+#: .\alumni\models.py:623
+msgid "Asosiy xabar"
+msgstr ""
+
+#: .\alumni\models.py:629
+msgid "Xabarlar"
+msgstr ""
+
+#: .\core\templates\_inc\nav.html:11
+msgid "In Bukhara"
+msgstr "Buxoroda"
+
+#: .\core\templates\_inc\nav.html:22
+msgid "Government portal of the Republic of Uzbekistan"
+msgstr "Oʻzbekiston Respublikasi hukumat portali"
+
+#: .\core\templates\_inc\nav.html:23
+msgid "State Testing Center"
+msgstr "Davlat test markazi"
+
+#: .\core\templates\_inc\nav.html:24
+msgid "Youth register"
+msgstr "Yoshlar daftari"
+
+#: .\core\templates\_inc\nav.html:76
+msgid "OXU"
+msgstr "OXU"
+
+#: .\core\templates\_inc\nav.html:76
+msgid "Career"
+msgstr "Karyera"
+
+#: .\core\templates\_inc\nav.html:93
+msgid "Menu"
+msgstr "Menyu"
+
+#: .\core\templates\_inc\nav.html:99 .\core\templates\_inc\nav.html:203
+msgid "Home"
+msgstr "Bosh sahifa"
+
+#: .\core\templates\_inc\nav.html:105 .\core\templates\_inc\nav.html:207
+msgid "University"
+msgstr "Universitet"
+
+#: .\core\templates\_inc\nav.html:108 .\core\templates\_inc\nav.html:212
+msgid "About university"
+msgstr "Universitet haqida"
+
+#: .\core\templates\_inc\nav.html:109 .\core\templates\_inc\nav.html:213
+msgid "Faculties"
+msgstr "Fakultetlar"
+
+#: .\core\templates\_inc\nav.html:110 .\core\templates\_inc\nav.html:214
+msgid "Study programs"
+msgstr "O‘quv dasturlari"
+
+#: .\core\templates\_inc\nav.html:112 .\core\templates\_inc\nav.html:215
+msgid "Admission"
+msgstr "Qabul"
+
+#: .\core\templates\_inc\nav.html:113 .\core\templates\_inc\nav.html:216
+msgid "Scholarships"
+msgstr "Grantlar"
+
+#: .\core\templates\_inc\nav.html:120 .\core\templates\_inc\nav.html:221
+#: .\resources\admin.py:36 .\resources\admin.py:155 .\resources\admin.py:174
+#: .\resources\admin.py:192 .\resources\apps.py:7 .\resources\models.py:101
+#: .\resources\models.py:195 .\resources\models.py:273
+msgid "Resources"
+msgstr "Resurslar"
+
+#: .\core\templates\_inc\nav.html:123 .\core\templates\_inc\nav.html:226
+msgid "All resources"
+msgstr "Barcha resurslar"
+
+#: .\core\templates\_inc\nav.html:125 .\core\templates\_inc\nav.html:227
+msgid "Textbooks"
+msgstr "Darsliklar"
+
+#: .\core\templates\_inc\nav.html:126 .\core\templates\_inc\nav.html:228
+msgid "Video lessons"
+msgstr "Video darslar"
+
+#: .\core\templates\_inc\nav.html:127 .\core\templates\_inc\nav.html:229
+msgid "Online courses"
+msgstr "Onlayn kurslar"
+
+#: .\core\templates\_inc\nav.html:128 .\core\templates\_inc\nav.html:230
+msgid "Problem sets"
+msgstr "Masalalar to‘plami"
+
+#: .\core\templates\_inc\nav.html:133 .\core\templates\_inc\nav.html:235
+#: .\events\admin.py:30 .\events\apps.py:7 .\events\models.py:109
+msgid "Events"
+msgstr "Tadbirlar"
+
+#: .\core\templates\_inc\nav.html:139 .\core\templates\_inc\nav.html:239
+#: .\employers\models.py:166 .\employers\templates\employers\list.html:153
+#: .\jobs\admin.py:20 .\jobs\admin.py:58 .\jobs\apps.py:7 .\jobs\models.py:161
+msgid "Jobs"
+msgstr "Vakansiyalar"
+
+#: .\core\templates\_inc\nav.html:142 .\core\templates\_inc\nav.html:244
+msgid "All jobs"
+msgstr "Barcha vakansiyalar"
+
+#: .\core\templates\_inc\nav.html:144 .\core\templates\_inc\nav.html:245
+msgid "Internships"
+msgstr "Stajirovkalar"
+
+#: .\core\templates\_inc\nav.html:145 .\core\templates\_inc\nav.html:246
+msgid "Full-time"
+msgstr "To‘liq stavka"
+
+#: .\core\templates\_inc\nav.html:146 .\core\templates\_inc\nav.html:247
+msgid "Part-time"
+msgstr "Yarim stavka"
+
+#: .\core\templates\_inc\nav.html:147 .\core\templates\_inc\nav.html:248
+msgid "Remote"
+msgstr "Masofadan"
+
+#: .\core\templates\_inc\nav.html:154 .\core\templates\_inc\nav.html:253
+msgid "CV"
+msgstr "CV"
+
+#: .\core\templates\_inc\nav.html:157 .\core\templates\_inc\nav.html:258
+msgid "My CVs"
+msgstr "Mening CVlarim"
+
+#: .\core\templates\_inc\nav.html:158 .\core\templates\_inc\nav.html:259
+msgid "Create CV"
+msgstr "CV yaratish"
+
+#: .\core\templates\_inc\nav.html:160 .\core\templates\_inc\nav.html:260
+msgid "Templates"
+msgstr "Shablonlar"
+
+#: .\core\templates\_inc\nav.html:161 .\core\templates\_inc\nav.html:261
+#: .\employers\admin.py:102 .\events\admin.py:77 .\jobs\admin.py:97
+#: .\resources\admin.py:71
+msgid "Statistics"
+msgstr "Statistika"
+
+#: .\core\templates\_inc\nav.html:171 .\core\templates\_inc\nav.html:270
+msgid "My profile"
+msgstr "Mening profilim"
+
+#: .\core\templates\_inc\nav.html:174
+#: .\employers\templates\employers\list.html:197
+msgid "Profile"
+msgstr "Profil"
+
+#: .\core\templates\_inc\nav.html:177 .\core\templates\_inc\nav.html:273
+msgid "Logout"
+msgstr "Chiqish"
+
+#: .\core\templates\base.html:8
+msgid "OXU Career Center"
+msgstr "OXU Karyera Markazi"
+
+#: .\core\templates\home.html:11
+msgid "OXU Career Center-ga xush kelibsiz"
+msgstr ""
+
+#: .\core\templates\home.html:12
+msgid ""
+"Kelajagingizni biz bilan quring. Sizga orzu qilgan ishingizni topishda va "
+"kasbiy ko'nikmalaringizni rivojlantirishda yordam beramiz."
+msgstr ""
+
+#: .\core\templates\home.html:15
+msgid "Ish o'rinlarini topish"
+msgstr ""
+
+#: .\core\templates\home.html:18
+msgid "Rezyume yaratish"
+msgstr ""
+
+#: .\core\templates\home.html:30
+msgid "Aktiv vakansiyalar"
+msgstr ""
+
+#: .\core\templates\home.html:34 .\jobs\templates\jobs\job_list.html:305
+msgid "Hamkor kompaniyalar"
+msgstr ""
+
+#: .\core\templates\home.html:38 .\core\templates\home.html:131
+msgid "Karyera resurslari"
+msgstr ""
+
+#: .\core\templates\home.html:48
+msgid "Nima uchun aynan biz?"
+msgstr ""
+
+#: .\core\templates\home.html:55
+msgid "Shaxsiy yondashuv"
+msgstr ""
+
+#: .\core\templates\home.html:56
+msgid "Har bir talaba va bitiruvchi uchun individual maslahat va yo'naltirish"
+msgstr ""
+
+#: .\core\templates\home.html:65
+msgid "Keng hamkorlar tarmog'i"
+msgstr ""
+
+#: .\core\templates\home.html:66
+msgid "Turli sohalardagi etakchi kompaniyalar bilan mustahkam hamkorlik"
+msgstr ""
+
+#: .\core\templates\home.html:75
+msgid "Zamonaviy resurslar"
+msgstr ""
+
+#: .\core\templates\home.html:76
+msgid "Karyerangizni rivojlantirish uchun barcha zamonaviy resurslar"
+msgstr ""
+
+#: .\core\templates\home.html:85
+msgid "Biz bilan karyera quring!"
+msgstr ""
+
+#: .\core\templates\home.html:93
+msgid "Tezkor kirish"
+msgstr ""
+
+#: .\core\templates\home.html:101
+msgid "Ish o'rinlari"
+msgstr ""
+
+#: .\core\templates\home.html:102
+msgid "Etakchi kompaniyalarning dolzarb takliflari va stajirovka imkoniyatlari"
+msgstr ""
+
+#: .\core\templates\home.html:104 .\core\templates\home.html:223
+msgid "Ko'rish"
+msgstr ""
+
+#: .\core\templates\home.html:116
+msgid "Bitiruvchilar tarmog'i"
+msgstr ""
+
+#: .\core\templates\home.html:117
+msgid "Kuchli bitiruvchilar jamoasiga qo'shiling va tarmoq quring"
+msgstr ""
+
+#: .\core\templates\home.html:119
+msgid "Qo'shilish"
+msgstr ""
+
+#: .\core\templates\home.html:132
+msgid "Intervyu, rezyume va kasbiy rivojlanish uchun foydali materiallar"
+msgstr ""
+
+#: .\core\templates\home.html:134
+msgid "O'rganish"
+msgstr ""
+
+#: .\core\templates\home.html:147
+msgid "Kasbiy rivojlanish va tarmoq qurish uchun tadbirlar"
+msgstr ""
+
+#: .\core\templates\home.html:149
+msgid "Ishtirok etish"
+msgstr ""
+
+#: .\core\templates\home.html:160
+msgid "So'ngi vakansiyalar"
+msgstr ""
+
+#: .\core\templates\home.html:162
+msgid "Barchasini ko'rish"
+msgstr ""
+
+#: .\core\templates\home.html:179 .\jobs\templates\jobs\job_list.html:256
+msgid "Batafsil"
+msgstr ""
+
+#: .\core\templates\home.html:187
+msgid "Hozircha vakansiyalar mavjud emas"
+msgstr ""
+
+#: .\core\templates\home.html:197
+msgid "Yaqinlashayotgan tadbirlar"
+msgstr ""
+
+#: .\core\templates\home.html:199
+msgid "Barcha tadbirlar"
+msgstr ""
+
+#: .\core\templates\home.html:231
+msgid "Yaqinlashayotgan tadbirlar mavjud emas"
+msgstr ""
+
+#: .\core\templates\home.html:240
+msgid "Bizning ishonchli hamkorlarimiz"
+msgstr ""
+
+#: .\cvbuilder\views.py:35
+msgid "Rezyume muvaffaqiyatli yaratildi!"
+msgstr ""
+
+#: .\cvbuilder\views.py:56
+msgid "Rezyume yangilandi!"
+msgstr ""
+
+#: .\cvbuilder\views.py:88
+msgid "Sizga ushbu rezyumega kirish huquqi yo'q."
+msgstr ""
+
+#: .\cvbuilder\views.py:122
+msgid "PDF eksport qilish imkoniyati hozircha mavjud emas."
+msgstr ""
+
+#: .\cvbuilder\views.py:125
+msgid "PDF yaratishda xatolik yuz berdi."
+msgstr ""
+
+#: .\cvbuilder\views.py:219
+msgid "Rezyume muvaffaqiyatli nusxalandi!"
+msgstr ""
+
+#: .\cvbuilder\views.py:238 .\cvbuilder\views.py:255 .\cvbuilder\views.py:272
+msgid "Noto'g'ri so'rov"
+msgstr ""
+
+#: .\cvbuilder\views.py:305
+#, python-brace-format
+msgid "Rezyume holati \"{status}\" ga o'zgartirildi"
+msgstr ""
+
+#: .\cvbuilder\views.py:309
+msgid "Noto'g'ri holat"
+msgstr ""
+
+#: .\cvbuilder\views.py:346
+#, python-brace-format
+msgid "\"{title}\" rezyumesi o'chirildi"
+msgstr ""
+
+#: .\employers\admin.py:26 .\events\admin.py:50 .\jobs\admin.py:36
+#: .\resources\admin.py:56
+msgid "Basic Information"
+msgstr ""
+
+#: .\employers\admin.py:29 .\jobs\admin.py:39
+msgid "Company Details"
+msgstr ""
+
+#: .\employers\admin.py:32 .\events\admin.py:151 .\jobs\admin.py:42
+#: .\jobs\admin.py:91
+msgid "Contact Information"
+msgstr ""
+
+#: .\employers\admin.py:35 .\jobs\admin.py:45
+msgid "Social Media"
+msgstr ""
+
+#: .\employers\admin.py:41 .\employers\admin.py:66 .\employers\admin.py:105
+#: .\employers\admin.py:131 .\employers\admin.py:169 .\employers\admin.py:192
+#: .\employers\admin.py:215 .\events\admin.py:80 .\events\admin.py:225
+#: .\events\admin.py:244 .\jobs\admin.py:51 .\jobs\admin.py:100
+#: .\jobs\admin.py:144 .\jobs\admin.py:192 .\jobs\admin.py:230
+#: .\jobs\admin.py:273 .\resources\admin.py:77
+msgid "Timestamps"
+msgstr ""
+
+#: .\employers\admin.py:54
+msgid "Profile Information"
+msgstr ""
+
+#: .\employers\admin.py:87 .\jobs\admin.py:76
+msgid "Job Information"
+msgstr ""
+
+#: .\employers\admin.py:90 .\jobs\admin.py:85
+msgid "Job Details"
+msgstr ""
+
+#: .\employers\admin.py:93 .\jobs\admin.py:82
+msgid "Salary Information"
+msgstr ""
+
+#: .\employers\admin.py:96
+msgid "Application Details"
+msgstr ""
+
+#: .\employers\admin.py:125 .\jobs\admin.py:135
+msgid "Application Information"
+msgstr ""
+
+#: .\employers\admin.py:140 .\jobs\admin.py:168
+#, python-format
+msgid "%(count)d applications marked as read"
+msgstr ""
+
+#: .\employers\admin.py:141
+msgid "Mark selected applications as read"
+msgstr ""
+
+#: .\employers\admin.py:145
+#, python-format
+msgid "%(count)d applications marked as unread"
+msgstr ""
+
+#: .\employers\admin.py:146
+msgid "Mark selected applications as unread"
+msgstr ""
+
+#: .\employers\admin.py:150
+#, python-format
+msgid "%(count)d applications set to new status"
+msgstr ""
+
+#: .\employers\admin.py:151
+msgid "Set status to new"
+msgstr ""
+
+#: .\employers\admin.py:155
+#, python-format
+msgid "%(count)d applications set to reviewed status"
+msgstr ""
+
+#: .\employers\admin.py:156
+msgid "Set status to reviewed"
+msgstr ""
+
+#: .\employers\admin.py:166
+msgid "Note Information"
+msgstr ""
+
+#: .\employers\admin.py:186 .\jobs\admin.py:261
+msgid "Interview Information"
+msgstr ""
+
+#: .\employers\admin.py:189
+msgid "Interview Details"
+msgstr ""
+
+#: .\employers\admin.py:206 .\jobs\admin.py:218
+msgid "Review Information"
+msgstr ""
+
+#: .\employers\admin.py:209
+msgid "Pros and Cons"
+msgstr ""
+
+#: .\employers\admin.py:224 .\jobs\admin.py:239
+#, python-format
+msgid "%(count)d reviews published"
+msgstr ""
+
+#: .\employers\admin.py:225 .\jobs\admin.py:240
+msgid "Publish selected reviews"
+msgstr ""
+
+#: .\employers\admin.py:229 .\jobs\admin.py:244
+#, python-format
+msgid "%(count)d reviews unpublished"
+msgstr ""
+
+#: .\employers\admin.py:230 .\jobs\admin.py:245
+msgid "Unpublish selected reviews"
+msgstr ""
+
+#: .\employers\admin.py:234 .\jobs\admin.py:249
+#, python-format
+msgid "%(count)d reviews verified"
+msgstr ""
+
+#: .\employers\admin.py:235 .\jobs\admin.py:250
+msgid "Verify selected reviews"
+msgstr ""
+
+#: .\employers\apps.py:7 .\employers\templates\employers\list.html:9
+msgid "Employers"
+msgstr ""
+
+#: .\employers\forms.py:16
+msgid "Company name"
+msgstr ""
+
+#: .\employers\forms.py:20
+msgid "Company description and activities..."
+msgstr ""
+
+#: .\employers\forms.py:26
+msgid "Headquarters location"
+msgstr ""
+
+#: .\employers\forms.py:34 .\employers\models.py:34 .\jobs\forms.py:219
+#: .\jobs\models.py:36
+msgid "Company Name"
+msgstr ""
+
+#: .\employers\forms.py:37 .\employers\models.py:37 .\jobs\forms.py:222
+#: .\jobs\models.py:39
+msgid "Logo"
+msgstr ""
+
+#: .\employers\forms.py:38 .\employers\models.py:38 .\jobs\forms.py:223
+#: .\jobs\forms.py:262 .\jobs\models.py:15 .\jobs\models.py:40
+#: .\jobs\models.py:266 .\resources\forms.py:222 .\resources\models.py:243
+msgid "Industry"
+msgstr ""
+
+#: .\employers\forms.py:39 .\employers\models.py:39 .\jobs\forms.py:224
+#: .\jobs\models.py:41
+msgid "Company Size"
+msgstr ""
+
+#: .\employers\forms.py:40 .\employers\models.py:40 .\jobs\forms.py:225
+#: .\jobs\models.py:42
+msgid "Founded Year"
+msgstr ""
+
+#: .\employers\forms.py:41 .\employers\models.py:41 .\jobs\forms.py:226
+#: .\jobs\models.py:43
+msgid "Headquarters"
+msgstr ""
+
+#: .\employers\forms.py:42 .\employers\forms.py:127 .\employers\models.py:45
+#: .\employers\models.py:152 .\jobs\forms.py:150 .\jobs\forms.py:227
+#: .\jobs\models.py:46 .\jobs\models.py:143
+msgid "Contact Email"
+msgstr ""
+
+#: .\employers\forms.py:43 .\employers\models.py:46 .\jobs\forms.py:228
+#: .\jobs\models.py:47
+msgid "Contact Phone"
+msgstr ""
+
+#: .\employers\forms.py:53
+msgid "Your position"
+msgstr ""
+
+#: .\employers\forms.py:54 .\employers\forms.py:59 .\employers\models.py:81
+msgid "Department"
+msgstr ""
+
+#: .\employers\forms.py:60 .\employers\models.py:82
+msgid "Phone"
+msgstr ""
+
+#: .\employers\forms.py:75
+msgid "Job title"
+msgstr ""
+
+#: .\employers\forms.py:79 .\jobs\forms.py:81
+msgid "Detailed job description..."
+msgstr ""
+
+#: .\employers\forms.py:84
+msgid "Candidate requirements..."
+msgstr ""
+
+#: .\employers\forms.py:89
+msgid "Job responsibilities..."
+msgstr ""
+
+#: .\employers\forms.py:94
+msgid "Benefits and perks..."
+msgstr ""
+
+#: .\employers\forms.py:98 .\events\forms.py:60 .\jobs\forms.py:86
+msgid "Tashkent, Uzbekistan"
+msgstr ""
+
+#: .\employers\forms.py:108
+msgid "Python, Django, JavaScript, ..."
+msgstr ""
+
+#: .\employers\forms.py:113 .\employers\models.py:133 .\jobs\forms.py:130
+#: .\jobs\forms.py:308 .\jobs\forms.py:361 .\jobs\models.py:111
+#: .\jobs\models.py:298 .\jobs\models.py:350
+msgid "Job Title"
+msgstr ""
+
+#: .\employers\forms.py:114 .\employers\models.py:134 .\jobs\forms.py:132
+#: .\jobs\models.py:112
+msgid "Job Description"
+msgstr ""
+
+#: .\employers\forms.py:115 .\employers\models.py:135 .\jobs\forms.py:145
+#: .\jobs\models.py:134
+msgid "Requirements"
+msgstr ""
+
+#: .\employers\forms.py:116 .\employers\models.py:136 .\jobs\forms.py:146
+#: .\jobs\models.py:135
+msgid "Responsibilities"
+msgstr ""
+
+#: .\employers\forms.py:117 .\employers\models.py:137 .\jobs\forms.py:147
+#: .\jobs\models.py:136
+msgid "Benefits"
+msgstr ""
+
+#: .\employers\forms.py:118 .\employers\models.py:139 .\jobs\forms.py:137
+#: .\jobs\forms.py:263 .\jobs\models.py:122 .\jobs\models.py:267
+msgid "Employment Type"
+msgstr ""
+
+#: .\employers\forms.py:119 .\employers\models.py:140 .\jobs\forms.py:138
+#: .\jobs\forms.py:264 .\jobs\models.py:123 .\jobs\models.py:268
+msgid "Experience Level"
+msgstr ""
+
+#: .\employers\forms.py:121 .\employers\models.py:144 .\jobs\forms.py:135
+#: .\jobs\models.py:118
+msgid "Remote Work Available"
+msgstr ""
+
+#: .\employers\forms.py:122 .\employers\models.py:146 .\jobs\forms.py:140
+#: .\jobs\models.py:127
+msgid "Minimum Salary"
+msgstr ""
+
+#: .\employers\forms.py:123 .\employers\models.py:147 .\jobs\forms.py:141
+#: .\jobs\models.py:128
+msgid "Maximum Salary"
+msgstr ""
+
+#: .\employers\forms.py:124 .\employers\models.py:148 .\events\forms.py:104
+#: .\events\models.py:88 .\jobs\forms.py:142 .\jobs\models.py:129
+msgid "Currency"
+msgstr ""
+
+#: .\employers\forms.py:125 .\employers\models.py:149 .\jobs\forms.py:143
+#: .\jobs\models.py:130
+msgid "Hide Salary"
+msgstr ""
+
+#: .\employers\forms.py:126 .\employers\models.py:151 .\jobs\forms.py:152
+#: .\jobs\models.py:145
+msgid "Application URL"
+msgstr ""
+
+#: .\employers\forms.py:128 .\employers\models.py:154 .\jobs\forms.py:148
+#: .\jobs\models.py:139 .\resources\forms.py:223 .\resources\models.py:244
+msgid "Required Skills"
+msgstr ""
+
+#: .\employers\forms.py:138 .\jobs\forms.py:162
+msgid "Minimum salary cannot be greater than maximum salary."
+msgstr ""
+
+#: .\employers\forms.py:152
+msgid "Write your cover letter..."
+msgstr ""
+
+#: .\employers\forms.py:158 .\employers\models.py:209 .\jobs\forms.py:188
+#: .\jobs\models.py:210
+msgid "Cover Letter"
+msgstr ""
+
+#: .\employers\forms.py:159 .\employers\models.py:210 .\jobs\forms.py:189
+#: .\jobs\models.py:213
+msgid "Expected Salary"
+msgstr ""
+
+#: .\employers\forms.py:160 .\jobs\forms.py:187
+msgid "Resume/CV"
+msgstr ""
+
+#: .\employers\forms.py:173
+msgid "Add notes about the candidate..."
+msgstr ""
+
+#: .\employers\forms.py:179 .\employers\models.py:235
+msgid "Note"
+msgstr ""
+
+#: .\employers\forms.py:180 .\employers\models.py:236
+msgid "Private Note"
+msgstr ""
+
+#: .\employers\forms.py:181
+msgid "Related Job"
+msgstr ""
+
+#: .\employers\forms.py:193
+msgid "Interview location or Zoom link"
+msgstr ""
+
+#: .\employers\forms.py:198 .\employers\models.py:261
+msgid "Scheduled Date"
+msgstr ""
+
+#: .\employers\forms.py:199
+msgid "Duration (minutes)"
+msgstr ""
+
+#: .\employers\forms.py:201 .\employers\models.py:264 .\resources\models.py:226
+msgid "Notes"
+msgstr ""
+
+#: .\employers\forms.py:202 .\employers\models.py:259
+msgid "Interviewer"
+msgstr ""
+
+#: .\employers\forms.py:213
+msgid "Review title"
+msgstr ""
+
+#: .\employers\forms.py:217
+msgid "Share your experience working at this company..."
+msgstr ""
+
+#: .\employers\forms.py:222 .\jobs\forms.py:292
+msgid "What did you like about working here?"
+msgstr ""
+
+#: .\employers\forms.py:227 .\jobs\forms.py:297 .\resources\forms.py:140
+msgid "What could be improved?"
+msgstr ""
+
+#: .\employers\forms.py:232 .\employers\models.py:268 .\employers\models.py:294
+#: .\employers\templates\employers\list.html:69 .\events\models.py:312
+#: .\resources\forms.py:144 .\resources\models.py:140
+msgid "Rating"
+msgstr ""
+
+#: .\employers\forms.py:234 .\employers\models.py:296
+msgid "Review"
+msgstr ""
+
+#: .\employers\forms.py:235 .\employers\models.py:298 .\jobs\forms.py:315
+#: .\jobs\models.py:309 .\resources\forms.py:146 .\resources\models.py:142
+msgid "Pros"
+msgstr ""
+
+#: .\employers\forms.py:236 .\employers\models.py:299 .\jobs\forms.py:316
+#: .\jobs\models.py:310 .\resources\forms.py:147 .\resources\models.py:143
+msgid "Cons"
+msgstr ""
+
+#: .\employers\forms.py:237 .\jobs\forms.py:319 .\jobs\forms.py:368
+msgid "Post Anonymously"
+msgstr ""
+
+#: .\employers\forms.py:246 .\jobs\forms.py:11
+msgid "Job title, company, or keywords..."
+msgstr ""
+
+#: .\employers\forms.py:253 .\jobs\forms.py:18
+msgid "Tashkent, Samarkand..."
+msgstr ""
+
+#: .\employers\forms.py:287
+msgid "Additional notes..."
+msgstr ""
+
+#: .\employers\models.py:11 .\jobs\models.py:28
+msgid "1-10 employees"
+msgstr ""
+
+#: .\employers\models.py:12 .\jobs\models.py:29
+msgid "11-50 employees"
+msgstr ""
+
+#: .\employers\models.py:13 .\jobs\models.py:30
+msgid "51-200 employees"
+msgstr ""
+
+#: .\employers\models.py:14 .\jobs\models.py:31
+msgid "201-500 employees"
+msgstr ""
+
+#: .\employers\models.py:15 .\jobs\models.py:32
+msgid "501-1000 employees"
+msgstr ""
+
+#: .\employers\models.py:16 .\jobs\models.py:33
+msgid "More than 1000 employees"
+msgstr ""
+
+#: .\employers\models.py:20
+msgid "IT & Technology"
+msgstr ""
+
+#: .\employers\models.py:21
+msgid "Finance & Banking"
+msgstr ""
+
+#: .\employers\models.py:22 .\employers\templates\employers\list.html:34
+#: .\employers\templates\employers\list.html:240
+msgid "Healthcare"
+msgstr ""
+
+#: .\employers\models.py:23 .\employers\templates\employers\list.html:35
+#: .\employers\templates\employers\list.html:244
+msgid "Education"
+msgstr ""
+
+#: .\employers\models.py:24 .\employers\templates\employers\list.html:37
+msgid "Manufacturing"
+msgstr ""
+
+#: .\employers\models.py:25 .\employers\templates\employers\list.html:36
+msgid "Retail"
+msgstr ""
+
+#: .\employers\models.py:26
+msgid "Consulting"
+msgstr ""
+
+#: .\employers\models.py:27
+msgid "Tourism & Hospitality"
+msgstr ""
+
+#: .\employers\models.py:28
+msgid "Construction"
+msgstr ""
+
+#: .\employers\models.py:29
+msgid "Energy"
+msgstr ""
+
+#: .\employers\models.py:30
+msgid "Telecommunications"
+msgstr ""
+
+#: .\employers\models.py:31 .\events\models.py:35 .\resources\models.py:39
+msgid "Other"
+msgstr ""
+
+#: .\employers\models.py:42
+msgid "e.g., Tashkent, Uzbekistan"
+msgstr ""
+
+#: .\employers\models.py:53 .\jobs\models.py:54
+msgid "Verified Company"
+msgstr ""
+
+#: .\employers\models.py:54 .\jobs\models.py:55 .\jobs\models.py:271
+#: .\resources\forms.py:226 .\resources\forms.py:259 .\resources\models.py:248
+#: .\resources\models.py:275
+msgid "Active"
+msgstr ""
+
+#: .\employers\models.py:60 .\employers\models.py:79 .\employers\models.py:130
+#: .\employers\models.py:291 .\jobs\forms.py:133 .\jobs\forms.py:360
+#: .\jobs\models.py:61 .\jobs\models.py:116 .\jobs\models.py:296
+#: .\jobs\models.py:348
+msgid "Company"
+msgstr ""
+
+#: .\employers\models.py:61 .\employers\templates\employers\list.html:55
+#: .\jobs\admin.py:24 .\jobs\models.py:62
+msgid "Companies"
+msgstr ""
+
+#: .\employers\models.py:85
+msgid "Can Post Jobs"
+msgstr ""
+
+#: .\employers\models.py:86
+msgid "Can Manage Jobs"
+msgstr ""
+
+#: .\employers\models.py:87
+msgid "Can View Candidates"
+msgstr ""
+
+#: .\employers\models.py:88
+msgid "Can Contact Candidates"
+msgstr ""
+
+#: .\employers\models.py:90
+msgid "Primary Contact"
+msgstr ""
+
+#: .\employers\models.py:91
+msgid "Active Profile"
+msgstr ""
+
+#: .\employers\models.py:97
+msgid "Employer Profile"
+msgstr ""
+
+#: .\employers\models.py:98
+msgid "Employer Profiles"
+msgstr ""
+
+#: .\employers\models.py:106 .\jobs\models.py:77
+msgid "Full Time"
+msgstr ""
+
+#: .\employers\models.py:107 .\jobs\models.py:78
+msgid "Part Time"
+msgstr ""
+
+#: .\employers\models.py:108 .\jobs\models.py:79
+msgid "Contract"
+msgstr ""
+
+#: .\employers\models.py:109 .\jobs\models.py:80
+msgid "Internship"
+msgstr ""
+
+#: .\employers\models.py:110 .\jobs\models.py:81
+msgid "Remote Work"
+msgstr ""
+
+#: .\employers\models.py:111 .\jobs\models.py:82
+msgid "Freelance"
+msgstr ""
+
+#: .\employers\models.py:115 .\jobs\models.py:86
+msgid "Intern"
+msgstr ""
+
+#: .\employers\models.py:116 .\jobs\models.py:87
+msgid "Junior"
+msgstr ""
+
+#: .\employers\models.py:117 .\jobs\models.py:88
+msgid "Middle"
+msgstr ""
+
+#: .\employers\models.py:118 .\jobs\models.py:89
+msgid "Senior"
+msgstr ""
+
+#: .\employers\models.py:119 .\jobs\models.py:90
+msgid "Lead"
+msgstr ""
+
+#: .\employers\models.py:120 .\jobs\models.py:91
+msgid "Manager"
+msgstr ""
+
+#: .\employers\models.py:121 .\jobs\models.py:92
+msgid "Director"
+msgstr ""
+
+#: .\employers\models.py:125 .\jobs\models.py:105
+msgid "Uzbek Sum (UZS)"
+msgstr ""
+
+#: .\employers\models.py:126 .\jobs\models.py:106
+msgid "US Dollar (USD)"
+msgstr ""
+
+#: .\employers\models.py:127 .\jobs\models.py:107
+msgid "Euro (EUR)"
+msgstr ""
+
+#: .\employers\models.py:131
+msgid "Posted By"
+msgstr ""
+
+#: .\employers\models.py:143
+msgid "e.g., Tashkent, Samarkand, Remote"
+msgstr ""
+
+#: .\employers\models.py:154 .\jobs\models.py:139 .\resources\models.py:244
+msgid "List skills separated by commas"
+msgstr ""
+
+#: .\employers\models.py:156 .\jobs\models.py:148
+msgid "Active Job"
+msgstr ""
+
+#: .\employers\models.py:157 .\jobs\models.py:149
+msgid "Featured Job"
+msgstr ""
+
+#: .\employers\models.py:158
+msgid "View Count"
+msgstr ""
+
+#: .\employers\models.py:165 .\employers\models.py:205
+#: .\employers\models.py:233 .\jobs\models.py:160 .\jobs\models.py:205
+#: .\jobs\models.py:240
+msgid "Job"
+msgstr ""
+
+#: .\employers\models.py:186 .\jobs\models.py:178
+msgid "Salary negotiable"
+msgstr ""
+
+#: .\employers\models.py:190 .\jobs\models.py:184
+#, python-format
+msgid "from %(salary)s %(currency)s"
+msgstr ""
+
+#: .\employers\models.py:192 .\jobs\models.py:186
+#, python-format
+msgid "up to %(salary)s %(currency)s"
+msgstr ""
+
+#: .\employers\models.py:193 .\jobs\models.py:187
+msgid "Not specified"
+msgstr ""
+
+#: .\employers\models.py:198
+msgid "New"
+msgstr ""
+
+#: .\employers\models.py:199
+msgid "Reviewed"
+msgstr ""
+
+#: .\employers\models.py:200 .\employers\models.py:274 .\jobs\models.py:199
+msgid "Interview"
+msgstr ""
+
+#: .\employers\models.py:201 .\jobs\models.py:200
+msgid "Rejected"
+msgstr ""
+
+#: .\employers\models.py:202 .\jobs\models.py:201
+msgid "Hired"
+msgstr ""
+
+#: .\employers\models.py:206 .\employers\models.py:231 .\jobs\models.py:206
+msgid "Candidate"
+msgstr ""
+
+#: .\employers\models.py:213 .\jobs\models.py:219
+msgid "Status Changed"
+msgstr ""
+
+#: .\employers\models.py:222 .\jobs\models.py:230
+msgid "Job Applications"
+msgstr ""
+
+#: .\employers\models.py:242
+msgid "Candidate Note"
+msgstr ""
+
+#: .\employers\models.py:243
+msgid "Candidate Notes"
+msgstr ""
+
+#: .\employers\models.py:252
+msgid "Scheduled"
+msgstr ""
+
+#: .\employers\models.py:253 .\events\models.py:42 .\resources\models.py:227
+msgid "Completed"
+msgstr ""
+
+#: .\employers\models.py:254 .\events\models.py:41 .\events\models.py:154
+msgid "Cancelled"
+msgstr ""
+
+#: .\employers\models.py:255 .\events\models.py:156
+msgid "No Show"
+msgstr ""
+
+#: .\employers\models.py:258
+msgid "Application"
+msgstr ""
+
+#: .\employers\models.py:262
+msgid "Duration in minutes"
+msgstr ""
+
+#: .\employers\models.py:262 .\resources\forms.py:103 .\resources\models.py:74
+msgid "Duration"
+msgstr ""
+
+#: .\employers\models.py:267
+msgid "Feedback"
+msgstr ""
+
+#: .\employers\models.py:268
+msgid "Rating from 1 to 5"
+msgstr ""
+
+#: .\employers\models.py:275
+msgid "Interviews"
+msgstr ""
+
+#: .\employers\models.py:284
+msgid "1 - Very Poor"
+msgstr ""
+
+#: .\employers\models.py:285
+msgid "2 - Poor"
+msgstr ""
+
+#: .\employers\models.py:286
+msgid "3 - Average"
+msgstr ""
+
+#: .\employers\models.py:287
+msgid "4 - Good"
+msgstr ""
+
+#: .\employers\models.py:288
+msgid "5 - Excellent"
+msgstr ""
+
+#: .\employers\models.py:292 .\jobs\models.py:297 .\jobs\models.py:349
+#: .\resources\forms.py:99 .\resources\models.py:70
+msgid "Author"
+msgstr ""
+
+#: .\employers\models.py:301 .\jobs\models.py:320
+msgid "Anonymous Review"
+msgstr ""
+
+#: .\employers\models.py:302 .\jobs\models.py:321 .\resources\models.py:146
+msgid "Verified Review"
+msgstr ""
+
+#: .\employers\models.py:303 .\events\models.py:40 .\jobs\models.py:322
+#: .\jobs\models.py:375 .\resources\forms.py:106 .\resources\models.py:81
+msgid "Published"
+msgstr ""
+
+#: .\employers\models.py:309 .\jobs\models.py:328
+msgid "Company Review"
+msgstr ""
+
+#: .\employers\models.py:310 .\jobs\models.py:329
+msgid "Company Reviews"
+msgstr ""
+
+#: .\employers\signals.py:12
+msgid "New Job Application Received"
+msgstr ""
+
+#: .\employers\signals.py:14
+#, python-brace-format
+msgid ""
+"You have received a new application for the position: {job_title}\n"
+"Candidate: {candidate_name}\n"
+"View application: {application_url}"
+msgstr ""
+
+#: .\employers\signals.py:37
+#, python-brace-format
+msgid "Interview Invitation - {company}"
+msgstr ""
+
+#: .\employers\signals.py:39
+#, python-brace-format
+msgid ""
+"Dear {candidate_name},\n"
+"\n"
+"You have been invited for an interview for the position: {job_title}\n"
+"Date and Time: {datetime}\n"
+"Location: {location}\n"
+"Duration: {duration} minutes\n"
+"Interviewer: {interviewer}\n"
+"\n"
+"Best regards,\n"
+"{company} Team"
+msgstr ""
+
+#: .\employers\templates\employers\list.html:10
+msgid "Discover top companies and find career opportunities"
+msgstr ""
+
+#: .\employers\templates\employers\list.html:26
+msgid "Search by company name..."
+msgstr ""
+
+#: .\employers\templates\employers\list.html:31
+msgid "All industries"
+msgstr ""
+
+#: .\employers\templates\employers\list.html:32
+#: .\employers\templates\employers\list.html:232
+msgid "Technology"
+msgstr ""
+
+#: .\employers\templates\employers\list.html:33
+#: .\employers\templates\employers\list.html:236
+msgid "Finance"
+msgstr ""
+
+#: .\employers\templates\employers\list.html:43
+msgid "Partners only"
+msgstr ""
+
+#: .\employers\templates\employers\list.html:58
+#, python-format
+msgid "Total: %(count)s companies"
+msgstr ""
+
+#: .\employers\templates\employers\list.html:60
+#: .\employers\templates\employers\list.html:216
+msgid "No companies found"
+msgstr ""
+
+#: .\employers\templates\employers\list.html:65
+msgid "Sort by:"
+msgstr ""
+
+#: .\employers\templates\employers\list.html:67
+msgid "Name"
+msgstr ""
+
+#: .\employers\templates\employers\list.html:68
+msgid "Job count"
+msgstr ""
+
+#: .\employers\templates\employers\list.html:70
+msgid "Newest"
+msgstr ""
+
+#: .\employers\templates\employers\list.html:102
+#, fuzzy
+#| msgid "Part-time"
+msgid "Partner"
+msgstr "Yarim stavka"
+
+#: .\employers\templates\employers\list.html:112
+#: .\employers\templates\employers\list.html:198
+#, python-format
+msgid "%(n)s vacancies"
+msgstr ""
+
+#: .\employers\templates\employers\list.html:141
+#, python-format
+msgid "%(r)s/5 rating"
+msgstr ""
+
+#: .\employers\templates\employers\list.html:149
+#, fuzzy
+#| msgid "My profile"
+msgid "View profile"
+msgstr "Mening profilim"
+
+#: .\employers\templates\employers\list.html:170
+msgid "Featured Partners"
+msgstr ""
+
+#: .\employers\templates\employers\list.html:193
+msgid "Premium"
+msgstr ""
+
+#: .\employers\templates\employers\list.html:217
+msgid "Try adjusting your search or come back later."
+msgstr ""
+
+#: .\employers\templates\employers\list.html:220
+msgid "Clear filters"
+msgstr ""
+
+#: .\employers\templates\employers\list.html:228
+#, fuzzy
+#| msgid "Statistics"
+msgid "Industry statistics"
+msgstr "Statistika"
+
+#: .\employers\views.py:106 .\jobs\views.py:141
+msgid "You have already applied for this job."
+msgstr ""
+
+#: .\employers\views.py:117 .\jobs\views.py:161
+msgid "Your application has been submitted successfully!"
+msgstr ""
+
+#: .\employers\views.py:134
+msgid "You need to complete your employer profile first."
+msgstr ""
+
+#: .\employers\views.py:165
+msgid "You already have an employer profile."
+msgstr ""
+
+#: .\employers\views.py:187
+msgid "Employer profile created successfully!"
+msgstr ""
+
+#: .\employers\views.py:303
+msgid "You need to complete your employer profile to access this page."
+msgstr ""
+
+#: .\employers\views.py:314
+msgid "You do not have permission to post jobs."
+msgstr ""
+
+#: .\employers\views.py:325
+msgid "Job posted successfully!"
+msgstr ""
+
+#: .\events\admin.py:37 .\events\forms.py:20 .\events\models.py:12
+#: .\resources\admin.py:43 .\resources\forms.py:22 .\resources\forms.py:177
+#: .\resources\models.py:13 .\resources\models.py:197
+msgid "Color"
+msgstr ""
+
+#: .\events\admin.py:53
+msgid "Date & Time"
+msgstr ""
+
+#: .\events\admin.py:59 .\events\models.py:71
+msgid "Organizer"
+msgstr ""
+
+#: .\events\admin.py:62
+msgid "Media"
+msgstr ""
+
+#: .\events\admin.py:65
+msgid "Registration"
+msgstr ""
+
+#: .\events\admin.py:71
+msgid "Pricing"
+msgstr ""
+
+#: .\events\admin.py:89
+#, python-format
+msgid "%(count)d events published"
+msgstr ""
+
+#: .\events\admin.py:90
+msgid "Publish selected events"
+msgstr ""
+
+#: .\events\admin.py:94
+#, python-format
+msgid "%(count)d events unpublished"
+msgstr ""
+
+#: .\events\admin.py:95
+msgid "Unpublish selected events"
+msgstr ""
+
+#: .\events\admin.py:99
+#, python-format
+msgid "%(count)d events marked as featured"
+msgstr ""
+
+#: .\events\admin.py:100 .\jobs\admin.py:120 .\resources\admin.py:97
+msgid "Mark as featured"
+msgstr ""
+
+#: .\events\admin.py:110
+msgid "Registration Information"
+msgstr ""
+
+#: .\events\admin.py:113
+msgid "Additional Information"
+msgstr ""
+
+#: .\events\admin.py:116
+msgid "Payment"
+msgstr ""
+
+#: .\events\admin.py:119
+msgid "Check-in"
+msgstr ""
+
+#: .\events\admin.py:128
+#, python-format
+msgid "%(count)d registrations marked as attended"
+msgstr ""
+
+#: .\events\admin.py:129
+msgid "Mark as attended"
+msgstr ""
+
+#: .\events\admin.py:133
+#, python-format
+msgid "%(count)d registrations marked as no show"
+msgstr ""
+
+#: .\events\admin.py:134
+msgid "Mark as no show"
+msgstr ""
+
+#: .\events\admin.py:138
+#, python-format
+msgid "%(count)d payments confirmed"
+msgstr ""
+
+#: .\events\admin.py:139
+msgid "Confirm payment"
+msgstr ""
+
+#: .\events\admin.py:148
+msgid "Speaker Information"
+msgstr ""
+
+#: .\events\admin.py:154 .\events\admin.py:181 .\events\admin.py:222
+msgid "Display"
+msgstr ""
+
+#: .\events\admin.py:166
+msgid "Session Information"
+msgstr ""
+
+#: .\events\admin.py:169
+msgid "Timing"
+msgstr ""
+
+#: .\events\admin.py:175 .\events\models.py:244
+msgid "Speakers"
+msgstr ""
+
+#: .\events\admin.py:178
+msgid "Materials"
+msgstr ""
+
+#: .\events\admin.py:198 .\events\forms.py:246 .\events\forms.py:298
+#: .\events\models.py:272 .\events\models.py:314 .\resources\admin.py:111
+#: .\resources\forms.py:145 .\resources\models.py:141
+msgid "Comment"
+msgstr ""
+
+#: .\events\admin.py:204
+#, python-format
+msgid "%(count)d comments approved"
+msgstr ""
+
+#: .\events\admin.py:205
+msgid "Approve selected comments"
+msgstr ""
+
+#: .\events\admin.py:209
+#, python-format
+msgid "%(count)d comments disapproved"
+msgstr ""
+
+#: .\events\admin.py:210
+msgid "Disapprove selected comments"
+msgstr ""
+
+#: .\events\admin.py:219
+msgid "Photo Information"
+msgstr ""
+
+#: .\events\admin.py:238
+msgid "Rating Information"
+msgstr ""
+
+#: .\events\admin.py:241
+msgid "Detailed Ratings"
+msgstr ""
+
+#: .\events\forms.py:12 .\resources\forms.py:12
+msgid "Category name"
+msgstr ""
+
+#: .\events\forms.py:18 .\events\models.py:10 .\resources\forms.py:19
+#: .\resources\models.py:10
+msgid "Category Name"
+msgstr ""
+
+#: .\events\forms.py:21 .\events\models.py:13 .\jobs\models.py:12
+#: .\resources\forms.py:21 .\resources\models.py:12
+msgid "Icon"
+msgstr ""
+
+#: .\events\forms.py:37
+msgid "Event title"
+msgstr ""
+
+#: .\events\forms.py:41
+msgid "Brief description (max 300 characters)"
+msgstr ""
+
+#: .\events\forms.py:46
+msgid "Detailed event description..."
+msgstr ""
+
+#: .\events\forms.py:79
+msgid "technology, workshop, networking"
+msgstr ""
+
+#: .\events\forms.py:83 .\events\models.py:53
+msgid "Event Title"
+msgstr ""
+
+#: .\events\forms.py:84 .\events\models.py:55 .\jobs\forms.py:131
+#: .\jobs\models.py:113 .\resources\forms.py:91 .\resources\models.py:59
+msgid "Short Description"
+msgstr ""
+
+#: .\events\forms.py:87 .\events\models.py:57
+msgid "Event Type"
+msgstr ""
+
+#: .\events\forms.py:88 .\events\models.py:60
+msgid "Start Date"
+msgstr ""
+
+#: .\events\forms.py:89 .\events\models.py:61
+msgid "End Date"
+msgstr ""
+
+#: .\events\forms.py:91 .\events\forms.py:297 .\events\models.py:65
+msgid "Venue"
+msgstr ""
+
+#: .\events\forms.py:92 .\events\models.py:66
+msgid "Online Event"
+msgstr ""
+
+#: .\events\forms.py:93 .\events\models.py:67
+msgid "Online Meeting Link"
+msgstr ""
+
+#: .\events\forms.py:94 .\events\models.py:68
+msgid "Full Address"
+msgstr ""
+
+#: .\events\forms.py:95 .\events\models.py:75
+msgid "Banner Image"
+msgstr ""
+
+#: .\events\forms.py:96 .\events\models.py:76 .\resources\forms.py:98
+#: .\resources\models.py:67
+msgid "Thumbnail"
+msgstr ""
+
+#: .\events\forms.py:97 .\events\models.py:79
+msgid "Registration Required"
+msgstr ""
+
+#: .\events\forms.py:98 .\events\models.py:80
+msgid "Registration Type"
+msgstr ""
+
+#: .\events\forms.py:99 .\events\models.py:81
+msgid "Registration Deadline"
+msgstr ""
+
+#: .\events\forms.py:100 .\events\models.py:82
+msgid "Maximum Participants"
+msgstr ""
+
+#: .\events\forms.py:101
+msgid "Enable Waitlist"
+msgstr ""
+
+#: .\events\forms.py:102 .\events\models.py:86
+msgid "Free Event"
+msgstr ""
+
+#: .\events\forms.py:103 .\events\models.py:87
+msgid "Price"
+msgstr ""
+
+#: .\events\forms.py:105 .\events\models.py:98 .\resources\forms.py:104
+#: .\resources\models.py:77
+msgid "Tags"
+msgstr ""
+
+#: .\events\forms.py:115
+msgid "End date must be after start date."
+msgstr ""
+
+#: .\events\forms.py:118
+msgid "Registration deadline cannot be after event start date."
+msgstr ""
+
+#: .\events\forms.py:132
+msgid "Any dietary restrictions?"
+msgstr ""
+
+#: .\events\forms.py:137
+msgid "Any special requirements?"
+msgstr ""
+
+#: .\events\forms.py:142
+msgid "Additional comments..."
+msgstr ""
+
+#: .\events\forms.py:146 .\events\models.py:167
+msgid "Dietary Restrictions"
+msgstr ""
+
+#: .\events\forms.py:147 .\events\models.py:168
+msgid "Special Requirements"
+msgstr ""
+
+#: .\events\forms.py:148 .\events\models.py:169
+msgid "Comments"
+msgstr ""
+
+#: .\events\forms.py:172 .\events\models.py:198
+msgid "Speaker Name"
+msgstr ""
+
+#: .\events\forms.py:173 .\events\models.py:199
+msgid "Speaker Title"
+msgstr ""
+
+#: .\events\forms.py:175 .\events\models.py:201
+msgid "Biography"
+msgstr ""
+
+#: .\events\forms.py:176 .\events\models.py:202
+msgid "Photo"
+msgstr ""
+
+#: .\events\forms.py:181 .\events\forms.py:219 .\events\models.py:209
+#: .\events\models.py:250 .\events\models.py:295 .\resources\forms.py:23
+#: .\resources\models.py:14
+msgid "Display Order"
+msgstr ""
+
+#: .\events\forms.py:211 .\events\models.py:232
+msgid "Session Title"
+msgstr ""
+
+#: .\events\forms.py:213 .\events\models.py:234
+msgid "Session Type"
+msgstr ""
+
+#: .\events\forms.py:214 .\events\models.py:237
+msgid "Start Time"
+msgstr ""
+
+#: .\events\forms.py:215 .\events\models.py:238
+msgid "End Time"
+msgstr ""
+
+#: .\events\forms.py:217 .\events\models.py:247
+msgid "Presentation URL"
+msgstr ""
+
+#: .\events\forms.py:218 .\events\models.py:248
+msgid "Materials URL"
+msgstr ""
+
+#: .\events\forms.py:228
+msgid "End time must be after start time."
+msgstr ""
+
+#: .\events\forms.py:242
+msgid "Share your thoughts about this event..."
+msgstr ""
+
+#: .\events\forms.py:290
+msgid "Share your experience..."
+msgstr ""
+
+#: .\events\forms.py:294 .\jobs\forms.py:309 .\jobs\models.py:301
+msgid "Overall Rating"
+msgstr ""
+
+#: .\events\forms.py:295
+msgid "Content Quality"
+msgstr ""
+
+#: .\events\forms.py:307
+msgid "Search events..."
+msgstr ""
+
+#: .\events\forms.py:313 .\resources\forms.py:274
+msgid "All Categories"
+msgstr ""
+
+#: .\events\forms.py:317 .\resources\forms.py:278
+msgid "All Types"
+msgstr ""
+
+#: .\events\forms.py:323
+msgid "Any Time"
+msgstr ""
+
+#: .\events\forms.py:324
+msgid "Today"
+msgstr ""
+
+#: .\events\forms.py:325
+msgid "This Week"
+msgstr ""
+
+#: .\events\forms.py:326
+msgid "This Month"
+msgstr ""
+
+#: .\events\forms.py:327
+msgid "Upcoming"
+msgstr ""
+
+#: .\events\forms.py:328
+msgid "Past Events"
+msgstr ""
+
+#: .\events\forms.py:337
+msgid "Location..."
+msgstr ""
+
+#: .\events\forms.py:360
+msgid "All Registered Participants"
+msgstr ""
+
+#: .\events\forms.py:361
+msgid "Confirmed Participants Only"
+msgstr ""
+
+#: .\events\forms.py:362
+msgid "Waiting List Only"
+msgstr ""
+
+#: .\events\forms.py:363
+msgid "Attended Participants"
+msgstr ""
+
+#: .\events\models.py:16
+msgid "Event Category"
+msgstr ""
+
+#: .\events\models.py:17
+msgid "Event Categories"
+msgstr ""
+
+#: .\events\models.py:26
+msgid "Conference"
+msgstr ""
+
+#: .\events\models.py:27 .\events\models.py:223
+msgid "Workshop"
+msgstr ""
+
+#: .\events\models.py:29 .\events\models.py:227
+msgid "Networking"
+msgstr ""
+
+#: .\events\models.py:30
+msgid "Career Fair"
+msgstr ""
+
+#: .\events\models.py:31
+msgid "Hackathon"
+msgstr ""
+
+#: .\events\models.py:32
+msgid "Webinar"
+msgstr ""
+
+#: .\events\models.py:33
+msgid "Social Event"
+msgstr ""
+
+#: .\events\models.py:34
+msgid "Training"
+msgstr ""
+
+#: .\events\models.py:39
+msgid "Draft"
+msgstr ""
+
+#: .\events\models.py:46
+msgid "Open Registration"
+msgstr ""
+
+#: .\events\models.py:47
+msgid "Approval Required"
+msgstr ""
+
+#: .\events\models.py:48
+msgid "Invitation Only"
+msgstr ""
+
+#: .\events\models.py:49
+msgid "Paid Registration"
+msgstr ""
+
+#: .\events\models.py:72
+msgid "Co-organizers"
+msgstr ""
+
+#: .\events\models.py:83
+msgid "Waitlist Enabled"
+msgstr ""
+
+#: .\events\models.py:92
+msgid "Featured Event"
+msgstr ""
+
+#: .\events\models.py:93
+msgid "Show Attendee List"
+msgstr ""
+
+#: .\events\models.py:94
+msgid "Allow Comments"
+msgstr ""
+
+#: .\events\models.py:101 .\jobs\models.py:152 .\resources\models.py:87
+msgid "Views Count"
+msgstr ""
+
+#: .\events\models.py:102
+msgid "Registration Count"
+msgstr ""
+
+#: .\events\models.py:108 .\events\models.py:159 .\events\models.py:197
+#: .\events\models.py:231 .\events\models.py:268 .\events\models.py:288
+#: .\events\models.py:307
+msgid "Event"
+msgstr ""
+
+#: .\events\models.py:152
+msgid "Registered"
+msgstr ""
+
+#: .\events\models.py:153
+msgid "Waiting List"
+msgstr ""
+
+#: .\events\models.py:155
+msgid "Attended"
+msgstr ""
+
+#: .\events\models.py:163
+msgid "Registration Date"
+msgstr ""
+
+#: .\events\models.py:173
+msgid "Pending"
+msgstr ""
+
+#: .\events\models.py:174
+msgid "Paid"
+msgstr ""
+
+#: .\events\models.py:175
+msgid "Refunded"
+msgstr ""
+
+#: .\events\models.py:176
+msgid "Payment Status"
+msgstr ""
+
+#: .\events\models.py:177
+msgid "Payment Amount"
+msgstr ""
+
+#: .\events\models.py:180
+msgid "QR Code"
+msgstr ""
+
+#: .\events\models.py:181
+msgid "Check-in Time"
+msgstr ""
+
+#: .\events\models.py:185
+msgid "Event Registrations"
+msgstr ""
+
+#: .\events\models.py:212
+msgid "Event Speaker"
+msgstr ""
+
+#: .\events\models.py:213
+msgid "Event Speakers"
+msgstr ""
+
+#: .\events\models.py:222
+msgid "Keynote"
+msgstr ""
+
+#: .\events\models.py:224
+msgid "Panel Discussion"
+msgstr ""
+
+#: .\events\models.py:225
+msgid "Presentation"
+msgstr ""
+
+#: .\events\models.py:226
+msgid "Q&A Session"
+msgstr ""
+
+#: .\events\models.py:228
+msgid "Break"
+msgstr ""
+
+#: .\events\models.py:253
+msgid "Event Session"
+msgstr ""
+
+#: .\events\models.py:254
+msgid "Event Sessions"
+msgstr ""
+
+#: .\events\models.py:270
+msgid "Parent Comment"
+msgstr ""
+
+#: .\events\models.py:273 .\resources\models.py:145
+msgid "Approved"
+msgstr ""
+
+#: .\events\models.py:279
+msgid "Event Comment"
+msgstr ""
+
+#: .\events\models.py:280
+msgid "Event Comments"
+msgstr ""
+
+#: .\events\models.py:289
+msgid "Image"
+msgstr ""
+
+#: .\events\models.py:290
+msgid "Caption"
+msgstr ""
+
+#: .\events\models.py:291
+msgid "Uploaded By"
+msgstr ""
+
+#: .\events\models.py:292
+msgid "Uploaded At"
+msgstr ""
+
+#: .\events\models.py:298
+msgid "Event Photo"
+msgstr ""
+
+#: .\events\models.py:299
+msgid "Event Photos"
+msgstr ""
+
+#: .\events\models.py:319
+msgid "Content Rating"
+msgstr ""
+
+#: .\events\models.py:323
+msgid "Organization Rating"
+msgstr ""
+
+#: .\events\models.py:327
+msgid "Venue Rating"
+msgstr ""
+
+#: .\events\models.py:334
+msgid "Event Rating"
+msgstr ""
+
+#: .\events\models.py:335
+msgid "Event Ratings"
+msgstr ""
+
+#: .\events\signals.py:13
+#, python-brace-format
+msgid "Registration Confirmation - {event_title}"
+msgstr ""
+
+#: .\events\views.py:167
+msgid "You are already registered for this event."
+msgstr ""
+
+#: .\events\views.py:172
+msgid "Registration for this event is closed."
+msgstr ""
+
+#: .\events\views.py:177
+msgid "This event is full, but you can join the waiting list."
+msgstr ""
+
+#: .\events\views.py:179
+msgid "This event is full. Registration is closed."
+msgstr ""
+
+#: .\events\views.py:192
+msgid "You have been added to the waiting list."
+msgstr ""
+
+#: .\events\views.py:197
+msgid "You have successfully registered for the event!"
+msgstr ""
+
+#: .\events\views.py:221
+msgid "Your registration has been cancelled."
+msgstr ""
+
+#: .\events\views.py:223
+msgid "You have been removed from the waiting list."
+msgstr ""
+
+#: .\events\views.py:228
+msgid "You are not registered for this event."
+msgstr ""
+
+#: .\events\views.py:263
+msgid "Event created successfully!"
+msgstr ""
+
+#: .\events\views.py:345
+msgid "You can only rate past events."
+msgstr ""
+
+#: .\events\views.py:350
+msgid "You must have attended the event to rate it."
+msgstr ""
+
+#: .\events\views.py:354
+msgid "You have already rated this event."
+msgstr ""
+
+#: .\events\views.py:365
+msgid "Thank you for your rating!"
+msgstr ""
+
+#: .\jobs\admin.py:79
+msgid "Location & Type"
+msgstr ""
+
+#: .\jobs\admin.py:109
+#, python-format
+msgid "%(count)d jobs activated"
+msgstr ""
+
+#: .\jobs\admin.py:110
+msgid "Activate selected jobs"
+msgstr ""
+
+#: .\jobs\admin.py:114
+#, python-format
+msgid "%(count)d jobs deactivated"
+msgstr ""
+
+#: .\jobs\admin.py:115
+msgid "Deactivate selected jobs"
+msgstr ""
+
+#: .\jobs\admin.py:119
+#, python-format
+msgid "%(count)d jobs marked as featured"
+msgstr ""
+
+#: .\jobs\admin.py:124
+#, python-format
+msgid "%(count)d jobs marked as urgent"
+msgstr ""
+
+#: .\jobs\admin.py:125
+msgid "Mark as urgent"
+msgstr ""
+
+#: .\jobs\admin.py:138
+msgid "Candidate Details"
+msgstr ""
+
+#: .\jobs\admin.py:153
+#, python-format
+msgid "%(count)d applications marked as reviewed"
+msgstr ""
+
+#: .\jobs\admin.py:154
+msgid "Mark as reviewed"
+msgstr ""
+
+#: .\jobs\admin.py:158
+#, python-format
+msgid "%(count)d applications marked as interview"
+msgstr ""
+
+#: .\jobs\admin.py:159
+msgid "Mark as interview"
+msgstr ""
+
+#: .\jobs\admin.py:163
+#, python-format
+msgid "%(count)d applications marked as rejected"
+msgstr ""
+
+#: .\jobs\admin.py:164
+msgid "Mark as rejected"
+msgstr ""
+
+#: .\jobs\admin.py:169
+msgid "Mark as read"
+msgstr ""
+
+#: .\jobs\admin.py:186
+msgid "Alert Information"
+msgstr ""
+
+#: .\jobs\admin.py:189
+msgid "Search Criteria"
+msgstr ""
+
+#: .\jobs\admin.py:201
+#, python-format
+msgid "%(count)d alerts activated"
+msgstr ""
+
+#: .\jobs\admin.py:202
+msgid "Activate selected alerts"
+msgstr ""
+
+#: .\jobs\admin.py:206
+#, python-format
+msgid "%(count)d alerts deactivated"
+msgstr ""
+
+#: .\jobs\admin.py:207
+msgid "Deactivate selected alerts"
+msgstr ""
+
+#: .\jobs\admin.py:221
+msgid "Ratings"
+msgstr ""
+
+#: .\jobs\admin.py:224
+msgid "Review Content"
+msgstr ""
+
+#: .\jobs\admin.py:264
+msgid "Process Details"
+msgstr ""
+
+#: .\jobs\admin.py:267
+msgid "Interview Content"
+msgstr ""
+
+#: .\jobs\admin.py:282
+#, python-format
+msgid "%(count)d interview experiences published"
+msgstr ""
+
+#: .\jobs\admin.py:283
+msgid "Publish selected experiences"
+msgstr ""
+
+#: .\jobs\admin.py:287
+#, python-format
+msgid "%(count)d interview experiences unpublished"
+msgstr ""
+
+#: .\jobs\admin.py:288
+msgid "Unpublish selected experiences"
+msgstr ""
+
+#: .\jobs\forms.py:24
+msgid "All Industries"
+msgstr ""
+
+#: .\jobs\forms.py:50
+msgid "Min salary"
+msgstr ""
+
+#: .\jobs\forms.py:71
+msgid "Senior Software Developer"
+msgstr ""
+
+#: .\jobs\forms.py:76
+msgid "Brief description of the job..."
+msgstr ""
+
+#: .\jobs\forms.py:101
+msgid "Required qualifications and experience..."
+msgstr ""
+
+#: .\jobs\forms.py:106
+msgid "Daily responsibilities and tasks..."
+msgstr ""
+
+#: .\jobs\forms.py:111
+msgid "Company benefits and perks..."
+msgstr ""
+
+#: .\jobs\forms.py:115
+msgid "Python, Django, JavaScript, SQL..."
+msgstr ""
+
+#: .\jobs\forms.py:119
+msgid "React, Docker, AWS, MongoDB..."
+msgstr ""
+
+#: .\jobs\forms.py:136 .\jobs\models.py:119
+msgid "Hybrid Work Available"
+msgstr ""
+
+#: .\jobs\forms.py:139 .\jobs\models.py:124
+msgid "Education Level"
+msgstr ""
+
+#: .\jobs\forms.py:144 .\jobs\models.py:131
+msgid "Salary Negotiable"
+msgstr ""
+
+#: .\jobs\forms.py:149 .\jobs\models.py:140
+msgid "Preferred Skills"
+msgstr ""
+
+#: .\jobs\forms.py:151 .\jobs\models.py:144
+msgid "Contact Person"
+msgstr ""
+
+#: .\jobs\forms.py:177
+msgid ""
+"Write your cover letter explaining why you are a good fit for this "
+"position..."
+msgstr ""
+
+#: .\jobs\forms.py:190
+msgid "Notice Period (days)"
+msgstr ""
+
+#: .\jobs\forms.py:191 .\jobs\models.py:215
+msgid "Available From"
+msgstr ""
+
+#: .\jobs\forms.py:243
+msgid "My Job Alert"
+msgstr ""
+
+#: .\jobs\forms.py:247
+msgid "Python, Django, Developer"
+msgstr ""
+
+#: .\jobs\forms.py:251
+msgid "Tashkent, Remote"
+msgstr ""
+
+#: .\jobs\forms.py:259 .\jobs\models.py:261
+msgid "Alert Name"
+msgstr ""
+
+#: .\jobs\forms.py:260 .\jobs\models.py:264 .\resources\forms.py:105
+#: .\resources\models.py:78
+msgid "Keywords"
+msgstr ""
+
+#: .\jobs\forms.py:265 .\jobs\models.py:272
+msgid "Frequency"
+msgstr ""
+
+#: .\jobs\forms.py:287
+msgid "Summary of your experience"
+msgstr ""
+
+#: .\jobs\forms.py:302
+msgid "Any advice for management?"
+msgstr ""
+
+#: .\jobs\forms.py:310 .\jobs\models.py:302
+msgid "Work/Life Balance"
+msgstr ""
+
+#: .\jobs\forms.py:311 .\jobs\models.py:303
+msgid "Salary & Benefits"
+msgstr ""
+
+#: .\jobs\forms.py:312 .\jobs\models.py:304
+msgid "Career Growth"
+msgstr ""
+
+#: .\jobs\forms.py:313 .\jobs\models.py:305
+msgid "Management"
+msgstr ""
+
+#: .\jobs\forms.py:314 .\jobs\models.py:308
+msgid "Review Title"
+msgstr ""
+
+#: .\jobs\forms.py:317 .\jobs\models.py:311
+msgid "Advice to Management"
+msgstr ""
+
+#: .\jobs\forms.py:318 .\jobs\models.py:318
+msgid "Employment Status"
+msgstr ""
+
+#: .\jobs\forms.py:338
+msgid "Describe the interview process step by step..."
+msgstr ""
+
+#: .\jobs\forms.py:349
+msgid "What questions were you asked during the interview?"
+msgstr ""
+
+#: .\jobs\forms.py:355
+msgid "Any recommendations for other candidates?"
+msgstr ""
+
+#: .\jobs\forms.py:362 .\jobs\models.py:353
+msgid "Interview Process"
+msgstr ""
+
+#: .\jobs\forms.py:363
+msgid "Difficulty Level (1-5)"
+msgstr ""
+
+#: .\jobs\forms.py:364 .\jobs\models.py:358
+msgid "Process Duration (days)"
+msgstr ""
+
+#: .\jobs\forms.py:365 .\jobs\models.py:361
+msgid "Interview Questions"
+msgstr ""
+
+#: .\jobs\forms.py:366 .\jobs\models.py:369
+msgid "Offer Status"
+msgstr ""
+
+#: .\jobs\forms.py:367 .\jobs\models.py:372
+msgid "Recommendations"
+msgstr ""
+
+#: .\jobs\forms.py:382
+msgid "Internal notes..."
+msgstr ""
+
+#: .\jobs\models.py:10
+msgid "Industry Name"
+msgstr ""
+
+#: .\jobs\models.py:16
+msgid "Industries"
+msgstr ""
+
+#: .\jobs\models.py:96
+msgid "High School"
+msgstr ""
+
+#: .\jobs\models.py:97
+msgid "College"
+msgstr ""
+
+#: .\jobs\models.py:98
+msgid "Bachelor's Degree"
+msgstr ""
+
+#: .\jobs\models.py:99
+msgid "Master's Degree"
+msgstr ""
+
+#: .\jobs\models.py:101
+msgid "No Formal Education Required"
+msgstr ""
+
+#: .\jobs\models.py:150
+msgid "Urgent Hiring"
+msgstr ""
+
+#: .\jobs\models.py:153
+msgid "Applications Count"
+msgstr ""
+
+#: .\jobs\models.py:180
+msgid "Negotiable"
+msgstr ""
+
+#: .\jobs\models.py:196
+msgid "Applied"
+msgstr ""
+
+#: .\jobs\models.py:197
+msgid "Under Review"
+msgstr ""
+
+#: .\jobs\models.py:198
+msgid "Shortlisted"
+msgstr ""
+
+#: .\jobs\models.py:202 .\jobs\models.py:368
+msgid "Withdrawn"
+msgstr ""
+
+#: .\jobs\models.py:214
+msgid "Days"
+msgstr ""
+
+#: .\jobs\models.py:214
+msgid "Notice Period"
+msgstr ""
+
+#: .\jobs\models.py:222
+msgid "Read by Employer"
+msgstr ""
+
+#: .\jobs\models.py:223
+msgid "Application Source"
+msgstr ""
+
+#: .\jobs\models.py:241
+msgid "Saved At"
+msgstr ""
+
+#: .\jobs\models.py:244
+msgid "Saved Job"
+msgstr ""
+
+#: .\jobs\models.py:245
+msgid "Saved Jobs"
+msgstr ""
+
+#: .\jobs\models.py:255
+msgid "Daily"
+msgstr ""
+
+#: .\jobs\models.py:256
+msgid "Weekly"
+msgstr ""
+
+#: .\jobs\models.py:257
+msgid "Monthly"
+msgstr ""
+
+#: .\jobs\models.py:273
+msgid "Last Sent"
+msgstr ""
+
+#: .\jobs\models.py:315
+msgid "Current Employee"
+msgstr ""
+
+#: .\jobs\models.py:316
+msgid "Former Employee"
+msgstr ""
+
+#: .\jobs\models.py:317
+msgid "Former Intern"
+msgstr ""
+
+#: .\jobs\models.py:356
+msgid "Difficulty Level"
+msgstr ""
+
+#: .\jobs\models.py:358
+msgid "From application to offer"
+msgstr ""
+
+#: .\jobs\models.py:365
+msgid "Offer Accepted"
+msgstr ""
+
+#: .\jobs\models.py:366
+msgid "Offer Declined"
+msgstr ""
+
+#: .\jobs\models.py:367
+msgid "No Offer"
+msgstr ""
+
+#: .\jobs\models.py:374
+msgid "Anonymous"
+msgstr ""
+
+#: .\jobs\models.py:381
+msgid "Interview Experience"
+msgstr ""
+
+#: .\jobs\models.py:382
+msgid "Interview Experiences"
+msgstr ""
+
+#: .\jobs\signals.py:14
+#, python-brace-format
+msgid "Application Confirmation - {job_title}"
+msgstr ""
+
+#: .\jobs\signals.py:85
+#, python-brace-format
+msgid "New Job Alert: {job_title}"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:12
+msgid "Вакансии"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:41
+msgid "Рекомендуемая"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:44
+msgid "Срочная"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:49
+msgid "Удаленная работа"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:52
+msgid "Гибридный формат"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:83
+msgid "Зарплата:"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:92
+msgid "Описание вакансии"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:106
+msgid "Обязанности"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:118
+msgid "Требования"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:129
+msgid "Навыки"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:132
+msgid "Обязательные навыки:"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:140
+msgid "Желательные навыки:"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:154
+msgid "Мы предлагаем"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:171
+#: .\jobs\templates\jobs\job_detail.html:325
+msgid "Откликнуться на вакансию"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:175
+msgid "Вы откликнулись"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:183
+msgid "В сохраненных"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:187
+msgid "Сохранить вакансию"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:193
+msgid "Войти для отклика"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:201
+msgid "Просмотров:"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:205
+msgid "Откликов:"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:214
+msgid "О компании"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:224
+msgid "Проверенная компания"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:247
+msgid "Основана в"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:253
+msgid "Все вакансии компании"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:261
+msgid "Контактная информация"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:284
+msgid "Веб-сайт"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:294
+msgid "Поделиться"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:331
+#: .\jobs\templates\jobs\job_detail.html:333
+msgid "Выберите резюме"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:338
+msgid "Сопроводительное письмо"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:340
+msgid "Расскажите, почему вы подходите на эту позицию..."
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:345
+msgid "Ожидаемая зарплата"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:347
+msgid "Укажите в"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:352
+msgid "Период отработки (дни)"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:359
+msgid "Отмена"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_detail.html:360
+msgid "Отправить отклик"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:10
+msgid "Vakansiyalar va Stajirovkalar"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:11
+msgid ""
+"O'zingizga mos karyera imkoniyatlarini toping va yangi bosqichni boshlang"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:27
+msgid "Lavozim, kompaniya yoki kalit so\\"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:32
+msgid "Barcha turdagi ishlar"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:33
+#: .\jobs\templates\jobs\job_list.html:76
+msgid "To'liq kunlik"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:34
+msgid "Yarim kunlik"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:36
+#: .\jobs\templates\jobs\job_list.html:72
+#: .\jobs\templates\jobs\job_list.html:194
+msgid "Uzoq ish"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:41
+msgid "Barcha sohalar"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:49
+msgid "Tajriba"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:50
+msgid "Stajyor"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:51
+msgid "Yosh mutaxassis"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:52
+msgid "Mutaxassis"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:53
+msgid "Katta mutaxassis"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:61
+msgid "Qo'shimcha filtrlarni ko'rsatish"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:80
+#: .\jobs\templates\jobs\job_list.html:128
+msgid "Maosh"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:82
+msgid "Maosh oralig'i"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:92
+msgid "Har qanday vaqt"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:93
+msgid "Bugun"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:94
+msgid "Oxirgi 7 kun"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:95
+msgid "Oxirgi 30 kun"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:101
+#: .\jobs\templates\jobs\job_list.html:284
+msgid "Filtrlarni tozalash"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:114
+msgid "Topilgan vakansiyalar"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:117
+msgid "ta vakansiya topildi"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:119
+#: .\jobs\templates\jobs\job_list.html:279
+msgid "Vakansiyalar topilmadi"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:124
+msgid "Saralash:"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:126
+msgid "Yangi"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:127
+msgid "Muvofiqlik"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:129
+msgid "Muddut"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:200
+msgid "Shoshilinch"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:205
+msgid "Tavsiya etilgan"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:220
+msgid "oldin"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:248
+msgid "Muddut:"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:252
+msgid "Aniqlanmagan"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:270
+msgid "Ko'proq vakansiyalarni yuklash"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:280
+msgid ""
+"Qidiruv shartlarini o'zgartirib ko'ring yoki yangi vakansiyalar paydo "
+"bo'lishini kuting"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:287
+msgid "Yangi vakansiyalar haqida xabar olish"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:297
+msgid "Jami vakansiyalar"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:301
+msgid "Stajirovkalar"
+msgstr ""
+
+#: .\jobs\templates\jobs\job_list.html:309
+msgid "Muvaffaqiyatli ishga joylashganlar"
+msgstr ""
+
+#: .\jobs\templates\jobs\toggle_save_job.html:5
+msgid "Вакансия сохранена"
+msgstr ""
+
+#: .\jobs\templates\jobs\toggle_save_job.html:5
+#: .\jobs\templates\jobs\toggle_save_job.html:31
+msgid "Вакансия удалена из сохраненных"
+msgstr ""
+
+#: .\jobs\templates\jobs\toggle_save_job.html:29
+msgid "Вакансия сохранена!"
+msgstr ""
+
+#: .\jobs\templates\jobs\toggle_save_job.html:38
+msgid "Вы сохранили вакансию"
+msgstr ""
+
+#: .\jobs\templates\jobs\toggle_save_job.html:38
+msgid "в свой список избранных."
+msgstr ""
+
+#: .\jobs\templates\jobs\toggle_save_job.html:40
+msgid "Вы удалили вакансию"
+msgstr ""
+
+#: .\jobs\templates\jobs\toggle_save_job.html:40
+msgid "из своего списка избранных."
+msgstr ""
+
+#: .\jobs\templates\jobs\toggle_save_job.html:75
+msgid "Перейти к сохраненным"
+msgstr ""
+
+#: .\jobs\templates\jobs\toggle_save_job.html:80
+msgid "Вернуться назад"
+msgstr ""
+
+#: .\jobs\templates\jobs\toggle_save_job.html:86
+msgid "Посмотреть вакансию"
+msgstr ""
+
+#: .\jobs\templates\jobs\toggle_save_job.html:95
+msgid "Вы можете просмотреть все сохраненные вакансии в своем профиле."
+msgstr ""
+
+#: .\jobs\templates\jobs\toggle_save_job.html:100
+msgid "Вы всегда можете сохранить эту вакансию снова."
+msgstr ""
+
+#: .\jobs\templates\jobs\toggle_save_job.html:112
+msgid "Все вакансии"
+msgstr ""
+
+#: .\jobs\templates\jobs\toggle_save_job.html:116
+msgid "Вакансии компании"
+msgstr ""
+
+#: .\jobs\templates\jobs\toggle_save_job.html:121
+msgid "Мои сохраненные"
+msgstr ""
+
+#: .\jobs\views.py:146
+msgid "This job posting has expired."
+msgstr ""
+
+#: .\jobs\views.py:184
+msgid "Job saved successfully!"
+msgstr ""
+
+#: .\jobs\views.py:186
+msgid "Job is already saved."
+msgstr ""
+
+#: .\jobs\views.py:197
+msgid "Job removed from saved list."
+msgstr ""
+
+#: .\jobs\views.py:300
+msgid "You have already reviewed this company."
+msgstr ""
+
+#: .\jobs\views.py:311
+msgid "Thank you for your review! It will be published after verification."
+msgstr ""
+
+#: .\jobs\views.py:335
+msgid "Thank you for sharing your interview experience!"
+msgstr ""
+
+#: .\jobs\views.py:358
+msgid "Job alert created successfully!"
+msgstr ""
+
+#: .\jobs\views.py:376
+msgid "Job alert deleted successfully!"
+msgstr ""
+
+#: .\resources\admin.py:59 .\resources\forms.py:95 .\resources\models.py:64
+msgid "Content"
+msgstr ""
+
+#: .\resources\admin.py:62
+msgid "Metadata"
+msgstr ""
+
+#: .\resources\admin.py:65
+msgid "SEO & Organization"
+msgstr ""
+
+#: .\resources\admin.py:68
+msgid "Access & Status"
+msgstr ""
+
+#: .\resources\admin.py:74
+msgid "Owner"
+msgstr ""
+
+#: .\resources\admin.py:86
+#, python-format
+msgid "%(count)d resources published"
+msgstr ""
+
+#: .\resources\admin.py:87
+msgid "Publish selected resources"
+msgstr ""
+
+#: .\resources\admin.py:91
+#, python-format
+msgid "%(count)d resources unpublished"
+msgstr ""
+
+#: .\resources\admin.py:92
+msgid "Unpublish selected resources"
+msgstr ""
+
+#: .\resources\admin.py:96
+#, python-format
+msgid "%(count)d resources marked as featured"
+msgstr ""
+
+#: .\resources\admin.py:117
+#, python-format
+msgid "%(count)d reviews approved"
+msgstr ""
+
+#: .\resources\admin.py:118
+msgid "Approve selected reviews"
+msgstr ""
+
+#: .\resources\admin.py:122
+#, python-format
+msgid "%(count)d reviews disapproved"
+msgstr ""
+
+#: .\resources\admin.py:123
+msgid "Disapprove selected reviews"
+msgstr ""
+
+#: .\resources\forms.py:40
+msgid "Resource title"
+msgstr ""
+
+#: .\resources\forms.py:45
+msgid "Brief description..."
+msgstr ""
+
+#: .\resources\forms.py:50
+msgid "Detailed description..."
+msgstr ""
+
+#: .\resources\forms.py:57
+msgid "Resource content (for articles/tutorials)..."
+msgstr ""
+
+#: .\resources\forms.py:69
+msgid "2 hours, 30 minutes"
+msgstr ""
+
+#: .\resources\forms.py:73
+msgid "programming, python, web-development"
+msgstr ""
+
+#: .\resources\forms.py:77
+msgid "python django web framework"
+msgstr ""
+
+#: .\resources\forms.py:82
+msgid "SEO meta description..."
+msgstr ""
+
+#: .\resources\forms.py:94 .\resources\models.py:61
+msgid "Resource Type"
+msgstr ""
+
+#: .\resources\forms.py:96 .\resources\models.py:65
+msgid "External URL"
+msgstr ""
+
+#: .\resources\forms.py:97 .\resources\models.py:66
+msgid "File"
+msgstr ""
+
+#: .\resources\forms.py:100 .\resources\models.py:71
+msgid "Publisher"
+msgstr ""
+
+#: .\resources\forms.py:101 .\resources\models.py:72
+msgid "Language"
+msgstr ""
+
+#: .\resources\forms.py:102 .\resources\forms.py:257 .\resources\models.py:73
+#: .\resources\models.py:272
+msgid "Level"
+msgstr ""
+
+#: .\resources\forms.py:107 .\resources\models.py:82
+msgid "Featured"
+msgstr ""
+
+#: .\resources\forms.py:108 .\resources\models.py:83
+msgid "Free Resource"
+msgstr ""
+
+#: .\resources\forms.py:109 .\resources\models.py:84
+msgid "Requires Login"
+msgstr ""
+
+#: .\resources\forms.py:110 .\resources\models.py:93
+msgid "Meta Description"
+msgstr ""
+
+#: .\resources\forms.py:130
+msgid "Share your experience with this resource..."
+msgstr ""
+
+#: .\resources\forms.py:135
+msgid "What did you like about this resource?"
+msgstr ""
+
+#: .\resources\forms.py:159
+msgid "My Python Learning Plan"
+msgstr ""
+
+#: .\resources\forms.py:164
+msgid "Description of your learning goals..."
+msgstr ""
+
+#: .\resources\forms.py:170
+msgid "3 months, 6 weeks, etc."
+msgstr ""
+
+#: .\resources\forms.py:174 .\resources\models.py:192
+msgid "Plan Name"
+msgstr ""
+
+#: .\resources\forms.py:176 .\resources\models.py:196
+msgid "Public Plan"
+msgstr ""
+
+#: .\resources\forms.py:178 .\resources\forms.py:258 .\resources\models.py:198
+#: .\resources\models.py:274
+msgid "Estimated Duration"
+msgstr ""
+
+#: .\resources\forms.py:193
+msgid "Frontend Developer"
+msgstr ""
+
+#: .\resources\forms.py:198
+msgid "Description of this career path..."
+msgstr ""
+
+#: .\resources\forms.py:202
+msgid "IT, Healthcare, Finance, etc."
+msgstr ""
+
+#: .\resources\forms.py:207
+msgid "JavaScript, React, HTML, CSS, ..."
+msgstr ""
+
+#: .\resources\forms.py:211
+msgid "$50,000 - $80,000"
+msgstr ""
+
+#: .\resources\forms.py:215
+msgid "High growth, Stable, etc."
+msgstr ""
+
+#: .\resources\forms.py:220 .\resources\models.py:241
+msgid "Career Path Name"
+msgstr ""
+
+#: .\resources\forms.py:224 .\resources\models.py:245
+msgid "Average Salary"
+msgstr ""
+
+#: .\resources\forms.py:225 .\resources\models.py:246
+msgid "Growth Outlook"
+msgstr ""
+
+#: .\resources\forms.py:238
+msgid "Web Development Fundamentals"
+msgstr ""
+
+#: .\resources\forms.py:243
+msgid "Description of this learning track..."
+msgstr ""
+
+#: .\resources\forms.py:249
+msgid "8 weeks, 3 months, etc."
+msgstr ""
+
+#: .\resources\forms.py:254 .\resources\models.py:269
+msgid "Track Name"
+msgstr ""
+
+#: .\resources\forms.py:256 .\resources\models.py:254 .\resources\models.py:271
+msgid "Career Path"
+msgstr ""
+
+#: .\resources\forms.py:268
+msgid "Search resources..."
+msgstr ""
+
+#: .\resources\forms.py:283 .\resources\models.py:46
+msgid "All Levels"
+msgstr ""
+
+#: .\resources\forms.py:288
+msgid "All Languages"
+msgstr ""
+
+#: .\resources\forms.py:316
+msgid "Notes about this resource..."
+msgstr ""
+
+#: .\resources\models.py:17
+msgid "Resource Category"
+msgstr ""
+
+#: .\resources\models.py:18
+msgid "Resource Categories"
+msgstr ""
+
+#: .\resources\models.py:30
+msgid "Article"
+msgstr ""
+
+#: .\resources\models.py:31
+msgid "Tutorial"
+msgstr ""
+
+#: .\resources\models.py:32
+msgid "Video"
+msgstr ""
+
+#: .\resources\models.py:33
+msgid "E-book"
+msgstr ""
+
+#: .\resources\models.py:34
+msgid "Online Course"
+msgstr ""
+
+#: .\resources\models.py:35
+msgid "Tool/Software"
+msgstr ""
+
+#: .\resources\models.py:36
+msgid "Template"
+msgstr ""
+
+#: .\resources\models.py:37
+msgid "Cheat Sheet"
+msgstr ""
+
+#: .\resources\models.py:38
+msgid "Guide"
+msgstr ""
+
+#: .\resources\models.py:50
+msgid "English"
+msgstr ""
+
+#: .\resources\models.py:51
+msgid "Uzbek"
+msgstr ""
+
+#: .\resources\models.py:52
+msgid "Russian"
+msgstr ""
+
+#: .\resources\models.py:53
+msgid "Multiple Languages"
+msgstr ""
+
+#: .\resources\models.py:74
+msgid "e.g., 2 hours, 30 minutes"
+msgstr ""
+
+#: .\resources\models.py:88
+msgid "Downloads Count"
+msgstr ""
+
+#: .\resources\models.py:89
+msgid "Likes Count"
+msgstr ""
+
+#: .\resources\models.py:95
+msgid "Created By"
+msgstr ""
+
+#: .\resources\models.py:100 .\resources\models.py:137
+#: .\resources\models.py:162 .\resources\models.py:177
+#: .\resources\models.py:224 .\resources\models.py:294
+msgid "Resource"
+msgstr ""
+
+#: .\resources\models.py:152
+msgid "Resource Review"
+msgstr ""
+
+#: .\resources\models.py:153
+msgid "Resource Reviews"
+msgstr ""
+
+#: .\resources\models.py:164
+msgid "Downloaded At"
+msgstr ""
+
+#: .\resources\models.py:169
+msgid "Resource Downloads"
+msgstr ""
+
+#: .\resources\models.py:179
+msgid "Liked At"
+msgstr ""
+
+#: .\resources\models.py:182
+msgid "Resource Like"
+msgstr ""
+
+#: .\resources\models.py:183
+msgid "Resource Likes"
+msgstr ""
+
+#: .\resources\models.py:204 .\resources\models.py:223
+msgid "Study Plan"
+msgstr ""
+
+#: .\resources\models.py:205
+msgid "Study Plans"
+msgstr ""
+
+#: .\resources\models.py:225 .\resources\models.py:295
+msgid "Order"
+msgstr ""
+
+#: .\resources\models.py:228
+msgid "Completed At"
+msgstr ""
+
+#: .\resources\models.py:231
+msgid "Study Plan Item"
+msgstr ""
+
+#: .\resources\models.py:232
+msgid "Study Plan Items"
+msgstr ""
+
+#: .\resources\models.py:247
+msgid "Recommended Resources"
+msgstr ""
+
+#: .\resources\models.py:255
+msgid "Career Paths"
+msgstr ""
+
+#: .\resources\models.py:281
+msgid "Learning Track"
+msgstr ""
+
+#: .\resources\models.py:282
+msgid "Learning Tracks"
+msgstr ""
+
+#: .\resources\models.py:293
+msgid "Track"
+msgstr ""
+
+#: .\resources\models.py:296
+msgid "Required"
+msgstr ""
+
+#: .\resources\models.py:299
+msgid "Track Resource"
+msgstr ""
+
+#: .\resources\models.py:300
+msgid "Track Resources"
+msgstr ""
+
+#: .\resources\signals.py:13
+#, python-brace-format
+msgid "New Review for {resource_title}"
+msgstr ""
+
+#: .\resources\views.py:147
+msgid "This resource is not available for download."
+msgstr ""
+
+#: .\resources\views.py:151
+msgid "You need to login to download this resource."
+msgstr ""
+
+#: .\resources\views.py:183
+msgid "Resource liked!"
+msgstr ""
+
+#: .\resources\views.py:188
+msgid "Resource unliked."
+msgstr ""
+
+#: .\resources\views.py:199
+msgid "You have already reviewed this resource."
+msgstr ""
+
+#: .\resources\views.py:210
+msgid "Thank you for your review!"
+msgstr ""
+
+#: .\resources\views.py:233
+msgid "Study plan created successfully!"
+msgstr ""
+
+#: .\resources\views.py:259
+msgid "This resource is already in your study plan."
+msgstr ""
+
+#: .\resources\views.py:267
+msgid "Resource added to study plan!"
+msgstr ""
+
+#: .\resources\views.py:398
+msgid "Resource removed from study plan."
+msgstr ""
