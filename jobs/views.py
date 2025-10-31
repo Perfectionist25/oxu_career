@@ -7,11 +7,188 @@ from django.core.paginator import Paginator
 from django.db.models import Q, Count, Avg
 from django.views.generic import ListView, DetailView
 from django.utils import timezone
-from .models import Job, JobApplication, SavedJob, JobAlert, Company, CompanyReview, InterviewExperience, Industry
+from .models import *
+from django.views.decorators.http import require_POST
 from .forms import (
     JobSearchForm, JobApplicationForm, JobAlertForm, CompanyReviewForm,
     InterviewExperienceForm, ApplicationStatusForm
 )
+
+@login_required
+def employer_applications(request):
+    """View for employers to see all applications to their jobs"""
+    if not request.user.is_employer:
+        messages.error(request, _("Only employers can access this page."))
+        return redirect('jobs:list')
+    
+    # Get all companies owned by this user
+    user_companies = Company.objects.filter(owner=request.user)
+    
+    if not user_companies.exists():
+        messages.info(request, _("You need to create a company first to view applications."))
+        return redirect('jobs:company_create')  # You might need to adjust this URL
+    
+    # Get all jobs from user's companies
+    employer_jobs = Job.objects.filter(company__in=user_companies)
+    
+    # Get applications with related data
+    applications = JobApplication.objects.filter(
+        job__in=employer_jobs
+    ).select_related(
+        'job', 'job__company', 'candidate', 'cv'
+    ).order_by('-created_at')
+    
+    # Filter by status if provided
+    status_filter = request.GET.get('status')
+    if status_filter:
+        applications = applications.filter(status=status_filter)
+    
+    # Count applications by status
+    status_counts = {
+        'total': applications.count(),
+        'applied': applications.filter(status='applied').count(),
+        'reviewed': applications.filter(status='reviewed').count(),
+        'shortlisted': applications.filter(status='shortlisted').count(),
+        'interview': applications.filter(status='interview').count(),
+        'rejected': applications.filter(status='rejected').count(),
+        'hired': applications.filter(status='hired').count(),
+    }
+    
+    context = {
+        'applications': applications,
+        'status_filter': status_filter,
+        'status_counts': status_counts,
+        'user_companies': user_companies,
+    }
+    
+    return render(request, 'jobs/employer_applications.html', context)
+
+@login_required
+def job_create(request):
+    """Create a new job posting"""
+    # Check if user is an employer
+    if not request.user.is_employer:
+        messages.error(request, _("Only employers can create job postings."))
+        return redirect('jobs:list')
+    
+    # Get companies that the user can post jobs for
+    user_companies = Company.objects.filter(owner=request.user, is_active=True)
+    
+    if not user_companies.exists():
+        messages.error(request, _("You need to create a company first before posting jobs."))
+        return redirect('companies:create')  # You might need to create this URL
+    
+    if request.method == 'POST':
+        form = JobForm(request.POST, user=request.user)
+        if form.is_valid():
+            job = form.save(commit=False)
+            job.created_by = request.user
+            job.save()
+            
+            # Handle save as draft or publish
+            if 'save_draft' in request.POST:
+                job.is_active = False
+                job.save()
+                messages.success(request, _("Job saved as draft successfully."))
+            else:  # publish
+                job.is_active = True
+                job.save()
+                messages.success(request, _("Job published successfully!"))
+            
+            return redirect('jobs:my_jobs')
+    else:
+        form = JobForm(user=request.user)
+    
+    context = {
+        'form': form,
+        'user_companies': user_companies,
+        'today': timezone.now().date(),
+    }
+    
+    return render(request, 'jobs/job_form.html', context)
+
+@login_required
+def my_jobs(request):
+    """Мои вакансии (для работодателей) и мои заявки (для студентов)"""
+    context = {}
+    
+    if hasattr(request.user, 'is_employer') and request.user.is_employer:
+        # Для работодателя - показываем созданные вакансии
+        jobs = Job.objects.filter(company__contact_email=request.user.email).order_by('-created_at')
+        
+        # Статистика
+        total_jobs = jobs.count()
+        active_jobs = jobs.filter(is_active=True).count()
+        draft_jobs = jobs.filter(is_active=False).count()
+        
+        # Пагинация
+        paginator = Paginator(jobs, 10)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        
+        context.update({
+            'jobs': page_obj,
+            'total_jobs': total_jobs,
+            'active_jobs': active_jobs,
+            'draft_jobs': draft_jobs,
+            'is_employer_view': True,
+        })
+        
+    elif hasattr(request.user, 'is_student') and request.user.is_student:
+        # Для студента - показываем заявки на вакансии
+        applications = JobApplication.objects.filter(candidate=request.user).select_related('job', 'job__company').order_by('-created_at')
+        
+        # Статистика
+        total_applications = applications.count()
+        pending_applications = applications.filter(status='applied').count()
+        reviewed_applications = applications.filter(status='reviewed').count()
+        interview_applications = applications.filter(status='interview').count()
+        accepted_applications = applications.filter(status='hired').count()
+        rejected_applications = applications.filter(status='rejected').count()
+        
+        # Пагинация
+        paginator = Paginator(applications, 10)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        
+        context.update({
+            'applications': page_obj,
+            'total_applications': total_applications,
+            'pending_applications': pending_applications,
+            'reviewed_applications': reviewed_applications,
+            'interview_applications': interview_applications,
+            'accepted_applications': accepted_applications,
+            'rejected_applications': rejected_applications,
+            'is_student_view': True,
+        })
+    
+    else:
+        messages.error(request, _("Sizda bu sahifani ko'rish huquqi yo'q"))
+        return redirect('accounts:home')
+    
+    return render(request, 'jobs/my_jobs.html', context)
+
+@login_required
+def saved_jobs(request):
+    """Сохраненные вакансии"""
+    if not hasattr(request.user, 'is_student') or not request.user.is_student:
+        messages.error(request, _("Sizda bu sahifani ko'rish huquqi yo'q"))
+        return redirect('accounts:home')
+    
+    saved_jobs = SavedJob.objects.filter(user=request.user).select_related('job', 'job__company').order_by('-created_at')
+    
+    # Пагинация
+    paginator = Paginator(saved_jobs, 12)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'saved_jobs': page_obj,
+        'total_saved': saved_jobs.count(),
+    }
+    
+    return render(request, 'jobs/saved_jobs.html', context)
+
 
 def job_list(request):
     """Список вакансий"""
@@ -130,6 +307,13 @@ def job_detail(request, pk):
         'similar_jobs': similar_jobs,
     }
     return render(request, 'jobs/job_detail.html', context)
+
+@require_POST
+def increment_job_views(request, pk):
+    job = get_object_or_404(Job, pk=pk)
+    job.views_count += 1
+    job.save()
+    return JsonResponse({'success': True, 'views_count': job.views_count})
 
 @login_required
 def apply_for_job(request, pk):

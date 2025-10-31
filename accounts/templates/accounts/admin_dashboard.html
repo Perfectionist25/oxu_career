@@ -20,8 +20,10 @@
                     </p>
                 </div>
                 <div class="text-end">
-                    <small class="text-muted d-block">{% trans "Oxirgi yangilanish" %}:</small>
-                    <small class="text-muted">{{ user.last_activity|default:user.date_joined|timesince }} {% trans "oldin" %}</small>
+                    <small class="text-muted d-block">{% trans "Oxirgi faollik" %}:</small>
+                    <small class="text-muted">
+                        {% now "H:i" %} {% trans "soat" %}
+                    </small>
                 </div>
             </div>
         </div>
@@ -118,22 +120,23 @@
                     </a>
                 </div>
                 
+                <!-- ВРЕМЕННО ОТКЛЮЧИТЕ ЭТИ ССЫЛКИ ИЛИ СОЗДАЙТЕ VIEWS -->
                 <div class="col-xl-2 col-md-3 col-6">
-                    <a href="{% url 'jobs:job_management' %}" class="btn btn-warning w-100 h-100 py-4">
+                    <a href="#" class="btn btn-warning w-100 h-100 py-4" onclick="alert('{% trans "Tez orada qo'shiladi" %}')">
                         <i class="fas fa-briefcase fa-2x mb-2"></i>
                         <div>{% trans "Vakansiyalar" %}</div>
                     </a>
                 </div>
                 
                 <div class="col-xl-2 col-md-3 col-6">
-                    <a href="{% url 'cvbuilder:cv_management' %}" class="btn btn-secondary w-100 h-100 py-4">
+                    <a href="#" class="btn btn-secondary w-100 h-100 py-4" onclick="alert('{% trans "Tez orada qo'shiladi" %}')">
                         <i class="fas fa-file-alt fa-2x mb-2"></i>
                         <div>{% trans "Rezyumelar" %}</div>
                     </a>
                 </div>
                 
                 <div class="col-xl-2 col-md-3 col-6">
-                    <a href="#" class="btn btn-dark w-100 h-100 py-4">
+                    <a href="#" class="btn btn-dark w-100 h-100 py-4" onclick="alert('{% trans "Tez orada qo'shiladi" %}')">
                         <i class="fas fa-chart-bar fa-2x mb-2"></i>
                         <div>{% trans "Statistika" %}</div>
                     </a>
@@ -178,13 +181,15 @@
                                             {% endif %}
                                             <div>
                                                 <div class="fw-bold">{{ activity.user.get_full_name|default:activity.user.username }}</div>
-                                                <small class="text-muted">{{ activity.user.get_user_type_display }}</small>
+                                                <small class="text-muted">
+                                                    {{ activity.user.get_user_type_display|default:"Foydalanuvchi" }}
+                                                </small>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="badge bg-{{ activity.activity_type|default:'secondary' }}">
-                                            {{ activity.get_activity_type_display }}
+                                        <span class="badge bg-secondary">
+                                            {{ activity.description|default:activity.activity_type }}
                                         </span>
                                     </td>
                                     <td>
@@ -222,15 +227,15 @@
                     </div>
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <span>{% trans "Yangi ish beruvchilar" %}</span>
-                        <span class="badge bg-info">+5</span>
+                        <span class="badge bg-info">+{{ stats.new_employers_week|default:0 }}</span>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <span>{% trans "Yangi vakansiyalar" %}</span>
-                        <span class="badge bg-warning">+12</span>
+                        <span class="badge bg-warning">+{{ stats.new_jobs_week|default:0 }}</span>
                     </div>
                     <div class="d-flex justify-content-between align-items-center">
                         <span>{% trans "Yangi rezyumelar" %}</span>
-                        <span class="badge bg-secondary">+8</span>
+                        <span class="badge bg-secondary">+{{ stats.new_resumes_week|default:0 }}</span>
                     </div>
                 </div>
             </div>

@@ -1,0 +1,757 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Yangi vakansiya yaratish" %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Заголовок -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h1 class="h3 fw-bold text-primary mb-1">
+                                <i class="fas fa-plus-circle me-2"></i>{% trans "Yangi vakansiya" %}
+                            </h1>
+                            <p class="text-muted mb-0">
+                                {% trans "Yangi ish o'rinini e'lon qiling va malakali kanditatlarni jalb qiling" %}
+                            </p>
+                        </div>
+                        <div>
+                            <a href="{% url 'jobs:my_jobs' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>{% trans "Ortga" %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Форма создания вакансии -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data" id="jobForm">
+                        {% csrf_token %}
+                        
+                        <!-- Display non-field errors -->
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                            <p class="mb-0">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Прогресс-бар -->
+                        <div class="mb-4">
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar" role="progressbar" style="width: 0%;" 
+                                     aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="progressBar"></div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-2">
+                                <small class="text-muted">{% trans "Asosiy ma'lumotlar" %}</small>
+                                <small class="text-muted">{% trans "Talablar" %}</small>
+                                <small class="text-muted">{% trans "Maosh" %}</small>
+                                <small class="text-muted">{% trans "Tasdiqlash" %}</small>
+                            </div>
+                        </div>
+
+                        <!-- Шаг 1: Основная информация -->
+                        <div class="form-step active" id="step1">
+                            <h4 class="fw-bold text-primary mb-4">
+                                <i class="fas fa-info-circle me-2"></i>{% trans "Asosiy ma'lumotlar" %}
+                            </h4>
+                            
+                            <div class="row">
+                                <!-- Название вакансии -->
+                                <div class="col-md-12 mb-3">
+                                    <label for="{{ form.title.id_for_label }}" class="form-label fw-bold">
+                                        {% trans "Vakansiya nomi" %} <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" name="title" class="form-control" id="{{ form.title.id_for_label }}" 
+                                           value="{{ form.title.value|default:'' }}" required maxlength="200">
+                                    {% if form.title.errors %}
+                                        <div class="text-danger small mt-1">{{ form.title.errors }}</div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Masalan: 'Frontend Developer', 'Marketing Manager'" %}</div>
+                                </div>
+
+                                <!-- Компания -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.company.id_for_label }}" class="form-label fw-bold">
+                                        {% trans "Kompaniya" %} <span class="text-danger">*</span>
+                                    </label>
+                                    <select name="company" class="form-select" id="{{ form.company.id_for_label }}" required>
+                                        <option value="">{% trans "Kompaniyani tanlang" %}</option>
+                                        {% for company in user_companies %}
+                                        <option value="{{ company.id }}" {% if form.company.value == company.id %}selected{% endif %}>
+                                            {{ company.name }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    {% if form.company.errors %}
+                                        <div class="text-danger small mt-1">{{ form.company.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Локация -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.location.id_for_label }}" class="form-label fw-bold">
+                                        {% trans "Manzil" %} <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" name="location" class="form-control" id="{{ form.location.id_for_label }}"
+                                           value="{{ form.location.value|default:'' }}" required>
+                                    {% if form.location.errors %}
+                                        <div class="text-danger small mt-1">{{ form.location.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Тип занятости -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.employment_type.id_for_label }}" class="form-label fw-bold">
+                                        {% trans "Ish turi" %} <span class="text-danger">*</span>
+                                    </label>
+                                    <select name="employment_type" class="form-select" id="{{ form.employment_type.id_for_label }}" required>
+                                        <option value="">{% trans "Ish turini tanlang" %}</option>
+                                        <option value="full_time" {% if form.employment_type.value == 'full_time' %}selected{% endif %}>{% trans "To'liq ish kuni" %}</option>
+                                        <option value="part_time" {% if form.employment_type.value == 'part_time' %}selected{% endif %}>{% trans "Qisman ish kuni" %}</option>
+                                        <option value="contract" {% if form.employment_type.value == 'contract' %}selected{% endif %}>{% trans "Kontrakt" %}</option>
+                                        <option value="internship" {% if form.employment_type.value == 'internship' %}selected{% endif %}>{% trans "Stajirovka" %}</option>
+                                        <option value="temporary" {% if form.employment_type.value == 'temporary' %}selected{% endif %}>{% trans "Vaqtincha" %}</option>
+                                    </select>
+                                    {% if form.employment_type.errors %}
+                                        <div class="text-danger small mt-1">{{ form.employment_type.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Уровень опыта -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.experience_level.id_for_label }}" class="form-label fw-bold">
+                                        {% trans "Tajriba darajasi" %} <span class="text-danger">*</span>
+                                    </label>
+                                    <select name="experience_level" class="form-select" id="{{ form.experience_level.id_for_label }}" required>
+                                        <option value="">{% trans "Tajriba darajasini tanlang" %}</option>
+                                        <option value="intern" {% if form.experience_level.value == 'intern' %}selected{% endif %}>{% trans "Stajyor" %}</option>
+                                        <option value="junior" {% if form.experience_level.value == 'junior' %}selected{% endif %}>{% trans "Junior" %}</option>
+                                        <option value="mid" {% if form.experience_level.value == 'mid' %}selected{% endif %}>{% trans "O'rta" %}</option>
+                                        <option value="senior" {% if form.experience_level.value == 'senior' %}selected{% endif %}>{% trans "Senior" %}</option>
+                                        <option value="lead" {% if form.experience_level.value == 'lead' %}selected{% endif %}>{% trans "Lid" %}</option>
+                                    </select>
+                                    {% if form.experience_level.errors %}
+                                        <div class="text-danger small mt-1">{{ form.experience_level.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Удаленная работа -->
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-check">
+                                        <input type="checkbox" name="remote_work" class="form-check-input" id="{{ form.remote_work.id_for_label }}"
+                                               {% if form.remote_work.value %}checked{% endif %}>
+                                        <label class="form-check-label fw-bold" for="{{ form.remote_work.id_for_label }}">
+                                            {% trans "Uzoq ish imkoniyati" %}
+                                        </label>
+                                    </div>
+                                    <div class="form-text">{% trans "Kanditat uzoqdan ishlashi mumkin" %}</div>
+                                </div>
+
+                                <!-- Гибридная работа -->
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-check">
+                                        <input type="checkbox" name="hybrid_work" class="form-check-input" id="{{ form.hybrid_work.id_for_label }}"
+                                               {% if form.hybrid_work.value %}checked{% endif %}>
+                                        <label class="form-check-label fw-bold" for="{{ form.hybrid_work.id_for_label }}">
+                                            {% trans "Gibrid ish rejimi" %}
+                                        </label>
+                                    </div>
+                                    <div class="form-text">{% trans "Ofis va uzoq ish aralashmasi" %}</div>
+                                </div>
+
+                                <!-- Краткое описание -->
+                                <div class="col-12 mb-3">
+                                    <label for="{{ form.short_description.id_for_label }}" class="form-label fw-bold">
+                                        {% trans "Qisqa tavsif" %} <span class="text-danger">*</span>
+                                    </label>
+                                    <textarea name="short_description" class="form-control" id="{{ form.short_description.id_for_label }}" 
+                                              rows="3" maxlength="300" required>{{ form.short_description.value|default:'' }}</textarea>
+                                    {% if form.short_description.errors %}
+                                        <div class="text-danger small mt-1">{{ form.short_description.errors }}</div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Vakansiyaning qisqa va jozibali tavsifi (maksimum 300 belgi)" %}</div>
+                                    <div class="mt-1">
+                                        <small class="text-muted">
+                                            <span id="shortDescCounter">0</span>/300 {% trans "belgi" %}
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end mt-4">
+                                <button type="button" class="btn btn-primary next-step" data-next="step2">
+                                    {% trans "Keyingi" %} <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Шаг 2: Описание и требования -->
+                        <div class="form-step" id="step2">
+                            <h4 class="fw-bold text-primary mb-4">
+                                <i class="fas fa-tasks me-2"></i>{% trans "Vazifalar va talablar" %}
+                            </h4>
+                            
+                            <div class="row">
+                                <!-- Полное описание -->
+                                <div class="col-12 mb-4">
+                                    <label for="{{ form.description.id_for_label }}" class="form-label fw-bold">
+                                        {% trans "Batafsil tavsif" %} <span class="text-danger">*</span>
+                                    </label>
+                                    <textarea name="description" class="form-control" id="{{ form.description.id_for_label }}" 
+                                              rows="6" required>{{ form.description.value|default:'' }}</textarea>
+                                    {% if form.description.errors %}
+                                        <div class="text-danger small mt-1">{{ form.description.errors }}</div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Ishning batafsil tavsifi, loyiha haqida ma'lumot" %}</div>
+                                </div>
+
+                                <!-- Обязанности -->
+                                <div class="col-12 mb-4">
+                                    <label for="{{ form.responsibilities.id_for_label }}" class="form-label fw-bold">
+                                        {% trans "Asosiy vazifalar" %} <span class="text-danger">*</span>
+                                    </label>
+                                    <textarea name="responsibilities" class="form-control" id="{{ form.responsibilities.id_for_label }}" 
+                                              rows="5" required>{{ form.responsibilities.value|default:'' }}</textarea>
+                                    {% if form.responsibilities.errors %}
+                                        <div class="text-danger small mt-1">{{ form.responsibilities.errors }}</div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Kanditatning asosiy majburiyatlari va vazifalari" %}</div>
+                                </div>
+
+                                <!-- Требования -->
+                                <div class="col-12 mb-4">
+                                    <label for="{{ form.requirements.id_for_label }}" class="form-label fw-bold">
+                                        {% trans "Talablar" %} <span class="text-danger">*</span>
+                                    </label>
+                                    <textarea name="requirements" class="form-control" id="{{ form.requirements.id_for_label }}" 
+                                              rows="5" required>{{ form.requirements.value|default:'' }}</textarea>
+                                    {% if form.requirements.errors %}
+                                        <div class="text-danger small mt-1">{{ form.requirements.errors }}</div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Kanditatdan talab qilinadigan bilim va ko'nikmalar" %}</div>
+                                </div>
+
+                                <!-- Желательные навыки -->
+                                <div class="col-12 mb-4">
+                                    <label for="{{ form.preferred_skills.id_for_label }}" class="form-label fw-bold">
+                                        {% trans "Qo'shimcha afzalliklar" %}
+                                    </label>
+                                    <textarea name="preferred_skills" class="form-control" id="{{ form.preferred_skills.id_for_label }}" 
+                                              rows="3">{{ form.preferred_skills.value|default:'' }}</textarea>
+                                    {% if form.preferred_skills.errors %}
+                                        <div class="text-danger small mt-1">{{ form.preferred_skills.errors }}</div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Majburiy bo'lmagan, lekin afzallik beradigan ko'nikmalar" %}</div>
+                                </div>
+
+                                <!-- Обязательные навыки -->
+                                <div class="col-12 mb-4">
+                                    <label for="{{ form.skills_required.id_for_label }}" class="form-label fw-bold">
+                                        {% trans "Majburiy ko'nikmalar" %} <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" name="skills_required" class="form-control" id="{{ form.skills_required.id_for_label }}"
+                                           value="{{ form.skills_required.value|default:'' }}" required
+                                           placeholder="{% trans 'Masalan: Python, Django, JavaScript' %}">
+                                    {% if form.skills_required.errors %}
+                                        <div class="text-danger small mt-1">{{ form.skills_required.errors }}</div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Vergul bilan ajratilgan ko'nikmalar ro'yxati. Masalan: Python, Django, JavaScript" %}</div>
+                                </div>
+
+                                <!-- Преимущества -->
+                                <div class="col-12 mb-4">
+                                    <label for="{{ form.benefits.id_for_label }}" class="form-label fw-bold">
+                                        {% trans "Ish sharotilari va imtiyozlar" %}
+                                    </label>
+                                    <textarea name="benefits" class="form-control" id="{{ form.benefits.id_for_label }}" 
+                                              rows="4">{{ form.benefits.value|default:'' }}</textarea>
+                                    {% if form.benefits.errors %}
+                                        <div class="text-danger small mt-1">{{ form.benefits.errors }}</div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Kompaniya taklif qiladigan qo'shimcha imtiyozlar" %}</div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <button type="button" class="btn btn-outline-secondary prev-step" data-prev="step1">
+                                    <i class="fas fa-arrow-left me-2"></i>{% trans "Oldingi" %}
+                                </button>
+                                <button type="button" class="btn btn-primary next-step" data-next="step3">
+                                    {% trans "Keyingi" %} <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Шаг 3: Зарплата и контакты -->
+                        <div class="form-step" id="step3">
+                            <h4 class="fw-bold text-primary mb-4">
+                                <i class="fas fa-money-bill-wave me-2"></i>{% trans "Maosh va kontaktlar" %}
+                            </h4>
+                            
+                            <div class="row">
+                                <!-- Валюта -->
+                                <div class="col-md-4 mb-3">
+                                    <label for="{{ form.currency.id_for_label }}" class="form-label fw-bold">
+                                        {% trans "Valyuta" %} <span class="text-danger">*</span>
+                                    </label>
+                                    <select name="currency" class="form-select" id="{{ form.currency.id_for_label }}" required>
+                                        <option value="">{% trans "Valyutani tanlang" %}</option>
+                                        <option value="UZS" {% if form.currency.value == 'UZS' %}selected{% endif %}>UZS</option>
+                                        <option value="USD" {% if form.currency.value == 'USD' %}selected{% endif %}>USD</option>
+                                        <option value="EUR" {% if form.currency.value == 'EUR' %}selected{% endif %}>EUR</option>
+                                        <option value="RUB" {% if form.currency.value == 'RUB' %}selected{% endif %}>RUB</option>
+                                    </select>
+                                    {% if form.currency.errors %}
+                                        <div class="text-danger small mt-1">{{ form.currency.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Минимальная зарплата -->
+                                <div class="col-md-4 mb-3">
+                                    <label for="{{ form.salary_min.id_for_label }}" class="form-label fw-bold">
+                                        {% trans "Minimal maosh" %}
+                                    </label>
+                                    <input type="number" name="salary_min" class="form-control" id="{{ form.salary_min.id_for_label }}"
+                                           value="{{ form.salary_min.value|default:'' }}" min="0" step="100000">
+                                    {% if form.salary_min.errors %}
+                                        <div class="text-danger small mt-1">{{ form.salary_min.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Максимальная зарплата -->
+                                <div class="col-md-4 mb-3">
+                                    <label for="{{ form.salary_max.id_for_label }}" class="form-label fw-bold">
+                                        {% trans "Maksimal maosh" %}
+                                    </label>
+                                    <input type="number" name="salary_max" class="form-control" id="{{ form.salary_max.id_for_label }}"
+                                           value="{{ form.salary_max.value|default:'' }}" min="0" step="100000">
+                                    {% if form.salary_max.errors %}
+                                        <div class="text-danger small mt-1">{{ form.salary_max.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Настройки зарплаты -->
+                                <div class="col-12 mb-4">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input type="checkbox" name="hide_salary" class="form-check-input" id="{{ form.hide_salary.id_for_label }}"
+                                                       {% if form.hide_salary.value %}checked{% endif %}>
+                                                <label class="form-check-label fw-bold" for="{{ form.hide_salary.id_for_label }}">
+                                                    {% trans "Maoshni yashirish" %}
+                                                </label>
+                                            </div>
+                                            <div class="form-text">{% trans "Maosh kandidatlarga ko'rinmaydi" %}</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input type="checkbox" name="salary_negotiable" class="form-check-input" id="{{ form.salary_negotiable.id_for_label }}"
+                                                       {% if form.salary_negotiable.value %}checked{% endif %}>
+                                                <label class="form-check-label fw-bold" for="{{ form.salary_negotiable.id_for_label }}">
+                                                    {% trans "Maosh kelishilgan holda" %}
+                                                </label>
+                                            </div>
+                                            <div class="form-text">{% trans "Maosh intervyu davomida kelishiladi" %}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Контактный email -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.contact_email.id_for_label }}" class="form-label fw-bold">
+                                        {% trans "Kontakt email" %} <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="email" name="contact_email" class="form-control" id="{{ form.contact_email.id_for_label }}"
+                                           value="{{ form.contact_email.value|default:user.email }}" required>
+                                    {% if form.contact_email.errors %}
+                                        <div class="text-danger small mt-1">{{ form.contact_email.errors }}</div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Arizalar qabul qilinadigan email manzili" %}</div>
+                                </div>
+
+                                <!-- Контактное лицо -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.contact_person.id_for_label }}" class="form-label fw-bold">
+                                        {% trans "Kontakt shaxs" %}
+                                    </label>
+                                    <input type="text" name="contact_person" class="form-control" id="{{ form.contact_person.id_for_label }}"
+                                           value="{{ form.contact_person.value|default:user.get_full_name }}">
+                                    {% if form.contact_person.errors %}
+                                        <div class="text-danger small mt-1">{{ form.contact_person.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- URL для заявки -->
+                                <div class="col-12 mb-4">
+                                    <label for="{{ form.application_url.id_for_label }}" class="form-label fw-bold">
+                                        {% trans "Ariza uchun havola" %}
+                                    </label>
+                                    <input type="url" name="application_url" class="form-control" id="{{ form.application_url.id_for_label }}"
+                                           value="{{ form.application_url.value|default:'' }}" placeholder="https://">
+                                    {% if form.application_url.errors %}
+                                        <div class="text-danger small mt-1">{{ form.application_url.errors }}</div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Agar arizalar boshqa sayt orqali qabul qilinsa" %}</div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <button type="button" class="btn btn-outline-secondary prev-step" data-prev="step2">
+                                    <i class="fas fa-arrow-left me-2"></i>{% trans "Oldingi" %}
+                                </button>
+                                <button type="button" class="btn btn-primary next-step" data-next="step4">
+                                    {% trans "Keyingi" %} <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Шаг 4: Дополнительные настройки и публикация -->
+                        <div class="form-step" id="step4">
+                            <h4 class="fw-bold text-primary mb-4">
+                                <i class="fas fa-cog me-2"></i>{% trans "Qo'shimcha sozlamalar" %}
+                            </h4>
+                            
+                            <div class="row">
+                                <!-- Уровень образования -->
+                                <div class="col-md-6 mb-4">
+                                    <label for="{{ form.education_level.id_for_label }}" class="form-label fw-bold">
+                                        {% trans "Talab qilinadigan ta'lim" %} <span class="text-danger">*</span>
+                                    </label>
+                                    <select name="education_level" class="form-select" id="{{ form.education_level.id_for_label }}" required>
+                                        <option value="">{% trans "Ta'lim darajasini tanlang" %}</option>
+                                        <option value="none" {% if form.education_level.value == 'none' %}selected{% endif %}>{% trans "Talab qilinmaydi" %}</option>
+                                        <option value="secondary" {% if form.education_level.value == 'secondary' %}selected{% endif %}>{% trans "O'rta ta'lim" %}</option>
+                                        <option value="vocational" {% if form.education_level.value == 'vocational' %}selected{% endif %}>{% trans "Kasb-hunar" %}</option>
+                                        <option value="bachelor" {% if form.education_level.value == 'bachelor' %}selected{% endif %}>{% trans "Bakalavr" %}</option>
+                                        <option value="master" {% if form.education_level.value == 'master' %}selected{% endif %}>{% trans "Magistr" %}</option>
+                                        <option value="phd" {% if form.education_level.value == 'phd' %}selected{% endif %}>{% trans "PhD" %}</option>
+                                    </select>
+                                    {% if form.education_level.errors %}
+                                        <div class="text-danger small mt-1">{{ form.education_level.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Дата истечения -->
+                                <div class="col-md-6 mb-4">
+                                    <label for="{{ form.expires_at.id_for_label }}" class="form-label fw-bold">
+                                        {% trans "Muddati" %}
+                                    </label>
+                                    <input type="date" name="expires_at" class="form-control" id="{{ form.expires_at.id_for_label }}"
+                                           value="{{ form.expires_at.value|default:'' }}" min="{{ today|date:'Y-m-d' }}">
+                                    {% if form.expires_at.errors %}
+                                        <div class="text-danger small mt-1">{{ form.expires_at.errors }}</div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Vakansiya amal qilish muddati" %}</div>
+                                </div>
+
+                                <!-- Дополнительные опции -->
+                                <div class="col-12 mb-4">
+                                    <h6 class="fw-bold mb-3">{% trans "Qo'shimcha imkoniyatlar" %}</h6>
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3">
+                                            <div class="form-check">
+                                                <input type="checkbox" name="is_featured" class="form-check-input" id="{{ form.is_featured.id_for_label }}"
+                                                       {% if form.is_featured.value %}checked{% endif %}>
+                                                <label class="form-check-label fw-bold" for="{{ form.is_featured.id_for_label }}">
+                                                    {% trans "Tavsiya etilgan" %}
+                                                </label>
+                                            </div>
+                                            <div class="form-text">{% trans "Vakansiya asosiy sahifada ko'rsatiladi" %}</div>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <div class="form-check">
+                                                <input type="checkbox" name="is_urgent" class="form-check-input" id="{{ form.is_urgent.id_for_label }}"
+                                                       {% if form.is_urgent.value %}checked{% endif %}>
+                                                <label class="form-check-label fw-bold" for="{{ form.is_urgent.id_for_label }}">
+                                                    {% trans "Shoshilinch" %}
+                                                </label>
+                                            </div>
+                                            <div class="form-text">{% trans "Vakansiya shoshilinch deb belgilanadi" %}</div>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <div class="form-check">
+                                                <input type="checkbox" name="is_active" class="form-check-input" id="{{ form.is_active.id_for_label }}"
+                                                       {% if form.is_active.value %}checked{% endif %}>
+                                                <label class="form-check-label fw-bold" for="{{ form.is_active.id_for_label }}">
+                                                    {% trans "Faol" %}
+                                                </label>
+                                            </div>
+                                            <div class="form-text">{% trans "Vakansiyani darhol nashr qilish" %}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Предпросмотр -->
+                                <div class="col-12 mb-4">
+                                    <div class="card border-warning">
+                                        <div class="card-header bg-warning text-dark">
+                                            <h6 class="mb-0">
+                                                <i class="fas fa-eye me-2"></i>{% trans "Vakansiya ko'rinishi" %}
+                                            </h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="jobPreview">
+                                                <p class="text-muted">{% trans "Ma'lumotlarni to'ldirgandan so'ng bu yerda vakansiyaning old ko'rinishi paydo bo'ladi" %}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <button type="button" class="btn btn-outline-secondary prev-step" data-prev="step3">
+                                    <i class="fas fa-arrow-left me-2"></i>{% trans "Oldingi" %}
+                                </button>
+                                <div>
+                                    <button type="submit" name="save_draft" value="true" class="btn btn-outline-primary me-2">
+                                        <i class="fas fa-save me-2"></i>{% trans "Qoralamada saqlash" %}
+                                    </button>
+                                    <button type="submit" name="publish" value="true" class="btn btn-success">
+                                        <i class="fas fa-paper-plane me-2"></i>{% trans "Nashr qilish" %}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Подсказки -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card border-0 bg-light">
+                        <div class="card-body">
+                            <h6 class="fw-bold mb-3">
+                                <i class="fas fa-lightbulb me-2 text-warning"></i>{% trans "Yordam va maslahatlar" %}
+                            </h6>
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-2">
+                                    <small class="text-muted">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        {% trans "Vakansiya nomi aniq va tushunarli bo'lsin" %}
+                                    </small>
+                                </li>
+                                <li class="mb-2">
+                                    <small class="text-muted">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        {% trans "Talablar va vazifalarni batafsil yozing" %}
+                                    </small>
+                                </li>
+                                <li class="mb-2">
+                                    <small class="text-muted">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        {% trans "Maosh diapazoni ko'rsatilsa, arizalar soni oshadi" %}
+                                    </small>
+                                </li>
+                                <li>
+                                    <small class="text-muted">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        {% trans "Kontakt ma'lumotlari to'g'ri va faol bo'lsin" %}
+                                    </small>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Многошаговая форма
+    const steps = document.querySelectorAll('.form-step');
+    const progressBar = document.getElementById('progressBar');
+    let currentStep = 0;
+
+    // Инициализация формы
+    function initForm() {
+        showStep(0);
+        updateProgressBar();
+        initCharacterCounter();
+        initPreview();
+    }
+
+    // Показать шаг
+    function showStep(stepIndex) {
+        steps.forEach((step, index) => {
+            step.classList.toggle('active', index === stepIndex);
+            step.classList.toggle('d-none', index !== stepIndex);
+        });
+        currentStep = stepIndex;
+        updateProgressBar();
+    }
+
+    // Обновить прогресс-бар
+    function updateProgressBar() {
+        const progress = ((currentStep + 1) / steps.length) * 100;
+        progressBar.style.width = `${progress}%`;
+        progressBar.setAttribute('aria-valuenow', progress);
+    }
+
+    // Счетчик символов для короткого описания
+    function initCharacterCounter() {
+        const shortDesc = document.getElementById('{{ form.short_description.id_for_label }}');
+        const counter = document.getElementById('shortDescCounter');
+        
+        if (shortDesc && counter) {
+            shortDesc.addEventListener('input', function() {
+                counter.textContent = this.value.length;
+                if (this.value.length > 300) {
+                    counter.classList.add('text-danger');
+                } else {
+                    counter.classList.remove('text-danger');
+                }
+            });
+            // Инициализация начального значения
+            counter.textContent = shortDesc.value.length;
+        }
+    }
+
+    // Предпросмотр вакансии
+    function initPreview() {
+        // Здесь можно добавить логику для предпросмотра
+        // на основе введенных данных
+    }
+
+    // Обработчики кнопок навигации
+    document.querySelectorAll('.next-step').forEach(button => {
+        button.addEventListener('click', function() {
+            const nextStep = this.getAttribute('data-next');
+            const stepIndex = Array.from(steps).findIndex(step => step.id === nextStep);
+            if (stepIndex !== -1) {
+                // Basic validation before proceeding
+                if (validateStep(currentStep)) {
+                    showStep(stepIndex);
+                }
+            }
+        });
+    });
+
+    document.querySelectorAll('.prev-step').forEach(button => {
+        button.addEventListener('click', function() {
+            const prevStep = this.getAttribute('data-prev');
+            const stepIndex = Array.from(steps).findIndex(step => step.id === prevStep);
+            if (stepIndex !== -1) {
+                showStep(stepIndex);
+            }
+        });
+    });
+
+    // Basic step validation
+    function validateStep(stepIndex) {
+        const currentStepElement = steps[stepIndex];
+        const requiredFields = currentStepElement.querySelectorAll('[required]');
+        let isValid = true;
+
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                field.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+
+        if (!isValid) {
+            alert('{% trans "Iltimos, barcha majburiy maydonlarni to\'ldiring" %}');
+        }
+
+        return isValid;
+    }
+
+    // Валидация формы перед отправкой
+    document.getElementById('jobForm').addEventListener('submit', function(e) {
+        const submitButton = e.submitter;
+        if (submitButton.name === 'publish') {
+            if (!confirm('{% trans "Vakansiyani nashr qilishni tasdiqlaysizmi?" %}')) {
+                e.preventDefault();
+            }
+        }
+    });
+
+    // Real-time validation
+    document.querySelectorAll('input[required], textarea[required], select[required]').forEach(field => {
+        field.addEventListener('blur', function() {
+            if (!this.value.trim()) {
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-invalid');
+            }
+        });
+    });
+
+    // Инициализация
+    initForm();
+});
+</script>
+
+<style>
+.form-step {
+    display: none;
+}
+
+.form-step.active {
+    display: block;
+}
+
+.form-label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+    border-radius: 0.5rem;
+    border: 1px solid #dee2e6;
+    padding: 0.75rem 1rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.form-text {
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.progress {
+    border-radius: 1rem;
+    background-color: #e9ecef;
+}
+
+.progress-bar {
+    border-radius: 1rem;
+    background-color: #0d6efd;
+    transition: width 0.3s ease;
+}
+
+.card {
+    border-radius: 1rem;
+}
+
+.btn {
+    border-radius: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+}
+</style>
+{% endblock %}

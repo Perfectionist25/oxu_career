@@ -1,0 +1,116 @@
+{% extends 'accounts/profile_base.html' %}
+{% load i18n %}
+
+{% block profile_specific %}
+<!-- Образовательная информация -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white">
+        <h5 class="fw-bold mb-0">
+            <i class="fas fa-graduation-cap me-2 text-primary"></i>
+            {% trans "Ta'lim ma'lumotlari" %}
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <strong class="text-muted">{% trans "Talaba ID" %}:</strong>
+                    <p class="mb-0">{{ profile.student_id|default:"—" }}</p>
+                </div>
+                <div class="mb-3">
+                    <strong class="text-muted">{% trans "Fakultet" %}:</strong>
+                    <p class="mb-0">{{ profile.faculty|default:"—" }}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <strong class="text-muted">{% trans "Mutaxassislik" %}:</strong>
+                    <p class="mb-0">{{ profile.specialty|default:"—" }}</p>
+                </div>
+                <div class="mb-3">
+                    <strong class="text-muted">{% trans "Ta'lim darajasi" %}:</strong>
+                    <p class="mb-0">{{ profile.get_education_level_display|default:"—" }}</p>
+                </div>
+            </div>
+        </div>
+        
+        {% if profile.course %}
+        <div class="mb-3">
+            <strong class="text-muted">{% trans "Kurs" %}:</strong>
+            <p class="mb-0">{{ profile.course }}-{% trans "kurs" %}</p>
+        </div>
+        {% endif %}
+        
+        {% if profile.gpa %}
+        <div class="mb-3">
+            <strong class="text-muted">{% trans "O'rtacha baho (GPA)" %}:</strong>
+            <p class="mb-0">{{ profile.gpa }}</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Навыки и умения -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white">
+        <h5 class="fw-bold mb-0">
+            <i class="fas fa-tools me-2 text-primary"></i>
+            {% trans "Ko'nikmalar va qobiliyatlar" %}
+        </h5>
+    </div>
+    <div class="card-body">
+        {% if profile.skills %}
+            <div class="d-flex flex-wrap gap-2">
+                {% for skill in profile.skills_list %}
+                    <span class="badge bg-secondary">{{ skill }}</span>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-muted mb-0">{% trans "Ko'nikmalar hali qo'shilmagan" %}</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Опыт работы (для выпускников) -->
+{% if profile.is_graduate %}
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white">
+        <h5 class="fw-bold mb-0">
+            <i class="fas fa-briefcase me-2 text-primary"></i>
+            {% trans "Ish tajribasi" %}
+        </h5>
+    </div>
+    <div class="card-body">
+        {% if profile.work_experience %}
+            <p>{{ profile.work_experience }}</p>
+        {% else %}
+            <p class="text-muted mb-0">{% trans "Ish tajribasi hali qo'shilmagan" %}</p>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block profile_stats %}
+{{ block.super }}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <span>{% trans "Yaratilgan rezyume" %}</span>
+    <span class="badge bg-info">{{ profile.resumes_created|default:0 }}</span>
+</div>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <span>{% trans "Ariza berilgan ishlar" %}</span>
+    <span class="badge bg-warning">{{ profile.jobs_applied|default:0 }}</span>
+</div>
+{% endblock %}
+
+{% block quick_actions %}
+{{ block.super }}
+<div class="d-grid gap-2 mt-2">
+    <a href="{% url 'cvbuilder:create_cv' %}" class="btn btn-success btn-sm">
+        <i class="fas fa-file-alt me-2"></i>{% trans "Rezyume yaratish" %}
+    </a>
+    <a href="{% url 'jobs:job_list' %}" class="btn btn-primary btn-sm">
+        <i class="fas fa-search me-2"></i>{% trans "Ish qidirish" %}
+    </a>
+</div>
+{% endblock %}

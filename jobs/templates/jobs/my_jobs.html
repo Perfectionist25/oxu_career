@@ -1,0 +1,427 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+    {% if is_employer_view %}
+        {% trans "Mening vakansiyalarim" %}
+    {% else %}
+        {% trans "Mening arizalarim" %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Заголовок -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 fw-bold text-primary mb-1">
+                        {% if is_employer_view %}
+                            <i class="fas fa-briefcase me-2"></i>{% trans "Mening vakansiyalarim" %}
+                        {% else %}
+                            <i class="fas fa-file-alt me-2"></i>{% trans "Mening arizalarim" %}
+                        {% endif %}
+                    </h1>
+                    <p class="text-muted mb-0">
+                        {% if is_employer_view %}
+                            {% trans "Yaratilgan barcha vakansiyalar ro'yxati" %}
+                        {% else %}
+                            {% trans "Barcha yuborilgan ish arizalari" %}
+                        {% endif %}
+                    </p>
+                </div>
+                <div>
+                    {% if is_employer_view %}
+                        <a href="{% url 'jobs:create_job' %}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>{% trans "Yangi vakansiya" %}
+                        </a>
+                    {% else %}
+                        <div class="btn-group">
+                            <a href="{% url 'jobs:job_list' %}" class="btn btn-primary">
+                                <i class="fas fa-search me-2"></i>{% trans "Ish qidirish" %}
+                            </a>
+                            <a href="{% url 'jobs:saved_jobs' %}" class="btn btn-outline-primary">
+                                <i class="fas fa-bookmark me-2"></i>{% trans "Saqlanganlar" %}
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Статистика -->
+    <div class="row mb-4">
+        {% if is_employer_view %}
+        <!-- Статистика работодателя -->
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card border-0 bg-primary text-white shadow-sm">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-briefcase fa-2x mb-2 opacity-50"></i>
+                    <h4 class="fw-bold mb-1">{{ total_jobs }}</h4>
+                    <small>{% trans "Jami vakansiyalar" %}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card border-0 bg-success text-white shadow-sm">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-play-circle fa-2x mb-2 opacity-50"></i>
+                    <h4 class="fw-bold mb-1">{{ active_jobs }}</h4>
+                    <small>{% trans "Faol vakansiyalar" %}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card border-0 bg-warning text-dark shadow-sm">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-edit fa-2x mb-2 opacity-50"></i>
+                    <h4 class="fw-bold mb-1">{{ draft_jobs }}</h4>
+                    <small>{% trans "Qoralama vakansiyalar" %}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card border-0 bg-info text-white shadow-sm">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-eye fa-2x mb-2 opacity-50"></i>
+                    <h4 class="fw-bold mb-1">
+                        {% with total_views=jobs.object_list|map_attribute:"views_count"|sum %}
+                            {{ total_views|default:0 }}
+                        {% endwith %}
+                    </h4>
+                    <small>{% trans "Jami ko'rishlar" %}</small>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <!-- Статистика студента -->
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card border-0 bg-primary text-white shadow-sm">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-paper-plane fa-2x mb-2 opacity-50"></i>
+                    <h4 class="fw-bold mb-1">{{ total_applications }}</h4>
+                    <small>{% trans "Jami arizalar" %}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card border-0 bg-warning text-dark shadow-sm">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-clock fa-2x mb-2 opacity-50"></i>
+                    <h4 class="fw-bold mb-1">{{ pending_applications }}</h4>
+                    <small>{% trans "Yuborilgan" %}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card border-0 bg-info text-white shadow-sm">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-search fa-2x mb-2 opacity-50"></i>
+                    <h4 class="fw-bold mb-1">{{ reviewed_applications }}</h4>
+                    <small>{% trans "Ko'rib chiqilmoqda" %}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card border-0 bg-purple text-white shadow-sm">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-comments fa-2x mb-2 opacity-50"></i>
+                    <h4 class="fw-bold mb-1">{{ interview_applications }}</h4>
+                    <small>{% trans "Intervyu" %}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card border-0 bg-success text-white shadow-sm">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-check-circle fa-2x mb-2 opacity-50"></i>
+                    <h4 class="fw-bold mb-1">{{ accepted_applications }}</h4>
+                    <small>{% trans "Qabul qilingan" %}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card border-0 bg-danger text-white shadow-sm">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-times-circle fa-2x mb-2 opacity-50"></i>
+                    <h4 class="fw-bold mb-1">{{ rejected_applications }}</h4>
+                    <small>{% trans "Rad etilgan" %}</small>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Содержимое -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    {% if is_employer_view %}
+                        <!-- Таблица вакансий для работодателя -->
+                        {% if jobs %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>{% trans "Vakansiya nomi" %}</th>
+                                            <th>{% trans "Kompaniya" %}</th>
+                                            <th>{% trans "Holati" %}</th>
+                                            <th>{% trans "Arizalar" %}</th>
+                                            <th>{% trans "Ko'rishlar" %}</th>
+                                            <th>{% trans "Yaratilgan sana" %}</th>
+                                            <th>{% trans "Amallar" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for job in jobs %}
+                                        <tr>
+                                            <td>
+                                                <div>
+                                                    <h6 class="mb-1">{{ job.title }}</h6>
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-map-marker-alt me-1"></i>{{ job.location }}
+                                                        {% if job.remote_work %}
+                                                            <span class="badge bg-success ms-2">{% trans "Uzoq ish" %}</span>
+                                                        {% endif %}
+                                                    </small>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    {% if job.company.logo %}
+                                                        <img src="{{ job.company.logo.url }}" alt="{{ job.company.name }}" 
+                                                             class="rounded me-2" width="30" height="30">
+                                                    {% else %}
+                                                        <div class="bg-secondary rounded d-flex align-items-center justify-content-center me-2" 
+                                                             style="width: 30px; height: 30px;">
+                                                            <i class="fas fa-building text-white" style="font-size: 12px;"></i>
+                                                        </div>
+                                                    {% endif %}
+                                                    <span>{{ job.company.name }}</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {% if job.is_active %}
+                                                    <span class="badge bg-success">{% trans "Faol" %}</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">{% trans "Qoralama" %}</span>
+                                                {% endif %}
+                                                {% if job.is_featured %}
+                                                    <span class="badge bg-warning mt-1">{% trans "Tavsiya etilgan" %}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-info">{{ job.applications_count }}</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-warning">{{ job.views_count }}</span>
+                                            </td>
+                                            <td>
+                                                <small class="text-muted">{{ job.created_at|date:"d.m.Y" }}</small>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <a href="{% url 'jobs:job_detail' job.id %}" class="btn btn-outline-primary" title="{% trans 'Koʻrish' %}">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a href="{% url 'jobs:edit_job' job.id %}" class="btn btn-outline-secondary" title="{% trans 'Tahrirlash' %}">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <a href="{% url 'jobs:job_applications' job.id %}" class="btn btn-outline-info" title="{% trans 'Arizalar' %}">
+                                                        <i class="fas fa-users"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Пагинация -->
+                            {% if jobs.has_other_pages %}
+                            <nav aria-label="Page navigation" class="mt-4">
+                                <ul class="pagination justify-content-center">
+                                    {% if jobs.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ jobs.previous_page_number }}">{% trans "Oldingi" %}</a>
+                                        </li>
+                                    {% endif %}
+                                    
+                                    {% for num in jobs.paginator.page_range %}
+                                        {% if jobs.number == num %}
+                                            <li class="page-item active">
+                                                <span class="page-link">{{ num }}</span>
+                                            </li>
+                                        {% elif num > jobs.number|add:'-3' and num < jobs.number|add:'3' %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                    
+                                    {% if jobs.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ jobs.next_page_number }}">{% trans "Keyingi" %}</a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                            {% endif %}
+                        {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-briefcase fa-4x text-muted mb-3"></i>
+                                <h5 class="text-muted">{% trans "Hozircha vakansiyalar mavjud emas" %}</h5>
+                                <p class="text-muted mb-4">{% trans "Birinchi vakansiyangizni yarating va sizga mos kanditatlarni toping" %}</p>
+                                <a href="{% url 'jobs:create_job' %}" class="btn btn-primary">
+                                    <i class="fas fa-plus me-2"></i>{% trans "Yangi vakansiya" %}
+                                </a>
+                            </div>
+                        {% endif %}
+
+                    {% else %}
+                        <!-- Таблица заявок для студента -->
+                        {% if applications %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>{% trans "Vakansiya" %}</th>
+                                            <th>{% trans "Kompaniya" %}</th>
+                                            <th>{% trans "Holati" %}</th>
+                                            <th>{% trans "Kutilayotgan maosh" %}</th>
+                                            <th>{% trans "Ariza sanasi" %}</th>
+                                            <th>{% trans "Amallar" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for application in applications %}
+                                        <tr>
+                                            <td>
+                                                <div>
+                                                    <h6 class="mb-1">{{ application.job.title }}</h6>
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-map-marker-alt me-1"></i>{{ application.job.location }}
+                                                        <span class="ms-2">{{ application.job.get_employment_type_display }}</span>
+                                                    </small>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    {% if application.job.company.logo %}
+                                                        <img src="{{ application.job.company.logo.url }}" alt="{{ application.job.company.name }}" 
+                                                             class="rounded me-2" width="30" height="30">
+                                                    {% else %}
+                                                        <div class="bg-secondary rounded d-flex align-items-center justify-content-center me-2" 
+                                                             style="width: 30px; height: 30px;">
+                                                            <i class="fas fa-building text-white" style="font-size: 12px;"></i>
+                                                        </div>
+                                                    {% endif %}
+                                                    <span>{{ application.job.company.name }}</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {% if application.status == 'applied' %}
+                                                    <span class="badge bg-warning">{% trans "Yuborilgan" %}</span>
+                                                {% elif application.status == 'reviewed' %}
+                                                    <span class="badge bg-info">{% trans "Ko'rib chiqilmoqda" %}</span>
+                                                {% elif application.status == 'shortlisted' %}
+                                                    <span class="badge bg-primary">{% trans "Saralangan" %}</span>
+                                                {% elif application.status == 'interview' %}
+                                                    <span class="badge bg-purple">{% trans "Intervyu" %}</span>
+                                                {% elif application.status == 'hired' %}
+                                                    <span class="badge bg-success">{% trans "Qabul qilindi" %}</span>
+                                                {% elif application.status == 'rejected' %}
+                                                    <span class="badge bg-danger">{% trans "Rad etildi" %}</span>
+                                                {% elif application.status == 'withdrawn' %}
+                                                    <span class="badge bg-secondary">{% trans "Bekor qilindi" %}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if application.expected_salary %}
+                                                    <strong>{{ application.expected_salary }} {{ application.job.currency }}</strong>
+                                                {% else %}
+                                                    <span class="text-muted">{% trans "Ko'rsatilmagan" %}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <small class="text-muted">{{ application.created_at|date:"d.m.Y H:i" }}</small>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <a href="{% url 'jobs:job_detail' application.job.id %}" class="btn btn-outline-primary" title="{% trans 'Vakansiyani koʻrish' %}">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a href="{% url 'jobs:application_detail' application.id %}" class="btn btn-outline-info" title="{% trans 'Ariza tafsilotlari' %}">
+                                                        <i class="fas fa-info-circle"></i>
+                                                    </a>
+                                                    {% if application.status == 'applied' or application.status == 'reviewed' %}
+                                                        <button class="btn btn-outline-danger" title="{% trans 'Arizani bekor qilish' %}">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Пагинация -->
+                            {% if applications.has_other_pages %}
+                            <nav aria-label="Page navigation" class="mt-4">
+                                <ul class="pagination justify-content-center">
+                                    {% if applications.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ applications.previous_page_number }}">{% trans "Oldingi" %}</a>
+                                        </li>
+                                    {% endif %}
+                                    
+                                    {% for num in applications.paginator.page_range %}
+                                        {% if applications.number == num %}
+                                            <li class="page-item active">
+                                                <span class="page-link">{{ num }}</span>
+                                            </li>
+                                        {% elif num > applications.number|add:'-3' and num < applications.number|add:'3' %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                    
+                                    {% if applications.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ applications.next_page_number }}">{% trans "Keyingi" %}</a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                            {% endif %}
+                        {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-file-alt fa-4x text-muted mb-3"></i>
+                                <h5 class="text-muted">{% trans "Hozircha arizalar mavjud emas" %}</h5>
+                                <p class="text-muted mb-4">{% trans "Birinchi ish arizangizni yuboring va karyera imkoniyatlarini oching" %}</p>
+                                <a href="{% url 'jobs:job_list' %}" class="btn btn-primary">
+                                    <i class="fas fa-search me-2"></i>{% trans "Ish qidirish" %}
+                                </a>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.bg-purple {
+    background-color: #6f42c1 !important;
+}
+</style>
+{% endblock %}

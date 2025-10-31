@@ -1,6 +1,72 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from .models import Job, JobApplication, SavedJob, JobAlert, CompanyReview, InterviewExperience, Industry, Company
+from .models import *
+
+class JobForm(forms.ModelForm):
+    class Meta:
+        model = Job
+        fields = [
+            'title', 'company', 'location', 'employment_type', 'experience_level',
+            'education_level', 'remote_work', 'hybrid_work', 'short_description',
+            'description', 'responsibilities', 'requirements', 'preferred_skills',
+            'skills_required', 'benefits', 'currency', 'salary_min', 'salary_max',
+            'hide_salary', 'salary_negotiable', 'contact_email', 'contact_person',
+            'application_url', 'expires_at', 'is_featured', 'is_urgent', 'is_active'
+        ]
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('Job title')}),
+            'company': forms.Select(attrs={'class': 'form-select'}),
+            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('Location')}),
+            'employment_type': forms.Select(attrs={'class': 'form-select'}),
+            'experience_level': forms.Select(attrs={'class': 'form-select'}),
+            'education_level': forms.Select(attrs={'class': 'form-select'}),
+            'short_description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'maxlength': '300'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 6}),
+            'responsibilities': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
+            'requirements': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
+            'preferred_skills': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'skills_required': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('Python, Django, JavaScript')}),
+            'benefits': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            'currency': forms.Select(attrs={'class': 'form-select'}),
+            'salary_min': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'step': '100000'}),
+            'salary_max': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'step': '100000'}),
+            'contact_email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'contact_person': forms.TextInput(attrs={'class': 'form-control'}),
+            'application_url': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'https://'}),
+            'expires_at': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'remote_work': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'hybrid_work': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'hide_salary': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'salary_negotiable': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'is_featured': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'is_urgent': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        
+        # Limit company choices to user's companies
+        if user:
+            self.fields['company'].queryset = Company.objects.filter(owner=user, is_active=True)
+        
+        # Set required fields
+        self.fields['title'].required = True
+        self.fields['company'].required = True
+        self.fields['location'].required = True
+        self.fields['employment_type'].required = True
+        self.fields['experience_level'].required = True
+        self.fields['education_level'].required = True
+        self.fields['short_description'].required = True
+        self.fields['description'].required = True
+        self.fields['responsibilities'].required = True
+        self.fields['requirements'].required = True
+        self.fields['skills_required'].required = True
+        self.fields['currency'].required = True
+        self.fields['contact_email'].required = True
+
+
 
 class JobSearchForm(forms.Form):
     """Форма поиска вакансий"""

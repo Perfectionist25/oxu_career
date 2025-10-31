@@ -1,0 +1,158 @@
+{% extends 'accounts/profile_base.html' %}
+{% load i18n %}
+
+{% block profile_specific %}
+<!-- Административная информация -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white">
+        <h5 class="fw-bold mb-0">
+            <i class="fas fa-user-shield me-2 text-primary"></i>
+            {% trans "Admin huquqlari" %}
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <strong class="text-muted">{% trans "Admin darajasi" %}:</strong>
+                    <p class="mb-0">
+                        {% if profile_user.is_main_admin %}
+                            <span class="badge bg-danger">{% trans "Bosh Admin" %}</span>
+                        {% else %}
+                            <span class="badge bg-warning">{% trans "Admin" %}</span>
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="mb-3">
+                    <strong class="text-muted">{% trans "Admin sifatida faol" %}:</strong>
+                    <p class="mb-0">
+                        {% if profile.is_active_admin %}
+                            <span class="badge bg-success">{% trans "Faol" %}</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{% trans "Faol emas" %}</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <strong class="text-muted">{% trans "Admin bo'lib ishlagan muddat" %}:</strong>
+                    <p class="mb-0">{{ profile.admin_since|timesince|default:"—" }}</p>
+                </div>
+                <div class="mb-3">
+                    <strong class="text-muted">{% trans "So'nggi admin faolligi" %}:</strong>
+                    <p class="mb-0">{{ profile.last_admin_activity|timesince|default:"—" }} {% trans "oldin" %}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Права доступа -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white">
+        <h5 class="fw-bold mb-0">
+            <i class="fas fa-key me-2 text-primary"></i>
+            {% trans "Ruxsatlar" %}
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <i class="fas {% if profile.can_manage_students %}fa-check text-success{% else %}fa-times text-danger{% endif %} me-2"></i>
+                    <span>{% trans "Talabalarni boshqarish" %}</span>
+                </div>
+                <div class="mb-3">
+                    <i class="fas {% if profile.can_manage_employers %}fa-check text-success{% else %}fa-times text-danger{% endif %} me-2"></i>
+                    <span>{% trans "Ish beruvchilarni boshqarish" %}</span>
+                </div>
+                <div class="mb-3">
+                    <i class="fas {% if profile.can_manage_jobs %}fa-check text-success{% else %}fa-times text-danger{% endif %} me-2"></i>
+                    <span>{% trans "Vakansiyalarni boshqarish" %}</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <i class="fas {% if profile.can_manage_resumes %}fa-check text-success{% else %}fa-times text-danger{% endif %} me-2"></i>
+                    <span>{% trans "Rezyumelarni boshqarish" %}</span>
+                </div>
+                <div class="mb-3">
+                    <i class="fas {% if profile.can_view_statistics %}fa-check text-success{% else %}fa-times text-danger{% endif %} me-2"></i>
+                    <span>{% trans "Statistikalarni ko'rish" %}</span>
+                </div>
+                {% if profile_user.is_main_admin %}
+                <div class="mb-3">
+                    <i class="fas fa-crown text-warning me-2"></i>
+                    <span>{% trans "Bosh admin huquqlari" %}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Последние административные действия -->
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white">
+        <h5 class="fw-bold mb-0">
+            <i class="fas fa-history me-2 text-primary"></i>
+            {% trans "So'nggi admin faolliklari" %}
+        </h5>
+    </div>
+    <div class="card-body">
+        {% if admin_activities %}
+            <div class="list-group list-group-flush">
+                {% for activity in admin_activities %}
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="mb-1">{{ activity.description }}</h6>
+                            <small class="text-muted">{{ activity.created_at|timesince }} {% trans "oldin" %}</small>
+                        </div>
+                        <span class="badge bg-{{ activity.activity_type }}">{{ activity.get_activity_type_display }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-muted mb-0">{% trans "Hozircha admin faolliklari mavjud emas" %}</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block profile_stats %}
+{{ block.super }}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <span>{% trans "Boshqarilgan foydalanuvchilar" %}</span>
+    <span class="badge bg-info">{{ managed_users|default:0 }}</span>
+</div>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <span>{% trans "Tizim ogohlantirishlari" %}</span>
+    <span class="badge bg-warning">{{ system_alerts|default:0 }}</span>
+</div>
+{% if profile_user.is_main_admin %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <span>{% trans "Yaratilgan adminlar" %}</span>
+    <span class="badge bg-success">{{ created_admins|default:0 }}</span>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block quick_actions %}
+{{ block.super }}
+<div class="d-grid gap-2 mt-2">
+    <a href="{% url 'accounts:admin_dashboard' %}" class="btn btn-success btn-sm">
+        <i class="fas fa-tachometer-alt me-2"></i>{% trans "Admin paneli" %}
+    </a>
+    <a href="{% url 'accounts:user_management' %}" class="btn btn-primary btn-sm">
+        <i class="fas fa-users-cog me-2"></i>{% trans "Foydalanuvchilar" %}
+    </a>
+    {% if profile_user.is_main_admin %}
+    <a href="{% url 'accounts:create_admin_account' %}" class="btn btn-warning btn-sm">
+        <i class="fas fa-user-plus me-2"></i>{% trans "Yangi admin" %}
+    </a>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4>{% trans "Test Login" %} ({{ user_type }})</h4>
+                </div>
+                <div class="card-body">
+                    <p>{% trans "Hemis tizimi ishlamayotgan vaqt uchun test login:" %}</p>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label>{% trans "Username" %}: test_student</label>
+                        </div>
+                        <div class="mb-3">
+                            <label>{% trans "Password" %}: test123</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            {% trans "Test Login" %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

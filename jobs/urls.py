@@ -11,16 +11,20 @@ urlpatterns = [
     path('companies/<int:pk>/', views.company_detail, name='company_detail'),
     path('companies/<int:pk>/jobs/', views.CompanyJobsView.as_view(), name='company_jobs'),
     path('industries/', views.industries_list, name='industries_list'),
+    path('my-jobs/', views.my_jobs, name='my_jobs'),
+    path('saved-jobs/', views.saved_jobs, name='saved_jobs'),
+    
+    # Job creation and management
+    path('create/', views.job_create, name='job_create'),
     
     # Job details and applications
-    path('jobs/<int:pk>/', views.job_detail, name='job_detail'),
-    path('jobs/<int:pk>/apply/', views.apply_for_job, name='apply_for_job'),
-    path('jobs/<int:pk>/save/', views.save_job, name='save_job'),
-    path('jobs/<int:pk>/unsave/', views.unsave_job, name='unsave_job'),
+    path('<int:pk>/', views.job_detail, name='job_detail'),
+    path('<int:pk>/apply/', views.apply_for_job, name='apply_for_job'),
+    path('<int:pk>/save/', views.save_job, name='save_job'),
+    path('<int:pk>/unsave/', views.unsave_job, name='unsave_job'),
     
-    # User job management
-    path('my-applications/', views.my_applications, name='my_applications'),
-    path('saved-jobs/', views.saved_jobs, name='saved_jobs'),
+    # User applications and alerts
+    path('applications/', views.my_applications, name='applications'),
     path('job-alerts/', views.job_alerts, name='job_alerts'),
     path('job-alerts/<int:pk>/delete/', views.delete_job_alert, name='delete_job_alert'),
     

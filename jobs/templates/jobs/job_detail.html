@@ -176,18 +176,22 @@
                         </button>
                         {% endif %}
 
-                        <form method="post" action="{% url 'jobs:toggle_save_job' job.pk %}" class="d-inline w-100">
+                        <!-- FIXED: Use correct URL names for save/unsave -->
+                        {% if job_is_saved %}
+                        <form method="post" action="{% url 'jobs:unsave_job' job.pk %}" class="d-inline w-100">
                             {% csrf_token %}
-                            {% if job_is_saved %}
                             <button type="submit" class="btn btn-outline-secondary w-100 mb-3">
                                 <i class="fas fa-bookmark text-warning me-2"></i>{% trans "В сохраненных" %}
                             </button>
-                            {% else %}
+                        </form>
+                        {% else %}
+                        <form method="post" action="{% url 'jobs:save_job' job.pk %}" class="d-inline w-100">
+                            {% csrf_token %}
                             <button type="submit" class="btn btn-outline-secondary w-100 mb-3">
                                 <i class="far fa-bookmark me-2"></i>{% trans "Сохранить вакансию" %}
                             </button>
-                            {% endif %}
                         </form>
+                        {% endif %}
                     {% else %}
                     <a href="{% url 'account_login' %}?next={{ request.path }}" class="btn btn-primary btn-lg w-100 mb-3">
                         {% trans "Войти для отклика" %}
@@ -319,7 +323,8 @@
 <div class="modal fade" id="applyModal" tabindex="-1" aria-labelledby="applyModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form method="post" action="{% url 'jobs:apply_job' job.pk %}">
+            <!-- FIXED: Use correct URL name for apply -->
+            <form method="post" action="{% url 'jobs:apply_for_job' job.pk %}">
                 {% csrf_token %}
                 <div class="modal-header">
                     <h5 class="modal-title" id="applyModalLabel">{% trans "Откликнуться на вакансию" %}</h5>
@@ -398,15 +403,10 @@ document.querySelectorAll('.share-btn').forEach(btn => {
     });
 });
 
-// Увеличиваем счетчик просмотров
+// Увеличиваем счетчик просмотров - REMOVED INVALID URL
 document.addEventListener('DOMContentLoaded', function() {
-    fetch('{% url "jobs:increment_job_views" job.pk %}', {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': '{{ csrf_token }}',
-            'Content-Type': 'application/json',
-        },
-    });
+    // Remove the invalid increment_job_views URL call
+    // You'll need to add this URL pattern if you want this functionality
 });
 </script>
 {% endblock %}

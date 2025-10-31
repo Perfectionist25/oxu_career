@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Profil" %} - {{ profile_user.get_full_name|default:profile_user.username }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Заголовок профиля -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            {% if profile_user.avatar %}
+                                <img src="{{ profile_user.avatar.url }}" alt="{{ profile_user.get_full_name }}" 
+                                     class="rounded-circle" width="100" height="100">
+                            {% else %}
+                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" 
+                                     style="width: 100px; height: 100px;">
+                                    <i class="fas fa-user text-white fa-3x"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col">
+                            <h1 class="h3 fw-bold mb-1">{{ profile_user.get_full_name|default:profile_user.username }}</h1>
+                            <p class="text-muted mb-2">
+                                <i class="fas fa-user-tag me-2"></i>
+                                {{ profile_user.get_user_type_display }}
+                            </p>
+                            <div class="d-flex flex-wrap gap-2">
+                                <span class="badge bg-primary">
+                                    <i class="fas fa-eye me-1"></i>
+                                    {{ profile_user.profile_views }} {% trans "ko'rish" %}
+                                </span>
+                                <span class="badge bg-success">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    {{ profile_user.date_joined|date:"d.m.Y" }} {% trans "dan" %}
+                                </span>
+                                {% if profile_user.last_login %}
+                                <span class="badge bg-info">
+                                    <i class="fas fa-sign-in-alt me-1"></i>
+                                    {{ profile_user.last_login|timesince }} {% trans "oldin" %}
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            {% if is_own_profile %}
+                                <a href="{% url 'accounts:profile_update' %}" class="btn btn-primary">
+                                    <i class="fas fa-edit me-2"></i>{% trans "Profilni tahrirlash" %}
+                                </a>
+                            {% else %}
+                                <button class="btn btn-outline-primary">
+                                    <i class="fas fa-envelope me-2"></i>{% trans "Xabar yuborish" %}
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Основная информация -->
+    <div class="row">
+        <!-- Левая колонка - Основная информация -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-info-circle me-2 text-primary"></i>
+                        {% trans "Asosiy ma'lumotlar" %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <strong class="text-muted">{% trans "F.I.SH" %}:</strong>
+                                <p class="mb-0">{{ profile_user.get_full_name|default:"—" }}</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong class="text-muted">{% trans "Elektron pochta" %}:</strong>
+                                <p class="mb-0">{{ profile_user.email|default:"—" }}</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong class="text-muted">{% trans "Telefon raqam" %}:</strong>
+                                <p class="mb-0">{{ profile_user.phone|default:"—" }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <strong class="text-muted">{% trans "Foydalanuvchi turi" %}:</strong>
+                                <p class="mb-0">
+                                    <span class="badge bg-primary">{{ profile_user.get_user_type_display }}</span>
+                                </p>
+                            </div>
+                            <div class="mb-3">
+                                <strong class="text-muted">{% trans "Ro'yxatdan o'tgan sana" %}:</strong>
+                                <p class="mb-0">{{ profile_user.date_joined|date:"d.m.Y H:i" }}</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong class="text-muted">{% trans "Holati" %}:</strong>
+                                <p class="mb-0">
+                                    {% if profile_user.is_active %}
+                                        <span class="badge bg-success">{% trans "Faol" %}</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">{% trans "Faol emas" %}</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Блок для специфической информации профиля -->
+            {% block profile_specific %}{% endblock %}
+        </div>
+
+        <!-- Правая колонка - Дополнительная информация -->
+        <div class="col-lg-4">
+            <!-- Статистика -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-chart-bar me-2 text-primary"></i>
+                        {% trans "Statistika" %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% block profile_stats %}
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span>{% trans "Profil ko'rishlar" %}</span>
+                        <span class="badge bg-primary">{{ profile_user.profile_views }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span>{% trans "Faollik" %}</span>
+                        <span class="badge bg-success">{% trans "Faol" %}</span>
+                    </div>
+                    {% endblock %}
+                </div>
+            </div>
+
+            <!-- Контактная информация -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-address-card me-2 text-primary"></i>
+                        {% trans "Aloqa" %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% block profile_contact %}
+                    <div class="mb-3">
+                        <i class="fas fa-envelope text-muted me-2"></i>
+                        <a href="mailto:{{ profile_user.email }}" class="text-decoration-none">
+                            {{ profile_user.email|default:"—" }}
+                        </a>
+                    </div>
+                    <div class="mb-3">
+                        <i class="fas fa-phone text-muted me-2"></i>
+                        <span>{{ profile_user.phone|default:"—" }}</span>
+                    </div>
+                    {% endblock %}
+                </div>
+            </div>
+
+            <!-- Быстрые действия -->
+            {% if is_own_profile %}
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-bolt me-2 text-primary"></i>
+                        {% trans "Tezkor amallar" %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% block quick_actions %}
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'accounts:profile_update' %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-edit me-2"></i>{% trans "Profilni tahrirlash" %}
+                        </a>
+                        <a href="#" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-lock me-2"></i>{% trans "Parolni o'zgartirish" %}
+                        </a>
+                        <a href="{% url 'accounts:notifications' %}" class="btn btn-outline-info btn-sm">
+                            <i class="fas fa-bell me-2"></i>{% trans "Bildirishnomalar" %}
+                        </a>
+                    </div>
+                    {% endblock %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

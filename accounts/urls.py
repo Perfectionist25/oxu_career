@@ -1,4 +1,4 @@
-# accounts/urls.py
+# accounts/urls.py - ОБНОВЛЕННАЯ ВЕРСИЯ
 from django.urls import path
 from . import views
 
@@ -11,6 +11,9 @@ urlpatterns = [
     path('employer-login/', views.employer_login, name='employer_login'),
     path('admin-login/', views.admin_login, name='admin_login'),
     path('logout/', views.logout_view, name='logout'),
+    
+    # Временные URL для тестирования
+    path('temp-student-login/', views.temp_student_login, name='temp_student_login'),
     
     # Home and redirects
     path('', views.home_redirect, name='home_redirect'),
@@ -36,6 +39,10 @@ urlpatterns = [
     path('admin/users/<int:user_id>/', views.user_detail, name='user_detail'),
     path('admin/users/<int:user_id>/toggle-status/', views.toggle_user_status, name='toggle_user_status'),
     
+    # Admin Management URLs
+    path('admin/management/', views.admin_management, name='admin_management'),
+    path('admin/employers/', views.admin_employer_management, name='admin_employer_management'),
+    
     # Notification URLs
     path('notifications/', views.notifications, name='notifications'),
     path('notifications/<int:notification_id>/read/', views.mark_notification_read, name='mark_notification_read'),
@@ -44,7 +51,7 @@ urlpatterns = [
     # API URLs
     path('api/user-stats/', views.user_stats_api, name='user_stats_api'),
     
-    # Legacy URLs (для обратной совместимости - можно удалить позже)
-    path('login/', views.hemis_login, name='login'),  # Перенаправление на hemis-login
-    path('register/', views.hemis_login, name='register'),  # Перенаправление на hemis-login
+    # Legacy URLs
+    path('login/', views.hemis_login, name='login'),
+    path('register/', views.hemis_login, name='register'),
 ]
