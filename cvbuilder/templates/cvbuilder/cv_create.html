@@ -79,14 +79,18 @@
                                                 {{ field.label }}
                                             {% endif %}
                                         </label>
-                                        {{ field }}
+                                        <input type="{{ field.field.widget.input_type }}" 
+                                               name="{{ field.name }}"
+                                               id="{{ field.id_for_label }}"
+                                               class="form-control {% if field.errors %}is-invalid{% endif %}"
+                                               value="{{ field.value|default:'' }}"
+                                               placeholder="{% if field.name == 'full_name' %}Ism Familiya{% elif field.name == 'email' %}email@example.com{% elif field.name == 'phone' %}+998 XX XXX-XX-XX{% elif field.name == 'address' %}Toshkent shahar{% endif %}">
                                         {% if field.errors %}
                                         <div class="invalid-feedback d-block">
-                                            {{ field.errors }}
+                                            {% for error in field.errors %}
+                                                {{ error }}
+                                            {% endfor %}
                                         </div>
-                                        {% endif %}
-                                        {% if field.help_text %}
-                                        <div class="form-text">{{ field.help_text }}</div>
                                         {% endif %}
                                     </div>
                                     {% endif %}
@@ -116,7 +120,9 @@
                                               placeholder="O'zingiz va kasbiy ko'nikmalaringiz haqida qisqacha ma'lumot...">{{ field.value|default:'' }}</textarea>
                                     {% if field.errors %}
                                     <div class="invalid-feedback d-block">
-                                        {{ field.errors }}
+                                        {% for error in field.errors %}
+                                            {{ error }}
+                                        {% endfor %}
                                     </div>
                                     {% endif %}
                                     <div class="form-text">Qisqa va tushunarli tavsif yozing (100-200 so'z)</div>
@@ -148,10 +154,30 @@
                                             <i class="fas fa-calendar me-2 text-primary"></i>Bitirgan yili
                                         {% endif %}
                                     </label>
-                                    {{ field }}
+                                    {% if field.name == 'graduation_year' %}
+                                        <select name="{{ field.name }}" 
+                                                id="{{ field.id_for_label }}" 
+                                                class="form-select {% if field.errors %}is-invalid{% endif %}">
+                                            <option value="">Yilni tanlang</option>
+                                            {% with "2024,2023,2022,2021,2020,2019,2018,2017,2016,2015" as year_string %}
+                                            {% for year in year_string.split %}
+                                                <option value="{{ year }}" {% if field.value|stringformat:'s' == year %}selected{% endif %}>{{ year }}</option>
+                                            {% endfor %}
+                                            {% endwith %}
+                                        </select>
+                                    {% else %}
+                                        <input type="text" 
+                                               name="{{ field.name }}"
+                                               id="{{ field.id_for_label }}"
+                                               class="form-control {% if field.errors %}is-invalid{% endif %}"
+                                               value="{{ field.value|default:'' }}"
+                                               placeholder="{% if field.name == 'education' %}Oliy ta'lim{% elif field.name == 'degree' %}Bakalavr{% elif field.name == 'institution' %}Toshkent Davlat Universiteti{% endif %}">
+                                    {% endif %}
                                     {% if field.errors %}
                                     <div class="invalid-feedback d-block">
-                                        {{ field.errors }}
+                                        {% for error in field.errors %}
+                                            {{ error }}
+                                        {% endfor %}
                                     </div>
                                     {% endif %}
                                 </div>
@@ -188,11 +214,17 @@
                                                   placeholder="Texnik va soft ko'nikmalaringizni vergul bilan ajrating...">{{ field.value|default:'' }}</textarea>
                                         <div class="form-text">Masalan: Python, Django, JavaScript, Liderlik, Kommunikatsiya</div>
                                     {% else %}
-                                        {{ field }}
+                                        <textarea name="{{ field.name }}" 
+                                                  id="{{ field.id_for_label }}" 
+                                                  class="form-control {% if field.errors %}is-invalid{% endif %}" 
+                                                  rows="3" 
+                                                  placeholder="{% if field.name == 'experience' %}Ish tajribangiz haqida ma'lumot...{% else %}Yutuqlaringiz haqida ma'lumot...{% endif %}">{{ field.value|default:'' }}</textarea>
                                     {% endif %}
                                     {% if field.errors %}
                                     <div class="invalid-feedback d-block">
-                                        {{ field.errors }}
+                                        {% for error in field.errors %}
+                                            {{ error }}
+                                        {% endfor %}
                                     </div>
                                     {% endif %}
                                 </div>
@@ -205,14 +237,27 @@
                             {% if field.name not in 'full_name,email,phone,address,professional_summary,education,degree,institution,graduation_year,experience,skills,achievements' %}
                             <div class="mb-3">
                                 <label for="{{ field.id_for_label }}" class="form-label fw-semibold">{{ field.label }}</label>
-                                {{ field }}
+                                {% if field.field.widget.input_type == 'select' %}
+                                    <select name="{{ field.name }}" 
+                                            id="{{ field.id_for_label }}" 
+                                            class="form-select {% if field.errors %}is-invalid{% endif %}">
+                                        {% for choice in field.field.choices %}
+                                            <option value="{{ choice.0 }}" {% if field.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% else %}
+                                    <input type="{{ field.field.widget.input_type }}" 
+                                           name="{{ field.name }}"
+                                           id="{{ field.id_for_label }}"
+                                           class="form-control {% if field.errors %}is-invalid{% endif %}"
+                                           value="{{ field.value|default:'' }}">
+                                {% endif %}
                                 {% if field.errors %}
                                 <div class="invalid-feedback d-block">
-                                    {{ field.errors }}
+                                    {% for error in field.errors %}
+                                        {{ error }}
+                                    {% endfor %}
                                 </div>
-                                {% endif %}
-                                {% if field.help_text %}
-                                <div class="form-text">{{ field.help_text }}</div>
                                 {% endif %}
                             </div>
                             {% endif %}
@@ -347,11 +392,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Form progress calculation
     function updateProgress() {
         const form = document.getElementById('cvForm');
+        if (!form) return;
+        
         const inputs = form.querySelectorAll('input, textarea, select');
         let filledCount = 0;
         
         inputs.forEach(input => {
-            if (input.type !== 'hidden' && input.value.trim() !== '') {
+            if (input.type !== 'hidden' && input.value && input.value.trim() !== '') {
                 filledCount++;
             }
         });
@@ -380,7 +427,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const previewBtn = document.getElementById('previewBtn');
     if (previewBtn) {
         previewBtn.addEventListener('click', function() {
-            // Add preview functionality here
             alert('Oldindan ko\'rish funksiyasi ishga tushadi');
         });
     }
@@ -404,7 +450,6 @@ document.addEventListener('DOMContentLoaded', function() {
             clearTimeout(autoSaveTimer);
             autoSaveTimer = setTimeout(() => {
                 console.log('Avtosaqlash...');
-                // Add auto-save functionality here
             }, 2000);
         });
     });

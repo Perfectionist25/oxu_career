@@ -15,7 +15,7 @@
                     <h1 class="h3 fw-bold text-primary mb-1">{% trans "Admin paneli" %}</h1>
                     <p class="text-muted mb-0">
                         {% trans "Tizim boshqaruvi" %} | 
-                        <strong>{{ user.get_full_name|default:user.username }}</strong>
+                        <strong style="color: black;">{{ user.get_full_name|default:user.username }}</strong>
                         {% if user.is_main_admin %}({% trans "Bosh Admin" %}){% endif %}
                     </p>
                 </div>
@@ -120,7 +120,6 @@
                     </a>
                 </div>
                 
-                <!-- ВРЕМЕННО ОТКЛЮЧИТЕ ЭТИ ССЫЛКИ ИЛИ СОЗДАЙТЕ VIEWS -->
                 <div class="col-xl-2 col-md-3 col-6">
                     <a href="#" class="btn btn-warning w-100 h-100 py-4" onclick="alert('{% trans "Tez orada qo'shiladi" %}')">
                         <i class="fas fa-briefcase fa-2x mb-2"></i>
@@ -159,10 +158,10 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>{% trans "Foydalanuvchi" %}</th>
-                                    <th>{% trans "Faollik" %}</th>
-                                    <th>{% trans "Vaqt" %}</th>
-                                    <th>{% trans "IP" %}</th>
+                                    <th style="color: black;">{% trans "Foydalanuvchi" %}</th>
+                                    <th style="color: black;">{% trans "Faollik" %}</th>
+                                    <th style="color: black;">{% trans "Vaqt" %}</th>
+                                    <th style="color: black;">{% trans "IP" %}</th>
                                 </tr>
                             </thead>
                             <tbody>

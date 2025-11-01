@@ -25,19 +25,19 @@ from .forms import (
 
 # Utility functions
 def is_student(user):
-    return user.is_authenticated and hasattr(user, 'is_student') and user.is_student
+    return user.is_authenticated and getattr(user, 'user_type', None) == 'student'
 
 def is_employer(user):
-    return user.is_authenticated and hasattr(user, 'is_employer') and user.is_employer and user.is_active_employer
+    return user.is_authenticated and getattr(user, 'user_type', None) == 'employer'
 
 def is_admin(user):
-    return user.is_authenticated and hasattr(user, 'is_admin') and user.is_admin
+    return user.is_authenticated and getattr(user, 'user_type', None) in ['admin', 'main_admin']
 
 def is_main_admin(user):
-    return user.is_authenticated and hasattr(user, 'is_main_admin') and user.is_main_admin
+    return user.is_authenticated and getattr(user, 'user_type', None) == 'main_admin'
 
 def can_manage_users(user):
-    return user.is_authenticated and hasattr(user, 'user_type') and user.user_type in ['admin', 'main_admin']
+    return user.is_authenticated and getattr(user, 'user_type', None) in ['admin', 'main_admin']
 
 def create_user_activity(user, activity_type, description='', ip_address=None, user_agent=''):
     """Создание записи активности пользователя"""
@@ -66,19 +66,17 @@ class HemisAPI:
     def get_user_info(access_token):
         return None
 
-# Authentication Views
 def hemis_login(request):
     """Временная заглушка для Hemis авторизации"""
     messages.info(request, _("Hemis tizimi hozircha ishlamayapti. Iltimos, boshqa login usulidan foydalaning."))
-    return redirect('home')
+    return redirect('/')
 
 @csrf_exempt
 def hemis_callback(request):
     """Временная заглушка для Hemis callback"""
     messages.info(request, _("Hemis tizimi hozircha ishlamayapti."))
-    return redirect('home')
+    return redirect('/')  # Исправлено
 
-# ВРЕМЕННЫЙ ВХОД ДЛЯ ТЕСТИРОВАНИЯ - УДАЛИТЕ ПОСЛЕ НАСТРОЙКИ HEMIS
 def temp_student_login(request):
     """Временный вход для студентов (тестирование)"""
     if request.method == 'POST':
@@ -101,9 +99,36 @@ def temp_student_login(request):
         if user:
             login(request, user)
             messages.success(request, _("Test student sifatida kirdingiz"))
-            return redirect('student_dashboard')
+            return redirect('accounts:student_dashboard')  # Исправлено
     
     return render(request, 'accounts/temp_login.html', {'user_type': 'student'})
+
+def temp_student_login(request):
+    """Временный вход для студентов (тестирование)"""
+    if request.method == 'POST':
+        # Создаем тестового студента если нет
+        student, created = CustomUser.objects.get_or_create(
+            username='test_student',
+            defaults={
+                'email': 'student@test.uz',
+                'first_name': 'Test',
+                'last_name': 'Student',
+                'user_type': 'student'
+            }
+        )
+        if created:
+            student.set_password('test123')
+            student.save()
+            StudentProfile.objects.create(user=student)
+        
+        user = authenticate(request, username='test_student', password='test123')
+        if user:
+            login(request, user)
+            messages.success(request, _("Test student sifatida kirdingiz"))
+            return redirect('student_dashboard')  # ИСПРАВЛЕНО
+    
+    return render(request, 'accounts/temp_login.html', {'user_type': 'student'})
+
 
 def employer_login(request):
     """Вход для работодателей - ИСПРАВЛЕННАЯ ВЕРСИЯ"""
@@ -123,7 +148,7 @@ def employer_login(request):
                     user_agent=request.META.get('HTTP_USER_AGENT', '')
                 )
                 messages.success(request, _("Xush kelibsiz!"))
-                return redirect('accounts:employer_dashboard')
+                return redirect('accounts:employer_dashboard')  # Исправлено
             else:
                 messages.error(request, _("Sizning hisobingiz faol emas"))
         else:
@@ -131,29 +156,37 @@ def employer_login(request):
     
     return render(request, 'accounts/employer_login.html')
 
+
 def admin_login(request):
-    """Вход для администраторов - ИСПРАВЛЕННАЯ ВЕРСИЯ"""
+    """Вход для администраторов"""
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         
-        if user is not None and (hasattr(user, 'is_admin') and user.is_admin or 
-                               hasattr(user, 'is_main_admin') and user.is_main_admin):
-            login(request, user)
-            create_user_activity(
-                user=user,
-                activity_type='login',
-                description='Admin sifatida tizimga kirish',
-                ip_address=get_client_ip(request),
-                user_agent=request.META.get('HTTP_USER_AGENT', '')
-            )
-            messages.success(request, _("Xush kelibsiz!"))
-            return redirect('accounts:admin_dashboard')
+        if user is not None:
+            # Проверяем user_type вместо отдельных атрибутов
+            user_type = getattr(user, 'user_type', None)
+            if user_type in ['admin', 'main_admin']:
+                login(request, user)
+                create_user_activity(
+                    user=user,
+                    activity_type='login',
+                    description='Admin sifatida tizimga kirish',
+                    ip_address=get_client_ip(request),
+                    user_agent=request.META.get('HTTP_USER_AGENT', '')
+                )
+                messages.success(request, _("Xush kelibsiz!"))
+                return redirect('accounts:admin_dashboard')
+            else:
+                messages.error(request, _("Sizda admin huquqlari yo'q"))
         else:
-            messages.error(request, _("Login yoki parol noto'g'ri yoki sizda admin huquqlari yo'q"))
+            messages.error(request, _("Login yoki parol noto'g'ri"))
     
     return render(request, 'accounts/admin_login.html')
+
+
+
 
 def logout_view(request):
     """Выход из системы"""
@@ -168,7 +201,7 @@ def logout_view(request):
     
     logout(request)
     messages.success(request, _("Siz tizimdan chiqdingiz"))
-    return redirect('accounts:home')
+    return redirect('/')
 
 # Employer Views
 @login_required
@@ -301,7 +334,7 @@ def admin_management(request):
     """Управление администраторами (только для главного админа)"""
     if not request.user.is_main_admin:
         messages.error(request, _("Sizda bu sahifaga kirish huquqi yo'q"))
-        return redirect('accounts:admin_dashboard')
+        return redirect('admin_dashboard')
     
     admins = CustomUser.objects.filter(user_type__in=['admin', 'main_admin'])
     
@@ -335,15 +368,16 @@ def get_client_ip(request):
 def home_redirect(request):
     """Перенаправление на соответствующую домашнюю страницу"""
     if request.user.is_authenticated:
-        if hasattr(request.user, 'is_student') and request.user.is_student:
+        user_type = getattr(request.user, 'user_type', None)
+        
+        if user_type == 'student':
             return redirect('accounts:student_dashboard')
-        elif hasattr(request.user, 'is_employer') and request.user.is_employer:
+        elif user_type == 'employer':
             return redirect('accounts:employer_dashboard')
-        elif (hasattr(request.user, 'is_admin') and request.user.is_admin or 
-              hasattr(request.user, 'is_main_admin') and request.user.is_main_admin):
+        elif user_type in ['admin', 'main_admin']:
             return redirect('accounts:admin_dashboard')
     
-    return redirect('accounts:home')
+    return redirect('/')
 
 def home(request):
     """Главная страница для гостей"""
@@ -487,7 +521,7 @@ def employer_profile_update(request):
             )
             
             messages.success(request, _("Profil muvaffaqiyatli yangilandi!"))
-            return redirect('accounts:employer_dashboard')
+            return redirect('employer_dashboard')
     else:
         user_form = UserUpdateForm(instance=request.user)
         profile_form = EmployerProfileForm(instance=employer_profile)

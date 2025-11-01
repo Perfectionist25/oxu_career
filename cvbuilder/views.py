@@ -8,16 +8,13 @@ from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 import tempfile
 import os
-from .models import CV, Education, Experience, Skill, Project, Language, Certificate, CVTemplate
-from .forms import (
-    CVForm, EducationForm, ExperienceForm, SkillForm, 
-    ProjectForm, LanguageForm, CertificateForm, CVSettingsForm
-)
+from .models import *
+from .forms import *
 
 class CVListView(ListView):
     """Список резюме пользователя"""
     model = CV
-    template_name = 'cvbuilder/cv_list.html'  # Исправлено имя шаблона
+    template_name = 'cvbuilder/cv_list.html'
     context_object_name = 'cvs'
     
     def get_queryset(self):
@@ -27,19 +24,21 @@ class CVListView(ListView):
 def cv_create(request):
     """Создание нового резюме"""
     if request.method == 'POST':
-        form = CVForm(request.POST, request.FILES)
+        form = CVForm(request.POST)
         if form.is_valid():
             cv = form.save(commit=False)
             cv.user = request.user
             cv.save()
             messages.success(request, _('Rezyume muvaffaqiyatli yaratildi!'))
-            return redirect('cvbuilder:cv_edit', pk=cv.pk)  # Исправлено имя URL
+            return redirect('cvbuilder:cv_edit', pk=cv.pk)
+        else:
+            messages.error(request, _('Rezyumeni to`lidiring!'))
     else:
         form = CVForm()
     
     templates = CVTemplate.objects.filter(is_active=True)
     
-    return render(request, 'cvbuilder/cv_create.html', {  # Исправлено имя шаблона
+    return render(request, 'cvbuilder/cv_create.html', {
         'form': form,
         'templates': templates,
     })
@@ -50,11 +49,11 @@ def cv_edit(request, pk):
     cv = get_object_or_404(CV, pk=pk, user=request.user)
     
     if request.method == 'POST':
-        form = CVForm(request.POST, request.FILES, instance=cv)
+        form = CVForm(request.POST, instance=cv)
         if form.is_valid():
             form.save()
             messages.success(request, _('Rezyume yangilandi!'))
-            return redirect('cvbuilder:cv_edit', pk=cv.pk)  # Исправлено имя URL
+            return redirect('cvbuilder:cv_edit', pk=cv.pk)
     else:
         form = CVForm(instance=cv)
     
@@ -62,9 +61,7 @@ def cv_edit(request, pk):
     education_form = EducationForm()
     experience_form = ExperienceForm()
     skill_form = SkillForm()
-    project_form = ProjectForm()
     language_form = LanguageForm()
-    certificate_form = CertificateForm()
     
     context = {
         'cv': cv,
@@ -72,11 +69,9 @@ def cv_edit(request, pk):
         'education_form': education_form,
         'experience_form': experience_form,
         'skill_form': skill_form,
-        'project_form': project_form,
         'language_form': language_form,
-        'certificate_form': certificate_form,
     }
-    return render(request, 'cvbuilder/cv_edit.html', context)  # Исправлено имя шаблона
+    return render(request, 'cvbuilder/cv_edit.html', context)
 
 @login_required
 def cv_detail(request, pk):
@@ -95,7 +90,6 @@ def cv_preview(request, pk):
     """Предпросмотр резюме"""
     cv = get_object_or_404(CV, pk=pk, user=request.user)
     
-    # Исправлено: убрана лишняя папка templates из пути
     template_path = f'cvbuilder/templates/{cv.template.template_file}'
     return render(request, template_path, {'cv': cv})
 
@@ -105,7 +99,7 @@ def cv_export_pdf(request, pk):
     cv = get_object_or_404(CV, pk=pk, user=request.user)
     
     try:
-        # Рендерим HTML (исправлен путь к шаблону)
+        # Рендерим HTML
         html_string = render_to_string(f'cvbuilder/templates/{cv.template.template_file}', {'cv': cv})
         
         # Создаем PDF (нужно установить weasyprint)
@@ -140,14 +134,8 @@ def cv_duplicate(request, pk):
         email=original_cv.email,
         phone=original_cv.phone,
         location=original_cv.location,
-        photo=original_cv.photo,
+        salary_expectation=original_cv.salary_expectation,
         summary=original_cv.summary,
-        show_photo=original_cv.show_photo,
-        show_email=original_cv.show_email,
-        show_phone=original_cv.show_phone,
-        linkedin=original_cv.linkedin,
-        github=original_cv.github,
-        portfolio=original_cv.portfolio,
     )
     
     # Копируем связанные объекты
@@ -157,10 +145,7 @@ def cv_duplicate(request, pk):
             institution=education.institution,
             degree=education.degree,
             field_of_study=education.field_of_study,
-            start_date=education.start_date,
-            end_date=education.end_date,
-            is_current=education.is_current,
-            description=education.description,
+            graduation_year=education.graduation_year,
         )
     
     for experience in original_cv.experiences.all():
@@ -168,7 +153,6 @@ def cv_duplicate(request, pk):
             cv=new_cv,
             company=experience.company,
             position=experience.position,
-            location=experience.location,
             start_date=experience.start_date,
             end_date=experience.end_date,
             is_current=experience.is_current,
@@ -180,20 +164,6 @@ def cv_duplicate(request, pk):
             cv=new_cv,
             name=skill.name,
             level=skill.level,
-            category=skill.category,
-            years_of_experience=skill.years_of_experience,
-        )
-    
-    # Копируем проекты
-    for project in original_cv.projects.all():
-        Project.objects.create(
-            cv=new_cv,
-            name=project.name,
-            description=project.description,
-            technologies=project.technologies,
-            url=project.url,
-            start_date=project.start_date,
-            end_date=project.end_date,
         )
     
     # Копируем языки
@@ -202,18 +172,6 @@ def cv_duplicate(request, pk):
             cv=new_cv,
             name=language.name,
             level=language.level,
-        )
-    
-    # Копируем сертификаты
-    for certificate in original_cv.certificates.all():
-        Certificate.objects.create(
-            cv=new_cv,
-            name=certificate.name,
-            organization=certificate.organization,
-            issue_date=certificate.issue_date,
-            expiry_date=certificate.expiry_date,
-            credential_id=certificate.credential_id,
-            url=certificate.url,
         )
     
     messages.success(request, _('Rezyume muvaffaqiyatli nusxalandi!'))
@@ -272,6 +230,23 @@ def add_skill(request, pk):
     return JsonResponse({'success': False, 'error': _('Noto\'g\'ri so\'rov')})
 
 @login_required
+def add_language(request, pk):
+    """Добавление языка через AJAX"""
+    cv = get_object_or_404(CV, pk=pk, user=request.user)
+    
+    if request.method == 'POST':
+        form = LanguageForm(request.POST)
+        if form.is_valid():
+            language = form.save(commit=False)
+            language.cv = cv
+            language.save()
+            return JsonResponse({'success': True, 'id': language.id})
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors})
+    
+    return JsonResponse({'success': False, 'error': _('Noto\'g\'ri so\'rov')})
+
+@login_required
 def delete_education(request, pk):
     """Удаление образования"""
     education = get_object_or_404(Education, pk=pk, cv__user=request.user)
@@ -290,6 +265,13 @@ def delete_skill(request, pk):
     """Удаление навыка"""
     skill = get_object_or_404(Skill, pk=pk, cv__user=request.user)
     skill.delete()
+    return JsonResponse({'success': True})
+
+@login_required
+def delete_language(request, pk):
+    """Удаление языка"""
+    language = get_object_or_404(Language, pk=pk, cv__user=request.user)
+    language.delete()
     return JsonResponse({'success': True})
 
 @login_required
@@ -324,13 +306,10 @@ def cv_stats(request):
         'total_cvs': cvs.count(),
         'published_cvs': cvs.filter(status='published').count(),
         'draft_cvs': cvs.filter(status='draft').count(),
-        'archived_cvs': cvs.filter(status='archived').count(),
         'total_experience': sum(cv.experiences.count() for cv in cvs),
         'total_skills': sum(cv.skills.count() for cv in cvs),
         'total_education': sum(cv.educations.count() for cv in cvs),
-        'total_projects': sum(cv.projects.count() for cv in cvs),
         'total_languages': sum(cv.languages.count() for cv in cvs),
-        'total_certificates': sum(cv.certificates.count() for cv in cvs),
     }
     
     return render(request, 'cvbuilder/cv_stats.html', {'stats': stats})
