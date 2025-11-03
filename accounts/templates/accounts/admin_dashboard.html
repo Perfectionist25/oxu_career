@@ -30,62 +30,62 @@
     </div>
 
     <!-- Статистика системы -->
-    <div class="row mb-5">
-        <div class="col-xl-2 col-md-4 col-6 mb-4">
+    <div class="row mb-1">
+        <div class="col">
             <div class="card border-0 bg-primary text-white shadow-sm">
                 <div class="card-body text-center py-4">
                     <i class="fas fa-users fa-2x mb-2 opacity-50"></i>
-                    <h3 class="fw-bold mb-1">{{ stats.total_users|default:0 }}</h3>
+                    <div class="fw-bold mb-1 h4">{{ stats.total_users|default:0 }}</div>
                     <small>{% trans "Jami foydalanuvchilar" %}</small>
                 </div>
             </div>
         </div>
         
-        <div class="col-xl-2 col-md-4 col-6 mb-4">
+        <div class="col">
             <div class="card border-0 bg-success text-white shadow-sm">
                 <div class="card-body text-center py-4">
                     <i class="fas fa-graduation-cap fa-2x mb-2 opacity-50"></i>
-                    <h3 class="fw-bold mb-1">{{ stats.total_students|default:0 }}</h3>
+                    <div class="fw-bold mb-1 h4">{{ stats.total_students|default:0 }}</div>
                     <small>{% trans "Talabalar" %}</small>
                 </div>
             </div>
         </div>
         
-        <div class="col-xl-2 col-md-4 col-6 mb-4">
+        <div class="col">
             <div class="card border-0 bg-info text-white shadow-sm">
                 <div class="card-body text-center py-4">
                     <i class="fas fa-building fa-2x mb-2 opacity-50"></i>
-                    <h3 class="fw-bold mb-1">{{ stats.total_employers|default:0 }}</h3>
+                    <div class="fw-bold mb-1 h4">{{ stats.total_employers|default:0 }}</div>
                     <small>{% trans "Ish beruvchilar" %}</small>
                 </div>
             </div>
         </div>
         
-        <div class="col-xl-2 col-md-4 col-6 mb-4">
+        <div class="col">
             <div class="card border-0 bg-warning text-dark shadow-sm">
                 <div class="card-body text-center py-4">
                     <i class="fas fa-briefcase fa-2x mb-2 opacity-50"></i>
-                    <h3 class="fw-bold mb-1">{{ stats.total_jobs|default:0 }}</h3>
+                    <div class="fw-bold mb-1 h4">{{ stats.total_jobs|default:0 }}</div>
                     <small>{% trans "Vakansiyalar" %}</small>
                 </div>
             </div>
         </div>
 
-        <div class="col-xl-2 col-md-4 col-6 mb-4">
+        <div class="col">
             <div class="card border-0 bg-secondary text-white shadow-sm">
                 <div class="card-body text-center py-4">
                     <i class="fas fa-file-alt fa-2x mb-2 opacity-50"></i>
-                    <h3 class="fw-bold mb-1">{{ stats.total_resumes|default:0 }}</h3>
+                    <div class="fw-bold mb-1 h4">{{ stats.total_resumes|default:0 }}</div>
                     <small>{% trans "Rezyumelar" %}</small>
                 </div>
             </div>
         </div>
 
-        <div class="col-xl-2 col-md-4 col-6 mb-4">
+        <div class="col">
             <div class="card border-0 bg-dark text-white shadow-sm">
                 <div class="card-body text-center py-4">
                     <i class="fas fa-user-clock fa-2x mb-2 opacity-50"></i>
-                    <h3 class="fw-bold mb-1">{{ stats.active_today|default:0 }}</h3>
+                    <div class="fw-bold mb-1 h4">{{ stats.active_today|default:0 }}</div>
                     <small>{% trans "Bugun faol" %}</small>
                 </div>
             </div>

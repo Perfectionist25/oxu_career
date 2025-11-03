@@ -4,39 +4,37 @@
 
 <!-- Верхняя часть хэдэра -->
 <div class="header-top">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-4">
-                <div class="contact-info">
-                    <a href="#">
-                        Joylashuv <i class="fas fa-map-marker-alt m-1"></i> Buxoroda
-                    </a>
-                    <a href="tel:+998555050009">
-                        <i class="fas fa-phone"></i> +998 55 505 00 09
-                    </a>
-                    <a href="mailto:info@oxu.uz">
-                        <i class="fas fa-envelope"></i> info@oxu.uz
-                    </a>
+    <div class="row align-items-center" style="padding: 0 5%;">
+        <div class="col">
+            <div class="contact-info">
+                <a href="#">
+                    Joylashuv <i class="fas fa-map-marker-alt m-1"></i> Buxoroda
+                </a>
+                <a href="tel:+998555050009">
+                    <i class="fas fa-phone"></i> +998 55 505 00 09
+                </a>
+                <a href="mailto:info@oxu.uz">
+                    <i class="fas fa-envelope"></i> info@oxu.uz
+                </a>
+            </div>
+        </div>
+        <div class="col government-links">
+            <a href="#"><strong>O'zbekiston Respublikasi hukumat portali</strong></a>
+            <a href="#"><strong>Davlat test markazi</strong></a>
+            <a href="#"><strong>Yoshlar daftari</strong></a>
+        </div>
+        <div class="col">
+            <div class="d-flex justify-content-end align-items-center">
+                <div class="social-icons me-3">
+                    <a href="#"><i style="font-size: larger;" class="fab fa-instagram text-white"></i></a>
+                    <a href="#"><i style="font-size: larger;" class="fab fa-telegram text-white"></i></a>
+                    <a href="#"><i style="font-size: larger;" class="fab fa-facebook text-white"></i></a>
+                    <a href="#"><i style="font-size: larger;" class="fab fa-youtube text-white"></i></a>
                 </div>
-            </div>
-            <div class="col-md-4 government-links">
-                <a href="#"><strong>O'zbekiston Respublikasi hukumat portali</strong></a>
-                <a href="#"><strong>Davlat test markazi</strong></a>
-                <a href="#"><strong>Yoshlar daftari</strong></a>
-            </div>
-            <div class="col-md-4">
-                <div class="d-flex justify-content-end align-items-center">
-                    <div class="social-icons me-3">
-                        <a href="#"><i style="font-size: larger;" class="fab fa-instagram text-white"></i></a>
-                        <a href="#"><i style="font-size: larger;" class="fab fa-telegram text-white"></i></a>
-                        <a href="#"><i style="font-size: larger;" class="fab fa-facebook text-white"></i></a>
-                        <a href="#"><i style="font-size: larger;" class="fab fa-youtube text-white"></i></a>
-                    </div>
-                    <div class="language-selector">
-                        <a href="#" class="active"><img width="36" src="{% static 'img/uzb.png' %}" alt="UZB"></a>
-                        <a href="#" class="active"><img width="36" src="{% static 'img/ru.png' %}" alt="RU"></a>
-                        <a href="#" class="active"><img width="36" src="{% static 'img/uk.png' %}" alt="EN"></a>
-                    </div>
+                <div class="language-selector">
+                    <a href="#" class="active"><img width="36" src="{% static 'img/uzb.png' %}" alt="UZB"></a>
+                    <a href="#" class="active"><img width="36" src="{% static 'img/ru.png' %}" alt="RU"></a>
+                    <a href="#" class="active"><img width="36" src="{% static 'img/uk.png' %}" alt="EN"></a>
                 </div>
             </div>
         </div>
@@ -45,29 +43,26 @@
 
 <!-- Средняя часть хэдэра -->
 <div class="header-middle">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-6">
-                <div class="d-flex">
-                    <a style="text-decoration: none;" href="/">
-                        <img width="70" src="{% static 'img/logo1.png' %}" alt="Logo" class="me-3">
-                    </a>
-                    <a style="text-decoration: none;" href="/">
-                        <div class="logo">OXU <br> Career</div>
-                    </a>
-                </div>
+    <div class="row align-items-center" style="padding: 0 5%;">
+        <div class="col-md-6">
+            <div class="d-flex">
+                <a style="text-decoration: none;" href="/">
+                    <img width="70" src="{% static 'img/logo1.png' %}" alt="Logo" class="me-3">
+                </a>
+                <a style="text-decoration: none;" href="/">
+                    <div class="logo mt-3">OXU <br> Career</div>
+                </a>
             </div>
-            <div class="col-md-6 text-end">
-                <img width="230" src="{% static 'img/study.svg' %}" alt="None">
-            </div>
+        </div>
+        <div class="col-md-6 text-end">
+            <img width="230" src="{% static 'img/study.svg' %}" alt="None">
         </div>
     </div>
 </div>
 
 <!-- Нижняя часть хэдэра с навигацией -->
 <div style="position: sticky; top: 0; z-index: 1;" class="header-bottom mb-3 p-3">
-    <div class="container">
-        <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex justify-content-between align-items-center" style="padding: 0 5%;">
             <!-- Основное меню -->
             <ul class="nav">
                 <li class="nav-item">
@@ -82,12 +77,13 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'events:list' %}">Tadbirlar</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'jobs:list' %}">Vakansiyalar</a>
-                </li>
+                
                 
                 {% if user.is_authenticated %}
                     {% if user.is_student %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'jobs:list' %}">Vakansiyalar</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'cvbuilder:cv_list' %}">Mening rezyumelarim</a>
                     </li>
@@ -102,6 +98,9 @@
                         <a class="nav-link" href="{% url 'jobs:job_create' %}">Vakansiya qo'shish</a>
                     </li>
                     {% elif user.is_admin or user.is_main_admin %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'jobs:list' %}">Vakansiyalar</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'accounts:admin_dashboard' %}">Admin panel</a>
                     </li>
@@ -151,13 +150,13 @@
                                 </a>
                             </li>
                             <li>
-    <a class="dropdown-item" href="{% url 'accounts:notifications' %}">
-        <i class="fas fa-bell me-2"></i>Xabarlar
-        {% if user.unread_notifications_count > 0 %}
-        <span class="badge bg-danger float-end">{{ user.unread_notifications_count }}</span>
-        {% endif %}
-    </a>
-</li>
+                                <a class="dropdown-item" href="{% url 'accounts:notifications' %}">
+                                    <i class="fas fa-bell me-2"></i>Xabarlar
+                                    {% if user.unread_notifications_count > 0 %}
+                                    <span class="badge bg-danger float-end">{{ user.unread_notifications_count }}</span>
+                                    {% endif %}
+                                </a>
+                            </li>
                             <li><hr class="dropdown-divider"></li>
                             
                             <!-- Дополнительные действия для админов -->
@@ -231,7 +230,6 @@
                 {% endif %}
             </div>
         </div>
-    </div>
 </div>
 
 <style>

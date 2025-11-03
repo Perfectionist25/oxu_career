@@ -9,54 +9,66 @@
     <!-- Заголовок профиля -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
+            <div class="card border-0 shadow-sm" style="border-left: 4px solid #012152;">
+                <div class="card-body py-4">
                     <div class="row align-items-center">
                         <div class="col-auto">
-                            {% if profile_user.avatar %}
-                                <img src="{{ profile_user.avatar.url }}" alt="{{ profile_user.get_full_name }}" 
-                                     class="rounded-circle" width="100" height="100">
+                            {% if profile.avatar %}
+                                <img src="{{ profile.avatar.url }}" alt="{{ profile_user.get_full_name }}" 
+                                     class="rounded-circle border border-3 border-primary" width="100" height="100" style="object-fit: cover;">
                             {% else %}
-                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" 
+                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center border border-3 border-primary" 
                                      style="width: 100px; height: 100px;">
-                                    <i class="fas fa-user text-white fa-3x"></i>
+                                    <i class="fas fa-user text-white fa-2x"></i>
                                 </div>
                             {% endif %}
                         </div>
                         <div class="col">
-                            <h1 class="h3 fw-bold mb-1">{{ profile_user.get_full_name|default:profile_user.username }}</h1>
-                            <p class="text-muted mb-2">
+                            <h1 class="h3 fw-bold mb-2 text-dark">{{ profile_user.get_full_name|default:profile_user.username }}</h1>
+                            <p class="text-primary mb-2 fw-semibold">
                                 <i class="fas fa-user-tag me-2"></i>
                                 {{ profile_user.get_user_type_display }}
                             </p>
                             <div class="d-flex flex-wrap gap-2">
-                                <span class="badge bg-primary">
+                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">
                                     <i class="fas fa-eye me-1"></i>
                                     {{ profile_user.profile_views }} {% trans "ko'rish" %}
                                 </span>
-                                <span class="badge bg-success">
+                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">
                                     <i class="fas fa-calendar me-1"></i>
                                     {{ profile_user.date_joined|date:"d.m.Y" }} {% trans "dan" %}
                                 </span>
                                 {% if profile_user.last_login %}
-                                <span class="badge bg-info">
+                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">
                                     <i class="fas fa-sign-in-alt me-1"></i>
                                     {{ profile_user.last_login|timesince }} {% trans "oldin" %}
                                 </span>
                                 {% endif %}
                             </div>
                         </div>
+                        {% if is_own_profile %}
                         <div class="col-auto">
-                            {% if is_own_profile %}
-                                <a href="{% url 'accounts:profile_update' %}" class="btn btn-primary">
+                            {% if profile_user.user_type == 'employer' %}
+                                <a href="{% url 'accounts:employer_profile_update' %}" class="btn btn-primary px-4">
+                                    <i class="fas fa-edit me-2"></i>{% trans "Profilni tahrirlash" %}
+                                </a>
+                            {% elif profile_user.user_type == 'student' %}
+                                <a href="{% url 'accounts:student_profile_update' %}" class="btn btn-primary px-4">
                                     <i class="fas fa-edit me-2"></i>{% trans "Profilni tahrirlash" %}
                                 </a>
                             {% else %}
-                                <button class="btn btn-outline-primary">
-                                    <i class="fas fa-envelope me-2"></i>{% trans "Xabar yuborish" %}
-                                </button>
+                                <a href="#" class="btn btn-primary px-4">
+                                    <i class="fas fa-edit me-2"></i>{% trans "Profilni tahrirlash" %}
+                                </a>
                             {% endif %}
                         </div>
+                        {% else %}
+                        <div class="col-auto">
+                            <button class="btn btn-outline-primary px-4">
+                                <i class="fas fa-envelope me-2"></i>{% trans "Xabar yuborish" %}
+                            </button>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -67,9 +79,9 @@
     <div class="row">
         <!-- Левая колонка - Основная информация -->
         <div class="col-lg-8">
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-white">
-                    <h5 class="fw-bold mb-0">
+            <div class="card border-0 shadow-sm mb-4" style="border-left: 4px solid #012152;">
+                <div class="card-header bg-white py-3">
+                    <h5 class="fw-bold mb-0 text-dark">
                         <i class="fas fa-info-circle me-2 text-primary"></i>
                         {% trans "Asosiy ma'lumotlar" %}
                     </h5>
@@ -77,42 +89,70 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="mb-3">
-                                <strong class="text-muted">{% trans "F.I.SH" %}:</strong>
-                                <p class="mb-0">{{ profile_user.get_full_name|default:"—" }}</p>
+                            <div class="mb-3 p-3 bg-light rounded">
+                                <strong class="text-primary d-block mb-1">{% trans "F.I.SH" %}:</strong>
+                                <p class="mb-0 text-dark fw-semibold">{{ profile_user.get_full_name|default:"—" }}</p>
                             </div>
-                            <div class="mb-3">
-                                <strong class="text-muted">{% trans "Elektron pochta" %}:</strong>
-                                <p class="mb-0">{{ profile_user.email|default:"—" }}</p>
+                            <div class="mb-3 p-3 bg-light rounded">
+                                <strong class="text-primary d-block mb-1">{% trans "Elektron pochta" %}:</strong>
+                                <p class="mb-0 text-dark fw-semibold">{{ profile_user.email|default:"—" }}</p>
                             </div>
-                            <div class="mb-3">
-                                <strong class="text-muted">{% trans "Telefon raqam" %}:</strong>
-                                <p class="mb-0">{{ profile_user.phone|default:"—" }}</p>
+                            <div class="mb-3 p-3 bg-light rounded">
+                                <strong class="text-primary d-block mb-1">{% trans "Telefon raqam" %}:</strong>
+                                <p class="mb-0 text-dark fw-semibold">{{ profile.phone|default:"—" }}</p>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="mb-3">
-                                <strong class="text-muted">{% trans "Foydalanuvchi turi" %}:</strong>
+                            <div class="mb-3 p-3 bg-light rounded">
+                                <strong class="text-primary d-block mb-1">{% trans "Foydalanuvchi turi" %}:</strong>
                                 <p class="mb-0">
-                                    <span class="badge bg-primary">{{ profile_user.get_user_type_display }}</span>
+                                    <span class="badge bg-primary px-3 py-2">{{ profile_user.get_user_type_display }}</span>
                                 </p>
                             </div>
-                            <div class="mb-3">
-                                <strong class="text-muted">{% trans "Ro'yxatdan o'tgan sana" %}:</strong>
-                                <p class="mb-0">{{ profile_user.date_joined|date:"d.m.Y H:i" }}</p>
+                            <div class="mb-3 p-3 bg-light rounded">
+                                <strong class="text-primary d-block mb-1">{% trans "Ro'yxatdan o'tgan sana" %}:</strong>
+                                <p class="mb-0 text-dark fw-semibold">{{ profile_user.date_joined|date:"d.m.Y H:i" }}</p>
                             </div>
-                            <div class="mb-3">
-                                <strong class="text-muted">{% trans "Holati" %}:</strong>
+                            <div class="mb-3 p-3 bg-light rounded">
+                                <strong class="text-primary d-block mb-1">{% trans "Holati" %}:</strong>
                                 <p class="mb-0">
                                     {% if profile_user.is_active %}
-                                        <span class="badge bg-success">{% trans "Faol" %}</span>
+                                        <span class="badge bg-success px-3 py-2">{% trans "Faol" %}</span>
                                     {% else %}
-                                        <span class="badge bg-danger">{% trans "Faol emas" %}</span>
+                                        <span class="badge bg-danger px-3 py-2">{% trans "Faol emas" %}</span>
                                     {% endif %}
                                 </p>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Дополнительные поля профиля -->
+                    {% if profile.bio %}
+                    <div class="mt-4 p-3 bg-primary bg-opacity-5 rounded border-start border-4 border-primary">
+                        <strong class="text-primary d-block mb-2">{% trans "O'zim haqimda" %}:</strong>
+                        <p class="mb-0 text-dark">{{ profile.bio|linebreaks }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if profile.company_name %}
+                    <div class="mt-3 p-3 bg-primary bg-opacity-5 rounded border-start border-4 border-primary">
+                        <strong class="text-primary d-block mb-2">{% trans "Kompaniya" %}:</strong>
+                        <p class="mb-0 text-dark fw-semibold">{{ profile.company_name }}</p>
+                        {% if profile.position %}
+                        <p class="mb-0 text-muted mt-1">{{ profile.position }}</p>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    {% if profile.faculty %}
+                    <div class="mt-3 p-3 bg-primary bg-opacity-5 rounded border-start border-4 border-primary">
+                        <strong class="text-primary d-block mb-2">{% trans "Ta'lim" %}:</strong>
+                        <p class="mb-0 text-dark fw-semibold">{{ profile.faculty }}</p>
+                        {% if profile.specialization %}
+                        <p class="mb-0 text-muted mt-1">{{ profile.specialization }}</p>
+                        {% endif %}
+                    </div>
+                    {% endif %}
                 </div>
             </div>
 
@@ -123,56 +163,70 @@
         <!-- Правая колонка - Дополнительная информация -->
         <div class="col-lg-4">
             <!-- Статистика -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-white">
-                    <h5 class="fw-bold mb-0">
+            <div class="card border-0 shadow-sm mb-4" style="border-left: 4px solid #012152;">
+                <div class="card-header bg-white py-3">
+                    <h5 class="fw-bold mb-0 text-dark">
                         <i class="fas fa-chart-bar me-2 text-primary"></i>
                         {% trans "Statistika" %}
                     </h5>
                 </div>
                 <div class="card-body">
                     {% block profile_stats %}
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span>{% trans "Profil ko'rishlar" %}</span>
+                    <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
+                        <span class="text-primary fw-semibold">{% trans "Profil ko'rishlar" %}</span>
                         <span class="badge bg-primary">{{ profile_user.profile_views }}</span>
                     </div>
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span>{% trans "Faollik" %}</span>
+                    <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
+                        <span class="text-primary fw-semibold">{% trans "Faollik" %}</span>
                         <span class="badge bg-success">{% trans "Faol" %}</span>
                     </div>
+                    {% if stats %}
+                        {% for key, value in stats.items %}
+                        <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
+                            <span class="text-primary fw-semibold">{{ key }}</span>
+                            <span class="badge bg-primary">{{ value }}</span>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
                     {% endblock %}
                 </div>
             </div>
 
             <!-- Контактная информация -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-white">
-                    <h5 class="fw-bold mb-0">
+            <div class="card border-0 shadow-sm mb-4" style="border-left: 4px solid #012152;">
+                <div class="card-header bg-white py-3">
+                    <h5 class="fw-bold mb-0 text-dark">
                         <i class="fas fa-address-card me-2 text-primary"></i>
                         {% trans "Aloqa" %}
                     </h5>
                 </div>
                 <div class="card-body">
                     {% block profile_contact %}
-                    <div class="mb-3">
-                        <i class="fas fa-envelope text-muted me-2"></i>
-                        <a href="mailto:{{ profile_user.email }}" class="text-decoration-none">
+                    <div class="mb-3 p-2 bg-light rounded">
+                        <i class="fas fa-envelope text-primary me-2"></i>
+                        <a href="mailto:{{ profile_user.email }}" class="text-decoration-none text-dark fw-semibold">
                             {{ profile_user.email|default:"—" }}
                         </a>
                     </div>
-                    <div class="mb-3">
-                        <i class="fas fa-phone text-muted me-2"></i>
-                        <span>{{ profile_user.phone|default:"—" }}</span>
+                    <div class="mb-3 p-2 bg-light rounded">
+                        <i class="fas fa-phone text-primary me-2"></i>
+                        <span class="text-dark fw-semibold">{{ profile.phone|default:"—" }}</span>
                     </div>
+                    {% if profile.location %}
+                    <div class="mb-3 p-2 bg-light rounded">
+                        <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                        <span class="text-dark fw-semibold">{{ profile.location }}</span>
+                    </div>
+                    {% endif %}
                     {% endblock %}
                 </div>
             </div>
 
             <!-- Быстрые действия -->
             {% if is_own_profile %}
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white">
-                    <h5 class="fw-bold mb-0">
+            <div class="card border-0 shadow-sm" style="border-left: 4px solid #012152;">
+                <div class="card-header bg-white py-3">
+                    <h5 class="fw-bold mb-0 text-dark">
                         <i class="fas fa-bolt me-2 text-primary"></i>
                         {% trans "Tezkor amallar" %}
                     </h5>
@@ -180,15 +234,26 @@
                 <div class="card-body">
                     {% block quick_actions %}
                     <div class="d-grid gap-2">
-                        <a href="{% url 'accounts:profile_update' %}" class="btn btn-outline-primary btn-sm">
-                            <i class="fas fa-edit me-2"></i>{% trans "Profilni tahrirlash" %}
-                        </a>
-                        <a href="#" class="btn btn-outline-secondary btn-sm">
+                        {% if profile_user.user_type == 'employer' %}
+                            <a href="{% url 'accounts:employer_profile_update' %}" class="btn btn-outline-primary btn-sm py-2">
+                                <i class="fas fa-edit me-2"></i>{% trans "Profilni tahrirlash" %}
+                            </a>
+                        {% elif profile_user.user_type == 'student' %}
+                            <a href="{% url 'accounts:student_profile_update' %}" class="btn btn-outline-primary btn-sm py-2">
+                                <i class="fas fa-edit me-2"></i>{% trans "Profilni tahrirlash" %}
+                            </a>
+                        {% endif %}
+                        <a href="#" class="btn btn-outline-primary btn-sm py-2">
                             <i class="fas fa-lock me-2"></i>{% trans "Parolni o'zgartirish" %}
                         </a>
-                        <a href="{% url 'accounts:notifications' %}" class="btn btn-outline-info btn-sm">
+                        <a href="{% url 'accounts:notifications' %}" class="btn btn-outline-primary btn-sm py-2">
                             <i class="fas fa-bell me-2"></i>{% trans "Bildirishnomalar" %}
                         </a>
+                        {% if profile_user.user_type == 'student' %}
+                        <a href="{% url 'cvbuilder:cv_list' %}" class="btn btn-outline-primary btn-sm py-2">
+                            <i class="fas fa-file-alt me-2"></i>{% trans "Rezyumelarim" %}
+                        </a>
+                        {% endif %}
                     </div>
                     {% endblock %}
                 </div>
@@ -197,4 +262,51 @@
         </div>
     </div>
 </div>
+
+<style>
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.badge {
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background-color: #012152;
+    border-color: #012152;
+    font-weight: 500;
+}
+.btn-primary:hover {
+    background-color: #013580;
+    border-color: #013580;
+}
+
+.btn-outline-primary {
+    color: #012152;
+    border-color: #012152;
+    font-weight: 500;
+}
+.btn-outline-primary:hover {
+    background-color: #012152;
+    border-color: #012152;
+    color: white;
+}
+
+.bg-light {
+    background-color: #f8f9fa !important;
+}
+
+.border-primary {
+    border-color: #012152 !important;
+}
+
+.text-primary {
+    color: #012152 !important;
+}
+</style>
 {% endblock %}

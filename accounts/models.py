@@ -574,6 +574,171 @@ class UserActivity(models.Model):
             self.user.save(update_fields=['last_activity'])
 
 
+# Добавьте в конец models.py перед сигналами
+
+class Job(models.Model):
+    """Модель вакансии/работы"""
+    
+    JOB_TYPE_CHOICES = [
+        ('full_time', _('To`liq kunlik')),
+        ('part_time', _('Yarim kunlik')),
+        ('remote', _('Uzoq ish')),
+        ('internship', _('Stajirovka')),
+        ('contract', _('Kontrakt')),
+    ]
+    
+    EXPERIENCE_LEVEL_CHOICES = [
+        ('intern', _('Stajyor')),
+        ('junior', _('Junior')),
+        ('middle', _('Middle')),
+        ('senior', _('Senior')),
+        ('lead', _('Lead')),
+    ]
+    
+    STATUS_CHOICES = [
+        ('draft', _('Qoralama')),
+        ('published', _('E\'lon qilingan')),
+        ('closed', _('Yopilgan')),
+        ('archived', _('Arxivlangan')),
+    ]
+    
+    # Основная информация
+    employer = models.ForeignKey(
+        EmployerProfile,
+        on_delete=models.CASCADE,
+        related_name='jobs',
+        verbose_name=_("Ish beruvchi")
+    )
+    title = models.CharField(
+        max_length=255,
+        verbose_name=_("Lavozim nomi")
+    )
+    description = models.TextField(
+        verbose_name=_("Ish tavsifi")
+    )
+    requirements = models.TextField(
+        verbose_name=_("Talablar")
+    )
+    responsibilities = models.TextField(
+        verbose_name=_("Majburiyatlar")
+    )
+    
+    # Детали работы
+    job_type = models.CharField(
+        max_length=20,
+        choices=JOB_TYPE_CHOICES,
+        verbose_name=_("Ish turi")
+    )
+    experience_level = models.CharField(
+        max_length=20,
+        choices=EXPERIENCE_LEVEL_CHOICES,
+        verbose_name=_("Tajriba darajasi")
+    )
+    
+    # Локация
+    location = models.CharField(
+        max_length=255,
+        verbose_name=_("Manzil")
+    )
+    is_remote = models.BooleanField(
+        default=False,
+        verbose_name=_("Uzoq ish")
+    )
+    
+    # Зарплата
+    salary_min = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        verbose_name=_("Minimal maosh")
+    )
+    salary_max = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        verbose_name=_("Maksimal maosh")
+    )
+    salary_currency = models.CharField(
+        max_length=10,
+        default='UZS',
+        verbose_name=_("Valyuta")
+    )
+    
+    # Навыки
+    skills_required = models.TextField(
+        blank=True,
+        verbose_name=_("Talab qilinadigan ko'nikmalar")
+    )
+    
+    # Статус и даты
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='draft',
+        verbose_name=_("Holat")
+    )
+    application_deadline = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_("Ariza muddati")
+    )
+    
+    # Статистика
+    views_count = models.PositiveIntegerField(
+        default=0,
+        verbose_name=_("Ko'rishlar soni")
+    )
+    applications_count = models.PositiveIntegerField(
+        default=0,
+        verbose_name=_("Arizalar soni")
+    )
+    
+    # Мета-данные
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name=_("Faol")
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    published_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_("E'lon qilingan vaqt")
+    )
+
+    class Meta:
+        verbose_name = _("Ish")
+        verbose_name_plural = _("Ishlar")
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['status', 'is_active']),
+            models.Index(fields=['employer', 'created_at']),
+        ]
+
+    def __str__(self):
+        return f"{self.title} - {self.employer.company_name}"
+
+    def get_absolute_url(self):
+        return reverse('jobs:job_detail', kwargs={'pk': self.pk})
+
+    def can_apply(self):
+        """Можно ли подавать заявку на эту вакансию"""
+        from django.utils import timezone
+        if self.status != 'published' or not self.is_active:
+            return False
+        if self.application_deadline and self.application_deadline < timezone.now().date():
+            return False
+        return True
+
+    def increment_views(self):
+        """Увеличить счетчик просмотров"""
+        self.views_count += 1
+        self.save(update_fields=['views_count'])
+
+
+
 class Notification(models.Model):
     """Модель для уведомлений пользователей"""
     NOTIFICATION_TYPES = [

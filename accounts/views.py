@@ -13,15 +13,8 @@ import requests
 import json
 from datetime import datetime, timedelta
 from django.conf import settings
-
-from .models import (
-    CustomUser, EmployerProfile, StudentProfile, AdminProfile, 
-    HemisAuth, UserActivity, Notification
-)
-from .forms import (
-    EmployerRegistrationForm, EmployerProfileForm, 
-    StudentProfileForm, AdminProfileForm, UserUpdateForm
-)
+from .models import *
+from .forms import *
 
 # Utility functions
 def is_student(user):
@@ -125,7 +118,7 @@ def temp_student_login(request):
         if user:
             login(request, user)
             messages.success(request, _("Test student sifatida kirdingiz"))
-            return redirect('student_dashboard')  # ИСПРАВЛЕНО
+            return redirect('accounts:student_dashboard')
     
     return render(request, 'accounts/temp_login.html', {'user_type': 'student'})
 
@@ -148,7 +141,7 @@ def employer_login(request):
                     user_agent=request.META.get('HTTP_USER_AGENT', '')
                 )
                 messages.success(request, _("Xush kelibsiz!"))
-                return redirect('accounts:employer_dashboard')  # Исправлено
+                return redirect('accounts:employer_dashboard')  
             else:
                 messages.error(request, _("Sizning hisobingiz faol emas"))
         else:
@@ -214,16 +207,24 @@ def employer_dashboard(request):
         employer_profile = EmployerProfile.objects.create(user=request.user)
         messages.info(request, _("Sizning profilingiz yaratildi. Iltimos, ma'lumotlaringizni to'ldiring."))
     
+    # Получаем статистику по вакансиям
+    jobs = Job.objects.filter(employer=employer_profile)
+    
     stats = {
-        'active_jobs': 0,  # Пока заглушка
-        'total_applications': 0,
+        'active_jobs': jobs.filter(status='published').count(),
+        'total_applications': sum(job.applications_count for job in jobs),
+        'draft_jobs': jobs.filter(status='draft').count(),
         'profile_views': employer_profile.total_views,
         'jobs_posted': employer_profile.jobs_posted,
     }
     
+    # Последние вакансии
+    recent_jobs = jobs.order_by('-created_at')[:5]
+    
     context = {
         'employer_profile': employer_profile,
         'stats': stats,
+        'recent_jobs': recent_jobs,
     }
     
     return render(request, 'accounts/employer_dashboard.html', context)
@@ -521,7 +522,7 @@ def employer_profile_update(request):
             )
             
             messages.success(request, _("Profil muvaffaqiyatli yangilandi!"))
-            return redirect('employer_dashboard')
+            return redirect('accounts:employer_dashboard')  # ← ДОБАВЬТЕ NAMESPACE
     else:
         user_form = UserUpdateForm(instance=request.user)
         profile_form = EmployerProfileForm(instance=employer_profile)
@@ -720,3 +721,172 @@ def user_stats_api(request):
     }
     
     return JsonResponse(stats)
+
+
+
+
+@login_required
+@user_passes_test(is_employer, login_url='accounts:employer_login')
+def create_job(request):
+    """Создание новой вакансии"""
+    try:
+        employer_profile = EmployerProfile.objects.get(user=request.user)
+    except EmployerProfile.DoesNotExist:
+        messages.error(request, _("Iltimos, avval profilingizni to'ldiring"))
+        return redirect('accounts:employer_profile_update')
+    
+    if request.method == 'POST':
+        form = JobForm(request.POST)
+        if form.is_valid():
+            job = form.save(commit=False)
+            job.employer = employer_profile
+            job.status = 'draft'  # По умолчанию черновик
+            
+            # Если пользователь хочет сразу опубликовать
+            if request.POST.get('publish_now'):
+                job.status = 'published'
+                job.published_at = timezone.now()
+            
+            job.save()
+            
+            # Обновляем статистику работодателя
+            employer_profile.jobs_posted += 1
+            employer_profile.save()
+            
+            create_user_activity(
+                user=request.user,
+                activity_type='job_create',
+                description=f'Yangi ish yaratildi: {job.title}'
+            )
+            
+            messages.success(request, _("Ish muvaffaqiyatli yaratildi!"))
+            
+            # Редирект в зависимости от действия
+            if job.status == 'published':
+                return redirect('accounts:employer_jobs')
+            else:
+                return redirect('accounts:employer_dashboard')
+        else:
+            messages.error(request, _("Iltimos, formani to'g'ri to'ldiring"))
+    else:
+        form = JobForm()
+    
+    context = {
+        'form': form,
+        'employer_profile': employer_profile,
+    }
+    
+    return render(request, 'accounts/create_job.html', context)
+
+@login_required
+@user_passes_test(is_employer, login_url='accounts:employer_login')
+def employer_jobs(request):
+    """Список вакансий работодателя"""
+    try:
+        employer_profile = EmployerProfile.objects.get(user=request.user)
+    except EmployerProfile.DoesNotExist:
+        messages.error(request, _("Iltimos, avval profilingizni to'ldiring"))
+        return redirect('accounts:employer_profile_update')
+    
+    jobs = Job.objects.filter(employer=employer_profile).order_by('-created_at')
+    
+    # Фильтрация по статусу
+    status_filter = request.GET.get('status', 'all')
+    if status_filter != 'all':
+        jobs = jobs.filter(status=status_filter)
+    
+    # Пагинация
+    paginator = Paginator(jobs, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    # Статистика
+    stats = {
+        'total': jobs.count(),
+        'published': jobs.filter(status='published').count(),
+        'draft': jobs.filter(status='draft').count(),
+        'closed': jobs.filter(status='closed').count(),
+    }
+    
+    context = {
+        'page_obj': page_obj,
+        'employer_profile': employer_profile,
+        'stats': stats,
+        'status_filter': status_filter,
+    }
+    
+    return render(request, 'accounts/employer_jobs.html', context)
+
+@login_required
+@user_passes_test(is_employer, login_url='accounts:employer_login')
+def edit_job(request, job_id):
+    """Редактирование вакансии"""
+    try:
+        employer_profile = EmployerProfile.objects.get(user=request.user)
+        job = Job.objects.get(id=job_id, employer=employer_profile)
+    except (EmployerProfile.DoesNotExist, Job.DoesNotExist):
+        messages.error(request, _("Ish topilmadi yoki sizda unga kirish huquqi yo'q"))
+        return redirect('accounts:employer_jobs')
+    
+    if request.method == 'POST':
+        form = JobForm(request.POST, instance=job)
+        if form.is_valid():
+            job = form.save()
+            
+            # Если пользователь хочет опубликовать
+            if request.POST.get('publish_now') and job.status == 'draft':
+                job.status = 'published'
+                job.published_at = timezone.now()
+                job.save()
+            
+            create_user_activity(
+                user=request.user,
+                activity_type='job_update',
+                description=f'Ish yangilandi: {job.title}'
+            )
+            
+            messages.success(request, _("Ish muvaffaqiyatli yangilandi!"))
+            return redirect('accounts:employer_jobs')
+        else:
+            messages.error(request, _("Iltimos, formani to'g'ri to'ldiring"))
+    else:
+        form = JobForm(instance=job)
+    
+    context = {
+        'form': form,
+        'job': job,
+        'employer_profile': employer_profile,
+    }
+    
+    return render(request, 'accounts/edit_job.html', context)
+
+@login_required
+@user_passes_test(is_employer, login_url='accounts:employer_login')
+def toggle_job_status(request, job_id):
+    """Активация/деактивация вакансии"""
+    if request.method == 'POST':
+        try:
+            employer_profile = EmployerProfile.objects.get(user=request.user)
+            job = Job.objects.get(id=job_id, employer=employer_profile)
+            
+            new_status = request.POST.get('status')
+            if new_status in ['published', 'closed', 'draft']:
+                job.status = new_status
+                if new_status == 'published' and not job.published_at:
+                    job.published_at = timezone.now()
+                job.save()
+                
+                create_user_activity(
+                    user=request.user,
+                    activity_type='job_update',
+                    description=f'Ish holati o\'zgartirildi: {job.title} -> {job.get_status_display()}'
+                )
+                
+                messages.success(request, _(f"Ish holati {job.get_status_display()} ga o'zgartirildi"))
+            else:
+                messages.error(request, _("Noto'g'ri holat"))
+                
+        except (EmployerProfile.DoesNotExist, Job.DoesNotExist):
+            messages.error(request, _("Ish topilmadi"))
+    
+    return redirect('accounts:employer_jobs')

@@ -30,6 +30,12 @@ urlpatterns = [
     path('student/profile/update/', views.student_profile_update, name='student_profile_update'),
     path('employer/profile/update/', views.employer_profile_update, name='employer_profile_update'),
     
+    # Job Management URLs (Employer only)
+    path('employer/jobs/', views.employer_jobs, name='employer_jobs'),
+    path('employer/jobs/create/', views.create_job, name='create_job'),
+    path('employer/jobs/<int:job_id>/edit/', views.edit_job, name='edit_job'),
+    path('employer/jobs/<int:job_id>/toggle-status/', views.toggle_job_status, name='toggle_job_status'),
+    
     # Account Creation (Admin only)
     path('admin/create-employer/', views.create_employer_account, name='create_employer_account'),
     path('admin/create-admin/', views.create_admin_account, name='create_admin_account'),

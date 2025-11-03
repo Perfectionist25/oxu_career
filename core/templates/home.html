@@ -3,13 +3,13 @@
 {% load i18n %}
 
 {% block content %}
-<div class="container py-5">
+<div class="section py-5" style="padding: 5%;">
   <!-- Hero Section -->
   <section class="text-center mb-5">
     <div class="row justify-content-center">
       <div class="col-lg-8">
-        <h1 class="display-5 fw-bold text-primary mb-4">{% trans "OXU Career Center-ga xush kelibsiz" %}</h1>
-        <p class="lead mb-4">{% trans "Kelajagingizni biz bilan quring. Sizga orzu qilgan ishingizni topishda va kasbiy ko'nikmalaringizni rivojlantirishda yordam beramiz." %}</p>
+        <div class="display-5 h4 fw-bold text-primary mb-4">{% trans "OXU Career Center-ga xush kelibsiz" %}</div>
+        <p class="lead mb-4 h6">{% trans "Kelajagingizni biz bilan quring. Sizga orzu qilgan ishingizni topishda va kasbiy ko'nikmalaringizni rivojlantirishda yordam beramiz." %}</p>
         <div class="d-flex justify-content-center flex-wrap gap-3">
           <a href="{% url 'jobs:list' %}" class="btn btn-primary btn-lg px-4 py-3">
             <i class="fas fa-briefcase me-2"></i>{% trans "Ish o'rinlarini topish" %}
@@ -22,19 +22,19 @@
         <!-- Quick Stats -->
         <div class="row mt-5 pt-4 border-top">
           <div class="col-md-3 col-6">
-            <div class="h4 fw-bold text-primary mb-1">{{ stats.alumni_count|default:"1000" }}+</div>
+            <div class="h5 fw-bold text-primary mb-1">{{ stats.alumni_count|default:"1000" }}+</div>
             <small class="text-muted">{% trans "Bitiruvchilar" %}</small>
           </div>
           <div class="col-md-3 col-6">
-            <div class="h4 fw-bold text-primary mb-1">{{ stats.jobs_count|default:"150" }}+</div>
+            <div class="h5 fw-bold text-primary mb-1">{{ stats.jobs_count|default:"150" }}+</div>
             <small class="text-muted">{% trans "Aktiv vakansiyalar" %}</small>
           </div>
           <div class="col-md-3 col-6">
-            <div class="h4 fw-bold text-primary mb-1">{{ stats.companies_count|default:"50" }}+</div>
+            <div class="h5 fw-bold text-primary mb-1">{{ stats.companies_count|default:"50" }}+</div>
             <small class="text-muted">{% trans "Hamkor kompaniyalar" %}</small>
           </div>
           <div class="col-md-3 col-6">
-            <div class="h4 fw-bold text-primary mb-1">{{ stats.resources_count|default:"200" }}+</div>
+            <div class="h5 fw-bold text-primary mb-1">{{ stats.resources_count|default:"200" }}+</div>
             <small class="text-muted">{% trans "Karyera resurslari" %}</small>
           </div>
         </div>
@@ -157,11 +157,18 @@
   <!-- Latest Jobs Preview -->
   <section class="mb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="fw-bold text-dark">{% trans "So'ngi vakansiyalar" %}</h2>
+      <div class="fw-bold text-dark h5">{% trans "So'ngi vakansiyalar" %}</div>
+      {% if user.is_autheticated %}  
       <a href="{% url 'jobs:list' %}" class="btn btn-outline-primary">
         {% trans "Barchasini ko'rish" %} <i class="fas fa-arrow-right ms-2"></i>
       </a>
+      {% else %}
+      <a href="{% url 'accounts:admin_login' %}" class="btn btn-outline-primary">
+        {% trans "Barchasini ko'rish" %} <i class="fas fa-arrow-right ms-2"></i>
+      </a>
+      {% endif %}
     </div>
+    {% if user.is_autheticated %}
     <div class="row g-3">
       {% for job in latest_jobs|slice:":6" %}
       <div class="col-lg-4 col-md-6">
@@ -189,12 +196,17 @@
       </div>
       {% endfor %}
     </div>
+    {% else %}
+    <div class="alert alert-info text-center">
+      {% trans "Ro'yhatdan o'ting" %}
+    </div>
+    {% endif %}
   </section>
 
   <!-- Upcoming Events -->
   <section class="mb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="fw-bold text-dark">{% trans "Yaqinlashayotgan tadbirlar" %}</h2>
+      <div class="fw-bold h5 text-dark">{% trans "Yaqinlashayotgan tadbirlar" %}</div>
       <a href="{% url 'events:list' %}" class="btn btn-outline-primary">
         {% trans "Barcha tadbirlar" %} <i class="fas fa-arrow-right ms-2"></i>
       </a>
@@ -232,28 +244,6 @@
         </div>
       </div>
       {% endfor %}
-    </div>
-  </section>
-
-  <!-- Partners Section -->
-  <section class="text-center mb-5">
-    <h3 class="fw-bold text-dark mb-4">{% trans "Bizning ishonchli hamkorlarimiz" %}</h3>
-    <div class="row align-items-center justify-content-center g-4">
-      <div class="col-6 col-md-3 col-lg-2">
-        <img src="{% static 'img/partner1.png' %}" alt="Partner 1" class="img-fluid grayscale partner-logo">
-      </div>
-      <div class="col-6 col-md-3 col-lg-2">
-        <img src="{% static 'img/partner2.png' %}" alt="Partner 2" class="img-fluid grayscale partner-logo">
-      </div>
-      <div class="col-6 col-md-3 col-lg-2">
-        <img src="{% static 'img/partner3.png' %}" alt="Partner 3" class="img-fluid grayscale partner-logo">
-      </div>
-      <div class="col-6 col-md-3 col-lg-2">
-        <img src="{% static 'img/partner4.png' %}" alt="Partner 4" class="img-fluid grayscale partner-logo">
-      </div>
-      <div class="col-6 col-md-3 col-lg-2">
-        <img src="{% static 'img/partner5.png' %}" alt="Partner 5" class="img-fluid grayscale partner-logo">
-      </div>
     </div>
   </section>
 </div>

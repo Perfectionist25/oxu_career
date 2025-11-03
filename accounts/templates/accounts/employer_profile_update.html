@@ -1,0 +1,400 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header Section -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                            <i class="fas fa-user-edit text-white fa-lg"></i>
+                        </div>
+                        <div>
+                            <h1 class="h3 fw-bold text-dark mb-1">Profilni yangilash</h1>
+                            <p class="text-muted mb-0">Shaxsiy ma'lumotlaringizni tahrirlang</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Update Form -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        
+                        {% if messages %}
+                        <div class="mb-4">
+                            {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                <i class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-triangle{% endif %} me-2"></i>
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <!-- User Form Section -->
+                        <div class="mb-5">
+                            <h4 class="fw-bold text-dark mb-4 border-bottom pb-2">
+                                <i class="fas fa-user me-2 text-primary"></i>
+                                Asosiy ma'lumotlar
+                            </h4>
+                            
+                            <div class="row">
+                                <!-- First Name -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ user_form.first_name.id_for_label }}" class="form-label fw-semibold">
+                                        <i class="fas fa-signature me-2 text-primary"></i>Ism
+                                    </label>
+                                    <input type="text" 
+                                           name="{{ user_form.first_name.name }}"
+                                           id="{{ user_form.first_name.id_for_label }}"
+                                           class="form-control {% if user_form.first_name.errors %}is-invalid{% endif %}"
+                                           value="{{ user_form.first_name.value|default:'' }}"
+                                           placeholder="Ismingiz">
+                                    {% if user_form.first_name.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in user_form.first_name.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Last Name -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ user_form.last_name.id_for_label }}" class="form-label fw-semibold">
+                                        <i class="fas fa-signature me-2 text-primary"></i>Familiya
+                                    </label>
+                                    <input type="text" 
+                                           name="{{ user_form.last_name.name }}"
+                                           id="{{ user_form.last_name.id_for_label }}"
+                                           class="form-control {% if user_form.last_name.errors %}is-invalid{% endif %}"
+                                           value="{{ user_form.last_name.value|default:'' }}"
+                                           placeholder="Familiyangiz">
+                                    {% if user_form.last_name.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in user_form.last_name.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="mb-3">
+                                <label for="{{ user_form.email.id_for_label }}" class="form-label fw-semibold">
+                                    <i class="fas fa-envelope me-2 text-primary"></i>Elektron pochta
+                                </label>
+                                <input type="email" 
+                                       name="{{ user_form.email.name }}"
+                                       id="{{ user_form.email.id_for_label }}"
+                                       class="form-control {% if user_form.email.errors %}is-invalid{% endif %}"
+                                       value="{{ user_form.email.value|default:'' }}"
+                                       placeholder="email@example.com">
+                                {% if user_form.email.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in user_form.email.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Profile Form Section -->
+                        <div class="mb-5">
+                            <h4 class="fw-bold text-dark mb-4 border-bottom pb-2">
+                                <i class="fas fa-id-card me-2 text-primary"></i>
+                                Profil ma'lumotlari
+                            </h4>
+
+                            {% if profile_form.phone %}
+                            <!-- Phone -->
+                            <div class="mb-3">
+                                <label for="{{ profile_form.phone.id_for_label }}" class="form-label fw-semibold">
+                                    <i class="fas fa-phone me-2 text-primary"></i>Telefon raqam
+                                </label>
+                                <input type="text" 
+                                       name="{{ profile_form.phone.name }}"
+                                       id="{{ profile_form.phone.id_for_label }}"
+                                       class="form-control {% if profile_form.phone.errors %}is-invalid{% endif %}"
+                                       value="{{ profile_form.phone.value|default:'' }}"
+                                       placeholder="+998 (XX) XXX-XX-XX">
+                                {% if profile_form.phone.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in profile_form.phone.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+
+                            {% if profile_form.bio %}
+                            <!-- Bio -->
+                            <div class="mb-3">
+                                <label for="{{ profile_form.bio.id_for_label }}" class="form-label fw-semibold">
+                                    <i class="fas fa-info-circle me-2 text-primary"></i>O'zim haqimda
+                                </label>
+                                <textarea name="{{ profile_form.bio.name }}"
+                                          id="{{ profile_form.bio.id_for_label }}"
+                                          class="form-control {% if profile_form.bio.errors %}is-invalid{% endif %}"
+                                          rows="4"
+                                          placeholder="O'zingiz haqingizda qisqacha ma'lumot...">{{ profile_form.bio.value|default:'' }}</textarea>
+                                {% if profile_form.bio.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in profile_form.bio.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+
+                            {% if profile_form.date_of_birth %}
+                            <!-- Date of Birth -->
+                            <div class="mb-3">
+                                <label for="{{ profile_form.date_of_birth.id_for_label }}" class="form-label fw-semibold">
+                                    <i class="fas fa-birthday-cake me-2 text-primary"></i>Tug'ilgan sana
+                                </label>
+                                <input type="date" 
+                                       name="{{ profile_form.date_of_birth.name }}"
+                                       id="{{ profile_form.date_of_birth.id_for_label }}"
+                                       class="form-control {% if profile_form.date_of_birth.errors %}is-invalid{% endif %}"
+                                       value="{{ profile_form.date_of_birth.value|default:'' }}">
+                                {% if profile_form.date_of_birth.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in profile_form.date_of_birth.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+
+                            {% if profile_form.avatar %}
+                            <!-- Avatar Upload -->
+                            <div class="mb-3">
+                                <label for="{{ profile_form.avatar.id_for_label }}" class="form-label fw-semibold">
+                                    <i class="fas fa-camera me-2 text-primary"></i>Profil rasmi
+                                </label>
+                                <input type="file" 
+                                       name="{{ profile_form.avatar.name }}"
+                                       id="{{ profile_form.avatar.id_for_label }}"
+                                       class="form-control {% if profile_form.avatar.errors %}is-invalid{% endif %}"
+                                       accept="image/*">
+                                {% if profile_form.avatar.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in profile_form.avatar.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                {% if profile_form.instance.avatar %}
+                                <div class="mt-2">
+                                    <small class="text-muted">Joriy rasm:</small>
+                                    <img src="{{ profile_form.instance.avatar.url }}" alt="Profil rasmi" class="rounded ms-2" style="width: 50px; height: 50px; object-fit: cover;">
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+
+                            <!-- Dynamic fields based on user type -->
+                            {% for field in profile_form %}
+                                {% if field.name not in 'phone,bio,date_of_birth,avatar' %}
+                                <div class="mb-3">
+                                    <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
+                                        {% if field.name == 'company_name' %}
+                                            <i class="fas fa-building me-2 text-primary"></i>Kompaniya nomi
+                                        {% elif field.name == 'position' %}
+                                            <i class="fas fa-briefcase me-2 text-primary"></i>Lavozim
+                                        {% elif field.name == 'faculty' %}
+                                            <i class="fas fa-graduation-cap me-2 text-primary"></i>Fakultet
+                                        {% elif field.name == 'specialization' %}
+                                            <i class="fas fa-book me-2 text-primary"></i>Mutaxassislik
+                                        {% else %}
+                                            {{ field.label }}
+                                        {% endif %}
+                                    </label>
+                                    {% if field.field.widget.input_type == 'select' %}
+                                        <select name="{{ field.name }}" 
+                                                id="{{ field.id_for_label }}"
+                                                class="form-select {% if field.errors %}is-invalid{% endif %}">
+                                            {% for choice in field.field.choices %}
+                                                <option value="{{ choice.0 }}" {% if field.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    {% else %}
+                                        <input type="{{ field.field.widget.input_type }}" 
+                                               name="{{ field.name }}"
+                                               id="{{ field.id_for_label }}"
+                                               class="form-control {% if field.errors %}is-invalid{% endif %}"
+                                               value="{{ field.value|default:'' }}"
+                                               placeholder="{% if field.name == 'company_name' %}Kompaniya nomi{% elif field.name == 'position' %}Lavozimingiz{% elif field.name == 'faculty' %}Fakultet nomi{% elif field.name == 'specialization' %}Mutaxassislik{% endif %}">
+                                    {% endif %}
+                                    {% if field.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in field.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    {% if field.help_text %}
+                                    <div class="form-text">{{ field.help_text }}</div>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="d-flex justify-content-between align-items-center pt-4 border-top">
+                            <a href="{% if request.user.user_type == 'student' %}{% url 'accounts:student_dashboard' %}{% elif request.user.user_type == 'employer' %}{% url 'accounts:employer_dashboard' %}{% else %}{% url 'accounts:admin_dashboard' %}{% endif %}" 
+                               class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Ortga qaytish
+                            </a>
+                            <div class="d-flex gap-3">
+                                <button type="reset" class="btn btn-outline-primary">
+                                    <i class="fas fa-undo me-2"></i>Bekor qilish
+                                </button>
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="fas fa-save me-2"></i>Saqlash
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tips Card -->
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="fas fa-lightbulb me-2 text-primary"></i>
+                        Foydali maslahatlar
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex mb-3">
+                        <i class="fas fa-check text-success me-2 mt-1"></i>
+                        <small>Ma'lumotlarni aniq va to'g'ri kiriting</small>
+                    </div>
+                    <div class="d-flex mb-3">
+                        <i class="fas fa-check text-success me-2 mt-1"></i>
+                        <small>Profil rasmi o'lchami 2MB dan oshmasligi kerak</small>
+                    </div>
+                    <div class="d-flex mb-3">
+                        <i class="fas fa-check text-success me-2 mt-1"></i>
+                        <small>Telefon raqamini xalqaro formatda kiriting</small>
+                    </div>
+                    <div class="d-flex">
+                        <i class="fas fa-check text-success me-2 mt-1"></i>
+                        <small>Ma'lumotlarni muntazam yangilab turish maqsadga muvofiq</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    transition: transform 0.3s ease;
+}
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    padding: 0.75rem 1rem;
+}
+.form-control:focus, .form-select:focus {
+    border-color: #012152;
+    box-shadow: 0 0 0 0.2rem rgba(1, 33, 82, 0.25);
+}
+
+.btn-primary {
+    background-color: #012152;
+    border-color: #012152;
+    border-radius: 8px;
+}
+.btn-primary:hover {
+    background-color: #012d6e;
+    border-color: #012d6e;
+}
+
+.alert {
+    border-radius: 8px;
+    border: none;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Phone number formatting
+    const phoneInput = document.getElementById('{{ profile_form.phone.id_for_label }}');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.startsWith('998')) {
+                value = '+' + value;
+            }
+            if (value.length > 4) {
+                value = value.replace(/(\+\d{3})(\d{2})(\d{3})(\d{2})(\d{2})/, '$1 ($2) $3-$4-$5');
+            }
+            e.target.value = value;
+        });
+    }
+
+    // Form submission loading state
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function() {
+            const submitButton = this.querySelector('button[type="submit"]');
+            if (submitButton) {
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saqlanmoqda...';
+                submitButton.disabled = true;
+            }
+        });
+    }
+
+    // Image preview for avatar
+    const avatarInput = document.getElementById('{{ profile_form.avatar.id_for_label }}');
+    if (avatarInput) {
+        avatarInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Create preview if doesn't exist
+                    let preview = document.getElementById('avatar-preview');
+                    if (!preview) {
+                        preview = document.createElement('div');
+                        preview.id = 'avatar-preview';
+                        preview.className = 'mt-2';
+                        preview.innerHTML = '<small class="text-muted">Yangi rasm:</small>';
+                        const img = document.createElement('img');
+                        img.className = 'rounded ms-2';
+                        img.style.cssText = 'width: 50px; height: 50px; object-fit: cover;';
+                        preview.appendChild(img);
+                        avatarInput.parentNode.appendChild(preview);
+                    }
+                    preview.querySelector('img').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

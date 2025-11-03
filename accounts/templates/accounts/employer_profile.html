@@ -159,10 +159,10 @@
 {% block quick_actions %}
 {{ block.super }}
 <div class="d-grid gap-2 mt-2">
-    <a href="{% url 'jobs:create_job' %}" class="btn btn-success btn-sm">
+    <a href="{% url 'accounts:create_job' %}" class="btn btn-success btn-sm">
         <i class="fas fa-plus me-2"></i>{% trans "Yangi vakansiya" %}
     </a>
-    <a href="{% url 'jobs:job_management' %}" class="btn btn-primary btn-sm">
+    <a href="{% url 'accounts:employer_jobs' %}" class="btn btn-primary btn-sm">
         <i class="fas fa-tasks me-2"></i>{% trans "Vakansiyalarni boshqarish" %}
     </a>
 </div>

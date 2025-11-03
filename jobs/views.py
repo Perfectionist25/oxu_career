@@ -5,14 +5,11 @@ from django.utils.translation import gettext_lazy as _
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.db.models import Q, Count, Avg
-from django.views.generic import ListView, DetailView
+from django.views.generic import DetailView
 from django.utils import timezone
 from .models import *
 from django.views.decorators.http import require_POST
-from .forms import (
-    JobSearchForm, JobApplicationForm, JobAlertForm, CompanyReviewForm,
-    InterviewExperienceForm, ApplicationStatusForm
-)
+from .forms import *
 
 @login_required
 def employer_applications(request):
@@ -21,15 +18,12 @@ def employer_applications(request):
         messages.error(request, _("Only employers can access this page."))
         return redirect('jobs:list')
     
-    # Get all companies owned by this user
-    user_companies = Company.objects.filter(owner=request.user)
+    # Получаем все вакансии созданные этим пользователем
+    employer_jobs = Job.objects.filter(created_by=request.user)
     
-    if not user_companies.exists():
-        messages.info(request, _("You need to create a company first to view applications."))
-        return redirect('jobs:company_create')  # You might need to adjust this URL
-    
-    # Get all jobs from user's companies
-    employer_jobs = Job.objects.filter(company__in=user_companies)
+    if not employer_jobs.exists():
+        messages.info(request, _("You need to create job postings first to view applications."))
+        return redirect('jobs:job_create')
     
     # Get applications with related data
     applications = JobApplication.objects.filter(
@@ -58,7 +52,6 @@ def employer_applications(request):
         'applications': applications,
         'status_filter': status_filter,
         'status_counts': status_counts,
-        'user_companies': user_companies,
     }
     
     return render(request, 'jobs/employer_applications.html', context)
@@ -66,36 +59,35 @@ def employer_applications(request):
 @login_required
 def job_create(request):
     """Create a new job posting"""
-    # Check if user is an employer
     if not request.user.is_employer:
         messages.error(request, _("Only employers can create job postings."))
         return redirect('jobs:list')
     
-    # Get companies that the user can post jobs for
-    user_companies = Company.objects.filter(owner=request.user, is_active=True)
+    # Получаем активные компании
+    user_companies = Company.objects.filter(is_active=True)
     
     if not user_companies.exists():
         messages.error(request, _("You need to create a company first before posting jobs."))
-        return redirect('companies:create')  # You might need to create this URL
+        return redirect('companies:create')  # Изменено на companies:create
     
     if request.method == 'POST':
         form = JobForm(request.POST, user=request.user)
         if form.is_valid():
             job = form.save(commit=False)
             job.created_by = request.user
-            job.save()
             
-            # Handle save as draft or publish
             if 'save_draft' in request.POST:
                 job.is_active = False
                 job.save()
                 messages.success(request, _("Job saved as draft successfully."))
-            else:  # publish
+            else:
                 job.is_active = True
                 job.save()
                 messages.success(request, _("Job published successfully!"))
             
             return redirect('jobs:my_jobs')
+        else:
+            messages.error(request, _("Please correct the errors below."))
     else:
         form = JobForm(user=request.user)
     
@@ -108,13 +100,76 @@ def job_create(request):
     return render(request, 'jobs/job_form.html', context)
 
 @login_required
+def job_edit(request, pk):
+    """Edit an existing job posting"""
+    job = get_object_or_404(Job, pk=pk)
+    
+    # Проверяем права доступа
+    if not request.user.is_employer or job.created_by != request.user:
+        messages.error(request, _("You don't have permission to edit this job."))
+        return redirect('jobs:job_detail', pk=pk)
+    
+    # Получаем активные компании
+    user_companies = Company.objects.filter(is_active=True)
+    
+    if request.method == 'POST':
+        form = JobForm(request.POST, instance=job, user=request.user)
+        if form.is_valid():
+            job = form.save(commit=False)
+            
+            # Handle save as draft or publish
+            if 'save_draft' in request.POST:
+                job.is_active = False
+                job.save()
+                messages.success(request, _("Job saved as draft successfully."))
+            else:  # publish
+                job.is_active = True
+                job.save()
+                messages.success(request, _("Job updated successfully!"))
+            
+            return redirect('jobs:my_jobs')
+        else:
+            messages.error(request, _("Please correct the errors below."))
+    else:
+        form = JobForm(instance=job, user=request.user)
+    
+    context = {
+        'form': form,
+        'user_companies': user_companies,
+        'today': timezone.now().date(),
+    }
+    
+    return render(request, 'jobs/job_form.html', context)
+
+@login_required
+def job_delete(request, pk):
+    """Delete a job posting"""
+    job = get_object_or_404(Job, pk=pk)
+    
+    # Проверяем права доступа
+    if not request.user.is_employer or job.created_by != request.user:
+        messages.error(request, _("You don't have permission to delete this job."))
+        return redirect('jobs:job_detail', pk=pk)
+    
+    if request.method == 'POST':
+        job_title = job.title
+        job.delete()
+        messages.success(request, _(f"Job '{job_title}' has been deleted successfully."))
+        return redirect('jobs:my_jobs')
+    
+    context = {
+        'job': job,
+    }
+    return render(request, 'jobs/job_confirm_delete.html', context)
+
+@login_required
 def my_jobs(request):
     """Мои вакансии (для работодателей) и мои заявки (для студентов)"""
     context = {}
     
     if hasattr(request.user, 'is_employer') and request.user.is_employer:
         # Для работодателя - показываем созданные вакансии
-        jobs = Job.objects.filter(company__contact_email=request.user.email).order_by('-created_at')
+        jobs = Job.objects.filter(created_by=request.user).order_by('-created_at')  # Исправлено на created_by
         
         # Статистика
         total_jobs = jobs.count()
@@ -188,7 +243,6 @@ def saved_jobs(request):
     }
     
     return render(request, 'jobs/saved_jobs.html', context)
-
 
 def job_list(request):
     """Список вакансий"""
@@ -381,16 +435,6 @@ def unsave_job(request, pk):
         messages.success(request, _('Job removed from saved list.'))
     
     return redirect('jobs:job_detail', pk=job.pk)
-
-@login_required
-def saved_jobs(request):
-    """Сохраненные вакансии"""
-    saved_jobs = SavedJob.objects.filter(user=request.user).select_related('job', 'job__company')
-    
-    context = {
-        'saved_jobs': saved_jobs,
-    }
-    return render(request, 'jobs/saved_jobs.html', context)
 
 @login_required
 def my_applications(request):

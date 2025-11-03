@@ -19,7 +19,7 @@
                     <div>
                         <h1 class="h3 fw-bold text-primary mb-1">{{ employer_profile.company_name }}</h1>
                         <p class="text-muted mb-0">
-                            {% trans "Xush kelibsiz" %}, <strong>{{ user.get_full_name|default:user.username }}</strong>!
+                            {% trans "Xush kelibsiz" %}, <strong style="color: black;">{{ user.get_full_name|default:user.username }}!</strong>
                         </p>
                     </div>
                 </div>
@@ -124,7 +124,7 @@
                     </a>
                 </div>
                 <div class="col-xl-2 col-md-4 col-6">
-                    <a href="{% url 'jobs:applications' %}" class="btn btn-warning w-100 h-100 py-3">
+                    <a href="{% url 'jobs:employer_applications' %}" class="btn btn-warning w-100 h-100 py-3">
                         <i class="fas fa-users fa-2x mb-2"></i>
                         <div>{% trans "Arizalar" %}</div>
                     </a>
@@ -155,15 +155,15 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <p><strong>{% trans "Soha" %}:</strong> {{ employer_profile.industry|default:"-" }}</p>
-                            <p><strong>{% trans "Kompaniya hajmi" %}:</strong> {{ employer_profile.get_company_size_display|default:"-" }}</p>
-                            <p><strong>{% trans "Tashkil etilgan yil" %}:</strong> {{ employer_profile.founded_year|default:"-" }}</p>
-                            <p><strong>{% trans "Bosh qarorgoh" %}:</strong> {{ employer_profile.headquarters|default:"-" }}</p>
+                            <p><strong style="color: black;">{% trans "Soha" %}:</strong> {{ employer_profile.industry|default:"-" }}</p>
+                            <p><strong style="color: black;">{% trans "Kompaniya hajmi" %}:</strong> {{ employer_profile.get_company_size_display|default:"-" }}</p>
+                            <p><strong style="color: black;">{% trans "Tashkil etilgan yil" %}:</strong> {{ employer_profile.founded_year|default:"-" }}</p>
+                            <p><strong style="color: black;">{% trans "Bosh qarorgoh" %}:</strong> {{ employer_profile.headquarters|default:"-" }}</p>
                         </div>
                         <div class="col-md-6">
-                            <p><strong>{% trans "Email" %}:</strong> {{ employer_profile.company_email|default:"-" }}</p>
-                            <p><strong>{% trans "Telefon" %}:</strong> {{ employer_profile.company_phone|default:"-" }}</p>
-                            <p><strong>{% trans "Veb sayt" %}:</strong> 
+                            <p><strong style="color: black;">{% trans "Email" %}:</strong> {{ employer_profile.company_email|default:"-" }}</p>
+                            <p><strong style="color: black;">{% trans "Telefon" %}:</strong> {{ employer_profile.company_phone|default:"-" }}</p>
+                            <p><strong style="color: black;">{% trans "Veb sayt" %}:</strong> 
                                 {% if employer_profile.company_website %}
                                 <a href="{{ employer_profile.company_website }}" target="_blank">{{ employer_profile.company_website }}</a>
                                 {% else %}-{% endif %}
@@ -214,7 +214,7 @@
                 </div>
                 <div class="card-body">
                     <p class="text-muted">{% trans "Bu yerda so'nggi arizalar ko'rsatiladi" %}</p>
-                    <a href="{% url 'jobs:applications' %}" class="btn btn-outline-primary btn-sm w-100">
+                    <a href="{% url 'jobs:employer_applications' %}" class="btn btn-outline-primary btn-sm w-100">
                         {% trans "Barcha arizalarni ko'rish" %}
                     </a>
                 </div>
