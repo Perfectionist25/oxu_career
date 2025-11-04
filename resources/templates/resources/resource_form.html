@@ -1,0 +1,861 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+    <div class="form-container">
+        <!-- Header -->
+        <div class="form-header">
+            <div class="header-content">
+                <h1 class="form-title">
+                    <i class="fas fa-{{ form.instance.pk|yesno:'edit,plus' }}"></i>
+                    {{ form.instance.pk|yesno:"Resursni Tahrirlash,Yangi Resurs Qo'shish" }}
+                </h1>
+                <a href="{% url 'resources:list' %}" class="back-button">
+                    <i class="fas fa-arrow-left"></i>
+                    Resurslar ro'yxatiga qaytish
+                </a>
+            </div>
+        </div>
+
+        <div class="form-body">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                        <button type="button" class="close-btn">&times;</button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data" class="resource-form">
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                    <div class="error-message">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Basic Information Section -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-info-circle"></i>
+                        Asosiy Ma'lumotlar
+                    </h2>
+                    
+                    <div class="form-grid">
+                        <!-- Title -->
+                        <div class="form-group full-width">
+                            <label for="{{ form.title.id_for_label }}" class="form-label">
+                                Sarlavha *
+                            </label>
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                                <div class="field-error">
+                                    {% for error in form.title.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-help">
+                                Resursning sarlavhasini kiriting (maksimum 200 belgi)
+                            </div>
+                        </div>
+
+                        <!-- Category -->
+                        <div class="form-group">
+                            <label for="{{ form.category.id_for_label }}" class="form-label">
+                                Kategoriya *
+                            </label>
+                            {{ form.category }}
+                            {% if form.category.errors %}
+                                <div class="field-error">
+                                    {% for error in form.category.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Publication Status -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                Nashr Holati
+                            </label>
+                            <div class="checkbox-group">
+                                {{ form.is_published }}
+                                <label for="{{ form.is_published.id_for_label }}" class="checkbox-label">
+                                    Darhol nashr etish
+                                </label>
+                            </div>
+                            {% if form.is_published.errors %}
+                                <div class="field-error">
+                                    {% for error in form.is_published.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-help">
+                                Belgilansa, resurs darhol foydalanuvchilar uchun ko'rinadi
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Description Section -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-align-left"></i>
+                        Tavsif
+                    </h2>
+                    
+                    <div class="form-group full-width">
+                        <label for="{{ form.description.id_for_label }}" class="form-label">
+                            Batafsil Tavsif *
+                        </label>
+                        {{ form.description }}
+                        {% if form.description.errors %}
+                            <div class="field-error">
+                                {% for error in form.description.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <div class="form-help">
+                            Resurs haqida batafsil ma'lumot bering. Foydalanuvchilar nima o'rganishlari mumkinligini tushuntiring.
+                        </div>
+                        <div class="char-counter">
+                            <span id="descriptionCount">0</span> / 5000 belgi
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Media Section -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-images"></i>
+                        Media va Havolalar
+                    </h2>
+                    
+                    <div class="form-grid">
+                        <!-- Image Upload -->
+                        <div class="form-group">
+                            <label for="{{ form.image.id_for_label }}" class="form-label">
+                                Asosiy Rasm
+                            </label>
+                            <div class="file-upload">
+                                {{ form.image }}
+                                <div class="upload-preview" id="imagePreview">
+                                    {% if form.instance.image %}
+                                        <img src="{{ form.instance.image.url }}" alt="Current image">
+                                        <div class="preview-overlay">
+                                            <i class="fas fa-sync"></i>
+                                            Rasmni almashtirish
+                                        </div>
+                                    {% else %}
+                                        <div class="upload-placeholder">
+                                            <i class="fas fa-cloud-upload-alt"></i>
+                                            <span>Rasm yuklash</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% if form.image.errors %}
+                                <div class="field-error">
+                                    {% for error in form.image.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-help">
+                                PNG, JPG yoki WEBP formatida. Maksimum hajm: 5MB
+                            </div>
+                        </div>
+
+                        <!-- YouTube URL -->
+                        <div class="form-group">
+                            <label for="{{ form.url_youtube.id_for_label }}" class="form-label">
+                                YouTube Havolasi
+                            </label>
+                            {{ form.url_youtube }}
+                            {% if form.url_youtube.errors %}
+                                <div class="field-error">
+                                    {% for error in form.url_youtube.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-help">
+                                Ixtiyoriy: YouTube video havolasini qo'shing
+                            </div>
+                            
+                            <!-- YouTube Preview -->
+                            {% if form.instance.url_youtube %}
+                            <div class="youtube-preview">
+                                <div class="preview-header">
+                                    <i class="fab fa-youtube"></i>
+                                    YouTube video mavjud
+                                </div>
+                                <a href="{{ form.instance.url_youtube }}" target="_blank" class="preview-link">
+                                    Havolani tekshirish
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview Section -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-eye"></i>
+                        Oldindan Ko'rish
+                    </h2>
+                    
+                    <div class="preview-card">
+                        <div class="preview-header">
+                            <div class="preview-badge" id="previewCategory">
+                                {{ form.instance.category.name|default:"Kategoriya" }}
+                            </div>
+                            <div class="preview-status" id="previewStatus">
+                                {{ form.instance.is_published|yesno:"Nashr etilgan,Nashr etilmagan" }}
+                            </div>
+                        </div>
+                        
+                        <h3 class="preview-title" id="previewTitle">
+                            {{ form.instance.title|default:"Resurs sarlavhasi" }}
+                        </h3>
+                        
+                        <div class="preview-image" id="previewImage">
+                            {% if form.instance.image %}
+                                <img src="{{ form.instance.image.url }}" alt="Preview image">
+                            {% else %}
+                                <div class="no-image">
+                                    <i class="fas fa-image"></i>
+                                    Rasm mavjud emas
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <p class="preview-description" id="previewDescription">
+                            {{ form.instance.description|default:"Resurs tavsifi bu yerda ko'rinadi..."|truncatewords:30 }}
+                        </p>
+                        
+                        {% if form.instance.url_youtube %}
+                        <div class="preview-youtube">
+                            <i class="fab fa-youtube"></i>
+                            YouTube video mavjud
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <div class="action-buttons">
+                        <a href="{% if form.instance.pk %}{% url 'resources:resource_detail' form.instance.pk %}{% else %}{% url 'resources:list' %}{% endif %}" 
+                           class="btn-secondary">
+                            <i class="fas fa-times"></i>
+                            Bekor qilish
+                        </a>
+                        
+                        <div class="primary-actions">
+                            {% if form.instance.pk %}
+                            <a href="{% url 'resources:resource_delete' form.instance.pk %}" class="btn-danger">
+                                <i class="fas fa-trash"></i>
+                                O'chirish
+                            </a>
+                            {% endif %}
+                            
+                            <button type="submit" name="save_draft" class="btn-outline">
+                                <i class="fas fa-save"></i>
+                                Qoralama sifatida saqlash
+                            </button>
+                            
+                            <button type="submit" name="publish" class="btn-primary">
+                                <i class="fas fa-paper-plane"></i>
+                                {{ form.instance.pk|yesno:"Yangilash,Saqlash va Nashr etish" }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Form Container */
+.form-container {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+/* Header */
+.form-header {
+    background: linear-gradient(135deg, #012152, #012d6e);
+    color: white;
+    padding: 2rem;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.form-title {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.back-button {
+    color: white;
+    text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.back-button:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+/* Form Body */
+.form-body {
+    padding: 2rem;
+}
+
+/* Alerts */
+.alert {
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: inherit;
+}
+
+/* Form Sections */
+.form-section {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #eee;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #012152;
+    margin: 0 0 2rem 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Form Grid */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+/* Form Groups */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #333;
+    font-size: 1rem;
+}
+
+/* Input Styles */
+input[type="text"],
+input[type="url"],
+textarea,
+select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+input[type="text"]:focus,
+input[type="url"]:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: #012152;
+    box-shadow: 0 0 0 3px rgba(1, 33, 82, 0.1);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 120px;
+    line-height: 1.5;
+}
+
+/* Checkbox */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.checkbox-label {
+    font-weight: normal;
+    color: #333;
+    cursor: pointer;
+}
+
+input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+/* File Upload */
+.file-upload {
+    position: relative;
+}
+
+.file-upload input[type="file"] {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.upload-preview {
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.upload-preview:hover {
+    border-color: #012152;
+    background: #f8f9fa;
+}
+
+.upload-preview img {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 6px;
+}
+
+.preview-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(1, 33, 82, 0.8);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.upload-preview:hover .preview-overlay {
+    opacity: 1;
+}
+
+.upload-placeholder {
+    color: #666;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.upload-placeholder i {
+    font-size: 2rem;
+}
+
+/* Character Counter */
+.char-counter {
+    text-align: right;
+    font-size: 0.875rem;
+    color: #666;
+    margin-top: 0.5rem;
+}
+
+/* YouTube Preview */
+.youtube-preview {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.preview-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #ff0000;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.preview-link {
+    color: #012152;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.preview-link:hover {
+    text-decoration: underline;
+}
+
+/* Preview Card */
+.preview-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 2rem;
+    border: 1px solid #e9ecef;
+}
+
+.preview-card .preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.preview-badge {
+    background: #012152;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.preview-status {
+    background: #28a745;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.preview-status.unpublished {
+    background: #ffc107;
+    color: #212529;
+}
+
+.preview-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 1rem 0;
+}
+
+.preview-image {
+    margin-bottom: 1rem;
+}
+
+.preview-image img {
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.no-image {
+    background: #e9ecef;
+    border-radius: 8px;
+    padding: 3rem;
+    text-align: center;
+    color: #6c757d;
+}
+
+.preview-description {
+    color: #666;
+    line-height: 1.6;
+    margin: 0 0 1rem 0;
+}
+
+.preview-youtube {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #ff0000;
+    font-weight: 500;
+}
+
+/* Form Actions */
+.form-actions {
+    border-top: 1px solid #eee;
+    padding-top: 2rem;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.primary-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+/* Buttons */
+.btn-primary, .btn-secondary, .btn-danger, .btn-outline {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.btn-primary { background: #012152; color: white; }
+.btn-secondary { background: #6c757d; color: white; }
+.btn-danger { background: #dc3545; color: white; }
+.btn-outline { background: white; color: #012152; border: 1px solid #012152; }
+
+.btn-primary:hover { background: #012d6e; }
+.btn-secondary:hover { background: #5a6268; }
+.btn-danger:hover { background: #c82333; }
+.btn-outline:hover { background: #f8f9fa; }
+
+/* Error Messages */
+.error-message {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid #f5c6cb;
+}
+
+.field-error {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.form-help {
+    color: #666;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .primary-actions {
+        flex-direction: column;
+    }
+    
+    .form-body {
+        padding: 1rem;
+    }
+    
+    .form-section {
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Character counter for description
+    const descriptionField = document.getElementById('{{ form.description.id_for_label }}');
+    const descriptionCount = document.getElementById('descriptionCount');
+    
+    if (descriptionField && descriptionCount) {
+        descriptionField.addEventListener('input', function() {
+            descriptionCount.textContent = this.value.length;
+        });
+        // Initialize count
+        descriptionCount.textContent = descriptionField.value.length;
+    }
+    
+    // Image preview
+    const imageInput = document.getElementById('{{ form.image.id_for_label }}');
+    const imagePreview = document.getElementById('imagePreview');
+    
+    if (imageInput) {
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview">
+                        <div class="preview-overlay">
+                            <i class="fas fa-sync"></i>
+                            Rasmni almashtirish
+                        </div>
+                    `;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+    
+    // Real-time preview updates
+    const titleField = document.getElementById('{{ form.title.id_for_label }}');
+    const categoryField = document.getElementById('{{ form.category.id_for_label }}');
+    const publishedField = document.getElementById('{{ form.is_published.id_for_label }}');
+    
+    const previewTitle = document.getElementById('previewTitle');
+    const previewCategory = document.getElementById('previewCategory');
+    const previewStatus = document.getElementById('previewStatus');
+    const previewDescription = document.getElementById('previewDescription');
+    
+    // Title update
+    if (titleField && previewTitle) {
+        titleField.addEventListener('input', function() {
+            previewTitle.textContent = this.value || "Resurs sarlavhasi";
+        });
+    }
+    
+    // Category update
+    if (categoryField && previewCategory) {
+        categoryField.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            previewCategory.textContent = selectedOption.text || "Kategoriya";
+        });
+    }
+    
+    // Published status update
+    if (publishedField && previewStatus) {
+        publishedField.addEventListener('change', function() {
+            if (this.checked) {
+                previewStatus.textContent = "Nashr etilgan";
+                previewStatus.className = "preview-status";
+            } else {
+                previewStatus.textContent = "Nashr etilmagan";
+                previewStatus.className = "preview-status unpublished";
+            }
+        });
+    }
+    
+    // Description update
+    if (descriptionField && previewDescription) {
+        descriptionField.addEventListener('input', function() {
+            previewDescription.textContent = this.value || "Resurs tavsifi bu yerda ko'rinadi...";
+            if (this.value.length > 150) {
+                previewDescription.textContent = this.value.substring(0, 150) + '...';
+            }
+        });
+    }
+    
+    // Form submission handling
+    const form = document.querySelector('.resource-form');
+    form.addEventListener('submit', function(e) {
+        const submitButton = e.submitter;
+        if (submitButton.name === 'publish') {
+            // Validate required fields before publishing
+            const title = titleField?.value.trim();
+            const category = categoryField?.value;
+            const description = descriptionField?.value.trim();
+            
+            if (!title || !category || !description) {
+                e.preventDefault();
+                alert('Iltimos, barcha majburiy maydonlarni to\'ldiring (sarlavha, kategoriya va tavsif)');
+                return;
+            }
+        }
+        
+        // Show loading state
+        const buttons = form.querySelectorAll('button[type="submit"]');
+        buttons.forEach(btn => {
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saqlanmoqda...';
+            btn.disabled = true;
+        });
+    });
+    
+    // Close alert functionality
+    document.querySelectorAll('.close-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.parentElement.style.display = 'none';
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,591 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+    <div class="confirmation-container">
+        <!-- Header -->
+        <div class="confirmation-header">
+            <div class="header-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h1 class="confirmation-title">Resursni O'chirish</h1>
+            <p class="confirmation-subtitle">Quyidagi resursni o'chirishni tasdiqlang</p>
+        </div>
+
+        <!-- Resource Info Card -->
+        <div class="resource-preview">
+            <div class="preview-header">
+                <div class="preview-badge">
+                    <i class="fas fa-trash"></i>
+                    O'chirilmoqda
+                </div>
+                <div class="preview-category">
+                    {{ resource.category.name|default:"Kategoriyasiz" }}
+                </div>
+            </div>
+
+            <div class="preview-content">
+                {% if resource.image %}
+                <div class="preview-image">
+                    <img src="{{ resource.image.url }}" alt="{{ resource.title }}">
+                </div>
+                {% endif %}
+
+                <div class="preview-details">
+                    <h3 class="preview-title">{{ resource.title }}</h3>
+                    <p class="preview-description">{{ resource.description|truncatewords:30 }}</p>
+
+                    <div class="preview-meta">
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <i class="fas fa-calendar-plus"></i>
+                                <div class="meta-info">
+                                    <span class="meta-label">Qo'shilgan sana</span>
+                                    <span class="meta-value">{{ resource.created_at|date:"d.m.Y H:i" }}</span>
+                                </div>
+                            </div>
+
+                            <div class="meta-item">
+                                <i class="fas fa-sync"></i>
+                                <div class="meta-info">
+                                    <span class="meta-label">Yangilangan sana</span>
+                                    <span class="meta-value">{{ resource.updated_at|date:"d.m.Y H:i" }}</span>
+                                </div>
+                            </div>
+
+                            <div class="meta-item">
+                                <i class="fas fa-eye"></i>
+                                <div class="meta-info">
+                                    <span class="meta-label">Holati</span>
+                                    <span class="meta-value status-{{ resource.is_published|yesno:'published,unpublished' }}">
+                                        {{ resource.is_published|yesno:"Nashr etilgan,Nashr etilmagan" }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {% if resource.url_youtube %}
+                            <div class="meta-item">
+                                <i class="fab fa-youtube"></i>
+                                <div class="meta-info">
+                                    <span class="meta-label">YouTube</span>
+                                    <span class="meta-value">Video mavjud</span>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Warning Alert -->
+        <div class="warning-alert">
+            <div class="alert-icon">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <div class="alert-content">
+                <h4>Diqqat! Bu amalni qaytarib bo'lmaydi</h4>
+                <p>Resursni o'chirish quyidagi oqibatlarga olib keladi:</p>
+                <ul class="warning-list">
+                    <li>Resurs butunlay o'chiriladi</li>
+                    <li>Barcha bog'liq ma'lumotlar yo'qoladi</li>
+                    <li>Foydalanuvchilar bu resursga boshqa kira olmaydi</li>
+                    <li>Bu amalni qaytarib bo'lmaydi</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Confirmation Form -->
+        <div class="confirmation-form">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="form-actions">
+                    <a href="{% url 'resources:resource_detail' resource.pk %}" class="btn-secondary">
+                        <i class="fas fa-arrow-left"></i>
+                        Ortga qaytish
+                    </a>
+                    
+                    <div class="danger-actions">
+                        <button type="button" class="btn-outline" onclick="toggleFinalConfirmation()">
+                            <i class="fas fa-times"></i>
+                            Bekor qilish
+                        </button>
+                        <button type="submit" class="btn-danger" id="deleteButton">
+                            <i class="fas fa-trash"></i>
+                            Resursni o'chirish
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Final Confirmation -->
+                <div class="final-confirmation" id="finalConfirmation">
+                    <div class="final-warning">
+                        <i class="fas fa-radiation"></i>
+                        <h4>Yakuniy tasdiq</h4>
+                        <p>Ishonchingiz komilmi? Bu amalni qaytarib bo'lmaydi.</p>
+                    </div>
+                    <div class="final-actions">
+                        <button type="button" class="btn-outline" onclick="toggleFinalConfirmation()">
+                            Yo'q, bekor qilish
+                        </button>
+                        <button type="submit" class="btn-danger-final">
+                            <i class="fas fa-skull-crossbones"></i>
+                            Ha, o'chirishni tasdiqlayman
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Alternative Actions -->
+        <div class="alternative-actions">
+            <h4>Boshqa variantlar</h4>
+            <div class="alternative-buttons">
+                {% if not resource.is_published %}
+                <a href="{% url 'resources:publish_resource' resource.pk %}" class="btn-success">
+                    <i class="fas fa-check"></i>
+                    Nashr etish
+                </a>
+                {% else %}
+                <a href="{% url 'resources:unpublish_resource' resource.pk %}" class="btn-warning">
+                    <i class="fas fa-eye-slash"></i>
+                    Nashrdan olish
+                </a>
+                {% endif %}
+                <a href="{% url 'resources:resource_edit' resource.pk %}" class="btn-primary">
+                    <i class="fas fa-edit"></i>
+                    Tahrirlash
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Confirmation Container */
+.confirmation-container {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+/* Header */
+.confirmation-header {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+    padding: 3rem 2rem;
+    text-align: center;
+}
+
+.header-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.9;
+}
+
+.confirmation-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 0 0 1rem 0;
+}
+
+.confirmation-subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin: 0;
+}
+
+/* Resource Preview */
+.resource-preview {
+    padding: 2rem;
+    border-bottom: 1px solid #eee;
+}
+
+.preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.preview-badge {
+    background: #dc3545;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.preview-category {
+    background: #6c757d;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.9rem;
+}
+
+.preview-content {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+.preview-image {
+    flex-shrink: 0;
+    width: 150px;
+}
+
+.preview-image img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.preview-details {
+    flex: 1;
+}
+
+.preview-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 1rem 0;
+    line-height: 1.4;
+}
+
+.preview-description {
+    color: #666;
+    line-height: 1.6;
+    margin: 0 0 1.5rem 0;
+}
+
+.preview-meta {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.meta-item i {
+    width: 20px;
+    color: #6c757d;
+    font-size: 1.1rem;
+}
+
+.meta-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.meta-label {
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 0.25rem;
+}
+
+.meta-value {
+    font-weight: 500;
+    color: #333;
+}
+
+.status-published { color: #28a745; }
+.status-unpublished { color: #ffc107; }
+
+/* Warning Alert */
+.warning-alert {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    margin: 2rem;
+    padding: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.alert-icon {
+    color: #856404;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.alert-content h4 {
+    color: #856404;
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+}
+
+.alert-content p {
+    color: #856404;
+    margin: 0 0 1rem 0;
+}
+
+.warning-list {
+    color: #856404;
+    margin: 0;
+    padding-left: 1.5rem;
+}
+
+.warning-list li {
+    margin-bottom: 0.5rem;
+}
+
+/* Confirmation Form */
+.confirmation-form {
+    padding: 2rem;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.danger-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+/* Buttons */
+.btn-primary, .btn-secondary, .btn-success, .btn-warning, .btn-danger, .btn-outline {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.btn-primary { background: #012152; color: white; }
+.btn-secondary { background: #6c757d; color: white; }
+.btn-success { background: #28a745; color: white; }
+.btn-warning { background: #ffc107; color: #212529; }
+.btn-danger { background: #dc3545; color: white; }
+.btn-outline { background: white; color: #6c757d; border: 1px solid #6c757d; }
+
+.btn-primary:hover { background: #012d6e; }
+.btn-secondary:hover { background: #5a6268; }
+.btn-success:hover { background: #218838; }
+.btn-warning:hover { background: #e0a800; }
+.btn-danger:hover { background: #c82333; }
+.btn-outline:hover { background: #f8f9fa; }
+
+/* Final Confirmation */
+.final-confirmation {
+    display: none;
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.final-confirmation.show {
+    display: block;
+}
+
+.final-warning {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.final-warning i {
+    font-size: 3rem;
+    color: #721c24;
+    margin-bottom: 1rem;
+}
+
+.final-warning h4 {
+    color: #721c24;
+    margin: 0 0 0.5rem 0;
+}
+
+.final-warning p {
+    color: #721c24;
+    margin: 0;
+}
+
+.final-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.btn-danger-final {
+    background: #721c24;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-danger-final:hover {
+    background: #5a151a;
+}
+
+/* Alternative Actions */
+.alternative-actions {
+    background: #f8f9fa;
+    padding: 2rem;
+    text-align: center;
+    border-top: 1px solid #eee;
+}
+
+.alternative-actions h4 {
+    margin: 0 0 1rem 0;
+    color: #666;
+}
+
+.alternative-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .confirmation-header {
+        padding: 2rem 1rem;
+    }
+    
+    .confirmation-title {
+        font-size: 2rem;
+    }
+    
+    .preview-content {
+        flex-direction: column;
+    }
+    
+    .preview-image {
+        width: 100%;
+    }
+    
+    .preview-image img {
+        height: 150px;
+    }
+    
+    .meta-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .danger-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .final-actions {
+        flex-direction: column;
+    }
+    
+    .alternative-buttons {
+        flex-direction: column;
+    }
+    
+    .warning-alert {
+        margin: 1rem;
+        flex-direction: column;
+        text-align: center;
+    }
+}
+</style>
+
+<script>
+function toggleFinalConfirmation() {
+    const finalConfirmation = document.getElementById('finalConfirmation');
+    const deleteButton = document.getElementById('deleteButton');
+    
+    if (finalConfirmation.classList.contains('show')) {
+        finalConfirmation.classList.remove('show');
+        deleteButton.style.display = 'flex';
+    } else {
+        finalConfirmation.classList.add('show');
+        deleteButton.style.display = 'none';
+    }
+}
+
+// Add confirmation for direct delete button click
+document.getElementById('deleteButton').addEventListener('click', function(e) {
+    if (!this.classList.contains('confirmed')) {
+        e.preventDefault();
+        toggleFinalConfirmation();
+    }
+});
+
+// Add smooth animations
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.querySelector('.confirmation-container');
+    container.style.opacity = '0';
+    container.style.transform = 'translateY(20px)';
+    
+    setTimeout(() => {
+        container.style.transition = 'all 0.5s ease';
+        container.style.opacity = '1';
+        container.style.transform = 'translateY(0)';
+    }, 100);
+});
+
+// Prevent accidental form submission
+let formSubmitted = false;
+document.querySelector('form').addEventListener('submit', function(e) {
+    if (formSubmitted) {
+        e.preventDefault();
+        return;
+    }
+    
+    const finalConfirmation = document.getElementById('finalConfirmation');
+    if (!finalConfirmation.classList.contains('show')) {
+        e.preventDefault();
+        toggleFinalConfirmation();
+    } else {
+        formSubmitted = true;
+        // Show loading state
+        const buttons = document.querySelectorAll('button[type="submit"]');
+        buttons.forEach(btn => {
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> O\'chirilmoqda...';
+            btn.disabled = true;
+        });
+    }
+});
+</script>
+{% endblock %}

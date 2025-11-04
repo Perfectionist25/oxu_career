@@ -244,6 +244,7 @@ def saved_jobs(request):
     
     return render(request, 'jobs/saved_jobs.html', context)
 
+@login_required
 def job_list(request):
     """Список вакансий"""
     form = JobSearchForm(request.GET or None)

@@ -34,7 +34,7 @@
             <small class="text-muted">{% trans "Hamkor kompaniyalar" %}</small>
           </div>
           <div class="col-md-3 col-6">
-            <div class="h5 fw-bold text-primary mb-1">{{ stats.resources_count|default:"200" }}+</div>
+            <div class="h5 fw-bold text-primary mb-1">{{ resources_stats.total_resources|default:"200" }}+</div>
             <small class="text-muted">{% trans "Karyera resurslari" %}</small>
           </div>
         </div>
@@ -154,21 +154,100 @@
     </div>
   </section>
 
+  <!-- Featured Resources -->
+  {% if featured_resources %}
+  <section class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div class="fw-bold text-dark h5">{% trans "Mashhur Resurslar" %}</div>
+      <a href="{% url 'resources:list' %}" class="btn btn-outline-primary">
+        {% trans "Barcha resurslar" %} <i class="fas fa-arrow-right ms-2"></i>
+      </a>
+    </div>
+    <div class="row g-3">
+      {% for resource in featured_resources %}
+      <div class="col-lg-4 col-md-6">
+        <div class="card h-100 resource-preview-card">
+          {% if resource.image %}
+          <img src="{{ resource.image.url }}" class="card-img-top" alt="{{ resource.title }}" style="height: 160px; object-fit: cover;">
+          {% else %}
+          <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 160px;">
+            <i class="fas fa-file-alt fa-3x text-muted"></i>
+          </div>
+          {% endif %}
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <span class="badge bg-primary">{{ resource.category.name }}</span>
+              {% if resource.url_youtube %}
+              <span class="badge bg-danger">
+                <i class="fab fa-youtube me-1"></i>Video
+              </span>
+              {% endif %}
+            </div>
+            <h6 class="card-title fw-bold">{{ resource.title }}</h6>
+            <p class="card-text text-muted small">{{ resource.description|truncatewords:15 }}</p>
+          </div>
+          <div class="card-footer bg-transparent py-2">
+            <a href="{% url 'resources:resource_detail' resource.pk %}" class="btn btn-sm btn-outline-primary w-100">
+              {% trans "Ko'rish" %}
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- Resource Categories -->
+  {% if resource_categories %}
+  <section class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div class="fw-bold text-dark h5">{% trans "Resurs Kategoriyalari" %}</div>
+      <a href="{% url 'resources:resource_list' %}" class="btn btn-outline-primary">
+        {% trans "Barcha kategoriyalar" %} <i class="fas fa-arrow-right ms-2"></i>
+      </a>
+    </div>
+    <div class="row g-3">
+      {% for category in resource_categories|slice:":6" %}
+      <div class="col-lg-4 col-md-6">
+        <div class="card h-100 category-card">
+          <div class="card-body text-center p-4">
+            <div class="category-icon mb-3">
+              <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto" style="width: 70px; height: 70px;">
+                <i class="fas fa-folder fa-2x"></i>
+              </div>
+            </div>
+            <h5 class="card-title fw-bold text-dark mb-2">{{ category.name }}</h5>
+            <p class="card-text text-muted small mb-3">
+              {{ category.published_resources_count }} ta resurs
+            </p>
+            <a href="{% url 'resources:resource_list' %}?category={{ category.id }}" class="btn btn-outline-primary btn-sm">
+              {% trans "Resurslarni ko'rish" %}
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
   <!-- Latest Jobs Preview -->
   <section class="mb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div class="fw-bold text-dark h5">{% trans "So'ngi vakansiyalar" %}</div>
-      {% if user.is_autheticated %}  
+      {% if user.is_authenticated and user.is_student or user.is_main_admin or user.is_admin %}
       <a href="{% url 'jobs:list' %}" class="btn btn-outline-primary">
         {% trans "Barchasini ko'rish" %} <i class="fas fa-arrow-right ms-2"></i>
       </a>
       {% else %}
-      <a href="{% url 'accounts:admin_login' %}" class="btn btn-outline-primary">
+      <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary">
         {% trans "Barchasini ko'rish" %} <i class="fas fa-arrow-right ms-2"></i>
       </a>
       {% endif %}
     </div>
-    {% if user.is_autheticated %}
+    
+    {% if user.is_authenticated and user.is_student or user.is_main_admin or user.is_admin %}
     <div class="row g-3">
       {% for job in latest_jobs|slice:":6" %}
       <div class="col-lg-4 col-md-6">
@@ -198,7 +277,10 @@
     </div>
     {% else %}
     <div class="alert alert-info text-center">
-      {% trans "Ro'yhatdan o'ting" %}
+      <p class="mb-2">{% trans "Vakansiyalarni ko'rish uchun tizimga kiring" %}</p>
+      <a href="{% url 'accounts:login' %}" class="btn btn-primary btn-sm">
+        {% trans "Tizimga kirish" %}
+      </a>
     </div>
     {% endif %}
   </section>
@@ -246,15 +328,54 @@
       {% endfor %}
     </div>
   </section>
+
+  <!-- Admin Panel (for staff) -->
+  {% if user.is_authenticated and user.is_staff and resources_admin_stats %}
+  <section class="mb-5">
+    <div class="card border-warning">
+      <div class="card-header bg-warning text-dark">
+        <h5 class="mb-0">
+          <i class="fas fa-cog me-2"></i>
+          {% trans "Resurslar Boshqaruvi" %}
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="row text-center">
+          <div class="col-md-4">
+            <div class="h4 text-primary mb-1">{{ resources_admin_stats.total_resources }}</div>
+            <small class="text-muted">{% trans "Jami Resurslar" %}</small>
+          </div>
+          <div class="col-md-4">
+            <div class="h4 text-warning mb-1">{{ resources_admin_stats.unpublished_count }}</div>
+            <small class="text-muted">{% trans "Tasdiqlanmagan" %}</small>
+          </div>
+          <div class="col-md-4">
+            {% if resources_admin_stats.approval_needed %}
+            <a href="{% url 'resources:unpublished_resources' %}" class="btn btn-danger">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              {% trans "Tasdiqlash Kerak" %}
+            </a>
+            {% else %}
+            <span class="text-success">
+              <i class="fas fa-check-circle me-2"></i>
+              {% trans "Barchasi Tasdiqlangan" %}
+            </span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  {% endif %}
 </div>
 
 <style>
-.quick-link-card {
+.quick-link-card, .resource-preview-card, .category-card, .job-preview-card, .event-preview-card {
   transition: all 0.3s ease;
 }
-.quick-link-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+.quick-link-card:hover, .resource-preview-card:hover, .category-card:hover, .job-preview-card:hover, .event-preview-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
 }
 
 .hover-card {
@@ -266,31 +387,33 @@
   transform: translateX(5px);
 }
 
-.feature-icon {
+.feature-icon, .category-icon {
   flex-shrink: 0;
 }
 
-.partner-logo {
-  transition: all 0.3s ease;
-  opacity: 0.7;
-  filter: grayscale(100%);
+.category-card {
+  border: 1px solid #e9ecef;
 }
-.partner-logo:hover {
-  opacity: 1;
-  filter: grayscale(0%);
+.category-card:hover {
+  border-color: #012152;
+}
+
+.resource-preview-card .card-img-top {
+  transition: transform 0.3s ease;
+}
+.resource-preview-card:hover .card-img-top {
   transform: scale(1.05);
 }
 
-.grayscale {
-  filter: grayscale(100%);
-}
-
-.job-preview-card, .event-preview-card {
-  transition: all 0.3s ease;
-}
-.job-preview-card:hover, .event-preview-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+@media (max-width: 768px) {
+  .display-5 {
+    font-size: 2rem !important;
+  }
+  
+  .btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
 }
 </style>
 {% endblock %}

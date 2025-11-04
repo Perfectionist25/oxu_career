@@ -34,6 +34,7 @@ class CustomUser(AbstractUser):
     #     null=True,
     #     verbose_name=_("Hemis ID")
     # )
+    
     hemis_data = models.JSONField(
         blank=True, 
         null=True,

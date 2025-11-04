@@ -66,12 +66,12 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 
                 # Кастомные контекст-процессоры
-                'core.context_processors.site_info',
-                'accounts.context_processors.auth_context',
-                'jobs.context_processors.jobs_context',
-                'events.context_processors.events_context',
-                'resources.context_processors.resources_context',
-                'employers.context_processors.employers_context',
+                # 'core.context_processors.site_info',
+                # 'accounts.context_processors.auth_context',
+                # 'jobs.context_processors.jobs_context',
+                # 'events.context_processors.events_context',
+                # 'resources.context_processors.resources_context',
+                # 'employers.context_processors.employers_context',
             ],
         },
     },

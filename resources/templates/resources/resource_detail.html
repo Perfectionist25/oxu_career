@@ -1,0 +1,909 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb-nav">
+        <a href="{% url 'resources:list' %}">Barcha Resurslar</a>
+        <i class="fas fa-chevron-right"></i>
+        <span>{{ resource.title }}</span>
+    </nav>
+
+    <!-- Resource Header -->
+    <div class="resource-header">
+        <div class="header-content">
+            <div class="resource-meta">
+                <div class="category-badge">
+                    {{ resource.category.name }}
+                </div>
+                <div class="status-badge {{ resource.is_published|yesno:'published,unpublished' }}">
+                    <i class="fas fa-{{ resource.is_published|yesno:'eye,eye-slash' }}"></i>
+                    {{ resource.is_published|yesno:"Nashr etilgan,Nashr etilmagan" }}
+                </div>
+            </div>
+            
+            <h1 class="resource-title">{{ resource.title }}</h1>
+            
+            <div class="resource-stats">
+                <div class="stat-item">
+                    <i class="fas fa-calendar"></i>
+                    <span>Qo'shilgan: {{ resource.created_at|date:"d.m.Y" }}</span>
+                </div>
+                {% if resource.updated_at != resource.created_at %}
+                <div class="stat-item">
+                    <i class="fas fa-sync"></i>
+                    <span>Yangilangan: {{ resource.updated_at|date:"d.m.Y" }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="header-actions">
+            {% if request.user.is_authenticated and request.user.is_staff %}
+            <div class="admin-actions">
+                <a href="{% url 'resources:resource_edit' resource.pk %}" class="btn-primary">
+                    <i class="fas fa-edit"></i>
+                    Tahrirlash
+                </a>
+                {% if resource.is_published %}
+                <a href="{% url 'resources:unpublish_resource' resource.pk %}" class="btn-warning">
+                    <i class="fas fa-eye-slash"></i>
+                    Nashrdan olish
+                </a>
+                {% else %}
+                <a href="{% url 'resources:publish_resource' resource.pk %}" class="btn-success">
+                    <i class="fas fa-check"></i>
+                    Nashr etish
+                </a>
+                {% endif %}
+                <a href="{% url 'resources:resource_delete' resource.pk %}" class="btn-danger">
+                    <i class="fas fa-trash"></i>
+                    O'chirish
+                </a>
+            </div>
+            {% endif %}
+            
+            <div class="share-actions">
+                <button class="btn-outline share-btn" onclick="shareResource()">
+                    <i class="fas fa-share-alt"></i>
+                    Ulashish
+                </button>
+                <button class="btn-outline bookmark-btn" onclick="toggleBookmark()">
+                    <i class="far fa-bookmark"></i>
+                    Saqlash
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="resource-content">
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Resource Image -->
+            {% if resource.image %}
+            <div class="resource-image-section">
+                <img src="{{ resource.image.url }}" alt="{{ resource.title }}" class="resource-image">
+            </div>
+            {% endif %}
+
+            <!-- Description -->
+            <div class="description-section">
+                <h2>Resurs haqida</h2>
+                <div class="description-content">
+                    {{ resource.description|linebreaks }}
+                </div>
+            </div>
+
+            <!-- YouTube Video -->
+            {% if resource.url_youtube %}
+            <div class="youtube-section">
+                <h2>Video Material</h2>
+                <div class="youtube-container">
+                    <div class="youtube-preview">
+                        <div class="youtube-header">
+                            <i class="fab fa-youtube"></i>
+                            <h3>YouTube Videosi</h3>
+                        </div>
+                        <p>Quyidagi havola orqali videoni tomosha qilishingiz mumkin:</p>
+                        <a href="{{ resource.url_youtube }}" target="_blank" class="youtube-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            YouTubeda ko'rish
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Quick Info -->
+            <div class="info-card">
+                <h3>Tezkor Ma'lumot</h3>
+                <div class="info-list">
+                    <div class="info-item">
+                        <i class="fas fa-layer-group"></i>
+                        <div class="info-content">
+                            <span class="info-label">Kategoriya</span>
+                            <span class="info-value">{{ resource.category.name }}</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-calendar-plus"></i>
+                        <div class="info-content">
+                            <span class="info-label">Qo'shilgan sana</span>
+                            <span class="info-value">{{ resource.created_at|date:"d.m.Y" }}</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-sync"></i>
+                        <div class="info-content">
+                            <span class="info-label">Yangilangan sana</span>
+                            <span class="info-value">{{ resource.updated_at|date:"d.m.Y" }}</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-eye"></i>
+                        <div class="info-content">
+                            <span class="info-label">Holati</span>
+                            <span class="info-value {{ resource.is_published|yesno:'published,unpublished' }}">
+                                {{ resource.is_published|yesno:"Nashr etilgan,Nashr etilmagan" }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Actions (Mobile) -->
+            {% if request.user.is_authenticated and request.user.is_staff %}
+            <div class="admin-card">
+                <h3>Boshqaruv</h3>
+                <div class="admin-actions-mobile">
+                    <a href="{% url 'resources:resource_edit' resource.pk %}" class="btn-primary btn-sm">
+                        <i class="fas fa-edit"></i>
+                        Tahrirlash
+                    </a>
+                    {% if resource.is_published %}
+                    <a href="{% url 'resources:unpublish_resource' resource.pk %}" class="btn-warning btn-sm">
+                        <i class="fas fa-eye-slash"></i>
+                        Yashirish
+                    </a>
+                    {% else %}
+                    <a href="{% url 'resources:publish_resource' resource.pk %}" class="btn-success btn-sm">
+                        <i class="fas fa-check"></i>
+                        Nashr etish
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'resources:resource_delete' resource.pk %}" class="btn-danger btn-sm">
+                        <i class="fas fa-trash"></i>
+                        O'chirish
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Share Card -->
+            <div class="share-card">
+                <h3>Ulashish</h3>
+                <div class="share-buttons">
+                    <button class="share-option" onclick="shareOnSocial('facebook')">
+                        <i class="fab fa-facebook-f"></i>
+                    </button>
+                    <button class="share-option" onclick="shareOnSocial('twitter')">
+                        <i class="fab fa-twitter"></i>
+                    </button>
+                    <button class="share-option" onclick="shareOnSocial('telegram')">
+                        <i class="fab fa-telegram"></i>
+                    </button>
+                    <button class="share-option" onclick="shareOnSocial('whatsapp')">
+                        <i class="fab fa-whatsapp"></i>
+                    </button>
+                    <button class="share-option" onclick="copyLink()">
+                        <i class="fas fa-link"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Similar Resources -->
+    {% if similar_resources %}
+    <div class="similar-resources">
+        <div class="section-header">
+            <h2>O'xshash Resurslar</h2>
+            <p>Bu kategoriyadagi boshqa foydali materiallar</p>
+        </div>
+        
+        <div class="similar-grid">
+            {% for similar in similar_resources %}
+            <div class="similar-card">
+                <div class="similar-content">
+                    {% if similar.image %}
+                    <div class="similar-image">
+                        <img src="{{ similar.image.url }}" alt="{{ similar.title }}">
+                    </div>
+                    {% endif %}
+                    
+                    <div class="similar-info">
+                        <div class="similar-category">
+                            {{ similar.category.name }}
+                        </div>
+                        <h4 class="similar-title">
+                            <a href="{% url 'resources:resource_detail' similar.pk %}">{{ similar.title }}</a>
+                        </h4>
+                        <p class="similar-description">
+                            {{ similar.description|truncatewords:15 }}
+                        </p>
+                        <div class="similar-meta">
+                            <span class="meta-item">
+                                <i class="fas fa-calendar"></i>
+                                {{ similar.created_at|date:"d.m.Y" }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Navigation -->
+    <div class="resource-navigation">
+        <a href="{% url 'resources:list' %}" class="nav-link">
+            <i class="fas fa-arrow-left"></i>
+            Barcha Resurslarga qaytish
+        </a>
+        
+        {% if request.user.is_authenticated and request.user.is_staff %}
+        <a href="{% url 'resources:unpublished_resources' %}" class="nav-link">
+            <i class="fas fa-eye-slash"></i>
+            Nashr etilmagan resurslar
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Breadcrumb */
+.breadcrumb-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.breadcrumb-nav a {
+    color: #012152;
+    text-decoration: none;
+}
+
+.breadcrumb-nav a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumb-nav i {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+/* Resource Header */
+.resource-header {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+}
+
+.header-content {
+    flex: 1;
+}
+
+.resource-meta {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.category-badge {
+    background: #012152;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.status-badge.published {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-badge.unpublished {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.resource-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #333;
+    margin: 0 0 1rem 0;
+    line-height: 1.3;
+}
+
+.resource-stats {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.header-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-width: 200px;
+}
+
+.admin-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.share-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Buttons */
+.btn-primary, .btn-secondary, .btn-success, .btn-warning, .btn-danger, .btn-outline {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    text-align: center;
+    justify-content: center;
+}
+
+.btn-primary { background: #012152; color: white; }
+.btn-success { background: #28a745; color: white; }
+.btn-warning { background: #ffc107; color: #212529; }
+.btn-danger { background: #dc3545; color: white; }
+.btn-outline { background: white; color: #012152; border: 1px solid #012152; }
+
+.btn-primary:hover { background: #012d6e; }
+.btn-success:hover { background: #218838; }
+.btn-warning:hover { background: #e0a800; }
+.btn-danger:hover { background: #c82333; }
+.btn-outline:hover { background: #f8f9fa; }
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+}
+
+/* Resource Content */
+.resource-content {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Image Section */
+.resource-image-section {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.resource-image {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+}
+
+/* Description Section */
+.description-section {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 2rem;
+}
+
+.description-section h2 {
+    color: #012152;
+    margin: 0 0 1.5rem 0;
+    font-size: 1.5rem;
+}
+
+.description-content {
+    line-height: 1.8;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+/* YouTube Section */
+.youtube-section {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 2rem;
+}
+
+.youtube-section h2 {
+    color: #012152;
+    margin: 0 0 1.5rem 0;
+    font-size: 1.5rem;
+}
+
+.youtube-container {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.youtube-preview {
+    text-align: center;
+}
+
+.youtube-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    color: #ff0000;
+    font-size: 1.2rem;
+}
+
+.youtube-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #ff0000;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.youtube-link:hover {
+    background: #cc0000;
+}
+
+/* Sidebar */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.info-card, .admin-card, .share-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+}
+
+.sidebar h3 {
+    color: #012152;
+    margin: 0 0 1rem 0;
+    font-size: 1.2rem;
+}
+
+.info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.info-item i {
+    width: 20px;
+    color: #012152;
+    font-size: 1rem;
+}
+
+.info-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-label {
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 0.25rem;
+}
+
+.info-value {
+    font-weight: 500;
+    color: #333;
+}
+
+.info-value.published { color: #28a745; }
+.info-value.unpublished { color: #ffc107; }
+
+.admin-actions-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Share Buttons */
+.share-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+}
+
+.share-option {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.share-option:hover {
+    background: #012152;
+    color: white;
+    border-color: #012152;
+}
+
+/* Similar Resources */
+.similar-resources {
+    margin-bottom: 3rem;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.section-header h2 {
+    color: #012152;
+    margin: 0 0 0.5rem 0;
+    font-size: 2rem;
+}
+
+.section-header p {
+    color: #666;
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.similar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.similar-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.similar-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.similar-content {
+    padding: 1.5rem;
+}
+
+.similar-image {
+    margin-bottom: 1rem;
+}
+
+.similar-image img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.similar-category {
+    background: #012152;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: inline-block;
+    margin-bottom: 0.75rem;
+}
+
+.similar-title {
+    margin: 0 0 0.75rem 0;
+}
+
+.similar-title a {
+    color: #333;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.similar-title a:hover {
+    color: #012152;
+}
+
+.similar-description {
+    color: #666;
+    line-height: 1.6;
+    margin: 0 0 1rem 0;
+}
+
+.similar-meta {
+    display: flex;
+    gap: 1rem;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: #999;
+    font-size: 0.8rem;
+}
+
+/* Navigation */
+.resource-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 2rem;
+    border-top: 1px solid #eee;
+}
+
+.nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #012152;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid #012152;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    background: #012152;
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .resource-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .resource-meta {
+        justify-content: center;
+    }
+    
+    .resource-stats {
+        justify-content: center;
+    }
+    
+    .header-actions {
+        width: 100%;
+        flex-direction: row;
+        justify-content: center;
+    }
+    
+    .admin-actions {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .resource-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .resource-title {
+        font-size: 2rem;
+    }
+    
+    .similar-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .resource-navigation {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .nav-link {
+        justify-content: center;
+    }
+    
+    .share-buttons {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+</style>
+
+<script>
+// Share functionality
+function shareResource() {
+    const title = '{{ resource.title }}';
+    const url = window.location.href;
+    const text = '{{ resource.description|truncatewords:20 }}';
+    
+    if (navigator.share) {
+        navigator.share({
+            title: title + ' - OXU Career',
+            text: text,
+            url: url,
+        })
+        .then(() => console.log('Resurs muvaffaqiyatli ulashildi'))
+        .catch((error) => console.log('Ulashishda xatolik', error));
+    } else {
+        copyLink();
+    }
+}
+
+function shareOnSocial(platform) {
+    const url = encodeURIComponent(window.location.href);
+    const title = encodeURIComponent('{{ resource.title }} - OXU Career');
+    const text = encodeURIComponent('{{ resource.description|truncatewords:20 }}');
+    
+    let shareUrl = '';
+    
+    switch (platform) {
+        case 'facebook':
+            shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+            break;
+        case 'twitter':
+            shareUrl = `https://twitter.com/intent/tweet?text=${title}&url=${url}`;
+            break;
+        case 'telegram':
+            shareUrl = `https://t.me/share/url?url=${url}&text=${title}`;
+            break;
+        case 'whatsapp':
+            shareUrl = `https://wa.me/?text=${title}%20${url}`;
+            break;
+    }
+    
+    if (shareUrl) {
+        window.open(shareUrl, '_blank', 'width=600,height=400');
+    }
+}
+
+function copyLink() {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
+        alert('Havola buferga nusxalandi!');
+    });
+}
+
+// Bookmark functionality
+function toggleBookmark() {
+    const button = document.querySelector('.bookmark-btn');
+    const icon = button.querySelector('i');
+    
+    if (icon.classList.contains('far')) {
+        icon.classList.remove('far');
+        icon.classList.add('fas');
+        button.innerHTML = '<i class="fas fa-bookmark"></i> Saqlandi';
+        button.style.background = '#012152';
+        button.style.color = 'white';
+        button.style.borderColor = '#012152';
+        
+        // Simulate API call to save bookmark
+        setTimeout(() => {
+            // In real implementation, make API call here
+            console.log('Resource bookmarked');
+        }, 500);
+    } else {
+        icon.classList.remove('fas');
+        icon.classList.add('far');
+        button.innerHTML = '<i class="far fa-bookmark"></i> Saqlash';
+        button.style.background = '';
+        button.style.color = '';
+        button.style.borderColor = '';
+        
+        // Simulate API call to remove bookmark
+        setTimeout(() => {
+            // In real implementation, make API call here
+            console.log('Resource unbookmarked');
+        }, 500);
+    }
+}
+
+// Add smooth animations
+document.addEventListener('DOMContentLoaded', function() {
+    const elements = document.querySelectorAll('.description-section, .youtube-section, .similar-card');
+    
+    elements.forEach((element, index) => {
+        element.style.opacity = '0';
+        element.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            element.style.transition = 'all 0.5s ease';
+            element.style.opacity = '1';
+            element.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+});
+
+// Image zoom functionality
+document.querySelectorAll('.resource-image').forEach(img => {
+    img.addEventListener('click', function() {
+        this.classList.toggle('zoomed');
+    });
+});
+</script>
+{% endblock %}
