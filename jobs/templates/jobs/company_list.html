@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Companies" %} - OXU Career{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0">
+                    <i class="fas fa-building me-2 text-primary"></i>
+                    {% trans "Companies" %}
+                </h1>
+            </div>
+
+            <!-- Информация о системе -->
+            <div class="alert alert-info mb-4">
+                <h5 class="alert-heading">
+                    <i class="fas fa-info-circle me-2"></i>
+                    {% trans "About Companies" %}
+                </h5>
+                <p class="mb-0">
+                    {% trans "Each employer represents one company. Companies are automatically created when employers complete their profiles." %}
+                </p>
+            </div>
+
+            <!-- Фильтры -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="industry" class="form-label">{% trans "Industry" %}</label>
+                            <select name="industry" id="industry" class="form-select">
+                                <option value="">{% trans "All Industries" %}</option>
+                                {% for industry in industries %}
+                                    <option value="{{ industry.id }}" {% if request.GET.industry == industry.id|stringformat:"i" %}selected{% endif %}>
+                                        {{ industry.name }} ({{ industry.company_count }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="q" class="form-label">{% trans "Search" %}</label>
+                            <input type="text" name="q" id="q" class="form-control" 
+                                   placeholder="{% trans 'Search companies...' %}" 
+                                   value="{{ request.GET.q }}">
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-outline-primary me-2">
+                                <i class="fas fa-search me-1"></i>{% trans "Search" %}
+                            </button>
+                            <a href="{% url 'jobs:company_list' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-1"></i>{% trans "Clear" %}
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Список компаний -->
+            {% if page_obj %}
+                <div class="row">
+                    {% for company in page_obj %}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start mb-3">
+                                    {% if company.logo %}
+                                        <img src="{{ company.logo.url }}" alt="{{ company.name }}" 
+                                             class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                    {% else %}
+                                        <div class="rounded bg-light d-flex align-items-center justify-content-center me-3" 
+                                             style="width: 50px; height: 50px;">
+                                            <i class="fas fa-building text-muted"></i>
+                                        </div>
+                                    {% endif %}
+                                    <div>
+                                        <h5 class="card-title mb-1">
+                                            <a href="{% url 'jobs:company_detail' company.pk %}" class="text-decoration-none">
+                                                {{ company.name }}
+                                            </a>
+                                        </h5>
+                                        {% if company.is_verified %}
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check-circle me-1"></i>{% trans "Verified" %}
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <p class="card-text text-muted small mb-2">
+                                    {{ company.description|truncatewords:20 }}
+                                </p>
+                                
+                                <div class="company-info small text-muted">
+                                    <div class="mb-1">
+                                        <i class="fas fa-industry me-1"></i>
+                                        {{ company.industry.name|default:"—" }}
+                                    </div>
+                                    <div class="mb-1">
+                                        <i class="fas fa-users me-1"></i>
+                                        {{ company.get_company_size_display|default:"—" }}
+                                    </div>
+                                    <div class="mb-1">
+                                        <i class="fas fa-map-marker-alt me-1"></i>
+                                        {{ company.headquarters|default:"—" }}
+                                    </div>
+                                    <div>
+                                        <i class="fas fa-briefcase me-1"></i>
+                                        {{ company.active_jobs_count }} {% trans "active jobs" %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        {% trans "Founded" %}: {{ company.founded_year|default:"—" }}
+                                    </small>
+                                    <a href="{% url 'jobs:company_detail' company.pk %}" class="btn btn-sm btn-outline-primary">
+                                        {% trans "View" %}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Пагинация -->
+                {% if page_obj.has_other_pages %}
+                <nav aria-label="Page navigation" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                                    {% trans "First" %}
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                                    <i class="fas fa-chevron-left"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                                        {{ num }}
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                                    {% trans "Last" %}
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-building fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">{% trans "No companies found" %}</h4>
+                    <p class="text-muted">{% trans "Try adjusting your search criteria." %}</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

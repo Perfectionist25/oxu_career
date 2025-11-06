@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
-from django.utils.html import format_html
-from .models import Industry, Company, Job, JobApplication, SavedJob, JobAlert, CompanyReview, InterviewExperience
+from .models import *
 
 class JobInline(admin.TabularInline):
     model = Job
@@ -11,50 +10,15 @@ class JobInline(admin.TabularInline):
 
 @admin.register(Industry)
 class IndustryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'job_count', 'company_count')
+    list_display = ('name', 'job_count')
     list_filter = ('name',)
     search_fields = ('name', 'description')
     
     def job_count(self, obj):
-        return Job.objects.filter(company__industry=obj).count()
-    job_count.short_description = _('Jobs')
-    
-    def company_count(self, obj):
-        return obj.company_set.count()
-    company_count.short_description = _('Companies')
-
-@admin.register(Company)
-class CompanyAdmin(admin.ModelAdmin):
-    list_display = ('name', 'industry', 'company_size', 'is_verified', 'is_active', 'job_count')
-    list_filter = ('industry', 'company_size', 'is_verified', 'is_active', 'created_at')
-    search_fields = ('name', 'description', 'headquarters')
-    list_editable = ('is_verified', 'is_active')
-    readonly_fields = ('created_at', 'updated_at')
-    inlines = [JobInline]
-    
-    fieldsets = (
-        (_('Basic Information'), {
-            'fields': ('name', 'description', 'website', 'logo')
-        }),
-        (_('Company Details'), {
-            'fields': ('industry', 'company_size', 'founded_year', 'headquarters')
-        }),
-        (_('Contact Information'), {
-            'fields': ('contact_email', 'contact_phone')
-        }),
-        (_('Social Media'), {
-            'fields': ('linkedin', 'twitter', 'facebook')
-        }),
-        (_('Status'), {
-            'fields': ('is_verified', 'is_active')
-        }),
-        (_('Timestamps'), {
-            'fields': ('created_at', 'updated_at')
-        }),
-    )
-    
-    def job_count(self, obj):
-        return obj.jobs.count()
+        # Считаем вакансии через EmployerProfile
+        from accounts.models import EmployerProfile
+        employer_profiles = EmployerProfile.objects.filter(industry=obj.name)
+        return Job.objects.filter(employer__in=employer_profiles).count()
     job_count.short_description = _('Jobs')
 
 class JobApplicationInline(admin.TabularInline):
@@ -65,16 +29,16 @@ class JobApplicationInline(admin.TabularInline):
 
 @admin.register(Job)
 class JobAdmin(admin.ModelAdmin):
-    list_display = ('title', 'company', 'employment_type', 'experience_level', 'location', 'is_active', 'is_featured', 'created_at')
+    list_display = ('title', 'employer_company', 'employment_type', 'experience_level', 'location', 'is_active', 'is_featured', 'created_at')
     list_filter = ('employment_type', 'experience_level', 'education_level', 'is_active', 'is_featured', 'is_urgent', 'created_at')
-    search_fields = ('title', 'company__name', 'description', 'location')
+    search_fields = ('title', 'employer__company_name', 'description', 'location')
     list_editable = ('is_active', 'is_featured')
-    readonly_fields = ('views_count', 'applications_count', 'created_at', 'updated_at')
+    readonly_fields = ('views_count', 'applications_count', 'created_at', 'updated_at', 'employer_info')
     inlines = [JobApplicationInline]
     
     fieldsets = (
         (_('Job Information'), {
-            'fields': ('title', 'short_description', 'description', 'company')
+            'fields': ('title', 'short_description', 'description', 'employer')
         }),
         (_('Location & Type'), {
             'fields': ('location', 'remote_work', 'hybrid_work', 'employment_type', 'experience_level', 'education_level')
@@ -102,6 +66,17 @@ class JobAdmin(admin.ModelAdmin):
         }),
     )
     
+    def employer_company(self, obj):
+        return obj.employer.company_name
+    employer_company.short_description = _('Company')
+    employer_company.admin_order_field = 'employer__company_name'
+    
+    def employer_info(self, obj):
+        if obj.employer:
+            return f"{obj.employer.company_name} ({obj.employer.user.username})"
+        return "-"
+    employer_info.short_description = _('Employer')
+    
     actions = ['activate_jobs', 'deactivate_jobs', 'mark_as_featured', 'mark_as_urgent']
     
     def activate_jobs(self, request, queryset):
@@ -126,9 +101,9 @@ class JobAdmin(admin.ModelAdmin):
 
 @admin.register(JobApplication)
 class JobApplicationAdmin(admin.ModelAdmin):
-    list_display = ('candidate', 'job', 'status', 'is_read', 'created_at')
+    list_display = ('candidate', 'job_with_company', 'status', 'is_read', 'created_at')
     list_filter = ('status', 'is_read', 'created_at')
-    search_fields = ('candidate__username', 'candidate__email', 'job__title', 'job__company__name')
+    search_fields = ('candidate__username', 'candidate__email', 'job__title', 'job__employer__company_name')
     readonly_fields = ('created_at', 'updated_at', 'status_changed_at')
     
     fieldsets = (
@@ -145,6 +120,10 @@ class JobApplicationAdmin(admin.ModelAdmin):
             'fields': ('created_at', 'updated_at')
         }),
     )
+    
+    def job_with_company(self, obj):
+        return f"{obj.job.title} - {obj.job.employer.company_name}"
+    job_with_company.short_description = _('Job')
     
     actions = ['mark_as_reviewed', 'mark_as_interview', 'mark_as_rejected', 'mark_as_read']
     
@@ -170,10 +149,14 @@ class JobApplicationAdmin(admin.ModelAdmin):
 
 @admin.register(SavedJob)
 class SavedJobAdmin(admin.ModelAdmin):
-    list_display = ('user', 'job', 'created_at')
+    list_display = ('user', 'job_with_company', 'created_at')
     list_filter = ('created_at',)
-    search_fields = ('user__username', 'job__title')
+    search_fields = ('user__username', 'job__title', 'job__employer__company_name')
     readonly_fields = ('created_at',)
+    
+    def job_with_company(self, obj):
+        return f"{obj.job.title} - {obj.job.employer.company_name}"
+    job_with_company.short_description = _('Job')
 
 @admin.register(JobAlert)
 class JobAlertAdmin(admin.ModelAdmin):
@@ -205,84 +188,3 @@ class JobAlertAdmin(admin.ModelAdmin):
         updated = queryset.update(is_active=False)
         self.message_user(request, _('%(count)d alerts deactivated') % {'count': updated})
     deactivate_alerts.short_description = _('Deactivate selected alerts')
-
-@admin.register(CompanyReview)
-class CompanyReviewAdmin(admin.ModelAdmin):
-    list_display = ('company', 'author', 'job_title', 'overall_rating', 'employment_status', 'is_verified', 'is_published', 'created_at')
-    list_filter = ('overall_rating', 'employment_status', 'is_verified', 'is_published', 'created_at')
-    search_fields = ('company__name', 'author__username', 'job_title', 'title')
-    list_editable = ('is_verified', 'is_published')
-    readonly_fields = ('created_at', 'updated_at')
-    
-    fieldsets = (
-        (_('Review Information'), {
-            'fields': ('company', 'author', 'job_title', 'employment_status')
-        }),
-        (_('Ratings'), {
-            'fields': ('overall_rating', 'work_life_balance', 'salary_benefits', 'career_growth', 'management')
-        }),
-        (_('Review Content'), {
-            'fields': ('title', 'pros', 'cons', 'advice')
-        }),
-        (_('Status'), {
-            'fields': ('is_anonymous', 'is_verified', 'is_published')
-        }),
-        (_('Timestamps'), {
-            'fields': ('created_at', 'updated_at')
-        }),
-    )
-    
-    actions = ['publish_reviews', 'unpublish_reviews', 'verify_reviews']
-    
-    def publish_reviews(self, request, queryset):
-        updated = queryset.update(is_published=True)
-        self.message_user(request, _('%(count)d reviews published') % {'count': updated})
-    publish_reviews.short_description = _('Publish selected reviews')
-    
-    def unpublish_reviews(self, request, queryset):
-        updated = queryset.update(is_published=False)
-        self.message_user(request, _('%(count)d reviews unpublished') % {'count': updated})
-    unpublish_reviews.short_description = _('Unpublish selected reviews')
-    
-    def verify_reviews(self, request, queryset):
-        updated = queryset.update(is_verified=True)
-        self.message_user(request, _('%(count)d reviews verified') % {'count': updated})
-    verify_reviews.short_description = _('Verify selected reviews')
-
-@admin.register(InterviewExperience)
-class InterviewExperienceAdmin(admin.ModelAdmin):
-    list_display = ('company', 'author', 'job_title', 'difficulty', 'offer_status', 'is_published', 'created_at')
-    list_filter = ('difficulty', 'offer_status', 'is_published', 'created_at')
-    search_fields = ('company__name', 'author__username', 'job_title')
-    list_editable = ('is_published',)
-    readonly_fields = ('created_at', 'updated_at')
-    
-    fieldsets = (
-        (_('Interview Information'), {
-            'fields': ('company', 'author', 'job_title')
-        }),
-        (_('Process Details'), {
-            'fields': ('process_description', 'difficulty', 'duration_days')
-        }),
-        (_('Interview Content'), {
-            'fields': ('interview_questions', 'offer_status', 'recommendations')
-        }),
-        (_('Status'), {
-            'fields': ('is_anonymous', 'is_published')
-        }),
-        (_('Timestamps'), {
-            'fields': ('created_at', 'updated_at')
-        }),
-    )
-    
-    actions = ['publish_experiences', 'unpublish_experiences']
-    
-    def publish_experiences(self, request, queryset):
-        updated = queryset.update(is_published=True)
-        self.message_user(request, _('%(count)d interview experiences published') % {'count': updated})
-    publish_experiences.short_description = _('Publish selected experiences')
-    
-    def unpublish_experiences(self, request, queryset):
-        updated = queryset.update(is_published=False)
-        self.message_user(request, _('%(count)d interview experiences unpublished') % {'count': updated})
-    unpublish_experiences.short_description = _('Unpublish selected experiences')

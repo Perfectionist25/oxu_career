@@ -1,458 +1,491 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Create New Resume" %} - Oxu Career{% endblock %}
+
 {% block content %}
-<div class="container py-5">
-    <!-- Header Section -->
-    <div class="row mb-5">
-        <div class="col-lg-8 mx-auto text-center">
-            <h1 class="display-5 fw-bold text-primary mb-3">Yangi rezyume yaratish</h1>
-            <p class="lead text-muted">{{ template_id }} shabloni asosida professional rezyumeningizni yarating</p>
-            
-            <!-- Progress Steps -->
-            <div class="row justify-content-center mt-4">
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0">{% trans "Create New Resume" %}</h1>
+                <a href="{% url 'cvbuilder:cv_list' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>{% trans "Back" %}
+                </a>
+            </div>
+
+            <!-- Messages -->
+            {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="row">
+                <!-- Main Form -->
                 <div class="col-lg-8">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="text-center">
-                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 40px; height: 40px;">
-                                <span class="text-white fw-bold">1</span>
-                            </div>
-                            <small class="fw-semibold">Ma'lumotlar</small>
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">{% trans "Resume Information" %}</h5>
                         </div>
-                        <div class="flex-grow-1 border-top border-2 border-primary mx-2"></div>
-                        <div class="text-center">
-                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 40px; height: 40px;">
-                                <span class="text-muted fw-bold">2</span>
-                            </div>
-                            <small class="text-muted">Ko'rib chiqish</small>
+                        <div class="card-body">
+                            <form method="post" id="cvForm">
+                                {% csrf_token %}
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.title.id_for_label }}" class="form-label">
+                                            {% trans "Resume Title" %} *
+                                        </label>
+                                        {{ form.title }}
+                                        {% if form.title.errors %}
+                                        <div class="text-danger small">{{ form.title.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.template.id_for_label }}" class="form-label">
+                                            {% trans "Template" %} *
+                                        </label>
+                                        {{ form.template }}
+                                        {% if form.template.errors %}
+                                        <div class="text-danger small">{{ form.template.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.full_name.id_for_label }}" class="form-label">
+                                            {% trans "Full Name" %} *
+                                        </label>
+                                        {{ form.full_name }}
+                                        {% if form.full_name.errors %}
+                                        <div class="text-danger small">{{ form.full_name.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.email.id_for_label }}" class="form-label">
+                                            {% trans "Email" %} *
+                                        </label>
+                                        {{ form.email }}
+                                        {% if form.email.errors %}
+                                        <div class="text-danger small">{{ form.email.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.phone.id_for_label }}" class="form-label">
+                                            {% trans "Phone" %} *
+                                        </label>
+                                        {{ form.phone }}
+                                        {% if form.phone.errors %}
+                                        <div class="text-danger small">{{ form.phone.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.location.id_for_label }}" class="form-label">
+                                            {% trans "Location" %}
+                                        </label>
+                                        {{ form.location }}
+                                        {% if form.location.errors %}
+                                        <div class="text-danger small">{{ form.location.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="{{ form.salary_expectation.id_for_label }}" class="form-label">
+                                        {% trans "Salary Expectation" %} ({% trans "in UZS" %})
+                                    </label>
+                                    {{ form.salary_expectation }}
+                                    {% if form.salary_expectation.errors %}
+                                    <div class="text-danger small">{{ form.salary_expectation.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="{{ form.summary.id_for_label }}" class="form-label">
+                                        {% trans "Summary" %}
+                                    </label>
+                                    {{ form.summary }}
+                                    {% if form.summary.errors %}
+                                    <div class="text-danger small">{{ form.summary.errors }}</div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Brief information about yourself (maximum 500 characters)" %}</div>
+                                </div>
+
+                                <!-- Status Selection -->
+                                <div class="mb-4">
+                                    <label class="form-label">{% trans "Resume Status" %} *</label>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-check card status-card">
+                                                <input class="form-check-input" type="radio" name="status" 
+                                                       id="status_draft" value="draft" checked>
+                                                <label class="form-check-label card-body" for="status_draft">
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="fas fa-edit text-warning me-3 fs-4"></i>
+                                                        <div>
+                                                            <strong>{% trans "Draft" %}</strong>
+                                                            <small class="d-block text-muted">
+                                                                {% trans "Only visible to you" %}
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check card status-card">
+                                                <input class="form-check-input" type="radio" name="status" 
+                                                       id="status_published" value="published">
+                                                <label class="form-check-label card-body" for="status_published">
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="fas fa-eye text-success me-3 fs-4"></i>
+                                                        <div>
+                                                            <strong>{% trans "Published" %}</strong>
+                                                            <small class="d-block text-muted">
+                                                                {% trans "Visible to employers and admins" %}
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check card status-card">
+                                                <input class="form-check-input" type="radio" name="status" 
+                                                       id="status_archived" value="archived">
+                                                <label class="form-check-label card-body" for="status_archived">
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="fas fa-archive text-secondary me-3 fs-4"></i>
+                                                        <div>
+                                                            <strong>{% trans "Archived" %}</strong>
+                                                            <small class="d-block text-muted">
+                                                                {% trans "Hidden from everyone" %}
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Save Options -->
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end border-top pt-3">
+                                    <button type="submit" name="save_draft" value="true" 
+                                            class="btn btn-outline-warning me-2">
+                                        <i class="fas fa-save me-2"></i>{% trans "Save as Draft" %}
+                                    </button>
+                                    <button type="submit" name="publish" value="true" 
+                                            class="btn btn-success me-2">
+                                        <i class="fas fa-eye me-2"></i>{% trans "Publish Resume" %}
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-2"></i>{% trans "Save Resume" %}
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                        <div class="flex-grow-1 border-top border-2 border-light mx-2"></div>
-                        <div class="text-center">
-                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 40px; height: 40px;">
-                                <span class="text-muted fw-bold">3</span>
+                    </div>
+
+                    <!-- Status Information -->
+                    <div class="card shadow-sm mt-4">
+                        <div class="card-header bg-light">
+                            <h6 class="card-title mb-0">{% trans "About Resume Status" %}</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-start mb-3">
+                                        <i class="fas fa-edit text-warning me-3 mt-1"></i>
+                                        <div>
+                                            <strong>{% trans "Draft" %}</strong>
+                                            <p class="small text-muted mb-0">
+                                                {% trans "Your resume is saved but only visible to you. Perfect for when you're still working on it." %}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-start mb-3">
+                                        <i class="fas fa-eye text-success me-3 mt-1"></i>
+                                        <div>
+                                            <strong>{% trans "Published" %}</strong>
+                                            <p class="small text-muted mb-0">
+                                                {% trans "Your resume is visible to employers and administrators. Use this when you're actively job hunting." %}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-start mb-3">
+                                        <i class="fas fa-archive text-secondary me-3 mt-1"></i>
+                                        <div>
+                                            <strong>{% trans "Archived" %}</strong>
+                                            <p class="small text-muted mb-0">
+                                                {% trans "Your resume is hidden from everyone. Use this when you're not currently looking for work." %}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <small class="text-muted">Yuklab olish</small>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
 
-    <div class="row">
-        <!-- Main Form -->
-        <div class="col-lg-8">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-4">
-                    <form method="post" novalidate id="cvForm">
-                        {% csrf_token %}
-                        
-                        {% if form.non_field_errors %}
-                        <div class="alert alert-danger d-flex align-items-center" role="alert">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            {{ form.non_field_errors }}
+                <!-- Templates -->
+                <div class="col-lg-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-secondary text-white">
+                            <h5 class="card-title mb-0">{% trans "Available Templates" %}</h5>
                         </div>
-                        {% endif %}
-
-                        <!-- Personal Information Section -->
-                        <div class="mb-5">
-                            <div class="d-flex align-items-center mb-4">
-                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                                    <i class="fas fa-user text-white"></i>
-                                </div>
-                                <h4 class="fw-bold text-dark mb-0">Shaxsiy ma'lumotlar</h4>
-                            </div>
-                            
-                            <div class="row">
-                                {% for field in form %}
-                                    {% if field.name in 'full_name,email,phone,address' %}
-                                    <div class="col-md-6 mb-3">
-                                        <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
-                                            {% if field.name == 'full_name' %}
-                                                <i class="fas fa-user me-2 text-primary"></i>To'liq ism
-                                            {% elif field.name == 'email' %}
-                                                <i class="fas fa-envelope me-2 text-primary"></i>Elektron pochta
-                                            {% elif field.name == 'phone' %}
-                                                <i class="fas fa-phone me-2 text-primary"></i>Telefon
-                                            {% elif field.name == 'address' %}
-                                                <i class="fas fa-map-marker-alt me-2 text-primary"></i>Manzil
-                                            {% else %}
-                                                {{ field.label }}
-                                            {% endif %}
-                                        </label>
-                                        <input type="{{ field.field.widget.input_type }}" 
-                                               name="{{ field.name }}"
-                                               id="{{ field.id_for_label }}"
-                                               class="form-control {% if field.errors %}is-invalid{% endif %}"
-                                               value="{{ field.value|default:'' }}"
-                                               placeholder="{% if field.name == 'full_name' %}Ism Familiya{% elif field.name == 'email' %}email@example.com{% elif field.name == 'phone' %}+998 XX XXX-XX-XX{% elif field.name == 'address' %}Toshkent shahar{% endif %}">
-                                        {% if field.errors %}
-                                        <div class="invalid-feedback d-block">
-                                            {% for error in field.errors %}
-                                                {{ error }}
-                                            {% endfor %}
+                        <div class="card-body">
+                            {% if templates %}
+                            <div class="row g-3">
+                                {% for template in templates %}
+                                <div class="col-12">
+                                    <div class="template-card border rounded p-3 {% if forloop.first %}border-primary{% endif %}" 
+                                         data-template-id="{{ template.id }}"
+                                         onclick="selectTemplate({{ template.id }})"
+                                         style="cursor: pointer;">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <h6 class="mb-0">{{ template.name }}</h6>
+                                            <span class="badge {% if template.is_free %}bg-success{% else %}bg-warning{% endif %}">
+                                                {% if template.is_free %}{% trans "Free" %}{% else %}{% trans "Premium" %}{% endif %}
+                                            </span>
                                         </div>
-                                        {% endif %}
+                                        <p class="small text-muted mb-2">{{ template.description }}</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-muted">
+                                                {% trans "Last updated" %}: {{ template.updated_at|date:"d.m.Y" }}
+                                            </small>
+                                            <button type="button" class="btn btn-sm btn-outline-primary preview-template" 
+                                                    data-template-id="{{ template.id }}">
+                                                {% trans "Preview" %}
+                                            </button>
+                                        </div>
                                     </div>
-                                    {% endif %}
+                                </div>
                                 {% endfor %}
                             </div>
-                        </div>
-
-                        <!-- Professional Summary -->
-                        <div class="mb-5">
-                            <div class="d-flex align-items-center mb-4">
-                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                                    <i class="fas fa-file-alt text-white"></i>
-                                </div>
-                                <h4 class="fw-bold text-dark mb-0">Professional ma'lumot</h4>
-                            </div>
-                            
-                            {% for field in form %}
-                                {% if field.name == 'professional_summary' %}
-                                <div class="mb-3">
-                                    <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
-                                        <i class="fas fa-briefcase me-2 text-primary"></i>Professional tavsif
-                                    </label>
-                                    <textarea name="{{ field.name }}" 
-                                              id="{{ field.id_for_label }}" 
-                                              class="form-control {% if field.errors %}is-invalid{% endif %}" 
-                                              rows="4" 
-                                              placeholder="O'zingiz va kasbiy ko'nikmalaringiz haqida qisqacha ma'lumot...">{{ field.value|default:'' }}</textarea>
-                                    {% if field.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {% for error in field.errors %}
-                                            {{ error }}
-                                        {% endfor %}
-                                    </div>
-                                    {% endif %}
-                                    <div class="form-text">Qisqa va tushunarli tavsif yozing (100-200 so'z)</div>
-                                </div>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-
-                        <!-- Education Section -->
-                        <div class="mb-5">
-                            <div class="d-flex align-items-center mb-4">
-                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                                    <i class="fas fa-graduation-cap text-white"></i>
-                                </div>
-                                <h4 class="fw-bold text-dark mb-0">Ta'lim</h4>
-                            </div>
-                            
-                            {% for field in form %}
-                                {% if field.name in 'education,degree,institution,graduation_year' %}
-                                <div class="mb-3">
-                                    <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
-                                        {% if field.name == 'education' %}
-                                            <i class="fas fa-university me-2 text-primary"></i>Ta'lim ma'lumotlari
-                                        {% elif field.name == 'degree' %}
-                                            <i class="fas fa-certificate me-2 text-primary"></i>Daraja
-                                        {% elif field.name == 'institution' %}
-                                            <i class="fas fa-school me-2 text-primary"></i>O'quv muassasasi
-                                        {% elif field.name == 'graduation_year' %}
-                                            <i class="fas fa-calendar me-2 text-primary"></i>Bitirgan yili
-                                        {% endif %}
-                                    </label>
-                                    {% if field.name == 'graduation_year' %}
-                                        <select name="{{ field.name }}" 
-                                                id="{{ field.id_for_label }}" 
-                                                class="form-select {% if field.errors %}is-invalid{% endif %}">
-                                            <option value="">Yilni tanlang</option>
-                                            {% with "2024,2023,2022,2021,2020,2019,2018,2017,2016,2015" as year_string %}
-                                            {% for year in year_string.split %}
-                                                <option value="{{ year }}" {% if field.value|stringformat:'s' == year %}selected{% endif %}>{{ year }}</option>
-                                            {% endfor %}
-                                            {% endwith %}
-                                        </select>
-                                    {% else %}
-                                        <input type="text" 
-                                               name="{{ field.name }}"
-                                               id="{{ field.id_for_label }}"
-                                               class="form-control {% if field.errors %}is-invalid{% endif %}"
-                                               value="{{ field.value|default:'' }}"
-                                               placeholder="{% if field.name == 'education' %}Oliy ta'lim{% elif field.name == 'degree' %}Bakalavr{% elif field.name == 'institution' %}Toshkent Davlat Universiteti{% endif %}">
-                                    {% endif %}
-                                    {% if field.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {% for error in field.errors %}
-                                            {{ error }}
-                                        {% endfor %}
-                                    </div>
-                                    {% endif %}
-                                </div>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-
-                        <!-- Work Experience -->
-                        <div class="mb-5">
-                            <div class="d-flex align-items-center mb-4">
-                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                                    <i class="fas fa-briefcase text-white"></i>
-                                </div>
-                                <h4 class="fw-bold text-dark mb-0">Ish tajribasi</h4>
-                            </div>
-                            
-                            {% for field in form %}
-                                {% if field.name in 'experience,skills,achievements' %}
-                                <div class="mb-3">
-                                    <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
-                                        {% if field.name == 'experience' %}
-                                            <i class="fas fa-history me-2 text-primary"></i>Ish tajribasi
-                                        {% elif field.name == 'skills' %}
-                                            <i class="fas fa-tools me-2 text-primary"></i>Ko'nikmalar
-                                        {% elif field.name == 'achievements' %}
-                                            <i class="fas fa-trophy me-2 text-primary"></i>Yutuqlar
-                                        {% endif %}
-                                    </label>
-                                    {% if field.name == 'skills' %}
-                                        <textarea name="{{ field.name }}" 
-                                                  id="{{ field.id_for_label }}" 
-                                                  class="form-control {% if field.errors %}is-invalid{% endif %}" 
-                                                  rows="3" 
-                                                  placeholder="Texnik va soft ko'nikmalaringizni vergul bilan ajrating...">{{ field.value|default:'' }}</textarea>
-                                        <div class="form-text">Masalan: Python, Django, JavaScript, Liderlik, Kommunikatsiya</div>
-                                    {% else %}
-                                        <textarea name="{{ field.name }}" 
-                                                  id="{{ field.id_for_label }}" 
-                                                  class="form-control {% if field.errors %}is-invalid{% endif %}" 
-                                                  rows="3" 
-                                                  placeholder="{% if field.name == 'experience' %}Ish tajribangiz haqida ma'lumot...{% else %}Yutuqlaringiz haqida ma'lumot...{% endif %}">{{ field.value|default:'' }}</textarea>
-                                    {% endif %}
-                                    {% if field.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {% for error in field.errors %}
-                                            {{ error }}
-                                        {% endfor %}
-                                    </div>
-                                    {% endif %}
-                                </div>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-
-                        <!-- Additional Fields -->
-                        {% for field in form %}
-                            {% if field.name not in 'full_name,email,phone,address,professional_summary,education,degree,institution,graduation_year,experience,skills,achievements' %}
-                            <div class="mb-3">
-                                <label for="{{ field.id_for_label }}" class="form-label fw-semibold">{{ field.label }}</label>
-                                {% if field.field.widget.input_type == 'select' %}
-                                    <select name="{{ field.name }}" 
-                                            id="{{ field.id_for_label }}" 
-                                            class="form-select {% if field.errors %}is-invalid{% endif %}">
-                                        {% for choice in field.field.choices %}
-                                            <option value="{{ choice.0 }}" {% if field.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
-                                        {% endfor %}
-                                    </select>
-                                {% else %}
-                                    <input type="{{ field.field.widget.input_type }}" 
-                                           name="{{ field.name }}"
-                                           id="{{ field.id_for_label }}"
-                                           class="form-control {% if field.errors %}is-invalid{% endif %}"
-                                           value="{{ field.value|default:'' }}">
-                                {% endif %}
-                                {% if field.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in field.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
+                            {% else %}
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-templates fa-3x mb-3"></i>
+                                <p>{% trans "No templates available at the moment" %}</p>
                             </div>
                             {% endif %}
-                        {% endfor %}
+                        </div>
+                    </div>
 
-                        <!-- Form Actions -->
-                        <div class="d-flex justify-content-between align-items-center pt-4 border-top">
-                            <a href="{% url 'cvbuilder:cv_list' %}" class="btn btn-outline-secondary">
-                                <i class="fas fa-arrow-left me-2"></i>Ortga qaytish
-                            </a>
-                            <div class="d-flex gap-3">
-                                <button type="button" class="btn btn-outline-primary" id="previewBtn">
-                                    <i class="fas fa-eye me-2"></i>Oldindan ko'rish
-                                </button>
-                                <button type="submit" class="btn btn-primary px-4">
-                                    <i class="fas fa-save me-2"></i>Saqlash va ko'rish
-                                </button>
+                    <!-- Quick Stats -->
+                    <div class="card shadow-sm mt-4">
+                        <div class="card-header bg-light">
+                            <h6 class="card-title mb-0">{% trans "Your Resume Stats" %}</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <div class="border-end">
+                                        <h5 class="text-primary mb-1">{{ user_cv_stats.draft_count|default:0 }}</h5>
+                                        <small class="text-muted">{% trans "Drafts" %}</small>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="border-end">
+                                        <h5 class="text-success mb-1">{{ user_cv_stats.published_count|default:0 }}</h5>
+                                        <small class="text-muted">{% trans "Published" %}</small>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <h5 class="text-secondary mb-1">{{ user_cv_stats.archived_count|default:0 }}</h5>
+                                    <small class="text-muted">{% trans "Archived" %}</small>
+                                </div>
                             </div>
                         </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+                    </div>
 
-        <!-- Sidebar - Template Preview & Tips -->
-        <div class="col-lg-4">
-            <!-- Template Preview -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-white border-0 py-3">
-                    <h5 class="fw-bold text-dark mb-0">
-                        <i class="fas fa-palette me-2 text-primary"></i>
-                        Shablon ko'rinishi
-                    </h5>
-                </div>
-                <div class="card-body text-center">
-                    <div class="bg-light rounded p-4 mb-3">
-                        <i class="fas fa-file-pdf fa-3x text-primary mb-3"></i>
-                        <h6 class="fw-bold">{{ template_id }}</h6>
-                        <small class="text-muted">Professional shablon</small>
+                    <!-- Help Section -->
+                    <div class="card shadow-sm mt-4">
+                        <div class="card-header bg-light">
+                            <h6 class="card-title mb-0">{% trans "Tips for Creating a Good Resume" %}</h6>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled small">
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    {% trans "Use a clear and professional title" %}
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    {% trans "Provide accurate contact information" %}
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    {% trans "Write a concise and compelling summary" %}
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    {% trans "Choose a template that matches your industry" %}
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    {% trans "Be realistic about salary expectations" %}
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-                    <a href="#" class="btn btn-outline-primary btn-sm">
-                        <i class="fas fa-external-link-alt me-2"></i>Namunani ko'rish
-                    </a>
-                </div>
-            </div>
-
-            <!-- Tips Card -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-white border-0 py-3">
-                    <h5 class="fw-bold text-dark mb-0">
-                        <i class="fas fa-lightbulb me-2 text-primary"></i>
-                        Foydali maslahatlar
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex mb-3">
-                        <i class="fas fa-check text-success me-2 mt-1"></i>
-                        <small>Ma'lumotlarni aniq va to'g'ri kiriting</small>
-                    </div>
-                    <div class="d-flex mb-3">
-                        <i class="fas fa-check text-success me-2 mt-1"></i>
-                        <small>Professional tavsifni qisqa va tushunarli yozing</small>
-                    </div>
-                    <div class="d-flex mb-3">
-                        <i class="fas fa-check text-success me-2 mt-1"></i>
-                        <small>Ko'nikmalarni vergul bilan ajrating</small>
-                    </div>
-                    <div class="d-flex">
-                        <i class="fas fa-check text-success me-2 mt-1"></i>
-                        <small>Yutuqlaringizni raqamlar bilan tasdiqlang</small>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Progress Card -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0 py-3">
-                    <h5 class="fw-bold text-dark mb-0">
-                        <i class="fas fa-chart-line me-2 text-primary"></i>
-                        To'ldirish darajasi
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="progress mb-3" style="height: 10px;">
-                        <div class="progress-bar bg-primary" role="progressbar" style="width: 65%;" id="progressBar"></div>
-                    </div>
-                    <small class="text-muted" id="progressText">Formani to'ldirish: 65%</small>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Template Preview Modal -->
+<div class="modal fade" id="templatePreviewModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{% trans "Template Preview" %}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="templatePreviewContent">
+                    <!-- Preview content will be loaded here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    {% trans "Close" %}
+                </button>
+                <button type="button" class="btn btn-primary" id="selectTemplateBtn">
+                    {% trans "Select This Template" %}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
 <style>
-.card {
-    transition: transform 0.3s ease;
-}
-.card:hover {
-    transform: translateY(-2px);
-}
-
-.form-control, .form-select {
-    border-radius: 8px;
-    border: 1px solid #dee2e6;
-    padding: 0.75rem 1rem;
-}
-.form-control:focus, .form-select:focus {
-    border-color: #012152;
-    box-shadow: 0 0 0 0.2rem rgba(1, 33, 82, 0.25);
-}
-
-.btn-primary {
-    background-color: #012152;
-    border-color: #012152;
-    border-radius: 8px;
-}
-.btn-primary:hover {
-    background-color: #012d6e;
-    border-color: #012d6e;
-}
-
-.progress {
-    border-radius: 10px;
-}
-.progress-bar {
-    border-radius: 10px;
-}
+    .status-card {
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+    
+    .status-card:hover {
+        border-color: #dee2e6;
+        transform: translateY(-2px);
+    }
+    
+    .status-card .form-check-input:checked ~ .card-body {
+        background-color: #f8f9fa;
+        border-radius: 0.375rem;
+    }
+    
+    .template-card {
+        transition: all 0.3s ease;
+    }
+    
+    .template-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
 </style>
+{% endblock %}
 
+{% block extra_js %}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Form progress calculation
-    function updateProgress() {
-        const form = document.getElementById('cvForm');
-        if (!form) return;
+    function selectTemplate(templateId) {
+        document.getElementById('id_template').value = templateId;
         
-        const inputs = form.querySelectorAll('input, textarea, select');
-        let filledCount = 0;
-        
-        inputs.forEach(input => {
-            if (input.type !== 'hidden' && input.value && input.value.trim() !== '') {
-                filledCount++;
-            }
+        // Update visual selection
+        document.querySelectorAll('.template-card').forEach(card => {
+            card.classList.remove('border-primary', 'bg-light');
         });
-        
-        const progress = Math.min(100, Math.round((filledCount / inputs.length) * 100));
-        const progressBar = document.getElementById('progressBar');
-        const progressText = document.getElementById('progressText');
-        
-        if (progressBar && progressText) {
-            progressBar.style.width = progress + '%';
-            progressText.textContent = `Formani to'ldirish: ${progress}%`;
+        event.currentTarget.classList.add('border-primary', 'bg-light');
+    }
+
+    // Template preview functionality
+    document.querySelectorAll('.preview-template').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const templateId = this.getAttribute('data-template-id');
+            
+            // Load template preview
+            fetch(`{% url 'cvbuilder:template_preview' 0 %}`.replace('0', templateId))
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('templatePreviewContent').innerHTML = html;
+                    const modal = new bootstrap.Modal(document.getElementById('templatePreviewModal'));
+                    modal.show();
+                    
+                    // Set up select button
+                    document.getElementById('selectTemplateBtn').onclick = function() {
+                        selectTemplate(templateId);
+                        modal.hide();
+                    };
+                })
+                .catch(error => {
+                    console.error('Error loading template preview:', error);
+                    alert('{% trans "Error loading template preview" %}');
+                });
+        });
+    });
+
+    // Form validation and status handling
+    document.getElementById('cvForm').addEventListener('submit', function(e) {
+        const templateField = document.getElementById('id_template');
+        if (!templateField.value) {
+            e.preventDefault();
+            alert('{% trans "Please select a template" %}');
+            return false;
         }
-    }
 
-    // Add input event listeners
-    const formInputs = document.querySelectorAll('#cvForm input, #cvForm textarea, #cvForm select');
-    formInputs.forEach(input => {
-        input.addEventListener('input', updateProgress);
-        input.addEventListener('change', updateProgress);
+        // Set status based on which button was clicked
+        const submitButton = e.submitter;
+        if (submitButton.name === 'save_draft') {
+            document.getElementById('status_draft').checked = true;
+        } else if (submitButton.name === 'publish') {
+            document.getElementById('status_published').checked = true;
+        }
     });
 
-    // Initialize progress
-    updateProgress();
+    // Auto-select first template if none selected
+    document.addEventListener('DOMContentLoaded', function() {
+        const templateField = document.getElementById('id_template');
+        if (!templateField.value && document.querySelector('.template-card')) {
+            const firstTemplate = document.querySelector('.template-card');
+            const templateId = firstTemplate.getAttribute('data-template-id');
+            selectTemplate(templateId);
+        }
+    });
 
-    // Preview button functionality
-    const previewBtn = document.getElementById('previewBtn');
-    if (previewBtn) {
-        previewBtn.addEventListener('click', function() {
-            alert('Oldindan ko\'rish funksiyasi ishga tushadi');
-        });
-    }
-
-    // Form submission loading state
-    const form = document.getElementById('cvForm');
-    if (form) {
-        form.addEventListener('submit', function() {
-            const submitButton = this.querySelector('button[type="submit"]');
-            if (submitButton) {
-                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saqlanmoqda...';
-                submitButton.disabled = true;
-            }
-        });
-    }
-
-    // Auto-save draft functionality
-    let autoSaveTimer;
-    formInputs.forEach(input => {
-        input.addEventListener('input', function() {
-            clearTimeout(autoSaveTimer);
-            autoSaveTimer = setTimeout(() => {
-                console.log('Avtosaqlash...');
-            }, 2000);
+    // Status card click handling
+    document.querySelectorAll('.status-card').forEach(card => {
+        card.addEventListener('click', function() {
+            const radio = this.querySelector('input[type="radio"]');
+            radio.checked = true;
+            
+            // Update visual selection
+            document.querySelectorAll('.status-card').forEach(c => {
+                c.classList.remove('border-primary');
+            });
+            this.classList.add('border-primary');
         });
     });
-});
 </script>
 {% endblock %}

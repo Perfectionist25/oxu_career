@@ -2,159 +2,233 @@
 {% load static %}
 {% load i18n %}
 
-{% block title %}{{ job.title }} - {{ job.company.name }} | OXU Career{% endblock %}
+{% block title %}{{ job.title }} - {{ job.employer.company_name }} - OXU Career{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <!-- Хлебные крошки -->
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'jobs:list' %}">{% trans "Вакансии" %}</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'jobs:company_detail' job.company.pk %}">{{ job.company.name }}</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{{ job.title }}</li>
-        </ol>
-    </nav>
-
+<div class="container-fluid py-4">
     <div class="row">
         <!-- Основной контент -->
         <div class="col-lg-8">
+            <!-- Хлебные крошки -->
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'jobs:list' %}">{% trans "Ish o'rinlari" %}</a></li>
+                    <li class="breadcrumb-item active">{{ job.title }}</li>
+                </ol>
+            </nav>
+
             <!-- Заголовок вакансии -->
-            <div class="card mb-4">
+            <div class="card border-0 shadow-sm mb-4">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h1 class="h3 mb-2">{{ job.title }}</h1>
-                            <h2 class="h5 text-muted mb-3">
-                                <a href="{% url 'jobs:company_detail' job.company.pk %}" class="text-decoration-none">
-                                    {{ job.company.name }}
-                                </a>
-                            </h2>
-                        </div>
-                        {% if job.company.logo %}
-                        <img src="{{ job.company.logo.url }}" alt="{{ job.company.name }}" class="company-logo" style="width: 80px; height: 80px; object-fit: contain;">
-                        {% endif %}
-                    </div>
+                    <div class="row align-items-start">
+                        <div class="col-md-8">
+                            <h1 class="h2 fw-bold text-primary mb-3">{{ job.title }}</h1>
+                            
+                            <div class="d-flex flex-wrap gap-3 mb-3">
+                                <div class="d-flex align-items-center text-muted">
+                                    <i class="fas fa-building me-2"></i>
+                                    <strong>{{ job.employer.company_name }}</strong>
+                                </div>
+                                <div class="d-flex align-items-center text-muted">
+                                    <i class="fas fa-map-marker-alt me-2"></i>
+                                    {{ job.location }}
+                                </div>
+                                <div class="d-flex align-items-center text-muted">
+                                    <i class="fas fa-clock me-2"></i>
+                                    {{ job.get_employment_type_display }}
+                                </div>
+                                {% if job.remote_work %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-laptop-house me-1"></i>{% trans "Uzoq ish" %}
+                                </span>
+                                {% endif %}
+                                {% if job.hybrid_work %}
+                                <span class="badge bg-info">
+                                    <i class="fas fa-balance-scale me-1"></i>{% trans "Gibrid" %}
+                                </span>
+                                {% endif %}
+                            </div>
 
-                    <!-- Бейджи -->
-                    <div class="mb-3">
-                        {% if job.is_featured %}
-                        <span class="badge bg-warning me-2">{% trans "Рекомендуемая" %}</span>
-                        {% endif %}
-                        {% if job.is_urgent %}
-                        <span class="badge bg-danger me-2">{% trans "Срочная" %}</span>
-                        {% endif %}
-                        <span class="badge bg-primary me-2">{{ job.get_employment_type_display }}</span>
-                        <span class="badge bg-secondary me-2">{{ job.get_experience_level_display }}</span>
-                        {% if job.remote_work %}
-                        <span class="badge bg-success me-2">{% trans "Удаленная работа" %}</span>
-                        {% endif %}
-                        {% if job.hybrid_work %}
-                        <span class="badge bg-info me-2">{% trans "Гибридный формат" %}</span>
-                        {% endif %}
-                    </div>
-
-                    <!-- Основная информация -->
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="fas fa-map-marker-alt text-muted me-2"></i>
-                                <span>{{ job.location }}</span>
+                            <!-- Зарплата -->
+                            <div class="mb-4">
+                                <h5 class="text-success fw-bold">
+                                    {{ job.salary_range }}
+                                    {% if job.salary_negotiable %}
+                                        <span class="badge bg-warning text-dark ms-2">{% trans "Kelishilgan holda" %}</span>
+                                    {% endif %}
+                                </h5>
                             </div>
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="fas fa-clock text-muted me-2"></i>
-                                <span>{{ job.get_employment_type_display }}</span>
+
+                            <!-- Действия -->
+                            <div class="d-flex flex-wrap gap-2">
+                                {% if user.is_authenticated and user.is_student %}
+                                    {% if has_applied %}
+                                        <button class="btn btn-success" disabled>
+                                            <i class="fas fa-check me-2"></i>{% trans "Ariza yuborilgan" %}
+                                        </button>
+                                    {% else %}
+                                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#applyModal">
+                                            <i class="fas fa-paper-plane me-2"></i>{% trans "Ariza yuborish" %}
+                                        </button>
+                                    {% endif %}
+                                    
+                                    {% if is_saved %}
+                                        <a href="{% url 'jobs:unsave_job' job.id %}" class="btn btn-outline-danger">
+                                            <i class="fas fa-bookmark me-2"></i>{% trans "Saqlanganlardan o'chirish" %}
+                                        </a>
+                                    {% else %}
+                                        <a href="{% url 'jobs:save_job' job.id %}" class="btn btn-outline-primary">
+                                            <i class="fas fa-bookmark me-2"></i>{% trans "Saqlash" %}
+                                        </a>
+                                    {% endif %}
+                                {% elif not user.is_authenticated %}
+                                    <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-primary">
+                                        <i class="fas fa-sign-in-alt me-2"></i>{% trans "Ariza yuborish uchun tizimga kiring" %}
+                                    </a>
+                                {% endif %}
+
+                                {% if user.is_authenticated and job.created_by == user %}
+                                    <div class="btn-group">
+                                        <a href="{% url 'jobs:job_edit' job.id %}" class="btn btn-outline-secondary">
+                                            <i class="fas fa-edit me-2"></i>{% trans "Tahrirlash" %}
+                                        </a>
+                                        <a href="{% url 'jobs:employer_applications' %}" class="btn btn-outline-info">
+                                            <i class="fas fa-users me-2"></i>{% trans "Arizalar" %} ({{ job.applications_count }})
+                                        </a>
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="fas fa-briefcase text-muted me-2"></i>
-                                <span>{{ job.get_experience_level_display }}</span>
-                            </div>
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="fas fa-graduation-cap text-muted me-2"></i>
-                                <span>{{ job.get_education_level_display }}</span>
+                        
+                        <div class="col-md-4 text-center">
+                            {% if job.employer.company_logo %}
+                                <img src="{{ job.employer.company_logo.url }}" alt="{{ job.employer.company_name }}" 
+                                     class="img-fluid rounded mb-3" style="max-height: 120px;">
+                            {% else %}
+                                <div class="bg-light rounded d-flex align-items-center justify-content-center mb-3" 
+                                     style="height: 120px;">
+                                    <i class="fas fa-building text-muted fa-3x"></i>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="text-muted small">
+                                <div class="mb-1">
+                                    <i class="fas fa-eye me-1"></i>
+                                    {{ job.views_count }} {% trans "ko'rish" %}
+                                </div>
+                                <div>
+                                    <i class="fas fa-users me-1"></i>
+                                    {{ job.applications_count }} {% trans "ariza" %}
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Зарплата -->
-                    {% if job.salary_range %}
-                    <div class="alert alert-info mb-0">
-                        <strong>{% trans "Зарплата:" %}</strong> {{ job.salary_range }}
-                    </div>
-                    {% endif %}
                 </div>
             </div>
 
             <!-- Описание вакансии -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3 class="h5 mb-0">{% trans "Описание вакансии" %}</h3>
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-file-alt me-2 text-primary"></i>
+                        {% trans "Vakansiya haqida" %}
+                    </h5>
                 </div>
                 <div class="card-body">
-                    <p class="lead">{{ job.short_description }}</p>
-                    <div class="job-description">
-                        {{ job.description|linebreaks }}
+                    <div class="mb-4">
+                        <h6 class="text-primary">{% trans "Qisqa tavsif" %}</h6>
+                        <p class="lead">{{ job.short_description }}</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-primary">{% trans "Batafsil tavsif" %}</h6>
+                        <div class="job-description">
+                            {{ job.description|linebreaks }}
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Обязанности -->
-            {% if job.responsibilities %}
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3 class="h5 mb-0">{% trans "Обязанности" %}</h3>
+            <!-- Обязанности и требования -->
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">
+                                <i class="fas fa-tasks me-2 text-primary"></i>
+                                {% trans "Asosiy vazifalar" %}
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="job-responsibilities">
+                                {{ job.responsibilities|linebreaks }}
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    {{ job.responsibilities|linebreaks }}
+                
+                <div class="col-md-6 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">
+                                <i class="fas fa-graduation-cap me-2 text-primary"></i>
+                                {% trans "Talablar" %}
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="job-requirements">
+                                {{ job.requirements|linebreaks }}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            {% endif %}
-
-            <!-- Требования -->
-            {% if job.requirements %}
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3 class="h5 mb-0">{% trans "Требования" %}</h3>
-                </div>
-                <div class="card-body">
-                    {{ job.requirements|linebreaks }}
-                </div>
-            </div>
-            {% endif %}
 
             <!-- Навыки -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3 class="h5 mb-0">{% trans "Навыки" %}</h3>
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-code me-2 text-primary"></i>
+                        {% trans "Ko'nikmalar" %}
+                    </h5>
                 </div>
                 <div class="card-body">
-                    <h6>{% trans "Обязательные навыки:" %}</h6>
-                    <div class="mb-3">
-                        {% for skill in job.skills_required_list %}
-                        <span class="badge bg-primary me-1 mb-1">{{ skill }}</span>
-                        {% endfor %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-primary">{% trans "Majburiy ko'nikmalar" %}</h6>
+                            <div class="skills-tags">
+                                {% for skill in job.skills_required.split %}
+                                    <span class="badge bg-primary me-2 mb-2">{{ skill.strip }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% if job.preferred_skills %}
+                        <div class="col-md-6">
+                            <h6 class="text-primary">{% trans "Qo'shimcha afzalliklar" %}</h6>
+                            <div class="skills-tags">
+                                {% for skill in job.preferred_skills.split %}
+                                    <span class="badge bg-secondary me-2 mb-2">{{ skill.strip }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
-                    
-                    {% if job.preferred_skills %}
-                    <h6>{% trans "Желательные навыки:" %}</h6>
-                    <div>
-                        {% for skill in job.preferred_skills_list %}
-                        <span class="badge bg-secondary me-1 mb-1">{{ skill }}</span>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
                 </div>
             </div>
 
             <!-- Преимущества -->
             {% if job.benefits %}
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3 class="h5 mb-0">{% trans "Мы предлагаем" %}</h3>
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-gift me-2 text-primary"></i>
+                        {% trans "Ish sharotilari va imtiyozlar" %}
+                    </h5>
                 </div>
                 <div class="card-body">
-                    {{ job.benefits|linebreaks }}
+                    <div class="job-benefits">
+                        {{ job.benefits|linebreaks }}
+                    </div>
                 </div>
             </div>
             {% endif %}
@@ -162,251 +236,277 @@
 
         <!-- Боковая панель -->
         <div class="col-lg-4">
-            <!-- Действия -->
-            <div class="card mb-4">
+            <!-- Информация о компании -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">
+                        <i class="fas fa-building me-2 text-primary"></i>
+                        {% trans "Kompaniya haqida" %}
+                    </h6>
+                </div>
                 <div class="card-body">
-                    {% if user.is_authenticated %}
-                        {% if not user_applied %}
-                        <button type="button" class="btn btn-primary btn-lg w-100 mb-3" data-bs-toggle="modal" data-bs-target="#applyModal">
-                            {% trans "Откликнуться на вакансию" %}
-                        </button>
-                        {% else %}
-                        <button class="btn btn-success btn-lg w-100 mb-3" disabled>
-                            <i class="fas fa-check me-2"></i>{% trans "Вы откликнулись" %}
-                        </button>
+                    <div class="text-center mb-3">
+                        {% if job.employer.company_logo %}
+                            <img src="{{ job.employer.company_logo.url }}" alt="{{ job.employer.company_name }}" 
+                                 class="img-fluid rounded mb-3" style="max-height: 80px;">
                         {% endif %}
+                        <h5 class="mb-2">{{ job.employer.company_name }}</h5>
+                        {% if job.employer.is_verified %}
+                            <span class="badge bg-success mb-3">
+                                <i class="fas fa-check-circle me-1"></i>{% trans "Tasdiqlangan" %}
+                            </span>
+                        {% endif %}
+                    </div>
 
-                        <!-- FIXED: Use correct URL names for save/unsave -->
-                        {% if job_is_saved %}
-                        <form method="post" action="{% url 'jobs:unsave_job' job.pk %}" class="d-inline w-100">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-secondary w-100 mb-3">
-                                <i class="fas fa-bookmark text-warning me-2"></i>{% trans "В сохраненных" %}
-                            </button>
-                        </form>
-                        {% else %}
-                        <form method="post" action="{% url 'jobs:save_job' job.pk %}" class="d-inline w-100">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-secondary w-100 mb-3">
-                                <i class="far fa-bookmark me-2"></i>{% trans "Сохранить вакансию" %}
-                            </button>
-                        </form>
-                        {% endif %}
-                    {% else %}
-                    <a href="{% url 'account_login' %}?next={{ request.path }}" class="btn btn-primary btn-lg w-100 mb-3">
-                        {% trans "Войти для отклика" %}
-                    </a>
+                    {% if job.employer.company_description %}
+                        <p class="small">{{ job.employer.company_description|truncatewords:30 }}</p>
                     {% endif %}
 
-                    <!-- Статистика -->
-                    <div class="small text-muted text-center">
-                        <div class="mb-1">
-                            <i class="fas fa-eye me-1"></i>
-                            {% trans "Просмотров:" %} {{ job.views_count }}
-                        </div>
-                        <div>
-                            <i class="fas fa-users me-1"></i>
-                            {% trans "Откликов:" %} {{ job.applications_count }}
-                        </div>
+                    <div class="company-info small">
+                        {% if job.employer.industry %}
+                            <div class="d-flex justify-content-between py-1 border-bottom">
+                                <span class="text-muted">{% trans "Soha" %}:</span>
+                                <span>{{ job.employer.industry }}</span>
+                            </div>
+                        {% endif %}
+                        
+                        {% if job.employer.company_size %}
+                            <div class="d-flex justify-content-between py-1 border-bottom">
+                                <span class="text-muted">{% trans "Kompaniya hajmi" %}:</span>
+                                <span>{{ job.employer.get_company_size_display }}</span>
+                            </div>
+                        {% endif %}
+                        
+                        {% if job.employer.headquarters %}
+                            <div class="d-flex justify-content-between py-1 border-bottom">
+                                <span class="text-muted">{% trans "Bosh qarorgoh" %}:</span>
+                                <span>{{ job.employer.headquarters }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mt-3">
+                        <a href="#" class="btn btn-outline-primary btn-sm w-100">
+                            <i class="fas fa-eye me-2"></i>{% trans "Kompaniya sahifasi" %}
+                        </a>
                     </div>
                 </div>
             </div>
 
-            <!-- Информация о компании -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3 class="h5 mb-0">{% trans "О компании" %}</h3>
+            <!-- Детали вакансии -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">
+                        <i class="fas fa-info-circle me-2 text-primary"></i>
+                        {% trans "Vakansiya tafsilotlari" %}
+                    </h6>
                 </div>
                 <div class="card-body">
-                    <div class="d-flex align-items-center mb-3">
-                        {% if job.company.logo %}
-                        <img src="{{ job.company.logo.url }}" alt="{{ job.company.name }}" class="me-3" style="width: 50px; height: 50px; object-fit: contain;">
-                        {% endif %}
-                        <div>
-                            <h5 class="mb-0">{{ job.company.name }}</h5>
-                            {% if job.company.is_verified %}
-                            <small class="text-success"><i class="fas fa-check-circle"></i> {% trans "Проверенная компания" %}</small>
-                            {% endif %}
+                    <div class="job-details small">
+                        <div class="d-flex justify-content-between py-2 border-bottom">
+                            <span class="text-muted">{% trans "Tajriba darajasi" %}:</span>
+                            <span class="fw-semibold">{{ job.get_experience_level_display }}</span>
                         </div>
-                    </div>
-                    
-                    <p class="small">{{ job.company.description|truncatewords:30 }}</p>
-                    
-                    <div class="small">
-                        <div class="mb-1">
-                            <i class="fas fa-industry text-muted me-2"></i>
-                            {{ job.company.industry.name }}
+                        <div class="d-flex justify-content-between py-2 border-bottom">
+                            <span class="text-muted">{% trans "Ta'lim darajasi" %}:</span>
+                            <span class="fw-semibold">{{ job.get_education_level_display }}</span>
                         </div>
-                        <div class="mb-1">
-                            <i class="fas fa-users text-muted me-2"></i>
-                            {{ job.company.get_company_size_display }}
+                        <div class="d-flex justify-content-between py-2 border-bottom">
+                            <span class="text-muted">{% trans "Ish turi" %}:</span>
+                            <span class="fw-semibold">{{ job.get_employment_type_display }}</span>
                         </div>
-                        <div class="mb-1">
-                            <i class="fas fa-map-marker-alt text-muted me-2"></i>
-                            {{ job.company.headquarters }}
+                        <div class="d-flex justify-content-between py-2 border-bottom">
+                            <span class="text-muted">{% trans "Yaratilgan sana" %}:</span>
+                            <span class="fw-semibold">{{ job.created_at|date:"d.m.Y" }}</span>
                         </div>
-                        {% if job.company.founded_year %}
-                        <div class="mb-1">
-                            <i class="fas fa-calendar text-muted me-2"></i>
-                            {% trans "Основана в" %} {{ job.company.founded_year }}
-                        </div>
+                        {% if job.expires_at %}
+                            <div class="d-flex justify-content-between py-2">
+                                <span class="text-muted">{% trans "Muddati" %}:</span>
+                                <span class="fw-semibold text-danger">{{ job.expires_at|date:"d.m.Y" }}</span>
+                            </div>
                         {% endif %}
                     </div>
-                    
-                    <a href="{% url 'jobs:company_detail' job.company.pk %}" class="btn btn-outline-primary btn-sm w-100 mt-3">
-                        {% trans "Все вакансии компании" %} ({{ job.company.active_jobs_count }})
-                    </a>
                 </div>
             </div>
 
             <!-- Контактная информация -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3 class="h5 mb-0">{% trans "Контактная информация" %}</h3>
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">
+                        <i class="fas fa-envelope me-2 text-primary"></i>
+                        {% trans "Kontakt ma'lumotlari" %}
+                    </h6>
                 </div>
                 <div class="card-body">
-                    <div class="small">
-                        {% if job.contact_person %}
+                    <div class="contact-info small">
                         <div class="mb-2">
-                            <i class="fas fa-user text-muted me-2"></i>
-                            {{ job.contact_person }}
-                        </div>
-                        {% endif %}
-                        <div class="mb-2">
-                            <i class="fas fa-envelope text-muted me-2"></i>
+                            <i class="fas fa-envelope me-2 text-muted"></i>
                             <a href="mailto:{{ job.contact_email }}">{{ job.contact_email }}</a>
                         </div>
-                        {% if job.company.contact_phone %}
-                        <div class="mb-2">
-                            <i class="fas fa-phone text-muted me-2"></i>
-                            <a href="tel:{{ job.company.contact_phone }}">{{ job.company.contact_phone }}</a>
-                        </div>
+                        {% if job.contact_person %}
+                            <div class="mb-2">
+                                <i class="fas fa-user me-2 text-muted"></i>
+                                {{ job.contact_person }}
+                            </div>
                         {% endif %}
-                        {% if job.company.website %}
-                        <div class="mb-2">
-                            <i class="fas fa-globe text-muted me-2"></i>
-                            <a href="{{ job.company.website }}" target="_blank">{% trans "Веб-сайт" %}</a>
-                        </div>
+                        {% if job.application_url %}
+                            <div class="mt-3">
+                                <a href="{{ job.application_url }}" target="_blank" class="btn btn-outline-primary btn-sm w-100">
+                                    <i class="fas fa-external-link-alt me-2"></i>{% trans "Ariza uchun havola" %}
+                                </a>
+                            </div>
                         {% endif %}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Поделиться -->
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="h5 mb-0">{% trans "Поделиться" %}</h3>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex justify-content-around">
-                        <a href="#" class="text-muted share-btn" data-platform="linkedin" title="LinkedIn">
-                            <i class="fab fa-linkedin fa-lg"></i>
-                        </a>
-                        <a href="#" class="text-muted share-btn" data-platform="telegram" title="Telegram">
-                            <i class="fab fa-telegram fa-lg"></i>
-                        </a>
-                        <a href="#" class="text-muted share-btn" data-platform="whatsapp" title="WhatsApp">
-                            <i class="fab fa-whatsapp fa-lg"></i>
-                        </a>
-                        <a href="#" class="text-muted share-btn" data-platform="facebook" title="Facebook">
-                            <i class="fab fa-facebook fa-lg"></i>
-                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Похожие вакансии -->
+    {% if similar_jobs %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-random me-2 text-primary"></i>
+                        {% trans "O'xshash vakansiyalar" %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for similar_job in similar_jobs %}
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card h-100 border">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <a href="{% url 'jobs:job_detail' similar_job.id %}" class="text-decoration-none">
+                                            {{ similar_job.title }}
+                                        </a>
+                                    </h6>
+                                    <p class="card-text small text-muted mb-2">{{ similar_job.employer.company_name }}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="badge bg-primary">{{ similar_job.get_employment_type_display }}</span>
+                                        <small class="text-muted">{{ similar_job.created_at|timesince }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
 
-<!-- Модальное окно отклика -->
-{% if user.is_authenticated and not user_applied %}
+<!-- Модальное окно для отклика -->
+{% if user.is_authenticated and user.is_student and not has_applied %}
 <div class="modal fade" id="applyModal" tabindex="-1" aria-labelledby="applyModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <!-- FIXED: Use correct URL name for apply -->
-            <form method="post" action="{% url 'jobs:apply_for_job' job.pk %}">
+            <div class="modal-header">
+                <h5 class="modal-title" id="applyModalLabel">
+                    <i class="fas fa-paper-plane me-2"></i>{% trans "Ariza yuborish" %}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'jobs:apply_for_job' job.id %}">
                 {% csrf_token %}
-                <div class="modal-header">
-                    <h5 class="modal-title" id="applyModalLabel">{% trans "Откликнуться на вакансию" %}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
                 <div class="modal-body">
-                    <!-- Форма отклика будет здесь -->
-                    <div class="mb-3">
-                        <label class="form-label">{% trans "Выберите резюме" %}</label>
-                        <select name="cv" class="form-select" required>
-                            <option value="">{% trans "Выберите резюме" %}</option>
-                            <!-- Список резюме пользователя -->
-                        </select>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        {% trans "Siz" %} <strong>{{ job.title }}</strong> {% trans "vakansiyasiga ariza yubormoqchisiz" %}
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">{% trans "Сопроводительное письмо" %}</label>
-                        <textarea name="cover_letter" class="form-control" rows="6" 
-                                  placeholder="{% trans 'Расскажите, почему вы подходите на эту позицию...' %}" required></textarea>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">{% trans "Ожидаемая зарплата" %}</label>
-                                <input type="number" name="expected_salary" class="form-control" 
-                                       placeholder="{% trans 'Укажите в' %} {{ job.currency }}">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">{% trans "Период отработки (дни)" %}</label>
-                                <input type="number" name="notice_period" class="form-control" value="0" min="0">
-                            </div>
-                        </div>
-                    </div>
+                    
+                    {{ application_form.as_p }}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Отмена" %}</button>
-                    <button type="submit" class="btn btn-primary">{% trans "Отправить отклик" %}</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Bekor qilish" %}</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane me-2"></i>{% trans "Ariza yuborish" %}
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 {% endif %}
+
+<style>
+.job-description, .job-responsibilities, .job-requirements, .job-benefits {
+    line-height: 1.6;
+}
+
+.skills-tags .badge {
+    font-size: 0.8rem;
+    padding: 0.5rem 0.75rem;
+}
+
+.company-info .border-bottom:last-child {
+    border-bottom: none !important;
+}
+
+.job-details .border-bottom:last-child {
+    border-bottom: none !important;
+}
+
+.card {
+    border-radius: 0.75rem;
+}
+
+.breadcrumb {
+    background: transparent;
+    padding: 0;
+}
+
+.lead {
+    font-size: 1.1rem;
+    color: #495057;
+}
+</style>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-// Функции для поделиться
-document.querySelectorAll('.share-btn').forEach(btn => {
-    btn.addEventListener('click', function(e) {
-        e.preventDefault();
-        const platform = this.dataset.platform;
-        const url = window.location.href;
-        const title = '{{ job.title }} - {{ job.company.name }}';
-        
-        let shareUrl = '';
-        switch(platform) {
-            case 'linkedin':
-                shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
-                break;
-            case 'telegram':
-                shareUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`;
-                break;
-            case 'whatsapp':
-                shareUrl = `https://wa.me/?text=${encodeURIComponent(title + ' ' + url)}`;
-                break;
-            case 'facebook':
-                shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
-                break;
-        }
-        
-        if (shareUrl) {
-            window.open(shareUrl, '_blank', 'width=600,height=400');
-        }
-    });
-});
-
-// Увеличиваем счетчик просмотров - REMOVED INVALID URL
 document.addEventListener('DOMContentLoaded', function() {
-    // Remove the invalid increment_job_views URL call
-    // You'll need to add this URL pattern if you want this functionality
+    // Обработка формы отклика
+    const applyModal = document.getElementById('applyModal');
+    if (applyModal) {
+        applyModal.addEventListener('shown.bs.modal', function () {
+            // Можно добавить дополнительную логику при открытии модального окна
+        });
+    }
+
+    // Подсветка навыков
+    const skillBadges = document.querySelectorAll('.skills-tags .badge');
+    skillBadges.forEach(badge => {
+        badge.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.05)';
+            this.style.transition = 'transform 0.2s ease';
+        });
+        
+        badge.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+        });
+    });
+
+    // Плавная прокрутка к секциям
+    const sectionLinks = document.querySelectorAll('a[href^="#"]');
+    sectionLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetSection = document.querySelector(targetId);
+            if (targetSection) {
+                targetSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
 });
 </script>
 {% endblock %}

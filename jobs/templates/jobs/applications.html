@@ -1,0 +1,412 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Vakansiyalar bo'yicha arizalar" %} - OXU Career{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Заголовок -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 fw-bold text-primary mb-1">
+                        <i class="fas fa-users me-2"></i>{% trans "Vakansiyalar bo'yicha arizalar" %}
+                    </h1>
+                    <p class="text-muted mb-0">
+                        {% trans "Barcha vakansiyalarga kelgan arizalar ro'yxati" %}
+                    </p>
+                </div>
+                <div>
+                    <a href="{% url 'jobs:my_jobs' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-2"></i>{% trans "Vakansiyalarimga qaytish" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Статистика -->
+    <div class="row mb-4">
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card border-0 bg-primary text-white shadow-sm">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-paper-plane fa-2x mb-2 opacity-50"></i>
+                    <h4 class="fw-bold mb-1">{{ status_counts.total }}</h4>
+                    <small>{% trans "Jami arizalar" %}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card border-0 bg-warning text-dark shadow-sm">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-clock fa-2x mb-2 opacity-50"></i>
+                    <h4 class="fw-bold mb-1">{{ status_counts.applied }}</h4>
+                    <small>{% trans "Yuborilgan" %}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card border-0 bg-info text-white shadow-sm">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-search fa-2x mb-2 opacity-50"></i>
+                    <h4 class="fw-bold mb-1">{{ status_counts.reviewed }}</h4>
+                    <small>{% trans "Ko'rib chiqilmoqda" %}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card border-0 bg-purple text-white shadow-sm">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-star fa-2x mb-2 opacity-50"></i>
+                    <h4 class="fw-bold mb-1">{{ status_counts.shortlisted }}</h4>
+                    <small>{% trans "Saralangan" %}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card border-0 bg-orange text-white shadow-sm">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-comments fa-2x mb-2 opacity-50"></i>
+                    <h4 class="fw-bold mb-1">{{ status_counts.interview }}</h4>
+                    <small>{% trans "Intervyu" %}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card border-0 bg-success text-white shadow-sm">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-check-circle fa-2x mb-2 opacity-50"></i>
+                    <h4 class="fw-bold mb-1">{{ status_counts.hired }}</h4>
+                    <small>{% trans "Qabul qilingan" %}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Фильтры -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h6 class="mb-2">{% trans "Arizalarni filtrlash" %}</h6>
+                            <div class="btn-group" role="group">
+                                <a href="{% url 'jobs:employer_applications' %}" 
+                                   class="btn {% if not status_filter %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                                    {% trans "Barchasi" %}
+                                </a>
+                                <a href="{% url 'jobs:employer_applications' %}?status=applied" 
+                                   class="btn {% if status_filter == 'applied' %}btn-warning{% else %}btn-outline-warning{% endif %}">
+                                    {% trans "Yuborilgan" %}
+                                </a>
+                                <a href="{% url 'jobs:employer_applications' %}?status=reviewed" 
+                                   class="btn {% if status_filter == 'reviewed' %}btn-info{% else %}btn-outline-info{% endif %}">
+                                    {% trans "Ko'rib chiqilmoqda" %}
+                                </a>
+                                <a href="{% url 'jobs:employer_applications' %}?status=interview" 
+                                   class="btn {% if status_filter == 'interview' %}btn-orange{% else %}btn-outline-orange{% endif %}">
+                                    {% trans "Intervyu" %}
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="{% trans 'Kanditat yoki vakansiya bo\'yicha qidirish...' %}" id="searchInput">
+                                <button class="btn btn-outline-secondary" type="button">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Таблица заявок -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-0">
+                    {% if applications %}
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>{% trans "Kanditat" %}</th>
+                                        <th>{% trans "Vakansiya" %}</th>
+                                        <th>{% trans "Status" %}</th>
+                                        <th>{% trans "Kutilayotgan maosh" %}</th>
+                                        <th>{% trans "Ariza sanasi" %}</th>
+                                        <th>{% trans "CV" %}</th>
+                                        <th>{% trans "Amallar" %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for application in applications %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                {% if application.candidate.avatar %}
+                                                    <img src="{{ application.candidate.avatar.url }}" alt="{{ application.candidate.get_full_name }}" 
+                                                         class="rounded-circle me-3" width="40" height="40">
+                                                {% else %}
+                                                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                                         style="width: 40px; height: 40px;">
+                                                        <i class="fas fa-user text-white"></i>
+                                                    </div>
+                                                {% endif %}
+                                                <div>
+                                                    <h6 class="mb-1">{{ application.candidate.get_full_name }}</h6>
+                                                    <small class="text-muted">{{ application.candidate.email }}</small>
+                                                    {% if application.candidate.phone_number %}
+                                                        <br>
+                                                        <small class="text-muted">{{ application.candidate.phone_number }}</small>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <h6 class="mb-1">{{ application.job.title }}</h6>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-map-marker-alt me-1"></i>{{ application.job.location }}
+                                                    <span class="ms-2">{{ application.job.get_employment_type_display }}</span>
+                                                </small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm {% if application.status == 'applied' %}btn-warning{% elif application.status == 'reviewed' %}btn-info{% elif application.status == 'shortlisted' %}btn-purple{% elif application.status == 'interview' %}btn-orange{% elif application.status == 'hired' %}btn-success{% elif application.status == 'rejected' %}btn-danger{% else %}btn-secondary{% endif %} dropdown-toggle"
+                                                        type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    {{ application.get_status_display }}
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item status-change" href="#" data-status="applied">{% trans "Yuborilgan" %}</a></li>
+                                                    <li><a class="dropdown-item status-change" href="#" data-status="reviewed">{% trans "Ko'rib chiqilmoqda" %}</a></li>
+                                                    <li><a class="dropdown-item status-change" href="#" data-status="shortlisted">{% trans "Saralangan" %}</a></li>
+                                                    <li><a class="dropdown-item status-change" href="#" data-status="interview">{% trans "Intervyu" %}</a></li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li><a class="dropdown-item status-change text-success" href="#" data-status="hired">{% trans "Qabul qilish" %}</a></li>
+                                                    <li><a class="dropdown-item status-change text-danger" href="#" data-status="rejected">{% trans "Rad etish" %}</a></li>
+                                                </ul>
+                                            </div>
+                                            {% if application.is_read %}
+                                                <small class="text-success"><i class="fas fa-check-circle"></i> {% trans "O'qilgan" %}</small>
+                                            {% else %}
+                                                <small class="text-warning"><i class="fas fa-clock"></i> {% trans "Yangi" %}</small>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if application.expected_salary %}
+                                                <strong>{{ application.expected_salary }} {{ application.job.currency }}</strong>
+                                            {% else %}
+                                                <span class="text-muted">{% trans "Ko'rsatilmagan" %}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">{{ application.created_at|date:"d.m.Y" }}</small>
+                                            <br>
+                                            <small class="text-muted">{{ application.created_at|time:"H:i" }}</small>
+                                        </td>
+                                        <td>
+                                            {% if application.cv %}
+                                                <a href="{{ application.cv.get_absolute_url }}" class="btn btn-outline-primary btn-sm" target="_blank">
+                                                    <i class="fas fa-file-pdf"></i> {% trans "CV ni ko'rish" %}
+                                                </a>
+                                            {% else %}
+                                                <span class="text-muted">{% trans "CV yo'q" %}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <button class="btn btn-outline-primary view-application" 
+                                                        data-application-id="{{ application.id }}"
+                                                        title="{% trans 'Ariza tafsilotlari' %}">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <a href="mailto:{{ application.candidate.email }}" class="btn btn-outline-info" title="{% trans 'Email yuborish' %}">
+                                                    <i class="fas fa-envelope"></i>
+                                                </a>
+                                                <button class="btn btn-outline-success add-note" 
+                                                        data-application-id="{{ application.id }}"
+                                                        title="{% trans 'Izoh qo\'shish' %}">
+                                                    <i class="fas fa-sticky-note"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-users fa-4x text-muted mb-3"></i>
+                            <h5 class="text-muted">{% trans "Hozircha arizalar mavjud emas" %}</h5>
+                            <p class="text-muted mb-4">
+                                {% if status_filter %}
+                                    {% trans "Ushbu holatdagi arizalar topilmadi" %}
+                                {% else %}
+                                    {% trans "Hozircha hech qanday vakansiyangizga ariza kelmagan" %}
+                                {% endif %}
+                            </p>
+                            <a href="{% url 'jobs:job_create' %}" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>{% trans "Yangi vakansiya yaratish" %}
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для просмотра заявки -->
+<div class="modal fade" id="applicationModal" tabindex="-1" aria-labelledby="applicationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="applicationModalLabel">{% trans "Ariza tafsilotlari" %}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="applicationModalBody">
+                <!-- Контент будет загружен через AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.bg-purple { background-color: #6f42c1 !important; }
+.bg-orange { background-color: #fd7e14 !important; }
+.btn-purple { background-color: #6f42c1; border-color: #6f42c1; color: white; }
+.btn-orange { background-color: #fd7e14; border-color: #fd7e14; color: white; }
+.btn-outline-purple { color: #6f42c1; border-color: #6f42c1; }
+.btn-outline-orange { color: #fd7e14; border-color: #fd7e14; }
+.btn-outline-purple:hover { background-color: #6f42c1; color: white; }
+.btn-outline-orange:hover { background-color: #fd7e14; color: white; }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Поиск ариз
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    }
+
+    // Изменение статуса аризы
+    const statusButtons = document.querySelectorAll('.status-change');
+    statusButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const newStatus = this.getAttribute('data-status');
+            const applicationId = this.closest('tr').querySelector('.view-application').getAttribute('data-application-id');
+            
+            // Отправка AJAX запроса для изменения статуса
+            fetch(`/jobs/applications/${applicationId}/update-status/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    status: newStatus
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload(); // Перезагрузка страницы для обновления статуса
+                } else {
+                    alert('{% trans "Statusni o\'zgartirishda xatolik yuz berdi" %}');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('{% trans "Statusni o\'zgartirishda xatolik yuz berdi" %}');
+            });
+        });
+    });
+
+    // Просмотр деталей аризы
+    const viewButtons = document.querySelectorAll('.view-application');
+    const applicationModal = new bootstrap.Modal(document.getElementById('applicationModal'));
+    
+    viewButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const applicationId = this.getAttribute('data-application-id');
+            
+            // Загрузка данных аризы через AJAX
+            fetch(`/jobs/applications/${applicationId}/detail/`)
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('applicationModalBody').innerHTML = html;
+                applicationModal.show();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('applicationModalBody').innerHTML = 
+                    '<div class="alert alert-danger">{% trans "Ma\'lumotlarni yuklashda xatolik yuz berdi" %}</div>';
+                applicationModal.show();
+            });
+        });
+    });
+
+    // Добавление заметки
+    const noteButtons = document.querySelectorAll('.add-note');
+    noteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const applicationId = this.getAttribute('data-application-id');
+            const note = prompt('{% trans "Izoh qo\'shish:" %}');
+            
+            if (note) {
+                // Отправка AJAX запроса для добавления заметки
+                fetch(`/jobs/applications/${applicationId}/add-note/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        note: note
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('{% trans "Izoh muvaffaqiyatli qo\'shildi" %}');
+                    } else {
+                        alert('{% trans "Izoh qo\'shishda xatolik yuz berdi" %}');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('{% trans "Izoh qo\'shishda xatolik yuz berdi" %}');
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

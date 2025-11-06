@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Create Company" %} - OXU Career{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-building me-2"></i>
+                        {% trans "Create New Company" %}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">{% trans "Create" %}</button>
+                            <a href="{% url 'jobs:company_list' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

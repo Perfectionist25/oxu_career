@@ -34,9 +34,19 @@
                 </div>
                 <div>
                     {% if is_employer_view %}
-                        <a href="{% url 'jobs:job_create' %}" class="btn btn-primary">
-                            <i class="fas fa-plus me-2"></i>{% trans "Yangi vakansiya" %}
-                        </a>
+                        <div class="btn-group">
+                            <a href="{% url 'jobs:job_create' %}" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>{% trans "Yangi vakansiya" %}
+                            </a>
+                            <a href="{% url 'jobs:employer_applications' %}" class="btn btn-outline-info position-relative">
+                                <i class="fas fa-users me-2"></i>{% trans "Arizalar" %}
+                                {% if total_applications_count > 0 %}
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ total_applications_count }}
+                                </span>
+                                {% endif %}
+                            </a>
+                        </div>
                     {% else %}
                         <div class="btn-group">
                             <a href="{% url 'jobs:job_list' %}" class="btn btn-primary">
@@ -87,15 +97,7 @@
             <div class="card border-0 bg-info text-white shadow-sm">
                 <div class="card-body text-center py-3">
                     <i class="fas fa-eye fa-2x mb-2 opacity-50"></i>
-                    <h4 class="fw-bold mb-1">
-                        {% with total_views=0 %}
-                            {% for job in jobs.object_list %}
-                                {% with total_views=total_views|add:job.views_count %}
-                                {% endwith %}
-                            {% endfor %}
-                            {{ total_views }}
-                        {% endwith %}
-                    </h4>
+                    <h4 class="fw-bold mb-1">{{ total_views }}</h4>
                     <small>{% trans "Jami ko'rishlar" %}</small>
                 </div>
             </div>
@@ -159,6 +161,41 @@
         {% endif %}
     </div>
 
+    <!-- Фильтры и поиск -->
+    {% if is_employer_view and jobs %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body py-3">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <div class="btn-group" role="group">
+                                <a href="?status=all" class="btn {% if not status_filter %}btn-primary{% else %}btn-outline-primary{% endif %} btn-sm">
+                                    {% trans "Barchasi" %}
+                                </a>
+                                <a href="?status=active" class="btn {% if status_filter == 'active' %}btn-success{% else %}btn-outline-success{% endif %} btn-sm">
+                                    {% trans "Faol" %}
+                                </a>
+                                <a href="?status=draft" class="btn {% if status_filter == 'draft' %}btn-warning{% else %}btn-outline-warning{% endif %} btn-sm">
+                                    {% trans "Qoralama" %}
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group input-group-sm">
+                                <input type="text" class="form-control" placeholder="{% trans 'Vakansiya nomi boʻyicha qidirish...' %}" id="searchInput">
+                                <button class="btn btn-outline-secondary" type="button" id="searchButton">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Содержимое -->
     <div class="row">
         <div class="col-12">
@@ -168,8 +205,8 @@
                         <!-- Таблица вакансий для работодателя -->
                         {% if jobs %}
                             <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
+                                <table class="table table-hover" id="jobsTable">
+                                    <thead class="table-light">
                                         <tr>
                                             <th>{% trans "Vakansiya nomi" %}</th>
                                             <th>{% trans "Kompaniya" %}</th>
@@ -182,30 +219,43 @@
                                     </thead>
                                     <tbody>
                                         {% for job in jobs %}
-                                        <tr>
+                                        <tr data-job-title="{{ job.title|lower }}">
                                             <td>
                                                 <div>
-                                                    <h6 class="mb-1">{{ job.title }}</h6>
+                                                    <h6 class="mb-1">
+                                                        <a href="{% url 'jobs:job_detail' job.id %}" class="text-decoration-none text-dark">
+                                                            {{ job.title }}
+                                                        </a>
+                                                        {% if job.is_urgent %}
+                                                            <span class="badge bg-danger ms-1">{% trans "Shoshilinch" %}</span>
+                                                        {% endif %}
+                                                        {% if job.is_featured %}
+                                                            <span class="badge bg-warning ms-1">{% trans "Tavsiya etilgan" %}</span>
+                                                        {% endif %}
+                                                    </h6>
                                                     <small class="text-muted">
                                                         <i class="fas fa-map-marker-alt me-1"></i>{{ job.location }}
                                                         {% if job.remote_work %}
                                                             <span class="badge bg-success ms-2">{% trans "Uzoq ish" %}</span>
+                                                        {% endif %}
+                                                        {% if job.hybrid_work %}
+                                                            <span class="badge bg-info ms-2">{% trans "Gibrid" %}</span>
                                                         {% endif %}
                                                     </small>
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="d-flex align-items-center">
-                                                    {% if job.company.logo %}
-                                                        <img src="{{ job.company.logo.url }}" alt="{{ job.company.name }}" 
-                                                             class="rounded me-2" width="30" height="30">
+                                                    {% if job.employer.company_logo %}
+                                                        <img src="{{ job.employer.company_logo.url }}" alt="{{ job.employer.company_name }}" 
+                                                             class="rounded me-2" width="30" height="30" style="object-fit: cover;">
                                                     {% else %}
                                                         <div class="bg-secondary rounded d-flex align-items-center justify-content-center me-2" 
                                                              style="width: 30px; height: 30px;">
                                                             <i class="fas fa-building text-white" style="font-size: 12px;"></i>
                                                         </div>
                                                     {% endif %}
-                                                    <span>{{ job.company.name }}</span>
+                                                    <span class="small">{{ job.employer.company_name }}</span>
                                                 </div>
                                             </td>
                                             <td>
@@ -214,30 +264,53 @@
                                                 {% else %}
                                                     <span class="badge bg-secondary">{% trans "Qoralama" %}</span>
                                                 {% endif %}
-                                                {% if job.is_featured %}
-                                                    <span class="badge bg-warning mt-1">{% trans "Tavsiya etilgan" %}</span>
+                                                {% if job.expires_at and job.is_expired %}
+                                                    <span class="badge bg-danger mt-1">{% trans "Muddati o'tgan" %}</span>
                                                 {% endif %}
                                             </td>
                                             <td>
-                                                <span class="badge bg-info">{{ job.applications_count }}</span>
+                                                <a href="{% url 'jobs:employer_applications' %}?job={{ job.id }}" class="text-decoration-none">
+                                                    <span class="badge bg-info">{{ job.applications_count }}</span>
+                                                </a>
                                             </td>
                                             <td>
                                                 <span class="badge bg-warning">{{ job.views_count }}</span>
                                             </td>
                                             <td>
                                                 <small class="text-muted">{{ job.created_at|date:"d.m.Y" }}</small>
+                                                {% if job.expires_at %}
+                                                    <br>
+                                                    <small class="text-muted">
+                                                        {% trans "Muddati" %}: {{ job.expires_at|date:"d.m.Y" }}
+                                                    </small>
+                                                {% endif %}
                                             </td>
                                             <td>
                                                 <div class="btn-group btn-group-sm">
                                                     <a href="{% url 'jobs:job_detail' job.id %}" class="btn btn-outline-primary" title="{% trans 'Koʻrish' %}">
                                                         <i class="fas fa-eye"></i>
                                                     </a>
-                                                    <a href="{% url 'jobs:edit_job' job.id %}" class="btn btn-outline-secondary" title="{% trans 'Tahrirlash' %}">
+                                                    <a href="{% url 'jobs:job_edit' job.id %}" class="btn btn-outline-secondary" title="{% trans 'Tahrirlash' %}">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
-                                                    <a href="{% url 'jobs:job_applications' job.id %}" class="btn btn-outline-info" title="{% trans 'Arizalar' %}">
-                                                        <i class="fas fa-users"></i>
-                                                    </a>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-outline-info dropdown-toggle" type="button" data-bs-toggle="dropdown" title="{% trans 'Qoʻshimcha amallar' %}">
+                                                            <i class="fas fa-cog"></i>
+                                                        </button>
+                                                        <ul class="dropdown-menu">
+                                                            <li>
+                                                                <a class="dropdown-item" href="{% url 'jobs:employer_applications' %}?job={{ job.id }}">
+                                                                    <i class="fas fa-users me-2"></i>{% trans "Arizalarni ko'rish" %}
+                                                                </a>
+                                                            </li>
+                                                            <li><hr class="dropdown-divider"></li>
+                                                            <li>
+                                                                <a class="dropdown-item text-danger" href="{% url 'jobs:job_delete' job.id %}" onclick="return confirm('{% trans 'Haqiqatan ham bu vakansiyani o\'chirmoqchimisiz?' %}')">
+                                                                    <i class="fas fa-trash me-2"></i>{% trans "O'chirish" %}
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
                                                 </div>
                                             </td>
                                         </tr>
@@ -252,7 +325,7 @@
                                 <ul class="pagination justify-content-center">
                                     {% if jobs.has_previous %}
                                         <li class="page-item">
-                                            <a class="page-link" href="?page={{ jobs.previous_page_number }}">{% trans "Oldingi" %}</a>
+                                            <a class="page-link" href="?page={{ jobs.previous_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}">{% trans "Oldingi" %}</a>
                                         </li>
                                     {% endif %}
                                     
@@ -263,14 +336,14 @@
                                             </li>
                                         {% elif num > jobs.number|add:'-3' and num < jobs.number|add:'3' %}
                                             <li class="page-item">
-                                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                                <a class="page-link" href="?page={{ num }}{% if status_filter %}&status={{ status_filter }}{% endif %}">{{ num }}</a>
                                             </li>
                                         {% endif %}
                                     {% endfor %}
                                     
                                     {% if jobs.has_next %}
                                         <li class="page-item">
-                                            <a class="page-link" href="?page={{ jobs.next_page_number }}">{% trans "Keyingi" %}</a>
+                                            <a class="page-link" href="?page={{ jobs.next_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}">{% trans "Keyingi" %}</a>
                                         </li>
                                     {% endif %}
                                 </ul>
@@ -292,7 +365,7 @@
                         {% if applications %}
                             <div class="table-responsive">
                                 <table class="table table-hover">
-                                    <thead>
+                                    <thead class="table-light">
                                         <tr>
                                             <th>{% trans "Vakansiya" %}</th>
                                             <th>{% trans "Kompaniya" %}</th>
@@ -307,7 +380,11 @@
                                         <tr>
                                             <td>
                                                 <div>
-                                                    <h6 class="mb-1">{{ application.job.title }}</h6>
+                                                    <h6 class="mb-1">
+                                                        <a href="{% url 'jobs:job_detail' application.job.id %}" class="text-decoration-none text-dark">
+                                                            {{ application.job.title }}
+                                                        </a>
+                                                    </h6>
                                                     <small class="text-muted">
                                                         <i class="fas fa-map-marker-alt me-1"></i>{{ application.job.location }}
                                                         <span class="ms-2">{{ application.job.get_employment_type_display }}</span>
@@ -316,33 +393,30 @@
                                             </td>
                                             <td>
                                                 <div class="d-flex align-items-center">
-                                                    {% if application.job.company.logo %}
-                                                        <img src="{{ application.job.company.logo.url }}" alt="{{ application.job.company.name }}" 
-                                                             class="rounded me-2" width="30" height="30">
+                                                    {% if application.job.employer.company_logo %}
+                                                        <img src="{{ application.job.employer.company_logo.url }}" alt="{{ application.job.employer.company_name }}" 
+                                                             class="rounded me-2" width="30" height="30" style="object-fit: cover;">
                                                     {% else %}
                                                         <div class="bg-secondary rounded d-flex align-items-center justify-content-center me-2" 
                                                              style="width: 30px; height: 30px;">
                                                             <i class="fas fa-building text-white" style="font-size: 12px;"></i>
                                                         </div>
                                                     {% endif %}
-                                                    <span>{{ application.job.company.name }}</span>
+                                                    <span class="small">{{ application.job.employer.company_name }}</span>
                                                 </div>
                                             </td>
                                             <td>
-                                                {% if application.status == 'applied' %}
-                                                    <span class="badge bg-warning">{% trans "Yuborilgan" %}</span>
-                                                {% elif application.status == 'reviewed' %}
-                                                    <span class="badge bg-info">{% trans "Ko'rib chiqilmoqda" %}</span>
-                                                {% elif application.status == 'shortlisted' %}
-                                                    <span class="badge bg-primary">{% trans "Saralangan" %}</span>
-                                                {% elif application.status == 'interview' %}
-                                                    <span class="badge bg-purple">{% trans "Intervyu" %}</span>
-                                                {% elif application.status == 'hired' %}
-                                                    <span class="badge bg-success">{% trans "Qabul qilindi" %}</span>
-                                                {% elif application.status == 'rejected' %}
-                                                    <span class="badge bg-danger">{% trans "Rad etildi" %}</span>
-                                                {% elif application.status == 'withdrawn' %}
-                                                    <span class="badge bg-secondary">{% trans "Bekor qilindi" %}</span>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-sm {% if application.status == 'applied' %}btn-warning{% elif application.status == 'reviewed' %}btn-info{% elif application.status == 'shortlisted' %}btn-primary{% elif application.status == 'interview' %}btn-purple{% elif application.status == 'hired' %}btn-success{% elif application.status == 'rejected' %}btn-danger{% else %}btn-secondary{% endif %} dropdown-toggle"
+                                                            type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        {{ application.get_status_display }}
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li><span class="dropdown-item-text small">{% trans "Oxirgi yangilangan" %}: {{ application.status_changed_at|date:"d.m.Y H:i" }}</span></li>
+                                                    </ul>
+                                                </div>
+                                                {% if application.is_read %}
+                                                    <small class="text-success d-block mt-1"><i class="fas fa-check-circle"></i> {% trans "Ko'rib chiqilgan" %}</small>
                                                 {% endif %}
                                             </td>
                                             <td>
@@ -353,20 +427,30 @@
                                                 {% endif %}
                                             </td>
                                             <td>
-                                                <small class="text-muted">{{ application.created_at|date:"d.m.Y H:i" }}</small>
+                                                <small class="text-muted">{{ application.created_at|date:"d.m.Y" }}</small>
+                                                <br>
+                                                <small class="text-muted">{{ application.created_at|time:"H:i" }}</small>
                                             </td>
                                             <td>
                                                 <div class="btn-group btn-group-sm">
                                                     <a href="{% url 'jobs:job_detail' application.job.id %}" class="btn btn-outline-primary" title="{% trans 'Vakansiyani koʻrish' %}">
                                                         <i class="fas fa-eye"></i>
                                                     </a>
-                                                    <a href="{% url 'jobs:application_detail' application.id %}" class="btn btn-outline-info" title="{% trans 'Ariza tafsilotlari' %}">
+                                                    <button class="btn btn-outline-info view-application-details" 
+                                                            data-application-id="{{ application.id }}"
+                                                            title="{% trans 'Ariza tafsilotlari' %}">
                                                         <i class="fas fa-info-circle"></i>
-                                                    </a>
+                                                    </button>
                                                     {% if application.status == 'applied' or application.status == 'reviewed' %}
-                                                        <button class="btn btn-outline-danger" title="{% trans 'Arizani bekor qilish' %}">
-                                                            <i class="fas fa-times"></i>
-                                                        </button>
+                                                        <form method="post" action="{% url 'jobs:update_application_status' application.id %}" class="d-inline">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="status" value="withdrawn">
+                                                            <button type="submit" class="btn btn-outline-danger" 
+                                                                    onclick="return confirm('{% trans 'Haqiqatan ham arizani bekor qilmoqchimisiz?' %}')"
+                                                                    title="{% trans 'Arizani bekor qilish' %}">
+                                                                <i class="fas fa-times"></i>
+                                                            </button>
+                                                        </form>
                                                     {% endif %}
                                                 </div>
                                             </td>
@@ -423,9 +507,114 @@
     </div>
 </div>
 
+<!-- Модальное окно для деталей заявки -->
+<div class="modal fade" id="applicationDetailsModal" tabindex="-1" aria-labelledby="applicationDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="applicationDetailsModalLabel">{% trans "Ariza tafsilotlari" %}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="applicationDetailsContent">
+                <!-- Контент будет загружен через AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
-.bg-purple {
-    background-color: #6f42c1 !important;
-}
+.bg-purple { background-color: #6f42c1 !important; }
+.btn-purple { background-color: #6f42c1; border-color: #6f42c1; color: white; }
+.table th { border-top: none; font-weight: 600; }
+.card { border-radius: 0.75rem; }
+.badge { font-weight: 500; }
 </style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Поиск вакансий для работодателя
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    
+    if (searchInput && searchButton) {
+        function performSearch() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const rows = document.querySelectorAll('#jobsTable tbody tr');
+            
+            rows.forEach(row => {
+                const jobTitle = row.getAttribute('data-job-title');
+                if (jobTitle.includes(searchTerm) || searchTerm === '') {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+        
+        searchInput.addEventListener('input', performSearch);
+        searchButton.addEventListener('click', performSearch);
+        
+        // Обработка Enter в поле поиска
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+    }
+
+    // Просмотр деталей заявки для студента
+    const viewButtons = document.querySelectorAll('.view-application-details');
+    const applicationModal = new bootstrap.Modal(document.getElementById('applicationDetailsModal'));
+    
+    viewButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const applicationId = this.getAttribute('data-application-id');
+            
+            // Показываем индикатор загрузки
+            document.getElementById('applicationDetailsContent').innerHTML = `
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">{% trans "Yuklanmoqda..." %}</span>
+                    </div>
+                    <p class="mt-2 text-muted">{% trans "Ma'lumotlar yuklanmoqda..." %}</p>
+                </div>
+            `;
+            
+            applicationModal.show();
+            
+            // Загрузка данных через AJAX
+            fetch(`/jobs/applications/${applicationId}/detail/`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    document.getElementById('applicationDetailsContent').innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('applicationDetailsContent').innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            {% trans "Ma'lumotlarni yuklashda xatolik yuz berdi. Iltimos, keyinroq urinib ko'ring." %}
+                        </div>
+                    `;
+                });
+        });
+    });
+
+    // Автоматическое обновление статусов (опционально)
+    function updateApplicationStatuses() {
+        // Здесь можно добавить логику для автоматического обновления статусов
+        // Например, через WebSockets или периодические AJAX запросы
+    }
+    
+    // Запускаем обновление каждые 30 секунд
+    setInterval(updateApplicationStatuses, 30000);
+});
+</script>
 {% endblock %}

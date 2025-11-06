@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.views.generic import TemplateView, ListView
 from django.db.models import Count
+from django.utils import timezone
 from .models import ContactMessage
 from .forms import ContactForm
 from jobs.models import Job
@@ -21,11 +22,10 @@ def home(request):
         'resources_count': Resource.objects.filter(is_published=True).count(),
     }
     
-    # Последние вакансии
-    latest_jobs = Job.objects.filter(is_active=True).select_related('company')[:6]
+    # Последние вакансии - ИСПРАВЛЕНО: select_related('employer') вместо 'company'
+    latest_jobs = Job.objects.filter(is_active=True).select_related('employer')[:6]
     
     # Предстоящие мероприятия
-    from django.utils import timezone
     upcoming_events = Event.objects.filter(
         status='published', 
         start_date__gt=timezone.now()

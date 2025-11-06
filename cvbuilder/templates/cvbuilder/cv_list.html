@@ -1,284 +1,696 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
+
 {% block content %}
-<div class="container py-5">
-    <!-- Header Section -->
-    <div class="row mb-5">
-        <div class="col-lg-8 mx-auto text-center">
-            <h1 class="display-5 fw-bold text-primary mb-3">Mening Rezyumelarim</h1>
-            <p class="lead text-muted">Barcha yaratilgan rezyumelaringizni boshqaring va yangilarini yarating</p>
+<div class="container py-4">
+    <!-- Sarlavha -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 fw-bold text-dark mb-1">Mening Rezyumelarim</h1>
+                    <p class="text-muted mb-0">Barcha yaratilgan rezyumelaringizni boshqaring</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'cvbuilder:cv_stats' %}" class="btn btn-outline-info btn-sm">
+                        <i class="fas fa-chart-bar me-1"></i>Statistika
+                    </a>
+                    <a href="{% url 'cvbuilder:cv_create' %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus me-1"></i>Yangi Rezyume
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Actions Bar -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h4 class="fw-bold text-dark mb-0">Rezyumelar ro'yxati</h4>
-            <p class="text-muted mb-0">
-                {% if cvs %}
-                    Jami: {{ cvs|length }} ta rezyume
-                {% else %}
-                    Hozircha rezyume mavjud emas
-                {% endif %}
-            </p>
-        </div>
-        <a href="{% url 'cvbuilder:cv_create' %}" class="btn btn-primary">  <!-- Исправлено -->
-            <i class="fas fa-plus me-2"></i>Yangi Rezyume
-        </a>
-    </div>
-
-    {% if cvs %}
-    <!-- CVs Grid -->
-    <div class="row g-4">
-        {% for cv in cvs %}
-        <div class="col-xl-4 col-lg-6 col-md-6">
-            <div class="card border-0 shadow-sm h-100 cv-card">
-                <div class="card-body p-4">
-                    <!-- CV Header -->
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div>
-                            <h5 class="fw-bold text-dark mb-1">{{ cv.full_name|default:"Ism kiritilmagan" }}</h5>
-                            <p class="text-primary fw-semibold mb-1">{{ cv.profession|default:"Kasb kiritilmagan" }}</p>  <!-- Исправлено: position → profession -->
-                        </div>
-                        <div class="dropdown">
-                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-ellipsis-v"></i>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a class="dropdown-item" href="{% url 'cvbuilder:cv_detail' cv.id %}">  <!-- Исправлено -->
-                                        <i class="fas fa-eye me-2"></i>Ko'rish
-                                    </a>
+    <!-- Status Tablar -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body py-3">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <ul class="nav nav-pills" id="statusTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab">
+                                        Barchasi <span class="badge bg-secondary ms-1">{{ cvs.count }}</span>
+                                    </button>
                                 </li>
-                                <li>
-                                    <a class="dropdown-item" href="{% url 'cvbuilder:cv_edit' cv.id %}">  <!-- Исправлено -->
-                                        <i class="fas fa-edit me-2"></i>Tahrirlash
-                                    </a>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="published-tab" data-bs-toggle="tab" data-bs-target="#published" type="button" role="tab">
+                                        <i class="fas fa-eye me-1"></i>Nashr qilingan 
+                                        <span class="badge bg-success ms-1">{{ published_count }}</span>
+                                    </button>
                                 </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <a class="dropdown-item text-danger" href="{% url 'cvbuilder:cv_delete' cv.id %}" onclick="return confirm('Haqiqatan ham ushbu rezyumeni o\'chirmoqchimisiz?')">  <!-- Исправлено -->
-                                        <i class="fas fa-trash me-2"></i>O'chirish
-                                    </a>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="draft-tab" data-bs-toggle="tab" data-bs-target="#draft" type="button" role="tab">
+                                        <i class="fas fa-edit me-1"></i>Qoralama 
+                                        <span class="badge bg-warning ms-1">{{ draft_count }}</span>
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="archived-tab" data-bs-toggle="tab" data-bs-target="#archived" type="button" role="tab">
+                                        <i class="fas fa-archive me-1"></i>Arxiv 
+                                        <span class="badge bg-secondary ms-1">{{ archived_count }}</span>
+                                    </button>
                                 </li>
                             </ul>
                         </div>
-                    </div>
-
-                    <!-- CV Details -->
-                    <div class="mb-3">
-                        <div class="d-flex text-muted small mb-2">
-                            <i class="fas fa-envelope me-2"></i>
-                            <span>{{ cv.email|default:"Email kiritilmagan" }}</span>
-                        </div>
-                        <div class="d-flex text-muted small mb-2">
-                            <i class="fas fa-phone me-2"></i>
-                            <span>{{ cv.phone|default:"Telefon kiritilmagan" }}</span>
-                        </div>
-                        <div class="d-flex text-muted small">
-                            <i class="fas fa-calendar me-2"></i>
-                            <span>Yaratilgan: {{ cv.created_at|date:"d.m.Y" }}</span>
+                        <div class="col-md-4 text-end">
+                            <small class="text-muted" id="resumeCountText">
+                                {% if cvs %}
+                                    Jami: {{ cvs|length }} ta rezyume
+                                {% else %}
+                                    Rezyumelar mavjud emas
+                                {% endif %}
+                            </small>
                         </div>
                     </div>
-
-                    <!-- Professional Summary Preview -->
-                    {% if cv.summary %}  <!-- Исправлено: professional_summary → summary -->
-                    <div class="mb-3">
-                        <p class="text-muted small mb-0">{{ cv.summary|truncatechars:30 }}</p>
-                    </div>
-                    {% endif %}
-
-                    <!-- Action Buttons -->
-                    <div class="d-flex gap-2">
-                        <a href="{% url 'cvbuilder:cv_detail' cv.id %}" class="btn btn-outline-primary btn-sm flex-fill">  <!-- Исправлено -->
-                            <i class="fas fa-eye me-1"></i>Ko'rish
-                        </a>
-                        <a href="{% url 'cvbuilder:cv_edit' cv.id %}" class="btn btn-outline-secondary btn-sm flex-fill">  <!-- Исправлено -->
-                            <i class="fas fa-edit me-1"></i>Tahrirlash
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- CV Footer -->
-                <div class="card-footer bg-transparent border-0 pt-0">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <small class="text-muted">
-                            {% if cv.updated_at != cv.created_at %}
-                            <div class="subtitle is-6 m-3">Yangilangan:    {{ cv.updated_at|date:"d.m.Y" }}</div>
-                            {% else %}
-                            <div class="subtitle is-6 m-3">
-                                Yangi yaratilgan
-                            </div>
-                            {% endif %}
-                        </small>
-                        <a href="{% url 'cvbuilder:cv_export_pdf' cv.id %}" class="btn btn-primary btn-sm">  <!-- Исправлено -->
-                            <i class="fas fa-download me-1"></i>PDF
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-
-    <!-- Bulk Actions -->
-    <div class="card border-0 shadow-sm mt-4">
-        <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h6 class="fw-bold text-dark mb-1">Tezkor amallar</h6>
-                    <small class="text-muted">Barcha rezyumelaringiz ustida amallar bajarish</small>
-                </div>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-outline-primary btn-sm">
-                        <i class="fas fa-download me-1"></i>Barchasini yuklab olish
-                    </button>
-                    <button class="btn btn-outline-secondary btn-sm">
-                        <i class="fas fa-print me-1"></i>Barchasini chop etish
-                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    {% else %}
-    <!-- Empty State -->
-    <div class="text-center py-5">
-        <div class="mb-4">
-            <i class="fas fa-file-alt fa-4x text-muted mb-3"></i>
-            <h4 class="text-muted">Hozircha rezyume mavjud emas</h4>
-            <p class="text-muted">Birinchi rezyumeningizni yarating va karyera imkoniyatlarini oching</p>
+    <!-- Qidiruv va Filtrlar -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-2">
+            <div class="input-group input-group-sm">
+                <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-muted"></i></span>
+                <input type="text" class="form-control border-start-0" id="searchInput" placeholder="Rezyumelarni qidirish...">
+            </div>
         </div>
-        <div class="d-flex justify-content-center gap-3">
-            <a href="{% url 'cvbuilder:cv_create' %}" class="btn btn-primary btn-lg">  <!-- Исправлено -->
-                <i class="fas fa-plus me-2"></i>Yangi Rezyume Yaratish
-            </a>
-            <a href="{% url 'cvbuilder:template_preview' 1 %}" class="btn btn-outline-primary btn-lg">  <!-- Исправлено (нужно указать существующий template_id) -->
-                <i class="fas fa-magic me-2"></i>Shablonlarni Ko'rish
-            </a>
+        <div class="col-md-3 mb-2">
+            <select class="form-select form-select-sm" id="templateFilter">
+                <option value="">Barcha shablonlar</option>
+                {% for template in templates %}
+                    <option value="{{ template.id }}">{{ template.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3 mb-2">
+            <select class="form-select form-select-sm" id="sortSelect">
+                <option value="newest">Yangi avval</option>
+                <option value="oldest">Eski avval</option>
+                <option value="name_asc">Ism A-Z</option>
+                <option value="name_desc">Ism Z-A</option>
+            </select>
+        </div>
+        <div class="col-md-2 mb-2">
+            <button class="btn btn-outline-secondary btn-sm w-100" onclick="resetFilters()">
+                <i class="fas fa-redo me-1"></i>Tozalash
+            </button>
         </div>
     </div>
-    {% endif %}
 
-    <!-- Quick Stats -->
+    <!-- Rezyumelar Jadvali -->
+    <div class="tab-content" id="statusTabContent">
+        <!-- Barcha Rezyumelar -->
+        <div class="tab-pane fade show active" id="all" role="tabpanel">
+            {% if cvs %}
+            <div class="card">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 25%">Ism va Sarlavha</th>
+                                    <th style="width: 20%">Aloqa</th>
+                                    <th style="width: 15%">Shablon</th>
+                                    <th style="width: 15%">Holati</th>
+                                    <th style="width: 15%">Sana</th>
+                                    <th style="width: 10%" class="text-center">Harakatlar</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allResumes">
+                                {% for cv in cvs %}
+                                <tr class="resume-item" data-status="{{ cv.status }}" data-template="{{ cv.template.id }}">
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="flex-shrink-0">
+                                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                    <i class="fas fa-file-alt text-white"></i>
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1 ms-3">
+                                                <h6 class="mb-0 cv-name">{{ cv.full_name|default:"Ism kiritilmagan" }}</h6>
+                                                <small class="text-muted">{{ cv.title|default:"Sarlavha kiritilmagan" }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="small">
+                                            <div><i class="fas fa-envelope text-muted me-1"></i> {{ cv.email|default:"-" }}</div>
+                                            <div><i class="fas fa-phone text-muted me-1"></i> {{ cv.phone|default:"-" }}</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark">{{ cv.template.name }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge status-{{ cv.status }}">
+                                            {% if cv.status == 'published' %}
+                                                <i class="fas fa-eye me-1"></i>Nashr qilingan
+                                            {% elif cv.status == 'draft' %}
+                                                <i class="fas fa-edit me-1"></i>Qoralama
+                                            {% else %}
+                                                <i class="fas fa-archive me-1"></i>Arxiv
+                                            {% endif %}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted cv-date" data-date="{{ cv.created_at|date:'c' }}">
+                                            {{ cv.created_at|date:"d.m.Y" }}
+                                        </small>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li>
+                                                    <a class="dropdown-item" href="{% url 'cvbuilder:cv_detail' cv.id %}">
+                                                        <i class="fas fa-eye me-2"></i>Ko'rish
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item" href="{% url 'cvbuilder:cv_edit' cv.id %}">
+                                                        <i class="fas fa-edit me-2"></i>Tahrirlash
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <button class="dropdown-item status-change-btn" 
+                                                            data-cv-id="{{ cv.id }}" 
+                                                            data-current-status="{{ cv.status }}">
+                                                        <i class="fas fa-exchange-alt me-2"></i>Holatni o'zgartirish
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item" href="{% url 'cvbuilder:cv_duplicate' cv.id %}">
+                                                        <i class="fas fa-copy me-2"></i>Nusxa olish
+                                                    </a>
+                                                </li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li>
+                                                    <a class="dropdown-item text-danger" href="{% url 'cvbuilder:cv_export_pdf' cv.id %}">
+                                                        <i class="fas fa-download me-2"></i>PDF yuklab olish
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item text-danger" href="{% url 'cvbuilder:cv_delete' cv.id %}" 
+                                                       onclick="return confirm('Ushbu rezyumeni o\'chirishni istaysizmi?')">
+                                                        <i class="fas fa-trash me-2"></i>O'chirish
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            {% include 'cvbuilder/partials/empty_state.html' %}
+            {% endif %}
+        </div>
+
+        <!-- Nashr qilingan Rezyumelar -->
+        <div class="tab-pane fade" id="published" role="tabpanel">
+            <div class="card">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Ism va Sarlavha</th>
+                                    <th>Aloqa</th>
+                                    <th>Shablon</th>
+                                    <th>Sana</th>
+                                    <th class="text-center">Harakatlar</th>
+                                </tr>
+                            </thead>
+                            <tbody id="publishedResumes">
+                                {% for cv in published_cvs %}
+                                <tr class="resume-item" data-status="{{ cv.status }}" data-template="{{ cv.template.id }}">
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="flex-shrink-0">
+                                                <div class="bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                    <i class="fas fa-eye text-white"></i>
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1 ms-3">
+                                                <h6 class="mb-0 cv-name">{{ cv.full_name|default:"Ism kiritilmagan" }}</h6>
+                                                <small class="text-muted">{{ cv.title|default:"Sarlavha kiritilmagan" }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="small">
+                                            <div><i class="fas fa-envelope text-muted me-1"></i> {{ cv.email|default:"-" }}</div>
+                                            <div><i class="fas fa-phone text-muted me-1"></i> {{ cv.phone|default:"-" }}</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark">{{ cv.template.name }}</span>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted cv-date" data-date="{{ cv.created_at|date:'c' }}">
+                                            {{ cv.created_at|date:"d.m.Y" }}
+                                        </small>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{% url 'cvbuilder:cv_detail' cv.id %}" class="btn btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{% url 'cvbuilder:cv_edit' cv.id %}" class="btn btn-outline-secondary">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'cvbuilder:cv_export_pdf' cv.id %}" class="btn btn-outline-success">
+                                                <i class="fas fa-download"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-4">
+                                        <i class="fas fa-eye-slash fa-2x text-muted mb-3"></i>
+                                        <h6 class="text-muted">Nashr qilingan rezyumelar mavjud emas</h6>
+                                        <p class="text-muted small">Hozircha hech qanday nashr qilingan rezyumengiz yo'q</p>
+                                        <a href="{% url 'cvbuilder:cv_create' %}" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-plus me-1"></i>Rezyume yaratish
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Qoralama Rezyumelar -->
+        <div class="tab-pane fade" id="draft" role="tabpanel">
+            <div class="card">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Ism va Sarlavha</th>
+                                    <th>Aloqa</th>
+                                    <th>Shablon</th>
+                                    <th>Sana</th>
+                                    <th class="text-center">Harakatlar</th>
+                                </tr>
+                            </thead>
+                            <tbody id="draftResumes">
+                                {% for cv in draft_cvs %}
+                                <tr class="resume-item" data-status="{{ cv.status }}" data-template="{{ cv.template.id }}">
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="flex-shrink-0">
+                                                <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                    <i class="fas fa-edit text-dark"></i>
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1 ms-3">
+                                                <h6 class="mb-0 cv-name">{{ cv.full_name|default:"Ism kiritilmagan" }}</h6>
+                                                <small class="text-muted">{{ cv.title|default:"Sarlavha kiritilmagan" }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="small">
+                                            <div><i class="fas fa-envelope text-muted me-1"></i> {{ cv.email|default:"-" }}</div>
+                                            <div><i class="fas fa-phone text-muted me-1"></i> {{ cv.phone|default:"-" }}</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark">{{ cv.template.name }}</span>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted cv-date" data-date="{{ cv.created_at|date:'c' }}">
+                                            {{ cv.created_at|date:"d.m.Y" }}
+                                        </small>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{% url 'cvbuilder:cv_edit' cv.id %}" class="btn btn-outline-warning">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button class="btn btn-outline-primary status-change-btn" 
+                                                    data-cv-id="{{ cv.id }}" 
+                                                    data-current-status="{{ cv.status }}">
+                                                <i class="fas fa-exchange-alt"></i>
+                                            </button>
+                                            <a href="{% url 'cvbuilder:cv_duplicate' cv.id %}" class="btn btn-outline-secondary">
+                                                <i class="fas fa-copy"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-4">
+                                        <i class="fas fa-edit fa-2x text-muted mb-3"></i>
+                                        <h6 class="text-muted">Qoralama rezyumelar mavjud emas</h6>
+                                        <p class="text-muted small">Hozircha hech qanday qoralama rezyumengiz yo'q</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Arxiv Rezyumelar -->
+        <div class="tab-pane fade" id="archived" role="tabpanel">
+            <div class="card">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Ism va Sarlavha</th>
+                                    <th>Aloqa</th>
+                                    <th>Shablon</th>
+                                    <th>Sana</th>
+                                    <th class="text-center">Harakatlar</th>
+                                </tr>
+                            </thead>
+                            <tbody id="archivedResumes">
+                                {% for cv in archived_cvs %}
+                                <tr class="resume-item" data-status="{{ cv.status }}" data-template="{{ cv.template.id }}">
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="flex-shrink-0">
+                                                <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                    <i class="fas fa-archive text-white"></i>
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1 ms-3">
+                                                <h6 class="mb-0 cv-name">{{ cv.full_name|default:"Ism kiritilmagan" }}</h6>
+                                                <small class="text-muted">{{ cv.title|default:"Sarlavha kiritilmagan" }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="small">
+                                            <div><i class="fas fa-envelope text-muted me-1"></i> {{ cv.email|default:"-" }}</div>
+                                            <div><i class="fas fa-phone text-muted me-1"></i> {{ cv.phone|default:"-" }}</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark">{{ cv.template.name }}</span>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted cv-date" data-date="{{ cv.created_at|date:'c' }}">
+                                            {{ cv.created_at|date:"d.m.Y" }}
+                                        </small>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-secondary status-change-btn" 
+                                                    data-cv-id="{{ cv.id }}" 
+                                                    data-current-status="{{ cv.status }}">
+                                                <i class="fas fa-exchange-alt"></i>
+                                            </button>
+                                            <a href="{% url 'cvbuilder:cv_duplicate' cv.id %}" class="btn btn-outline-primary">
+                                                <i class="fas fa-copy"></i>
+                                            </a>
+                                            <a href="{% url 'cvbuilder:cv_delete' cv.id %}" 
+                                               class="btn btn-outline-danger"
+                                               onclick="return confirm('Ushbu rezyumeni o\'chirishni istaysizmi?')">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-4">
+                                        <i class="fas fa-archive fa-2x text-muted mb-3"></i>
+                                        <h6 class="text-muted">Arxiv rezyumelar mavjud emas</h6>
+                                        <p class="text-muted small">Hozircha hech qanday arxiv rezyumengiz yo'q</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistika -->
     {% if cvs %}
-    <div class="row mt-5 pt-5 border-top">
-        <div class="col-md-3 text-center">
-            <div class="h4 fw-bold text-primary mb-1">{{ cvs|length }}</div>
-            <small class="text-muted">Jami rezyumeler</small>
-        </div>
-        <div class="col-md-3 text-center">
-            <div class="h4 fw-bold text-primary mb-1">
-                {% now "d.m.Y" as today %}
-                {% with recent_cvs=cvs|dictsortreversed:"created_at"|slice:":7" %}
-                    {{ recent_cvs|length }}
-                {% endwith %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body py-3">
+                    <div class="row text-center">
+                        <div class="col-md-3 border-end">
+                            <div class="h5 fw-bold text-primary mb-1">{{ cvs|length }}</div>
+                            <small class="text-muted">Jami Rezyume</small>
+                        </div>
+                        <div class="col-md-3 border-end">
+                            <div class="h5 fw-bold text-success mb-1">{{ published_count }}</div>
+                            <small class="text-muted">Nashr Qilingan</small>
+                        </div>
+                        <div class="col-md-3 border-end">
+                            <div class="h5 fw-bold text-warning mb-1">{{ draft_count }}</div>
+                            <small class="text-muted">Qoralama</small>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="h5 fw-bold text-secondary mb-1">{{ archived_count }}</div>
+                            <small class="text-muted">Arxiv</small>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <small class="text-muted">Oxirgi 7 kunda</small>
-        </div>
-        <div class="col-md-3 text-center">
-            <div class="h4 fw-bold text-primary mb-1">
-                {% with unique_templates=cvs|dictsort:"template"|join:", " %}
-                    {{ unique_templates|length }}
-                {% endwith %}
-            </div>
-            <small class="text-muted">Foydalanilgan shablonlar</small>
-        </div>
-        <div class="col-md-3 text-center">
-            <div class="h4 fw-bold text-primary mb-1">0</div>  <!-- Можно добавить поле downloads в модель CV -->
-            <small class="text-muted">Yuklab olingan</small>
         </div>
     </div>
     {% endif %}
 </div>
 
+<!-- Holatni o'zgartirish modali -->
+<div class="modal fade" id="statusModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Rezyume holatini o'zgartirish</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="statusForm" method="post" action="{% url 'cvbuilder:update_cv_status' 0 %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="cv_id" id="cvId">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Holatni tanlang</label>
+                        <select class="form-select form-select-sm" name="status" id="statusSelect">
+                            <option value="draft">Qoralama - Faqat siz ko'rasiz</option>
+                            <option value="published">Nashr qilingan - Ish beruvchilar va adminlar ko'radi</option>
+                            <option value="archived">Arxiv - Hammadan yashiringan</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Bekor qilish</button>
+                <button type="button" class="btn btn-primary btn-sm" id="saveStatusBtn">Saqlash</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
-.cv-card {
-    transition: all 0.3s ease;
-}
-.cv-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+.nav-pills .nav-link {
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
 }
 
-.dropdown-toggle::after {
-    display: none;
-}
-
-.btn-primary {
+.nav-pills .nav-link.active {
     background-color: #012152;
     border-color: #012152;
 }
-.btn-primary:hover {
-    background-color: #012d6e;
-    border-color: #012d6e;
+
+.table th {
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.table td {
+    font-size: 0.875rem;
+    vertical-align: middle;
+    padding: 0.75rem;
+}
+
+.resume-item {
+    transition: background-color 0.2s ease;
+}
+
+.resume-item:hover {
+    background-color: #f8f9fa;
+}
+
+/* Holat ranglari */
+.status-published { 
+    background-color: #d1fae5; 
+    color: #065f46; 
+    border: 1px solid #a7f3d0;
+}
+
+.status-draft { 
+    background-color: #fef3c7; 
+    color: #92400e; 
+    border: 1px solid #fcd34d;
+}
+
+.status-archived { 
+    background-color: #f3f4f6; 
+    color: #374151; 
+    border: 1px solid #d1d5db;
+}
+
+.btn-group-sm > .btn {
+    padding: 0.25rem 0.5rem;
 }
 
 .card {
-    border-radius: 12px;
+    border: 1px solid #e3e6f0;
+    border-radius: 0.5rem;
 }
 
-/* Стили для статусов резюме */
-.status-badge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 0.7em;
-    padding: 0.25em 0.5em;
+.input-group-text {
+    background-color: #f8f9fa;
+    border-color: #d1d7dc;
 }
-
-.status-published { background-color: #28a745; color: white; }
-.status-draft { background-color: #ffc107; color: black; }
-.status-archived { background-color: #6c757d; color: white; }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Add confirmation for delete actions
-    const deleteLinks = document.querySelectorAll('a[href*="delete"]');
-    deleteLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            if (!confirm('Haqiqatan ham ushbu rezyumeni o\'chirmoqchimisiz? Bu amalni ortga qaytarib bo\'lmaydi.')) {
-                e.preventDefault();
+    // Qidiruv funksiyasi
+    const searchInput = document.getElementById('searchInput');
+    const templateFilter = document.getElementById('templateFilter');
+    const sortSelect = document.getElementById('sortSelect');
+    
+    function filterResumes() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const templateValue = templateFilter.value;
+        const sortValue = sortSelect.value;
+        
+        const activeTab = document.querySelector('.tab-pane.active');
+        const resumes = activeTab.querySelectorAll('.resume-item');
+        
+        let visibleCount = 0;
+        
+        resumes.forEach(item => {
+            const cvName = item.querySelector('.cv-name').textContent.toLowerCase();
+            const cvEmail = item.querySelector('.cv-email').textContent.toLowerCase();
+            const cvTemplate = item.getAttribute('data-template');
+            const matchesSearch = cvName.includes(searchTerm) || cvEmail.includes(searchTerm);
+            const matchesTemplate = !templateValue || cvTemplate === templateValue;
+            
+            if (matchesSearch && matchesTemplate) {
+                item.style.display = '';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
             }
         });
-    });
-
-    // Add search functionality
-    const searchInput = document.createElement('input');
-    searchInput.type = 'text';
-    searchInput.className = 'form-control mb-3';
-    searchInput.placeholder = 'Rezyumelarni qidirish...';
-    searchInput.style.maxWidth = '300px';
-    
-    const actionsBar = document.querySelector('.d-flex.justify-content-between.align-items-center.mb-4');
-    if (actionsBar) {
-        actionsBar.parentNode.insertBefore(searchInput, actionsBar.nextSibling);
         
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const cvCards = document.querySelectorAll('.cv-card');
+        // Yangilash matni
+        document.getElementById('resumeCountText').textContent = 
+            `Topildi: ${visibleCount} ta rezyume`;
             
-            cvCards.forEach(card => {
-                const cvName = card.querySelector('h5').textContent.toLowerCase();
-                const cvProfession = card.querySelector('.text-primary').textContent.toLowerCase();
-                const cvEmail = card.querySelector('.fa-envelope').parentNode.textContent.toLowerCase();
-                
-                if (cvName.includes(searchTerm) || cvProfession.includes(searchTerm) || cvEmail.includes(searchTerm)) {
-                    card.parentNode.style.display = 'block';
-                } else {
-                    card.parentNode.style.display = 'none';
-                }
-            });
-        });
+        // Saralash
+        sortResumes(activeTab, sortValue);
     }
-
-    // Add status badges
-    const cvCards = document.querySelectorAll('.cv-card');
-    cvCards.forEach(card => {
-        // Здесь можно добавить бейджи статусов, если нужно
-        // Например: card.querySelector('.card-body').insertAdjacentHTML('afterbegin', '<span class="status-badge status-published">Published</span>');
+    
+    function sortResumes(container, sortBy) {
+        const tbody = container.querySelector('tbody');
+        const resumes = Array.from(tbody.querySelectorAll('.resume-item'));
+        
+        resumes.sort((a, b) => {
+            const aName = a.querySelector('.cv-name').textContent;
+            const bName = b.querySelector('.cv-name').textContent;
+            const aDate = new Date(a.querySelector('.cv-date').getAttribute('data-date'));
+            const bDate = new Date(b.querySelector('.cv-date').getAttribute('data-date'));
+            
+            switch(sortBy) {
+                case 'newest':
+                    return bDate - aDate;
+                case 'oldest':
+                    return aDate - bDate;
+                case 'name_asc':
+                    return aName.localeCompare(bName);
+                case 'name_desc':
+                    return bName.localeCompare(aName);
+                default:
+                    return 0;
+            }
+        });
+        
+        resumes.forEach(item => tbody.appendChild(item));
+    }
+    
+    // Filtrlarni tozalash
+    function resetFilters() {
+        searchInput.value = '';
+        templateFilter.value = '';
+        sortSelect.value = 'newest';
+        filterResumes();
+    }
+    
+    searchInput.addEventListener('input', filterResumes);
+    templateFilter.addEventListener('change', filterResumes);
+    sortSelect.addEventListener('change', filterResumes);
+    
+    // Holatni o'zgartirish
+    const statusModal = new bootstrap.Modal(document.getElementById('statusModal'));
+    let currentCvId = null;
+    
+    document.querySelectorAll('.status-change-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            currentCvId = this.getAttribute('data-cv-id');
+            const currentStatus = this.getAttribute('data-current-status');
+            
+            document.getElementById('cvId').value = currentCvId;
+            document.getElementById('statusSelect').value = currentStatus;
+            
+            const form = document.getElementById('statusForm');
+            form.action = form.action.replace('/0/', `/${currentCvId}/`);
+            
+            statusModal.show();
+        });
     });
+    
+    document.getElementById('saveStatusBtn').addEventListener('click', function() {
+        const form = document.getElementById('statusForm');
+        form.submit();
+    });
+    
+    // Tab o'zgarishida filtrlarni qayta ishlash
+    document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
+        tab.addEventListener('shown.bs.tab', function() {
+            filterResumes();
+        });
+    });
+    
+    // Boshlang'ich sozlash
+    filterResumes();
 });
 </script>
 {% endblock %}

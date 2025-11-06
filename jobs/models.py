@@ -1,8 +1,8 @@
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth import get_user_model
+
 User = get_user_model()
 
 class Industry(models.Model):
@@ -18,58 +18,6 @@ class Industry(models.Model):
 
     def __str__(self):
         return self.name
-
-    def job_count(self):
-        return self.jobs.filter(is_active=True).count()
-
-class Company(models.Model):
-    """Компании для вакансий"""
-    COMPANY_SIZE_CHOICES = [
-        ('1-10', _('1-10 employees')),
-        ('11-50', _('11-50 employees')),
-        ('51-200', _('51-200 employees')),
-        ('201-500', _('201-500 employees')),
-        ('501-1000', _('501-1000 employees')),
-        ('1000+', _('More than 1000 employees')),
-    ]
-
-    name = models.CharField(max_length=200, verbose_name=_("Company Name"))
-    description = models.TextField(verbose_name=_("Description"))
-    website = models.URLField(verbose_name=_("Website"))
-    logo = models.ImageField(upload_to='company_logos/', null=True, blank=True, verbose_name=_("Logo"))
-    industry = models.ForeignKey(Industry, on_delete=models.SET_NULL, null=True, verbose_name=_("Industry"))
-    company_size = models.CharField(max_length=20, choices=COMPANY_SIZE_CHOICES, verbose_name=_("Company Size"))
-    founded_year = models.IntegerField(null=True, blank=True, verbose_name=_("Founded Year"))
-    headquarters = models.CharField(max_length=100, verbose_name=_("Headquarters"))
-    
-    # Контактная информация
-    contact_email = models.EmailField(verbose_name=_("Contact Email"))
-    contact_phone = models.CharField(max_length=20, verbose_name=_("Contact Phone"))
-    
-    # Социальные сети
-    linkedin = models.URLField(blank=True, verbose_name=_("LinkedIn"))
-    twitter = models.URLField(blank=True, verbose_name=_("Twitter"))
-    facebook = models.URLField(blank=True, verbose_name=_("Facebook"))
-    
-    is_verified = models.BooleanField(default=False, verbose_name=_("Verified Company"))
-    is_active = models.BooleanField(default=True, verbose_name=_("Active"))
-    
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        verbose_name = _("Company")
-        verbose_name_plural = _("Companies")
-        ordering = ['name']
-
-    def __str__(self):
-        return self.name
-
-    def get_absolute_url(self):
-        return reverse('jobs:company_detail', kwargs={'pk': self.pk})
-
-    def active_jobs_count(self):
-        return self.jobs.filter(is_active=True).count()
 
 class Job(models.Model):
     """Вакансия"""
@@ -113,7 +61,13 @@ class Job(models.Model):
     short_description = models.TextField(max_length=300, verbose_name=_("Short Description"))
     
     # Компания и локация
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='jobs', verbose_name=_("Company"))
+    employer = models.ForeignKey(
+        'accounts.EmployerProfile',
+        on_delete=models.CASCADE,
+        related_name='jobs',
+        verbose_name=_("Ish beruvchi")
+    )
+
     location = models.CharField(max_length=100, verbose_name=_("Location"))
     remote_work = models.BooleanField(default=False, verbose_name=_("Remote Work Available"))
     hybrid_work = models.BooleanField(default=False, verbose_name=_("Hybrid Work Available"))
@@ -155,6 +109,14 @@ class Job(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     expires_at = models.DateTimeField(null=True, blank=True, verbose_name=_("Expires At"))
+    created_by = models.ForeignKey(
+        User, 
+        on_delete=models.CASCADE, 
+        null=True, 
+        blank=True,
+        verbose_name=_("Created by"),
+        related_name='jobs_created'
+    )
 
     class Meta:
         verbose_name = _("Job")
@@ -162,8 +124,8 @@ class Job(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"{self.title} - {self.company.name}"
-
+        return f"{self.title} - {self.employer.company_name}"
+    
     def get_absolute_url(self):
         return reverse('jobs:job_detail', kwargs={'pk': self.pk})
 
@@ -282,105 +244,3 @@ class JobAlert(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.user.username}"
-
-class CompanyReview(models.Model):
-    """Отзывы о компаниях"""
-    RATING_CHOICES = [
-        (1, '1 - Very Poor'),
-        (2, '2 - Poor'),
-        (3, '3 - Average'),
-        (4, '4 - Good'),
-        (5, '5 - Excellent'),
-    ]
-
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='reviews', verbose_name=_("Company"))
-    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_("Author"))
-    job_title = models.CharField(max_length=100, verbose_name=_("Job Title"))
-    
-    # Рейтинги
-    overall_rating = models.IntegerField(choices=RATING_CHOICES, verbose_name=_("Overall Rating"))
-    work_life_balance = models.IntegerField(choices=RATING_CHOICES, verbose_name=_("Work/Life Balance"))
-    salary_benefits = models.IntegerField(choices=RATING_CHOICES, verbose_name=_("Salary & Benefits"))
-    career_growth = models.IntegerField(choices=RATING_CHOICES, verbose_name=_("Career Growth"))
-    management = models.IntegerField(choices=RATING_CHOICES, verbose_name=_("Management"))
-    
-    # Отзыв
-    title = models.CharField(max_length=200, verbose_name=_("Review Title"))
-    pros = models.TextField(verbose_name=_("Pros"))
-    cons = models.TextField(verbose_name=_("Cons"))
-    advice = models.TextField(blank=True, verbose_name=_("Advice to Management"))
-    
-    # Мета-информация
-    employment_status = models.CharField(max_length=20, choices=[
-        ('current', _('Current Employee')),
-        ('former', _('Former Employee')),
-        ('intern', _('Former Intern')),
-    ], verbose_name=_("Employment Status"))
-    
-    is_anonymous = models.BooleanField(default=False, verbose_name=_("Anonymous Review"))
-    is_verified = models.BooleanField(default=False, verbose_name=_("Verified Review"))
-    is_published = models.BooleanField(default=False, verbose_name=_("Published"))
-    
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        verbose_name = _("Company Review")
-        verbose_name_plural = _("Company Reviews")
-        ordering = ['-created_at']
-        unique_together = ['company', 'author']
-
-    def __str__(self):
-        return f"Review by {self.author.username} for {self.company.name}"
-
-    def average_rating(self):
-        ratings = [
-            self.overall_rating,
-            self.work_life_balance,
-            self.salary_benefits,
-            self.career_growth,
-            self.management
-        ]
-        return sum(ratings) / len(ratings)
-
-class InterviewExperience(models.Model):
-    """Опыт собеседований"""
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='interview_experiences', verbose_name=_("Company"))
-    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_("Author"))
-    job_title = models.CharField(max_length=100, verbose_name=_("Job Title"))
-    
-    # Процесс собеседования
-    process_description = models.TextField(verbose_name=_("Interview Process"))
-    difficulty = models.IntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(5)],
-        verbose_name=_("Difficulty Level")
-    )
-    duration_days = models.IntegerField(help_text=_("From application to offer"), verbose_name=_("Process Duration (days)"))
-    
-    # Вопросы на собеседовании
-    interview_questions = models.TextField(verbose_name=_("Interview Questions"))
-    
-    # Результат
-    offer_status = models.CharField(max_length=20, choices=[
-        ('accepted', _('Offer Accepted')),
-        ('declined', _('Offer Declined')),
-        ('no_offer', _('No Offer')),
-        ('withdrawn', _('Withdrawn')),
-    ], verbose_name=_("Offer Status"))
-    
-    # Рекомендации
-    recommendations = models.TextField(blank=True, verbose_name=_("Recommendations"))
-    
-    is_anonymous = models.BooleanField(default=False, verbose_name=_("Anonymous"))
-    is_published = models.BooleanField(default=False, verbose_name=_("Published"))
-    
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        verbose_name = _("Interview Experience")
-        verbose_name_plural = _("Interview Experiences")
-        ordering = ['-created_at']
-
-    def __str__(self):
-        return f"Interview experience by {self.author.username} for {self.company.name}"

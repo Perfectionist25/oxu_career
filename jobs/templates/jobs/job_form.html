@@ -36,376 +36,453 @@
                         {% endfor %}
                     {% endif %}
 
-                    {% if not user_companies.exists %}
-                        <div class="alert alert-warning">
-                            <h5 class="alert-heading">
-                                <i class="fas fa-exclamation-triangle me-2"></i>
-                                {% trans "No Companies Available" %}
-                            </h5>
-                            <p class="mb-2">{% trans "You need to create a company first before posting jobs." %}</p>
-                            <a href="{% url 'companies:create' %}" class="btn btn-warning btn-sm">
-                                <i class="fas fa-plus me-1"></i>
-                                {% trans "Create Company" %}
-                            </a>
+                    <!-- УДАЛЕН БЛОК ПРОВЕРКИ КОМПАНИЙ -->
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <!-- Basic Information -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    {% trans "Basic Information" %}
+                                </h5>
+                            </div>
+
+                            <!-- Job Title -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.title.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Job Title" %} *
+                                </label>
+                                {{ form.title }}
+                                {% if form.title.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.title.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Location -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.location.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Location" %} *
+                                </label>
+                                {{ form.location }}
+                                {% if form.location.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.location.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">{% trans "e.g., Baku, Azerbaijan" %}</div>
+                            </div>
+
+                            <!-- Employment Type -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.employment_type.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Employment Type" %} *
+                                </label>
+                                {{ form.employment_type }}
+                                {% if form.employment_type.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.employment_type.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Experience Level -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.experience_level.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Experience Level" %} *
+                                </label>
+                                {{ form.experience_level }}
+                                {% if form.experience_level.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.experience_level.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Short Description -->
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.short_description.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Short Description" %} *
+                                </label>
+                                {{ form.short_description }}
+                                {% if form.short_description.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.short_description.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">{% trans "Brief summary of the job (max 300 characters)" %}</div>
+                            </div>
                         </div>
-                    {% else %}
-                        <form method="post" novalidate>
-                            {% csrf_token %}
+
+                        <!-- Salary Information -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-money-bill-wave me-2"></i>
+                                    {% trans "Salary Information" %}
+                                </h5>
+                            </div>
                             
-                            {% if form.non_field_errors %}
-                                <div class="alert alert-danger">
-                                    {% for error in form.non_field_errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
+                            <!-- Currency -->
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.currency.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Currency" %} *
+                                </label>
+                                {{ form.currency }}
+                                {% if form.currency.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.currency.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
 
-                            <!-- Basic Information -->
-                            <div class="row mb-4">
-                                <div class="col-12">
-                                    <h5 class="text-primary mb-3">
-                                        <i class="fas fa-info-circle me-2"></i>
-                                        {% trans "Basic Information" %}
-                                    </h5>
-                                </div>
-                                
-                                <!-- Company -->
-                                <div class="col-md-6 mb-3">
-                                    <label for="{{ form.company.id_for_label }}" class="form-label fw-semibold">
-                                        {% trans "Company" %} *
-                                    </label>
-                                    {{ form.company }}
-                                    {% if form.company.errors %}
-                                        <div class="text-danger small mt-1">
-                                            {% for error in form.company.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </div>
+                            <!-- Salary Range -->
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.salary_min.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Minimum Salary" %}
+                                </label>
+                                {{ form.salary_min }}
+                                {% if form.salary_min.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.salary_min.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
 
-                                <!-- Job Title -->
-                                <div class="col-md-6 mb-3">
-                                    <label for="{{ form.title.id_for_label }}" class="form-label fw-semibold">
-                                        {% trans "Job Title" %} *
-                                    </label>
-                                    {{ form.title }}
-                                    {% if form.title.errors %}
-                                        <div class="text-danger small mt-1">
-                                            {% for error in form.title.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.salary_max.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Maximum Salary" %}
+                                </label>
+                                {{ form.salary_max }}
+                                {% if form.salary_max.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.salary_max.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
 
-                                <!-- Location -->
-                                <div class="col-md-6 mb-3">
-                                    <label for="{{ form.location.id_for_label }}" class="form-label fw-semibold">
-                                        {% trans "Location" %} *
+                            <!-- Salary Options -->
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check">
+                                    {{ form.hide_salary }}
+                                    <label class="form-check-label fw-semibold" for="{{ form.hide_salary.id_for_label }}">
+                                        {% trans "Hide salary from candidates" %}
                                     </label>
-                                    {{ form.location }}
-                                    {% if form.location.errors %}
-                                        <div class="text-danger small mt-1">
-                                            {% for error in form.location.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                    <div class="form-text">{% trans "e.g., Baku, Azerbaijan" %}</div>
-                                </div>
-
-                                <!-- Employment Type -->
-                                <div class="col-md-6 mb-3">
-                                    <label for="{{ form.employment_type.id_for_label }}" class="form-label fw-semibold">
-                                        {% trans "Employment Type" %} *
-                                    </label>
-                                    {{ form.employment_type }}
-                                    {% if form.employment_type.errors %}
-                                        <div class="text-danger small mt-1">
-                                            {% for error in form.employment_type.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
                                 </div>
                             </div>
 
-                            <!-- Salary Information -->
-                            <div class="row mb-4">
-                                <div class="col-12">
-                                    <h5 class="text-primary mb-3">
-                                        <i class="fas fa-money-bill-wave me-2"></i>
-                                        {% trans "Salary Information" %}
-                                    </h5>
-                                </div>
-                                
-                                <!-- Salary Range -->
-                                <div class="col-md-6 mb-3">
-                                    <label for="{{ form.salary_min.id_for_label }}" class="form-label fw-semibold">
-                                        {% trans "Minimum Salary" %}
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check">
+                                    {{ form.salary_negotiable }}
+                                    <label class="form-check-label fw-semibold" for="{{ form.salary_negotiable.id_for_label }}">
+                                        {% trans "Salary is negotiable" %}
                                     </label>
-                                    {{ form.salary_min }}
-                                    {% if form.salary_min.errors %}
-                                        <div class="text-danger small mt-1">
-                                            {% for error in form.salary_min.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
                                 </div>
+                            </div>
+                        </div>
 
-                                <div class="col-md-6 mb-3">
-                                    <label for="{{ form.salary_max.id_for_label }}" class="form-label fw-semibold">
-                                        {% trans "Maximum Salary" %}
-                                    </label>
-                                    {{ form.salary_max }}
-                                    {% if form.salary_max.errors %}
-                                        <div class="text-danger small mt-1">
-                                            {% for error in form.salary_max.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </div>
-
-                                <!-- Salary Type and Negotiable -->
-                                <div class="col-md-6 mb-3">
-                                    <label for="{{ form.salary_type.id_for_label }}" class="form-label fw-semibold">
-                                        {% trans "Salary Type" %}
-                                    </label>
-                                    {{ form.salary_type }}
-                                    {% if form.salary_type.errors %}
-                                        <div class="text-danger small mt-1">
-                                            {% for error in form.salary_type.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </div>
-
-                                <div class="col-md-6 mb-3">
-                                    <div class="form-check mt-4">
-                                        {{ form.salary_negotiable }}
-                                        <label class="form-check-label fw-semibold" for="{{ form.salary_negotiable.id_for_label }}">
-                                            {% trans "Salary is negotiable" %}
-                                        </label>
+                        <!-- Requirements -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-graduation-cap me-2"></i>
+                                    {% trans "Requirements" %}
+                                </h5>
+                            </div>
+                            
+                            <!-- Education Level -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.education_level.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Education Level" %} *
+                                </label>
+                                {{ form.education_level }}
+                                {% if form.education_level.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.education_level.errors %}
+                                            {{ error }}
+                                        {% endfor %}
                                     </div>
-                                </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Skills Required -->
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.skills_required.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Required Skills" %} *
+                                </label>
+                                {{ form.skills_required }}
+                                {% if form.skills_required.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.skills_required.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">{% trans "Separate skills with commas (e.g., Python, Django, JavaScript)" %}</div>
+                            </div>
+
+                            <!-- Preferred Skills -->
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.preferred_skills.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Preferred Skills" %}
+                                </label>
+                                {{ form.preferred_skills }}
+                                {% if form.preferred_skills.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.preferred_skills.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Job Details -->
+                        <div class="mb-4">
+                            <h5 class="text-primary mb-3">
+                                <i class="fas fa-file-alt me-2"></i>
+                                {% trans "Job Details" %}
+                            </h5>
+                            
+                            <!-- Job Description -->
+                            <div class="mb-3">
+                                <label for="{{ form.description.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Job Description" %} *
+                                </label>
+                                {{ form.description }}
+                                {% if form.description.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.description.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">{% trans "Describe the role, responsibilities, and what you're looking for in a candidate" %}</div>
+                            </div>
+
+                            <!-- Responsibilities -->
+                            <div class="mb-3">
+                                <label for="{{ form.responsibilities.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Responsibilities" %} *
+                                </label>
+                                {{ form.responsibilities }}
+                                {% if form.responsibilities.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.responsibilities.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                             </div>
 
                             <!-- Requirements -->
-                            <div class="row mb-4">
-                                <div class="col-12">
-                                    <h5 class="text-primary mb-3">
-                                        <i class="fas fa-graduation-cap me-2"></i>
-                                        {% trans "Requirements" %}
-                                    </h5>
-                                </div>
-                                
-                                <!-- Experience Level -->
-                                <div class="col-md-6 mb-3">
-                                    <label for="{{ form.experience_level.id_for_label }}" class="form-label fw-semibold">
-                                        {% trans "Experience Level" %} *
-                                    </label>
-                                    {{ form.experience_level }}
-                                    {% if form.experience_level.errors %}
-                                        <div class="text-danger small mt-1">
-                                            {% for error in form.experience_level.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </div>
-
-                                <!-- Education Level -->
-                                <div class="col-md-6 mb-3">
-                                    <label for="{{ form.education_level.id_for_label }}" class="form-label fw-semibold">
-                                        {% trans "Education Level" %}
-                                    </label>
-                                    {{ form.education_level }}
-                                    {% if form.education_level.errors %}
-                                        <div class="text-danger small mt-1">
-                                            {% for error in form.education_level.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </div>
-
-                                <!-- Skills Required -->
-                                <div class="col-12 mb-3">
-                                    <label for="{{ form.skills_required.id_for_label }}" class="form-label fw-semibold">
-                                        {% trans "Required Skills" %}
-                                    </label>
-                                    {{ form.skills_required }}
-                                    {% if form.skills_required.errors %}
-                                        <div class="text-danger small mt-1">
-                                            {% for error in form.skills_required.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                    <div class="form-text">{% trans "Separate skills with commas (e.g., Python, Django, JavaScript)" %}</div>
-                                </div>
-                            </div>
-
-                            <!-- Job Details -->
-                            <div class="mb-4">
-                                <h5 class="text-primary mb-3">
-                                    <i class="fas fa-file-alt me-2"></i>
-                                    {% trans "Job Details" %}
-                                </h5>
-                                
-                                <!-- Job Description -->
-                                <div class="mb-3">
-                                    <label for="{{ form.description.id_for_label }}" class="form-label fw-semibold">
-                                        {% trans "Job Description" %} *
-                                    </label>
-                                    {{ form.description }}
-                                    {% if form.description.errors %}
-                                        <div class="text-danger small mt-1">
-                                            {% for error in form.description.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                    <div class="form-text">{% trans "Describe the role, responsibilities, and what you're looking for in a candidate" %}</div>
-                                </div>
-
-                                <!-- Requirements -->
-                                <div class="mb-3">
-                                    <label for="{{ form.requirements.id_for_label }}" class="form-label fw-semibold">
-                                        {% trans "Requirements & Qualifications" %}
-                                    </label>
-                                    {{ form.requirements }}
-                                    {% if form.requirements.errors %}
-                                        <div class="text-danger small mt-1">
-                                            {% for error in form.requirements.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </div>
-
-                                <!-- Benefits -->
-                                <div class="mb-3">
-                                    <label for="{{ form.benefits.id_for_label }}" class="form-label fw-semibold">
-                                        {% trans "Benefits & Perks" %}
-                                    </label>
-                                    {{ form.benefits }}
-                                    {% if form.benefits.errors %}
-                                        <div class="text-danger small mt-1">
-                                            {% for error in form.benefits.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-
-                            <!-- Additional Options -->
-                            <div class="row mb-4">
-                                <div class="col-12">
-                                    <h5 class="text-primary mb-3">
-                                        <i class="fas fa-cog me-2"></i>
-                                        {% trans "Additional Options" %}
-                                    </h5>
-                                </div>
-                                
-                                <!-- Remote Work -->
-                                <div class="col-md-4 mb-3">
-                                    <div class="form-check form-switch">
-                                        {{ form.remote_work }}
-                                        <label class="form-check-label fw-semibold" for="{{ form.remote_work.id_for_label }}">
-                                            {% trans "Remote Work Available" %}
-                                        </label>
+                            <div class="mb-3">
+                                <label for="{{ form.requirements.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Requirements & Qualifications" %} *
+                                </label>
+                                {{ form.requirements }}
+                                {% if form.requirements.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.requirements.errors %}
+                                            {{ error }}
+                                        {% endfor %}
                                     </div>
-                                </div>
-
-                                <!-- Urgent Hiring -->
-                                <div class="col-md-4 mb-3">
-                                    <div class="form-check form-switch">
-                                        {{ form.is_urgent }}
-                                        <label class="form-check-label fw-semibold" for="{{ form.is_urgent.id_for_label }}">
-                                            {% trans "Urgent Hiring" %}
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- Featured Job -->
-                                <div class="col-md-4 mb-3">
-                                    <div class="form-check form-switch">
-                                        {{ form.is_featured }}
-                                        <label class="form-check-label fw-semibold" for="{{ form.is_featured.id_for_label }}">
-                                            {% trans "Featured Job" %}
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- Application Deadline -->
-                                <div class="col-md-6 mb-3">
-                                    <label for="{{ form.application_deadline.id_for_label }}" class="form-label fw-semibold">
-                                        {% trans "Application Deadline" %} *
-                                    </label>
-                                    {{ form.application_deadline }}
-                                    {% if form.application_deadline.errors %}
-                                        <div class="text-danger small mt-1">
-                                            {% for error in form.application_deadline.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                    <div class="form-text">{% trans "Minimum deadline: today" %}</div>
-                                </div>
-
-                                <!-- Vacancies -->
-                                <div class="col-md-6 mb-3">
-                                    <label for="{{ form.vacancies.id_for_label }}" class="form-label fw-semibold">
-                                        {% trans "Number of Vacancies" %}
-                                    </label>
-                                    {{ form.vacancies }}
-                                    {% if form.vacancies.errors %}
-                                        <div class="text-danger small mt-1">
-                                            {% for error in form.vacancies.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-
-                            <!-- Action Buttons -->
-                            <div class="d-flex gap-3 justify-content-end border-top pt-4">
-                                <a href="{% url 'jobs:my_jobs' %}" class="btn btn-outline-secondary">
-                                    <i class="fas fa-times me-2"></i>
-                                    {% trans "Cancel" %}
-                                </a>
-                                
-                                {% if form.instance.pk %}
-                                    <!-- Edit mode -->
-                                    <button type="submit" name="save_draft" class="btn btn-outline-warning">
-                                        <i class="fas fa-save me-2"></i>
-                                        {% trans "Save as Draft" %}
-                                    </button>
-                                    <button type="submit" name="publish" class="btn btn-success">
-                                        <i class="fas fa-check me-2"></i>
-                                        {% trans "Update Job" %}
-                                    </button>
-                                {% else %}
-                                    <!-- Create mode -->
-                                    <button type="submit" name="save_draft" class="btn btn-outline-warning">
-                                        <i class="fas fa-save me-2"></i>
-                                        {% trans "Save as Draft" %}
-                                    </button>
-                                    <button type="submit" name="publish" class="btn btn-primary">
-                                        <i class="fas fa-paper-plane me-2"></i>
-                                        {% trans "Publish Job" %}
-                                    </button>
                                 {% endif %}
                             </div>
-                        </form>
-                    {% endif %}
+
+                            <!-- Benefits -->
+                            <div class="mb-3">
+                                <label for="{{ form.benefits.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Benefits & Perks" %}
+                                </label>
+                                {{ form.benefits }}
+                                {% if form.benefits.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.benefits.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Contact Information -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-envelope me-2"></i>
+                                    {% trans "Contact Information" %}
+                                </h5>
+                            </div>
+
+                            <!-- Contact Email -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.contact_email.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Contact Email" %} *
+                                </label>
+                                {{ form.contact_email }}
+                                {% if form.contact_email.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.contact_email.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Contact Person -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.contact_person.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Contact Person" %}
+                                </label>
+                                {{ form.contact_person }}
+                                {% if form.contact_person.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.contact_person.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Application URL -->
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.application_url.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Application URL (Optional)" %}
+                                </label>
+                                {{ form.application_url }}
+                                {% if form.application_url.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.application_url.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">{% trans "If you want candidates to apply through an external website" %}</div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Options -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-cog me-2"></i>
+                                    {% trans "Additional Options" %}
+                                </h5>
+                            </div>
+                            
+                            <!-- Work Options -->
+                            <div class="col-md-4 mb-3">
+                                <div class="form-check form-switch">
+                                    {{ form.remote_work }}
+                                    <label class="form-check-label fw-semibold" for="{{ form.remote_work.id_for_label }}">
+                                        {% trans "Remote Work Available" %}
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <div class="form-check form-switch">
+                                    {{ form.hybrid_work }}
+                                    <label class="form-check-label fw-semibold" for="{{ form.hybrid_work.id_for_label }}">
+                                        {% trans "Hybrid Work Available" %}
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Job Status Options -->
+                            <div class="col-md-4 mb-3">
+                                <div class="form-check form-switch">
+                                    {{ form.is_urgent }}
+                                    <label class="form-check-label fw-semibold" for="{{ form.is_urgent.id_for_label }}">
+                                        {% trans "Urgent Hiring" %}
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <div class="form-check form-switch">
+                                    {{ form.is_featured }}
+                                    <label class="form-check-label fw-semibold" for="{{ form.is_featured.id_for_label }}">
+                                        {% trans "Featured Job" %}
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Expiration Date -->
+                            <div class="col-md-8 mb-3">
+                                <label for="{{ form.expires_at.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Expiration Date" %}
+                                </label>
+                                {{ form.expires_at }}
+                                {% if form.expires_at.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.expires_at.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">{% trans "When this job posting should expire" %}</div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-3 justify-content-end border-top pt-4">
+                            <a href="{% url 'jobs:my_jobs' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i>
+                                {% trans "Cancel" %}
+                            </a>
+                            
+                            {% if form.instance.pk %}
+                                <!-- Edit mode -->
+                                <button type="submit" name="save_draft" class="btn btn-outline-warning">
+                                    <i class="fas fa-save me-2"></i>
+                                    {% trans "Save as Draft" %}
+                                </button>
+                                <button type="submit" name="publish" class="btn btn-success">
+                                    <i class="fas fa-check me-2"></i>
+                                    {% trans "Update Job" %}
+                                </button>
+                            {% else %}
+                                <!-- Create mode -->
+                                <button type="submit" name="save_draft" class="btn btn-outline-warning">
+                                    <i class="fas fa-save me-2"></i>
+                                    {% trans "Save as Draft" %}
+                                </button>
+                                <button type="submit" name="publish" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane me-2"></i>
+                                    {% trans "Publish Job" %}
+                                </button>
+                            {% endif %}
+                        </div>
+                    </form>
                 </div>
             </div>
 
@@ -421,7 +498,7 @@
                         <li class="mb-2">• {% trans "List required and preferred skills clearly" %}</li>
                         <li class="mb-2">• {% trans "Include information about your company culture" %}</li>
                         <li class="mb-2">• {% trans "Be transparent about salary and benefits" %}</li>
-                        <li>• {% trans "Set a realistic application deadline" %}</li>
+                        <li>• {% trans "Set a realistic expiration date" %}</li>
                     </ul>
                 </div>
             </div>
@@ -433,11 +510,11 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Set minimum date for application deadline
-    const deadlineField = document.getElementById('{{ form.application_deadline.id_for_label }}');
-    if (deadlineField) {
+    // Set minimum date for expiration date
+    const expiresAtField = document.getElementById('{{ form.expires_at.id_for_label }}');
+    if (expiresAtField) {
         const today = new Date().toISOString().split('T')[0];
-        deadlineField.min = today;
+        expiresAtField.min = today;
     }
 
     // Auto-format salary fields
@@ -465,9 +542,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (salaryMaxField) formatSalaryInput(salaryMaxField);
 
     // Character counters for text areas
+    const shortDescField = document.getElementById('{{ form.short_description.id_for_label }}');
     const descriptionField = document.getElementById('{{ form.description.id_for_label }}');
     const requirementsField = document.getElementById('{{ form.requirements.id_for_label }}');
-    const benefitsField = document.getElementById('{{ form.benefits.id_for_label }}');
+    const responsibilitiesField = document.getElementById('{{ form.responsibilities.id_for_label }}');
     
     function createCounter(field, maxLength) {
         const counter = document.createElement('div');
@@ -491,9 +569,26 @@ document.addEventListener('DOMContentLoaded', function() {
         field.dispatchEvent(new Event('input'));
     }
     
+    if (shortDescField) createCounter(shortDescField, 300);
     if (descriptionField) createCounter(descriptionField, 5000);
     if (requirementsField) createCounter(requirementsField, 2000);
-    if (benefitsField) createCounter(benefitsField, 1000);
+    if (responsibilitiesField) createCounter(responsibilitiesField, 2000);
+
+    // Remote/Hybrid work validation
+    const remoteWorkField = document.getElementById('{{ form.remote_work.id_for_label }}');
+    const hybridWorkField = document.getElementById('{{ form.hybrid_work.id_for_label }}');
+    
+    function validateWorkOptions() {
+        if (remoteWorkField.checked && hybridWorkField.checked) {
+            alert('{% trans "Please select only one work option: Remote OR Hybrid" %}');
+            hybridWorkField.checked = false;
+        }
+    }
+    
+    if (remoteWorkField && hybridWorkField) {
+        remoteWorkField.addEventListener('change', validateWorkOptions);
+        hybridWorkField.addEventListener('change', validateWorkOptions);
+    }
 });
 </script>
 

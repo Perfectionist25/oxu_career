@@ -23,16 +23,16 @@
                 </div>
                 <div class="mb-3">
                     <strong class="text-muted">{% trans "Kompaniya haqida" %}:</strong>
-                    <p class="mb-0">{{ profile.description|default:"—" }}</p>
+                    <p class="mb-0">{{ profile.company_description|default:"—" }}</p>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="mb-3">
                     <strong class="text-muted">{% trans "Veb-sayt" %}:</strong>
                     <p class="mb-0">
-                        {% if profile.website %}
-                            <a href="{{ profile.website }}" target="_blank" class="text-decoration-none">
-                                {{ profile.website }}
+                        {% if profile.company_website %}
+                            <a href="{{ profile.company_website }}" target="_blank" class="text-decoration-none">
+                                {{ profile.company_website }}
                             </a>
                         {% else %}
                             —
@@ -64,22 +64,22 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="mb-3">
-                    <strong class="text-muted">{% trans "Manzil" %}:</strong>
-                    <p class="mb-0">{{ profile.address|default:"—" }}</p>
+                    <strong class="text-muted">{% trans "Bosh qarorgoh" %}:</strong>
+                    <p class="mb-0">{{ profile.headquarters|default:"—" }}</p>
                 </div>
                 <div class="mb-3">
                     <strong class="text-muted">{% trans "Shahar" %}:</strong>
-                    <p class="mb-0">{{ profile.city|default:"—" }}</p>
+                    <p class="mb-0">{{ profile_user.city|default:"—" }}</p>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="mb-3">
                     <strong class="text-muted">{% trans "Telefon raqam" %}:</strong>
-                    <p class="mb-0">{{ profile.phone|default:"—" }}</p>
+                    <p class="mb-0">{{ profile.company_phone|default:profile_user.phone_number|default:"—" }}</p>
                 </div>
                 <div class="mb-3">
-                    <strong class="text-muted">{% trans "Qo'shimcha telefon" %}:</strong>
-                    <p class="mb-0">{{ profile.additional_phone|default:"—" }}</p>
+                    <strong class="text-muted">{% trans "Email" %}:</strong>
+                    <p class="mb-0">{{ profile.company_email|default:profile_user.email|default:"—" }}</p>
                 </div>
             </div>
         </div>
@@ -93,7 +93,7 @@
             <i class="fas fa-briefcase me-2 text-primary"></i>
             {% trans "Faol vakansiyalar" %}
         </h5>
-        <span class="badge bg-primary">{{ active_jobs_count|default:0 }}</span>
+        <span class="badge bg-primary">{{ active_jobs_count }}</span>
     </div>
     <div class="card-body">
         {% if active_jobs %}
@@ -104,7 +104,7 @@
                         <div>
                             <h6 class="mb-1">{{ job.title }}</h6>
                             <small class="text-muted">
-                                <i class="fas fa-map-marker-alt me-1"></i>{{ job.location }}
+                                <i class="fas fa-map-marker-alt me-1"></i>{{ job.location|default:"—" }}
                                 <i class="fas fa-clock ms-2 me-1"></i>{{ job.created_at|date:"d.m.Y" }}
                             </small>
                         </div>
@@ -126,32 +126,32 @@
 {{ block.super }}
 <div class="d-flex justify-content-between align-items-center mb-3">
     <span>{% trans "E'lon qilingan ishlar" %}</span>
-    <span class="badge bg-success">{{ profile.jobs_posted|default:0 }}</span>
+    <span class="badge bg-success">{{ jobs_posted }}</span>
 </div>
 <div class="d-flex justify-content-between align-items-center mb-3">
     <span>{% trans "Profil ko'rishlar" %}</span>
-    <span class="badge bg-info">{{ profile.total_views|default:0 }}</span>
+    <span class="badge bg-info">{{ total_views }}</span>
 </div>
 <div class="d-flex justify-content-between align-items-center mb-3">
     <span>{% trans "Qabul qilingan arizalar" %}</span>
-    <span class="badge bg-warning">{{ total_applications|default:0 }}</span>
+    <span class="badge bg-warning">{{ total_applications }}</span>
 </div>
 {% endblock %}
 
 {% block profile_contact %}
 {{ block.super }}
-{% if profile.website %}
+{% if profile.company_website %}
 <div class="mb-3">
     <i class="fas fa-globe text-muted me-2"></i>
-    <a href="{{ profile.website }}" target="_blank" class="text-decoration-none">
+    <a href="{{ profile.company_website }}" target="_blank" class="text-decoration-none">
         {% trans "Veb-sayt" %}
     </a>
 </div>
 {% endif %}
-{% if profile.address %}
+{% if profile.headquarters %}
 <div class="mb-3">
     <i class="fas fa-map-marker-alt text-muted me-2"></i>
-    <span>{{ profile.address }}</span>
+    <span>{{ profile.headquarters }}</span>
 </div>
 {% endif %}
 {% endblock %}
@@ -159,10 +159,10 @@
 {% block quick_actions %}
 {{ block.super }}
 <div class="d-grid gap-2 mt-2">
-    <a href="{% url 'accounts:create_job' %}" class="btn btn-success btn-sm">
+    <a href="{% url 'jobs:job_create' %}" class="btn btn-success btn-sm">
         <i class="fas fa-plus me-2"></i>{% trans "Yangi vakansiya" %}
     </a>
-    <a href="{% url 'accounts:employer_jobs' %}" class="btn btn-primary btn-sm">
+    <a href="{% url 'jobs:my_jobs' %}" class="btn btn-primary btn-sm">
         <i class="fas fa-tasks me-2"></i>{% trans "Vakansiyalarni boshqarish" %}
     </a>
 </div>

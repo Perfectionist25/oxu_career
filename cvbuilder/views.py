@@ -18,7 +18,22 @@ class CVListView(ListView):
     context_object_name = 'cvs'
     
     def get_queryset(self):
-        return CV.objects.filter(user=self.request.user)
+        return CV.objects.filter(user=self.request.user).select_related('template')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cvs = self.get_queryset()
+        
+        context.update({
+            'published_count': cvs.filter(status='published').count(),
+            'draft_count': cvs.filter(status='draft').count(),
+            'archived_count': cvs.filter(status='archived').count(),
+            'published_cvs': cvs.filter(status='published'),
+            'draft_cvs': cvs.filter(status='draft'),
+            'archived_cvs': cvs.filter(status='archived'),
+            'templates': CVTemplate.objects.filter(is_active=True),
+        })
+        return context
 
 @login_required
 def cv_create(request):
@@ -302,14 +317,28 @@ def cv_stats(request):
     """Статистика по резюме пользователя"""
     cvs = CV.objects.filter(user=request.user)
     
+    total_cvs = cvs.count()
+    published_cvs = cvs.filter(status='published').count()
+    draft_cvs = cvs.filter(status='draft').count()
+    archived_cvs = cvs.filter(status='archived').count()
+    
+    # Foizlarni hisoblash
+    published_percent = (published_cvs / total_cvs * 100) if total_cvs > 0 else 0
+    draft_percent = (draft_cvs / total_cvs * 100) if total_cvs > 0 else 0
+    archived_percent = (archived_cvs / total_cvs * 100) if total_cvs > 0 else 0
+    
     stats = {
-        'total_cvs': cvs.count(),
-        'published_cvs': cvs.filter(status='published').count(),
-        'draft_cvs': cvs.filter(status='draft').count(),
+        'total_cvs': total_cvs,
+        'published_cvs': published_cvs,
+        'draft_cvs': draft_cvs,
+        'archived_cvs': archived_cvs,
         'total_experience': sum(cv.experiences.count() for cv in cvs),
         'total_skills': sum(cv.skills.count() for cv in cvs),
         'total_education': sum(cv.educations.count() for cv in cvs),
         'total_languages': sum(cv.languages.count() for cv in cvs),
+        'published_percent': published_percent,
+        'draft_percent': draft_percent,
+        'archived_percent': archived_percent,
     }
     
     return render(request, 'cvbuilder/cv_stats.html', {'stats': stats})
