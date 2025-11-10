@@ -15,183 +15,726 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('auth', '0012_alter_user_first_name_max_length'),
+        ("auth", "0012_alter_user_first_name_max_length"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='CustomUser',
+            name="CustomUser",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('password', models.CharField(max_length=128, verbose_name='password')),
-                ('last_login', models.DateTimeField(blank=True, null=True, verbose_name='last login')),
-                ('is_superuser', models.BooleanField(default=False, help_text='Designates that this user has all permissions without explicitly assigning them.', verbose_name='superuser status')),
-                ('username', models.CharField(error_messages={'unique': 'A user with that username already exists.'}, help_text='Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.', max_length=150, unique=True, validators=[django.contrib.auth.validators.UnicodeUsernameValidator()], verbose_name='username')),
-                ('first_name', models.CharField(blank=True, max_length=150, verbose_name='first name')),
-                ('last_name', models.CharField(blank=True, max_length=150, verbose_name='last name')),
-                ('email', models.EmailField(blank=True, max_length=254, verbose_name='email address')),
-                ('is_staff', models.BooleanField(default=False, help_text='Designates whether the user can log into this admin site.', verbose_name='staff status')),
-                ('is_active', models.BooleanField(default=True, help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.', verbose_name='active')),
-                ('date_joined', models.DateTimeField(default=django.utils.timezone.now, verbose_name='date joined')),
-                ('user_type', models.CharField(choices=[('guest', 'Mehmon'), ('student', 'O`quvchi yoki bitiruvchi'), ('employer', 'Ish beruvchi'), ('admin', 'Admin'), ('main_admin', 'Bosh Admin')], default='guest', max_length=20, verbose_name='Foydalanuvchi turi')),
-                ('hemis_id', models.CharField(blank=True, max_length=100, null=True, unique=True, verbose_name='Hemis ID')),
-                ('hemis_data', models.JSONField(blank=True, null=True, verbose_name="Hemis ma'lumotlari")),
-                ('phone_number', phonenumber_field.modelfields.PhoneNumberField(blank=True, max_length=128, null=True, region=None, verbose_name='Telefon raqam')),
-                ('date_of_birth', models.DateField(blank=True, null=True, verbose_name="Tug'ilgan sana")),
-                ('bio', models.TextField(blank=True, max_length=500, verbose_name='Bio')),
-                ('avatar', models.ImageField(blank=True, null=True, upload_to='avatars/%Y/%m/%d/', verbose_name='Avatar')),
-                ('country', django_countries.fields.CountryField(blank=True, max_length=2, verbose_name='Davlat')),
-                ('city', models.CharField(blank=True, max_length=100, verbose_name='Shahar')),
-                ('address', models.CharField(blank=True, max_length=255, verbose_name='Manzil')),
-                ('website', models.URLField(blank=True, verbose_name='Veb sayt')),
-                ('linkedin', models.URLField(blank=True, verbose_name='LinkedIn')),
-                ('github', models.URLField(blank=True, verbose_name='GitHub')),
-                ('telegram', models.URLField(blank=True, verbose_name='Telegram')),
-                ('email_notifications', models.BooleanField(default=True, verbose_name='Email xabarnomalari')),
-                ('job_alerts', models.BooleanField(default=True, verbose_name='Ish ogohlantirishlari')),
-                ('newsletter', models.BooleanField(default=False, verbose_name='Yangiliklar')),
-                ('is_verified', models.BooleanField(default=False, verbose_name='Tasdiqlangan')),
-                ('is_active_employer', models.BooleanField(default=False, verbose_name='Faol ish beruvchi')),
-                ('profile_views', models.PositiveIntegerField(default=0, verbose_name="Profil ko'rishlar")),
-                ('last_activity', models.DateTimeField(blank=True, null=True, verbose_name='Oxirgi faollik')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('groups', models.ManyToManyField(blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', related_name='user_set', related_query_name='user', to='auth.group', verbose_name='groups')),
-                ('user_permissions', models.ManyToManyField(blank=True, help_text='Specific permissions for this user.', related_name='user_set', related_query_name='user', to='auth.permission', verbose_name='user permissions')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("password", models.CharField(max_length=128, verbose_name="password")),
+                (
+                    "last_login",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="last login"
+                    ),
+                ),
+                (
+                    "is_superuser",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Designates that this user has all permissions without explicitly assigning them.",
+                        verbose_name="superuser status",
+                    ),
+                ),
+                (
+                    "username",
+                    models.CharField(
+                        error_messages={
+                            "unique": "A user with that username already exists."
+                        },
+                        help_text="Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
+                        max_length=150,
+                        unique=True,
+                        validators=[
+                            django.contrib.auth.validators.UnicodeUsernameValidator()
+                        ],
+                        verbose_name="username",
+                    ),
+                ),
+                (
+                    "first_name",
+                    models.CharField(
+                        blank=True, max_length=150, verbose_name="first name"
+                    ),
+                ),
+                (
+                    "last_name",
+                    models.CharField(
+                        blank=True, max_length=150, verbose_name="last name"
+                    ),
+                ),
+                (
+                    "email",
+                    models.EmailField(
+                        blank=True, max_length=254, verbose_name="email address"
+                    ),
+                ),
+                (
+                    "is_staff",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Designates whether the user can log into this admin site.",
+                        verbose_name="staff status",
+                    ),
+                ),
+                (
+                    "is_active",
+                    models.BooleanField(
+                        default=True,
+                        help_text="Designates whether this user should be treated as active. Unselect this instead of deleting accounts.",
+                        verbose_name="active",
+                    ),
+                ),
+                (
+                    "date_joined",
+                    models.DateTimeField(
+                        default=django.utils.timezone.now, verbose_name="date joined"
+                    ),
+                ),
+                (
+                    "user_type",
+                    models.CharField(
+                        choices=[
+                            ("guest", "Mehmon"),
+                            ("student", "O`quvchi yoki bitiruvchi"),
+                            ("employer", "Ish beruvchi"),
+                            ("admin", "Admin"),
+                            ("main_admin", "Bosh Admin"),
+                        ],
+                        default="guest",
+                        max_length=20,
+                        verbose_name="Foydalanuvchi turi",
+                    ),
+                ),
+                (
+                    "hemis_id",
+                    models.CharField(
+                        blank=True,
+                        max_length=100,
+                        null=True,
+                        unique=True,
+                        verbose_name="Hemis ID",
+                    ),
+                ),
+                (
+                    "hemis_data",
+                    models.JSONField(
+                        blank=True, null=True, verbose_name="Hemis ma'lumotlari"
+                    ),
+                ),
+                (
+                    "phone_number",
+                    phonenumber_field.modelfields.PhoneNumberField(
+                        blank=True,
+                        max_length=128,
+                        null=True,
+                        region=None,
+                        verbose_name="Telefon raqam",
+                    ),
+                ),
+                (
+                    "date_of_birth",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Tug'ilgan sana"
+                    ),
+                ),
+                (
+                    "bio",
+                    models.TextField(blank=True, max_length=500, verbose_name="Bio"),
+                ),
+                (
+                    "avatar",
+                    models.ImageField(
+                        blank=True,
+                        null=True,
+                        upload_to="avatars/%Y/%m/%d/",
+                        verbose_name="Avatar",
+                    ),
+                ),
+                (
+                    "country",
+                    django_countries.fields.CountryField(
+                        blank=True, max_length=2, verbose_name="Davlat"
+                    ),
+                ),
+                (
+                    "city",
+                    models.CharField(blank=True, max_length=100, verbose_name="Shahar"),
+                ),
+                (
+                    "address",
+                    models.CharField(blank=True, max_length=255, verbose_name="Manzil"),
+                ),
+                ("website", models.URLField(blank=True, verbose_name="Veb sayt")),
+                ("linkedin", models.URLField(blank=True, verbose_name="LinkedIn")),
+                ("github", models.URLField(blank=True, verbose_name="GitHub")),
+                ("telegram", models.URLField(blank=True, verbose_name="Telegram")),
+                (
+                    "email_notifications",
+                    models.BooleanField(
+                        default=True, verbose_name="Email xabarnomalari"
+                    ),
+                ),
+                (
+                    "job_alerts",
+                    models.BooleanField(
+                        default=True, verbose_name="Ish ogohlantirishlari"
+                    ),
+                ),
+                (
+                    "newsletter",
+                    models.BooleanField(default=False, verbose_name="Yangiliklar"),
+                ),
+                (
+                    "is_verified",
+                    models.BooleanField(default=False, verbose_name="Tasdiqlangan"),
+                ),
+                (
+                    "is_active_employer",
+                    models.BooleanField(
+                        default=False, verbose_name="Faol ish beruvchi"
+                    ),
+                ),
+                (
+                    "profile_views",
+                    models.PositiveIntegerField(
+                        default=0, verbose_name="Profil ko'rishlar"
+                    ),
+                ),
+                (
+                    "last_activity",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="Oxirgi faollik"
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "groups",
+                    models.ManyToManyField(
+                        blank=True,
+                        help_text="The groups this user belongs to. A user will get all permissions granted to each of their groups.",
+                        related_name="user_set",
+                        related_query_name="user",
+                        to="auth.group",
+                        verbose_name="groups",
+                    ),
+                ),
+                (
+                    "user_permissions",
+                    models.ManyToManyField(
+                        blank=True,
+                        help_text="Specific permissions for this user.",
+                        related_name="user_set",
+                        related_query_name="user",
+                        to="auth.permission",
+                        verbose_name="user permissions",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Foydalanuvchi',
-                'verbose_name_plural': 'Foydalanuvchilar',
-                'ordering': ['-date_joined'],
+                "verbose_name": "Foydalanuvchi",
+                "verbose_name_plural": "Foydalanuvchilar",
+                "ordering": ["-date_joined"],
             },
             managers=[
-                ('objects', django.contrib.auth.models.UserManager()),
+                ("objects", django.contrib.auth.models.UserManager()),
             ],
         ),
         migrations.CreateModel(
-            name='AdminProfile',
+            name="AdminProfile",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('can_manage_students', models.BooleanField(default=True, verbose_name='Talabalarni boshqarish')),
-                ('can_manage_employers', models.BooleanField(default=True, verbose_name='Ish beruvchilarni boshqarish')),
-                ('can_manage_jobs', models.BooleanField(default=True, verbose_name='Ishlarni boshqarish')),
-                ('can_manage_resumes', models.BooleanField(default=True, verbose_name='Rezyumelarni boshqarish')),
-                ('can_view_statistics', models.BooleanField(default=True, verbose_name="Statistikalarni ko'rish")),
-                ('students_managed', models.PositiveIntegerField(default=0, verbose_name='Boshqarilgan talabalar')),
-                ('employers_created', models.PositiveIntegerField(default=0, verbose_name='Yaratilgan ish beruvchilar')),
-                ('jobs_approved', models.PositiveIntegerField(default=0, verbose_name='Tasdiqlangan ishlar')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='admin_profile', to=settings.AUTH_USER_MODEL, verbose_name='Foydalanuvchi')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "can_manage_students",
+                    models.BooleanField(
+                        default=True, verbose_name="Talabalarni boshqarish"
+                    ),
+                ),
+                (
+                    "can_manage_employers",
+                    models.BooleanField(
+                        default=True, verbose_name="Ish beruvchilarni boshqarish"
+                    ),
+                ),
+                (
+                    "can_manage_jobs",
+                    models.BooleanField(
+                        default=True, verbose_name="Ishlarni boshqarish"
+                    ),
+                ),
+                (
+                    "can_manage_resumes",
+                    models.BooleanField(
+                        default=True, verbose_name="Rezyumelarni boshqarish"
+                    ),
+                ),
+                (
+                    "can_view_statistics",
+                    models.BooleanField(
+                        default=True, verbose_name="Statistikalarni ko'rish"
+                    ),
+                ),
+                (
+                    "students_managed",
+                    models.PositiveIntegerField(
+                        default=0, verbose_name="Boshqarilgan talabalar"
+                    ),
+                ),
+                (
+                    "employers_created",
+                    models.PositiveIntegerField(
+                        default=0, verbose_name="Yaratilgan ish beruvchilar"
+                    ),
+                ),
+                (
+                    "jobs_approved",
+                    models.PositiveIntegerField(
+                        default=0, verbose_name="Tasdiqlangan ishlar"
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="admin_profile",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Foydalanuvchi",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Admin profili',
-                'verbose_name_plural': 'Admin profillari',
+                "verbose_name": "Admin profili",
+                "verbose_name_plural": "Admin profillari",
             },
         ),
         migrations.CreateModel(
-            name='EmployerProfile',
+            name="EmployerProfile",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('company_name', models.CharField(max_length=255, verbose_name='Kompaniya nomi')),
-                ('company_logo', models.ImageField(blank=True, null=True, upload_to='company_logos/%Y/%m/%d/', verbose_name='Kompaniya logotipi')),
-                ('company_description', models.TextField(verbose_name='Kompaniya haqida')),
-                ('company_email', models.EmailField(blank=True, max_length=254, verbose_name='Kompaniya emaili')),
-                ('company_phone', phonenumber_field.modelfields.PhoneNumberField(blank=True, max_length=128, null=True, region=None, verbose_name='Kompaniya telefoni')),
-                ('company_website', models.URLField(blank=True, verbose_name='Kompaniya veb sayti')),
-                ('company_linkedin', models.URLField(blank=True, verbose_name='Kompaniya LinkedIn')),
-                ('company_telegram', models.URLField(blank=True, verbose_name='Kompaniya Telegram')),
-                ('company_size', models.CharField(blank=True, choices=[('1-10', '1-10 xodim'), ('11-50', '11-50 xodim'), ('51-200', '51-200 xodim'), ('201-500', '201-500 xodim'), ('501-1000', '501-1000 xodim'), ('1000+', '1000+ xodim')], max_length=20, verbose_name='Kompaniya hajmi')),
-                ('industry', models.CharField(blank=True, max_length=255, verbose_name='Soha')),
-                ('founded_year', models.IntegerField(blank=True, null=True, verbose_name='Tashkil etilgan yil')),
-                ('headquarters', models.CharField(blank=True, max_length=255, verbose_name='Bosh qarorgoh')),
-                ('jobs_posted', models.PositiveIntegerField(default=0, verbose_name="E'lon qilingan ishlar")),
-                ('total_views', models.PositiveIntegerField(default=0, verbose_name="Jami ko'rishlar")),
-                ('is_verified', models.BooleanField(default=False, verbose_name='Tasdiqlangan kompaniya')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='employer_profile', to=settings.AUTH_USER_MODEL, verbose_name='Foydalanuvchi')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "company_name",
+                    models.CharField(max_length=255, verbose_name="Kompaniya nomi"),
+                ),
+                (
+                    "company_logo",
+                    models.ImageField(
+                        blank=True,
+                        null=True,
+                        upload_to="company_logos/%Y/%m/%d/",
+                        verbose_name="Kompaniya logotipi",
+                    ),
+                ),
+                (
+                    "company_description",
+                    models.TextField(verbose_name="Kompaniya haqida"),
+                ),
+                (
+                    "company_email",
+                    models.EmailField(
+                        blank=True, max_length=254, verbose_name="Kompaniya emaili"
+                    ),
+                ),
+                (
+                    "company_phone",
+                    phonenumber_field.modelfields.PhoneNumberField(
+                        blank=True,
+                        max_length=128,
+                        null=True,
+                        region=None,
+                        verbose_name="Kompaniya telefoni",
+                    ),
+                ),
+                (
+                    "company_website",
+                    models.URLField(blank=True, verbose_name="Kompaniya veb sayti"),
+                ),
+                (
+                    "company_linkedin",
+                    models.URLField(blank=True, verbose_name="Kompaniya LinkedIn"),
+                ),
+                (
+                    "company_telegram",
+                    models.URLField(blank=True, verbose_name="Kompaniya Telegram"),
+                ),
+                (
+                    "company_size",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("1-10", "1-10 xodim"),
+                            ("11-50", "11-50 xodim"),
+                            ("51-200", "51-200 xodim"),
+                            ("201-500", "201-500 xodim"),
+                            ("501-1000", "501-1000 xodim"),
+                            ("1000+", "1000+ xodim"),
+                        ],
+                        max_length=20,
+                        verbose_name="Kompaniya hajmi",
+                    ),
+                ),
+                (
+                    "industry",
+                    models.CharField(blank=True, max_length=255, verbose_name="Soha"),
+                ),
+                (
+                    "founded_year",
+                    models.IntegerField(
+                        blank=True, null=True, verbose_name="Tashkil etilgan yil"
+                    ),
+                ),
+                (
+                    "headquarters",
+                    models.CharField(
+                        blank=True, max_length=255, verbose_name="Bosh qarorgoh"
+                    ),
+                ),
+                (
+                    "jobs_posted",
+                    models.PositiveIntegerField(
+                        default=0, verbose_name="E'lon qilingan ishlar"
+                    ),
+                ),
+                (
+                    "total_views",
+                    models.PositiveIntegerField(
+                        default=0, verbose_name="Jami ko'rishlar"
+                    ),
+                ),
+                (
+                    "is_verified",
+                    models.BooleanField(
+                        default=False, verbose_name="Tasdiqlangan kompaniya"
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="employer_profile",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Foydalanuvchi",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Ish beruvchi profili',
-                'verbose_name_plural': 'Ish beruvchi profillari',
+                "verbose_name": "Ish beruvchi profili",
+                "verbose_name_plural": "Ish beruvchi profillari",
             },
         ),
         migrations.CreateModel(
-            name='HemisAuth',
+            name="HemisAuth",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('hemis_user_id', models.CharField(blank=True, max_length=100, null=True, verbose_name='Hemis User ID')),
-                ('access_token', models.TextField(verbose_name='Access Token')),
-                ('refresh_token', models.TextField(verbose_name='Refresh Token')),
-                ('token_expires', models.DateTimeField(verbose_name='Token muddati')),
-                ('hemis_user_data', models.JSONField(verbose_name="Hemis foydalanuvchi ma'lumotlari")),
-                ('last_sync', models.DateTimeField(auto_now=True, verbose_name='Oxirgi sinxronizatsiya')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='hemis_auth', to=settings.AUTH_USER_MODEL, verbose_name='Foydalanuvchi')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "hemis_user_id",
+                    models.CharField(
+                        blank=True,
+                        max_length=100,
+                        null=True,
+                        verbose_name="Hemis User ID",
+                    ),
+                ),
+                ("access_token", models.TextField(verbose_name="Access Token")),
+                ("refresh_token", models.TextField(verbose_name="Refresh Token")),
+                ("token_expires", models.DateTimeField(verbose_name="Token muddati")),
+                (
+                    "hemis_user_data",
+                    models.JSONField(verbose_name="Hemis foydalanuvchi ma'lumotlari"),
+                ),
+                (
+                    "last_sync",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Oxirgi sinxronizatsiya"
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="hemis_auth",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Foydalanuvchi",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Hemis autentifikatsiya',
-                'verbose_name_plural': 'Hemis autentifikatsiyalar',
+                "verbose_name": "Hemis autentifikatsiya",
+                "verbose_name_plural": "Hemis autentifikatsiyalar",
             },
         ),
         migrations.CreateModel(
-            name='Notification',
+            name="Notification",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('notification_type', models.CharField(choices=[('job_alert', 'Ish ogohlantirishi'), ('application_update', 'Ariza yangilanishi'), ('message', 'Xabar'), ('system', 'Tizim xabari'), ('event', 'Tadbir xabari'), ('security', 'Xavfsizlik xabari')], max_length=50, verbose_name='Xabar turi')),
-                ('title', models.CharField(max_length=255, verbose_name='Sarlavha')),
-                ('message', models.TextField(verbose_name='Xabar')),
-                ('is_read', models.BooleanField(default=False, verbose_name='O`qilgan')),
-                ('related_url', models.URLField(blank=True, verbose_name='Bog`langan URL')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Yaratilgan vaqt')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='Foydalanuvchi')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "notification_type",
+                    models.CharField(
+                        choices=[
+                            ("job_alert", "Ish ogohlantirishi"),
+                            ("application_update", "Ariza yangilanishi"),
+                            ("message", "Xabar"),
+                            ("system", "Tizim xabari"),
+                            ("event", "Tadbir xabari"),
+                            ("security", "Xavfsizlik xabari"),
+                        ],
+                        max_length=50,
+                        verbose_name="Xabar turi",
+                    ),
+                ),
+                ("title", models.CharField(max_length=255, verbose_name="Sarlavha")),
+                ("message", models.TextField(verbose_name="Xabar")),
+                (
+                    "is_read",
+                    models.BooleanField(default=False, verbose_name="O`qilgan"),
+                ),
+                (
+                    "related_url",
+                    models.URLField(blank=True, verbose_name="Bog`langan URL"),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Yaratilgan vaqt"
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Foydalanuvchi",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Xabar',
-                'verbose_name_plural': 'Xabarlar',
-                'ordering': ['-created_at'],
+                "verbose_name": "Xabar",
+                "verbose_name_plural": "Xabarlar",
+                "ordering": ["-created_at"],
             },
         ),
         migrations.CreateModel(
-            name='StudentProfile',
+            name="StudentProfile",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('student_id', models.CharField(blank=True, max_length=50, verbose_name='Talaba ID')),
-                ('faculty', models.CharField(blank=True, max_length=255, verbose_name='Fakultet')),
-                ('specialty', models.CharField(blank=True, max_length=255, verbose_name='Mutaxassislik')),
-                ('education_level', models.CharField(blank=True, choices=[('bachelor', 'Bakalavr'), ('master', 'Magistr'), ('phd', 'PhD'), ('college', 'Kollej'), ('school', 'Maktab')], max_length=20, verbose_name="Ta'lim darajasi")),
-                ('graduation_year', models.IntegerField(blank=True, null=True, verbose_name='Bitirgan yili')),
-                ('gpa', models.DecimalField(blank=True, decimal_places=2, max_digits=3, null=True, verbose_name="O'rtacha baho")),
-                ('desired_position', models.CharField(blank=True, max_length=255, verbose_name='Istagan lavozim')),
-                ('desired_salary', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Istagan maosh')),
-                ('work_type', models.CharField(blank=True, choices=[('full_time', 'To`liq kunlik'), ('part_time', 'Yarim kunlik'), ('remote', 'Uzoq ish'), ('internship', 'Stajirovka')], max_length=50, verbose_name='Ish turi')),
-                ('resumes_created', models.PositiveIntegerField(default=0, verbose_name='Yaratilgan rezyumelar')),
-                ('jobs_applied', models.PositiveIntegerField(default=0, verbose_name='Ariza berilgan ishlar')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='student_profile', to=settings.AUTH_USER_MODEL, verbose_name='Foydalanuvchi')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "student_id",
+                    models.CharField(
+                        blank=True, max_length=50, verbose_name="Talaba ID"
+                    ),
+                ),
+                (
+                    "faculty",
+                    models.CharField(
+                        blank=True, max_length=255, verbose_name="Fakultet"
+                    ),
+                ),
+                (
+                    "specialty",
+                    models.CharField(
+                        blank=True, max_length=255, verbose_name="Mutaxassislik"
+                    ),
+                ),
+                (
+                    "education_level",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("bachelor", "Bakalavr"),
+                            ("master", "Magistr"),
+                            ("phd", "PhD"),
+                            ("college", "Kollej"),
+                            ("school", "Maktab"),
+                        ],
+                        max_length=20,
+                        verbose_name="Ta'lim darajasi",
+                    ),
+                ),
+                (
+                    "graduation_year",
+                    models.IntegerField(
+                        blank=True, null=True, verbose_name="Bitirgan yili"
+                    ),
+                ),
+                (
+                    "gpa",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=3,
+                        null=True,
+                        verbose_name="O'rtacha baho",
+                    ),
+                ),
+                (
+                    "desired_position",
+                    models.CharField(
+                        blank=True, max_length=255, verbose_name="Istagan lavozim"
+                    ),
+                ),
+                (
+                    "desired_salary",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Istagan maosh",
+                    ),
+                ),
+                (
+                    "work_type",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("full_time", "To`liq kunlik"),
+                            ("part_time", "Yarim kunlik"),
+                            ("remote", "Uzoq ish"),
+                            ("internship", "Stajirovka"),
+                        ],
+                        max_length=50,
+                        verbose_name="Ish turi",
+                    ),
+                ),
+                (
+                    "resumes_created",
+                    models.PositiveIntegerField(
+                        default=0, verbose_name="Yaratilgan rezyumelar"
+                    ),
+                ),
+                (
+                    "jobs_applied",
+                    models.PositiveIntegerField(
+                        default=0, verbose_name="Ariza berilgan ishlar"
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="student_profile",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Foydalanuvchi",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Talaba profili',
-                'verbose_name_plural': 'Talaba profillari',
+                "verbose_name": "Talaba profili",
+                "verbose_name_plural": "Talaba profillari",
             },
         ),
         migrations.CreateModel(
-            name='UserActivity',
+            name="UserActivity",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('activity_type', models.CharField(choices=[('login', 'Kirish'), ('profile_view', 'Profil ko`rish'), ('job_apply', 'Ishga ariza'), ('resume_create', 'Rezyume yaratish'), ('job_create', 'Ish yaratish'), ('profile_update', 'Profil yangilash'), ('password_change', 'Parol o`zgartirish')], max_length=50, verbose_name='Faollik turi')),
-                ('description', models.TextField(blank=True, verbose_name='Tavsif')),
-                ('ip_address', models.GenericIPAddressField(blank=True, null=True, verbose_name='IP manzil')),
-                ('user_agent', models.TextField(blank=True, verbose_name='User Agent')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Yaratilgan vaqt')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='Foydalanuvchi')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "activity_type",
+                    models.CharField(
+                        choices=[
+                            ("login", "Kirish"),
+                            ("profile_view", "Profil ko`rish"),
+                            ("job_apply", "Ishga ariza"),
+                            ("resume_create", "Rezyume yaratish"),
+                            ("job_create", "Ish yaratish"),
+                            ("profile_update", "Profil yangilash"),
+                            ("password_change", "Parol o`zgartirish"),
+                        ],
+                        max_length=50,
+                        verbose_name="Faollik turi",
+                    ),
+                ),
+                ("description", models.TextField(blank=True, verbose_name="Tavsif")),
+                (
+                    "ip_address",
+                    models.GenericIPAddressField(
+                        blank=True, null=True, verbose_name="IP manzil"
+                    ),
+                ),
+                ("user_agent", models.TextField(blank=True, verbose_name="User Agent")),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Yaratilgan vaqt"
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Foydalanuvchi",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Foydalanuvchi faolligi',
-                'verbose_name_plural': 'Foydalanuvchi faolliklari',
-                'ordering': ['-created_at'],
+                "verbose_name": "Foydalanuvchi faolligi",
+                "verbose_name_plural": "Foydalanuvchi faolliklari",
+                "ordering": ["-created_at"],
             },
         ),
     ]

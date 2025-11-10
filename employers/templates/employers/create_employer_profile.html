@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block content %}
+<div class="container py-5">
+	<h1 class="display-5 fw-bold text-primary mb-4">{% trans "Create Employer Profile" %}</h1>
+	<div class="card shadow-sm mb-4">
+		<div class="card-body">
+			<form method="post">
+				{% csrf_token %}
+				<div class="mb-3">
+					<label for="companyName" class="form-label">{% trans "Company Name" %}</label>
+					<input type="text" class="form-control" id="companyName" name="company_name">
+				</div>
+				<div class="mb-3">
+					<label for="contactEmail" class="form-label">{% trans "Contact Email" %}</label>
+					<input type="email" class="form-control" id="contactEmail" name="contact_email">
+				</div>
+				<button type="submit" class="btn btn-primary">{% trans "Create Profile" %}</button>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}

@@ -183,8 +183,8 @@
               </span>
               {% endif %}
             </div>
-            <h6 class="card-title fw-bold">{{ resource.title }}</h6>
-            <p class="card-text text-muted small">{{ resource.description|truncatewords:15 }}</p>
+            <h6 class="card-title fw-bold">{{ resource.title|truncatechars:30 }}</h6>
+            <p class="card-text text-muted small">{{ resource.description|truncatechars:30 }}</p>
           </div>
           <div class="card-footer bg-transparent py-2">
             <a href="{% url 'resources:resource_detail' resource.pk %}" class="btn btn-sm btn-outline-primary w-100">
@@ -198,39 +198,7 @@
   </section>
   {% endif %}
 
-  <!-- Resource Categories -->
-  {% if resource_categories %}
-  <section class="mb-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <div class="fw-bold text-dark h5">{% trans "Resurs Kategoriyalari" %}</div>
-      <a href="{% url 'resources:resource_list' %}" class="btn btn-outline-primary">
-        {% trans "Barcha kategoriyalar" %} <i class="fas fa-arrow-right ms-2"></i>
-      </a>
-    </div>
-    <div class="row g-3">
-      {% for category in resource_categories|slice:":6" %}
-      <div class="col-lg-4 col-md-6">
-        <div class="card h-100 category-card">
-          <div class="card-body text-center p-4">
-            <div class="category-icon mb-3">
-              <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto" style="width: 70px; height: 70px;">
-                <i class="fas fa-folder fa-2x"></i>
-              </div>
-            </div>
-            <h5 class="card-title fw-bold text-dark mb-2">{{ category.name }}</h5>
-            <p class="card-text text-muted small mb-3">
-              {{ category.published_resources_count }} ta resurs
-            </p>
-            <a href="{% url 'resources:resource_list' %}?category={{ category.id }}" class="btn btn-outline-primary btn-sm">
-              {% trans "Resurslarni ko'rish" %}
-            </a>
-          </div>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-  </section>
-  {% endif %}
+
 
   <!-- Latest Jobs Preview -->
   <section class="mb-5">

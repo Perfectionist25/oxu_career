@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block content %}
+<div class="container py-5">
+	<h1 class="display-5 fw-bold text-primary mb-4">{% trans "Employer Dashboard" %}</h1>
+	<div class="row">
+		<div class="col-md-6">
+			<div class="card shadow-sm mb-4">
+				<div class="card-body">
+					<h5 class="card-title">{% trans "Statistics" %}</h5>
+					<ul class="list-group">
+						<li class="list-group-item">{% trans "Total Jobs" %}: 0</li>
+						<li class="list-group-item">{% trans "Active Jobs" %}: 0</li>
+						<li class="list-group-item">{% trans "Total Applications" %}: 0</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="card shadow-sm mb-4">
+				<div class="card-body">
+					<h5 class="card-title">{% trans "Recent Applications" %}</h5>
+					<ul class="list-group">
+						<li class="list-group-item">{% trans "No recent applications." %}</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

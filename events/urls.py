@@ -18,11 +18,7 @@ urlpatterns = [
     # Event management
     path("create/", views.create_event, name="create_event"),
     path("manage/", views.manage_events, name="manage_events"),
-    path(
-        "<slug:slug>/registrations/",
-        views.event_registrations,
-        name="event_registrations",
-    ),
+    path("<slug:slug>/registrations/", views.event_registrations, name="event_registrations"),
     # Admin management
     path("admin/", views.admin_event_list, name="admin_event_list"),
     path("admin/create/", views.admin_event_create, name="admin_event_create"),

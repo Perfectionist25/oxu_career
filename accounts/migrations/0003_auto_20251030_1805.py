@@ -2,22 +2,25 @@
 # accounts/migrations/0003_fix_hemis_data.py
 from django.db import migrations
 
+
 def fix_hemis_data(apps, schema_editor):
-    CustomUser = apps.get_model('accounts', 'CustomUser')
+    CustomUser = apps.get_model("accounts", "CustomUser")
     # Set NULL for invalid JSON data
     for user in CustomUser.objects.all():
         if user.hemis_data:
             try:
                 # Try to validate JSON
                 import json
+
                 json.loads(user.hemis_data)
             except (json.JSONDecodeError, TypeError):
                 user.hemis_data = None
                 user.save()
 
+
 class Migration(migrations.Migration):
     dependencies = [
-        ('accounts', '0002_remove_customuser_hemis_id'),
+        ("accounts", "0002_remove_customuser_hemis_id"),
     ]
 
     operations = [

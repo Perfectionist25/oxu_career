@@ -1,362 +1,471 @@
 # accounts/views.py - ИСПРАВЛЕННАЯ ВЕРСИЯ
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.decorators import login_required, user_passes_test
+from datetime import datetime, timedelta
+from typing import Optional, Union
+
 from django.contrib import messages
-from django.http import JsonResponse, HttpResponse
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.paginator import Paginator
+from django.http import JsonResponse
+from django.db.models import Q
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from django.utils.translation import gettext_lazy as _
-from django.db.models import Count, Q
-from django.core.paginator import Paginator
-import requests
-import json
-from datetime import datetime, timedelta
-from django.conf import settings
-from django.utils import timezone
-from .models import *
-from .forms import *
+
+from .forms import (
+    EmployerRegistrationForm,
+    EmployerProfileForm,
+    StudentProfileForm,
+    AdminProfileForm,
+    UserUpdateForm,
+)
+from .models import (
+    CustomUser,
+    EmployerProfile,
+    StudentProfile,
+    AdminProfile,
+    UserActivity,
+    Notification,
+)
+
 
 # Utility functions
 def is_student(user):
-    return user.is_authenticated and getattr(user, 'user_type', None) == 'student'
+    return user.is_authenticated and getattr(user, "user_type", None) == "student"
+
 
 def is_employer(user):
-    return user.is_authenticated and getattr(user, 'user_type', None) == 'employer'
+    return user.is_authenticated and getattr(user, "user_type", None) == "employer"
+
 
 def is_admin(user):
-    return user.is_authenticated and getattr(user, 'user_type', None) in ['admin', 'main_admin']
+    return user.is_authenticated and getattr(user, "user_type", None) in [
+        "admin",
+        "main_admin",
+    ]
+
 
 def is_main_admin(user):
-    return user.is_authenticated and getattr(user, 'user_type', None) == 'main_admin'
+    return user.is_authenticated and getattr(user, "user_type", None) == "main_admin"
+
 
 def can_manage_users(user):
-    return user.is_authenticated and getattr(user, 'user_type', None) in ['admin', 'main_admin']
+    return user.is_authenticated and getattr(user, "user_type", None) in [
+        "admin",
+        "main_admin",
+    ]
 
-def create_user_activity(user, activity_type, description='', ip_address=None, user_agent=''):
+
+def create_user_activity(
+    user, activity_type, description="", ip_address=None, user_agent=""
+):
     """Создание записи активности пользователя"""
     UserActivity.objects.create(
         user=user,
         activity_type=activity_type,
         description=description,
         ip_address=ip_address,
-        user_agent=user_agent
+        user_agent=user_agent,
     )
+
 
 # Hemis API Integration (ЗАГЛУШКА - временно отключаем)
 class HemisAPI:
     BASE_URL = "https://hemis.uz/api/v1"
-    
+
     @staticmethod
     def get_auth_url():
         """Заглушка для Hemis авторизации"""
         return "/"  # Временно возвращаем на главную
-    
+
     @staticmethod
     def get_token(code):
         return None
-    
+
     @staticmethod
     def get_user_info(access_token):
         return None
 
+
 def hemis_login(request):
     """Временная заглушка для Hemis авторизации"""
-    messages.info(request, _("Hemis tizimi hozircha ishlamayapti. Iltimos, boshqa login usulidan foydalaning."))
-    return redirect('/')
+    messages.info(
+        request,
+        _(
+            "Hemis tizimi hozircha ishlamayapti. Iltimos, boshqa login usulidan foydalaning."
+        ),
+    )
+    return redirect("/")
+
 
 @csrf_exempt
 def hemis_callback(request):
     """Временная заглушка для Hemis callback"""
     messages.info(request, _("Hemis tizimi hozircha ishlamayapti."))
-    return redirect('/')
+    return redirect("/")
+
 
 def temp_student_login(request):
     """Временный вход для студентов (тестирование)"""
-    if request.method == 'POST':
+    if request.method == "POST":
         # Создаем тестового студента если нет
         student, created = CustomUser.objects.get_or_create(
-            username='test_student',
+            username="test_student",
             defaults={
-                'email': 'student@test.uz',
-                'first_name': 'Test',
-                'last_name': 'Student',
-                'user_type': 'student'
-            }
+                "email": "student@test.uz",
+                "first_name": "Test",
+                "last_name": "Student",
+                "user_type": "student",
+            },
         )
         if created:
-            student.set_password('test123')
+            student.set_password("test123")
             student.save()
-            StudentProfile.objects.create(user=student)
-        
-        user = authenticate(request, username='test_student', password='test123')
+            # Use get_or_create to avoid duplicate profile when post_save signal
+            # already created StudentProfile for this user.
+            StudentProfile.objects.get_or_create(user=student)
+
+        user = authenticate(request, username="test_student", password="test123")
         if user:
             login(request, user)
             messages.success(request, _("Test student sifatida kirdingiz"))
-            return redirect('accounts:student_dashboard')
-    
-    return render(request, 'accounts/temp_login.html', {'user_type': 'student'})
+            return redirect("accounts:student_dashboard")
+
+    return render(request, "accounts/temp_login.html", {"user_type": "student"})
+
 
 def employer_login(request):
     """Вход для работодателей - ИСПРАВЛЕННАЯ ВЕРСИЯ"""
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
         user = authenticate(request, username=username, password=password)
-        
-        if user is not None and hasattr(user, 'is_employer') and user.is_employer:
-            if hasattr(user, 'is_active_employer') and user.is_active_employer:
+
+        if user is not None and hasattr(user, "is_employer") and user.is_employer:
+            if hasattr(user, "is_active_employer") and user.is_active_employer:
                 login(request, user)
                 create_user_activity(
                     user=user,
-                    activity_type='login',
-                    description='Ish beruvchi sifatida tizimga kirish',
+                    activity_type="login",
+                    description="Ish beruvchi sifatida tizimga kirish",
                     ip_address=get_client_ip(request),
-                    user_agent=request.META.get('HTTP_USER_AGENT', '')
+                    user_agent=request.META.get("HTTP_USER_AGENT", ""),
                 )
                 messages.success(request, _("Xush kelibsiz!"))
-                return redirect('accounts:employer_dashboard')  
+                return redirect("accounts:employer_dashboard")
             else:
                 messages.error(request, _("Sizning hisobingiz faol emas"))
         else:
-            messages.error(request, _("Login yoki parol noto'g'ri yoki sizda kirish huquqi yo'q"))
-    
-    return render(request, 'accounts/employer_login.html')
+            messages.error(
+                request, _("Login yoki parol noto'g'ri yoki sizda kirish huquqi yo'q")
+            )
+
+    return render(request, "accounts/employer_login.html")
+
 
 def admin_login(request):
     """Вход для администраторов"""
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
         user = authenticate(request, username=username, password=password)
-        
+
         if user is not None:
             # Проверяем user_type вместо отдельных атрибутов
-            user_type = getattr(user, 'user_type', None)
-            if user_type in ['admin', 'main_admin']:
+            user_type = getattr(user, "user_type", None)
+            if user_type in ["admin", "main_admin"]:
                 login(request, user)
                 create_user_activity(
                     user=user,
-                    activity_type='login',
-                    description='Admin sifatida tizimga kirish',
+                    activity_type="login",
+                    description="Admin sifatida tizimga kirish",
                     ip_address=get_client_ip(request),
-                    user_agent=request.META.get('HTTP_USER_AGENT', '')
+                    user_agent=request.META.get("HTTP_USER_AGENT", ""),
                 )
                 messages.success(request, _("Xush kelibsiz!"))
-                return redirect('accounts:admin_dashboard')
+                return redirect("accounts:admin_dashboard")
             else:
                 messages.error(request, _("Sizda admin huquqlari yo'q"))
         else:
             messages.error(request, _("Login yoki parol noto'g'ri"))
-    
-    return render(request, 'accounts/admin_login.html')
+
+    return render(request, "accounts/admin_login.html")
+
 
 def logout_view(request):
     """Выход из системы"""
     if request.user.is_authenticated:
         create_user_activity(
             user=request.user,
-            activity_type='logout',
-            description='Tizimdan chiqish',
+            activity_type="logout",
+            description="Tizimdan chiqish",
             ip_address=get_client_ip(request),
-            user_agent=request.META.get('HTTP_USER_AGENT', '')
+            user_agent=request.META.get("HTTP_USER_AGENT", ""),
         )
-    
+
     logout(request)
     messages.success(request, _("Siz tizimdan chiqdingiz"))
-    return redirect('/')
+    return redirect("/")
+
 
 # Employer Views
 @login_required
-@user_passes_test(is_employer, login_url='accounts:employer_login')
+@user_passes_test(is_employer, login_url="accounts:employer_login")
 def employer_dashboard(request):
     """Дашборд работодателя"""
     try:
         employer_profile = EmployerProfile.objects.get(user=request.user)
     except EmployerProfile.DoesNotExist:
         employer_profile = EmployerProfile.objects.create(user=request.user)
-        messages.info(request, _("Sizning profilingiz yaratildi. Iltimos, ma'lumotlaringizni to'ldiring."))
-    
+        messages.info(
+            request,
+            _("Sizning profilingiz yaratildi. Iltimos, ma'lumotlaringizni to'ldiring."),
+        )
+
     # Получаем статистику по вакансиям - ИСПРАВЛЕНО
     from jobs.models import Job, JobApplication
+
     jobs = Job.objects.filter(employer=employer_profile)
-    
+
     stats = {
-        'active_jobs': jobs.filter(is_active=True).count(),
-        'total_applications': JobApplication.objects.filter(job__employer=employer_profile).count(),
-        'draft_jobs': jobs.filter(is_active=False).count(),
-        'profile_views': employer_profile.total_views,
-        'jobs_posted': employer_profile.jobs_posted,
+        "active_jobs": jobs.filter(is_active=True).count(),
+        "total_applications": JobApplication.objects.filter(
+            job__employer=employer_profile
+        ).count(),
+        "draft_jobs": jobs.filter(is_active=False).count(),
+        "profile_views": employer_profile.total_views,
+        "jobs_posted": employer_profile.jobs_posted,
     }
-    
+
     # Последние вакансии
-    recent_jobs = jobs.order_by('-created_at')[:5]
-    
+    recent_jobs = jobs.order_by("-created_at")[:5]
+
     context = {
-        'employer_profile': employer_profile,
-        'stats': stats,
-        'recent_jobs': recent_jobs,
+        "employer_profile": employer_profile,
+        "stats": stats,
+        "recent_jobs": recent_jobs,
     }
-    
-    return render(request, 'accounts/employer_dashboard.html', context)
+
+    return render(request, "accounts/employer_dashboard.html", context)
+
 
 @login_required
-@user_passes_test(can_manage_users, login_url='accounts:admin_login')
+@user_passes_test(can_manage_users, login_url="accounts:admin_login")
 def create_employer_account(request):
     """Создание аккаунта работодателя"""
-    if request.method == 'POST':
+    if request.method == "POST":
         user_form = EmployerRegistrationForm(request.POST)
         profile_form = EmployerProfileForm(request.POST, request.FILES)
-        
+
         if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save(commit=False)
-            user.user_type = 'employer'
-            user.set_password(user_form.cleaned_data['password1'])
+            user.user_type = "employer"
+            user.set_password(user_form.cleaned_data["password1"])
             user.save()
-            
-            employer_profile = profile_form.save(commit=False)
-            employer_profile.user = user
-            employer_profile.save()
-            
+
+            # Avoid creating duplicate EmployerProfile if a post_save signal
+            # already created it. If it exists, update fields from form; otherwise
+            # save a new instance from the form.
+            try:
+                existing_profile = EmployerProfile.objects.get(user=user)
+                # Update fields from the form.cleaned_data
+                for field, value in profile_form.cleaned_data.items():
+                    # Skip files here; files are handled via profile_form.save below
+                    if field in ["company_logo"]:
+                        continue
+                    setattr(existing_profile, field, value)
+                # Handle file fields if provided
+                if profile_form.files.get("company_logo"):
+                    existing_profile.company_logo = profile_form.files.get("company_logo")
+                existing_profile.save()
+                employer_profile = existing_profile
+            except EmployerProfile.DoesNotExist:
+                employer_profile = profile_form.save(commit=False)
+                employer_profile.user = user
+                employer_profile.save()
+
             create_user_activity(
                 user=request.user,
-                activity_type='user_create',
-                description=f"Yangi ish beruvchi yaratildi: {employer_profile.company_name}"
+                activity_type="user_create",
+                description=f"Yangi ish beruvchi yaratildi: {employer_profile.company_name}",
             )
-            
-            messages.success(request, _("Ish beruvchi akkaunti muvaffaqiyatli yaratildi!"))
-            return redirect('accounts:user_management')
+
+            messages.success(
+                request, _("Ish beruvchi akkaunti muvaffaqiyatli yaratildi!")
+            )
+            return redirect("accounts:user_management")
     else:
         user_form = EmployerRegistrationForm()
         profile_form = EmployerProfileForm()
-    
-    context = {
-        'user_form': user_form,
-        'profile_form': profile_form,
-    }
-    
-    return render(request, 'accounts/create_employer_account.html', context)
 
-# Student Views  
+    context = {
+        "user_form": user_form,
+        "profile_form": profile_form,
+    }
+
+    return render(request, "accounts/create_employer_account.html", context)
+
+
+# Student Views
 @login_required
-@user_passes_test(is_student, login_url='accounts:hemis_login')
+@user_passes_test(is_student, login_url="accounts:hemis_login")
 def student_dashboard(request):
     """Дашборд студента"""
     try:
         student_profile = StudentProfile.objects.get(user=request.user)
     except StudentProfile.DoesNotExist:
         student_profile = StudentProfile.objects.create(user=request.user)
-        messages.info(request, _("Sizning profilingiz yaratildi. Iltimos, ma'lumotlaringizni to'ldiring."))
-    
+        messages.info(
+            request,
+            _("Sizning profilingiz yaratildi. Iltimos, ma'lumotlaringizni to'ldiring."),
+        )
+
     stats = {
-        'resumes_created': getattr(student_profile, 'resumes_created', 0),
-        'jobs_applied': getattr(student_profile, 'jobs_applied', 0),
-        'profile_views': getattr(request.user, 'profile_views', 0),
+        "resumes_created": getattr(student_profile, "resumes_created", 0),
+        "jobs_applied": getattr(student_profile, "jobs_applied", 0),
+        "profile_views": getattr(request.user, "profile_views", 0),
     }
-    
+
     context = {
-        'student_profile': student_profile,
-        'stats': stats,
+        "student_profile": student_profile,
+        "stats": stats,
     }
-    
-    return render(request, 'accounts/student_dashboard.html', context)
+
+    return render(request, "accounts/student_dashboard.html", context)
+
+
+# Search students (accessible to employers)
+@login_required
+@user_passes_test(is_employer, login_url="accounts:employer_login")
+def student_search(request):
+    """Simple student search for employers."""
+    query = request.GET.get("q", "").strip()
+    students = StudentProfile.objects.select_related("user").all()
+
+    if query:
+        students = students.filter(
+            Q(user__first_name__icontains=query)
+            | Q(user__last_name__icontains=query)
+            | Q(user__username__icontains=query)
+        )
+
+    paginator = Paginator(students, 12)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        "page_obj": page_obj,
+        "query": query,
+    }
+    return render(request, "accounts/student_search.html", context)
+
 
 # Admin Views
 @login_required
-@user_passes_test(is_admin, login_url='accounts:admin_login')
+@user_passes_test(is_admin, login_url="accounts:admin_login")
 def admin_dashboard(request):
     """Дашборд администратора"""
     try:
         admin_profile = AdminProfile.objects.get(user=request.user)
     except AdminProfile.DoesNotExist:
         admin_profile = AdminProfile.objects.create(user=request.user)
-    
+
     today = datetime.now().date()
     week_ago = today - timedelta(days=7)
-    
+
     # ИСПРАВЛЕНО: статистика вакансий и резюме
-    from jobs.models import Job
     from cvbuilder.models import CV
-    
+    from jobs.models import Job
+
     stats = {
-        'total_users': CustomUser.objects.count(),
-        'total_students': CustomUser.objects.filter(user_type='student').count(),
-        'total_employers': CustomUser.objects.filter(user_type='employer').count(),
-        'active_today': UserActivity.objects.filter(
-            created_at__date=today
-        ).values('user').distinct().count(),
-        'total_jobs': Job.objects.count(),
-        'total_resumes': CV.objects.count(),
-        'new_this_week': CustomUser.objects.filter(date_joined__gte=week_ago).count(),
+        "total_users": CustomUser.objects.count(),
+        "total_students": CustomUser.objects.filter(user_type="student").count(),
+        "total_employers": CustomUser.objects.filter(user_type="employer").count(),
+        "active_today": UserActivity.objects.filter(created_at__date=today)
+        .values("user")
+        .distinct()
+        .count(),
+        "total_jobs": Job.objects.count(),
+        "total_resumes": CV.objects.count(),
+        "new_this_week": CustomUser.objects.filter(date_joined__gte=week_ago).count(),
     }
-    
-    recent_activities = UserActivity.objects.select_related('user').order_by('-created_at')[:10]
-    
+
+    recent_activities = UserActivity.objects.select_related("user").order_by(
+        "-created_at"
+    )[:10]
+
     context = {
-        'admin_profile': admin_profile,
-        'stats': stats,
-        'recent_activities': recent_activities,
+        "admin_profile": admin_profile,
+        "stats": stats,
+        "recent_activities": recent_activities,
     }
-    
-    return render(request, 'accounts/admin_dashboard.html', context)
+
+    return render(request, "accounts/admin_dashboard.html", context)
+
 
 @login_required
-@user_passes_test(is_admin, login_url='accounts:admin_login')
+@user_passes_test(is_admin, login_url="accounts:admin_login")
 def admin_management(request):
     """Управление администраторами (только для главного админа)"""
     if not request.user.is_main_admin:
         messages.error(request, _("Sizda bu sahifaga kirish huquqi yo'q"))
-        return redirect('accounts:admin_dashboard')
-    
-    admins = CustomUser.objects.filter(user_type__in=['admin', 'main_admin'])
-    
-    context = {
-        'admins': admins,
-    }
-    return render(request, 'accounts/admin_management.html', context)
+        return redirect("accounts:admin_dashboard")
 
-@login_required  
-@user_passes_test(is_admin, login_url='accounts:admin_login')
+    admins = CustomUser.objects.filter(user_type__in=["admin", "main_admin"])
+
+    context = {
+        "admins": admins,
+    }
+    return render(request, "accounts/admin_management.html", context)
+
+
+@login_required
+@user_passes_test(is_admin, login_url="accounts:admin_login")
 def admin_employer_management(request):
     """Управление работодателями"""
-    employers = CustomUser.objects.filter(user_type='employer')
-    
+    employers = CustomUser.objects.filter(user_type="employer")
+
     context = {
-        'employers': employers,
+        "employers": employers,
     }
-    return render(request, 'accounts/admin_employer_management.html', context)
+    return render(request, "accounts/admin_employer_management.html", context)
+
 
 # Utility functions
 def get_client_ip(request):
     """Получить IP адрес клиента"""
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
     if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
+        ip = x_forwarded_for.split(",")[0]
     else:
-        ip = request.META.get('REMOTE_ADDR')
+        ip = request.META.get("REMOTE_ADDR")
     return ip
+
 
 # Home views
 def home_redirect(request):
     """Перенаправление на соответствующую домашнюю страницу"""
     if request.user.is_authenticated:
-        user_type = getattr(request.user, 'user_type', None)
-        
-        if user_type == 'student':
-            return redirect('accounts:student_dashboard')
-        elif user_type == 'employer':
-            return redirect('accounts:employer_dashboard')
-        elif user_type in ['admin', 'main_admin']:
-            return redirect('accounts:admin_dashboard')
-    
-    return redirect('/')
+        user_type = getattr(request.user, "user_type", None)
+
+        if user_type == "student":
+            return redirect("accounts:student_dashboard")
+        elif user_type == "employer":
+            return redirect("accounts:employer_dashboard")
+        elif user_type in ["admin", "main_admin"]:
+            return redirect("accounts:admin_dashboard")
+
+    return redirect("/")
+
 
 def home(request):
     """Главная страница для гостей"""
     if request.user.is_authenticated:
         return home_redirect(request)
-    
-    return render(request, 'home.html')
+
+    return render(request, "home.html")
+
 
 @login_required
 def profile_view(request, user_id=None):
@@ -367,348 +476,399 @@ def profile_view(request, user_id=None):
     else:
         user = request.user
         is_own_profile = True
-    
+
     # Увеличиваем счетчик просмотров если смотрим чужой профиль
     if user != request.user:
-        user.profile_views = getattr(user, 'profile_views', 0) + 1
+        user.profile_views = getattr(user, "profile_views", 0) + 1
         user.save()
-        
+
         create_user_activity(
             user=request.user,
-            activity_type='profile_view',
-            description=f"{user.username} profilini ko'rdi"
+            activity_type="profile_view",
+            description=f"{user.username} profilini ko'rdi",
         )
-    
+
     # Получаем соответствующий профиль
-    profile = None
-    template_name = 'accounts/profile_base.html'
-    
+    profile: Optional[Union[StudentProfile, EmployerProfile, AdminProfile]] = None
+    template_name = "accounts/profile_base.html"
+
     # Базовый контекст
     context = {
-        'profile_user': user,
-        'is_own_profile': is_own_profile,
+        "profile_user": user,
+        "is_own_profile": is_own_profile,
     }
-    
-    if hasattr(user, 'is_student') and user.is_student:
+
+    if hasattr(user, "is_student") and user.is_student:
         try:
             profile = StudentProfile.objects.get(user=user)
-            template_name = 'accounts/student_profile.html'
-            context.update({
-                'profile': profile,
-                'stats': {
-                    'resumes_created': getattr(profile, 'resumes_created', 0),
-                    'jobs_applied': getattr(profile, 'jobs_applied', 0),
+            template_name = "accounts/student_profile.html"
+            context.update(
+                {
+                    "profile": profile,
+                    "stats": {
+                        "resumes_created": getattr(profile, "resumes_created", 0),
+                        "jobs_applied": getattr(profile, "jobs_applied", 0),
+                    },
                 }
-            })
+            )
         except StudentProfile.DoesNotExist:
             profile = StudentProfile.objects.create(user=user)
-            
-    elif hasattr(user, 'is_employer') and user.is_employer:
+
+    elif hasattr(user, "is_employer") and user.is_employer:
         try:
             profile = EmployerProfile.objects.get(user=user)
-            template_name = 'accounts/employer_profile.html'
-            
+            template_name = "accounts/employer_profile.html"
+
             # ДОБАВЛЯЕМ ДАННЫЕ О ВАКАНСИЯХ - ИСПРАВЛЕНИЕ
             from jobs.models import Job, JobApplication
-            
+
             # Активные вакансии работодателя
             active_jobs = Job.objects.filter(
-                employer=profile,  # Используем связь с EmployerProfile
-                is_active=True
-            ).order_by('-created_at')[:5]
-            
+                employer=profile, is_active=True  # Используем связь с EmployerProfile
+            ).order_by("-created_at")[:5]
+
             # Общее количество откликов на все вакансии работодателя
             total_applications = JobApplication.objects.filter(
                 job__employer=profile  # Используем связь с EmployerProfile
             ).count()
-            
-            context.update({
-                'profile': profile,
-                'active_jobs': active_jobs,
-                'active_jobs_count': active_jobs.count(),
-                'total_applications': total_applications,
-                'jobs_posted': profile.jobs_posted,
-                'total_views': profile.total_views,
-            })
-            
+
+            context.update(
+                {
+                    "profile": profile,
+                    "active_jobs": active_jobs,
+                    "active_jobs_count": active_jobs.count(),
+                    "total_applications": total_applications,
+                    "jobs_posted": profile.jobs_posted,
+                    "total_views": profile.total_views,
+                }
+            )
+
         except EmployerProfile.DoesNotExist:
             profile = EmployerProfile.objects.create(user=user)
-            
-    elif (hasattr(user, 'is_admin') and user.is_admin or 
-          hasattr(user, 'is_main_admin') and user.is_main_admin):
+
+    elif (
+        hasattr(user, "is_admin")
+        and user.is_admin
+        or hasattr(user, "is_main_admin")
+        and user.is_main_admin
+    ):
         try:
             profile = AdminProfile.objects.get(user=user)
-            template_name = 'accounts/admin_profile.html'
-            context.update({
-                'profile': profile,
-                'admin_activities': UserActivity.objects.filter(
-                    user=user, 
-                    activity_type__in=['user_management', 'system_management']
-                )[:5],
-            })
+            template_name = "accounts/admin_profile.html"
+            context.update(
+                {
+                    "profile": profile,
+                    "admin_activities": UserActivity.objects.filter(
+                        user=user,
+                        activity_type__in=["user_management", "system_management"],
+                    )[:5],
+                }
+            )
         except AdminProfile.DoesNotExist:
             profile = AdminProfile.objects.create(user=user)
-    
-    context['profile'] = profile
+
+    context["profile"] = profile
     return render(request, template_name, context)
 
+
 @login_required
-@user_passes_test(is_student, login_url='accounts:hemis_login')
+@user_passes_test(is_student, login_url="accounts:hemis_login")
 def student_profile_update(request):
     """Редактирование профиля студента"""
     try:
         student_profile = StudentProfile.objects.get(user=request.user)
     except StudentProfile.DoesNotExist:
         student_profile = StudentProfile.objects.create(user=request.user)
-    
-    if request.method == 'POST':
+
+    if request.method == "POST":
         user_form = UserUpdateForm(request.POST, instance=request.user)
         profile_form = StudentProfileForm(request.POST, instance=student_profile)
-        
+
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
-            
+
             create_user_activity(
                 user=request.user,
-                activity_type='profile_update',
-                description='Talaba profili yangilandi'
+                activity_type="profile_update",
+                description="Talaba profili yangilandi",
             )
-            
+
             messages.success(request, _("Profil muvaffaqiyatli yangilandi!"))
-            return redirect('accounts:student_dashboard')
+            return redirect("accounts:student_dashboard")
     else:
         user_form = UserUpdateForm(instance=request.user)
         profile_form = StudentProfileForm(instance=student_profile)
-    
+
     context = {
-        'user_form': user_form,
-        'profile_form': profile_form,
+        "user_form": user_form,
+        "profile_form": profile_form,
     }
-    
-    return render(request, 'accounts/student_profile_update.html', context)
+
+    return render(request, "accounts/student_profile_update.html", context)
+
 
 @login_required
-@user_passes_test(is_employer, login_url='accounts:employer_login')
+@user_passes_test(is_employer, login_url="accounts:employer_login")
 def employer_profile_update(request):
     """Редактирование профиля работодателя"""
     try:
         employer_profile = EmployerProfile.objects.get(user=request.user)
     except EmployerProfile.DoesNotExist:
         employer_profile = EmployerProfile.objects.create(user=request.user)
-    
-    if request.method == 'POST':
+
+    if request.method == "POST":
         user_form = UserUpdateForm(request.POST, instance=request.user)
-        profile_form = EmployerProfileForm(request.POST, request.FILES, instance=employer_profile)
-        
+        profile_form = EmployerProfileForm(
+            request.POST, request.FILES, instance=employer_profile
+        )
+
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
-            
+
             create_user_activity(
                 user=request.user,
-                activity_type='profile_update',
-                description='Ish beruvchi profili yangilandi'
+                activity_type="profile_update",
+                description="Ish beruvchi profili yangilandi",
             )
-            
+
             messages.success(request, _("Profil muvaffaqiyatli yangilandi!"))
-            return redirect('accounts:employer_dashboard')
+            return redirect("accounts:employer_dashboard")
     else:
         user_form = UserUpdateForm(instance=request.user)
         profile_form = EmployerProfileForm(instance=employer_profile)
-    
+
     context = {
-        'user_form': user_form,
-        'profile_form': profile_form,
+        "user_form": user_form,
+        "profile_form": profile_form,
     }
-    
-    return render(request, 'accounts/employer_profile_update.html', context)
+
+    return render(request, "accounts/employer_profile_update.html", context)
+
 
 @login_required
-@user_passes_test(is_main_admin, login_url='accounts:admin_login')
+@user_passes_test(is_main_admin, login_url="accounts:admin_login")
 def create_admin_account(request):
     """Создание аккаунта администратора (только для главного админа)"""
-    if request.method == 'POST':
+    if request.method == "POST":
         form = AdminProfileForm(request.POST)
         if form.is_valid():
-            # Создаем пользователя
+            # Create user — uniqueness of username/email is validated in the form
             user = CustomUser.objects.create_user(
-                username=form.cleaned_data['username'],
-                email=form.cleaned_data['email'],
-                first_name=form.cleaned_data['first_name'],
-                last_name=form.cleaned_data['last_name'],
-                user_type='admin'
+                username=form.cleaned_data["username"],
+                email=form.cleaned_data["email"],
+                first_name=form.cleaned_data["first_name"],
+                last_name=form.cleaned_data["last_name"],
+                user_type="admin",
             )
-            user.set_password(form.cleaned_data['password1'])
+            user.set_password(form.cleaned_data["password1"])
             user.save()
-            
-            # Создаем профиль администратора
-            admin_profile = AdminProfile.objects.create(
+
+            # Создаем профиль администратора или обновляем существующий.
+            # У нас есть сигнал post_save, который также может автоматически
+            # создать профиль при создании пользователя, поэтому используем
+            # update_or_create чтобы избежать UNIQUE constraint ошибок.
+            AdminProfile.objects.update_or_create(
                 user=user,
-                can_manage_students=form.cleaned_data.get('can_manage_students', True),
-                can_manage_employers=form.cleaned_data.get('can_manage_employers', True),
-                can_manage_jobs=form.cleaned_data.get('can_manage_jobs', True),
-                can_manage_resumes=form.cleaned_data.get('can_manage_resumes', True),
-                can_view_statistics=form.cleaned_data.get('can_view_statistics', True),
+                defaults={
+                    "can_manage_students": form.cleaned_data.get(
+                        "can_manage_students", True
+                    ),
+                    "can_manage_employers": form.cleaned_data.get(
+                        "can_manage_employers", True
+                    ),
+                    "can_manage_jobs": form.cleaned_data.get(
+                        "can_manage_jobs", True
+                    ),
+                    "can_manage_resumes": form.cleaned_data.get(
+                        "can_manage_resumes", True
+                    ),
+                    "can_view_statistics": form.cleaned_data.get(
+                        "can_view_statistics", True
+                    ),
+                },
             )
-            
+
             create_user_activity(
                 user=request.user,
-                activity_type='user_create',
-                description=f"Yangi admin yaratildi: {user.username}"
+                activity_type="user_create",
+                description=f"Yangi admin yaratildi: {user.username}",
             )
-            
+
             messages.success(request, _("Admin akkaunti muvaffaqiyatli yaratildi!"))
-            return redirect('accounts:admin_management')
+            return redirect("accounts:admin_management")
     else:
         form = AdminProfileForm()
-    
+
     context = {
-        'form': form,
+        "form": form,
     }
-    
-    return render(request, 'accounts/create_admin_account.html', context)
+
+    return render(request, "accounts/create_admin_account.html", context)
+
 
 @login_required
-@user_passes_test(can_manage_users, login_url='accounts:admin_login')
+@user_passes_test(can_manage_users, login_url="accounts:admin_login")
 def user_management(request):
     """Управление пользователями"""
-    user_type = request.GET.get('type', 'all')
-    
+    user_type = request.GET.get("type", "all")
+
     users = CustomUser.objects.all()
-    
-    if user_type == 'students':
-        users = users.filter(user_type='student')
-    elif user_type == 'employers':
-        users = users.filter(user_type='employer')
-    elif user_type == 'admins':
-        users = users.filter(user_type__in=['admin', 'main_admin'])
-    
+
+    if user_type == "students":
+        users = users.filter(user_type="student")
+    elif user_type == "employers":
+        users = users.filter(user_type="employer")
+    elif user_type == "admins":
+        users = users.filter(user_type__in=["admin", "main_admin"])
+
     # Пагинация
     paginator = Paginator(users, 20)
-    page_number = request.GET.get('page')
+    page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
-    
+
     context = {
-        'page_obj': page_obj,
-        'user_type': user_type,
-        'total_users': users.count(),
+        "page_obj": page_obj,
+        "user_type": user_type,
+        "total_users": users.count(),
     }
-    
-    return render(request, 'accounts/user_management.html', context)
+
+    return render(request, "accounts/user_management.html", context)
+
 
 @login_required
-@user_passes_test(can_manage_users, login_url='accounts:admin_login')
+@user_passes_test(can_manage_users, login_url="accounts:admin_login")
 def user_detail(request, user_id):
     """Детальная информация о пользователе"""
     user = get_object_or_404(CustomUser, id=user_id)
-    
+
     # Получаем соответствующий профиль
-    profile = None
-    if hasattr(user, 'is_student') and user.is_student:
+    profile: Optional[Union[StudentProfile, EmployerProfile, AdminProfile]] = None
+    if hasattr(user, "is_student") and user.is_student:
         profile = get_object_or_404(StudentProfile, user=user)
-    elif hasattr(user, 'is_employer') and user.is_employer:
+    elif hasattr(user, "is_employer") and user.is_employer:
         profile = get_object_or_404(EmployerProfile, user=user)
-    elif (hasattr(user, 'is_admin') and user.is_admin or 
-          hasattr(user, 'is_main_admin') and user.is_main_admin):
+    elif (
+        hasattr(user, "is_admin")
+        and user.is_admin
+        or hasattr(user, "is_main_admin")
+        and user.is_main_admin
+    ):
         profile = get_object_or_404(AdminProfile, user=user)
-    
+
     # Активность пользователя
-    user_activities = UserActivity.objects.filter(user=user).order_by('-created_at')[:20]
-    
+    user_activities = UserActivity.objects.filter(user=user).order_by("-created_at")[
+        :20
+    ]
+
     context = {
-        'user': user,
-        'profile': profile,
-        'activities': user_activities,
+        "user": user,
+        "profile": profile,
+        "activities": user_activities,
     }
-    
-    return render(request, 'accounts/user_detail.html', context)
+
+    return render(request, "accounts/user_detail.html", context)
+
 
 @login_required
-@user_passes_test(can_manage_users, login_url='accounts:admin_login')
+@user_passes_test(can_manage_users, login_url="accounts:admin_login")
 def toggle_user_status(request, user_id):
     """Активация/деактивация пользователя"""
-    if request.method == 'POST':
+    if request.method == "POST":
         user = get_object_or_404(CustomUser, id=user_id)
-        
+
         # Главный админ не может быть деактивирован
-        if hasattr(user, 'is_main_admin') and user.is_main_admin:
+        if hasattr(user, "is_main_admin") and user.is_main_admin:
             messages.error(request, _("Bosh adminni deaktiv qilib bo'lmaydi"))
-            return redirect('accounts:user_management')
-        
+            return redirect("accounts:user_management")
+
         user.is_active = not user.is_active
         user.save()
-        
+
         action = "faollashtirildi" if user.is_active else "deaktiv qilindi"
         create_user_activity(
             user=request.user,
-            activity_type='user_management',
-            description=f"Foydalanuvchi {action}: {user.username}"
+            activity_type="user_management",
+            description=f"Foydalanuvchi {action}: {user.username}",
         )
-        
+
         messages.success(request, _(f"Foydalanuvchi {action}"))
-    
-    return redirect('accounts:user_management')
+
+    return redirect("accounts:user_management")
+
 
 # Notification Views
 @login_required
 def notifications(request):
     """Список уведомлений пользователя"""
-    notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
-    
+    notifications = Notification.objects.filter(user=request.user).order_by(
+        "-created_at"
+    )
+
     # Пагинация
     paginator = Paginator(notifications, 10)
-    page_number = request.GET.get('page')
+    page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
-    
+
     context = {
-        'page_obj': page_obj,
+        "page_obj": page_obj,
     }
-    
-    return render(request, 'accounts/notifications.html', context)
+
+    return render(request, "accounts/notifications.html", context)
+
 
 @login_required
 @require_http_methods(["POST"])
 def mark_notification_read(request, notification_id):
     """Пометить уведомление как прочитанное"""
-    notification = get_object_or_404(Notification, id=notification_id, user=request.user)
+    notification = get_object_or_404(
+        Notification, id=notification_id, user=request.user
+    )
     notification.is_read = True
     notification.save()
-    
-    return JsonResponse({'success': True})
+
+    return JsonResponse({"success": True})
+
 
 @login_required
 @require_http_methods(["POST"])
 def mark_all_notifications_read(request):
     """Пометить все уведомления как прочитанные"""
     Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
-    
-    return JsonResponse({'success': True})
+
+    return JsonResponse({"success": True})
+
 
 # API Views
 @login_required
 def user_stats_api(request):
     """API для статистики пользователей"""
-    if not (hasattr(request.user, 'is_admin') and request.user.is_admin or 
-            hasattr(request.user, 'is_main_admin') and request.user.is_main_admin):
-        return JsonResponse({'error': 'Permission denied'}, status=403)
-    
+    if not (
+        hasattr(request.user, "is_admin")
+        and request.user.is_admin
+        or hasattr(request.user, "is_main_admin")
+        and request.user.is_main_admin
+    ):
+        return JsonResponse({"error": "Permission denied"}, status=403)
+
     today = datetime.now().date()
     week_ago = today - timedelta(days=7)
-    
-    stats = {
-        'total_users': CustomUser.objects.count(),
-        'students_count': CustomUser.objects.filter(user_type='student').count(),
-        'employers_count': CustomUser.objects.filter(user_type='employer').count(),
-        'admins_count': CustomUser.objects.filter(user_type__in=['admin', 'main_admin']).count(),
-        'active_today': UserActivity.objects.filter(
-            created_at__date=today,
-            activity_type='login'
-        ).values('user').distinct().count(),
-        'new_this_week': CustomUser.objects.filter(
-            date_joined__gte=week_ago
-        ).count(),
-    }
-    
-    return JsonResponse(stats)
 
+    stats = {
+        "total_users": CustomUser.objects.count(),
+        "students_count": CustomUser.objects.filter(user_type="student").count(),
+        "employers_count": CustomUser.objects.filter(user_type="employer").count(),
+        "admins_count": CustomUser.objects.filter(
+            user_type__in=["admin", "main_admin"]
+        ).count(),
+        "active_today": UserActivity.objects.filter(
+            created_at__date=today, activity_type="login"
+        )
+        .values("user")
+        .distinct()
+        .count(),
+        "new_this_week": CustomUser.objects.filter(date_joined__gte=week_ago).count(),
+    }
+
+    return JsonResponse(stats)

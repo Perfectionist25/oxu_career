@@ -106,11 +106,11 @@
 {% block quick_actions %}
 {{ block.super }}
 <div class="d-grid gap-2 mt-2">
-    <a href="{% url 'cvbuilder:create_cv' %}" class="btn btn-success btn-sm">
+    <a href="{% url 'cvbuilder:cv_create' %}" class="btn btn-success btn-sm">
         <i class="fas fa-file-alt me-2"></i>{% trans "Rezyume yaratish" %}
     </a>
-    <a href="{% url 'jobs:job_list' %}" class="btn btn-primary btn-sm">
-        <i class="fas fa-search me-2"></i>{% trans "Ish qidirish" %}
+    <a href="{% url 'jobs:list' %}" class="btn btn-primary btn-sm">
+        <i class="fas fa-briefcase me-2"></i>{% trans "Ishlar" %}
     </a>
 </div>
 {% endblock %}

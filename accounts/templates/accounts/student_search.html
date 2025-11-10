@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="container py-5">
+  <h2 class="mb-4">{% trans "Talabalar qidirish" %}</h2>
+
+  <form method="get" class="mb-4">
+    <div class="input-group">
+      <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="{% trans 'Ism, familiya yoki username' %}">
+      <button class="btn btn-primary" type="submit">{% trans "Qidirish" %}</button>
+    </div>
+  </form>
+
+  {% if page_obj and page_obj.object_list %}
+  <div class="row g-3">
+    {% for profile in page_obj.object_list %}
+    <div class="col-md-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">{{ profile.user.get_full_name|default:profile.user.username }}</h5>
+          <p class="card-text small text-muted">{{ profile.university|default:"-" }} | {{ profile.degree|default:"-" }}</p>
+          <a href="{% url 'accounts:profile_detail' profile.user.id %}" class="stretched-link"></a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <nav class="mt-4">
+    <ul class="pagination">
+      {% if page_obj.has_previous %}
+      <li class="page-item"><a class="page-link" href="?q={{ query }}&page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+      {% endif %}
+      <li class="page-item disabled"><span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span></li>
+      {% if page_obj.has_next %}
+      <li class="page-item"><a class="page-link" href="?q={{ query }}&page={{ page_obj.next_page_number }}">&raquo;</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% else %}
+  <p class="text-muted">{% trans "Hech narsa topilmadi" %}</p>
+  {% endif %}
+</div>
+{% endblock %}

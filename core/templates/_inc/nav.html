@@ -3,45 +3,6 @@
 {% load i18n %}
 
 <!-- Верхняя часть хэдэра -->
-<div class="header-top">
-    <div class="row align-items-center" style="padding: 0 5%;">
-        <div class="col">
-            <div class="contact-info">
-                <a href="#">
-                    Joylashuv <i class="fas fa-map-marker-alt m-1"></i> Buxoroda
-                </a>
-                <a href="tel:+998555050009">
-                    <i class="fas fa-phone"></i> +998 55 505 00 09
-                </a>
-                <a href="mailto:info@oxu.uz">
-                    <i class="fas fa-envelope"></i> info@oxu.uz
-                </a>
-            </div>
-        </div>
-        <div class="col government-links">
-            <a href="#"><strong>O'zbekiston Respublikasi hukumat portali</strong></a>
-            <a href="#"><strong>Davlat test markazi</strong></a>
-            <a href="#"><strong>Yoshlar daftari</strong></a>
-        </div>
-        <div class="col">
-            <div class="d-flex justify-content-end align-items-center">
-                <div class="social-icons me-3">
-                    <a href="#"><i style="font-size: larger;" class="fab fa-instagram text-white"></i></a>
-                    <a href="#"><i style="font-size: larger;" class="fab fa-telegram text-white"></i></a>
-                    <a href="#"><i style="font-size: larger;" class="fab fa-facebook text-white"></i></a>
-                    <a href="#"><i style="font-size: larger;" class="fab fa-youtube text-white"></i></a>
-                </div>
-                <div class="language-selector">
-                    <a href="#" class="active"><img width="36" src="{% static 'img/uzb.png' %}" alt="UZB"></a>
-                    <a href="#" class="active"><img width="36" src="{% static 'img/ru.png' %}" alt="RU"></a>
-                    <a href="#" class="active"><img width="36" src="{% static 'img/uk.png' %}" alt="EN"></a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Средняя часть хэдэра -->
 <div class="header-middle">
     <div class="row align-items-center" style="padding: 0 5%;">
         <div class="col-md-6">
@@ -55,181 +16,209 @@
             </div>
         </div>
         <div class="col-md-6 text-end">
-            <img width="230" src="{% static 'img/study.svg' %}" alt="None">
+            <!-- <img width="230" src="{% static 'img/study.svg' %}" alt="None"> -->
+             <div class="d-flex justify-content-end align-items-center">
+                <div class="social-icons me-3">
+                    <a href="https://instagram.com/{{ settings.SOCIAL_INSTAGRAM }}" target="_blank"><i style="font-size: larger;" class="fab fa-instagram text-white"></i></a>
+                    <a href="https://t.me/{{ settings.SOCIAL_TELEGRAM }}" target="_blank"><i style="font-size: larger;" class="fab fa-telegram text-white"></i></a>
+                    <a href="https://facebook.com/{{ settings.SOCIAL_FACEBOOK }}" target="_blank"><i style="font-size: larger;" class="fab fa-facebook text-white"></i></a>
+                    <a href="https://youtube.com/{{ settings.SOCIAL_YOUTUBE }}" target="_blank"><i style="font-size: larger;" class="fab fa-youtube text-white"></i></a>
+                </div>
+                <div class="language-selector">
+                    <a href="{% url 'set_language' %}?lang=uz" class="{% if LANGUAGE_CODE == 'uz' %}active{% endif %}"><img width="36" src="{% static 'img/uzb.png' %}" alt="UZB"></a>
+                    <a href="{% url 'set_language' %}?lang=ru" class="{% if LANGUAGE_CODE == 'ru' %}active{% endif %}"><img width="36" src="{% static 'img/ru.png' %}" alt="RU"></a>
+                    <a href="{% url 'set_language' %}?lang=en" class="{% if LANGUAGE_CODE == 'en' %}active{% endif %}"><img width="36" src="{% static 'img/uk.png' %}" alt="EN"></a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Нижняя часть хэдэра с навигацией -->
 <div style="position: sticky; top: 0; z-index: 1;" class="header-bottom mb-3 p-3">
-        <div class="d-flex justify-content-between align-items-center" style="padding: 0 5%;">
-            <!-- Основное меню -->
-            <ul class="nav">
+    <div class="d-flex justify-content-between align-items-center" style="padding: 0 5%;">
+        <!-- Логотип и hamburger для мобильных -->
+        <div class="d-flex align-items-center">
+            <button class="navbar-toggler d-md-none me-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+
+        <!-- Основное меню -->
+        <div class="collapse navbar-collapse d-md-flex" id="navbarNav">
+            <ul class="nav flex-column flex-md-row">
                 <li class="nav-item">
-                    <a class="nav-link" href="/">Bosh sahifa</a>
+                    <a style="color: white !important;" class="nav-link" href="/">Bosh sahifa</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="https://oxu.uz/university">Universitet</a>
+                    <a style="color: white !important;" class="nav-link" href="https://oxu.uz/university">Universitet</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'resources:list' %}">Resurslar</a>
+                    <a style="color: white !important;" class="nav-link" href="{% url 'resources:list' %}">Resurslar</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'events:list' %}">Tadbirlar</a>
+                    <a style="color: white !important;" class="nav-link" href="{% url 'events:list' %}">Tadbirlar</a>
                 </li>
-                
-                
+
+
                 {% if user.is_authenticated %}
                     {% if user.is_student %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'jobs:list' %}">Vakansiyalar</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'jobs:list' %}">Vakansiyalar</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'cvbuilder:cv_list' %}">Mening rezyumelarim</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'cvbuilder:cv_list' %}">Mening rezyumelarim</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'cvbuilder:cv_create' %}">Rezyume yaratish</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'cvbuilder:cv_create' %}">Rezyume yaratish</a>
                     </li>
                     {% elif user.is_employer %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'jobs:my_jobs' %}">Mening vakansiyalarim</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'jobs:my_jobs' %}">Mening vakansiyalarim</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'jobs:job_create' %}">Vakansiya qo'shish</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'jobs:job_create' %}">Vakansiya qo'shish</a>
+                    </li>
+                    <li class="nav-item">
+                        <a style="color: white !important;" class="nav-link" href="{% url 'cvbuilder:public_cv_list' %}">Jamoat rezyumelari</a>
                     </li>
                     {% elif user.is_admin or user.is_main_admin %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'jobs:list' %}">Vakansiyalar</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'jobs:list' %}">Vakansiyalar</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'accounts:admin_dashboard' %}">Admin panel</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'accounts:admin_dashboard' %}">Admin panel</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'accounts:user_management' %}">Foydalanuvchilar</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'accounts:user_management' %}">Foydalanuvchilar</a>
+                    </li>
+                    <li class="nav-item">
+                        <a style="color: white !important;" class="nav-link" href="{% url 'cvbuilder:public_cv_list' %}">Jamoat rezyumelari</a>
                     </li>
                     {% endif %}
                 {% endif %}
             </ul>
-
-            <!-- Кнопки входа/профиля -->
-            <div class="d-flex align-items-center gap-2">
-                {% if user.is_authenticated %}
-                    <!-- Авторизованный пользователь -->
-                    <div class="dropdown">
-                        <button class="btn btn-outline-primary dropdown-toggle" type="button" 
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user me-1"></i>
-                            {{ user.get_full_name|default:user.username }}
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <!-- Дашборд в зависимости от типа пользователя -->
-                            {% if user.is_student %}
-                            <li>
-                                <a class="dropdown-item" href="{% url 'accounts:student_dashboard' %}">
-                                    <i class="fas fa-tachometer-alt me-2"></i>Shaxsiy kabinet
-                                </a>
-                            </li>
-                            {% elif user.is_employer %}
-                            <li>
-                                <a class="dropdown-item" href="{% url 'accounts:employer_dashboard' %}">
-                                    <i class="fas fa-building me-2"></i>Kompaniya kabineti
-                                </a>
-                            </li>
-                            {% elif user.is_admin or user.is_main_admin %}
-                            <li>
-                                <a class="dropdown-item" href="{% url 'accounts:admin_dashboard' %}">
-                                    <i class="fas fa-cogs me-2"></i>Admin panel
-                                </a>
-                            </li>
-                            {% endif %}
-                            
-                            <!-- Общие ссылки -->
-                            <li>
-                                <a class="dropdown-item" href="{% url 'accounts:profile_view' %}">
-                                    <i class="fas fa-user-edit me-2"></i>Profil
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{% url 'accounts:notifications' %}">
-                                    <i class="fas fa-bell me-2"></i>Xabarlar
-                                    {% if user.unread_notifications_count > 0 %}
-                                    <span class="badge bg-danger float-end">{{ user.unread_notifications_count }}</span>
-                                    {% endif %}
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            
-                            <!-- Дополнительные действия для админов -->
-                            {% if user.is_main_admin %}
-                            <li>
-                                <a class="dropdown-item" href="{% url 'accounts:create_admin_account' %}">
-                                    <i class="fas fa-user-plus me-2"></i>Yangi admin
-                                </a>
-                            </li>
-                            {% endif %}
-                            
-                            {% if user.is_admin or user.is_main_admin %}
-                            <li>
-                                <a class="dropdown-item" href="{% url 'accounts:create_employer_account' %}">
-                                    <i class="fas fa-building me-2"></i>Yangi ish beruvchi
-                                </a>
-                            </li>
-                            {% endif %}
-                            
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Chiqish
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                {% else %}
-                    <!-- Неавторизованный пользователь - кнопки входа -->
-                    <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle" type="button" 
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-sign-in-alt me-1"></i>Kirish
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li>
-                                <a class="dropdown-item" href="{% url 'accounts:hemis_login' %}">
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-graduation-cap text-success me-2"></i>
-                                        <div>
-                                            <div class="fw-bold">Talaba sifatida</div>
-                                            <small class="text-muted">Hemis orqali kirish</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{% url 'accounts:employer_login' %}">
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-building text-primary me-2"></i>
-                                        <div>
-                                            <div class="fw-bold">Ish beruvchi sifatida</div>
-                                            <small class="text-muted">Kompaniya akkaunti</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{% url 'accounts:admin_login' %}">
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-user-shield text-warning me-2"></i>
-                                        <div>
-                                            <div class="fw-bold">Admin sifatida</div>
-                                            <small class="text-muted">Tizim ma'muriyati</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                {% endif %}
-            </div>
         </div>
+
+        <!-- Кнопки входа/профиля -->
+        <div class="d-flex align-items-center gap-2">
+            {% if user.is_authenticated %}
+                <!-- Авторизованный пользователь -->
+                <div class="dropdown">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user me-1"></i>
+                        {{ user.get_full_name|default:user.username }}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <!-- Дашборд в зависимости от типа пользователя -->
+                        {% if user.is_student %}
+                        <li>
+                            <a class="dropdown-item" href="{% url 'accounts:student_dashboard' %}">
+                                <i class="fas fa-tachometer-alt me-2"></i>Shaxsiy kabinet
+                            </a>
+                        </li>
+                        {% elif user.is_employer %}
+                        <li>
+                            <a class="dropdown-item" href="{% url 'accounts:employer_dashboard' %}">
+                                <i class="fas fa-building me-2"></i>Kompaniya kabineti
+                            </a>
+                        </li>
+                        {% elif user.is_admin or user.is_main_admin %}
+                        <li>
+                            <a class="dropdown-item" href="{% url 'accounts:admin_dashboard' %}">
+                                <i class="fas fa-cogs me-2"></i>Admin panel
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        <!-- Общие ссылки -->
+                        <li>
+                            <a class="dropdown-item" href="{% url 'accounts:profile_view' %}">
+                                <i class="fas fa-user-edit me-2"></i>Profil
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'accounts:notifications' %}">
+                                <i class="fas fa-bell me-2"></i>Xabarlar
+                                {% if user.unread_notifications_count > 0 %}
+                                <span class="badge bg-danger float-end">{{ user.unread_notifications_count }}</span>
+                                {% endif %}
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+
+                        <!-- Дополнительные действия для админов -->
+                        {% if user.is_main_admin %}
+                        <li>
+                            <a class="dropdown-item" href="{% url 'accounts:create_admin_account' %}">
+                                <i class="fas fa-user-plus me-2"></i>Yangi admin
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if user.is_admin or user.is_main_admin %}
+                        <li>
+                            <a class="dropdown-item" href="{% url 'accounts:create_employer_account' %}">
+                                <i class="fas fa-building me-2"></i>Yangi ish beruvchi
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}">
+                                <i class="fas fa-sign-out-alt me-2"></i>Chiqish
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            {% else %}
+                <!-- Неавторизованный пользователь - кнопки входа -->
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-sign-in-alt me-1"></i>Kirish
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'accounts:hemis_login' %}">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-graduation-cap text-success me-2"></i>
+                                    <div>
+                                        <div class="fw-bold">Talaba sifatida</div>
+                                        <small class="text-muted">Hemis orqali kirish</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'accounts:employer_login' %}">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-building text-primary me-2"></i>
+                                    <div>
+                                        <div class="fw-bold">Ish beruvchi sifatida</div>
+                                        <small class="text-muted">Kompaniya akkaunti</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'accounts:admin_login' %}">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-user-shield text-warning me-2"></i>
+                                    <div>
+                                        <div class="fw-bold">Admin sifatida</div>
+                                        <small class="text-muted">Tizim ma'muriyati</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+    </div>
 </div>
 
 <style>
@@ -269,7 +258,7 @@
 }
 
 .nav-link {
-    color: #333 !important;
+    color: white !important;
     font-weight: 500;
     padding: 0.5rem 1rem;
     border-radius: 0.375rem;
@@ -277,7 +266,8 @@
 }
 
 .nav-link:hover {
-    background-color: rgba(1, 33, 82, 0.05);
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white !important;
 }
 
 .btn {
@@ -349,30 +339,70 @@
     border-color: rgba(255,255,255,0.3);
 }
 
-/* Адаптивность */
+/* Hamburger menu styles */
+.navbar-toggler {
+    border: none;
+    background: none;
+    padding: 0.5rem;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+    outline: none;
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.5%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='m4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    width: 1.5em;
+    height: 1.5em;
+}
+
+.logo-mobile {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    line-height: 1.2;
+}
+
+/* Mobile navigation styles */
 @media (max-width: 768px) {
-    .nav-link {
-        margin: 5px;
-        text-align: center;
+    .header-bottom {
+        position: relative !important;
     }
-    
+
+    .header-bottom .d-flex {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+
+    .navbar-collapse {
+        margin-top: 10px;
+    }
+
+    .nav {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .nav-link {
+        margin: 2px 0;
+        text-align: left;
+        padding: 0.75rem 1rem;
+        border-radius: 5px;
+    }
+
     .contact-info a {
         display: block;
         margin-bottom: 5px;
     }
-    
+
     .government-links a {
         display: block;
     }
-    
-    .header-bottom .container > .d-flex {
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    .nav {
-        flex-wrap: wrap;
-        justify-content: center;
+
+    .header-bottom .d-flex.align-items-center {
+        justify-content: space-between;
+        margin-bottom: 10px;
     }
 }
 </style>

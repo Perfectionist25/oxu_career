@@ -198,10 +198,10 @@
                                 <small>{{ edu.institution }}</small>
                             </div>
                             <div class="btn-group btn-group-sm">
-                                <a href="#" class="btn btn-outline-primary btn-sm">
+                                <a href="{% url 'cvbuilder:edit_education' education.id %}" class="btn btn-outline-primary btn-sm">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <a href="#" class="btn btn-outline-danger btn-sm">
+                                <a href="{% url 'cvbuilder:delete_education' education.id %}" class="btn btn-outline-danger btn-sm">
                                     <i class="fas fa-trash"></i>
                                 </a>
                             </div>

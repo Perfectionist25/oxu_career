@@ -1,0 +1,4 @@
+[flake8]
+exclude = .venv,venv,__pycache__,staticfiles,static,*/migrations/*
+max-line-length = 120
+extend-ignore = E203,W503

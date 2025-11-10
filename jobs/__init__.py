@@ -1,2 +1,1 @@
-default_app_config = 'jobs.apps.JobsConfig'
-
+default_app_config = "jobs.apps.JobsConfig"

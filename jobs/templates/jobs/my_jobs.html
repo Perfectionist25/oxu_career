@@ -484,7 +484,7 @@
                                     
                                     {% if applications.has_next %}
                                         <li class="page-item">
-                                            <a class="page-link" href="?page={{ applications.next_page_number }}">{% trans "Keyingi" %}</a>
+                                            <a class="page-link" href="?page={{ applications.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{% trans "Keyingi" %}</a>
                                         </li>
                                     {% endif %}
                                 </ul>

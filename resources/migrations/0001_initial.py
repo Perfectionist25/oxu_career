@@ -8,41 +8,85 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='ResourceCategory',
+            name="ResourceCategory",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100, verbose_name='Category Name')),
-                ('description', models.TextField(blank=True, verbose_name='Description')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(max_length=100, verbose_name="Category Name"),
+                ),
+                (
+                    "description",
+                    models.TextField(blank=True, verbose_name="Description"),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
             ],
             options={
-                'verbose_name': 'Resource Category',
-                'verbose_name_plural': 'Resource Categories',
-                'ordering': ['name'],
+                "verbose_name": "Resource Category",
+                "verbose_name_plural": "Resource Categories",
+                "ordering": ["name"],
             },
         ),
         migrations.CreateModel(
-            name='Resource',
+            name="Resource",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=200, verbose_name='Title')),
-                ('description', models.TextField(verbose_name='Description')),
-                ('image', models.ImageField(blank=True, null=True, upload_to='resources/images/%Y/%m/%d/', verbose_name='Image')),
-                ('url_youtube', models.URLField(blank=True, verbose_name='YouTube URL')),
-                ('is_published', models.BooleanField(default=False, verbose_name='Published')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('category', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='resources', to='resources.resourcecategory', verbose_name='Category')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=200, verbose_name="Title")),
+                ("description", models.TextField(verbose_name="Description")),
+                (
+                    "image",
+                    models.ImageField(
+                        blank=True,
+                        null=True,
+                        upload_to="resources/images/%Y/%m/%d/",
+                        verbose_name="Image",
+                    ),
+                ),
+                (
+                    "url_youtube",
+                    models.URLField(blank=True, verbose_name="YouTube URL"),
+                ),
+                (
+                    "is_published",
+                    models.BooleanField(default=False, verbose_name="Published"),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "category",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="resources",
+                        to="resources.resourcecategory",
+                        verbose_name="Category",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Resource',
-                'verbose_name_plural': 'Resources',
-                'ordering': ['-created_at'],
+                "verbose_name": "Resource",
+                "verbose_name_plural": "Resources",
+                "ordering": ["-created_at"],
             },
         ),
     ]

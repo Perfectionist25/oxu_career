@@ -10,130 +10,495 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('accounts', '0005_delete_job'),
-        ('cvbuilder', '0001_initial'),
+        ("accounts", "0005_delete_job"),
+        ("cvbuilder", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Industry',
+            name="Industry",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100, verbose_name='Industry Name')),
-                ('description', models.TextField(blank=True, verbose_name='Description')),
-                ('icon', models.CharField(blank=True, max_length=50, verbose_name='Icon')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(max_length=100, verbose_name="Industry Name"),
+                ),
+                (
+                    "description",
+                    models.TextField(blank=True, verbose_name="Description"),
+                ),
+                (
+                    "icon",
+                    models.CharField(blank=True, max_length=50, verbose_name="Icon"),
+                ),
             ],
             options={
-                'verbose_name': 'Industry',
-                'verbose_name_plural': 'Industries',
-                'ordering': ['name'],
+                "verbose_name": "Industry",
+                "verbose_name_plural": "Industries",
+                "ordering": ["name"],
             },
         ),
         migrations.CreateModel(
-            name='Job',
+            name="Job",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=200, verbose_name='Job Title')),
-                ('description', models.TextField(verbose_name='Job Description')),
-                ('short_description', models.TextField(max_length=300, verbose_name='Short Description')),
-                ('location', models.CharField(max_length=100, verbose_name='Location')),
-                ('remote_work', models.BooleanField(default=False, verbose_name='Remote Work Available')),
-                ('hybrid_work', models.BooleanField(default=False, verbose_name='Hybrid Work Available')),
-                ('employment_type', models.CharField(choices=[('full_time', 'Full Time'), ('part_time', 'Part Time'), ('contract', 'Contract'), ('internship', 'Internship'), ('remote', 'Remote Work'), ('freelance', 'Freelance')], max_length=20, verbose_name='Employment Type')),
-                ('experience_level', models.CharField(choices=[('intern', 'Intern'), ('junior', 'Junior'), ('middle', 'Middle'), ('senior', 'Senior'), ('lead', 'Lead'), ('manager', 'Manager'), ('director', 'Director')], max_length=20, verbose_name='Experience Level')),
-                ('education_level', models.CharField(choices=[('school', 'High School'), ('college', 'College'), ('bachelor', "Bachelor's Degree"), ('master', "Master's Degree"), ('phd', 'PhD'), ('none', 'No Formal Education Required')], max_length=20, verbose_name='Education Level')),
-                ('salary_min', models.DecimalField(blank=True, decimal_places=2, max_digits=12, null=True, verbose_name='Minimum Salary')),
-                ('salary_max', models.DecimalField(blank=True, decimal_places=2, max_digits=12, null=True, verbose_name='Maximum Salary')),
-                ('currency', models.CharField(choices=[('UZS', 'Uzbek Sum (UZS)'), ('USD', 'US Dollar (USD)'), ('EUR', 'Euro (EUR)')], default='UZS', max_length=3, verbose_name='Currency')),
-                ('hide_salary', models.BooleanField(default=False, verbose_name='Hide Salary')),
-                ('salary_negotiable', models.BooleanField(default=False, verbose_name='Salary Negotiable')),
-                ('requirements', models.TextField(verbose_name='Requirements')),
-                ('responsibilities', models.TextField(verbose_name='Responsibilities')),
-                ('benefits', models.TextField(blank=True, verbose_name='Benefits')),
-                ('skills_required', models.TextField(help_text='List skills separated by commas', verbose_name='Required Skills')),
-                ('preferred_skills', models.TextField(blank=True, verbose_name='Preferred Skills')),
-                ('contact_email', models.EmailField(max_length=254, verbose_name='Contact Email')),
-                ('contact_person', models.CharField(blank=True, max_length=100, verbose_name='Contact Person')),
-                ('application_url', models.URLField(blank=True, verbose_name='Application URL')),
-                ('is_active', models.BooleanField(default=True, verbose_name='Active Job')),
-                ('is_featured', models.BooleanField(default=False, verbose_name='Featured Job')),
-                ('is_urgent', models.BooleanField(default=False, verbose_name='Urgent Hiring')),
-                ('views_count', models.IntegerField(default=0, verbose_name='Views Count')),
-                ('applications_count', models.IntegerField(default=0, verbose_name='Applications Count')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('expires_at', models.DateTimeField(blank=True, null=True, verbose_name='Expires At')),
-                ('created_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='jobs_created', to=settings.AUTH_USER_MODEL, verbose_name='Created by')),
-                ('employer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='jobs', to='accounts.employerprofile', verbose_name='Ish beruvchi')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=200, verbose_name="Job Title")),
+                ("description", models.TextField(verbose_name="Job Description")),
+                (
+                    "short_description",
+                    models.TextField(max_length=300, verbose_name="Short Description"),
+                ),
+                ("location", models.CharField(max_length=100, verbose_name="Location")),
+                (
+                    "remote_work",
+                    models.BooleanField(
+                        default=False, verbose_name="Remote Work Available"
+                    ),
+                ),
+                (
+                    "hybrid_work",
+                    models.BooleanField(
+                        default=False, verbose_name="Hybrid Work Available"
+                    ),
+                ),
+                (
+                    "employment_type",
+                    models.CharField(
+                        choices=[
+                            ("full_time", "Full Time"),
+                            ("part_time", "Part Time"),
+                            ("contract", "Contract"),
+                            ("internship", "Internship"),
+                            ("remote", "Remote Work"),
+                            ("freelance", "Freelance"),
+                        ],
+                        max_length=20,
+                        verbose_name="Employment Type",
+                    ),
+                ),
+                (
+                    "experience_level",
+                    models.CharField(
+                        choices=[
+                            ("intern", "Intern"),
+                            ("junior", "Junior"),
+                            ("middle", "Middle"),
+                            ("senior", "Senior"),
+                            ("lead", "Lead"),
+                            ("manager", "Manager"),
+                            ("director", "Director"),
+                        ],
+                        max_length=20,
+                        verbose_name="Experience Level",
+                    ),
+                ),
+                (
+                    "education_level",
+                    models.CharField(
+                        choices=[
+                            ("school", "High School"),
+                            ("college", "College"),
+                            ("bachelor", "Bachelor's Degree"),
+                            ("master", "Master's Degree"),
+                            ("phd", "PhD"),
+                            ("none", "No Formal Education Required"),
+                        ],
+                        max_length=20,
+                        verbose_name="Education Level",
+                    ),
+                ),
+                (
+                    "salary_min",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=12,
+                        null=True,
+                        verbose_name="Minimum Salary",
+                    ),
+                ),
+                (
+                    "salary_max",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=12,
+                        null=True,
+                        verbose_name="Maximum Salary",
+                    ),
+                ),
+                (
+                    "currency",
+                    models.CharField(
+                        choices=[
+                            ("UZS", "Uzbek Sum (UZS)"),
+                            ("USD", "US Dollar (USD)"),
+                            ("EUR", "Euro (EUR)"),
+                        ],
+                        default="UZS",
+                        max_length=3,
+                        verbose_name="Currency",
+                    ),
+                ),
+                (
+                    "hide_salary",
+                    models.BooleanField(default=False, verbose_name="Hide Salary"),
+                ),
+                (
+                    "salary_negotiable",
+                    models.BooleanField(
+                        default=False, verbose_name="Salary Negotiable"
+                    ),
+                ),
+                ("requirements", models.TextField(verbose_name="Requirements")),
+                ("responsibilities", models.TextField(verbose_name="Responsibilities")),
+                ("benefits", models.TextField(blank=True, verbose_name="Benefits")),
+                (
+                    "skills_required",
+                    models.TextField(
+                        help_text="List skills separated by commas",
+                        verbose_name="Required Skills",
+                    ),
+                ),
+                (
+                    "preferred_skills",
+                    models.TextField(blank=True, verbose_name="Preferred Skills"),
+                ),
+                (
+                    "contact_email",
+                    models.EmailField(max_length=254, verbose_name="Contact Email"),
+                ),
+                (
+                    "contact_person",
+                    models.CharField(
+                        blank=True, max_length=100, verbose_name="Contact Person"
+                    ),
+                ),
+                (
+                    "application_url",
+                    models.URLField(blank=True, verbose_name="Application URL"),
+                ),
+                (
+                    "is_active",
+                    models.BooleanField(default=True, verbose_name="Active Job"),
+                ),
+                (
+                    "is_featured",
+                    models.BooleanField(default=False, verbose_name="Featured Job"),
+                ),
+                (
+                    "is_urgent",
+                    models.BooleanField(default=False, verbose_name="Urgent Hiring"),
+                ),
+                (
+                    "views_count",
+                    models.IntegerField(default=0, verbose_name="Views Count"),
+                ),
+                (
+                    "applications_count",
+                    models.IntegerField(default=0, verbose_name="Applications Count"),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "expires_at",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="Expires At"
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="jobs_created",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created by",
+                    ),
+                ),
+                (
+                    "employer",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="jobs",
+                        to="accounts.employerprofile",
+                        verbose_name="Ish beruvchi",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Job',
-                'verbose_name_plural': 'Jobs',
-                'ordering': ['-created_at'],
+                "verbose_name": "Job",
+                "verbose_name_plural": "Jobs",
+                "ordering": ["-created_at"],
             },
         ),
         migrations.CreateModel(
-            name='JobAlert',
+            name="JobAlert",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100, verbose_name='Alert Name')),
-                ('keywords', models.CharField(blank=True, max_length=200, verbose_name='Keywords')),
-                ('location', models.CharField(blank=True, max_length=100, verbose_name='Location')),
-                ('employment_type', models.CharField(blank=True, choices=[('full_time', 'Full Time'), ('part_time', 'Part Time'), ('contract', 'Contract'), ('internship', 'Internship'), ('remote', 'Remote Work'), ('freelance', 'Freelance')], max_length=20, verbose_name='Employment Type')),
-                ('experience_level', models.CharField(blank=True, choices=[('intern', 'Intern'), ('junior', 'Junior'), ('middle', 'Middle'), ('senior', 'Senior'), ('lead', 'Lead'), ('manager', 'Manager'), ('director', 'Director')], max_length=20, verbose_name='Experience Level')),
-                ('is_active', models.BooleanField(default=True, verbose_name='Active')),
-                ('frequency', models.CharField(choices=[('daily', 'Daily'), ('weekly', 'Weekly'), ('monthly', 'Monthly')], default='daily', max_length=10, verbose_name='Frequency')),
-                ('last_sent', models.DateTimeField(blank=True, null=True, verbose_name='Last Sent')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('industry', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='jobs.industry', verbose_name='Industry')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='job_alert_subscriptions', to=settings.AUTH_USER_MODEL, verbose_name='User')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100, verbose_name="Alert Name")),
+                (
+                    "keywords",
+                    models.CharField(
+                        blank=True, max_length=200, verbose_name="Keywords"
+                    ),
+                ),
+                (
+                    "location",
+                    models.CharField(
+                        blank=True, max_length=100, verbose_name="Location"
+                    ),
+                ),
+                (
+                    "employment_type",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("full_time", "Full Time"),
+                            ("part_time", "Part Time"),
+                            ("contract", "Contract"),
+                            ("internship", "Internship"),
+                            ("remote", "Remote Work"),
+                            ("freelance", "Freelance"),
+                        ],
+                        max_length=20,
+                        verbose_name="Employment Type",
+                    ),
+                ),
+                (
+                    "experience_level",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("intern", "Intern"),
+                            ("junior", "Junior"),
+                            ("middle", "Middle"),
+                            ("senior", "Senior"),
+                            ("lead", "Lead"),
+                            ("manager", "Manager"),
+                            ("director", "Director"),
+                        ],
+                        max_length=20,
+                        verbose_name="Experience Level",
+                    ),
+                ),
+                ("is_active", models.BooleanField(default=True, verbose_name="Active")),
+                (
+                    "frequency",
+                    models.CharField(
+                        choices=[
+                            ("daily", "Daily"),
+                            ("weekly", "Weekly"),
+                            ("monthly", "Monthly"),
+                        ],
+                        default="daily",
+                        max_length=10,
+                        verbose_name="Frequency",
+                    ),
+                ),
+                (
+                    "last_sent",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="Last Sent"
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "industry",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="jobs.industry",
+                        verbose_name="Industry",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="job_alert_subscriptions",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="User",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Job Alert',
-                'verbose_name_plural': 'Job Alerts',
-                'ordering': ['-created_at'],
+                "verbose_name": "Job Alert",
+                "verbose_name_plural": "Job Alerts",
+                "ordering": ["-created_at"],
             },
         ),
         migrations.CreateModel(
-            name='JobApplication',
+            name="JobApplication",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('cover_letter', models.TextField(verbose_name='Cover Letter')),
-                ('expected_salary', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Expected Salary')),
-                ('notice_period', models.IntegerField(default=0, help_text='Days', verbose_name='Notice Period')),
-                ('available_from', models.DateField(blank=True, null=True, verbose_name='Available From')),
-                ('status', models.CharField(choices=[('applied', 'Applied'), ('reviewed', 'Under Review'), ('shortlisted', 'Shortlisted'), ('interview', 'Interview'), ('rejected', 'Rejected'), ('hired', 'Hired'), ('withdrawn', 'Withdrawn')], default='applied', max_length=20, verbose_name='Status')),
-                ('status_changed_at', models.DateTimeField(auto_now=True, verbose_name='Status Changed')),
-                ('is_read', models.BooleanField(default=False, verbose_name='Read by Employer')),
-                ('source', models.CharField(blank=True, max_length=50, verbose_name='Application Source')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('candidate', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='Candidate')),
-                ('cv', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='cvbuilder.cv', verbose_name='Resume')),
-                ('job', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='applications', to='jobs.job', verbose_name='Job')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("cover_letter", models.TextField(verbose_name="Cover Letter")),
+                (
+                    "expected_salary",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Expected Salary",
+                    ),
+                ),
+                (
+                    "notice_period",
+                    models.IntegerField(
+                        default=0, help_text="Days", verbose_name="Notice Period"
+                    ),
+                ),
+                (
+                    "available_from",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Available From"
+                    ),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("applied", "Applied"),
+                            ("reviewed", "Under Review"),
+                            ("shortlisted", "Shortlisted"),
+                            ("interview", "Interview"),
+                            ("rejected", "Rejected"),
+                            ("hired", "Hired"),
+                            ("withdrawn", "Withdrawn"),
+                        ],
+                        default="applied",
+                        max_length=20,
+                        verbose_name="Status",
+                    ),
+                ),
+                (
+                    "status_changed_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Status Changed"),
+                ),
+                (
+                    "is_read",
+                    models.BooleanField(default=False, verbose_name="Read by Employer"),
+                ),
+                (
+                    "source",
+                    models.CharField(
+                        blank=True, max_length=50, verbose_name="Application Source"
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "candidate",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Candidate",
+                    ),
+                ),
+                (
+                    "cv",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="cvbuilder.cv",
+                        verbose_name="Resume",
+                    ),
+                ),
+                (
+                    "job",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="applications",
+                        to="jobs.job",
+                        verbose_name="Job",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Job Application',
-                'verbose_name_plural': 'Job Applications',
-                'ordering': ['-created_at'],
-                'unique_together': {('job', 'candidate')},
+                "verbose_name": "Job Application",
+                "verbose_name_plural": "Job Applications",
+                "ordering": ["-created_at"],
+                "unique_together": {("job", "candidate")},
             },
         ),
         migrations.CreateModel(
-            name='SavedJob',
+            name="SavedJob",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Saved At')),
-                ('job', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='saved_by', to='jobs.job', verbose_name='Job')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='saved_jobs', to=settings.AUTH_USER_MODEL, verbose_name='User')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Saved At"),
+                ),
+                (
+                    "job",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="saved_by",
+                        to="jobs.job",
+                        verbose_name="Job",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="saved_jobs",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="User",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Saved Job',
-                'verbose_name_plural': 'Saved Jobs',
-                'ordering': ['-created_at'],
-                'unique_together': {('user', 'job')},
+                "verbose_name": "Saved Job",
+                "verbose_name_plural": "Saved Jobs",
+                "ordering": ["-created_at"],
+                "unique_together": {("user", "job")},
             },
         ),
     ]

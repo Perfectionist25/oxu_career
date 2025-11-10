@@ -1,134 +1,188 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load youtube_extras %}
 {% block content %}
-<div class="container py-5">
+<div class="container py-4">
     <!-- Breadcrumb -->
-    <nav class="breadcrumb-nav">
-        <a href="{% url 'resources:list' %}">Barcha Resurslar</a>
-        <i class="fas fa-chevron-right"></i>
-        <span>{{ resource.title }}</span>
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'resources:list' %}">Barcha Resurslar</a></li>
+            <li class="breadcrumb-item active">{{ resource.title }}</li>
+        </ol>
     </nav>
 
     <!-- Resource Header -->
-    <div class="resource-header">
-        <div class="header-content">
-            <div class="resource-meta">
-                <div class="category-badge">
-                    {{ resource.category.name }}
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <span class="badge bg-primary">{{ resource.category.name }}</span>
+                        <span class="badge bg-{{ resource.is_published|yesno:'success,warning' }}">
+                            <i class="fas fa-{{ resource.is_published|yesno:'eye,eye-slash' }} me-1"></i>
+                            {{ resource.is_published|yesno:"Nashr etilgan,Nashr etilmagan" }}
+                        </span>
+                    </div>
+                    
+                    <h1 class="h2 mb-3 text-dark">{{ resource.title }}</h1>
+                    
+                    <div class="d-flex flex-wrap gap-3 text-muted">
+                        <small>
+                            <i class="fas fa-calendar me-1"></i>
+                            Qo'shilgan: {{ resource.created_at|date:"d.m.Y" }}
+                        </small>
+                        {% if resource.updated_at != resource.created_at %}
+                        <small>
+                            <i class="fas fa-sync me-1"></i>
+                            Yangilangan: {{ resource.updated_at|date:"d.m.Y" }}
+                        </small>
+                        {% endif %}
+                    </div>
                 </div>
-                <div class="status-badge {{ resource.is_published|yesno:'published,unpublished' }}">
-                    <i class="fas fa-{{ resource.is_published|yesno:'eye,eye-slash' }}"></i>
-                    {{ resource.is_published|yesno:"Nashr etilgan,Nashr etilmagan" }}
+                
+                <div class="col-md-4 text-md-end">
+                    <button class="btn btn-outline-primary" onclick="shareResource()">
+                        <i class="fas fa-share-alt me-1"></i>
+                        Ulashish
+                    </button>
                 </div>
-            </div>
-            
-            <h1 class="resource-title">{{ resource.title }}</h1>
-            
-            <div class="resource-stats">
-                <div class="stat-item">
-                    <i class="fas fa-calendar"></i>
-                    <span>Qo'shilgan: {{ resource.created_at|date:"d.m.Y" }}</span>
-                </div>
-                {% if resource.updated_at != resource.created_at %}
-                <div class="stat-item">
-                    <i class="fas fa-sync"></i>
-                    <span>Yangilangan: {{ resource.updated_at|date:"d.m.Y" }}</span>
-                </div>
-                {% endif %}
-            </div>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="header-actions">
-            <div class="share-actions">
-                <span style="margin-right: 25%;"></span>
-                <button class="btn-outline share-btn" onclick="shareResource()">
-                    <i class="fas fa-share-alt"></i>
-                    Ulashish
-                </button>
             </div>
         </div>
     </div>
 
-    <div class="resource-content">
+    <div class="row">
         <!-- Main Content -->
-        <div class="main-content">
+        <div class="col-lg-8">
             <!-- Resource Image -->
             {% if resource.image %}
-            <div class="resource-image-section">
-                <img src="{{ resource.image.url }}" alt="{{ resource.title }}" class="resource-image">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-0">
+                    <img src="{{ resource.image.url }}" alt="{{ resource.title }}" class="img-fluid w-100 rounded-top" style="max-height: 400px; object-fit: cover;">
+                </div>
             </div>
             {% endif %}
 
             <!-- Description -->
-            <div class="description-section">
-                <h2>Resurs haqida</h2>
-                <div class="description-content">
-                    {{ resource.description|linebreaks }}
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h3 class="h4 text-primary mb-3">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Resurs haqida
+                    </h3>
+                    <div class="description-content">
+                        {{ resource.description|linebreaks }}
+                    </div>
                 </div>
             </div>
 
             <!-- YouTube Video -->
             {% if resource.url_youtube %}
-            <div class="youtube-section">
-                <h2>Video Material</h2>
-                <div class="youtube-container">
-                    <div class="youtube-header">
-                        <i class="fab fa-youtube"></i>
-                        <h3>YouTube Videosi</h3>
-                    </div>
-                    <div class="youtube-embed">
-                        {% with video_id=resource.url_youtube|youtube_id %}
-                            {% if video_id %}
-                                <div class="youtube-responsive">
-                                    <iframe src="https://www.youtube.com/embed/{{ video_id }}" frameborder="0" allowfullscreen></iframe>
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h3 class="h4 text-primary mb-3">
+                        <i class="fab fa-youtube text-danger me-2"></i>
+                        Video Material
+                    </h3>
+                    
+                    {% if youtube_data and youtube_data.is_embeddable %}
+                        <!-- YouTube Player with API -->
+                        <div id="youtubePlayerContainer">
+                            <div id="youtubePlayer"></div>
+                            <div id="youtubeLoading" class="text-center py-4">
+                                <div class="spinner-border text-danger mb-3" role="status">
+                                    <span class="visually-hidden">Loading...</span>
                                 </div>
-                            {% else %}
-                                <a href="{{ resource.url_youtube }}" target="_blank" rel="noopener noreferrer" class="youtube-link">
-                                    <i class="fas fa-external-link-alt"></i>
-                                    YouTubeda ko'rish
+                                <p class="text-muted">Video yuklanmoqda...</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Debug info -->
+                        <div class="mt-2 text-center">
+                            <small class="text-muted">
+                                Video ID: {{ youtube_data.video_id }} | 
+                                <a href="{{ resource.url_youtube }}" target="_blank" class="text-danger">
+                                    YouTubeda ochish
                                 </a>
+                            </small>
+                        </div>
+                        
+                    {% else %}
+                        <!-- Fallback - Direct link to YouTube -->
+                        <div class="text-center py-4">
+                            <div class="mb-4">
+                                <i class="fab fa-youtube fa-3x text-danger mb-3"></i>
+                                <h5 class="text-dark">{{ youtube_data.title|default:resource.title }}</h5>
+                                <p class="text-muted">Video YouTube platformasida mavjud</p>
+                            </div>
+                            
+                            <a href="{{ resource.url_youtube }}" target="_blank" rel="noopener noreferrer" class="btn btn-danger btn-lg">
+                                <i class="fab fa-youtube me-2"></i>
+                                YouTubeda ko'rish
+                            </a>
+                            
+                            <div class="mt-3">
+                                <small class="text-muted">
+                                    Video yangi oynada ochiladi
+                                </small>
+                            </div>
+                            
+                            {% if not youtube_data or not youtube_data.is_embeddable %}
+                            <div class="alert alert-warning mt-3">
+                                <small>
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    {% if youtube_data %}
+                                        Video embedding mumkin emas yoki cheklangan.
+                                    {% else %}
+                                        YouTube video havolasi tekshirilmadi.
+                                    {% endif %}
+                                </small>
+                            </div>
                             {% endif %}
-                        {% endwith %}
-                    </div>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
             {% endif %}
         </div>
 
         <!-- Sidebar -->
-        <div class="sidebar">
+        <div class="col-lg-4">
             <!-- Quick Info -->
-            <div class="info-card">
-                <h3>Tezkor Ma'lumot</h3>
-                <div class="info-list">
-                    <div class="info-item">
-                        <i class="fas fa-layer-group"></i>
-                        <div class="info-content">
-                            <span class="info-label">Kategoriya</span>
-                            <span class="info-value">{{ resource.category.name }}</span>
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Tezkor Ma'lumot
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-layer-group text-primary me-3"></i>
+                                <span class="fw-semibold">Kategoriya</span>
+                            </div>
+                            <span class="badge bg-primary">{{ resource.category.name }}</span>
                         </div>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-calendar-plus"></i>
-                        <div class="info-content">
-                            <span class="info-label">Qo'shilgan sana</span>
-                            <span class="info-value">{{ resource.created_at|date:"d.m.Y" }}</span>
+                        <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-calendar-plus text-success me-3"></i>
+                                <span class="fw-semibold">Qo'shilgan sana</span>
+                            </div>
+                            <span>{{ resource.created_at|date:"d.m.Y" }}</span>
                         </div>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-sync"></i>
-                        <div class="info-content">
-                            <span class="info-label">Yangilangan sana</span>
-                            <span class="info-value">{{ resource.updated_at|date:"d.m.Y" }}</span>
+                        <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-sync text-warning me-3"></i>
+                                <span class="fw-semibold">Yangilangan sana</span>
+                            </div>
+                            <span>{{ resource.updated_at|date:"d.m.Y" }}</span>
                         </div>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-eye"></i>
-                        <div class="info-content">
-                            <span class="info-label">Holati</span>
-                            <span class="info-value {{ resource.is_published|yesno:'published,unpublished' }}">
+                        <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-eye text-info me-3"></i>
+                                <span class="fw-semibold">Holati</span>
+                            </div>
+                            <span class="badge bg-{{ resource.is_published|yesno:'success,warning' }}">
                                 {{ resource.is_published|yesno:"Nashr etilgan,Nashr etilmagan" }}
                             </span>
                         </div>
@@ -136,53 +190,82 @@
                 </div>
             </div>
 
-            <!-- Admin Actions (Mobile) -->
+            <!-- Admin Actions -->
             {% if request.user.is_authenticated and request.user.is_staff %}
-            <div class="admin-card">
-                <h3>Boshqaruv</h3>
-                <div class="admin-actions-mobile">
-                    <a href="{% url 'resources:resource_edit' resource.pk %}" class="btn-primary btn-sm">
-                        <i class="fas fa-edit"></i>
-                        Tahrirlash
-                    </a>
-                    {% if resource.is_published %}
-                    <a href="{% url 'resources:unpublish_resource' resource.pk %}" class="btn-warning btn-sm">
-                        <i class="fas fa-eye-slash"></i>
-                        Yashirish
-                    </a>
-                    {% else %}
-                    <a href="{% url 'resources:publish_resource' resource.pk %}" class="btn-success btn-sm">
-                        <i class="fas fa-check"></i>
-                        Nashr etish
-                    </a>
-                    {% endif %}
-                    <a href="{% url 'resources:resource_delete' resource.pk %}" class="btn-danger btn-sm">
-                        <i class="fas fa-trash"></i>
-                        O'chirish
-                    </a>
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-cog me-2"></i>
+                        Boshqaruv
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'resources:resource_edit' resource.pk %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-edit me-1"></i>
+                            Tahrirlash
+                        </a>
+                        {% if resource.is_published %}
+                        <a href="{% url 'resources:unpublish_resource' resource.pk %}" class="btn btn-outline-warning btn-sm">
+                            <i class="fas fa-eye-slash me-1"></i>
+                            Yashirish
+                        </a>
+                        {% else %}
+                        <a href="{% url 'resources:publish_resource' resource.pk %}" class="btn btn-outline-success btn-sm">
+                            <i class="fas fa-check me-1"></i>
+                            Nashr etish
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'resources:resource_delete' resource.pk %}" class="btn btn-outline-danger btn-sm">
+                            <i class="fas fa-trash me-1"></i>
+                            O'chirish
+                        </a>
+                    </div>
                 </div>
             </div>
             {% endif %}
 
             <!-- Share Card -->
-            <div class="share-card">
-                <h3>Ulashish</h3>
-                <div class="share-buttons">
-                    <button class="share-option" onclick="shareOnSocial('facebook')">
-                        <i class="fab fa-facebook-f"></i>
-                    </button>
-                    <button class="share-option" onclick="shareOnSocial('twitter')">
-                        <i class="fab fa-twitter"></i>
-                    </button>
-                    <button class="share-option" onclick="shareOnSocial('telegram')">
-                        <i class="fab fa-telegram"></i>
-                    </button>
-                    <button class="share-option" onclick="shareOnSocial('whatsapp')">
-                        <i class="fab fa-whatsapp"></i>
-                    </button>
-                    <button class="share-option" onclick="copyLink()">
-                        <i class="fas fa-link"></i>
-                    </button>
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-share-alt me-2"></i>
+                        Ulashish
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-2 text-center">
+                        <div class="col-4">
+                            <button class="btn btn-outline-primary w-100" onclick="shareOnSocial('facebook')">
+                                <i class="fab fa-facebook-f"></i>
+                            </button>
+                        </div>
+                        <div class="col-4">
+                            <button class="btn btn-outline-info w-100" onclick="shareOnSocial('twitter')">
+                                <i class="fab fa-twitter"></i>
+                            </button>
+                        </div>
+                        <div class="col-4">
+                            <button class="btn btn-outline-primary w-100" onclick="shareOnSocial('telegram')">
+                                <i class="fab fa-telegram"></i>
+                            </button>
+                        </div>
+                        <div class="col-4">
+                            <button class="btn btn-outline-success w-100" onclick="shareOnSocial('whatsapp')">
+                                <i class="fab fa-whatsapp"></i>
+                            </button>
+                        </div>
+                        <div class="col-4">
+                            <button class="btn btn-outline-secondary w-100" onclick="copyLink()">
+                                <i class="fas fa-link"></i>
+                            </button>
+                        </div>
+                        <div class="col-4">
+                            <button class="btn btn-outline-danger w-100" onclick="shareResource()">
+                                <i class="fas fa-share-alt"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -190,37 +273,36 @@
 
     <!-- Similar Resources -->
     {% if similar_resources %}
-    <div class="similar-resources">
-        <div class="section-header">
-            <h2>O'xshash Resurslar</h2>
-            <p>Bu kategoriyadagi boshqa foydali materiallar</p>
+    <div class="mt-5 pt-4 border-top">
+        <div class="text-center mb-4">
+            <h3 class="h4 text-primary">O'xshash Resurslar</h3>
+            <p class="text-muted">Bu kategoriyadagi boshqa foydali materiallar</p>
         </div>
         
-        <div class="similar-grid">
+        <div class="row g-4">
             {% for similar in similar_resources %}
-            <div class="similar-card">
-                <div class="similar-content">
+            <div class="col-md-6 col-lg-4">
+                <div class="card shadow-sm h-100">
                     {% if similar.image %}
-                    <div class="similar-image">
-                        <img src="{{ similar.image.url }}" alt="{{ similar.title }}">
-                    </div>
+                    <img src="{{ similar.image.url }}" class="card-img-top" alt="{{ similar.title }}" style="height: 200px; object-fit: cover;">
                     {% endif %}
-                    
-                    <div class="similar-info">
-                        <div class="similar-category">
-                            {{ similar.category.name }}
+                    <div class="card-body d-flex flex-column">
+                        <div class="mb-2">
+                            <span class="badge bg-primary">{{ similar.category.name }}</span>
                         </div>
-                        <h4 class="similar-title">
-                            <a href="{% url 'resources:resource_detail' similar.pk %}">{{ similar.title }}</a>
-                        </h4>
-                        <p class="similar-description">
+                        <h5 class="card-title">
+                            <a href="{% url 'resources:resource_detail' similar.pk %}" class="text-decoration-none text-dark">
+                                {{ similar.title }}
+                            </a>
+                        </h5>
+                        <p class="card-text text-muted flex-grow-1">
                             {{ similar.description|truncatewords:15 }}
                         </p>
-                        <div class="similar-meta">
-                            <span class="meta-item">
-                                <i class="fas fa-calendar"></i>
+                        <div class="mt-auto">
+                            <small class="text-muted">
+                                <i class="fas fa-calendar me-1"></i>
                                 {{ similar.created_at|date:"d.m.Y" }}
-                            </span>
+                            </small>
                         </div>
                     </div>
                 </div>
@@ -231,566 +313,94 @@
     {% endif %}
 
     <!-- Navigation -->
-    <div class="resource-navigation">
-        <a href="{% url 'resources:list' %}" class="nav-link">
-            <i class="fas fa-arrow-left"></i>
-                Barcha Resurslarga qaytish
+    <div class="d-flex justify-content-between align-items-center mt-5 pt-4 border-top">
+        <a href="{% url 'resources:list' %}" class="btn btn-outline-primary">
+            <i class="fas fa-arrow-left me-1"></i>
+            Barcha Resurslarga qaytish
         </a>
         
         {% if request.user.is_authenticated and request.user.is_staff %}
-        <a href="{% url 'resources:unpublished_resources' %}" class="nav-link">
-            <i class="fas fa-eye-slash"></i>
+        <a href="{% url 'resources:unpublished_resources' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-eye-slash me-1"></i>
             Nashr etilmagan resurslar
         </a>
         {% endif %}
     </div>
 </div>
 
+<!-- YouTube IFrame API -->
+{% if resource.url_youtube and youtube_data and youtube_data.is_embeddable %}
+<script src="https://www.youtube.com/iframe_api"></script>
+{% endif %}
+
 <style>
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-/* Breadcrumb */
-.breadcrumb-nav {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 2rem;
-    font-size: 0.9rem;
-    color: #666;
-}
-
-.breadcrumb-nav a {
-    color: #012152;
-    text-decoration: none;
-}
-
-.breadcrumb-nav a:hover {
-    text-decoration: underline;
-}
-
-.breadcrumb-nav i {
-    font-size: 0.8rem;
-    color: #999;
-}
-
-/* Resource Header */
-.resource-header {
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    padding: 2rem;
-    margin-bottom: 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 2rem;
-}
-
-.header-content {
-    flex: 1;
-}
-
-.resource-meta {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-}
-
-.category-badge {
-    background: #012152;
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight: 500;
-}
-
-.status-badge {
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.status-badge.published {
-    background: #d4edda;
-    color: #155724;
-}
-
-.status-badge.unpublished {
-    background: #fff3cd;
-    color: #856404;
-}
-
-.resource-title {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #333;
-    margin: 0 0 1rem 0;
-    line-height: 1.3;
-}
-
-.resource-stats {
-    display: flex;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-}
-
-.stat-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: #666;
-    font-size: 0.9rem;
-}
-
-.header-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    min-width: 200px;
-}
-
-.admin-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.share-actions {
-    display: flex;
-    gap: 0.5rem;
-}
-
-/* Buttons */
-.btn-primary, .btn-secondary, .btn-success, .btn-warning, .btn-danger, .btn-outline {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 8px;
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s ease;
-    text-align: center;
-    justify-content: center;
-}
-
-.btn-primary { background: #012152; color: white; }
-.btn-success { background: #28a745; color: white; }
-.btn-warning { background: #ffc107; color: #212529; }
-.btn-danger { background: #dc3545; color: white; }
-.btn-outline { background: white; color: #012152; border: 1px solid #012152; }
-
-.btn-primary:hover { background: #012d6e; }
-.btn-success:hover { background: #218838; }
-.btn-warning:hover { background: #e0a800; }
-.btn-danger:hover { background: #c82333; }
-.btn-outline:hover { background: #f8f9fa; }
-
-.btn-sm {
-    padding: 0.5rem 1rem;
-    font-size: 0.8rem;
-}
-
-/* Resource Content */
-.resource-content {
-    display: grid;
-    grid-template-columns: 1fr 350px;
-    gap: 2rem;
-    margin-bottom: 3rem;
-}
-
-.main-content {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-}
-
-/* Image Section */
-.resource-image-section {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    overflow: hidden;
-}
-
-.resource-image {
-    width: 100%;
-    height: 400px;
-    object-fit: cover;
-}
-
-/* Description Section */
-.description-section {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    padding: 2rem;
-}
-
-.description-section h2 {
-    color: #012152;
-    margin: 0 0 1.5rem 0;
-    font-size: 1.5rem;
-}
-
 .description-content {
-    line-height: 1.8;
-    color: #333;
-    font-size: 1.1rem;
+    line-height: 1.7;
+    font-size: 1.05rem;
+    color: #495057;
 }
 
-/* YouTube Section */
-.youtube-section {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    padding: 2rem;
-}
-
-.youtube-section h2 {
-    color: #012152;
-    margin: 0 0 1.5rem 0;
-    font-size: 1.5rem;
-}
-
-.youtube-container {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 1.5rem;
-}
-
-.youtube-preview {
-    text-align: center;
-}
-
-.youtube-header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    color: #ff0000;
-    font-size: 1.2rem;
-}
-
-.youtube-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: #ff0000;
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 500;
-    transition: background-color 0.3s ease;
-}
-
-.youtube-link:hover {
-    background: #cc0000;
-}
-
-/* YouTube Responsive */
-.youtube-responsive {
-    position: relative;
-    padding-bottom: 56.25%;
-    height: 0;
-    overflow: hidden;
-    max-width: 100%;
-    background: #000;
-}
-
-.youtube-responsive iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
-/* Sidebar */
-.sidebar {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-.info-card, .admin-card, .share-card {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    padding: 1.5rem;
-}
-
-.sidebar h3 {
-    color: #012152;
-    margin: 0 0 1rem 0;
-    font-size: 1.2rem;
-}
-
-.info-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.info-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.info-item i {
-    width: 20px;
-    color: #012152;
-    font-size: 1rem;
-}
-
-.info-content {
-    display: flex;
-    flex-direction: column;
-}
-
-.info-label {
-    font-size: 0.8rem;
-    color: #666;
-    margin-bottom: 0.25rem;
-}
-
-.info-value {
-    font-weight: 500;
-    color: #333;
-}
-
-.info-value.published { color: #28a745; }
-.info-value.unpublished { color: #ffc107; }
-
-.admin-actions-mobile {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-/* Share Buttons */
-.share-buttons {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.5rem;
-}
-
-.share-option {
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    padding: 0.75rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-}
-
-.share-option:hover {
-    background: #012152;
-    color: white;
-    border-color: #012152;
-}
-
-/* Similar Resources */
-.similar-resources {
-    margin-bottom: 3rem;
-}
-
-.section-header {
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-.section-header h2 {
-    color: #012152;
-    margin: 0 0 0.5rem 0;
-    font-size: 2rem;
-}
-
-.section-header p {
-    color: #666;
-    margin: 0;
-    font-size: 1.1rem;
-}
-
-.similar-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-}
-
-.similar-card {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
-    overflow: hidden;
-}
-
-.similar-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-}
-
-.similar-content {
-    padding: 1.5rem;
-}
-
-.similar-image {
+.description-content p {
     margin-bottom: 1rem;
 }
 
-.similar-image img {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
+.card {
+    border: none;
+    border-radius: 12px;
+}
+
+.card-header {
+    border-radius: 12px 12px 0 0 !important;
+    border-bottom: 1px solid #e3e6f0;
+}
+
+.list-group-item {
+    padding: 0.75rem 0;
+}
+
+#youtubePlayer {
     border-radius: 8px;
+    min-height: 400px;
 }
 
-.similar-category {
-    background: #012152;
-    color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    display: inline-block;
-    margin-bottom: 0.75rem;
+/* Hover effects */
+.card:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s ease-in-out;
 }
 
-.similar-title {
-    margin: 0 0 0.75rem 0;
+.btn:hover {
+    transform: translateY(-1px);
+    transition: transform 0.2s ease-in-out;
 }
 
-.similar-title a {
-    color: #333;
-    text-decoration: none;
-    font-size: 1.1rem;
-    font-weight: 600;
-    line-height: 1.4;
+/* Custom badge colors */
+.badge.bg-warning {
+    color: #000;
 }
 
-.similar-title a:hover {
-    color: #012152;
-}
-
-.similar-description {
-    color: #666;
-    line-height: 1.6;
-    margin: 0 0 1rem 0;
-}
-
-.similar-meta {
-    display: flex;
-    gap: 1rem;
-}
-
-.meta-item {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    color: #999;
-    font-size: 0.8rem;
-}
-
-/* Navigation */
-.resource-navigation {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 2rem;
-    border-top: 1px solid #eee;
-}
-
-.nav-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: #000 !important;
-    background: white;
-    text-decoration: none;
-    font-weight: 500;
-    padding: 0.75rem 1.5rem;
-    border: 1px solid #012152;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-}
-
-.nav-link:hover {
-    background: #012152 !important;
-    color: white !important;
-}
-
-/* Responsive */
+/* Responsive adjustments */
 @media (max-width: 768px) {
-    .resource-header {
-        flex-direction: column;
-        text-align: center;
+    .container {
+        padding: 1rem;
     }
     
-    .resource-meta {
-        justify-content: center;
+    .card-body {
+        padding: 1.25rem;
     }
     
-    .resource-stats {
-        justify-content: center;
-    }
-    
-    .header-actions {
-        width: 100%;
-        flex-direction: row;
-        justify-content: center;
-    }
-    
-    .admin-actions {
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-    
-    .resource-content {
-        grid-template-columns: 1fr;
-    }
-    
-    .resource-title {
-        font-size: 2rem;
-    }
-    
-    .similar-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .resource-navigation {
+    .d-flex.justify-content-between {
         flex-direction: column;
         gap: 1rem;
-        align-items: stretch;
     }
     
-    .nav-link {
+    .btn {
+        width: 100%;
         justify-content: center;
     }
     
-    .share-buttons {
-        grid-template-columns: repeat(5, 1fr);
+    #youtubePlayer {
+        min-height: 250px;
     }
 }
 </style>
@@ -818,7 +428,6 @@ function shareResource() {
 function shareOnSocial(platform) {
     const url = encodeURIComponent(window.location.href);
     const title = encodeURIComponent('{{ resource.title }} - OXU Career');
-    const text = encodeURIComponent('{{ resource.description|truncatewords:20 }}');
     
     let shareUrl = '';
     
@@ -845,63 +454,117 @@ function shareOnSocial(platform) {
 function copyLink() {
     const url = window.location.href;
     navigator.clipboard.writeText(url).then(() => {
-        alert('Havola buferga nusxalandi!');
+        // Show Bootstrap toast or alert
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3';
+        alert.style.zIndex = '9999';
+        alert.innerHTML = `
+            <i class="fas fa-check-circle me-2"></i>
+            Havola buferga nusxalandi!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.body.appendChild(alert);
+        
+        setTimeout(() => {
+            alert.remove();
+        }, 3000);
     });
 }
 
-// Bookmark functionality
-function toggleBookmark() {
-    const button = document.querySelector('.bookmark-btn');
-    const icon = button.querySelector('i');
-    
-    if (icon.classList.contains('far')) {
-        icon.classList.remove('far');
-        icon.classList.add('fas');
-        button.innerHTML = '<i class="fas fa-bookmark"></i> Saqlandi';
-        button.style.background = '#012152';
-        button.style.color = 'white';
-        button.style.borderColor = '#012152';
+// YouTube Player functionality
+{% if resource.url_youtube and youtube_data and youtube_data.is_embeddable %}
+var youtubePlayer;
+
+function onYouTubeIframeAPIReady() {
+    initializeYouTubePlayer('{{ youtube_data.video_id }}');
+}
+
+function initializeYouTubePlayer(videoId) {
+    try {
+        youtubePlayer = new YT.Player('youtubePlayer', {
+            height: '400',
+            width: '100%',
+            videoId: videoId,
+            playerVars: {
+                'playsinline': 1,
+                'rel': 0,
+                'modestbranding': 1,
+                'showinfo': 0,
+                'enablejsapi': 1
+            },
+            events: {
+                'onReady': function(event) {
+                    console.log('YouTube Player ready');
+                    document.getElementById('youtubeLoading').style.display = 'none';
+                },
+                'onStateChange': function(event) {
+                    // Handle player state changes if needed
+                },
+                'onError': function(event) {
+                    console.error('YouTube Player error:', event.data);
+                    showYouTubeFallback('Video o‘ynatilmadi. Xatolik kodi: ' + event.data);
+                }
+            }
+        });
         
-        // Simulate API call to save bookmark
-        setTimeout(() => {
-            // In real implementation, make API call here
-            console.log('Resource bookmarked');
-        }, 500);
-    } else {
-        icon.classList.remove('fas');
-        icon.classList.add('far');
-        button.style.background = '';
-        button.style.color = '';
-        button.style.borderColor = '';
+        // Fallback if player doesn't initialize within 5 seconds
+        setTimeout(function() {
+            const loadingElement = document.getElementById('youtubeLoading');
+            if (loadingElement && loadingElement.style.display !== 'none') {
+                showYouTubeFallback('Video pleer ishga tushmadi.');
+            }
+        }, 5000);
         
-        // Simulate API call to remove bookmark
-        setTimeout(() => {
-            // In real implementation, make API call here
-            console.log('Resource unbookmarked');
-        }, 500);
+    } catch (error) {
+        console.error('YouTube Player initialization error:', error);
+        showYouTubeFallback('Video pleer ishga tushirilmadi.');
     }
 }
 
+function showYouTubeFallback(message) {
+    const container = document.getElementById('youtubePlayerContainer');
+    if (container) {
+        container.innerHTML = `
+            <div class="text-center py-4">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    ${message}
+                    <div class="mt-3">
+                        <a href="{{ resource.url_youtube }}" target="_blank" rel="noopener noreferrer" class="btn btn-danger">
+                            <i class="fab fa-youtube me-1"></i>
+                            YouTubeda ko'rish
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+}
+
+// Fallback if YouTube API doesn't load
+setTimeout(function() {
+    {% if youtube_data and youtube_data.is_embeddable %}
+    if (typeof YT === 'undefined' && document.getElementById('youtubeLoading')) {
+        console.log('YouTube API not loaded, using fallback');
+        showYouTubeFallback('YouTube API yuklanmadi.');
+    }
+    {% endif %}
+}, 10000);
+{% endif %}
+
 // Add smooth animations
 document.addEventListener('DOMContentLoaded', function() {
-    const elements = document.querySelectorAll('.description-section, .youtube-section, .similar-card');
-    
-    elements.forEach((element, index) => {
-        element.style.opacity = '0';
-        element.style.transform = 'translateY(20px)';
+    // Add loading animation to cards
+    const cards = document.querySelectorAll('.card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
         
         setTimeout(() => {
-            element.style.transition = 'all 0.5s ease';
-            element.style.opacity = '1';
-            element.style.transform = 'translateY(0)';
+            card.style.transition = 'all 0.5s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
         }, index * 100);
-    });
-});
-
-// Image zoom functionality
-document.querySelectorAll('.resource-image').forEach(img => {
-    img.addEventListener('click', function() {
-        this.classList.toggle('zoomed');
     });
 });
 </script>

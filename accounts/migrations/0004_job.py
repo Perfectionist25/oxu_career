@@ -7,41 +7,159 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0003_auto_20251030_1805'),
+        ("accounts", "0003_auto_20251030_1805"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Job',
+            name="Job",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=255, verbose_name='Lavozim nomi')),
-                ('description', models.TextField(verbose_name='Ish tavsifi')),
-                ('requirements', models.TextField(verbose_name='Talablar')),
-                ('responsibilities', models.TextField(verbose_name='Majburiyatlar')),
-                ('job_type', models.CharField(choices=[('full_time', 'To`liq kunlik'), ('part_time', 'Yarim kunlik'), ('remote', 'Uzoq ish'), ('internship', 'Stajirovka'), ('contract', 'Kontrakt')], max_length=20, verbose_name='Ish turi')),
-                ('experience_level', models.CharField(choices=[('intern', 'Stajyor'), ('junior', 'Junior'), ('middle', 'Middle'), ('senior', 'Senior'), ('lead', 'Lead')], max_length=20, verbose_name='Tajriba darajasi')),
-                ('location', models.CharField(max_length=255, verbose_name='Manzil')),
-                ('is_remote', models.BooleanField(default=False, verbose_name='Uzoq ish')),
-                ('salary_min', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Minimal maosh')),
-                ('salary_max', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Maksimal maosh')),
-                ('salary_currency', models.CharField(default='UZS', max_length=10, verbose_name='Valyuta')),
-                ('skills_required', models.TextField(blank=True, verbose_name="Talab qilinadigan ko'nikmalar")),
-                ('status', models.CharField(choices=[('draft', 'Qoralama'), ('published', "E'lon qilingan"), ('closed', 'Yopilgan'), ('archived', 'Arxivlangan')], default='draft', max_length=20, verbose_name='Holat')),
-                ('application_deadline', models.DateField(blank=True, null=True, verbose_name='Ariza muddati')),
-                ('views_count', models.PositiveIntegerField(default=0, verbose_name="Ko'rishlar soni")),
-                ('applications_count', models.PositiveIntegerField(default=0, verbose_name='Arizalar soni')),
-                ('is_active', models.BooleanField(default=True, verbose_name='Faol')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('published_at', models.DateTimeField(blank=True, null=True, verbose_name="E'lon qilingan vaqt")),
-                ('employer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='jobs', to='accounts.employerprofile', verbose_name='Ish beruvchi')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "title",
+                    models.CharField(max_length=255, verbose_name="Lavozim nomi"),
+                ),
+                ("description", models.TextField(verbose_name="Ish tavsifi")),
+                ("requirements", models.TextField(verbose_name="Talablar")),
+                ("responsibilities", models.TextField(verbose_name="Majburiyatlar")),
+                (
+                    "job_type",
+                    models.CharField(
+                        choices=[
+                            ("full_time", "To`liq kunlik"),
+                            ("part_time", "Yarim kunlik"),
+                            ("remote", "Uzoq ish"),
+                            ("internship", "Stajirovka"),
+                            ("contract", "Kontrakt"),
+                        ],
+                        max_length=20,
+                        verbose_name="Ish turi",
+                    ),
+                ),
+                (
+                    "experience_level",
+                    models.CharField(
+                        choices=[
+                            ("intern", "Stajyor"),
+                            ("junior", "Junior"),
+                            ("middle", "Middle"),
+                            ("senior", "Senior"),
+                            ("lead", "Lead"),
+                        ],
+                        max_length=20,
+                        verbose_name="Tajriba darajasi",
+                    ),
+                ),
+                ("location", models.CharField(max_length=255, verbose_name="Manzil")),
+                (
+                    "is_remote",
+                    models.BooleanField(default=False, verbose_name="Uzoq ish"),
+                ),
+                (
+                    "salary_min",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Minimal maosh",
+                    ),
+                ),
+                (
+                    "salary_max",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Maksimal maosh",
+                    ),
+                ),
+                (
+                    "salary_currency",
+                    models.CharField(
+                        default="UZS", max_length=10, verbose_name="Valyuta"
+                    ),
+                ),
+                (
+                    "skills_required",
+                    models.TextField(
+                        blank=True, verbose_name="Talab qilinadigan ko'nikmalar"
+                    ),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("draft", "Qoralama"),
+                            ("published", "E'lon qilingan"),
+                            ("closed", "Yopilgan"),
+                            ("archived", "Arxivlangan"),
+                        ],
+                        default="draft",
+                        max_length=20,
+                        verbose_name="Holat",
+                    ),
+                ),
+                (
+                    "application_deadline",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Ariza muddati"
+                    ),
+                ),
+                (
+                    "views_count",
+                    models.PositiveIntegerField(
+                        default=0, verbose_name="Ko'rishlar soni"
+                    ),
+                ),
+                (
+                    "applications_count",
+                    models.PositiveIntegerField(
+                        default=0, verbose_name="Arizalar soni"
+                    ),
+                ),
+                ("is_active", models.BooleanField(default=True, verbose_name="Faol")),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "published_at",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="E'lon qilingan vaqt"
+                    ),
+                ),
+                (
+                    "employer",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="jobs",
+                        to="accounts.employerprofile",
+                        verbose_name="Ish beruvchi",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Ish',
-                'verbose_name_plural': 'Ishlar',
-                'ordering': ['-created_at'],
-                'indexes': [models.Index(fields=['status', 'is_active'], name='accounts_jo_status_f5a629_idx'), models.Index(fields=['employer', 'created_at'], name='accounts_jo_employe_9c9b57_idx')],
+                "verbose_name": "Ish",
+                "verbose_name_plural": "Ishlar",
+                "ordering": ["-created_at"],
+                "indexes": [
+                    models.Index(
+                        fields=["status", "is_active"],
+                        name="accounts_jo_status_f5a629_idx",
+                    ),
+                    models.Index(
+                        fields=["employer", "created_at"],
+                        name="accounts_jo_employe_9c9b57_idx",
+                    ),
+                ],
             },
         ),
     ]

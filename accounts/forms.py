@@ -1,7 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import gettext_lazy as _
-from .models import *
+
+from .models import CustomUser, EmployerProfile, StudentProfile, AdminProfile
+
 
 class EmployerRegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -10,24 +12,40 @@ class EmployerRegistrationForm(UserCreationForm):
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2']
+        fields = [
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "password1",
+            "password2",
+        ]
+
 
 class EmployerProfileForm(forms.ModelForm):
     class Meta:
         model = EmployerProfile
         fields = [
-            'company_name', 'company_logo', 'company_description',
-            'company_email', 'company_phone', 'company_website',
-            'company_linkedin', 'company_telegram', 'company_size',
-            'industry', 'founded_year', 'headquarters'
+            "company_name",
+            "company_logo",
+            "company_description",
+            "company_email",
+            "company_phone",
+            "company_website",
+            "company_linkedin",
+            "company_telegram",
+            "company_size",
+            "industry",
+            "founded_year",
+            "headquarters",
         ]
+
 
 class StudentProfileForm(forms.ModelForm):
     class Meta:
         model = StudentProfile
-        fields = [
-            'desired_position', 'desired_salary', 'work_type'
-        ]
+        fields = ["desired_position", "desired_salary", "work_type"]
+
 
 class AdminProfileForm(forms.ModelForm):
     username = forms.CharField(max_length=150)
@@ -40,9 +58,17 @@ class AdminProfileForm(forms.ModelForm):
     class Meta:
         model = AdminProfile
         fields = [
-            'username', 'email', 'first_name', 'last_name', 'password1', 'password2',
-            'can_manage_students', 'can_manage_employers', 'can_manage_jobs',
-            'can_manage_resumes', 'can_view_statistics'
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "password1",
+            "password2",
+            "can_manage_students",
+            "can_manage_employers",
+            "can_manage_jobs",
+            "can_manage_resumes",
+            "can_view_statistics",
         ]
 
     def clean_password2(self):
@@ -52,7 +78,20 @@ class AdminProfileForm(forms.ModelForm):
             raise forms.ValidationError(_("Parollar mos kelmadi"))
         return password2
 
+    def clean_username(self):
+        username = self.cleaned_data.get("username")
+        if username and CustomUser.objects.filter(username=username).exists():
+            raise forms.ValidationError(_("Bu username allaqachon mavjud"))
+        return username
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        if email and CustomUser.objects.filter(email=email).exists():
+            raise forms.ValidationError(_("Bu email allaqachon mavjud"))
+        return email
+
+
 class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'phone_number', 'email', 'bio', 'avatar']
+        fields = ["first_name", "last_name", "phone_number", "email", "bio", "avatar"]

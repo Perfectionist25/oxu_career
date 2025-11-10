@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block content %}
+<div class="container py-5">
+	<h1 class="display-5 fw-bold text-primary mb-4">{% trans "CV Template Preview" %}</h1>
+	<div class="card shadow-sm mb-4">
+		<div class="card-body">
+			<p class="lead">{% trans "Preview of the selected CV template will appear here." %}</p>
+			<div class="bg-light p-4 rounded">
+				<span class="text-muted">{% trans "[CV template content]" %}</span>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

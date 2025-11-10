@@ -1,9 +1,25 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.contrib.auth.models import User
-from .models import Profile
 
-@receiver(post_save, sender=User)
+from .models import (
+    CustomUser,
+    StudentProfile,
+    AdminProfile,
+)
+
+
+@receiver(post_save, sender=CustomUser)
 def create_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
+    """Create a simple profile record after a CustomUser is created.
+
+    We only auto-create profiles that don't require many mandatory fields.
+    StudentProfile and AdminProfile are safe to create with defaults. Employer
+    profiles usually require company data, so we skip creating them here.
+    """
+    if not created:
+        return
+
+    if instance.user_type == "student":
+        StudentProfile.objects.create(user=instance)
+    elif instance.user_type in ("admin", "main_admin"):
+        AdminProfile.objects.create(user=instance)

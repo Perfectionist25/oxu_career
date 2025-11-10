@@ -2,117 +2,115 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-smszkt-pg7m@dqqk%&c=ui-mfxrw9##*4v##0&75j9_((bl^0o'
+SECRET_KEY = "django-insecure-smszkt-pg7m@dqqk%&c=ui-mfxrw9##*4v##0&75j9_((bl^0o"
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
-LOGIN_URL = '/accounts/login/'
+SITE_URL = "http://localhost:8000" if DEBUG else "https://career.oxu.uz"
 
-PHONENUMBER_DEFAULT_REGION = 'UZ'
+LOGIN_URL = "/accounts/login/"
+
+PHONENUMBER_DEFAULT_REGION = "UZ"
 
 INSTALLED_APPS = [
-    'jazzmin', # Admin interface
-    
+    "jazzmin",  # Admin interface
     # Ваши приложения (важен порядок для переопределения шаблонов)
-    'accounts.apps.AccountsConfig', # User authentication - ДОЛЖЕН БЫТЬ ПЕРВЫМ
-    'core.apps.CoreConfig', # Main app
-    'alumni.apps.AlumniConfig', # Alumni network
-    'resources.apps.ResourcesConfig', # Resource library
-    'events.apps.EventsConfig', # Event management
-    'employers.apps.EmployersConfig', # Employer profiles
-    'cvbuilder.apps.CvbuilderConfig', # CV builder
-    'jobs.apps.JobsConfig', # Job listings
-    
+    "accounts.apps.AccountsConfig",  # User authentication - ДОЛЖЕН БЫТЬ ПЕРВЫМ
+    "core.apps.CoreConfig",  # Main app
+    "alumni.apps.AlumniConfig",  # Alumni network
+    "resources.apps.ResourcesConfig",  # Resource library
+    "events.apps.EventsConfig",  # Event management
+    "employers.apps.EmployersConfig",  # Employer profiles
+    "cvbuilder.apps.CvbuilderConfig",  # CV builder
+    "jobs.apps.JobsConfig",  # Job listings
     # Сторонние приложения
-    'phonenumber_field',
-    'django_countries',
-    
+    "phonenumber_field",
+    "django_countries",
     # Django приложения
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware',  # ПЕРЕМЕСТИТЬ СЮДА для правильной работы i18n
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",  # ПЕРЕМЕСТИТЬ СЮДА для правильной работы i18n
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'config.urls'
+ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                'django.template.context_processors.media',
-                'django.template.context_processors.static',
-                
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "templates"],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+                "django.template.context_processors.media",
+                "django.template.context_processors.static",
                 # Кастомные контекст-процессоры
-                # 'core.context_processors.site_info',
-                # 'accounts.context_processors.auth_context',
-                # 'jobs.context_processors.jobs_context',
-                # 'events.context_processors.events_context',
-                # 'resources.context_processors.resources_context',
-                # 'employers.context_processors.employers_context',
+                'core.context_processors.site_info',
+                'accounts.context_processors.auth_context',
+                'jobs.context_processors.jobs_context',
+                'events.context_processors.events_context',
+                'resources.context_processors.resources_context',
+                'employers.context_processors.employers_context',
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'config.wsgi.application'
+WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
 # Мультиязычность
 LANGUAGES = [
-    ('uz', 'Oʻzbekcha'),
-    ('ru', 'Русский'),
-    ('en', 'English'),
+    ("en", "English"),
+    ("uz", "Oʻzbekcha"),
+    ("ru", "Русский"),
 ]
 
-LOCALE_PATHS = [BASE_DIR / 'locale']
+LOCALE_PATHS = [BASE_DIR / "locale"]
 
-LANGUAGE_CODE = 'uz'
+LANGUAGE_CODE = "uz"
 
-TIME_ZONE = 'Asia/Tashkent'
+TIME_ZONE = "Asia/Tashkent"
 
 USE_I18N = True
 
@@ -121,32 +119,32 @@ USE_L10N = True
 USE_TZ = True
 
 # Статические файлы
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Медиа файлы
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Кастомная модель пользователя
-AUTH_USER_MODEL = 'accounts.CustomUser'  # ДОБАВИТЬ
+AUTH_USER_MODEL = "accounts.CustomUser"  # ДОБАВИТЬ
 
 # Настройки аутентификации
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'accounts.backends.EmailBackend',  # ДОБАВИТЬ если есть в accounts
+    "django.contrib.auth.backends.ModelBackend",
+    "accounts.backends.EmailBackend",  # ДОБАВИТЬ если есть в accounts
 ]
 
 # Настройки login/logout
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
 
 # Email настройки (для разработки)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = 'noreply@oxu.uz'
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "noreply@oxu.uz"
 
 # Jazzmin настройки
 JAZZMIN_SETTINGS = {
@@ -165,7 +163,14 @@ JAZZMIN_SETTINGS = {
     "navigation_expanded": True,
     "hide_apps": [],
     "hide_models": [],
-    "order_with_respect_to": ["accounts", "alumni", "jobs", "events", "resources", "auth"],
+    "order_with_respect_to": [
+        "accounts",
+        "alumni",
+        "jobs",
+        "events",
+        "resources",
+        "auth",
+    ],
     "icons": {
         "auth": "fas fa-users-cog",
         "auth.user": "fas fa-user",
@@ -211,7 +216,7 @@ JAZZMIN_UI_TWEAKS = {
         "info": "btn-info",
         "warning": "btn-warning",
         "danger": "btn-danger",
-        "success": "btn-success"
+        "success": "btn-success",
     },
 }
 

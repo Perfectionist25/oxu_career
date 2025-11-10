@@ -153,10 +153,10 @@
                                     </td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
-                                            <a href="#" class="btn btn-outline-primary" title="{% trans "Ko'rish" %}">
+                                            <a href="{% url 'jobs:application_detail' application.id %}" class="btn btn-outline-primary" title="{% trans "Ko'rish" %}">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="#" class="btn btn-outline-success" title="{% trans "Holatni o'zgartirish" %}">
+                                            <a href="{% url 'jobs:update_application_status' application.id %}" class="btn btn-outline-success" title="{% trans "Holatni o'zgartirish" %}">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                         </div>
