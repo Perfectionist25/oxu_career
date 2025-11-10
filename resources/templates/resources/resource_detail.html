@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load youtube_extras %}
 {% block content %}
 <div class="container py-5">
     <!-- Breadcrumb -->
@@ -40,38 +41,11 @@
 
         <!-- Action Buttons -->
         <div class="header-actions">
-            {% if request.user.is_authenticated and request.user.is_staff %}
-            <div class="admin-actions">
-                <a href="{% url 'resources:resource_edit' resource.pk %}" class="btn-primary">
-                    <i class="fas fa-edit"></i>
-                    Tahrirlash
-                </a>
-                {% if resource.is_published %}
-                <a href="{% url 'resources:unpublish_resource' resource.pk %}" class="btn-warning">
-                    <i class="fas fa-eye-slash"></i>
-                    Nashrdan olish
-                </a>
-                {% else %}
-                <a href="{% url 'resources:publish_resource' resource.pk %}" class="btn-success">
-                    <i class="fas fa-check"></i>
-                    Nashr etish
-                </a>
-                {% endif %}
-                <a href="{% url 'resources:resource_delete' resource.pk %}" class="btn-danger">
-                    <i class="fas fa-trash"></i>
-                    O'chirish
-                </a>
-            </div>
-            {% endif %}
-            
             <div class="share-actions">
+                <span style="margin-right: 25%;"></span>
                 <button class="btn-outline share-btn" onclick="shareResource()">
                     <i class="fas fa-share-alt"></i>
                     Ulashish
-                </button>
-                <button class="btn-outline bookmark-btn" onclick="toggleBookmark()">
-                    <i class="far fa-bookmark"></i>
-                    Saqlash
                 </button>
             </div>
         </div>
@@ -100,16 +74,23 @@
             <div class="youtube-section">
                 <h2>Video Material</h2>
                 <div class="youtube-container">
-                    <div class="youtube-preview">
-                        <div class="youtube-header">
-                            <i class="fab fa-youtube"></i>
-                            <h3>YouTube Videosi</h3>
-                        </div>
-                        <p>Quyidagi havola orqali videoni tomosha qilishingiz mumkin:</p>
-                        <a href="{{ resource.url_youtube }}" target="_blank" class="youtube-link">
-                            <i class="fas fa-external-link-alt"></i>
-                            YouTubeda ko'rish
-                        </a>
+                    <div class="youtube-header">
+                        <i class="fab fa-youtube"></i>
+                        <h3>YouTube Videosi</h3>
+                    </div>
+                    <div class="youtube-embed">
+                        {% with video_id=resource.url_youtube|youtube_id %}
+                            {% if video_id %}
+                                <div class="youtube-responsive">
+                                    <iframe src="https://www.youtube.com/embed/{{ video_id }}" frameborder="0" allowfullscreen></iframe>
+                                </div>
+                            {% else %}
+                                <a href="{{ resource.url_youtube }}" target="_blank" rel="noopener noreferrer" class="youtube-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    YouTubeda ko'rish
+                                </a>
+                            {% endif %}
+                        {% endwith %}
                     </div>
                 </div>
             </div>
@@ -253,7 +234,7 @@
     <div class="resource-navigation">
         <a href="{% url 'resources:list' %}" class="nav-link">
             <i class="fas fa-arrow-left"></i>
-            Barcha Resurslarga qaytish
+                Barcha Resurslarga qaytish
         </a>
         
         {% if request.user.is_authenticated and request.user.is_staff %}
@@ -522,6 +503,24 @@
     background: #cc0000;
 }
 
+/* YouTube Responsive */
+.youtube-responsive {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+    background: #000;
+}
+
+.youtube-responsive iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
 /* Sidebar */
 .sidebar {
     display: flex;
@@ -726,7 +725,8 @@
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    color: #012152;
+    color: #000 !important;
+    background: white;
     text-decoration: none;
     font-weight: 500;
     padding: 0.75rem 1.5rem;
@@ -736,8 +736,8 @@
 }
 
 .nav-link:hover {
-    background: #012152;
-    color: white;
+    background: #012152 !important;
+    color: white !important;
 }
 
 /* Responsive */
@@ -870,7 +870,6 @@ function toggleBookmark() {
     } else {
         icon.classList.remove('fas');
         icon.classList.add('far');
-        button.innerHTML = '<i class="far fa-bookmark"></i> Saqlash';
         button.style.background = '';
         button.style.color = '';
         button.style.borderColor = '';
