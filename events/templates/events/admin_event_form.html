@@ -1,0 +1,303 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Заголовок -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 fw-bold text-primary mb-1">{{ title }}</h1>
+                    <p class="text-muted mb-0">{% trans "Tadbir ma'lumotlarini to'ldiring" %}</p>
+                </div>
+                <div>
+                    <a href="{% url 'events:admin_event_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>{% trans "Orqaga" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Форма -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <!-- Основная информация -->
+                        <h5 class="fw-bold mb-3">
+                            <i class="fas fa-info-circle text-primary me-2"></i>{% trans "Asosiy ma'lumotlar" %}
+                        </h5>
+
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <label for="{{ form.title.id_for_label }}" class="form-label fw-bold">
+                                    {{ form.title.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.title }}
+                                {% if form.title.errors %}
+                                <div class="text-danger small">{{ form.title.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.category.id_for_label }}" class="form-label fw-bold">
+                                    {{ form.category.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.category }}
+                                {% if form.category.errors %}
+                                <div class="text-danger small">{{ form.category.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.short_description.id_for_label }}" class="form-label fw-bold">
+                                {{ form.short_description.label }}
+                            </label>
+                            {{ form.short_description }}
+                            {% if form.short_description.errors %}
+                            <div class="text-danger small">{{ form.short_description.errors.0 }}</div>
+                            {% endif %}
+                            <div class="form-text">{% trans "Qisqa tavsif (ixtiyoriy, lekin tavsiya etiladi)" %}</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label fw-bold">
+                                {{ form.description.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                            <div class="text-danger small">{{ form.description.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Дата и время -->
+                        <h5 class="fw-bold mb-3 mt-4">
+                            <i class="fas fa-calendar-alt text-primary me-2"></i>{% trans "Sana va vaqt" %}
+                        </h5>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.start_date.id_for_label }}" class="form-label fw-bold">
+                                    {{ form.start_date.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.start_date }}
+                                {% if form.start_date.errors %}
+                                <div class="text-danger small">{{ form.start_date.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.end_date.id_for_label }}" class="form-label fw-bold">
+                                    {{ form.end_date.label }}
+                                </label>
+                                {{ form.end_date }}
+                                {% if form.end_date.errors %}
+                                <div class="text-danger small">{{ form.end_date.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Место проведения -->
+                        <h5 class="fw-bold mb-3 mt-4">
+                            <i class="fas fa-map-marker-alt text-primary me-2"></i>{% trans "Joy va manzil" %}
+                        </h5>
+
+                        <div class="mb-3">
+                            <div class="form-check mb-3">
+                                {{ form.online_event }}
+                                <label for="{{ form.online_event.id_for_label }}" class="form-check-label fw-bold">
+                                    {{ form.online_event.label }}
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="location-fields" {% if form.online_event.value %}style="display: none;"{% endif %}>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="{{ form.venue.id_for_label }}" class="form-label fw-bold">
+                                        {{ form.venue.label }}
+                                    </label>
+                                    {{ form.venue }}
+                                    {% if form.venue.errors %}
+                                    <div class="text-danger small">{{ form.venue.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="{{ form.location.id_for_label }}" class="form-label fw-bold">
+                                        {{ form.location.label }}
+                                    </label>
+                                    {{ form.location }}
+                                    {% if form.location.errors %}
+                                    <div class="text-danger small">{{ form.location.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="{{ form.address.id_for_label }}" class="form-label fw-bold">
+                                    {{ form.address.label }}
+                                </label>
+                                {{ form.address }}
+                                {% if form.address.errors %}
+                                <div class="text-danger small">{{ form.address.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Регистрация -->
+                        <h5 class="fw-bold mb-3 mt-4">
+                            <i class="fas fa-users text-primary me-2"></i>{% trans "Ro'yxatdan o'tish" %}
+                        </h5>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="{{ form.max_participants.id_for_label }}" class="form-label fw-bold">
+                                    {{ form.max_participants.label }}
+                                </label>
+                                {{ form.max_participants }}
+                                {% if form.max_participants.errors %}
+                                <div class="text-danger small">{{ form.max_participants.errors.0 }}</div>
+                                {% endif %}
+                                <div class="form-text">{% trans "Cheklanmagan uchun bo'sh qoldiring" %}</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.registration_deadline.id_for_label }}" class="form-label fw-bold">
+                                    {{ form.registration_deadline.label }}
+                                </label>
+                                {{ form.registration_deadline }}
+                                {% if form.registration_deadline.errors %}
+                                <div class="text-danger small">{{ form.registration_deadline.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.is_free.id_for_label }}" class="form-label fw-bold">
+                                    {{ form.is_free.label }}
+                                </label>
+                                <div class="mt-2">
+                                    {{ form.is_free }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Изображение -->
+                        <h5 class="fw-bold mb-3 mt-4">
+                            <i class="fas fa-image text-primary me-2"></i>{% trans "Rasm" %}
+                        </h5>
+
+                        <div class="mb-3">
+                            <label for="{{ form.image.id_for_label }}" class="form-label fw-bold">
+                                {{ form.image.label }}
+                            </label>
+                            {{ form.image }}
+                            {% if form.image.errors %}
+                            <div class="text-danger small">{{ form.image.errors.0 }}</div>
+                            {% endif %}
+                            <div class="form-text">{% trans "Tavsiya etilgan o'lcham: 1200x600 piksel" %}</div>
+                        </div>
+
+                        <!-- Статус -->
+                        <h5 class="fw-bold mb-3 mt-4">
+                            <i class="fas fa-cog text-primary me-2"></i>{% trans "Sozlamalar" %}
+                        </h5>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.status.id_for_label }}" class="form-label fw-bold">
+                                    {{ form.status.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.status }}
+                                {% if form.status.errors %}
+                                <div class="text-danger small">{{ form.status.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.organizer.id_for_label }}" class="form-label fw-bold">
+                                    {{ form.organizer.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.organizer }}
+                                {% if form.organizer.errors %}
+                                <div class="text-danger small">{{ form.organizer.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Кнопки -->
+                        <div class="d-flex justify-content-end mt-4 pt-3 border-top">
+                            <a href="{% url 'events:admin_event_list' %}" class="btn btn-outline-secondary me-2">
+                                {% trans "Bekor qilish" %}
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>{% trans "Saqlash" %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Боковая панель -->
+        <div class="col-lg-4">
+            <!-- Помощь -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0 fw-bold">
+                        <i class="fas fa-question-circle text-primary me-2"></i>{% trans "Yordam" %}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled small mb-0">
+                        <li class="mb-2">
+                            <strong>{% trans "Sarlavha:" %}</strong> {% trans "Tadbir nomini aniq va jozibali qilib yozing" %}
+                        </li>
+                        <li class="mb-2">
+                            <strong>{% trans "Tavsif:" %}</strong> {% trans "Batafsil ma'lumot bering, shunda qatnashchilar nima kutishlari mumkinligini bilib olishadi" %}
+                        </li>
+                        <li class="mb-2">
+                            <strong>{% trans "Sana:" %}</strong> {% trans "Boshlanish va tugash vaqtini aniq ko'rsating" %}
+                        </li>
+                        <li class="mb-2">
+                            <strong>{% trans "Joy:" %}</strong> {% trans "Agar onlayn bo'lsa, havolani qo'shing" %}
+                        </li>
+                        <li class="mb-0">
+                            <strong>{% trans "Rasm:" %}</strong> {% trans "Jozibali rasm qo'shish qatnashishni oshiradi" %}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Предпросмотр -->
+            {% if form.instance.image %}
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0 fw-bold">
+                        <i class="fas fa-eye text-primary me-2"></i>{% trans "Joriy rasm" %}
+                    </h6>
+                </div>
+                <div class="card-body text-center">
+                    <img src="{{ form.instance.image.url }}" alt="Event image" class="img-fluid rounded">
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+// Показать/скрыть поля места проведения
+document.getElementById('{{ form.online_event.id_for_label }}').addEventListener('change', function() {
+    const locationFields = document.getElementById('location-fields');
+    if (this.checked) {
+        locationFields.style.display = 'none';
+    } else {
+        locationFields.style.display = 'block';
+    }
+});
+</script>
+{% endblock %}

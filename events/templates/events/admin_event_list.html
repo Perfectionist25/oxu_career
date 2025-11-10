@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Boshqaruv - Tadbirlar" %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Заголовок -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 fw-bold text-primary mb-1">{% trans "Tadbirlar boshqaruvi" %}</h1>
+                    <p class="text-muted mb-0">{% trans "Barcha tadbirlarni ko'rish va boshqarish" %}</p>
+                </div>
+                <div>
+                    <a href="{% url 'events:admin_event_create' %}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>{% trans "Yangi tadbir" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Статистика -->
+    <div class="row mb-4">
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card border-0 bg-primary text-white shadow-sm">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-calendar-alt fa-2x mb-2 opacity-75"></i>
+                    <div class="fw-bold h5">{{ stats.total }}</div>
+                    <small>{% trans "Jami" %}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card border-0 bg-success text-white shadow-sm">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-check-circle fa-2x mb-2 opacity-75"></i>
+                    <div class="fw-bold h5">{{ stats.published }}</div>
+                    <small>{% trans "Nashr etilgan" %}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card border-0 bg-warning text-white shadow-sm">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-edit fa-2x mb-2 opacity-75"></i>
+                    <div class="fw-bold h5">{{ stats.draft }}</div>
+                    <small>{% trans "Qoralama" %}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card border-0 bg-danger text-white shadow-sm">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-times-circle fa-2x mb-2 opacity-75"></i>
+                    <div class="fw-bold h5">{{ stats.cancelled }}</div>
+                    <small>{% trans "Bekor qilingan" %}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card border-0 bg-info text-white shadow-sm">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-check-double fa-2x mb-2 opacity-75"></i>
+                    <div class="fw-bold h5">{{ stats.completed }}</div>
+                    <small>{% trans "Tugagan" %}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Фильтры -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <input type="text" name="q" class="form-control" placeholder="{% trans 'Qidirish...' %}" value="{{ request.GET.q }}">
+                </div>
+                <div class="col-md-2">
+                    <select name="status" class="form-select">
+                        <option value="">{% trans "Barcha holatlar" %}</option>
+                        {% for status_value, status_label in status_choices %}
+                        <option value="{{ status_value }}" {% if request.GET.status == status_value %}selected{% endif %}>
+                            {{ status_label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="category" class="form-select">
+                        <option value="">{% trans "Barcha kategoriyalar" %}</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="organizer" class="form-select">
+                        <option value="">{% trans "Barcha tashkilotchilar" %}</option>
+                        {% for organizer in organizers %}
+                        <option value="{{ organizer }}" {% if request.GET.organizer == organizer %}selected{% endif %}>
+                            {{ organizer }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="fas fa-search me-1"></i>{% trans "Qidirish" %}
+                    </button>
+                    <a href="{% url 'events:admin_event_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-1"></i>{% trans "Tozalash" %}
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Список событий -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="border-0">{% trans "Tadbir" %}</th>
+                            <th class="border-0">{% trans "Tashkilotchi" %}</th>
+                            <th class="border-0">{% trans "Kategoriya" %}</th>
+                            <th class="border-0">{% trans "Boshlanish" %}</th>
+                            <th class="border-0">{% trans "Holat" %}</th>
+                            <th class="border-0">{% trans "Ro'yxatdan o'tganlar" %}</th>
+                            <th class="border-0 text-center">{% trans "Amallar" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in page_obj %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    {% if event.image %}
+                                    <img src="{{ event.image.url }}" alt="{{ event.title }}" class="rounded me-3" width="50" height="50" style="object-fit: cover;">
+                                    {% else %}
+                                    <div class="bg-light rounded d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                        <i class="fas fa-calendar-alt text-muted"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div>
+                                        <h6 class="mb-0 fw-bold">{{ event.title|truncatechars:50 }}</h6>
+                                        <small class="text-muted">{{ event.short_description|truncatechars:80 }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fw-bold">{{ event.organizer.get_full_name|default:event.organizer.username }}</div>
+                                <small class="text-muted">{{ event.organizer.email }}</small>
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary">{{ event.category.name }}</span>
+                            </td>
+                            <td>
+                                <div class="fw-bold">{{ event.start_date|date:"d.m.Y" }}</div>
+                                <small class="text-muted">{{ event.start_date|time:"H:i" }}</small>
+                            </td>
+                            <td>
+                                {% if event.status == 'published' %}
+                                <span class="badge bg-success">{% trans "Nashr etilgan" %}</span>
+                                {% elif event.status == 'draft' %}
+                                <span class="badge bg-warning">{% trans "Qoralama" %}</span>
+                                {% elif event.status == 'cancelled' %}
+                                <span class="badge bg-danger">{% trans "Bekor qilingan" %}</span>
+                                {% elif event.status == 'completed' %}
+                                <span class="badge bg-info">{% trans "Tugagan" %}</span>
+                                {% else %}
+                                <span class="badge bg-secondary">{{ event.get_status_display }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="fw-bold">{{ event.registration_count }}</div>
+                                {% if event.max_participants %}
+                                <small class="text-muted">/ {{ event.max_participants }}</small>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group" role="group">
+                                    <a href="{% url 'events:event_detail' event.slug %}" class="btn btn-sm btn-outline-primary" title="{% trans 'Ko\'rish' %}">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{% url 'events:admin_event_edit' event.pk %}" class="btn btn-sm btn-outline-warning" title="{% trans 'Tahrirlash' %}">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'events:admin_event_delete' event.pk %}" class="btn btn-sm btn-outline-danger" title="{% trans 'O\'chirish' %}">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center py-5">
+                                <i class="fas fa-calendar-alt fa-3x text-muted mb-3"></i>
+                                <h5 class="text-muted">{% trans "Tadbirlar topilmadi" %}</h5>
+                                <p class="text-muted">{% trans "Sizning so'rovingizga mos tadbirlar mavjud emas." %}</p>
+                                <a href="{% url 'events:admin_event_create' %}" class="btn btn-primary">
+                                    <i class="fas fa-plus me-2"></i>{% trans "Birinchi tadbirni yaratish" %}
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Пагинация -->
+        {% if page_obj.has_other_pages %}
+        <div class="card-footer bg-white border-0">
+            <nav aria-label="Event pagination">
+                <ul class="pagination justify-content-center mb-0">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            {% trans "Oldingi" %}
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            {% trans "Keyingi" %}
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
