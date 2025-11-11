@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Event Categories" %}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">{% trans "Event Categories" %}</h1>
+
+            <div class="row">
+                {% for category in categories %}
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            {% if category.icon %}
+                            <i class="{{ category.icon }}" style="font-size: 3rem; color: {{ category.color }};"></i>
+                            {% else %}
+                            <i class="fas fa-calendar" style="font-size: 3rem; color: {{ category.color }};"></i>
+                            {% endif %}
+                            <h5 class="card-title mt-3">{{ category.name }}</h5>
+                            {% if category.description %}
+                            <p class="card-text">{{ category.description }}</p>
+                            {% endif %}
+                            <a href="{% url 'events:event_list' %}?category={{ category.slug }}" class="btn btn-primary">
+                                {% trans "View Events" %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        {% trans "No categories found." %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

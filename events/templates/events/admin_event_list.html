@@ -193,7 +193,22 @@
                                     <a href="{% url 'events:admin_event_edit' event.pk %}" class="btn btn-sm btn-outline-warning" title="{% trans 'Tahrirlash' %}">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <a href="{% url 'events:admin_event_delete' event.pk %}" class="btn btn-sm btn-outline-danger" title="{% trans 'O\'chirish' %}">
+                                    {% if event.status == 'published' %}
+                                    <form method="post" action="{% url 'events:unpublish_event' event.pk %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary" title="{% trans 'Nashrdan olib tashlash' %}" onclick="return confirm('Haqiqatan ham bu tadbirni nashrdan olib tashlamoqchimisiz?')">
+                                            <i class="fas fa-eye-slash"></i>
+                                        </button>
+                                    </form>
+                                    {% elif event.status == 'draft' %}
+                                    <form method="post" action="{% url 'events:publish_event' event.pk %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-outline-success" title="{% trans 'Nashr etish' %}" onclick="return confirm('Haqiqatan ham bu tadbirni nashr etmoqchimisiz?')">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                    <a href="{% url 'events:admin_event_delete' event.pk %}" class="btn btn-sm btn-outline-danger" title="{% trans 'O\'chirish' %}" onclick="return confirm('Haqiqatan ham bu tadbirni o\'chirmoqchimisiz?')">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                 </div>

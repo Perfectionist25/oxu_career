@@ -16,7 +16,6 @@
             </div>
         </div>
         <div class="col-md-6 text-end">
-            <!-- <img width="230" src="{% static 'img/study.svg' %}" alt="None"> -->
              <div class="d-flex justify-content-end align-items-center">
                 <div class="social-icons me-3">
                     <a href="https://instagram.com/{{ settings.SOCIAL_INSTAGRAM }}" target="_blank"><i style="font-size: larger;" class="fab fa-instagram text-white"></i></a>
@@ -35,7 +34,7 @@
 </div>
 
 <!-- Нижняя часть хэдэра с навигацией -->
-<div style="position: sticky; top: 0; z-index: 1;" class="header-bottom mb-3 p-3">
+<div style="position: sticky; top: 0; z-index: 10;" class="header-bottom mb-3 p-3">
     <div class="d-flex justify-content-between align-items-center" style="padding: 0 5%;">
         <!-- Логотип и hamburger для мобильных -->
         <div class="d-flex align-items-center">
@@ -57,7 +56,7 @@
                     <a style="color: white !important;" class="nav-link" href="{% url 'resources:list' %}">Resurslar</a>
                 </li>
                 <li class="nav-item">
-                    <a style="color: white !important;" class="nav-link" href="{% url 'events:list' %}">Tadbirlar</a>
+                    <a style="color: white !important;" class="nav-link" href="{% url 'events:event_list' %}">Tadbirlar</a>
                 </li>
 
 
@@ -180,8 +179,8 @@
                             data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-sign-in-alt me-1"></i>Kirish
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li>
+                    <ul class="dropdown-menu dropdown-menu-end p-3">
+                        <li class="menu-section">
                             <a class="dropdown-item" href="{% url 'accounts:hemis_login' %}">
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-graduation-cap text-success me-2"></i>
@@ -192,7 +191,7 @@
                                 </div>
                             </a>
                         </li>
-                        <li>
+                        <li class="menu-section">
                             <a class="dropdown-item" href="{% url 'accounts:employer_login' %}">
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-building text-primary me-2"></i>
@@ -203,7 +202,7 @@
                                 </div>
                             </a>
                         </li>
-                        <li>
+                        <li class="menu-section">
                             <a class="dropdown-item" href="{% url 'accounts:admin_login' %}">
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-user-shield text-warning me-2"></i>
@@ -226,6 +225,12 @@
     background-color: #012152 !important;
     padding: 8px 0;
     color: white;
+}
+
+.menu-section:hover{
+    .text-muted{
+        color: white !important;
+    }
 }
 
 .header-top a {

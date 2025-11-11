@@ -22,8 +22,8 @@
         <!-- Quick Stats -->
         <div class="row mt-5 pt-4 border-top">
           <div class="col-md-3 col-6">
-            <div class="h5 fw-bold text-primary mb-1">{{ stats.alumni_count|default:"1000" }}+</div>
-            <small class="text-muted">{% trans "Bitiruvchilar" %}</small>
+            <div class="h5 fw-bold text-primary mb-1">{{ stats.alumni_count|default:"0" }}+</div>
+            <small class="text-muted">{% trans "Talabalar/Bitiruvchilar" %}</small>
           </div>
           <div class="col-md-3 col-6">
             <div class="h5 fw-bold text-primary mb-1">{{ stats.jobs_count|default:"150" }}+</div>
@@ -80,7 +80,7 @@
     
     <div class="col-lg-6">
       <div class="position-relative">
-        <img src="{% static 'img/oxu_group.jpg' %}" alt="Career Center" class="img-fluid rounded shadow-lg">
+        <img src="{% static 'img/progress.jpg' %}" alt="Career Center" width="650" class="img rounded shadow-lg">
         <div class="position-absolute bottom-0 start-0 bg-primary text-white p-3 rounded-end">
           <h5 class="mb-0">{% trans "Biz bilan karyera quring!" %}</h5>
         </div>
@@ -145,7 +145,7 @@
             </div>
             <h5 class="card-title fw-bold text-dark mb-3">{% trans "Tadbirlar" %}</h5>
             <p class="card-text text-muted small mb-4">{% trans "Kasbiy rivojlanish va tarmoq qurish uchun tadbirlar" %}</p>
-            <a href="{% url 'events:list' %}" class="btn btn-primary w-100">
+            <a href="{% url 'events:event_list' %}" class="btn btn-primary w-100">
               {% trans "Ishtirok etish" %} <i class="fas fa-arrow-right ms-2"></i>
             </a>
           </div>
@@ -164,7 +164,7 @@
       </a>
     </div>
     <div class="row g-3">
-      {% for resource in featured_resources %}
+      {% for resource in latest_resources %}
       <div class="col-lg-4 col-md-6">
         <div class="card h-100 resource-preview-card">
           {% if resource.image %}
@@ -257,7 +257,7 @@
   <section class="mb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div class="fw-bold h5 text-dark">{% trans "Yaqinlashayotgan tadbirlar" %}</div>
-      <a href="{% url 'events:list' %}" class="btn btn-outline-primary">
+      <a href="{% url 'events:event_list' %}" class="btn btn-outline-primary">
         {% trans "Barcha tadbirlar" %} <i class="fas fa-arrow-right ms-2"></i>
       </a>
     </div>

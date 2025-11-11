@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Manage Events" %}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>{% trans "Manage My Events" %}</h1>
+                <a href="{% url 'events:create_event' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> {% trans "Create New Event" %}
+                </a>
+            </div>
+
+            <!-- Фильтры -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-3">
+                            <label for="status" class="form-label">{% trans "Status" %}</label>
+                            <select name="status" id="status" class="form-select">
+                                <option value="">{% trans "All Statuses" %}</option>
+                                {% for status_value, status_label in event_statuses %}
+                                <option value="{{ status_value }}" {% if request.GET.status == status_value %}selected{% endif %}>
+                                    {{ status_label }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">&nbsp;</label>
+                            <button type="submit" class="btn btn-primary d-block">{% trans "Filter" %}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Список мероприятий -->
+            <div class="row">
+                {% for event in page_obj %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        {% if event.banner_image %}
+                        <img src="{{ event.banner_image.url }}" class="card-img-top" alt="{{ event.title }}" style="height: 200px; object-fit: cover;">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ event.title }}</h5>
+                            <p class="card-text">{{ event.short_description|truncatechars:100 }}</p>
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar"></i> {{ event.start_date|date:"M d, Y H:i" }}
+                                </small>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-users"></i> {{ event.registration_count }} {% trans "registrations" %}
+                                </small>
+                            </div>
+                            <div class="mb-3">
+                                <span class="badge bg-{{ event.status|lower }}">{{ event.get_status_display }}</span>
+                            </div>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a href="{% url 'events:event_detail' event.slug %}" class="btn btn-outline-primary btn-sm">
+                                    {% trans "View" %}
+                                </a>
+                                <a href="{% url 'events:event_registrations' event.slug %}" class="btn btn-outline-info btn-sm">
+                                    {% trans "Registrations" %} ({{ event.registration_count }})
+                                </a>
+                                {% if event.status == 'draft' %}
+                                <form method="post" action="{% url 'events:publish_event' event.pk %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success btn-sm">
+                                        {% trans "Publish" %}
+                                    </button>
+                                </form>
+                                {% elif event.status == 'published' %}
+                                <form method="post" action="{% url 'events:unpublish_event' event.pk %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-warning btn-sm">
+                                        {% trans "Unpublish" %}
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        {% trans "You haven't created any events yet." %}
+                        <a href="{% url 'events:create_event' %}">{% trans "Create your first event" %}</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Пагинация -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Event pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">{% trans "Previous" %}</a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">{{ num }}</a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">{% trans "Next" %}</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

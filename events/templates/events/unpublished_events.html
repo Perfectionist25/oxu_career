@@ -1,0 +1,762 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="header-section">
+        <h1 class="main-title">Nashr Etilmagan Tadbirlar</h1>
+        <p class="subtitle">Tekshirish va nashr etish uchun kutayotgan barcha tadbirlar</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon pending">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-info">
+                <div class="stat-number">{{ total_events }}</div>
+                <div class="stat-label">Jami nashr etilmagan</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon today">
+                <i class="fas fa-calendar-day"></i>
+            </div>
+            <div class="stat-info">
+                <div class="stat-number">{{ today_count|default:0 }}</div>
+                <div class="stat-label">Bugun qo'shilgan</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon categories">
+                <i class="fas fa-tags"></i>
+            </div>
+            <div class="stat-info">
+                <div class="stat-number">{{ categories_count|default:0 }}</div>
+                <div class="stat-label">Kategoriyalar</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions Bar -->
+    <div class="actions-bar">
+        <div class="action-buttons">
+            <a href="{% url 'events:create_event' %}" class="btn-success">
+                <i class="fas fa-plus"></i>Yangi tadbir qo'shish
+            </a>
+            <a href="{% url 'events:event_list' %}" class="btn-secondary">
+                <i class="fas fa-eye"></i>Nashr etilgan tadbirlar
+            </a>
+        </div>
+
+        <div class="view-options">
+            <span class="view-label">Ko'rinish:</span>
+            <button class="view-btn active" data-view="grid">
+                <i class="fas fa-th"></i>
+            </button>
+            <button class="view-btn" data-view="list">
+                <i class="fas fa-list"></i>
+            </button>
+        </div>
+    </div>
+
+    {% if page_obj %}
+    <!-- Events Table/Grid -->
+    <div class="events-container view-grid" id="eventsView">
+        {% for event in page_obj %}
+        <div class="event-card unpublished">
+            <div class="card-header">
+                <div class="status-badge">
+                    <i class="fas fa-eye-slash"></i>
+                    Nashr etilmagan
+                </div>
+                <div class="card-actions">
+                    <div class="dropdown">
+                        <button class="dropdown-btn">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="{% url 'events:publish_event' event.pk %}"
+                               class="dropdown-item publish-btn"
+                               onclick="return confirm('Ushbu tadbirni nashr etishni xohlaysizmi?')">
+                                <i class="fas fa-check"></i>Nashr etish
+                            </a>
+                            <a href="{% url 'events:admin_event_edit' event.pk %}" class="dropdown-item">
+                                <i class="fas fa-edit"></i>Tahrirlash
+                            </a>
+                            <a href="{% url 'events:event_detail' event.slug %}" class="dropdown-item">
+                                <i class="fas fa-eye"></i>Ko'rish
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="{% url 'events:admin_event_delete' event.pk %}"
+                               class="dropdown-item delete-btn"
+                               onclick="return confirm('Ushbu tadbirni o\'chirishni tasdiqlaysizmi?')">
+                                <i class="fas fa-trash"></i>O'chirish
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-content">
+                <!-- Event Image -->
+                {% if event.banner_image %}
+                <div class="event-image">
+                    <img src="{{ event.banner_image.url }}" alt="{{ event.title }}">
+                </div>
+                {% else %}
+                <div class="event-image placeholder">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                {% endif %}
+
+                <!-- Event Info -->
+                <div class="event-info">
+                    <div class="category-badge">
+                        {{ event.category.name|default:"Kategoriyasiz" }}
+                    </div>
+                    <h3 class="event-title">{{ event.title }}</h3>
+                    <p class="event-description">{{ event.short_description|truncatewords:20 }}</p>
+
+                    <!-- Event Meta -->
+                    <div class="event-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-user"></i>
+                            Tashkilotchi: {{ event.organizer.get_full_name|default:event.organizer.username }}
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-calendar-plus"></i>
+                            Qo'shilgan: {{ event.created_at|date:"d.m.Y" }}
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-clock"></i>
+                            Boshlanish: {{ event.start_date|date:"d.m.Y H:i" }}
+                        </div>
+                        {% if event.online_event %}
+                        <div class="meta-item">
+                            <i class="fas fa-globe"></i>
+                            Onlayn tadbir
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <form method="post" action="{% url 'events:publish_event' event.pk %}" class="quick-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-success btn-sm" onclick="return confirm('Nashr etishni tasdiqlaysizmi?')">
+                            <i class="fas fa-check"></i>Nashr etish
+                        </button>
+                    </form>
+                    <a href="{% url 'events:admin_event_edit' event.pk %}" class="btn-secondary btn-sm">
+                        <i class="fas fa-edit"></i>Tahrirlash
+                    </a>
+                    <a href="{% url 'events:event_detail' event.slug %}" class="btn-primary btn-sm">
+                        <i class="fas fa-eye"></i>Ko'rish
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="page-link">
+                <i class="fas fa-chevron-left"></i> Oldingi
+            </a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <span class="page-link active">{{ num }}</span>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <a href="?page={{ num }}" class="page-link">
+                    {{ num }}
+                </a>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="page-link">
+                Keyingi <i class="fas fa-chevron-right"></i>
+            </a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <!-- Empty State -->
+    <div class="empty-state">
+        <div class="empty-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h3>Barcha tadbirlar nashr etilgan</h3>
+        <p>Hozirda nashr etilmagan tadbirlar mavjud emas. Barcha materiallar allaqachon nashr etilgan.</p>
+        <div class="empty-actions">
+            <a href="{% url 'events:create_event' %}" class="btn-success">
+                <i class="fas fa-plus"></i>Yangi tadbir qo'shish
+            </a>
+            <a href="{% url 'events:event_list' %}" class="btn-primary">
+                <i class="fas fa-eye"></i>Nashr etilgan tadbirlarni ko'rish
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Bulk Actions -->
+    {% if page_obj %}
+    <div class="bulk-actions">
+        <div class="bulk-header">
+            <h4>Ommaviy amallar</h4>
+            <p>Bir nechta tadbirlarni bir vaqtda boshqarish</p>
+        </div>
+        <div class="bulk-buttons">
+            <button class="btn-warning" onclick="bulkPublish()">
+                <i class="fas fa-check-double"></i>Tanlilarni nashr etish
+            </button>
+            <button class="btn-secondary" onclick="selectAll()">
+                <i class="fas fa-check-square"></i>Barchasini tanlash
+            </button>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Header Section */
+.header-section {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.main-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #012152;
+    margin-bottom: 1rem;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: #666;
+    line-height: 1.6;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.stat-icon.pending { background: #ffc107; }
+.stat-icon.today { background: #17a2b8; }
+.stat-icon.categories { background: #6f42c1; }
+
+.stat-info {
+    flex: 1;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    line-height: 1;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+
+/* Actions Bar */
+.actions-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.view-options {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.view-label {
+    color: #666;
+    margin-right: 0.5rem;
+}
+
+.view-btn {
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 0.5rem;
+    cursor: pointer;
+    color: #666;
+    transition: all 0.3s ease;
+}
+
+.view-btn.active,
+.view-btn:hover {
+    background: #012152;
+    color: white;
+    border-color: #012152;
+}
+
+/* Events Container */
+.events-container {
+    margin-bottom: 3rem;
+}
+
+.view-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 2rem;
+}
+
+.view-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Event Card */
+.event-card.unpublished {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-left: 4px solid #ffc107;
+    transition: all 0.3s ease;
+}
+
+.event-card.unpublished:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1.5rem 1.5rem 0;
+    margin-bottom: 1rem;
+}
+
+.status-badge {
+    background: #fff3cd;
+    color: #856404;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.card-actions {
+    position: relative;
+}
+
+.dropdown-btn {
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 0.5rem;
+    cursor: pointer;
+    color: #666;
+    transition: all 0.3s ease;
+}
+
+.dropdown-btn:hover {
+    background: #f8f9fa;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    min-width: 200px;
+    z-index: 1000;
+    display: none;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-item {
+    display: block;
+    padding: 0.75rem 1rem;
+    color: #333;
+    text-decoration: none;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.dropdown-item:hover {
+    background: #f8f9fa;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: #dee2e6;
+    margin: 0.5rem 0;
+}
+
+.publish-btn { color: #28a745; }
+.delete-btn { color: #dc3545; }
+
+.card-content {
+    padding: 0 1.5rem 1.5rem;
+}
+
+.event-image {
+    margin-bottom: 1rem;
+}
+
+.event-image img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.event-image.placeholder {
+    height: 200px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ddd;
+    font-size: 3rem;
+}
+
+.event-info {
+    margin-bottom: 1.5rem;
+}
+
+.category-badge {
+    display: inline-block;
+    background: #6c757d;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+}
+
+.event-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 0.75rem 0;
+    line-height: 1.4;
+}
+
+.event-description {
+    color: #666;
+    line-height: 1.6;
+    margin: 0 0 1rem 0;
+}
+
+.event-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.quick-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.quick-form {
+    flex: 1;
+}
+
+.btn-sm {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+/* Buttons */
+.btn-primary, .btn-secondary, .btn-success, .btn-warning {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.btn-primary { background: #012152; color: white; }
+.btn-secondary { background: #6c757d; color: white; }
+.btn-success { background: #28a745; color: white; }
+.btn-warning { background: #ffc107; color: #212529; }
+
+.btn-primary:hover { background: #012d6e; }
+.btn-secondary:hover { background: #5a6268; }
+.btn-success:hover { background: #218838; }
+.btn-warning:hover { background: #e0a800; }
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 3rem 0;
+}
+
+.page-link {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #012152;
+    transition: all 0.3s ease;
+}
+
+.page-link:hover,
+.page-link.active {
+    background: #012152;
+    color: white;
+    border-color: #012152;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: #28a745;
+    margin-bottom: 1.5rem;
+}
+
+.empty-state h3 {
+    margin: 0 0 1rem 0;
+    color: #333;
+}
+
+.empty-state p {
+    margin: 0 0 2rem 0;
+    color: #666;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.empty-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+/* Bulk Actions */
+.bulk-actions {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+.bulk-header {
+    margin-bottom: 1rem;
+}
+
+.bulk-header h4 {
+    margin: 0 0 0.5rem 0;
+    color: #333;
+}
+
+.bulk-header p {
+    margin: 0;
+    color: #666;
+}
+
+.bulk-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .view-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .actions-bar {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .view-options {
+        justify-content: center;
+    }
+
+    .empty-actions {
+        flex-direction: column;
+    }
+
+    .bulk-buttons {
+        flex-direction: column;
+    }
+
+    .quick-actions {
+        flex-direction: column;
+    }
+
+    .card-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .dropdown-menu {
+        right: auto;
+        left: 0;
+    }
+}
+</style>
+
+<script>
+// View toggle functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const viewBtns = document.querySelectorAll('.view-btn');
+    const eventsView = document.getElementById('eventsView');
+
+    viewBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Remove active class from all buttons
+            viewBtns.forEach(b => b.classList.remove('active'));
+            // Add active class to clicked button
+            this.classList.add('active');
+
+            // Switch view
+            const viewType = this.dataset.view;
+            eventsView.className = 'events-container view-' + viewType;
+        });
+    });
+});
+
+// Bulk actions functionality
+function bulkPublish() {
+    const selectedEvents = document.querySelectorAll('.event-checkbox:checked');
+    if (selectedEvents.length === 0) {
+        alert('Iltimos, nashr etish uchun kamida bitta tadbirni tanlang.');
+        return;
+    }
+
+    if (confirm(`Siz ${selectedEvents.length} ta tadbirni nashr etishni xohlaysizmi?`)) {
+        // Simulate bulk publish action
+        alert(`${selectedEvents.length} ta tadbir nashr etildi!`);
+        // In real implementation, you would submit a form or make an API call
+    }
+}
+
+function selectAll() {
+    const checkboxes = document.querySelectorAll('.event-checkbox');
+    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+
+    checkboxes.forEach(cb => {
+        cb.checked = !allChecked;
+    });
+}
+
+// Auto-hide dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    if (!event.target.closest('.dropdown')) {
+        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+            menu.style.display = 'none';
+        });
+    }
+});
+</script>
+{% endblock %}

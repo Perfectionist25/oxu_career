@@ -25,7 +25,9 @@ def home(request):
     }
 
     # Последние вакансии - ИСПРАВЛЕНО: select_related('employer') вместо 'company'
-    latest_jobs = Job.objects.filter(is_active=True).select_related("employer")[:6]
+    latest_jobs = Job.objects.filter(is_active=True).select_related("employer")[:3]
+
+    latest_resources = Resource.objects.filter(is_published=True).order_by('-created_at')[:3]
 
     # Предстоящие мероприятия
     upcoming_events = Event.objects.filter(
@@ -35,6 +37,7 @@ def home(request):
     context = {
         "stats": stats,
         "latest_jobs": latest_jobs,
+        "latest_resources": latest_resources,
         "upcoming_events": upcoming_events,
     }
     return render(request, "home.html", context)

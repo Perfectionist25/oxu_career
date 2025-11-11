@@ -1,403 +1,196 @@
-{% extends 'base.html' %}
-{% load static %}
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Events" %}{% endblock %}
+
 {% block content %}
-<div class="container py-5">
-    <!-- Header Section -->
-    <div class="row mb-5">
-        <div class="col-lg-8 mx-auto text-center">
-            <h1 class="display-5 fw-bold text-primary mb-3">Tadbirlar</h1>
-            <p class="lead text-muted">Karyera rivojlanishi, treninglar va networking tadbirlarida qatnashing</p>
-        </div>
-    </div>
-
-    <!-- Search and Filters -->
-    <div class="card border-0 shadow-sm mb-5">
-        <div class="card-body p-4">
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <div class="input-group">
-                        <span class="input-group-text bg-light border-end-0">
-                            <i class="fas fa-search text-muted"></i>
-                        </span>
-                        <input type="text" 
-                               class="form-control" 
-                               id="searchInput" 
-                               placeholder="Tadbir nomi bo'yicha qidirish...">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <select class="form-select" id="typeFilter">
-                        <option value="">Barcha turdagi tadbirlar</option>
-                        <option value="workshop">Workshop</option>
-                        <option value="seminar">Seminar</option>
-                        <option value="conference">Konferensiya</option>
-                        <option value="networking">Networking</option>
-                        <option value="career_fair">Karyera ko'rgazmasi</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <select class="form-select" id="statusFilter">
-                        <option value="upcoming">Kutilayotgan tadbirlar</option>
-                        <option value="archived">O'tgan tadbirlar</option>
-                        <option value="all">Barcha tadbirlar</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Upcoming Events Section -->
-    <div class="row mb-5">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="fw-bold text-dark mb-0">
-                    <i class="fas fa-rocket me-2 text-primary"></i>
-                    Kutilayotgan Tadbirlar
-                </h2>
-                <span class="badge bg-primary fs-6">{{ upcoming|length }} ta tadbir</span>
-            </div>
-
-            {% if upcoming %}
-            <div class="row g-4" id="upcomingEvents">
-                {% for event in upcoming %}
-                <div class="col-xl-4 col-lg-6 event-item" data-type="{{ event.event_type|default:'' }}" data-status="upcoming">
-                    <div class="card border-0 shadow-sm h-100 event-card">
-                        <div class="card-body p-4">
-                            <!-- Event Image -->
-                            {% if event.image %}
-                            <div class="event-image mb-3">
-                                <img src="{{ event.image.url }}" alt="{{ event.title }}" class="rounded w-100" style="height: 180px; object-fit: cover;">
-                            </div>
-                            {% else %}
-                            <div class="bg-light rounded text-center mb-3 p-4" style="height: 180px; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-calendar-alt fa-3x text-primary"></i>
-                            </div>
-                            {% endif %}
-
-                            <!-- Event Status -->
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                {% if event.event_type %}
-                                <span class="badge bg-info">{{ event.event_type }}</span>
-                                {% endif %}
-                                {% if event.is_featured %}
-                                <span class="badge bg-warning text-dark">
-                                    <i class="fas fa-star me-1"></i>Tavsiya etiladi
-                                </span>
-                                {% endif %}
-                            </div>
-
-                            <!-- Event Title -->
-                            <h5 class="fw-bold text-dark mb-2">{{ event.title }}</h5>
-
-                            <!-- Event Details -->
-                            <div class="mb-3">
-                                <div class="d-flex text-muted small mb-2">
-                                    <i class="fas fa-calendar me-2"></i>
-                                    <span>{{ event.date|date:"d.m.Y" }}</span>
-                                </div>
-                                <div class="d-flex text-muted small mb-2">
-                                    <i class="fas fa-clock me-2"></i>
-                                    <span>{{ event.date|date:"H:i" }} da boshlanadi</span>
-                                </div>
-                                <div class="d-flex text-muted small">
-                                    <i class="fas fa-map-marker-alt me-2"></i>
-                                    <span>
-                                        {{ event.location }}
-                                        {% if event.is_online %}
-                                        <span class="text-success"> (Onlayn)</span>
-                                        {% endif %}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <!-- Event Description -->
-                            {% if event.description %}
-                            <p class="text-muted small mb-3">{{ event.description|truncatewords:15 }}</p>
-                            {% endif %}
-
-                            <!-- Registration Info -->
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                {% if event.capacity %}
-                                <small class="text-muted">
-                                    <i class="fas fa-users me-1"></i>
-                                    {{ event.registered_count|default:0 }}/{{ event.capacity }}
-                                </small>
-                                {% endif %}
-                                {% if event.is_free %}
-                                <span class="badge bg-success">Bepul</span>
-                                {% endif %}
-                            </div>
-
-                            <!-- Action Buttons -->
-                            <div class="d-flex gap-2">
-                                <a href="{% url 'events:detail' event.id %}" class="btn btn-outline-primary btn-sm flex-fill">
-                                    <i class="fas fa-eye me-1"></i>Batafsil
-                                </a>
-                                {% if event.registration_link %}
-                                <a href="{{ event.registration_link }}" target="_blank" class="btn btn-primary btn-sm flex-fill">
-                                    <i class="fas fa-user-plus me-1"></i>Ro'yxatdan o'tish
-                                </a>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            {% else %}
-            <!-- Empty Upcoming Events -->
-            <div class="text-center py-5">
-                <i class="fas fa-calendar-times fa-4x text-muted mb-3"></i>
-                <h4 class="text-muted">Hozircha kutilayotgan tadbirlar yo'q</h4>
-                <p class="text-muted">Yangi tadbirlar tez orada e'lon qilinadi</p>
-                <button class="btn btn-outline-primary" onclick="subscribeToNotifications()">
-                    <i class="fas fa-bell me-2"></i>Yangi tadbirlar haqida xabar olish
-                </button>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-
-    <!-- Archived Events Section -->
+<div class="container mt-4">
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="fw-bold text-dark mb-0">
-                    <i class="fas fa-archive me-2 text-secondary"></i>
-                    O'tgan Tadbirlar
-                </h2>
-                <span class="badge bg-secondary fs-6">{{ archived|length }} ta tadbir</span>
+                <h1>{% trans "Events" %}</h1>
+                <div>
+                    <a href="{% url 'events:event_calendar' %}" class="btn btn-outline-primary me-2">
+                        <i class="fas fa-calendar"></i> {% trans "Calendar View" %}
+                    </a>
+                    <a href="{% url 'events:create_event' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> {% trans "Create Event" %}
+                    </a>
+                </div>
             </div>
 
-            {% if archived %}
-            <div class="row g-4" id="archivedEvents">
-                {% for event in archived %}
-                <div class="col-xl-4 col-lg-6 event-item" data-type="{{ event.event_type|default:'' }}" data-status="archived">
-                    <div class="card border-0 shadow-sm h-100 event-card">
-                        <div class="card-body p-4">
-                            <!-- Event Image -->
-                            {% if event.image %}
-                            <div class="event-image mb-3">
-                                <img src="{{ event.image.url }}" alt="{{ event.title }}" class="rounded w-100" style="height: 150px; object-fit: cover; opacity: 0.7;">
+            <!-- Фильтры и поиск -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-3">
+                            <label for="search" class="form-label">{% trans "Search" %}</label>
+                            <input type="text" name="search" id="search" class="form-control" value="{{ request.GET.search }}" placeholder="{% trans 'Search events...' %}">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="category" class="form-label">{% trans "Category" %}</label>
+                            <select name="category" id="category" class="form-select">
+                                <option value="">{% trans "All Categories" %}</option>
+                                {% for category in categories %}
+                                <option value="{{ category.slug }}" {% if request.GET.category == category.slug %}selected{% endif %}>
+                                    {{ category.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="type" class="form-label">{% trans "Type" %}</label>
+                            <select name="type" id="type" class="form-select">
+                                <option value="">{% trans "All Types" %}</option>
+                                {% for type_value, type_label in event_types %}
+                                <option value="{{ type_value }}" {% if request.GET.type == type_value %}selected{% endif %}>
+                                    {{ type_label }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="sort" class="form-label">{% trans "Sort by" %}</label>
+                            <select name="sort" id="sort" class="form-select">
+                                <option value="start_date" {% if request.GET.sort == 'start_date' or not request.GET.sort %}selected{% endif %}>{% trans "Date" %}</option>
+                                <option value="title" {% if request.GET.sort == 'title' %}selected{% endif %}>{% trans "Title" %}</option>
+                                <option value="category" {% if request.GET.sort == 'category' %}selected{% endif %}>{% trans "Category" %}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">&nbsp;</label>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">{% trans "Search" %}</button>
+                                <a href="{% url 'events:event_list' %}" class="btn btn-outline-secondary">{% trans "Clear" %}</a>
                             </div>
-                            {% else %}
-                            <div class="bg-light rounded text-center mb-3 p-4" style="height: 150px; display: flex; align-items: center; justify-content: center; opacity: 0.7;">
-                                <i class="fas fa-history fa-3x text-muted"></i>
-                            </div>
-                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
 
-                            <!-- Event Status -->
-                            <div class="mb-2">
-                                <span class="badge bg-secondary">
-                                    <i class="fas fa-check-circle me-1"></i>Yakunlangan
-                                </span>
-                                {% if event.event_type %}
-                                <span class="badge bg-info ms-1">{{ event.event_type }}</span>
+            <!-- Категории -->
+            <div class="mb-4">
+                <h5>{% trans "Categories" %}</h5>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{% url 'events:event_list' %}" class="btn btn-sm {% if not request.GET.category %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                        {% trans "All" %}
+                    </a>
+                    {% for category in categories %}
+                    <a href="?category={{ category.slug }}{% for key, value in request.GET.items %}{% if key != 'category' and key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-sm {% if request.GET.category == category.slug %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                        {% if category.icon %}<i class="{{ category.icon }}"></i> {% endif %}{{ category.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Список мероприятий -->
+            <div class="row">
+                {% for event in page_obj %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100">
+                        {% if event.banner_image %}
+                        <img src="{{ event.banner_image.url }}" class="card-img-top" alt="{{ event.title }}" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                        <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <i class="fas fa-calendar fa-3x text-muted"></i>
+                        </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title mb-0">{{ event.title }}</h5>
+                                {% if event.category %}
+                                <span class="badge" style="background-color: {{ event.category.color }};">{{ event.category.name }}</span>
                                 {% endif %}
                             </div>
-
-                            <!-- Event Title -->
-                            <h5 class="fw-bold text-dark mb-2">{{ event.title }}</h5>
-
-                            <!-- Event Details -->
-                            <div class="mb-3">
-                                <div class="d-flex text-muted small mb-2">
-                                    <i class="fas fa-calendar me-2"></i>
-                                    <span>{{ event.date|date:"d.m.Y" }}</span>
-                                </div>
-                                <div class="d-flex text-muted small">
-                                    <i class="fas fa-map-marker-alt me-2"></i>
-                                    <span>{{ event.location }}</span>
-                                </div>
+                            <p class="card-text text-muted">{{ event.short_description|truncatechars:120 }}</p>
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar"></i> {{ event.start_date|date:"M d, Y" }}
+                                    {% if event.start_date|date:"M d, Y" != event.end_date|date:"M d, Y" %}
+                                    - {{ event.end_date|date:"M d, Y" }}
+                                    {% endif %}
+                                </small>
                             </div>
-
-                            <!-- Event Description -->
-                            {% if event.description %}
-                            <p class="text-muted small mb-3">{{ event.description|truncatewords:12 }}</p>
-                            {% endif %}
-
-                            <!-- Action Buttons -->
-                            <div class="d-flex gap-2">
-                                <a href="{% url 'events:detail' event.id %}" class="btn btn-outline-secondary btn-sm flex-fill">
-                                    <i class="fas fa-eye me-1"></i>Ko'rish
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock"></i> {{ event.start_date|date:"H:i" }}
+                                    {% if event.end_date %}
+                                    - {{ event.end_date|date:"H:i" }}
+                                    {% endif %}
+                                </small>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-map-marker-alt"></i> {{ event.location }}
+                                </small>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted">
+                                    <i class="fas fa-users"></i> {{ event.registration_count }}
+                                    {% if event.max_participants %}
+                                    / {{ event.max_participants }}
+                                    {% endif %}
+                                    {% trans "participants" %}
+                                </small>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="{% url 'events:event_detail' event.slug %}" class="btn btn-primary btn-sm">
+                                    {% trans "View Details" %}
                                 </a>
-                                {% if event.materials_link %}
-                                <a href="{{ event.materials_link }}" target="_blank" class="btn btn-outline-primary btn-sm flex-fill">
-                                    <i class="fas fa-download me-1"></i>Materiallar
-                                </a>
+                                {% if event.is_upcoming and event.registration_required %}
+                                <small class="text-muted">
+                                    {% if event.is_registration_open %}
+                                    <span class="text-success">{% trans "Registration open" %}</span>
+                                    {% else %}
+                                    <span class="text-danger">{% trans "Registration closed" %}</span>
+                                    {% endif %}
+                                </small>
                                 {% endif %}
                             </div>
                         </div>
                     </div>
                 </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="text-center py-5">
+                        <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">{% trans "No events found" %}</h5>
+                        <p class="text-muted">{% trans "Try adjusting your search criteria or check back later for new events." %}</p>
+                        <a href="{% url 'events:event_list' %}" class="btn btn-primary">{% trans "Clear Filters" %}</a>
+                    </div>
+                </div>
                 {% endfor %}
             </div>
-            {% else %}
-            <!-- Empty Archived Events -->
-            <div class="text-center py-4">
-                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                <h5 class="text-muted">O'tgan tadbirlar arxivi bo'sh</h5>
-                <p class="text-muted">Birinchilardan bo'lib yangi tadbirlarda qatnashing</p>
-            </div>
+
+            <!-- Пагинация -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Event pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{% trans "Previous" %}</a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{% trans "Next" %}</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
             {% endif %}
         </div>
     </div>
-
-    <!-- Statistics Section -->
-    <div class="row mt-5 pt-5 border-top">
-        <div class="col-md-3 text-center">
-            <div class="h3 fw-bold text-primary mb-1">{{ stats.total_events }}</div>
-            <small class="text-muted">Jami tadbirlar</small>
-        </div>
-        <div class="col-md-3 text-center">
-            <div class="h3 fw-bold text-primary mb-1">{{ stats.upcoming_events }}</div>
-            <small class="text-muted">Kutilayotgan</small>
-        </div>
-        <div class="col-md-3 text-center">
-            <div class="h3 fw-bold text-primary mb-1">{{ stats.participants_count }}+</div>
-            <small class="text-muted">Ishtirokchilar</small>
-        </div>
-        <div class="col-md-3 text-center">
-            <div class="h3 fw-bold text-primary mb-1">{{ stats.organizers_count }}+</div>
-            <small class="text-muted">Tashkilotchilar</small>
-        </div>
-    </div>
 </div>
-
-<style>
-.event-card {
-    transition: all 0.3s ease;
-    border-radius: 12px;
-}
-.event-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
-}
-
-.badge {
-    font-size: 0.7em;
-}
-
-.btn-primary {
-    background-color: #012152;
-    border-color: #012152;
-}
-.btn-primary:hover {
-    background-color: #012d6e;
-    border-color: #012d6e;
-}
-
-.card {
-    border-radius: 12px;
-}
-
-.event-image {
-    border-radius: 8px;
-    overflow: hidden;
-}
-</style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('searchInput');
-    const typeFilter = document.getElementById('typeFilter');
-    const statusFilter = document.getElementById('statusFilter');
-    const eventItems = document.querySelectorAll('.event-item');
-
-    function filterEvents() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const typeValue = typeFilter.value;
-        const statusValue = statusFilter.value;
-
-        eventItems.forEach(item => {
-            const title = item.querySelector('.card-title')?.textContent.toLowerCase() || '';
-            const type = item.getAttribute('data-type');
-            const status = item.getAttribute('data-status');
-
-            const matchesSearch = title.includes(searchTerm);
-            const matchesType = !typeValue || type === typeValue;
-            const matchesStatus = statusValue === 'all' || status === statusValue;
-
-            if (matchesSearch && matchesType && matchesStatus) {
-                item.style.display = 'block';
-                
-                // Show/hide section headers based on visible items
-                const section = item.closest('.row');
-                const visibleItems = section.querySelectorAll('.event-item[style="display: block"]');
-                if (visibleItems.length === 0) {
-                    section.style.display = 'none';
-                } else {
-                    section.style.display = 'block';
-                }
-            } else {
-                item.style.display = 'none';
-            }
-        });
-
-        // Show empty state if no events match
-        const visibleEvents = document.querySelectorAll('.event-item[style="display: block"]');
-        const emptyStates = document.querySelectorAll('.text-center.py-5, .text-center.py-4');
-        
-        if (visibleEvents.length === 0) {
-            emptyStates.forEach(state => state.style.display = 'block');
-        } else {
-            emptyStates.forEach(state => state.style.display = 'none');
-        }
-    }
-
-    // Event listeners
-    searchInput.addEventListener('input', filterEvents);
-    typeFilter.addEventListener('change', filterEvents);
-    statusFilter.addEventListener('change', filterEvents);
-
-    // Subscribe to notifications
-    window.subscribeToNotifications = function() {
-        // Implement notification subscription logic
-        alert('Siz yangi tadbirlar haqida xabardor bo\'lasiz!');
-    };
-
-    // Add loading animation
-    document.querySelectorAll('.event-card').forEach(card => {
-        card.addEventListener('click', function(e) {
-            if (e.target.tagName === 'A') return;
-            
-            const link = this.querySelector('a[href*="detail"]');
-            if (link) {
-                link.click();
-            }
-        });
-    });
-
-    // Initialize filters
-    filterEvents();
-});
-
-// Add countdown for upcoming events
-function updateUpcomingEventsCountdown() {
-    const upcomingEvents = document.querySelectorAll('[data-status="upcoming"]');
-    
-    upcomingEvents.forEach(eventItem => {
-        const eventDate = new Date(eventItem.querySelector('.fa-calendar').parentNode.textContent.trim());
-        const now = new Date();
-        const diff = eventDate - now;
-        
-        if (diff > 0) {
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            if (days <= 7) { // Show countdown for events within a week
-                const countdownElement = eventItem.querySelector('.event-countdown');
-                if (!countdownElement) {
-                    const countdown = document.createElement('div');
-                    countdown.className = 'event-countdown badge bg-warning mt-2';
-                    countdown.textContent = `${days} kun qoldi`;
-                    eventItem.querySelector('.card-body').appendChild(countdown);
-                }
-            }
-        }
-    });
-}
-
-// Update countdown every hour
-setInterval(updateUpcomingEventsCountdown, 3600000);
-updateUpcomingEventsCountdown(); // Initial call
-</script>
 {% endblock %}

@@ -293,7 +293,10 @@ def saved_jobs(request):
 def job_list(request):
     """Список вакансий"""
     form = JobSearchForm(request.GET or None)
-    jobs = Job.objects.filter(is_active=True)
+    if request.user.is_staff:
+        jobs = Job.objects.all()  # Show all jobs for admins
+    else:
+        jobs = Job.objects.filter(is_active=True)  # Show only active jobs for regular users
 
     if form.is_valid():
         query = form.cleaned_data.get("query")
@@ -371,7 +374,10 @@ def job_list(request):
 
 def job_detail(request, pk):
     """Детальная страница вакансии"""
-    job = get_object_or_404(Job, pk=pk, is_active=True)
+    if request.user.is_authenticated and request.user.is_staff:
+        job = get_object_or_404(Job, pk=pk)  # Staff can see all jobs
+    else:
+        job = get_object_or_404(Job, pk=pk, is_active=True)  # Regular users see only active jobs
 
     # Увеличиваем счетчик просмотров
     job.views_count += 1
