@@ -11,13 +11,8 @@ from django.views.decorators.http import require_POST
 from accounts.models import EmployerProfile
 from typing import Any, Iterable, cast
 
-from .forms import (
-    JobForm,
-    JobSearchForm,
-    JobApplicationForm,
-    JobAlertForm,
-)
-from .models import Job, Industry, JobApplication, SavedJob, JobAlert
+from .forms import *
+from .models import *
 
 
 @login_required
@@ -314,16 +309,12 @@ def job_list(request):
                 | Q(description__icontains=query)
                 | Q(
                     employer__company_name__icontains=query
-                )  # ИСПРАВЛЕНО: employer__company_name
+                )
                 | Q(skills_required__icontains=query)
             )
 
         if location:
             jobs = jobs.filter(location__icontains=location)
-
-        # ИСПРАВЛЕНО: убрана фильтрация по industry, так как у EmployerProfile нет прямого поля industry
-        # if industry:
-        #     jobs = jobs.filter(company__industry=industry)
 
         if employment_type:
             jobs = jobs.filter(employment_type__in=employment_type)
@@ -367,7 +358,6 @@ def job_list(request):
         "form": form,
         "total_jobs": total_jobs,
         "featured_jobs": featured_jobs,
-        # ИСПРАВЛЕНО: убрана статистика по отраслям, так как нет модели Company
     }
     return render(request, "jobs/job_list.html", context)
 

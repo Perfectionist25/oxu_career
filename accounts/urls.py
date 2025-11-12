@@ -36,11 +36,6 @@ urlpatterns = [
         views.employer_profile_update,
         name="employer_profile_update",
     ),
-    # УДАЛИТЬ URL управления вакансиями - они теперь в jobs/urls.py
-    # path('employer/jobs/', views.employer_jobs, name='employer_jobs'),
-    # path('employer/jobs/create/', views.create_job, name='create_job'),
-    # path('employer/jobs/<int:job_id>/edit/', views.edit_job, name='edit_job'),
-    # path('employer/jobs/<int:job_id>/toggle-status/', views.toggle_job_status, name='toggle_job_status'),
     # Account Creation (Admin only)
     path(
         "admin/create-employer/",
