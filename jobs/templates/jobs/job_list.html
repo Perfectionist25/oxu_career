@@ -40,7 +40,7 @@
                     <select class="form-select" id="categoryFilter">
                         <option value="">{% trans "Barcha sohalar" %}</option>
                         {% for industry in industries %}
-                        <option value="{{ industry.name }}">{{ industry.name }}</option>
+                        <option value="{{ industry }}">{{ industry }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -137,11 +137,11 @@
     <!-- Jobs Grid -->
     <div class="row g-4" id="jobsContainer">
         {% for job in jobs %}
-        <div class="col-xl-6 job-item" 
-             data-title="{{ job.title.lower }}" 
-             data-company="{{ job.company.name.lower }}" 
-             data-type="{{ job.employment_type|default:'' }}" 
-             data-category="{{ job.company.industry.name|default:'' }}"
+        <div class="col-xl-6 job-item"
+             data-title="{{ job.title.lower }}"
+             data-company="{{ job.employer.company_name.lower }}"
+             data-type="{{ job.employment_type|default:'' }}"
+             data-category="{{ job.employer.industry|default:''|escape }}"
              data-experience="{{ job.experience_level|default:'' }}"
              data-salary="{{ job.salary_min|default:0 }}"
              data-remote="{{ job.remote_work|yesno:'true,false' }}">
@@ -150,22 +150,22 @@
                     <div class="d-flex align-items-start">
                         <!-- Company Logo -->
                         <div class="flex-shrink-0 me-3">
-                            {% if job.company.logo %}
-                                <img src="{{ job.company.logo.url }}" alt="{{ job.company.name }}" class="rounded" width="60" height="60" style="object-fit: cover;">
+                            {% if job.employer.company_logo %}
+                                <img src="{{ job.employer.company_logo.url }}" alt="{{ job.employer.company_name }}" class="rounded" width="60" height="60" style="object-fit: cover;">
                             {% else %}
                                 <div class="bg-primary rounded d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
                                     <i class="fas fa-building text-white"></i>
                                 </div>
                             {% endif %}
                         </div>
-                        
+
                         <!-- Job Details -->
                         <div class="flex-grow-1">
                             <!-- Job Header -->
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <div>
                                     <h5 class="fw-bold text-dark mb-1">{{ job.title }}</h5>
-                                    <h6 class="text-primary mb-2">{{ job.company.name }}</h6>
+                                    <h6 class="text-primary mb-2">{{ job.employer.company_name }}</h6>
                                 </div>
                                 <div class="d-flex gap-1">
                                     <button class="btn btn-outline-secondary btn-sm" onclick="toggleBookmark({{ job.id }})">

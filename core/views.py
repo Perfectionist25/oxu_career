@@ -1,3 +1,4 @@
+import logging
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.http import JsonResponse
@@ -12,6 +13,9 @@ from resources.models import Resource
 
 from .forms import ContactForm
 from .models import ContactMessage
+
+# Set up logger for API requests
+logger = logging.getLogger(__name__)
 
 
 def home(request):
@@ -190,6 +194,22 @@ def api_stats(request):
 def health_check(request):
     """Проверка работоспособности приложения"""
     return JsonResponse({"status": "ok", "message": "Application is running"})
+
+
+def welcome_api(request):
+    """Welcome API endpoint that logs requests and returns JSON response"""
+    # Log request metadata
+    logger.info(f"Request received: {request.method} {request.path}")
+
+    # Prepare response data
+    response_data = {
+        "message": "Welcome to the OXU Career API Service!",
+        "method": request.method,
+        "path": request.path,
+        "timestamp": timezone.now().isoformat(),
+    }
+
+    return JsonResponse(response_data)
 
 
 # Обработчики ошибок

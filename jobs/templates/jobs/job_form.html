@@ -39,12 +39,20 @@
                     <!-- УДАЛЕН БЛОК ПРОВЕРКИ КОМПАНИЙ -->
                     <form method="post" novalidate>
                         {% csrf_token %}
-                        
+
                         {% if form.non_field_errors %}
-                            <div class="alert alert-danger">
-                                {% for error in form.non_field_errors %}
-                                    {{ error }}
-                                {% endfor %}
+                            <div class="alert alert-danger border-0 shadow-sm mb-4">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-exclamation-triangle me-2 fs-5"></i>
+                                    <div>
+                                        <strong>{% trans "Please correct the following errors:" %}</strong>
+                                        <ul class="mb-0 mt-2">
+                                            {% for error in form.non_field_errors %}
+                                                <li>{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         {% endif %}
 
@@ -64,8 +72,41 @@
                                 </label>
                                 {{ form.title }}
                                 {% if form.title.errors %}
-                                    <div class="text-danger small mt-1">
+                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.title.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Region -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.region.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Region" %} *
+                                </label>
+                                {{ form.region }}
+                                {% if form.region.errors %}
+                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        {% for error in form.region.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- District -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.district.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "District" %}
+                                </label>
+                                {{ form.district }}
+                                {% if form.district.errors %}
+                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        {% for error in form.district.errors %}
                                             {{ error }}
                                         {% endfor %}
                                     </div>
@@ -79,13 +120,14 @@
                                 </label>
                                 {{ form.location }}
                                 {% if form.location.errors %}
-                                    <div class="text-danger small mt-1">
+                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.location.errors %}
                                             {{ error }}
                                         {% endfor %}
                                     </div>
                                 {% endif %}
-                                <div class="form-text">{% trans "e.g., Baku, Azerbaijan" %}</div>
+                                <div class="form-text">{% trans "Full address" %}</div>
                             </div>
 
                             <!-- Employment Type -->
@@ -95,7 +137,8 @@
                                 </label>
                                 {{ form.employment_type }}
                                 {% if form.employment_type.errors %}
-                                    <div class="text-danger small mt-1">
+                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.employment_type.errors %}
                                             {{ error }}
                                         {% endfor %}
@@ -110,7 +153,8 @@
                                 </label>
                                 {{ form.experience_level }}
                                 {% if form.experience_level.errors %}
-                                    <div class="text-danger small mt-1">
+                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.experience_level.errors %}
                                             {{ error }}
                                         {% endfor %}
@@ -125,7 +169,8 @@
                                 </label>
                                 {{ form.short_description }}
                                 {% if form.short_description.errors %}
-                                    <div class="text-danger small mt-1">
+                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.short_description.errors %}
                                             {{ error }}
                                         {% endfor %}
@@ -147,11 +192,12 @@
                             <!-- Currency -->
                             <div class="col-md-4 mb-3">
                                 <label for="{{ form.currency.id_for_label }}" class="form-label fw-semibold">
-                                    {% trans "Currency" %} *
+                                    {% trans "Currency" %}
                                 </label>
                                 {{ form.currency }}
                                 {% if form.currency.errors %}
-                                    <div class="text-danger small mt-1">
+                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.currency.errors %}
                                             {{ error }}
                                         {% endfor %}
@@ -166,7 +212,8 @@
                                 </label>
                                 {{ form.salary_min }}
                                 {% if form.salary_min.errors %}
-                                    <div class="text-danger small mt-1">
+                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.salary_min.errors %}
                                             {{ error }}
                                         {% endfor %}
@@ -180,7 +227,8 @@
                                 </label>
                                 {{ form.salary_max }}
                                 {% if form.salary_max.errors %}
-                                    <div class="text-danger small mt-1">
+                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.salary_max.errors %}
                                             {{ error }}
                                         {% endfor %}
@@ -224,7 +272,8 @@
                                 </label>
                                 {{ form.education_level }}
                                 {% if form.education_level.errors %}
-                                    <div class="text-danger small mt-1">
+                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.education_level.errors %}
                                             {{ error }}
                                         {% endfor %}
@@ -239,7 +288,8 @@
                                 </label>
                                 {{ form.skills_required }}
                                 {% if form.skills_required.errors %}
-                                    <div class="text-danger small mt-1">
+                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.skills_required.errors %}
                                             {{ error }}
                                         {% endfor %}
@@ -255,7 +305,8 @@
                                 </label>
                                 {{ form.preferred_skills }}
                                 {% if form.preferred_skills.errors %}
-                                    <div class="text-danger small mt-1">
+                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.preferred_skills.errors %}
                                             {{ error }}
                                         {% endfor %}
@@ -278,7 +329,8 @@
                                 </label>
                                 {{ form.description }}
                                 {% if form.description.errors %}
-                                    <div class="text-danger small mt-1">
+                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.description.errors %}
                                             {{ error }}
                                         {% endfor %}
@@ -294,7 +346,8 @@
                                 </label>
                                 {{ form.responsibilities }}
                                 {% if form.responsibilities.errors %}
-                                    <div class="text-danger small mt-1">
+                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.responsibilities.errors %}
                                             {{ error }}
                                         {% endfor %}
@@ -309,7 +362,8 @@
                                 </label>
                                 {{ form.requirements }}
                                 {% if form.requirements.errors %}
-                                    <div class="text-danger small mt-1">
+                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.requirements.errors %}
                                             {{ error }}
                                         {% endfor %}
@@ -324,7 +378,8 @@
                                 </label>
                                 {{ form.benefits }}
                                 {% if form.benefits.errors %}
-                                    <div class="text-danger small mt-1">
+                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.benefits.errors %}
                                             {{ error }}
                                         {% endfor %}
@@ -349,8 +404,25 @@
                                 </label>
                                 {{ form.contact_email }}
                                 {% if form.contact_email.errors %}
-                                    <div class="text-danger small mt-1">
+                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.contact_email.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Contact Phone -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.contact_phone.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Contact Phone" %} *
+                                </label>
+                                {{ form.contact_phone }}
+                                {% if form.contact_phone.errors %}
+                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        {% for error in form.contact_phone.errors %}
                                             {{ error }}
                                         {% endfor %}
                                     </div>
@@ -364,7 +436,8 @@
                                 </label>
                                 {{ form.contact_person }}
                                 {% if form.contact_person.errors %}
-                                    <div class="text-danger small mt-1">
+                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.contact_person.errors %}
                                             {{ error }}
                                         {% endfor %}
@@ -379,7 +452,8 @@
                                 </label>
                                 {{ form.application_url }}
                                 {% if form.application_url.errors %}
-                                    <div class="text-danger small mt-1">
+                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.application_url.errors %}
                                             {{ error }}
                                         {% endfor %}
@@ -443,7 +517,8 @@
                                 </label>
                                 {{ form.expires_at }}
                                 {% if form.expires_at.errors %}
-                                    <div class="text-danger small mt-1">
+                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.expires_at.errors %}
                                             {{ error }}
                                         {% endfor %}

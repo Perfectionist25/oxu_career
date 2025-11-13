@@ -5,51 +5,57 @@ from . import views
 app_name = "jobs"
 
 urlpatterns = [
-    # Public pages
+    # Umumiy sahifalar
     path("", views.job_list, name="list"),
-    path("industries/", views.industries_list, name="industries_list"),
-    path("my-jobs/", views.my_jobs, name="my_jobs"),
-    path("saved-jobs/", views.saved_jobs, name="saved_jobs"),
-    # Job creation and management
-    path("create/", views.job_create, name="job_create"),
-    path("<int:pk>/edit/", views.job_edit, name="job_edit"),
-    path("<int:pk>/delete/", views.job_delete, name="job_delete"),
-    # Job details and applications
+    path("tarmoqlar/", views.industries_list, name="industries_list"),
+    path("mening-ishlarim/", views.my_jobs, name="my_jobs"),
+    path("saqlanganlar/", views.saved_jobs, name="saved_jobs"),
+    
+    # Vakansiya yaratish va boshqarish
+    path("yaratish/", views.job_create, name="job_create"),
+    path("<int:pk>/tahrirlash/", views.job_edit, name="job_edit"),
+    path("<int:pk>/ochirish/", views.job_delete, name="job_delete"),
+    
+    # Vakansiya tafsilotlari va arizalar
     path("<int:pk>/", views.job_detail, name="job_detail"),
-    path("<int:pk>/apply/", views.apply_for_job, name="apply_for_job"),
-    path("<int:pk>/save/", views.save_job, name="save_job"),
-    path("<int:pk>/unsave/", views.unsave_job, name="unsave_job"),
+    path("<int:pk>/ariza-berish/", views.apply_for_job, name="apply_for_job"),
+    path("<int:pk>/saqlash/", views.save_job, name="save_job"),
+    path("<int:pk>/saqlanganlardan-olish/", views.unsave_job, name="unsave_job"),
     path(
-        "<int:pk>/increment-views/",
+        "<int:pk>/korishlar-soni/",
         views.increment_job_views,
         name="increment_job_views",
     ),
-    # User applications and alerts
-    path("applications/my/", views.my_applications, name="my_applications"),
+    
+    # Foydalanuvchi arizalari va ogohlantirishlar
+    path("mening-arizalarim/", views.my_applications, name="my_applications"),
     path(
-        "employer/applications/",
+        "ish-beruvchi/arizalar/",
         views.employer_applications,
         name="employer_applications",
     ),
-    path("job-alerts/", views.job_alerts, name="job_alerts"),
+    path("ogohlantirishlar/", views.job_alerts, name="job_alerts"),
     path(
-        "job-alerts/<int:pk>/delete/", views.delete_job_alert, name="delete_job_alert"
+        "ogohlantirishlar/<int:pk>/ochirish/", 
+        views.delete_job_alert, 
+        name="delete_job_alert"
     ),
-    # AJAX endpoints
+    
+    # AJAX endpointlar
     path(
-        "applications/<int:pk>/update-status/",
+        "arizalar/<int:pk>/status-yangilash/",
         views.update_application_status,
         name="update_application_status",
     ),
     path(
-        "applications/<int:pk>/detail/",
+        "arizalar/<int:pk>/batafsil/",
         views.application_detail,
         name="application_detail",
     ),
     path(
-        "applications/<int:pk>/add-note/",
+        "arizalar/<int:pk>/izoh-qoshish/",
         views.add_application_note,
         name="add_application_note",
     ),
-    path("get-user-cvs/", views.get_user_cvs, name="get_user_cvs"),
+    path("rezyume-olish/", views.get_user_cvs, name="get_user_cvs"),
 ]

@@ -1,166 +1,222 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from .models import Job, Industry, JobApplication, JobAlert
+from .models import Job, JobApplication
 
 
 class JobForm(forms.ModelForm):
-    """Форма для создания/редактирования вакансий"""
+    """Vakansiya yaratish/tahrirlash formasi"""
 
     class Meta:
         model = Job
         fields = [
+            # Asosiy ma'lumotlar
             "title",
             "short_description",
             "description",
+            
+            # Manzil va ish turi
+            "region",
+            "district", 
             "location",
             "remote_work",
             "hybrid_work",
+            "office_work",
             "employment_type",
+            
+            # Tajriba va ma'lumot
             "experience_level",
             "education_level",
+            
+            # Maosh
             "salary_min",
-            "salary_max",
+            "salary_max", 
             "currency",
             "hide_salary",
             "salary_negotiable",
+            "bonus_system",
+            
+            # Talablar va majburiyatlar
             "requirements",
             "responsibilities",
             "benefits",
+            
+            # Ko'nikmalar
             "skills_required",
             "preferred_skills",
+            "language_requirements",
+            
+            # Ish jadvali
+            "work_schedule",
+            "probation_period",
+            
+            # Kontakt ma'lumotlari
             "contact_email",
+            "contact_phone",
             "contact_person",
-            "application_url",
+            
+            # Muddati
             "expires_at",
         ]
 
         widgets = {
-            "title": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": _("Senior Software Developer"),
-                }
-            ),
-            "short_description": forms.Textarea(
-                attrs={
-                    "class": "form-control",
-                    "rows": 2,
-                    "placeholder": _("Brief description of the job..."),
-                }
-            ),
-            "description": forms.Textarea(
-                attrs={
-                    "class": "form-control",
-                    "rows": 5,
-                    "placeholder": _("Detailed job description..."),
-                }
-            ),
-            "location": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": _("Tashkent, Uzbekistan"),
-                }
-            ),
+            # Asosiy ma'lumotlar
+            "title": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": _("Masalan: Senior Dasturchi"),
+            }),
+            "short_description": forms.Textarea(attrs={
+                "class": "form-control",
+                "rows": 2,
+                "placeholder": _("Ishning qisqacha tavsifi..."),
+            }),
+            "description": forms.Textarea(attrs={
+                "class": "form-control",
+                "rows": 5,
+                "placeholder": _("Ishning batafsil tavsifi..."),
+            }),
+            
+            # Manzil va ish turi
+            "region": forms.Select(attrs={"class": "form-control"}),
+            "district": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": _("Masalan: Mirzo Ulug'bek tumani"),
+            }),
+            "location": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": _("To'liq manzil"),
+            }),
             "remote_work": forms.CheckboxInput(attrs={"class": "form-check-input"}),
             "hybrid_work": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            "office_work": forms.CheckboxInput(attrs={"class": "form-check-input"}),
             "employment_type": forms.Select(attrs={"class": "form-control"}),
+            
+            # Tajriba va ma'lumot
             "experience_level": forms.Select(attrs={"class": "form-control"}),
             "education_level": forms.Select(attrs={"class": "form-control"}),
-            "salary_min": forms.NumberInput(
-                attrs={"class": "form-control", "min": "0"}
-            ),
-            "salary_max": forms.NumberInput(
-                attrs={"class": "form-control", "min": "0"}
-            ),
+            
+            # Maosh
+            "salary_min": forms.NumberInput(attrs={
+                "class": "form-control",
+                "min": "0",
+                "placeholder": _("Minimal maosh"),
+            }),
+            "salary_max": forms.NumberInput(attrs={
+                "class": "form-control", 
+                "min": "0",
+                "placeholder": _("Maksimal maosh"),
+            }),
             "currency": forms.Select(attrs={"class": "form-control"}),
             "hide_salary": forms.CheckboxInput(attrs={"class": "form-check-input"}),
-            "salary_negotiable": forms.CheckboxInput(
-                attrs={"class": "form-check-input"}
-            ),
-            "requirements": forms.Textarea(
-                attrs={
-                    "class": "form-control",
-                    "rows": 4,
-                    "placeholder": _("Required qualifications and experience..."),
-                }
-            ),
-            "responsibilities": forms.Textarea(
-                attrs={
-                    "class": "form-control",
-                    "rows": 4,
-                    "placeholder": _("Daily responsibilities and tasks..."),
-                }
-            ),
-            "benefits": forms.Textarea(
-                attrs={
-                    "class": "form-control",
-                    "rows": 3,
-                    "placeholder": _("Company benefits and perks..."),
-                }
-            ),
-            "skills_required": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": _("Python, Django, JavaScript, SQL..."),
-                }
-            ),
-            "preferred_skills": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": _("React, Docker, AWS, MongoDB..."),
-                }
-            ),
+            "salary_negotiable": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            "bonus_system": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            
+            # Talablar va majburiyatlar
+            "requirements": forms.Textarea(attrs={
+                "class": "form-control",
+                "rows": 4,
+                "placeholder": _("Talab qilinadigan bilim va ko'nikmalar..."),
+            }),
+            "responsibilities": forms.Textarea(attrs={
+                "class": "form-control",
+                "rows": 4,
+                "placeholder": _("Asosiy vazifalar va majburiyatlar..."),
+            }),
+            "benefits": forms.Textarea(attrs={
+                "class": "form-control",
+                "rows": 3,
+                "placeholder": _("Kompaniya taklif qiladigan imtiyozlar..."),
+            }),
+            
+            # Ko'nikmalar
+            "skills_required": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": _("Python, Django, JavaScript, SQL..."),
+            }),
+            "preferred_skills": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": _("React, Docker, AWS..."),
+            }),
+            "language_requirements": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": _("Ingliz tili - O'rta daraja, Rus tili - Erkin..."),
+            }),
+            
+            # Ish jadvali
+            "work_schedule": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": _("Masalan: 09:00 - 18:00, dam olish kunlari: Shanba, Yakshanba"),
+            }),
+            "probation_period": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": _("Masalan: 3 oy"),
+            }),
+            
+            # Kontakt ma'lumotlari
             "contact_email": forms.EmailInput(attrs={"class": "form-control"}),
-            "contact_person": forms.TextInput(attrs={"class": "form-control"}),
-            "application_url": forms.URLInput(attrs={"class": "form-control"}),
-            "expires_at": forms.DateInput(
-                attrs={"class": "form-control", "type": "date"}
-            ),
+            "contact_phone": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": _("+998 XX XXX XX XX"),
+            }),
+            "contact_person": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": _("Mas'ul shaxsning F.I.SH"),
+            }),
+            
+            # Muddati
+            "expires_at": forms.DateInput(attrs={
+                "class": "form-control",
+                "type": "date"
+            }),
         }
+        
         labels = {
-            "title": _("Job Title"),
-            "short_description": _("Short Description"),
-            "description": _("Job Description"),
-            "location": _("Location"),
-            "remote_work": _("Remote Work Available"),
-            "hybrid_work": _("Hybrid Work Available"),
-            "employment_type": _("Employment Type"),
-            "experience_level": _("Experience Level"),
-            "education_level": _("Education Level"),
-            "salary_min": _("Minimum Salary"),
-            "salary_max": _("Maximum Salary"),
-            "currency": _("Currency"),
-            "hide_salary": _("Hide Salary"),
-            "salary_negotiable": _("Salary Negotiable"),
-            "requirements": _("Requirements"),
-            "responsibilities": _("Responsibilities"),
-            "benefits": _("Benefits"),
-            "skills_required": _("Required Skills"),
-            "preferred_skills": _("Preferred Skills"),
-            "contact_email": _("Contact Email"),
-            "contact_person": _("Contact Person"),
-            "application_url": _("Application URL"),
-            "expires_at": _("Expires At"),
+            "title": _("Lavozim nomi"),
+            "short_description": _("Qisqacha tavsif"),
+            "description": _("Batafsil tavsif"),
+            "region": _("Viloyat"),
+            "district": _("Tuman/Shahar"),
+            "location": _("To'liq manzil"),
+            "remote_work": _("Uydan ishlash"),
+            "hybrid_work": _("Gibrid ish"),
+            "office_work": _("Ofisda ishlash"),
+            "employment_type": _("Ish turi"),
+            "experience_level": _("Tajriba darajasi"),
+            "education_level": _("Ma'lumot darajasi"),
+            "salary_min": _("Minimal maosh"),
+            "salary_max": _("Maksimal maosh"),
+            "currency": _("Valyuta"),
+            "hide_salary": _("Maoshnni yashirish"),
+            "salary_negotiable": _("Maosh kelishilgan holda"),
+            "bonus_system": _("Bonus tizimi"),
+            "requirements": _("Talablar"),
+            "responsibilities": _("Majburiyatlar"),
+            "benefits": _("Imtiyozlar"),
+            "skills_required": _("Talab qilinadigan ko'nikmalar"),
+            "preferred_skills": _("Qo'shimcha ko'nikmalar"),
+            "language_requirements": _("Til bilish darajasi"),
+            "work_schedule": _("Ish jadvali"),
+            "probation_period": _("Sinov muddati"),
+            "contact_email": _("Email manzili"),
+            "contact_phone": _("Telefon raqam"),
+            "contact_person": _("Mas'ul shaxs"),
+            "expires_at": _("Muddati tugaydigan sana"),
         }
 
     def __init__(self, *args, **kwargs):
         kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
 
-        # Set required fields
-        self.fields["title"].required = True
-        self.fields["location"].required = True
-        self.fields["employment_type"].required = True
-        self.fields["experience_level"].required = True
-        self.fields["education_level"].required = True
-        self.fields["short_description"].required = True
-        self.fields["description"].required = True
-        self.fields["responsibilities"].required = True
-        self.fields["requirements"].required = True
-        self.fields["skills_required"].required = True
-        self.fields["currency"].required = True
-        self.fields["contact_email"].required = True
+        # Majburiy maydonlar
+        required_fields = [
+            "title", "region", "employment_type", "experience_level", 
+            "education_level", "short_description", "description", 
+            "responsibilities", "requirements", "skills_required",
+            "contact_email", "contact_phone"
+        ]
+        
+        for field in required_fields:
+            self.fields[field].required = True
 
     def clean(self):
         cleaned_data = super().clean() or {}
@@ -168,172 +224,121 @@ class JobForm(forms.ModelForm):
         salary_max = cleaned_data.get("salary_max")
         remote_work = cleaned_data.get("remote_work", False)
         hybrid_work = cleaned_data.get("hybrid_work", False)
+        office_work = cleaned_data.get("office_work", False)
 
-        if (
-            salary_min is not None
-            and salary_max is not None
-            and salary_min > salary_max
-        ):
+        # Maosh tekshiruvi
+        if salary_min and salary_max and salary_min > salary_max:
             raise forms.ValidationError(
-                _("Minimum salary cannot be greater than maximum salary.")
+                _("Minimal maosh maksimal maoshdan katta bo'lishi mumkin emas.")
             )
 
-        # Проверка режима работы
-        if remote_work and hybrid_work:
-            raise forms.ValidationError(_("Cannot select both remote and hybrid work."))
+        # Ish turi tekshiruvi
+        work_types = [remote_work, hybrid_work, office_work]
+        if not any(work_types):
+            raise forms.ValidationError(
+                _("Kamida bitta ish turini tanlang.")
+            )
 
         return cleaned_data
 
 
 class JobSearchForm(forms.Form):
-    """Форма поиска вакансий"""
+    """Ish qidirish formasi"""
 
     query = forms.CharField(
         required=False,
-        widget=forms.TextInput(
-            attrs={
-                "class": "form-control",
-                "placeholder": _("Job title, company, or keywords..."),
-            }
-        ),
+        widget=forms.TextInput(attrs={
+            "class": "form-control",
+            "placeholder": _("Lavozim, kompaniya yoki kalit so'zlar..."),
+        }),
     )
-    location = forms.CharField(
+    
+    region = forms.CharField(
         required=False,
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": _("Tashkent, Samarkand...")}
-        ),
+        widget=forms.TextInput(attrs={
+            "class": "form-control",
+            "placeholder": _("Toshkent, Samarqand..."),
+        }),
     )
-    industry = forms.ModelChoiceField(
-        queryset=Industry.objects.all(),
-        required=False,
-        empty_label=_("All Industries"),
-        widget=forms.Select(attrs={"class": "form-control"}),
-    )
+    
     employment_type = forms.MultipleChoiceField(
         required=False,
         choices=Job.EMPLOYMENT_TYPE_CHOICES,
         widget=forms.CheckboxSelectMultiple(attrs={"class": "form-check-input"}),
     )
+    
     experience_level = forms.MultipleChoiceField(
         required=False,
         choices=Job.EXPERIENCE_LEVEL_CHOICES,
         widget=forms.CheckboxSelectMultiple(attrs={"class": "form-check-input"}),
     )
-    education_level = forms.MultipleChoiceField(
-        required=False,
-        choices=Job.EDUCATION_LEVEL_CHOICES,
-        widget=forms.CheckboxSelectMultiple(attrs={"class": "form-check-input"}),
-    )
+    
     remote_work = forms.BooleanField(
-        required=False, widget=forms.CheckboxInput(attrs={"class": "form-check-input"})
+        required=False, 
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input"})
     )
+    
     salary_min = forms.IntegerField(
         required=False,
-        widget=forms.NumberInput(
-            attrs={"class": "form-control", "placeholder": _("Min salary"), "min": "0"}
-        ),
+        widget=forms.NumberInput(attrs={
+            "class": "form-control",
+            "placeholder": _("Minimal maosh"),
+            "min": "0"
+        }),
     )
 
 
 class JobApplicationForm(forms.ModelForm):
-    """Форма для отклика на вакансию"""
+    """Vakansiyaga ariza topshirish formasi"""
 
     class Meta:
         model = JobApplication
         fields = [
             "cv",
-            "cover_letter",
+            "cover_letter", 
             "expected_salary",
-            "notice_period",
             "available_from",
         ]
+        
         widgets = {
             "cv": forms.Select(attrs={"class": "form-control"}),
-            "cover_letter": forms.Textarea(
-                attrs={
-                    "class": "form-control",
-                    "rows": 6,
-                    "placeholder": _(
-                        "Write your cover letter explaining why you are a good fit for this position..."
-                    ),
-                }
-            ),
-            "expected_salary": forms.NumberInput(
-                attrs={"class": "form-control", "min": "0"}
-            ),
-            "notice_period": forms.NumberInput(
-                attrs={"class": "form-control", "min": "0"}
-            ),
-            "available_from": forms.DateInput(
-                attrs={"class": "form-control", "type": "date"}
-            ),
+            "cover_letter": forms.Textarea(attrs={
+                "class": "form-control",
+                "rows": 6,
+                "placeholder": _("Nima uchun siz ushbu lavozimga mos kelasiz..."),
+            }),
+            "expected_salary": forms.NumberInput(attrs={
+                "class": "form-control", 
+                "min": "0",
+                "placeholder": _("Kutilayotgan maosh"),
+            }),
+            "available_from": forms.DateInput(attrs={
+                "class": "form-control", 
+                "type": "date"
+            }),
         }
+        
         labels = {
-            "cv": _("Resume/CV"),
-            "cover_letter": _("Cover Letter"),
-            "expected_salary": _("Expected Salary"),
-            "notice_period": _("Notice Period (days)"),
-            "available_from": _("Available From"),
-        }
-
-
-class JobAlertForm(forms.ModelForm):
-    """Форма для оповещений о вакансиях"""
-
-    class Meta:
-        model = JobAlert
-        fields = [
-            "name",
-            "keywords",
-            "location",
-            "industry",
-            "employment_type",
-            "experience_level",
-            "frequency",
-        ]
-        widgets = {
-            "name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": _("My Job Alert")}
-            ),
-            "keywords": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": _("Python, Django, Developer"),
-                }
-            ),
-            "location": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": _("Tashkent, Remote")}
-            ),
-            "industry": forms.Select(attrs={"class": "form-control"}),
-            "employment_type": forms.Select(attrs={"class": "form-control"}),
-            "experience_level": forms.Select(attrs={"class": "form-control"}),
-            "frequency": forms.Select(attrs={"class": "form-control"}),
-        }
-        labels = {
-            "name": _("Alert Name"),
-            "keywords": _("Keywords"),
-            "location": _("Location"),
-            "industry": _("Industry"),
-            "employment_type": _("Employment Type"),
-            "experience_level": _("Experience Level"),
-            "frequency": _("Frequency"),
+            "cv": _("Rezyume"),
+            "cover_letter": _("Xat"),
+            "expected_salary": _("Kutilayotgan maosh"),
+            "available_from": _("Ish boshlash sanasi"),
         }
 
 
 class ApplicationStatusForm(forms.Form):
-    """Форма изменения статуса отклика"""
+    """Ariza holatini o'zgartirish formasi"""
 
     status = forms.ChoiceField(
         choices=JobApplication.STATUS_CHOICES,
         widget=forms.Select(attrs={"class": "form-control"}),
     )
+    
     notes = forms.CharField(
         required=False,
-        widget=forms.Textarea(
-            attrs={
-                "class": "form-control",
-                "rows": 3,
-                "placeholder": _("Internal notes..."),
-            }
-        ),
+        widget=forms.Textarea(attrs={
+            "class": "form-control",
+            "rows": 3,
+            "placeholder": _("Izohlar..."),
+        }),
     )

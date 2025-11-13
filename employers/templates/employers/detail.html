@@ -369,8 +369,8 @@
 function shareCompany() {
     if (navigator.share) {
         navigator.share({
-            title: '{{ employer.name }} - OXU Career',
-            text: '{{ employer.description|truncatewords:15 }}',
+            title: "{{ employer.name|escapejs }} - OXU Career",
+            text: "{{ employer.description|truncatewords:15|escapejs }}",
             url: window.location.href,
         })
         .then(() => console.log('Muvaffaqiyatli ulashildi'))
@@ -420,7 +420,7 @@ function saveJob(jobId) {
 function notifyWhenAvailable() {
     const employerId = {{ employer.id }};
     // Add subscription logic here
-    alert('Siz {{ employer.name }} kompaniyasining yangi vakansiyalari haqida xabardor bo\'lasiz!');
+    alert('Siz {{ employer.name|escapejs }} kompaniyasining yangi vakansiyalari haqida xabardor bo\'lasiz!');
 }
 
 // Add smooth scrolling for better UX

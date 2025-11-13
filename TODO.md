@@ -1,17 +1,6 @@
-# TODO: Add Admin Event Management
+# TODO: Add Welcome API Endpoint
 
-## Tasks
-- [x] Add admin views to events/views.py (list, create, edit, delete events)
-- [x] Add admin URLs to events/urls.py
-- [x] Add "Events" button to admin_dashboard.html
-- [x] Create admin event templates if needed
-- [x] Test admin event management functionality (Django system check passed, no tests available)
-- [x] Verify admin access restrictions (decorators implemented)
-
-## Files to Edit
-- events/views.py
-- events/urls.py
-- accounts/templates/accounts/admin_dashboard.html
-- events/templates/events/admin_event_list.html (new)
-- events/templates/events/admin_event_form.html (new)
-- events/templates/events/admin_event_delete.html (new)
+## Steps to Complete
+- [x] Edit core/views.py to add welcome_api view that logs request metadata and returns JSON response
+- [x] Edit core/urls.py to add URL pattern for the welcome endpoint
+- [x] Test the new endpoint by making a request to verify logging and response

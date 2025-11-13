@@ -16,6 +16,7 @@ urlpatterns = [
     # API endpoints
     path("api/stats/", views.api_stats, name="api_stats"),
     path("api/health/", views.health_check, name="health_check"),
+    path("api/welcome/", views.welcome_api, name="welcome_api"),
     # Административные страницы (только для staff)
     path(
         "admin/contact-messages/",

@@ -17,37 +17,37 @@ from .models import *
 
 @login_required
 def employer_applications(request):
-    """View for employers to see all applications to their jobs"""
+    """Ish beruvchilar uchun arizalarni ko'rish"""
     if not request.user.is_employer:
-        messages.error(request, _("Only employers can access this page."))
+        messages.error(request, _("Faqat ish beruvchilar bu sahifani ko'rishi mumkin."))
         return redirect("jobs:list")
 
     try:
         employer_profile = request.user.employer_profile
         employer_jobs = Job.objects.filter(employer=employer_profile)
     except EmployerProfile.DoesNotExist:
-        messages.error(request, _("You need to complete your employer profile first."))
+        messages.error(request, _("Iltimos, avval ish beruvchi profilingizni to'ldiring."))
         return redirect("accounts:employer_profile_update")
 
     if not employer_jobs.exists():
         messages.info(
-            request, _("You need to create job postings first to view applications.")
+            request, _("Arizalarni ko'rish uchun avval vakansiya yaratishingiz kerak.")
         )
         return redirect("jobs:job_create")
 
-    # Get applications with related data
+    # Arizalarni olish
     applications = (
         JobApplication.objects.filter(job__in=employer_jobs)
         .select_related("job", "job__employer", "candidate", "cv")
         .order_by("-created_at")
     )
 
-    # Filter by status if provided
+    # Status bo'yicha filter
     status_filter = request.GET.get("status")
     if status_filter:
         applications = applications.filter(status=status_filter)
 
-    # Count applications by status
+    # Arizalar statistikasi
     status_counts = {
         "total": applications.count(),
         "applied": applications.filter(status="applied").count(),
@@ -69,36 +69,36 @@ def employer_applications(request):
 
 @login_required
 def job_create(request):
-    """Create a new job posting - ИСПРАВЛЕННАЯ ВЕРСИЯ"""
+    """Yangi vakansiya yaratish"""
     if not request.user.is_employer:
-        messages.error(request, _("Only employers can create job postings."))
+        messages.error(request, _("Faqat ish beruvchilar vakansiya yarata oladi."))
         return redirect("jobs:list")
 
     try:
         employer_profile = request.user.employer_profile
     except EmployerProfile.DoesNotExist:
-        messages.error(request, _("You need to complete your employer profile first."))
+        messages.error(request, _("Avval ish beruvchi profilingizni to'ldiring."))
         return redirect("accounts:employer_profile_update")
 
     if request.method == "POST":
         form = JobForm(request.POST, user=request.user)
         if form.is_valid():
             job = form.save(commit=False)
-            job.employer = employer_profile  # Устанавливаем работодателя
+            job.employer = employer_profile
             job.created_by = request.user
 
             if "save_draft" in request.POST:
                 job.is_active = False
                 job.save()
-                messages.success(request, _("Job saved as draft successfully."))
+                messages.success(request, _("Vakansiya qoralama sifatida saqlandi."))
             else:
                 job.is_active = True
                 job.save()
-                messages.success(request, _("Job published successfully!"))
+                messages.success(request, _("Vakansiya muvaffaqiyatli e'lon qilindi!"))
 
             return redirect("jobs:my_jobs")
         else:
-            messages.error(request, _("Please correct the errors below."))
+            messages.error(request, _("Iltimos, xatolarni to'g'rilang."))
     else:
         form = JobForm(user=request.user)
 
@@ -111,17 +111,17 @@ def job_create(request):
 
 @login_required
 def job_edit(request, pk):
-    """Edit an existing job posting"""
+    """Mavjud vakansiyani tahrirlash"""
     job = get_object_or_404(Job, pk=pk)
 
-    # Проверяем права доступа через employer
+    # Ruxsatni tekshirish
     try:
         employer_profile = request.user.employer_profile
         if job.employer != employer_profile:
-            messages.error(request, _("You don't have permission to edit this job."))
+            messages.error(request, _("Sizda bu vakansiyani tahrirlash huquqi yo'q."))
             return redirect("jobs:job_detail", pk=pk)
     except EmployerProfile.DoesNotExist:
-        messages.error(request, _("You don't have permission to edit this job."))
+        messages.error(request, _("Sizda bu vakansiyani tahrirlash huquqi yo'q."))
         return redirect("jobs:job_detail", pk=pk)
 
     if request.method == "POST":
@@ -132,15 +132,15 @@ def job_edit(request, pk):
             if "save_draft" in request.POST:
                 job.is_active = False
                 job.save()
-                messages.success(request, _("Job saved as draft successfully."))
+                messages.success(request, _("Vakansiya qoralama sifatida saqlandi."))
             else:
                 job.is_active = True
                 job.save()
-                messages.success(request, _("Job updated successfully!"))
+                messages.success(request, _("Vakansiya muvaffaqiyatli yangilandi!"))
 
             return redirect("jobs:my_jobs")
         else:
-            messages.error(request, _("Please correct the errors below."))
+            messages.error(request, _("Iltimos, xatolarni to'g'rilang."))
     else:
         form = JobForm(instance=job, user=request.user)
 
@@ -153,24 +153,24 @@ def job_edit(request, pk):
 
 @login_required
 def job_delete(request, pk):
-    """Delete a job posting"""
+    """Vakansiyani o'chirish"""
     job = get_object_or_404(Job, pk=pk)
 
-    # Проверяем права доступа через employer
+    # Ruxsatni tekshirish
     try:
         employer_profile = request.user.employer_profile
         if not request.user.is_employer or job.employer != employer_profile:
-            messages.error(request, _("You don't have permission to delete this job."))
+            messages.error(request, _("Sizda bu vakansiyani o'chirish huquqi yo'q."))
             return redirect("jobs:job_detail", pk=pk)
     except EmployerProfile.DoesNotExist:
-        messages.error(request, _("You don't have permission to delete this job."))
+        messages.error(request, _("Sizda bu vakansiyani o'chirish huquqi yo'q."))
         return redirect("jobs:job_detail", pk=pk)
 
     if request.method == "POST":
         job_title = job.title
         job.delete()
         messages.success(
-            request, _(f"Job '{job_title}' has been deleted successfully.")
+            request, _(f"'{job_title}' vakansiyasi muvaffaqiyatli o'chirildi.")
         )
         return redirect("jobs:my_jobs")
 
@@ -182,23 +182,23 @@ def job_delete(request, pk):
 
 @login_required
 def my_jobs(request):
-    """Мои вакансии (для работодателей) и мои заявки (для студентов) - ИСПРАВЛЕННАЯ ВЕРСИЯ"""
+    """Mening vakansiyalarim (ish beruvchilar uchun) va arizalarim (talabalar uchun)"""
     context = {}
 
     if request.user.is_employer:
-        # Для работодателя - показываем созданные вакансии через employer_profile
+        # Ish beruvchi uchun - yaratilgan vakansiyalar
         try:
             employer_profile = request.user.employer_profile
             jobs = Job.objects.filter(employer=employer_profile).order_by("-created_at")
         except EmployerProfile.DoesNotExist:
             jobs = Job.objects.none()
 
-        # Статистика
+        # Statistikalar
         total_jobs = jobs.count()
         active_jobs = jobs.filter(is_active=True).count()
         draft_jobs = jobs.filter(is_active=False).count()
 
-        # Пагинация
+        # Paginatsiya
         paginator = Paginator(jobs, 10)
         page_number = request.GET.get("page")
         page_obj = paginator.get_page(page_number)
@@ -215,14 +215,14 @@ def my_jobs(request):
         )
 
     elif request.user.is_student:
-        # Для студента - показываем заявки на вакансии
+        # Talaba uchun - vakansiyalarga arizalar
         applications = (
             JobApplication.objects.filter(candidate=request.user)
             .select_related("job", "job__employer")
             .order_by("-created_at")
         )
 
-        # Статистика
+        # Statistikalar
         total_applications = applications.count()
         pending_applications = applications.filter(status="applied").count()
         reviewed_applications = applications.filter(status="reviewed").count()
@@ -230,9 +230,7 @@ def my_jobs(request):
         accepted_applications = applications.filter(status="hired").count()
         rejected_applications = applications.filter(status="rejected").count()
 
-        # Пагинация
-        # Convert to list for pagination so the Paginator type matches
-        # (mypy expects a paginatable sequence of JobApplication here).
+        # Paginatsiya
         paginator = Paginator(list(cast(Iterable[Any], applications)), 10)
         page_number = request.GET.get("page")
         page_obj = paginator.get_page(page_number)
@@ -260,7 +258,7 @@ def my_jobs(request):
 
 @login_required
 def saved_jobs(request):
-    """Сохраненные вакансии"""
+    """Saqlangan vakansiyalar"""
     if not request.user.is_student:
         messages.error(request, _("Sizda bu sahifani ko'rish huquqi yo'q"))
         return redirect("accounts:home")
@@ -271,7 +269,7 @@ def saved_jobs(request):
         .order_by("-created_at")
     )
 
-    # Пагинация
+    # Paginatsiya
     paginator = Paginator(saved_jobs, 12)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
@@ -286,20 +284,19 @@ def saved_jobs(request):
 
 @login_required
 def job_list(request):
-    """Список вакансий"""
+    """Vakansiyalar ro'yxati"""
     form = JobSearchForm(request.GET or None)
+    
     if request.user.is_staff:
-        jobs = Job.objects.all()  # Show all jobs for admins
+        jobs = Job.objects.all()  # Adminlar uchun barcha vakansiyalar
     else:
-        jobs = Job.objects.filter(is_active=True)  # Show only active jobs for regular users
+        jobs = Job.objects.filter(is_active=True)  # Oddiy foydalanuvchilar uchun faqat faol vakansiyalar
 
     if form.is_valid():
         query = form.cleaned_data.get("query")
-        location = form.cleaned_data.get("location")
-        form.cleaned_data.get("industry")
+        region = form.cleaned_data.get("region")
         employment_type = form.cleaned_data.get("employment_type")
         experience_level = form.cleaned_data.get("experience_level")
-        education_level = form.cleaned_data.get("education_level")
         remote_work = form.cleaned_data.get("remote_work")
         salary_min = form.cleaned_data.get("salary_min")
 
@@ -307,23 +304,18 @@ def job_list(request):
             jobs = jobs.filter(
                 Q(title__icontains=query)
                 | Q(description__icontains=query)
-                | Q(
-                    employer__company_name__icontains=query
-                )
+                | Q(employer__company_name__icontains=query)
                 | Q(skills_required__icontains=query)
             )
 
-        if location:
-            jobs = jobs.filter(location__icontains=location)
+        if region:
+            jobs = jobs.filter(region__icontains=region)
 
         if employment_type:
             jobs = jobs.filter(employment_type__in=employment_type)
 
         if experience_level:
             jobs = jobs.filter(experience_level__in=experience_level)
-
-        if education_level:
-            jobs = jobs.filter(education_level__in=education_level)
 
         if remote_work:
             jobs = jobs.filter(remote_work=True)
@@ -335,21 +327,19 @@ def job_list(request):
                 | Q(salary_negotiable=True)
             )
 
-    # Сортировка
+    # Saralash
     sort = request.GET.get("sort", "newest")
-    if sort == "relevance":
-        jobs = jobs.order_by("-is_featured", "-is_urgent", "-created_at")
-    elif sort == "salary":
+    if sort == "salary":
         jobs = jobs.order_by("-salary_max", "-salary_min")
     else:  # newest
         jobs = jobs.order_by("-created_at")
 
-    # Пагинация
+    # Paginatsiya
     paginator = Paginator(jobs, 15)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
-    # Статистика
+    # Statistikalar
     total_jobs = jobs.count()
     featured_jobs = jobs.filter(is_featured=True)[:5]
 
@@ -363,17 +353,17 @@ def job_list(request):
 
 
 def job_detail(request, pk):
-    """Детальная страница вакансии"""
+    """Vakansiya batafsil sahifasi"""
     if request.user.is_authenticated and request.user.is_staff:
-        job = get_object_or_404(Job, pk=pk)  # Staff can see all jobs
+        job = get_object_or_404(Job, pk=pk)  # Adminlar barcha vakansiyalarni ko'rishi mumkin
     else:
-        job = get_object_or_404(Job, pk=pk, is_active=True)  # Regular users see only active jobs
+        job = get_object_or_404(Job, pk=pk, is_active=True)  # Oddiy foydalanuvchilar faqat faol vakansiyalarni
 
-    # Увеличиваем счетчик просмотров
+    # Ko'rishlar sonini oshiramiz
     job.views_count += 1
     job.save()
 
-    # Проверяем, откликался ли пользователь
+    # Foydalanuvchi ariza topshirganligini tekshiramiz
     has_applied = False
     application = None
     if request.user.is_authenticated:
@@ -383,15 +373,15 @@ def job_detail(request, pk):
         except JobApplication.DoesNotExist:
             pass
 
-    # Проверяем, сохранена ли вакансия
+    # Vakansiya saqlanganligini tekshiramiz
     is_saved = False
     if request.user.is_authenticated:
         is_saved = SavedJob.objects.filter(job=job, user=request.user).exists()
 
-    # Форма для отклика
+    # Ariza formasi
     application_form = JobApplicationForm()
 
-    # Похожие вакансии (ИСПРАВЛЕНО: убрана фильтрация по industry)
+    # O'xshash vakansiyalar
     similar_jobs = Job.objects.filter(
         is_active=True, experience_level=job.experience_level
     ).exclude(pk=job.pk)[:4]
@@ -409,6 +399,7 @@ def job_detail(request, pk):
 
 @require_POST
 def increment_job_views(request, pk):
+    """Vakansiya ko'rishlar sonini oshirish (AJAX)"""
     job = get_object_or_404(Job, pk=pk)
     job.views_count += 1
     job.save()
@@ -417,17 +408,17 @@ def increment_job_views(request, pk):
 
 @login_required
 def apply_for_job(request, pk):
-    """Отклик на вакансию"""
+    """Vakansiyaga ariza topshirish"""
     job = get_object_or_404(Job, pk=pk, is_active=True)
 
-    # Проверяем, не откликался ли уже
+    # Oldin ariza topshirilganligini tekshiramiz
     if JobApplication.objects.filter(job=job, candidate=request.user).exists():
-        messages.warning(request, _("You have already applied for this job."))
+        messages.warning(request, _("Siz ushbu vakansiyaga allaqachon ariza topshirgansiz."))
         return redirect("jobs:job_detail", pk=job.pk)
 
-    # Проверяем, не истекла ли вакансия
+    # Vakansiya muddati tugaganligini tekshiramiz
     if job.is_expired():
-        messages.error(request, _("This job posting has expired."))
+        messages.error(request, _("Ushbu vakansiyaning muddati tugagan."))
         return redirect("jobs:job_detail", pk=job.pk)
 
     if request.method == "POST":
@@ -438,12 +429,12 @@ def apply_for_job(request, pk):
             application.candidate = request.user
             application.save()
 
-            # Увеличиваем счетчик откликов
+            # Ariza sonini oshiramiz
             job.applications_count += 1
             job.save()
 
             messages.success(
-                request, _("Your application has been submitted successfully!")
+                request, _("Arizangiz muvaffaqiyatli yuborildi!")
             )
             return redirect("jobs:job_detail", pk=job.pk)
     else:
@@ -458,42 +449,42 @@ def apply_for_job(request, pk):
 
 @login_required
 def save_job(request, pk):
-    """Сохранение вакансии"""
+    """Vakansiyani saqlash"""
     job = get_object_or_404(Job, pk=pk, is_active=True)
 
     if request.method == "POST":
         saved_job, created = SavedJob.objects.get_or_create(job=job, user=request.user)
 
         if created:
-            messages.success(request, _("Job saved successfully!"))
+            messages.success(request, _("Vakansiya muvaffaqiyatli saqlandi!"))
         else:
-            messages.info(request, _("Job is already saved."))
+            messages.info(request, _("Vakansiya allaqachon saqlangan."))
 
     return redirect("jobs:job_detail", pk=job.pk)
 
 
 @login_required
 def unsave_job(request, pk):
-    """Удаление вакансии из сохраненных"""
+    """Vakansiyani saqlanganlardan o'chirish"""
     job = get_object_or_404(Job, pk=pk)
 
     if request.method == "POST":
         SavedJob.objects.filter(job=job, user=request.user).delete()
-        messages.success(request, _("Job removed from saved list."))
+        messages.success(request, _("Vakansiya saqlanganlardan o'chirildi."))
 
     return redirect("jobs:job_detail", pk=job.pk)
 
 
 @login_required
 def my_applications(request):
-    """Мои отклики"""
+    """Mening arizalarim"""
     applications = (
         JobApplication.objects.filter(candidate=request.user)
         .select_related("job", "job__employer")
         .order_by("-created_at")
     )
 
-    # Статистика
+    # Statistikalar
     stats = applications.aggregate(
         total=Count("id"),
         applied=Count("id", filter=Q(status="applied")),
@@ -509,126 +500,9 @@ def my_applications(request):
     return render(request, "jobs/my_applications.html", context)
 
 
-# ИСПРАВЛЕНО: временно закомментированы функции связанные с Company
-# так как у нас нет модели Company
-
-# def company_list(request):
-#     """Список компаний - показываем все активные компании"""
-#     companies = Company.objects.filter(is_active=True, is_verified=True)
-
-#     # Фильтрация
-#     industry_id = request.GET.get('industry')
-#     if industry_id:
-#         companies = companies.filter(industry_id=industry_id)
-
-#     query = request.GET.get('q')
-#     if query:
-#         companies = companies.filter(
-#             Q(name__icontains=query) |
-#             Q(description__icontains=query)
-#         )
-
-#     # Пагинация
-#     paginator = Paginator(companies, 12)
-#     page_number = request.GET.get('page')
-#     page_obj = paginator.get_page(page_number)
-
-#     context = {
-#         'page_obj': page_obj,
-#         'industries': Industry.objects.all(),
-#         'total_companies': companies.count(),
-#     }
-#     return render(request, 'jobs/company_list.html', context)
-
-# def company_detail(request, pk):
-#     """Детальная страница компании"""
-#     company = get_object_or_404(Company, pk=pk, is_active=True)
-
-#     # Активные вакансии
-#     jobs = company.jobs.filter(is_active=True)
-
-#     # Отзывы
-#     reviews = company.reviews.filter(is_published=True)
-
-#     # Статистика отзывов
-#     review_stats = reviews.aggregate(
-#         avg_overall=Avg('overall_rating'),
-#         avg_work_life=Avg('work_life_balance'),
-#         avg_salary=Avg('salary_benefits'),
-#         avg_growth=Avg('career_growth'),
-#         avg_management=Avg('management'),
-#         total_reviews=Count('id')
-#     )
-
-#     # Опыт собеседований
-#     interview_experiences = company.interview_experiences.filter(is_published=True)[:5]
-
-#     context = {
-#         'company': company,
-#         'jobs': jobs,
-#         'reviews': reviews,
-#         'interview_experiences': interview_experiences,
-#         'review_stats': review_stats,
-#     }
-#     return render(request, 'jobs/company_detail.html', context)
-
-# @login_required
-# def create_company_review(request, pk):
-#     """Создание отзыва о компании"""
-#     company = get_object_or_404(Company, pk=pk, is_active=True)
-
-#     # Проверяем, не оставлял ли пользователь уже отзыв
-#     if CompanyReview.objects.filter(company=company, author=request.user).exists():
-#         messages.warning(request, _('You have already reviewed this company.'))
-#         return redirect('jobs:company_detail', pk=company.pk)
-
-#     if request.method == 'POST':
-#         form = CompanyReviewForm(request.POST)
-#         if form.is_valid():
-#             review = form.save(commit=False)
-#             review.company = company
-#             review.author = request.user
-#             review.save()
-
-#             messages.success(request, _('Thank you for your review! It will be published after verification.'))
-#             return redirect('jobs:company_detail', pk=company.pk)
-#     else:
-#         form = CompanyReviewForm()
-
-#     context = {
-#         'company': company,
-#         'form': form,
-#     }
-#     return render(request, 'jobs/create_company_review.html', context)
-
-# @login_required
-# def create_interview_experience(request, pk):
-#     """Создание опыта собеседования"""
-#     company = get_object_or_404(Company, pk=pk, is_active=True)
-
-#     if request.method == 'POST':
-#         form = InterviewExperienceForm(request.POST)
-#         if form.is_valid():
-#             experience = form.save(commit=False)
-#             experience.company = company
-#             experience.author = request.user
-#             experience.save()
-
-#             messages.success(request, _('Thank you for sharing your interview experience!'))
-#             return redirect('jobs:company_detail', pk=company.pk)
-#     else:
-#         form = InterviewExperienceForm(initial={'company': company})
-
-#     context = {
-#         'company': company,
-#         'form': form,
-#     }
-#     return render(request, 'jobs/create_interview_experience.html', context)
-
-
 @login_required
 def job_alerts(request):
-    """Управление оповещениями о вакансиях"""
+    """Vakansiya ogohlantirishlarini boshqarish"""
     alerts = JobAlert.objects.filter(user=request.user)
 
     if request.method == "POST":
@@ -638,7 +512,7 @@ def job_alerts(request):
             alert.user = request.user
             alert.save()
 
-            messages.success(request, _("Job alert created successfully!"))
+            messages.success(request, _("Vakansiya ogohlantirishi muvaffaqiyatli yaratildi!"))
             return redirect("jobs:job_alerts")
     else:
         form = JobAlertForm()
@@ -652,20 +526,20 @@ def job_alerts(request):
 
 @login_required
 def delete_job_alert(request, pk):
-    """Удаление оповещения о вакансиях"""
+    """Vakansiya ogohlantirishini o'chirish"""
     alert = get_object_or_404(JobAlert, pk=pk, user=request.user)
 
     if request.method == "POST":
         alert.delete()
-        messages.success(request, _("Job alert deleted successfully!"))
+        messages.success(request, _("Vakansiya ogohlantirishi muvaffaqiyatli o'chirildi!"))
 
     return redirect("jobs:job_alerts")
 
 
-# AJAX views
+# AJAX viewlar
 @login_required
 def update_application_status(request, pk):
-    """Обновление статуса отклика (AJAX)"""
+    """Ariza statusini yangilash (AJAX)"""
     if (
         request.method == "POST"
         and request.headers.get("X-Requested-With") == "XMLHttpRequest"
@@ -690,7 +564,7 @@ def update_application_status(request, pk):
 
 @login_required
 def get_user_cvs(request):
-    """Получение резюме пользователя (AJAX)"""
+    """Foydalanuvchi rezyumelarini olish (AJAX)"""
     from cvbuilder.models import CV
 
     cvs = CV.objects.filter(user=request.user, status="published")
@@ -707,25 +581,8 @@ def get_user_cvs(request):
     return JsonResponse({"cvs": cv_list})
 
 
-# ИСПРАВЛЕНО: временно закомментирован CompanyJobsView
-# class CompanyJobsView(DetailView):
-#     """Вакансии конкретной компании"""
-#     model = Company
-#     template_name = 'jobs/company_jobs.html'
-#     context_object_name = 'company'
-
-#     def get_queryset(self):
-#         return Company.objects.filter(is_active=True)
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['jobs'] = self.object.jobs.filter(is_active=True)
-#         return context
-
-
 def industries_list(request):
-    """Список отраслей"""
-    # ИСПРАВЛЕНО: временно упрощена логика, так как нет Company
+    """Tarmoqlar ro'yxati"""
     industries = Industry.objects.all().order_by("name")
 
     context = {
@@ -736,15 +593,15 @@ def industries_list(request):
 
 @login_required
 def application_detail(request, pk):
-    """Детали заявки (для AJAX)"""
+    """Ariza batafsil (AJAX uchun)"""
     application = get_object_or_404(JobApplication, pk=pk)
 
-    # Проверяем права доступа
+    # Ruxsatni tekshiramiz
     if not (
         application.candidate == request.user
         or application.job.employer.user == request.user
     ):
-        return JsonResponse({"error": "Permission denied"}, status=403)
+        return JsonResponse({"error": "Ruxsat rad etildi"}, status=403)
 
     context = {
         "application": application,
@@ -755,20 +612,19 @@ def application_detail(request, pk):
 @login_required
 @require_POST
 def add_application_note(request, pk):
-    """Добавление заметки к заявке (AJAX)"""
+    """Arizaga izoh qo'shish (AJAX)"""
     if request.headers.get("X-Requested-With") == "XMLHttpRequest":
         application = get_object_or_404(JobApplication, pk=pk)
 
-        # Проверяем права доступа (только работодатель)
+        # Faqat ish beruvchi uchun ruxsat
         if application.job.employer.user != request.user:
-            return JsonResponse({"success": False, "error": "Permission denied"})
+            return JsonResponse({"success": False, "error": "Ruxsat rad etildi"})
 
         note = request.POST.get("note")
         if note:
-            # Здесь можно сохранить заметку в модель ApplicationNote или в поле application
-            # Пока просто возвращаем успех
+            # Izohni saqlash logikasi
             return JsonResponse({"success": True})
 
-        return JsonResponse({"success": False, "error": "Note is required"})
+        return JsonResponse({"success": False, "error": "Izoh kiritish majburiy"})
 
-    return JsonResponse({"success": False, "error": "Invalid request"})
+    return JsonResponse({"success": False, "error": "Noto'g'ri so'rov"})
