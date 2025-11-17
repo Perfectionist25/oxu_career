@@ -1,7 +1,77 @@
 {% extends 'accounts/profile_base.html' %}
+{% load static %}
 {% load i18n %}
 
 {% block profile_specific %}
+<!-- Аватар и основная информация -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white">
+        <h5 class="fw-bold mb-0">
+            <i class="fas fa-user-circle me-2 text-primary"></i>
+            {% trans "Asosiy ma'lumotlar" %}
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="row align-items-center">
+            <!-- Аватар -->
+            <div class="col-md-3 text-center mb-3 mb-md-0">
+                <div class="avatar-container position-relative">
+                    {% if profile_user.avatar %}
+                        <img src="{{ profile_user.avatar.url }}" 
+                             alt="{% trans 'Admin avatari' %}" 
+                             class="avatar-img rounded-circle shadow-sm"
+                             style="width: 150px; height: 150px; object-fit: cover;">
+                    {% else %}
+                        <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center bg-light text-muted shadow-sm"
+                             style="width: 150px; height: 150px; font-size: 3rem;">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                    {% endif %}
+                    {% if profile_user.is_main_admin %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            <i class="fas fa-crown"></i>
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Основная информация -->
+            <div class="col-md-9">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <strong class="text-muted">{% trans "Foydalanuvchi nomi" %}:</strong>
+                            <p class="mb-0 fw-semibold">{{ profile_user.username }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <strong class="text-muted">{% trans "Elektron pochta" %}:</strong>
+                            <p class="mb-0">{{ profile_user.email }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <strong class="text-muted">{% trans "To'liq ism" %}:</strong>
+                            <p class="mb-0">{{ profile_user.get_full_name|default:"—" }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <strong class="text-muted">{% trans "Telefon raqam" %}:</strong>
+                            <p class="mb-0">{{ profile_user.phone_number|default:"—" }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <strong class="text-muted">{% trans "Profil yaratilgan" %}:</strong>
+                            <p class="mb-0">{{ profile_user.date_joined|date:"d.m.Y H:i" }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <strong class="text-muted">{% trans "So'nggi faollik" %}:</strong>
+                            <p class="mb-0">{{ profile_user.last_login|timesince|default:"—" }} {% trans "oldin" %}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Административная информация -->
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white">
@@ -17,9 +87,13 @@
                     <strong class="text-muted">{% trans "Admin darajasi" %}:</strong>
                     <p class="mb-0">
                         {% if profile_user.is_main_admin %}
-                            <span class="badge bg-danger">{% trans "Bosh Admin" %}</span>
+                            <span class="badge bg-danger">
+                                <i class="fas fa-crown me-1"></i>{% trans "Bosh Admin" %}
+                            </span>
                         {% else %}
-                            <span class="badge bg-warning">{% trans "Admin" %}</span>
+                            <span class="badge bg-warning">
+                                <i class="fas fa-user-shield me-1"></i>{% trans "Admin" %}
+                            </span>
                         {% endif %}
                     </p>
                 </div>
@@ -27,9 +101,13 @@
                     <strong class="text-muted">{% trans "Admin sifatida faol" %}:</strong>
                     <p class="mb-0">
                         {% if profile.is_active_admin %}
-                            <span class="badge bg-success">{% trans "Faol" %}</span>
+                            <span class="badge bg-success">
+                                <i class="fas fa-check me-1"></i>{% trans "Faol" %}
+                            </span>
                         {% else %}
-                            <span class="badge bg-secondary">{% trans "Faol emas" %}</span>
+                            <span class="badge bg-secondary">
+                                <i class="fas fa-times me-1"></i>{% trans "Faol emas" %}
+                            </span>
                         {% endif %}
                     </p>
                 </div>
@@ -87,6 +165,44 @@
                     <span>{% trans "Bosh admin huquqlari" %}</span>
                 </div>
                 {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Статистика администрирования -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white">
+        <h5 class="fw-bold mb-0">
+            <i class="fas fa-chart-bar me-2 text-primary"></i>
+            {% trans "Admin statistikasi" %}
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="row text-center">
+            <div class="col-md-4 mb-3">
+                <div class="card bg-light border-0">
+                    <div class="card-body">
+                        <h3 class="text-primary fw-bold">{{ profile.students_managed|default:0 }}</h3>
+                        <p class="text-muted mb-0">{% trans "Boshqarilgan talabalar" %}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card bg-light border-0">
+                    <div class="card-body">
+                        <h3 class="text-success fw-bold">{{ profile.employers_created|default:0 }}</h3>
+                        <p class="text-muted mb-0">{% trans "Yaratilgan ish beruvchilar" %}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card bg-light border-0">
+                    <div class="card-body">
+                        <h3 class="text-info fw-bold">{{ profile.jobs_approved|default:0 }}</h3>
+                        <p class="text-muted mb-0">{% trans "Tasdiqlangan ishlar" %}</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

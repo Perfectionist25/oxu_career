@@ -22,7 +22,7 @@
             <!-- Фильтры и поиск -->
             <div class="card mb-4">
                 <div class="card-body">
-                    <form method="get" class="row g-3">
+                    <form method="get" class="row g-3" id="filterForm">
                         <div class="col-md-3">
                             <label for="search" class="form-label">{% trans "Search" %}</label>
                             <input type="text" name="search" id="search" class="form-control" value="{{ request.GET.search }}" placeholder="{% trans 'Search events...' %}">
@@ -71,19 +71,19 @@
             <!-- Категории -->
             <div class="mb-4">
                 <h5>{% trans "Categories" %}</h5>
-                <div class="d-flex flex-wrap gap-2">
-                    <a href="{% url 'events:event_list' %}" class="btn btn-sm {% if not request.GET.category %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                <div class="d-flex flex-wrap gap-2" id="categoryButtons">
+                    <a href="{% url 'events:event_list' %}" class="btn btn-sm {% if not request.GET.category %}btn-primary{% else %}btn-outline-primary{% endif %}" data-category="">
                         {% trans "All" %}
                     </a>
                     {% for category in categories %}
-                    <a href="?category={{ category.slug }}{% for key, value in request.GET.items %}{% if key != 'category' and key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-sm {% if request.GET.category == category.slug %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                    <a href="#" class="btn btn-sm {% if request.GET.category == category.slug %}btn-primary{% else %}btn-outline-primary{% endif %} category-btn" data-category="{{ category.slug }}">
                         {% if category.icon %}<i class="{{ category.icon }}"></i> {% endif %}{{ category.name }}
                     </a>
                     {% endfor %}
                 </div>
             </div>
 
-            <!-- Список мероприятий -->
+            <!-- Остальная часть шаблона без изменений -->
             <div class="row">
                 {% for event in page_obj %}
                 <div class="col-lg-4 col-md-6 mb-4">
@@ -178,7 +178,7 @@
                     {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
                     <li class="page-item">
                         <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
-                        </li>
+                    </li>
                     {% endif %}
                     {% endfor %}
 
@@ -193,4 +193,47 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterForm = document.getElementById('filterForm');
+    const categorySelect = document.getElementById('category');
+    const typeSelect = document.getElementById('type');
+    const sortSelect = document.getElementById('sort');
+    const categoryButtons = document.querySelectorAll('.category-btn');
+
+    // Автоматическая отправка формы при изменении select
+    [categorySelect, typeSelect, sortSelect].forEach(select => {
+        select.addEventListener('change', function() {
+            filterForm.submit();
+        });
+    });
+
+    // Обработка кликов по кнопкам категорий
+    categoryButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const category = this.getAttribute('data-category');
+            
+            // Устанавливаем значение в select
+            categorySelect.value = category;
+            
+            // Отправляем форму
+            filterForm.submit();
+        });
+    });
+
+    // Автоматическая отправка формы при вводе в поиск (с задержкой)
+    let searchTimeout;
+    const searchInput = document.getElementById('search');
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            filterForm.submit();
+        }, 500); // Задержка 500ms
+    });
+});
+</script>
 {% endblock %}

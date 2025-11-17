@@ -24,9 +24,13 @@
                     <a href="https://youtube.com/{{ settings.SOCIAL_YOUTUBE }}" target="_blank"><i style="font-size: larger;" class="fab fa-youtube text-white"></i></a>
                 </div>
                 <div class="language-selector">
-                    <a href="{% url 'set_language' %}?lang=uz" class="{% if LANGUAGE_CODE == 'uz' %}active{% endif %}"><img width="36" src="{% static 'img/uzb.png' %}" alt="UZB"></a>
-                    <a href="{% url 'set_language' %}?lang=ru" class="{% if LANGUAGE_CODE == 'ru' %}active{% endif %}"><img width="36" src="{% static 'img/ru.png' %}" alt="RU"></a>
-                    <a href="{% url 'set_language' %}?lang=en" class="{% if LANGUAGE_CODE == 'en' %}active{% endif %}"><img width="36" src="{% static 'img/uk.png' %}" alt="EN"></a>
+                    <form action="{% url 'set_language' %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                        <button name="language" value="uz" type="submit" class="{% if LANGUAGE_CODE == 'uz' %}active{% endif %}" style="border: none; background: none; padding: 0;"><img width="36" src="{% static 'img/uzb.png' %}" alt="UZB"></button>
+                        <button name="language" value="ru" type="submit" class="{% if LANGUAGE_CODE == 'ru' %}active{% endif %}" style="border: none; background: none; padding: 0;"><img width="36" src="{% static 'img/ru.png' %}" alt="RU"></button>
+                        <button name="language" value="en" type="submit" class="{% if LANGUAGE_CODE == 'en' %}active{% endif %}" style="border: none; background: none; padding: 0;"><img width="36" src="{% static 'img/uk.png' %}" alt="EN"></button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -47,52 +51,52 @@
         <div class="collapse navbar-collapse d-md-flex" id="navbarNav">
             <ul class="nav flex-column flex-md-row">
                 <li class="nav-item">
-                    <a style="color: white !important;" class="nav-link" href="/">Bosh sahifa</a>
+                    <a style="color: white !important;" class="nav-link" href="/">{% trans "Bosh sahifa" %}</a>
                 </li>
                 <li class="nav-item">
-                    <a style="color: white !important;" class="nav-link" href="https://oxu.uz/university">Universitet</a>
+                    <a style="color: white !important;" class="nav-link" href="https://oxu.uz/university">{% trans "Universitet" %}</a>
                 </li>
                 <li class="nav-item">
-                    <a style="color: white !important;" class="nav-link" href="{% url 'resources:list' %}">Resurslar</a>
+                    <a style="color: white !important;" class="nav-link" href="{% url 'resources:list' %}">{% trans "Resurslar" %}</a>
                 </li>
                 <li class="nav-item">
-                    <a style="color: white !important;" class="nav-link" href="{% url 'events:event_list' %}">Tadbirlar</a>
+                    <a style="color: white !important;" class="nav-link" href="{% url 'events:event_list' %}">{% trans "Tadbirlar" %}</a>
                 </li>
 
 
                 {% if user.is_authenticated %}
                     {% if user.is_student %}
                     <li class="nav-item">
-                        <a style="color: white !important;" class="nav-link" href="{% url 'jobs:list' %}">Vakansiyalar</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'jobs:list' %}">{% trans "Vakansiyalar" %}</a>
                     </li>
                     <li class="nav-item">
-                        <a style="color: white !important;" class="nav-link" href="{% url 'cvbuilder:cv_list' %}">Mening rezyumelarim</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'cvbuilder:cv_list' %}">{% trans "Mening rezyumelarim" %}</a>
                     </li>
                     <li class="nav-item">
-                        <a style="color: white !important;" class="nav-link" href="{% url 'cvbuilder:cv_create' %}">Rezyume yaratish</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'cvbuilder:cv_create' %}">{% trans "Rezyume yaratish" %}</a>
                     </li>
                     {% elif user.is_employer %}
                     <li class="nav-item">
-                        <a style="color: white !important;" class="nav-link" href="{% url 'jobs:my_jobs' %}">Mening vakansiyalarim</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'jobs:my_jobs' %}">{% trans "Mening vakansiyalarim" %}</a>
                     </li>
                     <li class="nav-item">
-                        <a style="color: white !important;" class="nav-link" href="{% url 'jobs:job_create' %}">Vakansiya qo'shish</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'jobs:job_create' %}">{% trans "Vakansiya qo'shish" %}</a>
                     </li>
                     <li class="nav-item">
-                        <a style="color: white !important;" class="nav-link" href="{% url 'cvbuilder:public_cv_list' %}">Jamoat rezyumelari</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'cvbuilder:public_cv_list' %}">{% trans "Jamoat rezyumelari" %}</a>
                     </li>
                     {% elif user.is_admin or user.is_main_admin %}
                     <li class="nav-item">
-                        <a style="color: white !important;" class="nav-link" href="{% url 'jobs:list' %}">Vakansiyalar</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'jobs:list' %}">{% trans "Vakansiyalar" %}</a>
                     </li>
                     <li class="nav-item">
-                        <a style="color: white !important;" class="nav-link" href="{% url 'accounts:admin_dashboard' %}">Admin panel</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'accounts:admin_dashboard' %}">{% trans "Admin panel" %}</a>
                     </li>
                     <li class="nav-item">
-                        <a style="color: white !important;" class="nav-link" href="{% url 'accounts:user_management' %}">Foydalanuvchilar</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'accounts:user_management' %}">{% trans "Foydalanuvchilar" %}</a>
                     </li>
                     <li class="nav-item">
-                        <a style="color: white !important;" class="nav-link" href="{% url 'cvbuilder:public_cv_list' %}">Jamoat rezyumelari</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'cvbuilder:public_cv_list' %}">{% trans "Jamoat rezyumelari" %}</a>
                     </li>
                     {% endif %}
                 {% endif %}
@@ -104,7 +108,7 @@
             {% if user.is_authenticated %}
                 <!-- Авторизованный пользователь -->
                 <div class="dropdown">
-                    <button class="btn btn-outline-primary dropdown-toggle" type="button"
+                    <button class="btn {% if request.resolver_match.url_name == 'profile_view' %}btn-primary{% else %}btn-outline-primary{% endif %} dropdown-toggle" type="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-user me-1"></i>
                         {{ user.get_full_name|default:user.username }}
@@ -114,19 +118,19 @@
                         {% if user.is_student %}
                         <li>
                             <a class="dropdown-item" href="{% url 'accounts:student_dashboard' %}">
-                                <i class="fas fa-tachometer-alt me-2"></i>Shaxsiy kabinet
+                                <i class="fas fa-tachometer-alt me-2"></i>{% trans "Shaxsiy kabinet" %}
                             </a>
                         </li>
                         {% elif user.is_employer %}
                         <li>
                             <a class="dropdown-item" href="{% url 'accounts:employer_dashboard' %}">
-                                <i class="fas fa-building me-2"></i>Kompaniya kabineti
+                                <i class="fas fa-building me-2"></i>{% trans "Kompaniya kabineti" %}
                             </a>
                         </li>
                         {% elif user.is_admin or user.is_main_admin %}
                         <li>
                             <a class="dropdown-item" href="{% url 'accounts:admin_dashboard' %}">
-                                <i class="fas fa-cogs me-2"></i>Admin panel
+                                <i class="fas fa-cogs me-2"></i>{% trans "Admin panel" %}
                             </a>
                         </li>
                         {% endif %}
@@ -134,12 +138,12 @@
                         <!-- Общие ссылки -->
                         <li>
                             <a class="dropdown-item" href="{% url 'accounts:profile_view' %}">
-                                <i class="fas fa-user-edit me-2"></i>Profil
+                                <i class="fas fa-user-edit me-2"></i>{% trans "Profil" %}
                             </a>
                         </li>
                         <li>
                             <a class="dropdown-item" href="{% url 'accounts:notifications' %}">
-                                <i class="fas fa-bell me-2"></i>Xabarlar
+                                <i class="fas fa-bell me-2"></i>{% trans "Xabarlar" %}
                                 {% if user.unread_notifications_count > 0 %}
                                 <span class="badge bg-danger float-end">{{ user.unread_notifications_count }}</span>
                                 {% endif %}
@@ -151,7 +155,7 @@
                         {% if user.is_main_admin %}
                         <li>
                             <a class="dropdown-item" href="{% url 'accounts:create_admin_account' %}">
-                                <i class="fas fa-user-plus me-2"></i>Yangi admin
+                                <i class="fas fa-user-plus me-2"></i>{% trans "Yangi admin" %}
                             </a>
                         </li>
                         {% endif %}
@@ -159,7 +163,7 @@
                         {% if user.is_admin or user.is_main_admin %}
                         <li>
                             <a class="dropdown-item" href="{% url 'accounts:create_employer_account' %}">
-                                <i class="fas fa-building me-2"></i>Yangi ish beruvchi
+                                <i class="fas fa-building me-2"></i>{% trans "Yangi ish beruvchi" %}
                             </a>
                         </li>
                         {% endif %}
@@ -167,7 +171,7 @@
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}">
-                                <i class="fas fa-sign-out-alt me-2"></i>Chiqish
+                                <i class="fas fa-sign-out-alt me-2"></i>{% trans "Chiqish" %}
                             </a>
                         </li>
                     </ul>
@@ -177,7 +181,7 @@
                 <div class="dropdown">
                     <button class="btn btn-primary dropdown-toggle" type="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-sign-in-alt me-1"></i>Kirish
+                        <i class="fas fa-sign-in-alt me-1"></i>{% trans "Kirish" %}
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end p-3">
                         <li class="menu-section">
@@ -185,8 +189,8 @@
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-graduation-cap text-success me-2"></i>
                                     <div>
-                                        <div class="fw-bold">Talaba sifatida</div>
-                                        <small class="text-muted">Hemis orqali kirish</small>
+                                        <div class="fw-bold">{% trans "Talaba sifatida" %}</div>
+                                        <small class="text-muted">{% trans "Hemis orqali kirish" %}</small>
                                     </div>
                                 </div>
                             </a>
@@ -196,8 +200,8 @@
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-building text-primary me-2"></i>
                                     <div>
-                                        <div class="fw-bold">Ish beruvchi sifatida</div>
-                                        <small class="text-muted">Kompaniya akkaunti</small>
+                                        <div class="fw-bold">{% trans "Ish beruvchi sifatida" %}</div>
+                                        <small class="text-muted">{% trans "Kompaniya akkaunti" %}</small>
                                     </div>
                                 </div>
                             </a>
@@ -207,8 +211,8 @@
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-user-shield text-warning me-2"></i>
                                     <div>
-                                        <div class="fw-bold">Admin sifatida</div>
-                                        <small class="text-muted">Tizim ma'muriyati</small>
+                                        <div class="fw-bold">{% trans "Admin sifatida" %}</div>
+                                        <small class="text-muted">{% trans "Tizim ma'muriyati" %}</small>
                                     </div>
                                 </div>
                             </a>

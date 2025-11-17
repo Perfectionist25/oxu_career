@@ -38,14 +38,26 @@
                             <form method="post" id="cvForm">
                                 {% csrf_token %}
                                 
+                                <!-- Hidden status field -->
+                                <input type="hidden" name="status" id="statusField" value="draft">
+                                
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="{{ form.title.id_for_label }}" class="form-label">
                                             {% trans "Resume Title" %} *
                                         </label>
-                                        {{ form.title }}
+                                        <input type="text" name="{{ form.title.name }}" 
+                                               id="{{ form.title.id_for_label }}" 
+                                               class="form-control {% if form.title.errors %}is-invalid{% endif %}" 
+                                               value="{{ form.title.value|default:'' }}" 
+                                               placeholder="{% trans 'e.g., Senior Developer Resume' %}" 
+                                               required>
                                         {% if form.title.errors %}
-                                        <div class="text-danger small">{{ form.title.errors }}</div>
+                                        <div class="invalid-feedback">
+                                            {% for error in form.title.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
                                         {% endif %}
                                     </div>
                                     
@@ -53,9 +65,24 @@
                                         <label for="{{ form.template.id_for_label }}" class="form-label">
                                             {% trans "Template" %} *
                                         </label>
-                                        {{ form.template }}
+                                        <select name="{{ form.template.name }}" 
+                                                id="{{ form.template.id_for_label }}" 
+                                                class="form-select {% if form.template.errors %}is-invalid{% endif %}" 
+                                                required>
+                                            <option value="">{% trans "Select Template" %}</option>
+                                            {% for template in templates %}
+                                            <option value="{{ template.id }}" 
+                                                    {% if form.template.value == template.id %}selected{% endif %}>
+                                                {{ template.name }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
                                         {% if form.template.errors %}
-                                        <div class="text-danger small">{{ form.template.errors }}</div>
+                                        <div class="invalid-feedback">
+                                            {% for error in form.template.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -65,9 +92,18 @@
                                         <label for="{{ form.full_name.id_for_label }}" class="form-label">
                                             {% trans "Full Name" %} *
                                         </label>
-                                        {{ form.full_name }}
+                                        <input type="text" name="{{ form.full_name.name }}" 
+                                               id="{{ form.full_name.id_for_label }}" 
+                                               class="form-control {% if form.full_name.errors %}is-invalid{% endif %}" 
+                                               value="{{ form.full_name.value|default:'' }}" 
+                                               placeholder="{% trans 'Your full name' %}" 
+                                               required>
                                         {% if form.full_name.errors %}
-                                        <div class="text-danger small">{{ form.full_name.errors }}</div>
+                                        <div class="invalid-feedback">
+                                            {% for error in form.full_name.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
                                         {% endif %}
                                     </div>
                                     
@@ -75,9 +111,18 @@
                                         <label for="{{ form.email.id_for_label }}" class="form-label">
                                             {% trans "Email" %} *
                                         </label>
-                                        {{ form.email }}
+                                        <input type="email" name="{{ form.email.name }}" 
+                                               id="{{ form.email.id_for_label }}" 
+                                               class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
+                                               value="{{ form.email.value|default:'' }}" 
+                                               placeholder="{% trans 'your.email@example.com' %}" 
+                                               required>
                                         {% if form.email.errors %}
-                                        <div class="text-danger small">{{ form.email.errors }}</div>
+                                        <div class="invalid-feedback">
+                                            {% for error in form.email.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -87,9 +132,18 @@
                                         <label for="{{ form.phone.id_for_label }}" class="form-label">
                                             {% trans "Phone" %} *
                                         </label>
-                                        {{ form.phone }}
+                                        <input type="tel" name="{{ form.phone.name }}" 
+                                               id="{{ form.phone.id_for_label }}" 
+                                               class="form-control {% if form.phone.errors %}is-invalid{% endif %}" 
+                                               value="{{ form.phone.value|default:'' }}" 
+                                               placeholder="{% trans '+998 XX XXX XX XX' %}" 
+                                               required>
                                         {% if form.phone.errors %}
-                                        <div class="text-danger small">{{ form.phone.errors }}</div>
+                                        <div class="invalid-feedback">
+                                            {% for error in form.phone.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
                                         {% endif %}
                                     </div>
                                     
@@ -97,9 +151,17 @@
                                         <label for="{{ form.location.id_for_label }}" class="form-label">
                                             {% trans "Location" %}
                                         </label>
-                                        {{ form.location }}
+                                        <input type="text" name="{{ form.location.name }}" 
+                                               id="{{ form.location.id_for_label }}" 
+                                               class="form-control {% if form.location.errors %}is-invalid{% endif %}" 
+                                               value="{{ form.location.value|default:'' }}" 
+                                               placeholder="{% trans 'City, Country' %}">
                                         {% if form.location.errors %}
-                                        <div class="text-danger small">{{ form.location.errors }}</div>
+                                        <div class="invalid-feedback">
+                                            {% for error in form.location.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -108,9 +170,19 @@
                                     <label for="{{ form.salary_expectation.id_for_label }}" class="form-label">
                                         {% trans "Salary Expectation" %} ({% trans "in UZS" %})
                                     </label>
-                                    {{ form.salary_expectation }}
+                                    <input type="number" name="{{ form.salary_expectation.name }}" 
+                                           id="{{ form.salary_expectation.id_for_label }}" 
+                                           class="form-control {% if form.salary_expectation.errors %}is-invalid{% endif %}" 
+                                           value="{{ form.salary_expectation.value|default:'' }}" 
+                                           placeholder="{% trans 'e.g., 5000000' %}" 
+                                           min="0" 
+                                           step="100000">
                                     {% if form.salary_expectation.errors %}
-                                    <div class="text-danger small">{{ form.salary_expectation.errors }}</div>
+                                    <div class="invalid-feedback">
+                                        {% for error in form.salary_expectation.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
                                     {% endif %}
                                 </div>
 
@@ -118,9 +190,18 @@
                                     <label for="{{ form.summary.id_for_label }}" class="form-label">
                                         {% trans "Summary" %}
                                     </label>
-                                    {{ form.summary }}
+                                    <textarea name="{{ form.summary.name }}" 
+                                              id="{{ form.summary.id_for_label }}" 
+                                              class="form-control {% if form.summary.errors %}is-invalid{% endif %}" 
+                                              rows="4" 
+                                              placeholder="{% trans 'Brief information about yourself...' %}" 
+                                              maxlength="500">{{ form.summary.value|default:'' }}</textarea>
                                     {% if form.summary.errors %}
-                                    <div class="text-danger small">{{ form.summary.errors }}</div>
+                                    <div class="invalid-feedback">
+                                        {% for error in form.summary.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
                                     {% endif %}
                                     <div class="form-text">{% trans "Brief information about yourself (maximum 500 characters)" %}</div>
                                 </div>
@@ -130,8 +211,8 @@
                                     <label class="form-label">{% trans "Resume Status" %} *</label>
                                     <div class="row">
                                         <div class="col-md-4">
-                                            <div class="form-check card status-card">
-                                                <input class="form-check-input" type="radio" name="status" 
+                                            <div class="form-check card status-card" data-status="draft">
+                                                <input class="form-check-input" type="radio" name="status_radio" 
                                                        id="status_draft" value="draft" checked>
                                                 <label class="form-check-label card-body" for="status_draft">
                                                     <div class="d-flex align-items-center">
@@ -147,8 +228,8 @@
                                             </div>
                                         </div>
                                         <div class="col-md-4">
-                                            <div class="form-check card status-card">
-                                                <input class="form-check-input" type="radio" name="status" 
+                                            <div class="form-check card status-card" data-status="published">
+                                                <input class="form-check-input" type="radio" name="status_radio" 
                                                        id="status_published" value="published">
                                                 <label class="form-check-label card-body" for="status_published">
                                                     <div class="d-flex align-items-center">
@@ -164,8 +245,8 @@
                                             </div>
                                         </div>
                                         <div class="col-md-4">
-                                            <div class="form-check card status-card">
-                                                <input class="form-check-input" type="radio" name="status" 
+                                            <div class="form-check card status-card" data-status="archived">
+                                                <input class="form-check-input" type="radio" name="status_radio" 
                                                        id="status_archived" value="archived">
                                                 <label class="form-check-label card-body" for="status_archived">
                                                     <div class="d-flex align-items-center">
@@ -185,15 +266,15 @@
 
                                 <!-- Save Options -->
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end border-top pt-3">
-                                    <button type="submit" name="save_draft" value="true" 
+                                    <button type="submit" name="action" value="save_draft" 
                                             class="btn btn-outline-warning me-2">
                                         <i class="fas fa-save me-2"></i>{% trans "Save as Draft" %}
                                     </button>
-                                    <button type="submit" name="publish" value="true" 
+                                    <button type="submit" name="action" value="publish" 
                                             class="btn btn-success me-2">
                                         <i class="fas fa-eye me-2"></i>{% trans "Publish Resume" %}
                                     </button>
-                                    <button type="submit" class="btn btn-primary">
+                                    <button type="submit" name="action" value="save" class="btn btn-primary">
                                         <i class="fas fa-save me-2"></i>{% trans "Save Resume" %}
                                     </button>
                                 </div>
@@ -259,7 +340,7 @@
                                 <div class="col-12">
                                     <div class="template-card border rounded p-3 {% if forloop.first %}border-primary{% endif %}" 
                                          data-template-id="{{ template.id }}"
-                                         onclick="selectTemplate({{ template.id }})"
+                                         onclick="selectTemplate(this, {{ template.id }})"
                                          style="cursor: pointer;">
                                         <div class="d-flex justify-content-between align-items-start mb-2">
                                             <h6 class="mb-0">{{ template.name }}</h6>
@@ -283,7 +364,7 @@
                             </div>
                             {% else %}
                             <div class="text-center text-muted py-4">
-                                <i class="fas fa-templates fa-3x mb-3"></i>
+                                <i class="fas fa-file-alt fa-3x mb-3"></i>
                                 <p>{% trans "No templates available at the moment" %}</p>
                             </div>
                             {% endif %}
@@ -291,6 +372,7 @@
                     </div>
 
                     <!-- Quick Stats -->
+                    {% if user_cv_stats %}
                     <div class="card shadow-sm mt-4">
                         <div class="card-header bg-light">
                             <h6 class="card-title mb-0">{% trans "Your Resume Stats" %}</h6>
@@ -316,6 +398,7 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
 
                     <!-- Help Section -->
                     <div class="card shadow-sm mt-4">
@@ -384,10 +467,11 @@
     .status-card {
         transition: all 0.3s ease;
         border: 2px solid transparent;
+        cursor: pointer;
     }
     
-    .status-card:hover {
-        border-color: #dee2e6;
+    .status-card:hover, .status-card.selected {
+        border-color: #0d6efd;
         transform: translateY(-2px);
     }
     
@@ -400,23 +484,32 @@
         transition: all 0.3s ease;
     }
     
-    .template-card:hover {
+    .template-card:hover, .template-card.selected {
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        border-color: #0d6efd !important;
+        background-color: #f8f9fa;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
     }
 </style>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    function selectTemplate(templateId) {
+    function selectTemplate(element, templateId) {
         document.getElementById('id_template').value = templateId;
         
         // Update visual selection
         document.querySelectorAll('.template-card').forEach(card => {
-            card.classList.remove('border-primary', 'bg-light');
+            card.classList.remove('selected');
+            card.classList.remove('border-primary');
+            card.classList.remove('bg-light');
         });
-        event.currentTarget.classList.add('border-primary', 'bg-light');
+        element.classList.add('selected', 'border-primary', 'bg-light');
     }
 
     // Template preview functionality
@@ -425,24 +518,28 @@
             e.stopPropagation();
             const templateId = this.getAttribute('data-template-id');
             
-            // Load template preview
-            fetch(`{% url 'cvbuilder:template_preview' 0 %}`.replace('0', templateId))
-                .then(response => response.text())
-                .then(html => {
-                    document.getElementById('templatePreviewContent').innerHTML = html;
-                    const modal = new bootstrap.Modal(document.getElementById('templatePreviewModal'));
-                    modal.show();
-                    
-                    // Set up select button
-                    document.getElementById('selectTemplateBtn').onclick = function() {
-                        selectTemplate(templateId);
-                        modal.hide();
-                    };
-                })
-                .catch(error => {
-                    console.error('Error loading template preview:', error);
-                    alert('{% trans "Error loading template preview" %}');
-                });
+            // Load template preview (you'll need to implement this endpoint)
+            // For now, show a simple message
+            document.getElementById('templatePreviewContent').innerHTML = `
+                <div class="text-center py-4">
+                    <i class="fas fa-file-alt fa-4x text-muted mb-3"></i>
+                    <h5>Template Preview</h5>
+                    <p class="text-muted">Preview for template ID: ${templateId}</p>
+                    <p class="text-muted"><small>Template preview functionality will be implemented here.</small></p>
+                </div>
+            `;
+            
+            const modal = new bootstrap.Modal(document.getElementById('templatePreviewModal'));
+            modal.show();
+            
+            // Set up select button
+            document.getElementById('selectTemplateBtn').onclick = function() {
+                const templateCard = document.querySelector(`[data-template-id="${templateId}"]`);
+                if (templateCard) {
+                    selectTemplate(templateCard, templateId);
+                }
+                modal.hide();
+            };
         });
     });
 
@@ -457,10 +554,18 @@
 
         // Set status based on which button was clicked
         const submitButton = e.submitter;
-        if (submitButton.name === 'save_draft') {
+        const action = submitButton.value;
+        
+        if (action === 'save_draft') {
+            document.getElementById('statusField').value = 'draft';
             document.getElementById('status_draft').checked = true;
-        } else if (submitButton.name === 'publish') {
+        } else if (action === 'publish') {
+            document.getElementById('statusField').value = 'published';
             document.getElementById('status_published').checked = true;
+        } else if (action === 'save') {
+            // Use the currently selected radio button value
+            const selectedStatus = document.querySelector('input[name="status_radio"]:checked').value;
+            document.getElementById('statusField').value = selectedStatus;
         }
     });
 
@@ -470,7 +575,14 @@
         if (!templateField.value && document.querySelector('.template-card')) {
             const firstTemplate = document.querySelector('.template-card');
             const templateId = firstTemplate.getAttribute('data-template-id');
-            selectTemplate(templateId);
+            selectTemplate(firstTemplate, templateId);
+        }
+
+        // Set initial status based on form data
+        const initialStatus = '{{ form.status.value|default:"draft" }}';
+        if (initialStatus) {
+            document.getElementById('statusField').value = initialStatus;
+            document.querySelector(`input[name="status_radio"][value="${initialStatus}"]`).checked = true;
         }
     });
 
@@ -482,10 +594,38 @@
             
             // Update visual selection
             document.querySelectorAll('.status-card').forEach(c => {
-                c.classList.remove('border-primary');
+                c.classList.remove('selected');
             });
-            this.classList.add('border-primary');
+            this.classList.add('selected');
         });
     });
+
+    // Character counter for summary
+    const summaryField = document.getElementById('{{ form.summary.id_for_label }}');
+    if (summaryField) {
+        const counter = document.createElement('div');
+        counter.className = 'form-text text-end';
+        summaryField.parentNode.appendChild(counter);
+        
+        function updateCounter() {
+            const count = summaryField.value.length;
+            counter.textContent = `${count}/500 characters`;
+            
+            if (count > 450) {
+                counter.classList.add('text-warning');
+            } else {
+                counter.classList.remove('text-warning');
+            }
+            
+            if (count > 500) {
+                counter.classList.add('text-danger');
+            } else {
+                counter.classList.remove('text-danger');
+            }
+        }
+        
+        summaryField.addEventListener('input', updateCounter);
+        updateCounter(); // Initial count
+    }
 </script>
 {% endblock %}

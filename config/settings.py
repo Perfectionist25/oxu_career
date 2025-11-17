@@ -58,11 +58,12 @@ TEMPLATES = [
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
-                "django.template.context_processors.request",
+                "django.template.context_processors.request",  # ← Убедись что этот есть
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "django.template.context_processors.media",
                 "django.template.context_processors.static",
+                "django.template.context_processors.i18n",  # ← ДОБАВЬ ЭТУ СТРОКУ!
                 # Кастомные контекст-процессоры
                 'core.context_processors.site_info',
                 'accounts.context_processors.auth_context',

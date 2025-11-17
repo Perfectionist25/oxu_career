@@ -21,20 +21,16 @@
         
         <!-- Quick Stats -->
         <div class="row mt-5 pt-4 border-top">
-          <div class="col-md-3 col-6">
+          <div class="col-md-4 col-6">
             <div class="h5 fw-bold text-primary mb-1">{{ stats.alumni_count|default:"0" }}+</div>
             <small class="text-muted">{% trans "Talabalar/Bitiruvchilar" %}</small>
           </div>
-          <div class="col-md-3 col-6">
-            <div class="h5 fw-bold text-primary mb-1">{{ stats.jobs_count|default:"150" }}+</div>
+          <div class="col-md-4 col-6">
+            <div class="h5 fw-bold text-primary mb-1">{{ stats.jobs_count|default:"0" }}+</div>
             <small class="text-muted">{% trans "Aktiv vakansiyalar" %}</small>
           </div>
-          <div class="col-md-3 col-6">
-            <div class="h5 fw-bold text-primary mb-1">{{ stats.companies_count|default:"50" }}+</div>
-            <small class="text-muted">{% trans "Hamkor kompaniyalar" %}</small>
-          </div>
-          <div class="col-md-3 col-6">
-            <div class="h5 fw-bold text-primary mb-1">{{ resources_stats.total_resources|default:"200" }}+</div>
+          <div class="col-md-4 col-6">
+            <div class="h5 fw-bold text-primary mb-1">{{ resources_stats.total_resources|default:"0" }}+</div>
             <small class="text-muted">{% trans "Karyera resurslari" %}</small>
           </div>
         </div>
