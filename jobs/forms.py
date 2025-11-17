@@ -1,8 +1,6 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
-
-from .models import Job, JobApplication
-
+from .models import *
 
 class JobForm(forms.ModelForm):
     """Vakansiya yaratish/tahrirlash formasi"""
@@ -207,9 +205,9 @@ class JobForm(forms.ModelForm):
         kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
 
-        # Majburiy maydonlar
+        # Majburiy maydonlar - region olib tashlandi
         required_fields = [
-            "title", "region", "employment_type", "experience_level", 
+            "title", "employment_type", "experience_level", 
             "education_level", "short_description", "description", 
             "responsibilities", "requirements", "skills_required",
             "contact_email", "contact_phone"
@@ -218,6 +216,20 @@ class JobForm(forms.ModelForm):
         for field in required_fields:
             self.fields[field].required = True
 
+        # Region maydoni majburiy emas
+        self.fields['region'].required = False
+        self.fields['district'].required = False
+        
+        # Location maydoni majburiy qilish (agar region tanlanmagan bo'lsa)
+        self.fields['location'].required = True
+
+        # Select maydonlariga bo'sh variant qo'shish
+        self.fields['region'].empty_label = _("Viloyatni tanlang")
+        self.fields['employment_type'].empty_label = _("Ish turini tanlang")
+        self.fields['experience_level'].empty_label = _("Tajriba darajasini tanlang")
+        self.fields['education_level'].empty_label = _("Ma'lumot darajasini tanlang")
+        self.fields['currency'].empty_label = _("Valyutani tanlang")
+
     def clean(self):
         cleaned_data = super().clean() or {}
         salary_min = cleaned_data.get("salary_min")
@@ -225,6 +237,8 @@ class JobForm(forms.ModelForm):
         remote_work = cleaned_data.get("remote_work", False)
         hybrid_work = cleaned_data.get("hybrid_work", False)
         office_work = cleaned_data.get("office_work", False)
+        region = cleaned_data.get("region")
+        location = cleaned_data.get("location")
 
         # Maosh tekshiruvi
         if salary_min and salary_max and salary_min > salary_max:
@@ -239,7 +253,26 @@ class JobForm(forms.ModelForm):
                 _("Kamida bitta ish turini tanlang.")
             )
 
+        # Manzil tekshiruvi - agar region tanlanmagan bo'lsa, location majburiy
+        if not region and not location:
+            raise forms.ValidationError(
+                _("Iltimos, kamida bitta manzil maydonini to'ldiring (viloyat yoki to'liq manzil).")
+            )
+
         return cleaned_data
+
+    def clean_location(self):
+        """Location maydoni uchun qo'shimcha tekshiruv"""
+        location = self.cleaned_data.get('location')
+        region = self.cleaned_data.get('region')
+        
+        # Agar region tanlanmagan bo'lsa, location majburiy
+        if not region and not location:
+            raise forms.ValidationError(
+                _("Agar viloyat tanlanmagan bo'lsa, to'liq manzilni kiriting.")
+            )
+            
+        return location
 
 
 class JobSearchForm(forms.Form):

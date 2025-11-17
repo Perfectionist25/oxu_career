@@ -288,9 +288,9 @@ def job_list(request):
     form = JobSearchForm(request.GET or None)
     
     if request.user.is_staff:
-        jobs = Job.objects.all()  # Adminlar uchun barcha vakansiyalar
+        jobs = Job.objects.all()
     else:
-        jobs = Job.objects.filter(is_active=True)  # Oddiy foydalanuvchilar uchun faqat faol vakansiyalar
+        jobs = Job.objects.filter(is_active=True)
 
     if form.is_valid():
         query = form.cleaned_data.get("query")
@@ -331,7 +331,7 @@ def job_list(request):
     sort = request.GET.get("sort", "newest")
     if sort == "salary":
         jobs = jobs.order_by("-salary_max", "-salary_min")
-    else:  # newest
+    else:
         jobs = jobs.order_by("-created_at")
 
     # Paginatsiya
@@ -346,6 +346,7 @@ def job_list(request):
     context = {
         "page_obj": page_obj,
         "form": form,
+        "jobs": jobs,
         "total_jobs": total_jobs,
         "featured_jobs": featured_jobs,
     }

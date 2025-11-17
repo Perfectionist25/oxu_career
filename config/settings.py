@@ -17,7 +17,7 @@ PHONENUMBER_DEFAULT_REGION = "UZ"
 INSTALLED_APPS = [
     "jazzmin",  # Admin interface
     # Ваши приложения (важен порядок для переопределения шаблонов)
-    "accounts.apps.AccountsConfig",  # User authentication - ДОЛЖЕН БЫТЬ ПЕРВЫМ
+    "accounts.apps.AccountsConfig",  # User authentication
     "core.apps.CoreConfig",  # Main app
     "alumni.apps.AlumniConfig",  # Alumni network
     "resources.apps.ResourcesConfig",  # Resource library
@@ -71,6 +71,7 @@ TEMPLATES = [
                 'resources.context_processors.resources_context',
                 'employers.context_processors.employers_context',
             ],
+            'debug': DEBUG,
         },
     },
 ]

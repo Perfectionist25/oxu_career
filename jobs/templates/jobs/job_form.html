@@ -36,8 +36,7 @@
                         {% endfor %}
                     {% endif %}
 
-                    <!-- УДАЛЕН БЛОК ПРОВЕРКИ КОМПАНИЙ -->
-                    <form method="post" novalidate>
+                    <form method="post" novalidate id="job-form">
                         {% csrf_token %}
 
                         {% if form.non_field_errors %}
@@ -70,9 +69,15 @@
                                 <label for="{{ form.title.id_for_label }}" class="form-label fw-semibold">
                                     {% trans "Job Title" %} *
                                 </label>
-                                {{ form.title }}
+                                <input type="text" 
+                                       name="{{ form.title.name }}" 
+                                       id="{{ form.title.id_for_label }}" 
+                                       class="form-control {% if form.title.errors %}is-invalid{% endif %}" 
+                                       value="{{ form.title.value|default:'' }}" 
+                                       placeholder="{% trans 'e.g., Senior Software Engineer' %}" 
+                                       required>
                                 {% if form.title.errors %}
-                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                    <div class="invalid-feedback d-block">
                                         <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.title.errors %}
                                             {{ error }}
@@ -81,14 +86,26 @@
                                 {% endif %}
                             </div>
 
-                            <!-- Region -->
+                            <!-- Region - NOW OPTIONAL -->
                             <div class="col-md-6 mb-3">
                                 <label for="{{ form.region.id_for_label }}" class="form-label fw-semibold">
-                                    {% trans "Region" %} *
+                                    {% trans "Region" %}
                                 </label>
-                                {{ form.region }}
+                                <select name="{{ form.region.name }}" 
+                                        id="{{ form.region.id_for_label }}" 
+                                        class="form-select {% if form.region.errors %}is-invalid{% endif %}">
+                                    <option value="">{% trans "Select Region (Optional)" %}</option>
+                                    {% for value, label in form.region.field.choices %}
+                                        {% if value %}
+                                            <option value="{{ value }}" 
+                                                    {% if form.region.value == value %}selected{% endif %}>
+                                                {{ label }}
+                                            </option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
                                 {% if form.region.errors %}
-                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                    <div class="invalid-feedback d-block">
                                         <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.region.errors %}
                                             {{ error }}
@@ -97,14 +114,19 @@
                                 {% endif %}
                             </div>
 
-                            <!-- District -->
+                            <!-- District - NOW OPTIONAL -->
                             <div class="col-md-6 mb-3">
                                 <label for="{{ form.district.id_for_label }}" class="form-label fw-semibold">
                                     {% trans "District" %}
                                 </label>
-                                {{ form.district }}
+                                <input type="text"
+                                       name="{{ form.district.name }}" 
+                                       id="{{ form.district.id_for_label }}" 
+                                       class="form-control {% if form.district.errors %}is-invalid{% endif %}" 
+                                       value="{{ form.district.value|default:'' }}" 
+                                       placeholder="{% trans 'e.g., Mirzo Ulugbek district' %}">
                                 {% if form.district.errors %}
-                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                    <div class="invalid-feedback d-block">
                                         <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.district.errors %}
                                             {{ error }}
@@ -113,21 +135,27 @@
                                 {% endif %}
                             </div>
 
-                            <!-- Location -->
+                            <!-- Location - REQUIRED IF NO REGION -->
                             <div class="col-md-6 mb-3">
                                 <label for="{{ form.location.id_for_label }}" class="form-label fw-semibold">
                                     {% trans "Location" %} *
                                 </label>
-                                {{ form.location }}
+                                <input type="text" 
+                                       name="{{ form.location.name }}" 
+                                       id="{{ form.location.id_for_label }}" 
+                                       class="form-control {% if form.location.errors %}is-invalid{% endif %}" 
+                                       value="{{ form.location.value|default:'' }}" 
+                                       placeholder="{% trans 'Full address' %}" 
+                                       required>
                                 {% if form.location.errors %}
-                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                    <div class="invalid-feedback d-block">
                                         <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.location.errors %}
                                             {{ error }}
                                         {% endfor %}
                                     </div>
                                 {% endif %}
-                                <div class="form-text">{% trans "Full address" %}</div>
+                                <div class="form-text">{% trans "Full address (required if region is not selected)" %}</div>
                             </div>
 
                             <!-- Employment Type -->
@@ -135,9 +163,22 @@
                                 <label for="{{ form.employment_type.id_for_label }}" class="form-label fw-semibold">
                                     {% trans "Employment Type" %} *
                                 </label>
-                                {{ form.employment_type }}
+                                <select name="{{ form.employment_type.name }}" 
+                                        id="{{ form.employment_type.id_for_label }}" 
+                                        class="form-select {% if form.employment_type.errors %}is-invalid{% endif %}" 
+                                        required>
+                                    <option value="">{% trans "Select Employment Type" %}</option>
+                                    {% for value, label in form.employment_type.field.choices %}
+                                        {% if value %}
+                                            <option value="{{ value }}" 
+                                                    {% if form.employment_type.value == value %}selected{% endif %}>
+                                                {{ label }}
+                                            </option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
                                 {% if form.employment_type.errors %}
-                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                    <div class="invalid-feedback d-block">
                                         <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.employment_type.errors %}
                                             {{ error }}
@@ -151,9 +192,22 @@
                                 <label for="{{ form.experience_level.id_for_label }}" class="form-label fw-semibold">
                                     {% trans "Experience Level" %} *
                                 </label>
-                                {{ form.experience_level }}
+                                <select name="{{ form.experience_level.name }}" 
+                                        id="{{ form.experience_level.id_for_label }}" 
+                                        class="form-select {% if form.experience_level.errors %}is-invalid{% endif %}" 
+                                        required>
+                                    <option value="">{% trans "Select Experience Level" %}</option>
+                                    {% for value, label in form.experience_level.field.choices %}
+                                        {% if value %}
+                                            <option value="{{ value }}" 
+                                                    {% if form.experience_level.value == value %}selected{% endif %}>
+                                                {{ label }}
+                                            </option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
                                 {% if form.experience_level.errors %}
-                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                    <div class="invalid-feedback d-block">
                                         <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.experience_level.errors %}
                                             {{ error }}
@@ -167,9 +221,15 @@
                                 <label for="{{ form.short_description.id_for_label }}" class="form-label fw-semibold">
                                     {% trans "Short Description" %} *
                                 </label>
-                                {{ form.short_description }}
+                                <textarea name="{{ form.short_description.name }}" 
+                                          id="{{ form.short_description.id_for_label }}" 
+                                          class="form-control {% if form.short_description.errors %}is-invalid{% endif %}" 
+                                          rows="3" 
+                                          maxlength="300" 
+                                          placeholder="{% trans 'Brief summary of the job position...' %}" 
+                                          required>{{ form.short_description.value|default:'' }}</textarea>
                                 {% if form.short_description.errors %}
-                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                    <div class="invalid-feedback d-block">
                                         <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.short_description.errors %}
                                             {{ error }}
@@ -177,6 +237,60 @@
                                     </div>
                                 {% endif %}
                                 <div class="form-text">{% trans "Brief summary of the job (max 300 characters)" %}</div>
+                            </div>
+                        </div>
+
+                        <!-- Work Type Options -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-laptop-house me-2"></i>
+                                    {% trans "Work Type" %} *
+                                </h5>
+                                <div class="alert alert-info border-0">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    {% trans "Please select at least one work type option" %}
+                                </div>
+                            </div>
+                            
+                            <!-- Work Options -->
+                            <div class="col-md-4 mb-3">
+                                <div class="form-check form-switch">
+                                    <input type="checkbox" 
+                                           name="{{ form.remote_work.name }}" 
+                                           id="{{ form.remote_work.id_for_label }}" 
+                                           class="form-check-input work-type-checkbox" 
+                                           {% if form.remote_work.value %}checked{% endif %}>
+                                    <label class="form-check-label fw-semibold" for="{{ form.remote_work.id_for_label }}">
+                                        {% trans "Remote Work Available" %}
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <div class="form-check form-switch">
+                                    <input type="checkbox" 
+                                           name="{{ form.hybrid_work.name }}" 
+                                           id="{{ form.hybrid_work.id_for_label }}" 
+                                           class="form-check-input work-type-checkbox" 
+                                           {% if form.hybrid_work.value %}checked{% endif %}>
+                                    <label class="form-check-label fw-semibold" for="{{ form.hybrid_work.id_for_label }}">
+                                        {% trans "Hybrid Work Available" %}
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <div class="form-check form-switch">
+                                    <input type="checkbox" 
+                                           name="{{ form.office_work.name }}" 
+                                           id="{{ form.office_work.id_for_label }}" 
+                                           class="form-check-input work-type-checkbox" 
+                                           {% if form.office_work.value %}checked{% endif %}>
+                                    <label class="form-check-label fw-semibold" for="{{ form.office_work.id_for_label }}">
+                                        {% trans "Office Work Available" %}
+                                    </label>
+                                </div>
                             </div>
                         </div>
 
@@ -194,9 +308,21 @@
                                 <label for="{{ form.currency.id_for_label }}" class="form-label fw-semibold">
                                     {% trans "Currency" %}
                                 </label>
-                                {{ form.currency }}
+                                <select name="{{ form.currency.name }}" 
+                                        id="{{ form.currency.id_for_label }}" 
+                                        class="form-select {% if form.currency.errors %}is-invalid{% endif %}">
+                                    <option value="">{% trans "Select Currency" %}</option>
+                                    {% for value, label in form.currency.field.choices %}
+                                        {% if value %}
+                                            <option value="{{ value }}" 
+                                                    {% if form.currency.value == value %}selected{% endif %}>
+                                                {{ label }}
+                                            </option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
                                 {% if form.currency.errors %}
-                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                    <div class="invalid-feedback d-block">
                                         <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.currency.errors %}
                                             {{ error }}
@@ -210,9 +336,16 @@
                                 <label for="{{ form.salary_min.id_for_label }}" class="form-label fw-semibold">
                                     {% trans "Minimum Salary" %}
                                 </label>
-                                {{ form.salary_min }}
+                                <input type="number" 
+                                       name="{{ form.salary_min.name }}" 
+                                       id="{{ form.salary_min.id_for_label }}" 
+                                       class="form-control {% if form.salary_min.errors %}is-invalid{% endif %}" 
+                                       value="{{ form.salary_min.value|default:'' }}" 
+                                       placeholder="{% trans 'e.g., 50000' %}" 
+                                       min="0" 
+                                       step="100">
                                 {% if form.salary_min.errors %}
-                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                    <div class="invalid-feedback d-block">
                                         <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.salary_min.errors %}
                                             {{ error }}
@@ -225,9 +358,16 @@
                                 <label for="{{ form.salary_max.id_for_label }}" class="form-label fw-semibold">
                                     {% trans "Maximum Salary" %}
                                 </label>
-                                {{ form.salary_max }}
+                                <input type="number" 
+                                       name="{{ form.salary_max.name }}" 
+                                       id="{{ form.salary_max.id_for_label }}" 
+                                       class="form-control {% if form.salary_max.errors %}is-invalid{% endif %}" 
+                                       value="{{ form.salary_max.value|default:'' }}" 
+                                       placeholder="{% trans 'e.g., 80000' %}" 
+                                       min="0" 
+                                       step="100">
                                 {% if form.salary_max.errors %}
-                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                    <div class="invalid-feedback d-block">
                                         <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.salary_max.errors %}
                                             {{ error }}
@@ -239,7 +379,11 @@
                             <!-- Salary Options -->
                             <div class="col-md-6 mb-3">
                                 <div class="form-check">
-                                    {{ form.hide_salary }}
+                                    <input type="checkbox" 
+                                           name="{{ form.hide_salary.name }}" 
+                                           id="{{ form.hide_salary.id_for_label }}" 
+                                           class="form-check-input" 
+                                           {% if form.hide_salary.value %}checked{% endif %}>
                                     <label class="form-check-label fw-semibold" for="{{ form.hide_salary.id_for_label }}">
                                         {% trans "Hide salary from candidates" %}
                                     </label>
@@ -248,9 +392,26 @@
 
                             <div class="col-md-6 mb-3">
                                 <div class="form-check">
-                                    {{ form.salary_negotiable }}
+                                    <input type="checkbox" 
+                                           name="{{ form.salary_negotiable.name }}" 
+                                           id="{{ form.salary_negotiable.id_for_label }}" 
+                                           class="form-check-input" 
+                                           {% if form.salary_negotiable.value %}checked{% endif %}>
                                     <label class="form-check-label fw-semibold" for="{{ form.salary_negotiable.id_for_label }}">
                                         {% trans "Salary is negotiable" %}
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check">
+                                    <input type="checkbox" 
+                                           name="{{ form.bonus_system.name }}" 
+                                           id="{{ form.bonus_system.id_for_label }}" 
+                                           class="form-check-input" 
+                                           {% if form.bonus_system.value %}checked{% endif %}>
+                                    <label class="form-check-label fw-semibold" for="{{ form.bonus_system.id_for_label }}">
+                                        {% trans "Bonus system available" %}
                                     </label>
                                 </div>
                             </div>
@@ -270,9 +431,22 @@
                                 <label for="{{ form.education_level.id_for_label }}" class="form-label fw-semibold">
                                     {% trans "Education Level" %} *
                                 </label>
-                                {{ form.education_level }}
+                                <select name="{{ form.education_level.name }}" 
+                                        id="{{ form.education_level.id_for_label }}" 
+                                        class="form-select {% if form.education_level.errors %}is-invalid{% endif %}" 
+                                        required>
+                                    <option value="">{% trans "Select Education Level" %}</option>
+                                    {% for value, label in form.education_level.field.choices %}
+                                        {% if value %}
+                                            <option value="{{ value }}" 
+                                                    {% if form.education_level.value == value %}selected{% endif %}>
+                                                {{ label }}
+                                            </option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
                                 {% if form.education_level.errors %}
-                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                    <div class="invalid-feedback d-block">
                                         <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.education_level.errors %}
                                             {{ error }}
@@ -286,9 +460,15 @@
                                 <label for="{{ form.skills_required.id_for_label }}" class="form-label fw-semibold">
                                     {% trans "Required Skills" %} *
                                 </label>
-                                {{ form.skills_required }}
+                                <input type="text"
+                                       name="{{ form.skills_required.name }}" 
+                                       id="{{ form.skills_required.id_for_label }}" 
+                                       class="form-control {% if form.skills_required.errors %}is-invalid{% endif %}" 
+                                       value="{{ form.skills_required.value|default:'' }}" 
+                                       placeholder="{% trans 'Python, Django, JavaScript, React, ...' %}" 
+                                       required>
                                 {% if form.skills_required.errors %}
-                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                    <div class="invalid-feedback d-block">
                                         <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.skills_required.errors %}
                                             {{ error }}
@@ -303,11 +483,37 @@
                                 <label for="{{ form.preferred_skills.id_for_label }}" class="form-label fw-semibold">
                                     {% trans "Preferred Skills" %}
                                 </label>
-                                {{ form.preferred_skills }}
+                                <input type="text"
+                                       name="{{ form.preferred_skills.name }}" 
+                                       id="{{ form.preferred_skills.id_for_label }}" 
+                                       class="form-control {% if form.preferred_skills.errors %}is-invalid{% endif %}" 
+                                       value="{{ form.preferred_skills.value|default:'' }}" 
+                                       placeholder="{% trans 'AWS, Docker, PostgreSQL, ...' %}">
                                 {% if form.preferred_skills.errors %}
-                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                    <div class="invalid-feedback d-block">
                                         <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.preferred_skills.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Language Requirements -->
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.language_requirements.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Language Requirements" %}
+                                </label>
+                                <input type="text"
+                                       name="{{ form.language_requirements.name }}" 
+                                       id="{{ form.language_requirements.id_for_label }}" 
+                                       class="form-control {% if form.language_requirements.errors %}is-invalid{% endif %}" 
+                                       value="{{ form.language_requirements.value|default:'' }}" 
+                                       placeholder="{% trans 'English - Intermediate, Russian - Fluent, ...' %}">
+                                {% if form.language_requirements.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        {% for error in form.language_requirements.errors %}
                                             {{ error }}
                                         {% endfor %}
                                     </div>
@@ -327,9 +533,14 @@
                                 <label for="{{ form.description.id_for_label }}" class="form-label fw-semibold">
                                     {% trans "Job Description" %} *
                                 </label>
-                                {{ form.description }}
+                                <textarea name="{{ form.description.name }}" 
+                                          id="{{ form.description.id_for_label }}" 
+                                          class="form-control {% if form.description.errors %}is-invalid{% endif %}" 
+                                          rows="5" 
+                                          placeholder="{% trans 'Describe the role, responsibilities, and what you are looking for in a candidate...' %}" 
+                                          required>{{ form.description.value|default:'' }}</textarea>
                                 {% if form.description.errors %}
-                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                    <div class="invalid-feedback d-block">
                                         <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.description.errors %}
                                             {{ error }}
@@ -344,9 +555,14 @@
                                 <label for="{{ form.responsibilities.id_for_label }}" class="form-label fw-semibold">
                                     {% trans "Responsibilities" %} *
                                 </label>
-                                {{ form.responsibilities }}
+                                <textarea name="{{ form.responsibilities.name }}" 
+                                          id="{{ form.responsibilities.id_for_label }}" 
+                                          class="form-control {% if form.responsibilities.errors %}is-invalid{% endif %}" 
+                                          rows="4" 
+                                          placeholder="{% trans 'List the main responsibilities of this position...' %}" 
+                                          required>{{ form.responsibilities.value|default:'' }}</textarea>
                                 {% if form.responsibilities.errors %}
-                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                    <div class="invalid-feedback d-block">
                                         <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.responsibilities.errors %}
                                             {{ error }}
@@ -360,9 +576,14 @@
                                 <label for="{{ form.requirements.id_for_label }}" class="form-label fw-semibold">
                                     {% trans "Requirements & Qualifications" %} *
                                 </label>
-                                {{ form.requirements }}
+                                <textarea name="{{ form.requirements.name }}" 
+                                          id="{{ form.requirements.id_for_label }}" 
+                                          class="form-control {% if form.requirements.errors %}is-invalid{% endif %}" 
+                                          rows="4" 
+                                          placeholder="{% trans 'List the required qualifications and experience...' %}" 
+                                          required>{{ form.requirements.value|default:'' }}</textarea>
                                 {% if form.requirements.errors %}
-                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                    <div class="invalid-feedback d-block">
                                         <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.requirements.errors %}
                                             {{ error }}
@@ -376,11 +597,67 @@
                                 <label for="{{ form.benefits.id_for_label }}" class="form-label fw-semibold">
                                     {% trans "Benefits & Perks" %}
                                 </label>
-                                {{ form.benefits }}
+                                <textarea name="{{ form.benefits.name }}" 
+                                          id="{{ form.benefits.id_for_label }}" 
+                                          class="form-control {% if form.benefits.errors %}is-invalid{% endif %}" 
+                                          rows="3" 
+                                          placeholder="{% trans 'Health insurance, flexible hours, remote work options...' %}">{{ form.benefits.value|default:'' }}</textarea>
                                 {% if form.benefits.errors %}
-                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                    <div class="invalid-feedback d-block">
                                         <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.benefits.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Work Schedule -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-clock me-2"></i>
+                                    {% trans "Work Schedule" %}
+                                </h5>
+                            </div>
+
+                            <!-- Work Schedule -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.work_schedule.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Work Schedule" %}
+                                </label>
+                                <input type="text" 
+                                       name="{{ form.work_schedule.name }}" 
+                                       id="{{ form.work_schedule.id_for_label }}" 
+                                       class="form-control {% if form.work_schedule.errors %}is-invalid{% endif %}" 
+                                       value="{{ form.work_schedule.value|default:'' }}" 
+                                       placeholder="{% trans 'e.g., 09:00 - 18:00, weekends: Saturday, Sunday' %}">
+                                {% if form.work_schedule.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        {% for error in form.work_schedule.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Probation Period -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.probation_period.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Probation Period" %}
+                                </label>
+                                <input type="text" 
+                                       name="{{ form.probation_period.name }}" 
+                                       id="{{ form.probation_period.id_for_label }}" 
+                                       class="form-control {% if form.probation_period.errors %}is-invalid{% endif %}" 
+                                       value="{{ form.probation_period.value|default:'' }}" 
+                                       placeholder="{% trans 'e.g., 3 months' %}">
+                                {% if form.probation_period.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        {% for error in form.probation_period.errors %}
                                             {{ error }}
                                         {% endfor %}
                                     </div>
@@ -402,9 +679,15 @@
                                 <label for="{{ form.contact_email.id_for_label }}" class="form-label fw-semibold">
                                     {% trans "Contact Email" %} *
                                 </label>
-                                {{ form.contact_email }}
+                                <input type="email" 
+                                       name="{{ form.contact_email.name }}" 
+                                       id="{{ form.contact_email.id_for_label }}" 
+                                       class="form-control {% if form.contact_email.errors %}is-invalid{% endif %}" 
+                                       value="{{ form.contact_email.value|default:'' }}" 
+                                       placeholder="{% trans 'email@company.com' %}" 
+                                       required>
                                 {% if form.contact_email.errors %}
-                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                    <div class="invalid-feedback d-block">
                                         <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.contact_email.errors %}
                                             {{ error }}
@@ -418,9 +701,15 @@
                                 <label for="{{ form.contact_phone.id_for_label }}" class="form-label fw-semibold">
                                     {% trans "Contact Phone" %} *
                                 </label>
-                                {{ form.contact_phone }}
+                                <input type="tel" 
+                                       name="{{ form.contact_phone.name }}" 
+                                       id="{{ form.contact_phone.id_for_label }}" 
+                                       class="form-control {% if form.contact_phone.errors %}is-invalid{% endif %}" 
+                                       value="{{ form.contact_phone.value|default:'' }}" 
+                                       placeholder="{% trans '+998 XX XXX XX XX' %}" 
+                                       required>
                                 {% if form.contact_phone.errors %}
-                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                    <div class="invalid-feedback d-block">
                                         <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.contact_phone.errors %}
                                             {{ error }}
@@ -430,36 +719,24 @@
                             </div>
 
                             <!-- Contact Person -->
-                            <div class="col-md-6 mb-3">
+                            <div class="col-12 mb-3">
                                 <label for="{{ form.contact_person.id_for_label }}" class="form-label fw-semibold">
                                     {% trans "Contact Person" %}
                                 </label>
-                                {{ form.contact_person }}
+                                <input type="text" 
+                                       name="{{ form.contact_person.name }}" 
+                                       id="{{ form.contact_person.id_for_label }}" 
+                                       class="form-control {% if form.contact_person.errors %}is-invalid{% endif %}" 
+                                       value="{{ form.contact_person.value|default:'' }}" 
+                                       placeholder="{% trans 'Responsible person full name' %}">
                                 {% if form.contact_person.errors %}
-                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                    <div class="invalid-feedback d-block">
                                         <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.contact_person.errors %}
                                             {{ error }}
                                         {% endfor %}
                                     </div>
                                 {% endif %}
-                            </div>
-
-                            <!-- Application URL -->
-                            <div class="col-12 mb-3">
-                                <label for="{{ form.application_url.id_for_label }}" class="form-label fw-semibold">
-                                    {% trans "Application URL (Optional)" %}
-                                </label>
-                                {{ form.application_url }}
-                                {% if form.application_url.errors %}
-                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
-                                        <i class="fas fa-exclamation-circle me-2"></i>
-                                        {% for error in form.application_url.errors %}
-                                            {{ error }}
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                                <div class="form-text">{% trans "If you want candidates to apply through an external website" %}</div>
                             </div>
                         </div>
 
@@ -471,53 +748,19 @@
                                     {% trans "Additional Options" %}
                                 </h5>
                             </div>
-                            
-                            <!-- Work Options -->
-                            <div class="col-md-4 mb-3">
-                                <div class="form-check form-switch">
-                                    {{ form.remote_work }}
-                                    <label class="form-check-label fw-semibold" for="{{ form.remote_work.id_for_label }}">
-                                        {% trans "Remote Work Available" %}
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="col-md-4 mb-3">
-                                <div class="form-check form-switch">
-                                    {{ form.hybrid_work }}
-                                    <label class="form-check-label fw-semibold" for="{{ form.hybrid_work.id_for_label }}">
-                                        {% trans "Hybrid Work Available" %}
-                                    </label>
-                                </div>
-                            </div>
-
-                            <!-- Job Status Options -->
-                            <div class="col-md-4 mb-3">
-                                <div class="form-check form-switch">
-                                    {{ form.is_urgent }}
-                                    <label class="form-check-label fw-semibold" for="{{ form.is_urgent.id_for_label }}">
-                                        {% trans "Urgent Hiring" %}
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="col-md-4 mb-3">
-                                <div class="form-check form-switch">
-                                    {{ form.is_featured }}
-                                    <label class="form-check-label fw-semibold" for="{{ form.is_featured.id_for_label }}">
-                                        {% trans "Featured Job" %}
-                                    </label>
-                                </div>
-                            </div>
 
                             <!-- Expiration Date -->
-                            <div class="col-md-8 mb-3">
+                            <div class="col-md-6 mb-3">
                                 <label for="{{ form.expires_at.id_for_label }}" class="form-label fw-semibold">
                                     {% trans "Expiration Date" %}
                                 </label>
-                                {{ form.expires_at }}
+                                <input type="date" 
+                                       name="{{ form.expires_at.name }}" 
+                                       id="{{ form.expires_at.id_for_label }}" 
+                                       class="form-control {% if form.expires_at.errors %}is-invalid{% endif %}" 
+                                       value="{{ form.expires_at.value|date:'Y-m-d'|default:'' }}">
                                 {% if form.expires_at.errors %}
-                                    <div class="alert alert-danger border-0 py-2 px-3 mb-2">
+                                    <div class="invalid-feedback d-block">
                                         <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.expires_at.errors %}
                                             {{ error }}
@@ -585,47 +828,31 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('job-form');
+    
     // Set minimum date for expiration date
     const expiresAtField = document.getElementById('{{ form.expires_at.id_for_label }}');
     if (expiresAtField) {
-        const today = new Date().toISOString().split('T')[0];
-        expiresAtField.min = today;
-    }
-
-    // Auto-format salary fields
-    const salaryMinField = document.getElementById('{{ form.salary_min.id_for_label }}');
-    const salaryMaxField = document.getElementById('{{ form.salary_max.id_for_label }}');
-    
-    function formatSalaryInput(field) {
-        field.addEventListener('blur', function() {
-            if (this.value) {
-                let value = parseInt(this.value.replace(/\D/g, ''));
-                if (!isNaN(value)) {
-                    this.value = value.toLocaleString();
-                }
-            }
-        });
+        const today = new Date();
+        today.setDate(today.getDate() + 1); // Minimum tomorrow
+        const minDate = today.toISOString().split('T')[0];
+        expiresAtField.min = minDate;
         
-        field.addEventListener('focus', function() {
-            if (this.value) {
-                this.value = this.value.replace(/\D/g, '');
-            }
-        });
+        // Set default expiration to 30 days from now if empty
+        if (!expiresAtField.value) {
+            const defaultDate = new Date();
+            defaultDate.setDate(defaultDate.getDate() + 30);
+            expiresAtField.value = defaultDate.toISOString().split('T')[0];
+        }
     }
-    
-    if (salaryMinField) formatSalaryInput(salaryMinField);
-    if (salaryMaxField) formatSalaryInput(salaryMaxField);
 
     // Character counters for text areas
-    const shortDescField = document.getElementById('{{ form.short_description.id_for_label }}');
-    const descriptionField = document.getElementById('{{ form.description.id_for_label }}');
-    const requirementsField = document.getElementById('{{ form.requirements.id_for_label }}');
-    const responsibilitiesField = document.getElementById('{{ form.responsibilities.id_for_label }}');
-    
     function createCounter(field, maxLength) {
+        if (!field) return;
+        
         const counter = document.createElement('div');
         counter.className = 'form-text text-end';
-        counter.innerHTML = `<span class="char-count">0</span> / ${maxLength} characters`;
+        counter.innerHTML = `<span class="char-count">${field.value.length}</span> / ${maxLength} characters`;
         
         field.parentNode.appendChild(counter);
         
@@ -633,37 +860,158 @@ document.addEventListener('DOMContentLoaded', function() {
             const count = this.value.length;
             counter.querySelector('.char-count').textContent = count;
             
-            if (count > maxLength * 0.9) {
+            if (count > maxLength) {
+                counter.classList.add('text-danger');
+                this.classList.add('is-invalid');
+            } else if (count > maxLength * 0.9) {
+                counter.classList.remove('text-danger');
                 counter.classList.add('text-warning');
+                this.classList.remove('is-invalid');
             } else {
-                counter.classList.remove('text-warning');
+                counter.classList.remove('text-danger', 'text-warning');
+                this.classList.remove('is-invalid');
+            }
+        });
+    }
+    
+    createCounter(document.getElementById('{{ form.short_description.id_for_label }}'), 300);
+    createCounter(document.getElementById('{{ form.description.id_for_label }}'), 5000);
+    createCounter(document.getElementById('{{ form.requirements.id_for_label }}'), 2000);
+    createCounter(document.getElementById('{{ form.responsibilities.id_for_label }}'), 2000);
+
+    // Work type validation - at least one must be selected
+    const workTypeCheckboxes = document.querySelectorAll('.work-type-checkbox');
+    const workTypeError = document.createElement('div');
+    workTypeError.className = 'invalid-feedback d-block work-type-error';
+    workTypeError.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>{% trans "Please select at least one work type" %}';
+    
+    function validateWorkTypes() {
+        let atLeastOneChecked = false;
+        workTypeCheckboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                atLeastOneChecked = true;
             }
         });
         
-        // Trigger initial count
-        field.dispatchEvent(new Event('input'));
-    }
-    
-    if (shortDescField) createCounter(shortDescField, 300);
-    if (descriptionField) createCounter(descriptionField, 5000);
-    if (requirementsField) createCounter(requirementsField, 2000);
-    if (responsibilitiesField) createCounter(responsibilitiesField, 2000);
-
-    // Remote/Hybrid work validation
-    const remoteWorkField = document.getElementById('{{ form.remote_work.id_for_label }}');
-    const hybridWorkField = document.getElementById('{{ form.hybrid_work.id_for_label }}');
-    
-    function validateWorkOptions() {
-        if (remoteWorkField.checked && hybridWorkField.checked) {
-            alert('{% trans "Please select only one work option: Remote OR Hybrid" %}');
-            hybridWorkField.checked = false;
+        // Remove existing error
+        const existingError = document.querySelector('.work-type-error');
+        if (existingError) {
+            existingError.remove();
         }
+        
+        // Remove error styling from all checkboxes
+        workTypeCheckboxes.forEach(checkbox => {
+            checkbox.classList.remove('is-invalid');
+        });
+        
+        if (!atLeastOneChecked) {
+            // Add error to first checkbox and show error message
+            if (workTypeCheckboxes[0]) {
+                workTypeCheckboxes[0].classList.add('is-invalid');
+                workTypeCheckboxes[0].closest('.col-md-4').appendChild(workTypeError);
+            }
+            return false;
+        }
+        return true;
     }
     
-    if (remoteWorkField && hybridWorkField) {
-        remoteWorkField.addEventListener('change', validateWorkOptions);
-        hybridWorkField.addEventListener('change', validateWorkOptions);
+    // Add event listeners to work type checkboxes
+    workTypeCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', validateWorkTypes);
+    });
+
+    // Salary validation
+    const salaryMinField = document.getElementById('{{ form.salary_min.id_for_label }}');
+    const salaryMaxField = document.getElementById('{{ form.salary_max.id_for_label }}');
+    
+    function validateSalary() {
+        if (salaryMinField.value && salaryMaxField.value) {
+            const min = parseInt(salaryMinField.value);
+            const max = parseInt(salaryMaxField.value);
+            
+            if (min > max) {
+                salaryMaxField.classList.add('is-invalid');
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'invalid-feedback d-block';
+                errorDiv.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>{% trans "Maximum salary must be greater than minimum salary" %}';
+                
+                // Remove existing error if any
+                const existingError = salaryMaxField.parentNode.querySelector('.invalid-feedback.d-block');
+                if (existingError) {
+                    existingError.remove();
+                }
+                
+                salaryMaxField.parentNode.appendChild(errorDiv);
+                return false;
+            } else {
+                salaryMaxField.classList.remove('is-invalid');
+                const existingError = salaryMaxField.parentNode.querySelector('.invalid-feedback.d-block');
+                if (existingError) {
+                    existingError.remove();
+                }
+            }
+        }
+        return true;
     }
+    
+    if (salaryMinField && salaryMaxField) {
+        salaryMinField.addEventListener('blur', validateSalary);
+        salaryMaxField.addEventListener('blur', validateSalary);
+    }
+
+    // Form submission validation
+    form.addEventListener('submit', function(e) {
+        let isValid = true;
+        
+        // Validate work types
+        if (!validateWorkTypes()) {
+            isValid = false;
+        }
+        
+        // Validate salary
+        if (!validateSalary()) {
+            isValid = false;
+        }
+        
+        // Basic required field validation
+        const requiredFields = form.querySelectorAll('[required]');
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                field.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+        
+        if (!isValid) {
+            e.preventDefault();
+            // Scroll to first error
+            const firstError = form.querySelector('.is-invalid');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            return false;
+        }
+    });
+
+    // Real-time validation for required fields
+    const requiredFields = form.querySelectorAll('[required]');
+    requiredFields.forEach(field => {
+        field.addEventListener('blur', function() {
+            if (!this.value.trim()) {
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-invalid');
+            }
+        });
+        
+        field.addEventListener('input', function() {
+            if (this.value.trim()) {
+                this.classList.remove('is-invalid');
+            }
+        });
+    });
 });
 </script>
 
@@ -677,11 +1025,18 @@ document.addEventListener('DOMContentLoaded', function() {
     border-radius: 0.5rem;
     border: 1px solid #dee2e6;
     padding: 0.75rem 1rem;
+    transition: all 0.2s ease-in-out;
 }
 
 .form-control:focus, .form-select:focus {
     border-color: #0d6efd;
     box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    transform: translateY(-1px);
+}
+
+.form-control.is-invalid, .form-select.is-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
 }
 
 .form-check-input:checked {
@@ -689,14 +1044,32 @@ document.addEventListener('DOMContentLoaded', function() {
     border-color: #0d6efd;
 }
 
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.form-check-input.is-invalid {
+    border-color: #dc3545;
+}
+
 .card {
     border-radius: 1rem;
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
 }
 
 .btn {
     border-radius: 0.5rem;
     padding: 0.75rem 1.5rem;
     font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
 }
 
 .alert {
@@ -710,6 +1083,34 @@ document.addEventListener('DOMContentLoaded', function() {
 
 .bg-primary {
     background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%) !important;
+}
+
+.invalid-feedback {
+    font-size: 0.875rem;
+}
+
+.char-count {
+    font-weight: 600;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1.5rem !important;
+    }
+    
+    .btn {
+        padding: 0.5rem 1rem;
+    }
+    
+    .d-flex.gap-3 {
+        flex-direction: column;
+        gap: 1rem !important;
+    }
+    
+    .d-flex.gap-3 .btn {
+        width: 100%;
+    }
 }
 </style>
 {% endblock %}

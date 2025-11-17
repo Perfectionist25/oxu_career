@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -67,68 +66,37 @@ class Job(models.Model):
         ("EUR", _("Yevro")),
     ]
 
+    # Ish turlari - ИСПРАВЛЕНО: убраны лишние поля и исправлены опечатки
+    WORK_TYPE_CHOICES = [  # ИСПРАВЛЕНО: переименовано и исправлены опечатки
+        ("remote", _("Uydan ishlash")),
+        ("hybrid", _("Gibrid ishlash")),
+        ("office", _("Ishxonada ishlash")),
+    ]
+
     # ASOSIY MA'LUMOTLAR
     title = models.CharField(max_length=200, verbose_name=_("Lavozim nomi"))
     description = models.TextField(verbose_name=_("Ish haqida batafsil"))
-    short_description = models.CharField(
-        max_length=300, verbose_name=_("Qisqacha tavsif")
-    )
+    short_description = models.CharField(max_length=300, verbose_name=_("Qisqacha tavsif"))
 
     # KORXONA VA MANZIL
-    employer = models.ForeignKey(
-        "accounts.EmployerProfile",
-        on_delete=models.CASCADE,
-        related_name="jobs",
-        verbose_name=_("Ish beruvchi"),
-    )
+    employer = models.ForeignKey("accounts.EmployerProfile", on_delete=models.CASCADE, related_name="jobs", verbose_name=_("Ish beruvchi"))
 
-    location = models.CharField(max_length=100, verbose_name=_("Ish joyi manzili"))
+    location = models.CharField(max_length=100, verbose_name=_("Ish joyi manzili"), blank=True, default=_('Kiritilmagan'))
     district = models.CharField(max_length=100, blank=True, verbose_name=_("Tuman/Shahar"))
-    region = models.CharField(max_length=100, default="Toshkent", verbose_name=_("Viloyat"))
+    region = models.CharField(max_length=100, default=_("Kiritilmagan"), verbose_name=_("Viloyat"), blank=True)
     
-    # Ish turi
-    remote_work = models.BooleanField(default=False, verbose_name=_("Uydan ishlash"))
-    hybrid_work = models.BooleanField(default=False, verbose_name=_("Gibrid ish"))
-    office_work = models.BooleanField(default=True, verbose_name=_("Ofisda ishlash"))
+    # Ish turi - ИСПРАВЛЕНО: используется исправленный choices
+    work_type = models.CharField(max_length=20, choices=WORK_TYPE_CHOICES, verbose_name=_('Ish tipi'))
 
     # ISH SHARTLARI
-    employment_type = models.CharField(
-        max_length=20,
-        choices=EMPLOYMENT_TYPE_CHOICES,
-        verbose_name=_("Ish turi"),
-    )
-    experience_level = models.CharField(
-        max_length=20,
-        choices=EXPERIENCE_LEVEL_CHOICES,
-        verbose_name=_("Tajriba darajasi"),
-    )
-    education_level = models.CharField(
-        max_length=20,
-        choices=EDUCATION_LEVEL_CHOICES,
-        verbose_name=_("Ma'lumot darajasi"),
-    )
+    employment_type = models.CharField(max_length=20, choices=EMPLOYMENT_TYPE_CHOICES, verbose_name=_("Ish turi"))
+    experience_level = models.CharField(max_length=20, choices=EXPERIENCE_LEVEL_CHOICES, verbose_name=_("Tajriba darajasi"))
+    education_level = models.CharField(max_length=20, choices=EDUCATION_LEVEL_CHOICES, verbose_name=_("Ma'lumot darajasi"))
 
     # MAOSH
-    salary_min = models.DecimalField(
-        max_digits=12,
-        decimal_places=2,
-        null=True,
-        blank=True,
-        verbose_name=_("Minimal maosh"),
-    )
-    salary_max = models.DecimalField(
-        max_digits=12,
-        decimal_places=2,
-        null=True,
-        blank=True,
-        verbose_name=_("Maksimal maosh"),
-    )
-    currency = models.CharField(
-        max_length=3,
-        choices=CURRENCY_CHOICES,
-        default="UZS",
-        verbose_name=_("Valyuta"),
-    )
+    salary_min = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, verbose_name=_("Minimal maosh"))
+    salary_max = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, verbose_name=_("Maksimal maosh"))
+    currency = models.CharField(max_length=3, choices=CURRENCY_CHOICES, default="UZS", verbose_name=_("Valyuta"))
     hide_salary = models.BooleanField(default=False, verbose_name=_("Maoshnni yashirish"))
     salary_negotiable = models.BooleanField(default=False, verbose_name=_("Maosh kelishilgan holda"))
     
@@ -143,40 +111,21 @@ class Job(models.Model):
     benefits = models.TextField(blank=True, verbose_name=_("Ish shartlari va imtiyozlar"))
 
     # KO'NIKMALAR
-    skills_required = models.TextField(
-        help_text=_("Ko'nikmalarni vergul bilan ajrating"),
-        verbose_name=_("Talab qilinadigan ko'nikmalar"),
-    )
+    skills_required = models.TextField(help_text=_("Ko'nikmalarni vergul bilan ajrating"), verbose_name=_("Talab qilinadigan ko'nikmalar"))
     preferred_skills = models.TextField(blank=True, verbose_name=_("Qo'shimcha ko'nikmalar"))
 
     # TIL BILISH
-    language_requirements = models.TextField(
-        blank=True,
-        verbose_name=_("Til bilish darajasi"),
-        help_text=_("Masalan: Ingliz tili - O'rta daraja")
-    )
+    language_requirements = models.TextField(blank=True, verbose_name=_("Til bilish darajasi"), help_text=_("Masalan: Ingliz tili - O'rta daraja"))
 
     # KONTAKT MA'LUMOTLARI
     contact_email = models.EmailField(verbose_name=_("Aloqa uchun email"))
     contact_phone = models.CharField(max_length=20, blank=True, verbose_name=_("Telefon raqam"))
-    contact_person = models.CharField(
-        max_length=100, blank=True, verbose_name=_("Mas'ul shaxs")
-    )
+    contact_person = models.CharField(max_length=100, blank=True, verbose_name=_("Mas'ul shaxs"))
     application_url = models.URLField(blank=True, verbose_name=_("Ariza topshirish havolasi"))
 
     # ISH JARAYONI
-    work_schedule = models.CharField(
-        max_length=100,
-        blank=True,
-        verbose_name=_("Ish jadvali"),
-        help_text=_("Masalan: 09:00 - 18:00, dam olish kunlari: Shanba, Yakshanba")
-    )
-    probation_period = models.CharField(
-        max_length=50,
-        blank=True,
-        verbose_name=_("Sinov muddati"),
-        help_text=_("Masalan: 3 oy")
-    )
+    work_schedule = models.CharField(max_length=100, blank=True, verbose_name=_("Ish jadvali"), help_text=_("Masalan: 09:00 - 18:00, dam olish kunlari: Shanba, Yakshanba"))
+    probation_period = models.CharField(max_length=50, blank=True, verbose_name=_("Sinov muddati"), help_text=_("Masalan: 3 oy"))
 
     # STATISTIKA VA HOLAT
     is_active = models.BooleanField(default=True, verbose_name=_("Faol vakansiya"))
@@ -191,18 +140,14 @@ class Job(models.Model):
     # SANALAR
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Yaratilgan sana"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Yangilangan sana"))
-    expires_at = models.DateTimeField(
-        null=True, blank=True, verbose_name=_("Muddati tugaydigan sana")
-    )
+    expires_at = models.DateTimeField(null=True, blank=True, verbose_name=_("Muddati tugaydigan sana"))
     
-    created_by = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        verbose_name=_("Yaratgan foydalanuvchi"),
-        related_name="jobs_created",
-    )
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_("Yaratgan foydalanuvchi"), related_name="jobs_created")
+
+    # ДОБАВЛЕНЫ ОТСУТСТВУЮЩИЕ ПОЛЯ ДЛЯ work_type_display метода
+    remote_work = models.BooleanField(default=False, verbose_name=_("Uzoq ish"))
+    hybrid_work = models.BooleanField(default=False, verbose_name=_("Gibrid ish"))
+    office_work = models.BooleanField(default=False, verbose_name=_("Ofisda ish"))
 
     class Meta:
         verbose_name = _("Ish o'rini")

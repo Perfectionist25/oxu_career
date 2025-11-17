@@ -30,10 +30,9 @@
                 <div class="col-md-3">
                     <select class="form-select" id="typeFilter">
                         <option value="">{% trans "Barcha turdagi ishlar" %}</option>
-                        <option value="full_time">{% trans "To'liq kunlik" %}</option>
-                        <option value="part_time">{% trans "Yarim kunlik" %}</option>
-                        <option value="internship">{% trans "Stajirovka" %}</option>
-                        <option value="remote">{% trans "Uzoq ish" %}</option>
+                        {% for value, label in employment_types %}
+                        <option value="{{ value }}">{{ label }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="col-md-3">
@@ -47,10 +46,9 @@
                 <div class="col-md-2">
                     <select class="form-select" id="experienceFilter">
                         <option value="">{% trans "Tajriba" %}</option>
-                        <option value="intern">{% trans "Stajyor" %}</option>
-                        <option value="junior">{% trans "Yosh mutaxassis" %}</option>
-                        <option value="middle">{% trans "Mutaxassis" %}</option>
-                        <option value="senior">{% trans "Katta mutaxassis" %}</option>
+                        {% for value, label in experience_levels %}
+                        <option value="{{ value }}">{{ label }}</option>
+                        {% endfor %}
                     </select>
                 </div>
             </div>
@@ -68,12 +66,12 @@
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">{% trans "Ish turi" %}</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="remoteWork">
+                            <input class="form-check-input work-type-filter" type="checkbox" value="remote" id="remoteWork">
                             <label class="form-check-label" for="remoteWork">{% trans "Uzoq ish" %}</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="fullTime">
-                            <label class="form-check-label" for="fullTime">{% trans "To'liq kunlik" %}</label>
+                            <input class="form-check-input work-type-filter" type="checkbox" value="hybrid" id="hybridWork">
+                            <label class="form-check-label" for="hybridWork">{% trans "Gibrid ish" %}</label>
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -114,7 +112,7 @@
                     <h4 class="fw-bold text-dark mb-0">{% trans "Topilgan vakansiyalar" %}</h4>
                     <p class="text-muted mb-0" id="resultsCount">
                         {% if jobs %}
-                            {{ jobs|length }} {% trans "ta vakansiya topildi" %}
+                            {{ jobs.paginator.count }} {% trans "ta vakansiya topildi" %}
                         {% else %}
                             {% trans "Vakansiyalar topilmadi" %}
                         {% endif %}
@@ -138,13 +136,15 @@
     <div class="row g-4" id="jobsContainer">
         {% for job in jobs %}
         <div class="col-xl-6 job-item"
-             data-title="{{ job.title.lower }}"
-             data-company="{{ job.employer.company_name.lower }}"
+             data-title="{{ job.title|lower }}"
+             data-company="{{ job.employer.company_name|lower }}"
              data-type="{{ job.employment_type|default:'' }}"
-             data-category="{{ job.employer.industry|default:''|escape }}"
+             data-category="{{ job.employer.industry|default:'' }}"
              data-experience="{{ job.experience_level|default:'' }}"
              data-salary="{{ job.salary_min|default:0 }}"
-             data-remote="{{ job.remote_work|yesno:'true,false' }}">
+             data-remote="{{ job.remote_work|yesno:'true,false' }}"
+             data-hybrid="{{ job.hybrid_work|yesno:'true,false' }}"
+             data-created="{{ job.created_at|date:'Y-m-d' }}">
             <div class="card border-0 shadow-sm h-100 job-card">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-start">
@@ -179,11 +179,7 @@
 
                             <!-- Job Badges -->
                             <div class="d-flex flex-wrap gap-2 mb-3">
-                                {% if job.employment_type == 'internship' %}
-                                <span class="badge bg-success">
-                                    <i class="fas fa-graduation-cap me-1"></i>{% trans "Stajirovka" %}
-                                </span>
-                                {% else %}
+                                {% if job.employment_type %}
                                 <span class="badge bg-primary">
                                     <i class="fas fa-briefcase me-1"></i>{{ job.get_employment_type_display }}
                                 </span>
@@ -195,6 +191,12 @@
                                 </span>
                                 {% endif %}
                                 
+                                {% if job.hybrid_work %}
+                                <span class="badge bg-info text-dark">
+                                    <i class="fas fa-home-office me-1"></i>{% trans "Gibrid ish" %}
+                                </span>
+                                {% endif %}
+                                
                                 {% if job.is_urgent %}
                                 <span class="badge bg-danger">
                                     <i class="fas fa-bolt me-1"></i>{% trans "Shoshilinch" %}
@@ -202,7 +204,7 @@
                                 {% endif %}
                                 
                                 {% if job.is_featured %}
-                                <span class="badge bg-info">{% trans "Tavsiya etilgan" %}</span>
+                                <span class="badge bg-success">{% trans "Tavsiya etilgan" %}</span>
                                 {% endif %}
                             </div>
 
@@ -211,7 +213,13 @@
                                 <div class="col-6">
                                     <div class="d-flex align-items-center text-muted small">
                                         <i class="fas fa-map-marker-alt me-2"></i>
-                                        <span>{{ job.location }}</span>
+                                        <span>
+                                            {% if job.region %}
+                                                {{ job.region }}{% if job.district %}, {{ job.district }}{% endif %}
+                                            {% else %}
+                                                {{ job.location|default:_("Manzil ko'rsatilmagan") }}
+                                            {% endif %}
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="col-6">
@@ -224,14 +232,27 @@
                                 <div class="col-6">
                                     <div class="d-flex align-items-center text-success small fw-bold">
                                         <i class="fas fa-money-bill-wave me-2"></i>
-                                        <span>{{ job.salary_range }}</span>
+                                        <span>
+                                            {% if job.hide_salary %}
+                                                {% trans "Kelishilgan holda" %}
+                                            {% else %}
+                                                {% if job.salary_min and job.salary_max %}
+                                                    {{ job.salary_min|floatformat:0 }} - {{ job.salary_max|floatformat:0 }} {{ job.get_currency_display }}
+                                                {% elif job.salary_min %}
+                                                    {{ job.salary_min|floatformat:0 }}+ {{ job.get_currency_display }}
+                                                {% elif job.salary_max %}
+                                                    {{ job.salary_max|floatformat:0 }} {{ job.get_currency_display }} gacha
+                                                {% endif %}
+                                                {% if job.salary_negotiable %}({% trans "kelishiladi" %}){% endif %}
+                                            {% endif %}
+                                        </span>
                                     </div>
                                 </div>
                                 {% endif %}
                                 <div class="col-6">
                                     <div class="d-flex align-items-center text-muted small">
                                         <i class="fas fa-briefcase me-2"></i>
-                                        <span>{{ job.get_experience_level_display }}</span>
+                                        <span>{{ job.get_experience_level_display|default:_("Tajriba ko'rsatilmagan") }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -239,6 +260,20 @@
                             <!-- Job Description -->
                             {% if job.short_description %}
                             <p class="text-muted small mb-3">{{ job.short_description|truncatewords:20 }}</p>
+                            {% endif %}
+
+                            <!-- Skills Preview -->
+                            {% if job.skills_required %}
+                            <div class="mb-3">
+                                <div class="d-flex flex-wrap gap-1">
+                                    {% for skill in job.skills_required|slice:":5" %}
+                                    <span class="badge bg-light text-dark border small">{{ skill }}</span>
+                                    {% endfor %}
+                                    {% if job.skills_required|length > 5 %}
+                                    <span class="badge bg-light text-dark border small">+{{ job.skills_required|length|add:"-5" }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
                             {% endif %}
 
                             <!-- Deadline -->
@@ -264,12 +299,46 @@
         {% endfor %}
     </div>
 
-    <!-- Load More Button -->
-    <div class="text-center mt-5">
-        <button class="btn btn-outline-primary" id="loadMoreBtn">
-            <i class="fas fa-refresh me-2"></i>{% trans "Ko'proq vakansiyalarni yuklash" %}
-        </button>
+    <!-- Pagination -->
+    {% if jobs.has_other_pages %}
+    <div class="d-flex justify-content-center mt-5">
+        <nav aria-label="Job pagination">
+            <ul class="pagination">
+                {% if jobs.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ jobs.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">&laquo;</span>
+                </li>
+                {% endif %}
+
+                {% for i in jobs.paginator.page_range %}
+                    {% if jobs.number == i %}
+                    <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                    {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if jobs.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ jobs.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">&raquo;</span>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
     </div>
+    {% endif %}
 
     {% else %}
     <!-- Empty State -->
@@ -291,24 +360,26 @@
     {% endif %}
 
     <!-- Quick Stats -->
+    {% if stats %}
     <div class="row mt-5 pt-5 border-top">
         <div class="col-md-3 text-center">
-            <div class="h3 fw-bold text-primary mb-1">{{ stats.total_jobs }}+</div>
+            <div class="h3 fw-bold text-primary mb-1">{{ stats.total_jobs|default:0 }}+</div>
             <small class="text-muted">{% trans "Jami vakansiyalar" %}</small>
         </div>
         <div class="col-md-3 text-center">
-            <div class="h3 fw-bold text-primary mb-1">{{ stats.internships_count }}+</div>
+            <div class="h3 fw-bold text-primary mb-1">{{ stats.internships_count|default:0 }}+</div>
             <small class="text-muted">{% trans "Stajirovkalar" %}</small>
         </div>
         <div class="col-md-3 text-center">
-            <div class="h3 fw-bold text-primary mb-1">{{ stats.companies_count }}+</div>
+            <div class="h3 fw-bold text-primary mb-1">{{ stats.companies_count|default:0 }}+</div>
             <small class="text-muted">{% trans "Hamkor kompaniyalar" %}</small>
         </div>
         <div class="col-md-3 text-center">
-            <div class="h3 fw-bold text-primary mb-1">{{ stats.success_stories }}+</div>
+            <div class="h3 fw-bold text-primary mb-1">{{ stats.success_stories|default:0 }}+</div>
             <small class="text-muted">{% trans "Muvaffaqiyatli ishga joylashganlar" %}</small>
         </div>
     </div>
+    {% endif %}
 </div>
 
 <style>
@@ -352,8 +423,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const experienceFilter = document.getElementById('experienceFilter');
     const salaryFilter = document.getElementById('salaryFilter');
     const dateFilter = document.getElementById('dateFilter');
-    const remoteWork = document.getElementById('remoteWork');
-    const fullTime = document.getElementById('fullTime');
+    const workTypeFilters = document.querySelectorAll('.work-type-filter');
     const sortSelect = document.getElementById('sortSelect');
     const jobItems = document.querySelectorAll('.job-item');
 
@@ -362,22 +432,41 @@ document.addEventListener('DOMContentLoaded', function() {
         let visibleCount = 0;
 
         jobItems.forEach(item => {
-            const title = item.getAttribute('data-title');
-            const company = item.getAttribute('data-company');
-            const type = item.getAttribute('data-type');
-            const category = item.getAttribute('data-category');
-            const experience = item.getAttribute('data-experience');
-            const salary = item.getAttribute('data-salary');
-            const isRemote = item.getAttribute('data-remote');
+            const title = item.getAttribute('data-title') || '';
+            const company = item.getAttribute('data-company') || '';
+            const type = item.getAttribute('data-type') || '';
+            const category = item.getAttribute('data-category') || '';
+            const experience = item.getAttribute('data-experience') || '';
+            const salary = parseInt(item.getAttribute('data-salary')) || 0;
+            const isRemote = item.getAttribute('data-remote') === 'true';
+            const isHybrid = item.getAttribute('data-hybrid') === 'true';
+            const createdDate = item.getAttribute('data-created');
 
-            const matchesSearch = title.includes(searchTerm) || company.includes(searchTerm);
+            // Search filter
+            const matchesSearch = !searchTerm || 
+                                title.includes(searchTerm) || 
+                                company.includes(searchTerm);
+            
+            // Type filter
             const matchesType = !typeFilter.value || type === typeFilter.value;
+            
+            // Category filter
             const matchesCategory = !categoryFilter.value || category === categoryFilter.value;
+            
+            // Experience filter
             const matchesExperience = !experienceFilter.value || experience === experienceFilter.value;
-            const matchesSalary = !salaryFilter.value || salary === salaryFilter.value;
-            const matchesRemote = !remoteWork.checked || isRemote === 'true';
+            
+            // Salary filter
+            const matchesSalary = checkSalaryFilter(salary, salaryFilter.value);
+            
+            // Work type filters
+            const matchesWorkType = checkWorkTypeFilters(isRemote, isHybrid);
+            
+            // Date filter
+            const matchesDate = checkDateFilter(createdDate, dateFilter.value);
 
-            if (matchesSearch && matchesType && matchesCategory && matchesExperience && matchesSalary && matchesRemote) {
+            if (matchesSearch && matchesType && matchesCategory && 
+                matchesExperience && matchesSalary && matchesWorkType && matchesDate) {
                 item.style.display = 'block';
                 visibleCount++;
             } else {
@@ -386,34 +475,65 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Update results count
-        document.getElementById('resultsCount').textContent = `${visibleCount} ta vakansiya topildi`;
+        document.getElementById('resultsCount').textContent = 
+            `${visibleCount} {% trans "ta vakansiya topildi" %}`;
     }
 
-    function sortJobs() {
-        const container = document.getElementById('jobsContainer');
-        const items = Array.from(jobItems).filter(item => item.style.display !== 'none');
+    function checkSalaryFilter(salary, filterValue) {
+        if (!filterValue) return true;
         
-        items.sort((a, b) => {
-            const sortBy = sortSelect.value;
-            
-            switch(sortBy) {
-                case 'newest':
-                    return 0; // Would need creation date data attribute
-                case 'salary':
-                    const aSalary = parseInt(a.getAttribute('data-salary')) || 0;
-                    const bSalary = parseInt(b.getAttribute('data-salary')) || 0;
-                    return bSalary - aSalary;
-                case 'deadline':
-                    // Would need deadline date for sorting
-                    return 0;
-                case 'relevant':
-                default:
-                    return 0;
+        switch(filterValue) {
+            case '0-3000000':
+                return salary <= 3000000;
+            case '3000000-6000000':
+                return salary >= 3000000 && salary <= 6000000;
+            case '6000000-10000000':
+                return salary >= 6000000 && salary <= 10000000;
+            case '10000000+':
+                return salary >= 10000000;
+            default:
+                return true;
+        }
+    }
+
+    function checkWorkTypeFilters(isRemote, isHybrid) {
+        let remoteChecked = false;
+        let hybridChecked = false;
+        
+        workTypeFilters.forEach(filter => {
+            if (filter.checked) {
+                if (filter.value === 'remote') remoteChecked = true;
+                if (filter.value === 'hybrid') hybridChecked = true;
             }
         });
 
-        // Re-append sorted items
-        items.forEach(item => container.appendChild(item));
+        // If no work type filters are selected, show all
+        if (!remoteChecked && !hybridChecked) return true;
+        
+        // Check if job matches any selected work type
+        return (remoteChecked && isRemote) || (hybridChecked && isHybrid);
+    }
+
+    function checkDateFilter(createdDate, filterValue) {
+        if (!filterValue || !createdDate) return true;
+        
+        const jobDate = new Date(createdDate);
+        const today = new Date();
+        
+        switch(filterValue) {
+            case 'today':
+                return jobDate.toDateString() === today.toDateString();
+            case 'week':
+                const weekAgo = new Date(today);
+                weekAgo.setDate(today.getDate() - 7);
+                return jobDate >= weekAgo;
+            case 'month':
+                const monthAgo = new Date(today);
+                monthAgo.setDate(today.getDate() - 30);
+                return jobDate >= monthAgo;
+            default:
+                return true;
+        }
     }
 
     // Event listeners
@@ -423,9 +543,10 @@ document.addEventListener('DOMContentLoaded', function() {
     experienceFilter.addEventListener('change', filterJobs);
     salaryFilter.addEventListener('change', filterJobs);
     dateFilter.addEventListener('change', filterJobs);
-    remoteWork.addEventListener('change', filterJobs);
-    fullTime.addEventListener('change', filterJobs);
-    sortSelect.addEventListener('change', sortJobs);
+    workTypeFilters.forEach(filter => {
+        filter.addEventListener('change', filterJobs);
+    });
+    sortSelect.addEventListener('change', filterJobs);
 
     // Clear filters
     window.clearFilters = function() {
@@ -435,33 +556,30 @@ document.addEventListener('DOMContentLoaded', function() {
         experienceFilter.value = '';
         salaryFilter.value = '';
         dateFilter.value = '';
-        remoteWork.checked = false;
-        fullTime.checked = false;
+        workTypeFilters.forEach(filter => filter.checked = false);
         sortSelect.value = 'newest';
         filterJobs();
     };
 
-    // Subscribe to notifications
+    // Other functions remain the same...
     window.subscribeToNotifications = function() {
-        alert('Siz yangi vakansiyalar haqida xabardor bo\'lasiz!');
+        alert('{% trans "Siz yangi vakansiyalar haqida xabardor bo\'lasiz!" %}');
     };
 
-    // Share job functionality
     window.shareJob = function(jobId) {
         const jobUrl = `/jobs/${jobId}/`;
         if (navigator.share) {
             navigator.share({
-                title: 'Vakansiya - OXU Career',
+                title: '{% trans "Vakansiya - OXU Career" %}',
                 url: jobUrl,
             });
         } else {
             navigator.clipboard.writeText(window.location.origin + jobUrl).then(() => {
-                alert('Vakansiya havolasi buferga nusxalandi!');
+                alert('{% trans "Vakansiya havolasi buferga nusxalandi!" %}');
             });
         }
     };
 
-    // Bookmark functionality
     window.toggleBookmark = function(jobId) {
         const button = event.target.closest('button');
         const icon = button.querySelector('i');
@@ -476,16 +594,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // Remove from bookmarks API call
         }
     };
-
-    // Load more functionality
-    document.getElementById('loadMoreBtn')?.addEventListener('click', function() {
-        this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Yuklanmoqda...';
-        // Simulate API call
-        setTimeout(() => {
-            this.innerHTML = '<i class="fas fa-check me-2"></i>Barcha vakansiyalar yuklandi';
-            this.disabled = true;
-        }, 1500);
-    });
 
     // Initialize
     filterJobs();
