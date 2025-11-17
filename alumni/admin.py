@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin import display
 from django.utils.html import format_html
+from modeltranslation.admin import TranslationAdmin
 
 from .models import (
     Alumni,

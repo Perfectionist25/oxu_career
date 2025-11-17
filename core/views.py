@@ -24,12 +24,12 @@ def home(request):
     stats = {
         "alumni_count": Alumni.objects.count(),
         "jobs_count": Job.objects.filter(is_active=True).count(),
-        "companies_count": 50,  # Можно заменить на реальный запрос
+        "companies_count": 50,
         "resources_count": Resource.objects.filter(is_published=True).count(),
     }
 
-    # Последние вакансии - ИСПРАВЛЕНО: select_related('employer') вместо 'company'
-    latest_jobs = Job.objects.filter(is_active=True).select_related("employer")[:3]
+    # Последние вакансии
+    latest_jobs = Job.objects.filter(is_active=True).select_related("employer")[:6]
 
     latest_resources = Resource.objects.filter(is_published=True).order_by('-created_at')[:3]
 
@@ -38,11 +38,28 @@ def home(request):
         status="published", start_date__gt=timezone.now()
     ).order_by("start_date")[:3]
 
+    # Статистика для ресурсов
+    resources_stats = {
+        "total_resources": stats["resources_count"],
+    }
+
+    # Статистика для админов
+    resources_admin_stats = None
+    if request.user.is_authenticated and request.user.is_staff:
+        resources_admin_stats = {
+            "total_resources": stats["resources_count"],
+            "unpublished_count": Resource.objects.filter(is_published=False).count(),
+            "approval_needed": Resource.objects.filter(is_published=False).exists(),
+        }
+
     context = {
         "stats": stats,
         "latest_jobs": latest_jobs,
         "latest_resources": latest_resources,
+        "featured_resources": latest_resources,
         "upcoming_events": upcoming_events,
+        "resources_stats": resources_stats,
+        "resources_admin_stats": resources_admin_stats,
     }
     return render(request, "home.html", context)
 

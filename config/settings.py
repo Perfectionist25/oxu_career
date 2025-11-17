@@ -15,6 +15,7 @@ LOGIN_URL = "/accounts/login/"
 PHONENUMBER_DEFAULT_REGION = "UZ"
 
 INSTALLED_APPS = [
+    "modeltranslation",  # MUST be before django.contrib.admin
     "jazzmin",  # Admin interface
     # Ваши приложения (важен порядок для переопределения шаблонов)
     "accounts.apps.AccountsConfig",  # User authentication
@@ -119,6 +120,10 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+# Modeltranslation configuration
+MODELTRANSLATION_DEFAULT_LANGUAGE = 'uz'
+MODELTRANSLATION_LANGUAGES = ('uz', 'ru', 'en')
 
 # Статические файлы
 STATIC_URL = "/static/"

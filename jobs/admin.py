@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin import display
 from django.utils.translation import gettext_lazy as _
+from modeltranslation.admin import TranslationAdmin
 
 from .models import Job, Industry, JobApplication, SavedJob, JobAlert
 
@@ -13,7 +14,7 @@ class JobInline(admin.TabularInline):
 
 
 @admin.register(Industry)
-class IndustryAdmin(admin.ModelAdmin):
+class IndustryAdmin(TranslationAdmin):
     list_display = ("name", "job_count")
     list_filter = ("name",)
     search_fields = ("name", "description")
@@ -35,7 +36,7 @@ class JobApplicationInline(admin.TabularInline):
 
 
 @admin.register(Job)
-class JobAdmin(admin.ModelAdmin):
+class JobAdmin(TranslationAdmin):
     list_display = (
         "title",
         "employer_company",

@@ -196,57 +196,57 @@
 
 
   <!-- Latest Jobs Preview -->
-  <section class="mb-5">
+<section class="mb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <div class="fw-bold text-dark h5">{% trans "So'ngi vakansiyalar" %}</div>
-      {% if user.is_authenticated and user.is_student or user.is_main_admin or user.is_admin %}
-      <a href="{% url 'jobs:list' %}" class="btn btn-outline-primary">
-        {% trans "Barchasini ko'rish" %} <i class="fas fa-arrow-right ms-2"></i>
-      </a>
-      {% else %}
-      <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary">
-        {% trans "Barchasini ko'rish" %} <i class="fas fa-arrow-right ms-2"></i>
-      </a>
-      {% endif %}
+        <div class="fw-bold text-dark h5">{% trans "So'ngi vakansiyalar" %}</div>
+        {% if user.is_authenticated and user.is_student or user.is_authenticated and user.is_main_admin or user.is_authenticated and user.is_admin %}
+        <a href="{% url 'jobs:list' %}" class="btn btn-outline-primary">
+            {% trans "Barchasini ko'rish" %} <i class="fas fa-arrow-right ms-2"></i>
+        </a>
+        {% else %}
+        <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary">
+            {% trans "Barchasini ko'rish" %} <i class="fas fa-arrow-right ms-2"></i>
+        </a>
+        {% endif %}
     </div>
     
-    {% if user.is_authenticated and user.is_student or user.is_main_admin or user.is_admin %}
+    {% if user.is_authenticated and user.is_student or user.is_authenticated and user.is_main_admin or user.is_authenticated and user.is_admin %}
     <div class="row g-3">
-      {% for job in latest_jobs|slice:":6" %}
-      <div class="col-lg-4 col-md-6">
-        <div class="card h-100 job-preview-card">
-          <div class="card-body">
-            <h6 class="card-title fw-bold">{{ job.title }}</h6>
-            <p class="card-text text-muted small mb-2">{{ job.company.name }}</p>
-            <div class="d-flex justify-content-between align-items-center">
-              <span class="badge bg-primary">{{ job.get_employment_type_display }}</span>
-              <small class="text-muted">{{ job.created_at|timesince }}</small>
+        {% for job in latest_jobs|slice:":3" %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card h-100 job-preview-card">
+                <div class="card-body">
+                    <h6 class="card-title fw-bold">{{ job.title }}</h6>
+                    <p class="card-text text-muted small mb-2">{{ job.employer.company_name }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-primary">{{ job.get_employment_type_display }}</span>
+                        <small class="text-muted">{{ job.created_at|timesince }}</small>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent py-2">
+                    <a href="{% url 'jobs:job_detail' job.pk %}" class="btn btn-sm btn-outline-primary w-100">
+                        {% trans "Batafsil" %}
+                    </a>
+                </div>
             </div>
-          </div>
-          <div class="card-footer bg-transparent py-2">
-            <a href="{% url 'jobs:job_detail' job.pk %}" class="btn btn-sm btn-outline-primary w-100">
-              {% trans "Batafsil" %}
-            </a>
-          </div>
         </div>
-      </div>
-      {% empty %}
-      <div class="col-12">
-        <div class="alert alert-info text-center">
-          {% trans "Hozircha vakansiyalar mavjud emas" %}
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                {% trans "Hozircha vakansiyalar mavjud emas" %}
+            </div>
         </div>
-      </div>
-      {% endfor %}
+        {% endfor %}
     </div>
     {% else %}
     <div class="alert alert-info text-center">
-      <p class="mb-2">{% trans "Vakansiyalarni ko'rish uchun tizimga kiring" %}</p>
-      <a href="{% url 'accounts:login' %}" class="btn btn-primary btn-sm">
-        {% trans "Tizimga kirish" %}
-      </a>
+        <p class="mb-2">{% trans "Vakansiyalarni ko'rish uchun tizimga kiring" %}</p>
+        <a href="{% url 'accounts:login' %}" class="btn btn-primary btn-sm">
+            {% trans "Tizimga kirish" %}
+        </a>
     </div>
     {% endif %}
-  </section>
+</section>
 
   <!-- Upcoming Events -->
   <section class="mb-5">
