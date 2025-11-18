@@ -54,7 +54,9 @@ class EventCategoryAdmin(TranslationAdmin):
 
 
 @admin.register(Event)
-class EventAdmin(admin.ModelAdmin):
+class EventAdmin(TranslationAdmin):
+    """Admin interface for Event model with comprehensive management"""
+
     list_display = (
         "title",
         "organizer",
@@ -122,6 +124,8 @@ class EventAdmin(admin.ModelAdmin):
                     "show_attendee_list",
                     "allow_comments",
                     "tags",
+                    "registration_link",
+                    "materials_link",
                 )
             },
         ),

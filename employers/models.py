@@ -33,20 +33,43 @@ class Company(models.Model):
         ("other", _("Other")),
     ]
 
-    name = models.CharField(max_length=200, verbose_name=_("Company Name"))
-    description = models.TextField(verbose_name=_("Description"))
-    website = models.URLField(verbose_name=_("Website"))
+    name = models.CharField(
+        max_length=200,
+        verbose_name=_("Company Name"),
+        help_text=_("Official company name")
+    )
+    description = models.TextField(
+        verbose_name=_("Description"),
+        help_text=_("Brief description of the company and its activities")
+    )
+    website = models.URLField(
+        verbose_name=_("Website"),
+        help_text=_("Company website URL")
+    )
     logo = models.ImageField(
-        upload_to="company_logos/", null=True, blank=True, verbose_name=_("Logo")
+        upload_to="company_logos/",
+        null=True,
+        blank=True,
+        verbose_name=_("Logo"),
+        help_text=_("Company logo image")
     )
     industry = models.CharField(
-        max_length=50, choices=INDUSTRY_CHOICES, verbose_name=_("Industry")
+        max_length=50,
+        choices=INDUSTRY_CHOICES,
+        verbose_name=_("Industry"),
+        help_text=_("Primary industry sector")
     )
     company_size = models.CharField(
-        max_length=20, choices=COMPANY_SIZE_CHOICES, verbose_name=_("Company Size")
+        max_length=20,
+        choices=COMPANY_SIZE_CHOICES,
+        verbose_name=_("Company Size"),
+        help_text=_("Number of employees")
     )
     founded_year = models.IntegerField(
-        null=True, blank=True, verbose_name=_("Founded Year")
+        null=True,
+        blank=True,
+        verbose_name=_("Founded Year"),
+        help_text=_("Year the company was founded")
     )
     headquarters = models.CharField(
         max_length=100,
@@ -54,20 +77,55 @@ class Company(models.Model):
         help_text=_("e.g., Tashkent, Uzbekistan"),
     )
 
-    # Контактная информация
-    contact_email = models.EmailField(verbose_name=_("Contact Email"))
-    contact_phone = models.CharField(max_length=20, verbose_name=_("Contact Phone"))
+    # Contact Information
+    contact_email = models.EmailField(
+        verbose_name=_("Contact Email"),
+        help_text=_("Primary contact email address")
+    )
+    contact_phone = models.CharField(
+        max_length=20,
+        verbose_name=_("Contact Phone"),
+        help_text=_("Primary contact phone number")
+    )
 
-    # Социальные сети
-    linkedin = models.URLField(blank=True, verbose_name=_("LinkedIn"))
-    twitter = models.URLField(blank=True, verbose_name=_("Twitter"))
-    facebook = models.URLField(blank=True, verbose_name=_("Facebook"))
+    # Social Media
+    linkedin = models.URLField(
+        blank=True,
+        verbose_name=_("LinkedIn"),
+        help_text=_("Company LinkedIn profile URL")
+    )
+    twitter = models.URLField(
+        blank=True,
+        verbose_name=_("Twitter"),
+        help_text=_("Company Twitter profile URL")
+    )
+    facebook = models.URLField(
+        blank=True,
+        verbose_name=_("Facebook"),
+        help_text=_("Company Facebook page URL")
+    )
 
-    is_verified = models.BooleanField(default=False, verbose_name=_("Verified Company"))
-    is_active = models.BooleanField(default=True, verbose_name=_("Active"))
+    is_verified = models.BooleanField(
+        default=False,
+        verbose_name=_("Verified Company"),
+        help_text=_("Whether the company profile has been verified")
+    )
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name=_("Active"),
+        help_text=_("Whether the company profile is active")
+    )
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Created At"),
+        help_text=_("When the company profile was created")
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Updated At"),
+        help_text=_("Last update to the company profile")
+    )
 
     class Meta:
         verbose_name = _("Company")
@@ -88,38 +146,80 @@ class Company(models.Model):
 
 
 class EmployerProfile(models.Model):
-    """Профиль работодателя"""
+    """Employer profile model linking users to companies"""
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name=_("User"))
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name=_("User"),
+        help_text=_("User account associated with this employer profile")
+    )
     company = models.ForeignKey(
         Company,
         on_delete=models.CASCADE,
         related_name="employers",
         verbose_name=_("Company"),
+        help_text=_("Company this employer represents")
     )
-    position = models.CharField(max_length=100, verbose_name=_("Position"))
-    department = models.CharField(max_length=100, verbose_name=_("Department"))
-    phone = models.CharField(max_length=20, verbose_name=_("Phone"))
+    position = models.CharField(
+        max_length=100,
+        verbose_name=_("Position"),
+        help_text=_("Job title or position within the company")
+    )
+    department = models.CharField(
+        max_length=100,
+        verbose_name=_("Department"),
+        help_text=_("Department or team within the company")
+    )
+    phone = models.CharField(
+        max_length=20,
+        verbose_name=_("Phone"),
+        help_text=_("Direct contact phone number")
+    )
 
-    # Права доступа
-    can_post_jobs = models.BooleanField(default=False, verbose_name=_("Can Post Jobs"))
+    # Access Rights
+    can_post_jobs = models.BooleanField(
+        default=False,
+        verbose_name=_("Can Post Jobs"),
+        help_text=_("Permission to create new job postings")
+    )
     can_manage_jobs = models.BooleanField(
-        default=False, verbose_name=_("Can Manage Jobs")
+        default=False,
+        verbose_name=_("Can Manage Jobs"),
+        help_text=_("Permission to edit and manage job postings")
     )
     can_view_candidates = models.BooleanField(
-        default=False, verbose_name=_("Can View Candidates")
+        default=False,
+        verbose_name=_("Can View Candidates"),
+        help_text=_("Permission to view applicant information")
     )
     can_contact_candidates = models.BooleanField(
-        default=False, verbose_name=_("Can Contact Candidates")
+        default=False,
+        verbose_name=_("Can Contact Candidates"),
+        help_text=_("Permission to contact applicants directly")
     )
 
     is_primary_contact = models.BooleanField(
-        default=False, verbose_name=_("Primary Contact")
+        default=False,
+        verbose_name=_("Primary Contact"),
+        help_text=_("Main contact person for the company")
     )
-    is_active = models.BooleanField(default=True, verbose_name=_("Active Profile"))
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name=_("Active Profile"),
+        help_text=_("Whether this employer profile is active")
+    )
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Created At"),
+        help_text=_("When the employer profile was created")
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Updated At"),
+        help_text=_("Last update to the employer profile")
+    )
 
     class Meta:
         verbose_name = _("Employer Profile")
@@ -162,26 +262,49 @@ class Job(models.Model):
         on_delete=models.CASCADE,
         related_name="jobs",
         verbose_name=_("Company"),
+        help_text=_("Company posting this job")
     )
     posted_by = models.ForeignKey(
-        EmployerProfile, on_delete=models.CASCADE, verbose_name=_("Posted By")
+        EmployerProfile,
+        on_delete=models.CASCADE,
+        verbose_name=_("Posted By"),
+        help_text=_("Employer who posted this job")
     )
 
-    title = models.CharField(max_length=200, verbose_name=_("Job Title"))
-    description = models.TextField(verbose_name=_("Job Description"))
-    requirements = models.TextField(verbose_name=_("Requirements"))
-    responsibilities = models.TextField(verbose_name=_("Responsibilities"))
-    benefits = models.TextField(blank=True, verbose_name=_("Benefits"))
+    title = models.CharField(
+        max_length=200,
+        verbose_name=_("Job Title"),
+        help_text=_("Position title for this job posting")
+    )
+    description = models.TextField(
+        verbose_name=_("Job Description"),
+        help_text=_("Detailed description of the job and company")
+    )
+    requirements = models.TextField(
+        verbose_name=_("Requirements"),
+        help_text=_("Skills, experience, and qualifications required")
+    )
+    responsibilities = models.TextField(
+        verbose_name=_("Responsibilities"),
+        help_text=_("Key responsibilities and duties")
+    )
+    benefits = models.TextField(
+        blank=True,
+        verbose_name=_("Benefits"),
+        help_text=_("Benefits and perks offered (optional)")
+    )
 
     employment_type = models.CharField(
         max_length=20,
         choices=EMPLOYMENT_TYPE_CHOICES,
         verbose_name=_("Employment Type"),
+        help_text=_("Type of employment (full-time, part-time, etc.)")
     )
     experience_level = models.CharField(
         max_length=20,
         choices=EXPERIENCE_LEVEL_CHOICES,
         verbose_name=_("Experience Level"),
+        help_text=_("Required experience level")
     )
 
     location = models.CharField(
@@ -190,7 +313,9 @@ class Job(models.Model):
         help_text=_("e.g., Tashkent, Samarkand, Remote"),
     )
     remote_work = models.BooleanField(
-        default=False, verbose_name=_("Remote Work Available")
+        default=False,
+        verbose_name=_("Remote Work Available"),
+        help_text=_("Whether remote work is an option")
     )
 
     salary_min = models.DecimalField(
@@ -199,6 +324,7 @@ class Job(models.Model):
         null=True,
         blank=True,
         verbose_name=_("Minimum Salary"),
+        help_text=_("Minimum salary offered")
     )
     salary_max = models.DecimalField(
         max_digits=12,
@@ -206,31 +332,67 @@ class Job(models.Model):
         null=True,
         blank=True,
         verbose_name=_("Maximum Salary"),
+        help_text=_("Maximum salary offered")
     )
     currency = models.CharField(
         max_length=3,
         choices=CURRENCY_CHOICES,
         default="UZS",
         verbose_name=_("Currency"),
+        help_text=_("Currency for salary information")
     )
-    hide_salary = models.BooleanField(default=False, verbose_name=_("Hide Salary"))
+    hide_salary = models.BooleanField(
+        default=False,
+        verbose_name=_("Hide Salary"),
+        help_text=_("Whether to hide salary information from public view")
+    )
 
-    application_url = models.URLField(blank=True, verbose_name=_("Application URL"))
-    contact_email = models.EmailField(verbose_name=_("Contact Email"))
+    application_url = models.URLField(
+        blank=True,
+        verbose_name=_("Application URL"),
+        help_text=_("External URL for job applications (optional)")
+    )
+    contact_email = models.EmailField(
+        verbose_name=_("Contact Email"),
+        help_text=_("Email address for job inquiries")
+    )
 
     skills_required = models.TextField(
-        help_text=_("List skills separated by commas"),
         verbose_name=_("Required Skills"),
+        help_text=_("Skills required for this position")
     )
 
-    is_active = models.BooleanField(default=True, verbose_name=_("Active Job"))
-    is_featured = models.BooleanField(default=False, verbose_name=_("Featured Job"))
-    views_count = models.IntegerField(default=0, verbose_name=_("View Count"))
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name=_("Active Job"),
+        help_text=_("Whether this job posting is active")
+    )
+    is_featured = models.BooleanField(
+        default=False,
+        verbose_name=_("Featured Job"),
+        help_text=_("Whether this job is featured/promoted")
+    )
+    views_count = models.IntegerField(
+        default=0,
+        verbose_name=_("View Count"),
+        help_text=_("Number of times this job has been viewed")
+    )
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Created At"),
+        help_text=_("When the job was posted")
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Updated At"),
+        help_text=_("Last update to the job posting")
+    )
     expires_at = models.DateTimeField(
-        null=True, blank=True, verbose_name=_("Expires At")
+        null=True,
+        blank=True,
+        verbose_name=_("Expires At"),
+        help_text=_("When this job posting expires")
     )
 
     class Meta:
@@ -273,7 +435,7 @@ class Job(models.Model):
 
 
 class JobApplication(models.Model):
-    """Отклик на вакансию"""
+    """Job application model for tracking candidate applications"""
 
     STATUS_CHOICES = [
         ("new", _("New")),
@@ -288,12 +450,14 @@ class JobApplication(models.Model):
         on_delete=models.CASCADE,
         related_name="applications",
         verbose_name=_("Job"),
+        help_text=_("Job position being applied for")
     )
     candidate = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name="employer_applications",
         verbose_name=_("Candidate"),
+        help_text=_("User applying for the job")
     )
     cv = models.ForeignKey(
         "cvbuilder.CV",
@@ -302,28 +466,51 @@ class JobApplication(models.Model):
         blank=True,
         related_name="employer_applications",
         verbose_name=_("Resume"),
+        help_text=_("CV submitted with the application")
     )
 
-    cover_letter = models.TextField(verbose_name=_("Cover Letter"))
+    cover_letter = models.TextField(
+        verbose_name=_("Cover Letter"),
+        help_text=_("Candidate's cover letter or motivation")
+    )
     expected_salary = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         null=True,
         blank=True,
         verbose_name=_("Expected Salary"),
+        help_text=_("Candidate's expected salary")
     )
 
     status = models.CharField(
-        max_length=20, choices=STATUS_CHOICES, default="new", verbose_name=_("Status")
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="new",
+        verbose_name=_("Status"),
+        help_text=_("Current status of the application")
     )
     status_changed_at = models.DateTimeField(
-        auto_now=True, verbose_name=_("Status Changed")
+        auto_now=True,
+        verbose_name=_("Status Changed"),
+        help_text=_("When the status was last changed")
     )
 
-    is_read = models.BooleanField(default=False, verbose_name=_("Read"))
+    is_read = models.BooleanField(
+        default=False,
+        verbose_name=_("Read"),
+        help_text=_("Whether the application has been read by employer")
+    )
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Created At"),
+        help_text=_("When the application was submitted")
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Updated At"),
+        help_text=_("Last update to the application")
+    )
 
     class Meta:
         verbose_name = _("Job Application")
@@ -336,26 +523,50 @@ class JobApplication(models.Model):
 
 
 class CandidateNote(models.Model):
-    """Заметки работодателя о кандидате"""
+    """Employer notes about candidates"""
 
     candidate = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name="employer_notes",
         verbose_name=_("Candidate"),
+        help_text=_("Candidate this note is about")
     )
     employer = models.ForeignKey(
-        EmployerProfile, on_delete=models.CASCADE, verbose_name=_("Employer")
+        EmployerProfile,
+        on_delete=models.CASCADE,
+        verbose_name=_("Employer"),
+        help_text=_("Employer who wrote this note")
     )
     job = models.ForeignKey(
-        Job, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_("Job")
+        Job,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        verbose_name=_("Job"),
+        help_text=_("Job application this note relates to (optional)")
     )
 
-    note = models.TextField(verbose_name=_("Note"))
-    is_private = models.BooleanField(default=True, verbose_name=_("Private Note"))
+    note = models.TextField(
+        verbose_name=_("Note"),
+        help_text=_("Content of the note about the candidate")
+    )
+    is_private = models.BooleanField(
+        default=True,
+        verbose_name=_("Private Note"),
+        help_text=_("Whether this note is private to the employer")
+    )
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Created At"),
+        help_text=_("When the note was created")
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Updated At"),
+        help_text=_("Last update to the note")
+    )
 
     class Meta:
         verbose_name = _("Candidate Note")
@@ -367,7 +578,7 @@ class CandidateNote(models.Model):
 
 
 class Interview(models.Model):
-    """Собеседование"""
+    """Interview scheduling and tracking model"""
 
     STATUS_CHOICES = [
         ("scheduled", _("Scheduled")),
@@ -381,34 +592,62 @@ class Interview(models.Model):
         on_delete=models.CASCADE,
         related_name="interviews",
         verbose_name=_("Application"),
+        help_text=_("Job application this interview is for")
     )
     interviewer = models.ForeignKey(
-        EmployerProfile, on_delete=models.CASCADE, verbose_name=_("Interviewer")
+        EmployerProfile,
+        on_delete=models.CASCADE,
+        verbose_name=_("Interviewer"),
+        help_text=_("Employer conducting the interview")
     )
 
-    scheduled_date = models.DateTimeField(verbose_name=_("Scheduled Date"))
-    duration = models.IntegerField(
-        help_text=_("Duration in minutes"), verbose_name=_("Duration")
+    scheduled_date = models.DateTimeField(
+        verbose_name=_("Scheduled Date"),
+        help_text=_("Date and time when the interview is scheduled")
     )
-    location = models.TextField(verbose_name=_("Location"))
-    notes = models.TextField(blank=True, verbose_name=_("Notes"))
+    duration = models.IntegerField(
+        verbose_name=_("Duration"),
+        help_text=_("Expected duration of the interview in minutes")
+    )
+    location = models.TextField(
+        verbose_name=_("Location"),
+        help_text=_("Interview location or meeting details")
+    )
+    notes = models.TextField(
+        blank=True,
+        verbose_name=_("Notes"),
+        help_text=_("Additional notes about the interview")
+    )
 
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
         default="scheduled",
         verbose_name=_("Status"),
+        help_text=_("Current status of the interview")
     )
-    feedback = models.TextField(blank=True, verbose_name=_("Feedback"))
+    feedback = models.TextField(
+        blank=True,
+        verbose_name=_("Feedback"),
+        help_text=_("Interview feedback and evaluation")
+    )
     rating = models.IntegerField(
         null=True,
         blank=True,
-        help_text=_("Rating from 1 to 5"),
         verbose_name=_("Rating"),
+        help_text=_("Overall rating of the candidate")
     )
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Created At"),
+        help_text=_("When the interview was scheduled")
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Updated At"),
+        help_text=_("Last update to the interview record")
+    )
 
     class Meta:
         verbose_name = _("Interview")
@@ -420,7 +659,7 @@ class Interview(models.Model):
 
 
 class CompanyReview(models.Model):
-    """Отзывы о компании"""
+    """Company review and rating model"""
 
     RATING_CHOICES = [
         (1, _("1 - Very Poor")),
@@ -435,29 +674,66 @@ class CompanyReview(models.Model):
         on_delete=models.CASCADE,
         related_name="reviews",
         verbose_name=_("Company"),
+        help_text=_("Company being reviewed")
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name="employer_reviews",
         verbose_name=_("Author"),
+        help_text=_("User who wrote the review")
     )
 
-    rating = models.IntegerField(choices=RATING_CHOICES, verbose_name=_("Rating"))
-    title = models.CharField(max_length=200, verbose_name=_("Title"))
-    review = models.TextField(verbose_name=_("Review"))
+    rating = models.IntegerField(
+        choices=RATING_CHOICES,
+        verbose_name=_("Rating"),
+        help_text=_("Overall rating from 1 to 5")
+    )
+    title = models.CharField(
+        max_length=200,
+        verbose_name=_("Title"),
+        help_text=_("Review title or headline")
+    )
+    review = models.TextField(
+        verbose_name=_("Review"),
+        help_text=_("Detailed review content")
+    )
 
-    pros = models.TextField(verbose_name=_("Pros"))
-    cons = models.TextField(verbose_name=_("Cons"))
+    pros = models.TextField(
+        verbose_name=_("Pros"),
+        help_text=_("Positive aspects of the company")
+    )
+    cons = models.TextField(
+        verbose_name=_("Cons"),
+        help_text=_("Negative aspects of the company")
+    )
 
     is_anonymous = models.BooleanField(
-        default=False, verbose_name=_("Anonymous Review")
+        default=False,
+        verbose_name=_("Anonymous Review"),
+        help_text=_("Whether the review is posted anonymously")
     )
-    is_verified = models.BooleanField(default=False, verbose_name=_("Verified Review"))
-    is_published = models.BooleanField(default=False, verbose_name=_("Published"))
+    is_verified = models.BooleanField(
+        default=False,
+        verbose_name=_("Verified Review"),
+        help_text=_("Whether the reviewer is verified (e.g., former employee)")
+    )
+    is_published = models.BooleanField(
+        default=False,
+        verbose_name=_("Published"),
+        help_text=_("Whether the review is published and visible")
+    )
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Created At"),
+        help_text=_("When the review was submitted")
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Updated At"),
+        help_text=_("Last update to the review")
+    )
 
     class Meta:
         verbose_name = _("Company Review")

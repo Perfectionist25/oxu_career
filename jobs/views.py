@@ -294,7 +294,6 @@ def job_list(request):
 
     if form.is_valid():
         query = form.cleaned_data.get("query")
-        region = form.cleaned_data.get("region")
         employment_type = form.cleaned_data.get("employment_type")
         experience_level = form.cleaned_data.get("experience_level")
         remote_work = form.cleaned_data.get("remote_work")
@@ -307,9 +306,6 @@ def job_list(request):
                 | Q(employer__company_name__icontains=query)
                 | Q(skills_required__icontains=query)
             )
-
-        if region:
-            jobs = jobs.filter(region__icontains=region)
 
         if employment_type:
             jobs = jobs.filter(employment_type__in=employment_type)
@@ -324,7 +320,6 @@ def job_list(request):
             jobs = jobs.filter(
                 Q(salary_min__gte=salary_min)
                 | Q(salary_max__gte=salary_min)
-                | Q(salary_negotiable=True)
             )
 
     # Saralash
@@ -501,40 +496,6 @@ def my_applications(request):
     return render(request, "jobs/my_applications.html", context)
 
 
-@login_required
-def job_alerts(request):
-    """Vakansiya ogohlantirishlarini boshqarish"""
-    alerts = JobAlert.objects.filter(user=request.user)
-
-    if request.method == "POST":
-        form = JobAlertForm(request.POST)
-        if form.is_valid():
-            alert = form.save(commit=False)
-            alert.user = request.user
-            alert.save()
-
-            messages.success(request, _("Vakansiya ogohlantirishi muvaffaqiyatli yaratildi!"))
-            return redirect("jobs:job_alerts")
-    else:
-        form = JobAlertForm()
-
-    context = {
-        "alerts": alerts,
-        "form": form,
-    }
-    return render(request, "jobs/job_alerts.html", context)
-
-
-@login_required
-def delete_job_alert(request, pk):
-    """Vakansiya ogohlantirishini o'chirish"""
-    alert = get_object_or_404(JobAlert, pk=pk, user=request.user)
-
-    if request.method == "POST":
-        alert.delete()
-        messages.success(request, _("Vakansiya ogohlantirishi muvaffaqiyatli o'chirildi!"))
-
-    return redirect("jobs:job_alerts")
 
 
 # AJAX viewlar

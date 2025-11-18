@@ -8,40 +8,44 @@ from .models import Resource, ResourceCategory
 
 @admin.register(ResourceCategory)
 class ResourceCategoryAdmin(TranslationAdmin):
-    list_display = ("name", "resource_count")  # Убрали 'created_at'
-    list_filter = ()  # Убрали 'created_at'
+    """Admin interface for ResourceCategory with resource count display"""
+
+    list_display = ("name", "resource_count")
+    list_filter = ("name",)
     search_fields = ("name", "description")
-    # Убрали readonly_fields = ('created_at',)
 
     fieldsets = (
         (_("Basic Information"), {"fields": ("name", "description")}),
-        # Убрали секцию с временными метками
     )
 
     @display(description=_("Resources Count"))
     def resource_count(self, obj):
+        """Returns total count of resources in this category"""
         return obj.resources.count()
 
 
 @admin.register(Resource)
-class ResourceAdmin(admin.ModelAdmin):
+class ResourceAdmin(TranslationAdmin):
+    """Admin interface for Resource model with media content management"""
+
     list_display = (
         "title",
         "category",
         "is_published",
         "has_youtube",
-    )  # Убрали 'created_at', 'updated_at'
-    list_filter = ("category", "is_published")  # Убрали 'created_at'
+        "created_at",
+    )
+    list_filter = ("category", "is_published", "created_at")
     search_fields = ("title", "description", "category__name")
     list_editable = ("is_published",)
-    # Убрали readonly_fields = ('created_at', 'updated_at')
+    readonly_fields = ("created_at", "updated_at")
     list_per_page = 20
 
     fieldsets = (
         (_("Basic Information"), {"fields": ("title", "category", "description")}),
         (_("Media Content"), {"fields": ("image", "url_youtube")}),
         (_("Publication Status"), {"fields": ("is_published",)}),
-        # Убрали секцию с временными метками
+        (_("Timestamps"), {"fields": ("created_at", "updated_at")}),
     )
 
     @display(boolean=True, description=_("YouTube"))

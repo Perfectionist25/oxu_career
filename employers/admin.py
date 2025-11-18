@@ -14,20 +14,30 @@ from .models import (
 
 
 class EmployerProfileInline(admin.TabularInline):
+    """Inline admin for employer profiles within company admin"""
+
     model = EmployerProfile
     extra = 0
     fields = ("user", "position", "department", "is_primary_contact", "is_active")
+    verbose_name = "Employer Profile"
+    verbose_name_plural = "Employer Profiles"
 
 
 class JobInline(admin.TabularInline):
+    """Inline admin for jobs within company admin"""
+
     model = Job
     extra = 0
     fields = ("title", "employment_type", "experience_level", "is_active", "created_at")
     readonly_fields = ("created_at",)
+    verbose_name = "Job Posting"
+    verbose_name_plural = "Job Postings"
 
 
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
+    """Admin interface for managing companies"""
+
     list_display = (
         "name",
         "industry",
@@ -40,6 +50,8 @@ class CompanyAdmin(admin.ModelAdmin):
     search_fields = ("name", "description", "headquarters")
     list_editable = ("is_verified", "is_active")
     readonly_fields = ("created_at", "updated_at")
+    date_hierarchy = "created_at"
+    list_per_page = 20
     inlines = [EmployerProfileInline, JobInline]
 
     fieldsets = (
@@ -60,10 +72,13 @@ class CompanyAdmin(admin.ModelAdmin):
 
 @admin.register(EmployerProfile)
 class EmployerProfileAdmin(admin.ModelAdmin):
+    """Admin interface for managing employer profiles"""
+
     list_display = ("user", "company", "position", "is_primary_contact", "is_active")
     list_filter = ("is_primary_contact", "is_active", "company")
     search_fields = ("user__username", "user__email", "company__name", "position")
     readonly_fields = ("created_at", "updated_at")
+    list_per_page = 20
 
     fieldsets = (
         (
@@ -87,14 +102,20 @@ class EmployerProfileAdmin(admin.ModelAdmin):
 
 
 class JobApplicationInline(admin.TabularInline):
+    """Inline admin for job applications within job admin"""
+
     model = JobApplication
     extra = 0
     fields = ("candidate", "status", "created_at")
     readonly_fields = ("created_at",)
+    verbose_name = "Job Application"
+    verbose_name_plural = "Job Applications"
 
 
 @admin.register(Job)
 class JobAdmin(admin.ModelAdmin):
+    """Admin interface for managing job postings"""
+
     list_display = (
         "title",
         "company",
@@ -114,6 +135,8 @@ class JobAdmin(admin.ModelAdmin):
     search_fields = ("title", "company__name", "description", "location")
     list_editable = ("is_active",)
     readonly_fields = ("views_count", "created_at", "updated_at")
+    date_hierarchy = "created_at"
+    list_per_page = 20
     inlines = [JobApplicationInline]
 
     fieldsets = (
@@ -157,14 +180,20 @@ class JobAdmin(admin.ModelAdmin):
 
 
 class InterviewInline(admin.TabularInline):
+    """Inline admin for interviews within job application admin"""
+
     model = Interview
     extra = 0
     fields = ("scheduled_date", "interviewer", "status")
     readonly_fields = ("scheduled_date",)
+    verbose_name = "Interview"
+    verbose_name_plural = "Interviews"
 
 
 @admin.register(JobApplication)
 class JobApplicationAdmin(admin.ModelAdmin):
+    """Admin interface for managing job applications"""
+
     list_display = ("candidate", "job", "status", "is_read", "created_at")
     list_filter = ("status", "is_read", "created_at")
     search_fields = (
@@ -174,6 +203,8 @@ class JobApplicationAdmin(admin.ModelAdmin):
         "job__company__name",
     )
     readonly_fields = ("created_at", "updated_at", "status_changed_at")
+    date_hierarchy = "created_at"
+    list_per_page = 20
     inlines = [InterviewInline]
 
     fieldsets = (
@@ -225,10 +256,14 @@ class JobApplicationAdmin(admin.ModelAdmin):
 
 @admin.register(CandidateNote)
 class CandidateNoteAdmin(admin.ModelAdmin):
+    """Admin interface for managing employer notes about candidates"""
+
     list_display = ("candidate", "employer", "job", "is_private", "created_at")
     list_filter = ("is_private", "created_at")
     search_fields = ("candidate__username", "employer__user__username", "note")
     readonly_fields = ("created_at", "updated_at")
+    date_hierarchy = "created_at"
+    list_per_page = 20
 
     fieldsets = (
         (
@@ -241,6 +276,8 @@ class CandidateNoteAdmin(admin.ModelAdmin):
 
 @admin.register(Interview)
 class InterviewAdmin(admin.ModelAdmin):
+    """Admin interface for managing interviews"""
+
     list_display = (
         "application",
         "interviewer",
@@ -255,6 +292,8 @@ class InterviewAdmin(admin.ModelAdmin):
         "interviewer__user__username",
     )
     readonly_fields = ("created_at", "updated_at")
+    date_hierarchy = "scheduled_date"
+    list_per_page = 20
 
     fieldsets = (
         (
@@ -276,6 +315,8 @@ class InterviewAdmin(admin.ModelAdmin):
 
 @admin.register(CompanyReview)
 class CompanyReviewAdmin(admin.ModelAdmin):
+    """Admin interface for managing company reviews"""
+
     list_display = (
         "company",
         "author",
@@ -288,6 +329,8 @@ class CompanyReviewAdmin(admin.ModelAdmin):
     search_fields = ("company__name", "author__username", "title")
     list_editable = ("is_verified", "is_published")
     readonly_fields = ("created_at", "updated_at")
+    date_hierarchy = "created_at"
+    list_per_page = 20
 
     fieldsets = (
         (

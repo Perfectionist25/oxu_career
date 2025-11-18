@@ -7,11 +7,24 @@ User = get_user_model()
 
 
 class Industry(models.Model):
-    """Отрасли промышленности/сферы деятельности"""
+    """Represents industry sectors for job categorization"""
 
-    name = models.CharField(max_length=100, verbose_name=_("Industry Name"))
-    description = models.TextField(blank=True, verbose_name=_("Description"))
-    icon = models.CharField(max_length=50, blank=True, verbose_name=_("Icon"))
+    name = models.CharField(
+        max_length=100,
+        verbose_name=_("Industry Name"),
+        help_text=_("Name of the industry sector")
+    )
+    description = models.TextField(
+        blank=True,
+        verbose_name=_("Description"),
+        help_text=_("Optional description of the industry")
+    )
+    icon = models.CharField(
+        max_length=50,
+        blank=True,
+        verbose_name=_("Icon"),
+        help_text=_("Icon identifier for UI display")
+    )
 
     class Meta:
         verbose_name = _("Industry")
@@ -23,131 +36,314 @@ class Industry(models.Model):
 
 
 class Job(models.Model):
-    """Ish o'rinlari (Vakansiya)"""
+    """Stores job vacancy information with multilingual support"""
 
-    # Ish turi tanlovlari
+    # Employment type choices
     EMPLOYMENT_TYPE_CHOICES = [
-        ("full_time", _("To'liq ish kuni")),
-        ("part_time", _("Yarim ish kuni")),
-        ("contract", _("Kontrakt asosida")),
-        ("internship", _("Stajyorlik")),
-        ("remote", _("Masofaviy ish")),
-        ("freelance", _("Frilans")),
-        ("shift", _("Smenali ish")),
-        ("flexible", _("Moslashuvchan grafik")),
+        ("full_time", _("Full Time")),
+        ("part_time", _("Part Time")),
+        ("contract", _("Contract")),
+        ("internship", _("Internship")),
+        ("remote", _("Remote")),
+        ("freelance", _("Freelance")),
+        ("shift", _("Shift Work")),
+        ("flexible", _("Flexible Schedule")),
     ]
 
-    # Tajriba darajasi
+    # Experience level choices
     EXPERIENCE_LEVEL_CHOICES = [
-        ("no_experience", _("Tajriba talab qilinmaydi")),
-        ("intern", _("Stajyor")),
-        ("junior", _("Yosh mutaxassis")),
-        ("middle", _("O'rta daraja")),
-        ("senior", _("Katta mutaxassis")),
-        ("lead", _("Lid")),
-        ("manager", _("Menejer")),
-        ("director", _("Rahbar")),
+        ("no_experience", _("No Experience Required")),
+        ("intern", _("Intern")),
+        ("junior", _("Junior")),
+        ("middle", _("Middle")),
+        ("senior", _("Senior")),
+        ("lead", _("Lead")),
+        ("manager", _("Manager")),
+        ("director", _("Director")),
     ]
 
-    # Ma'lumot darajasi
+    # Education level choices
     EDUCATION_LEVEL_CHOICES = [
-        ("school", _("O'rta ma'lumot")),
-        ("college", _("O'rta maxsus")),
-        ("bachelor", _("Bakalavr")),
-        ("master", _("Magistr")),
+        ("school", _("High School")),
+        ("college", _("College")),
+        ("bachelor", _("Bachelor's Degree")),
+        ("master", _("Master's Degree")),
         ("phd", _("PhD")),
-        ("none", _("Ma'lumot talab qilinmaydi")),
+        ("none", _("No Education Required")),
     ]
 
-    # Valyuta tanlovlari
+    # Currency choices
     CURRENCY_CHOICES = [
-        ("UZS", _("So'm")),
-        ("USD", _("AQSH dollari")),
-        ("EUR", _("Yevro")),
+        ("UZS", _("UZS")),
+        ("USD", _("USD")),
+        ("EUR", _("EUR")),
     ]
 
-    # Ish turlari - ИСПРАВЛЕНО: убраны лишние поля и исправлены опечатки
-    WORK_TYPE_CHOICES = [  # ИСПРАВЛЕНО: переименовано и исправлены опечатки
-        ("remote", _("Uydan ishlash")),
-        ("hybrid", _("Gibrid ishlash")),
-        ("office", _("Ishxonada ishlash")),
+    # Work type choices
+    WORK_TYPE_CHOICES = [
+        ("remote", _("Remote")),
+        ("hybrid", _("Hybrid")),
+        ("office", _("Office")),
     ]
 
-    # ASOSIY MA'LUMOTLAR
-    title = models.CharField(max_length=200, verbose_name=_("Lavozim nomi"))
-    description = models.TextField(verbose_name=_("Ish haqida batafsil"))
-    short_description = models.CharField(max_length=300, verbose_name=_("Qisqacha tavsif"))
+    # Basic Information
+    title = models.CharField(
+        max_length=200,
+        verbose_name=_("Job Title"),
+        help_text=_("Enter the position title")
+    )
+    description = models.TextField(
+        verbose_name=_("Job Description"),
+        help_text=_("Detailed description of the job responsibilities")
+    )
+    short_description = models.CharField(
+        max_length=300,
+        verbose_name=_("Short Description"),
+        help_text=_("Brief summary of the job")
+    )
 
-    # KORXONA VA MANZIL
-    employer = models.ForeignKey("accounts.EmployerProfile", on_delete=models.CASCADE, related_name="jobs", verbose_name=_("Ish beruvchi"))
+    # Company and Location
+    employer = models.ForeignKey(
+        "accounts.EmployerProfile",
+        on_delete=models.CASCADE,
+        related_name="jobs",
+        verbose_name=_("Employer"),
+        help_text=_("The employer posting this job")
+    )
 
-    location = models.CharField(max_length=100, verbose_name=_("Ish joyi manzili"), blank=True, default=_('Kiritilmagan'))
-    district = models.CharField(max_length=100, blank=True, verbose_name=_("Tuman/Shahar"))
-    region = models.CharField(max_length=100, default=_("Kiritilmagan"), verbose_name=_("Viloyat"), blank=True)
+    location = models.CharField(
+        max_length=100,
+        verbose_name=_("Location"),
+        blank=True,
+        default="",
+        help_text=_("Specific location or address")
+    )
+    district = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_("District/City"),
+        help_text=_("District or city name")
+    )
+    region = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_("Region"),
+        help_text=_("Region or province")
+    )
     
-    # Ish turi - ИСПРАВЛЕНО: используется исправленный choices
-    work_type = models.CharField(max_length=20, choices=WORK_TYPE_CHOICES, verbose_name=_('Ish tipi'))
+    # Work Type
+    work_type = models.CharField(
+        max_length=20,
+        choices=WORK_TYPE_CHOICES,
+        verbose_name=_("Work Type"),
+        help_text=_("Type of work arrangement")
+    )
 
-    # ISH SHARTLARI
-    employment_type = models.CharField(max_length=20, choices=EMPLOYMENT_TYPE_CHOICES, verbose_name=_("Ish turi"))
-    experience_level = models.CharField(max_length=20, choices=EXPERIENCE_LEVEL_CHOICES, verbose_name=_("Tajriba darajasi"))
-    education_level = models.CharField(max_length=20, choices=EDUCATION_LEVEL_CHOICES, verbose_name=_("Ma'lumot darajasi"))
+    # Job Conditions
+    employment_type = models.CharField(
+        max_length=20,
+        choices=EMPLOYMENT_TYPE_CHOICES,
+        verbose_name=_("Employment Type"),
+        help_text=_("Type of employment contract")
+    )
+    experience_level = models.CharField(
+        max_length=20,
+        choices=EXPERIENCE_LEVEL_CHOICES,
+        verbose_name=_("Experience Level"),
+        help_text=_("Required experience level")
+    )
+    education_level = models.CharField(
+        max_length=20,
+        choices=EDUCATION_LEVEL_CHOICES,
+        verbose_name=_("Education Level"),
+        help_text=_("Required education level")
+    )
 
-    # MAOSH
-    salary_min = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, verbose_name=_("Minimal maosh"))
-    salary_max = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, verbose_name=_("Maksimal maosh"))
-    currency = models.CharField(max_length=3, choices=CURRENCY_CHOICES, default="UZS", verbose_name=_("Valyuta"))
-    hide_salary = models.BooleanField(default=False, verbose_name=_("Maoshnni yashirish"))
-    salary_negotiable = models.BooleanField(default=False, verbose_name=_("Maosh kelishilgan holda"))
+    # Salary
+    salary_min = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        verbose_name=_("Minimum Salary"),
+        help_text=_("Minimum salary amount")
+    )
+    salary_max = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        verbose_name=_("Maximum Salary"),
+        help_text=_("Maximum salary amount")
+    )
+    currency = models.CharField(
+        max_length=3,
+        choices=CURRENCY_CHOICES,
+        default="UZS",
+        verbose_name=_("Currency"),
+        help_text=_("Salary currency")
+    )
+    hide_salary = models.BooleanField(
+        default=False,
+        verbose_name=_("Hide Salary"),
+        help_text=_("Hide salary information from public view")
+    )
+    salary_negotiable = models.BooleanField(
+        default=False,
+        verbose_name=_("Salary Negotiable"),
+        help_text=_("Salary is open to negotiation")
+    )
     
-    # QO'SHIMCHA TO'LOVLAR
-    bonus_system = models.BooleanField(default=False, verbose_name=_("Bonus tizimi"))
-    kpi_bonus = models.BooleanField(default=False, verbose_name=_("KPI asosida bonus"))
-    performance_bonus = models.BooleanField(default=False, verbose_name=_("Ish natijasiga ko'ra bonus"))
+    # Additional Compensation
+    bonus_system = models.BooleanField(
+        default=False,
+        verbose_name=_("Bonus System"),
+        help_text=_("Company offers bonus system")
+    )
+    kpi_bonus = models.BooleanField(
+        default=False,
+        verbose_name=_("KPI Bonus"),
+        help_text=_("Bonuses based on KPI performance")
+    )
+    performance_bonus = models.BooleanField(
+        default=False,
+        verbose_name=_("Performance Bonus"),
+        help_text=_("Bonuses based on overall performance")
+    )
 
-    # TALABLAR
-    requirements = models.TextField(verbose_name=_("Talablar"))
-    responsibilities = models.TextField(verbose_name=_("Majburiyatlar"))
-    benefits = models.TextField(blank=True, verbose_name=_("Ish shartlari va imtiyozlar"))
+    # Requirements
+    requirements = models.TextField(
+        verbose_name=_("Requirements"),
+        help_text=_("Job requirements and qualifications")
+    )
+    responsibilities = models.TextField(
+        verbose_name=_("Responsibilities"),
+        help_text=_("Job duties and responsibilities")
+    )
+    benefits = models.TextField(
+        blank=True,
+        verbose_name=_("Benefits"),
+        help_text=_("Employee benefits and perks")
+    )
 
-    # KO'NIKMALAR
-    skills_required = models.TextField(help_text=_("Ko'nikmalarni vergul bilan ajrating"), verbose_name=_("Talab qilinadigan ko'nikmalar"))
-    preferred_skills = models.TextField(blank=True, verbose_name=_("Qo'shimcha ko'nikmalar"))
+    # Skills
+    skills_required = models.TextField(
+        verbose_name=_("Required Skills"),
+        help_text=_("List required skills separated by commas")
+    )
+    preferred_skills = models.TextField(
+        blank=True,
+        verbose_name=_("Preferred Skills"),
+        help_text=_("List preferred skills separated by commas")
+    )
 
-    # TIL BILISH
-    language_requirements = models.TextField(blank=True, verbose_name=_("Til bilish darajasi"), help_text=_("Masalan: Ingliz tili - O'rta daraja"))
+    # Language Requirements
+    language_requirements = models.TextField(
+        blank=True,
+        verbose_name=_("Language Requirements"),
+        help_text=_("Required language proficiency levels")
+    )
 
-    # KONTAKT MA'LUMOTLARI
-    contact_email = models.EmailField(verbose_name=_("Aloqa uchun email"))
-    contact_phone = models.CharField(max_length=20, blank=True, verbose_name=_("Telefon raqam"))
-    contact_person = models.CharField(max_length=100, blank=True, verbose_name=_("Mas'ul shaxs"))
-    application_url = models.URLField(blank=True, verbose_name=_("Ariza topshirish havolasi"))
+    # Contact Information
+    contact_email = models.EmailField(
+        verbose_name=_("Contact Email"),
+        help_text=_("Email for job applications")
+    )
+    contact_phone = models.CharField(
+        max_length=20,
+        blank=True,
+        verbose_name=_("Contact Phone"),
+        help_text=_("Phone number for inquiries")
+    )
+    contact_person = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_("Contact Person"),
+        help_text=_("Name of the contact person")
+    )
+    application_url = models.URLField(
+        blank=True,
+        verbose_name=_("Application URL"),
+        help_text=_("Direct link to apply")
+    )
 
-    # ISH JARAYONI
-    work_schedule = models.CharField(max_length=100, blank=True, verbose_name=_("Ish jadvali"), help_text=_("Masalan: 09:00 - 18:00, dam olish kunlari: Shanba, Yakshanba"))
-    probation_period = models.CharField(max_length=50, blank=True, verbose_name=_("Sinov muddati"), help_text=_("Masalan: 3 oy"))
+    # Work Process
+    work_schedule = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_("Work Schedule"),
+        help_text=_("Working hours and days")
+    )
+    probation_period = models.CharField(
+        max_length=50,
+        blank=True,
+        verbose_name=_("Probation Period"),
+        help_text=_("Duration of probation period")
+    )
 
-    # STATISTIKA VA HOLAT
-    is_active = models.BooleanField(default=True, verbose_name=_("Faol vakansiya"))
-    is_featured = models.BooleanField(default=False, verbose_name=_("Tavsiya etilgan"))
-    is_urgent = models.BooleanField(default=False, verbose_name=_("Shoshilinch"))
-    is_premium = models.BooleanField(default=False, verbose_name=_("Premium vakansiya"))
+    # Status and Statistics
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name=_("Active"),
+        help_text=_("Job is currently active")
+    )
+    is_featured = models.BooleanField(
+        default=False,
+        verbose_name=_("Featured"),
+        help_text=_("Highlight this job in listings")
+    )
+    is_urgent = models.BooleanField(
+        default=False,
+        verbose_name=_("Urgent"),
+        help_text=_("Mark as urgent hiring")
+    )
+    is_premium = models.BooleanField(
+        default=False,
+        verbose_name=_("Premium"),
+        help_text=_("Premium job listing")
+    )
 
-    views_count = models.IntegerField(default=0, verbose_name=_("Ko'rishlar soni"))
-    applications_count = models.IntegerField(default=0, verbose_name=_("Arizalar soni"))
-    favorites_count = models.IntegerField(default=0, verbose_name=_("Saqlanganlar soni"))
+    views_count = models.IntegerField(
+        default=0,
+        verbose_name=_("Views Count"),
+        help_text=_("Number of views")
+    )
+    applications_count = models.IntegerField(
+        default=0,
+        verbose_name=_("Applications Count"),
+        help_text=_("Number of applications received")
+    )
+    favorites_count = models.IntegerField(
+        default=0,
+        verbose_name=_("Favorites Count"),
+        help_text=_("Number of times saved as favorite")
+    )
 
-    # SANALAR
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Yaratilgan sana"))
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Yangilangan sana"))
-    expires_at = models.DateTimeField(null=True, blank=True, verbose_name=_("Muddati tugaydigan sana"))
+    # Dates
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Created At")
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Updated At")
+    )
+    expires_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_("Expires At"),
+        help_text=_("Job posting expiration date")
+    )
     
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_("Yaratgan foydalanuvchi"), related_name="jobs_created")
-
-    # ДОБАВЛЕНЫ ОТСУТСТВУЮЩИЕ ПОЛЯ ДЛЯ work_type_display метода
-    remote_work = models.BooleanField(default=False, verbose_name=_("Uzoq ish"))
-    hybrid_work = models.BooleanField(default=False, verbose_name=_("Gibrid ish"))
-    office_work = models.BooleanField(default=False, verbose_name=_("Ofisda ish"))
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        verbose_name=_("Created By"),
+        related_name="jobs_created",
+        help_text=_("User who created this job")
+    )
 
     class Meta:
         verbose_name = _("Ish o'rini")
@@ -216,7 +412,7 @@ class Job(models.Model):
 
 
 class JobApplication(models.Model):
-    """Отклик на вакансию"""
+    """Stores job application information from candidates"""
 
     STATUS_CHOICES = [
         ("applied", _("Applied")),
@@ -233,55 +429,85 @@ class JobApplication(models.Model):
         on_delete=models.CASCADE,
         related_name="applications",
         verbose_name=_("Job"),
+        help_text=_("The job being applied for")
     )
     candidate = models.ForeignKey(
-        User, on_delete=models.CASCADE, verbose_name=_("Candidate")
+        User,
+        on_delete=models.CASCADE,
+        verbose_name=_("Candidate"),
+        help_text=_("The user applying for the job")
     )
 
-    # Резюме и сопроводительное письмо
+    # Resume and Cover Letter
     cv = models.ForeignKey(
         "cvbuilder.CV",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
         verbose_name=_("Resume"),
+        help_text=_("Candidate's resume/CV")
     )
-    cover_letter = models.TextField(verbose_name=_("Cover Letter"))
+    cover_letter = models.TextField(
+        verbose_name=_("Cover Letter"),
+        help_text=_("Candidate's cover letter explaining their interest")
+    )
 
-    # Ожидания
+    # Expectations
     expected_salary = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         null=True,
         blank=True,
         verbose_name=_("Expected Salary"),
+        help_text=_("Candidate's expected salary")
     )
     notice_period = models.IntegerField(
-        default=0, help_text=_("Days"), verbose_name=_("Notice Period")
+        default=0,
+        verbose_name=_("Notice Period"),
+        help_text=_("Days required for notice period")
     )
     available_from = models.DateField(
-        null=True, blank=True, verbose_name=_("Available From")
+        null=True,
+        blank=True,
+        verbose_name=_("Available From"),
+        help_text=_("Date when candidate can start work")
     )
 
-    # Статус
+    # Status
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
         default="applied",
         verbose_name=_("Status"),
+        help_text=_("Current application status")
     )
     status_changed_at = models.DateTimeField(
-        auto_now=True, verbose_name=_("Status Changed")
+        auto_now=True,
+        verbose_name=_("Status Changed"),
+        help_text=_("When status was last updated")
     )
 
-    # Дополнительная информация
-    is_read = models.BooleanField(default=False, verbose_name=_("Read by Employer"))
+    # Additional Information
+    is_read = models.BooleanField(
+        default=False,
+        verbose_name=_("Read by Employer"),
+        help_text=_("Whether employer has read this application")
+    )
     source = models.CharField(
-        max_length=50, blank=True, verbose_name=_("Application Source")
+        max_length=50,
+        blank=True,
+        verbose_name=_("Application Source"),
+        help_text=_("How the candidate found this job")
     )
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Created At")
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Updated At")
+    )
 
     class Meta:
         verbose_name = _("Job Application")
@@ -294,18 +520,27 @@ class JobApplication(models.Model):
 
 
 class SavedJob(models.Model):
-    """Сохраненные вакансии"""
+    """Stores user's saved job bookmarks"""
 
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name="saved_jobs",
         verbose_name=_("User"),
+        help_text=_("User who saved the job")
     )
     job = models.ForeignKey(
-        Job, on_delete=models.CASCADE, related_name="saved_by", verbose_name=_("Job")
+        Job,
+        on_delete=models.CASCADE,
+        related_name="saved_by",
+        verbose_name=_("Job"),
+        help_text=_("The saved job")
     )
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Saved At"))
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Saved At"),
+        help_text=_("When the job was saved")
+    )
 
     class Meta:
         verbose_name = _("Saved Job")
@@ -318,7 +553,7 @@ class SavedJob(models.Model):
 
 
 class JobAlert(models.Model):
-    """Оповещения о вакансиях"""
+    """Stores job alert subscriptions for email notifications"""
 
     FREQUENCY_CHOICES = [
         ("daily", _("Daily")),
@@ -331,44 +566,78 @@ class JobAlert(models.Model):
         on_delete=models.CASCADE,
         related_name="job_alert_subscriptions",
         verbose_name=_("User"),
+        help_text=_("User who created the alert")
     )
-    name = models.CharField(max_length=100, verbose_name=_("Alert Name"))
+    name = models.CharField(
+        max_length=100,
+        verbose_name=_("Alert Name"),
+        help_text=_("Name for this job alert")
+    )
 
-    # Параметры поиска
-    keywords = models.CharField(max_length=200, blank=True, verbose_name=_("Keywords"))
-    location = models.CharField(max_length=100, blank=True, verbose_name=_("Location"))
+    # Search Parameters
+    keywords = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name=_("Keywords"),
+        help_text=_("Keywords to search for in jobs")
+    )
+    location = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_("Location"),
+        help_text=_("Preferred job location")
+    )
     industry = models.ForeignKey(
         Industry,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
         verbose_name=_("Industry"),
+        help_text=_("Preferred industry")
     )
     employment_type = models.CharField(
         max_length=20,
         choices=Job.EMPLOYMENT_TYPE_CHOICES,
         blank=True,
         verbose_name=_("Employment Type"),
+        help_text=_("Preferred employment type")
     )
     experience_level = models.CharField(
         max_length=20,
         choices=Job.EXPERIENCE_LEVEL_CHOICES,
         blank=True,
         verbose_name=_("Experience Level"),
+        help_text=_("Preferred experience level")
     )
 
-    # Настройки
-    is_active = models.BooleanField(default=True, verbose_name=_("Active"))
+    # Settings
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name=_("Active"),
+        help_text=_("Whether this alert is active")
+    )
     frequency = models.CharField(
         max_length=10,
         choices=FREQUENCY_CHOICES,
         default="daily",
         verbose_name=_("Frequency"),
+        help_text=_("How often to send notifications")
     )
-    last_sent = models.DateTimeField(null=True, blank=True, verbose_name=_("Last Sent"))
+    last_sent = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_("Last Sent"),
+        help_text=_("When the last notification was sent")
+    )
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Created At")
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Updated At")
+    )
 
     class Meta:
         verbose_name = _("Job Alert")

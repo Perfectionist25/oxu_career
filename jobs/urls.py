@@ -34,12 +34,7 @@ urlpatterns = [
         views.employer_applications,
         name="employer_applications",
     ),
-    path("ogohlantirishlar/", views.job_alerts, name="job_alerts"),
-    path(
-        "ogohlantirishlar/<int:pk>/ochirish/", 
-        views.delete_job_alert, 
-        name="delete_job_alert"
-    ),
+
     
     # AJAX endpointlar
     path(

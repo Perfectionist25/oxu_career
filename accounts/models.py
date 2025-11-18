@@ -10,25 +10,26 @@ from django.dispatch import receiver
 
 
 class CustomUser(AbstractUser):
-    """Модель пользователя с разными ролями"""
+    """Custom user model with different roles and extended profile information"""
 
     USER_TYPE_CHOICES = [
-        ("guest", _("Mehmon")),
-        ("student", _("O`quvchi yoki bitiruvchi")),
-        ("employer", _("Ish beruvchi")),
+        ("guest", _("Guest")),
+        ("student", _("Student or Graduate")),
+        ("employer", _("Employer")),
         ("admin", _("Admin")),
-        ("main_admin", _("Bosh Admin")),
+        ("main_admin", _("Main Admin")),
     ]
 
-    # Основная информация
+    # Basic Information
     user_type = models.CharField(
         max_length=20,
         choices=USER_TYPE_CHOICES,
         default="guest",
-        verbose_name=_("Foydalanuvchi turi"),
+        verbose_name=_("User Type"),
+        help_text=_("Type of user account (guest, student, employer, admin)")
     )
 
-    # Hemis API данные для студентов
+    # Hemis API data for students
     # hemis_id = models.CharField(
     #     max_length=100,
     #     blank=True,
@@ -38,63 +39,136 @@ class CustomUser(AbstractUser):
     # )
 
     hemis_data = models.JSONField(
-        blank=True, null=True, verbose_name=_("Hemis ma'lumotlari")
+        blank=True,
+        null=True,
+        verbose_name=_("Hemis Data"),
+        help_text=_("JSON data from Hemis API integration")
     )
 
-    # Контактная информация
+    # Contact Information
     phone_number = PhoneNumberField(
-        blank=True, null=True, verbose_name=_("Telefon raqam")
+        blank=True,
+        null=True,
+        verbose_name=_("Phone Number"),
+        help_text=_("User's phone number with country code")
     )
     date_of_birth = models.DateField(
-        null=True, blank=True, verbose_name=_("Tug'ilgan sana")
+        null=True,
+        blank=True,
+        verbose_name=_("Date of Birth"),
+        help_text=_("User's date of birth")
     )
 
-    # Профиль
-    bio = models.TextField(max_length=500, blank=True, verbose_name=_("Bio"))
+    # Profile
+    bio = models.TextField(
+        max_length=500,
+        blank=True,
+        verbose_name=_("Bio"),
+        help_text=_("Short biography or description")
+    )
     avatar = models.ImageField(
-        upload_to="avatars/%Y/%m/%d/", null=True, blank=True, verbose_name=_("Avatar")
+        upload_to="avatars/%Y/%m/%d/",
+        null=True,
+        blank=True,
+        verbose_name=_("Avatar"),
+        help_text=_("Profile picture")
     )
 
-    # Локация
-    country = CountryField(blank=True, verbose_name=_("Davlat"))
-    city = models.CharField(max_length=100, blank=True, verbose_name=_("Shahar"))
-    address = models.CharField(max_length=255, blank=True, verbose_name=_("Manzil"))
+    # Location
+    country = CountryField(
+        blank=True,
+        verbose_name=_("Country"),
+        help_text=_("Country of residence")
+    )
+    city = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_("City"),
+        help_text=_("City of residence")
+    )
+    address = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name=_("Address"),
+        help_text=_("Full address")
+    )
 
-    # Социальные сети
-    website = models.URLField(blank=True, verbose_name=_("Veb sayt"))
-    linkedin = models.URLField(blank=True, verbose_name=_("LinkedIn"))
-    github = models.URLField(blank=True, verbose_name=_("GitHub"))
-    telegram = models.URLField(blank=True, verbose_name=_("Telegram"))
+    # Social Media
+    website = models.URLField(
+        blank=True,
+        verbose_name=_("Website"),
+        help_text=_("Personal or professional website")
+    )
+    linkedin = models.URLField(
+        blank=True,
+        verbose_name=_("LinkedIn"),
+        help_text=_("LinkedIn profile URL")
+    )
+    github = models.URLField(
+        blank=True,
+        verbose_name=_("GitHub"),
+        help_text=_("GitHub profile URL")
+    )
+    telegram = models.URLField(
+        blank=True,
+        verbose_name=_("Telegram"),
+        help_text=_("Telegram username or link")
+    )
 
-    # Настройки
+    # Preferences
     email_notifications = models.BooleanField(
-        default=True, verbose_name=_("Email xabarnomalari")
+        default=True,
+        verbose_name=_("Email Notifications"),
+        help_text=_("Receive email notifications")
     )
     job_alerts = models.BooleanField(
-        default=True, verbose_name=_("Ish ogohlantirishlari")
+        default=True,
+        verbose_name=_("Job Alerts"),
+        help_text=_("Receive job alert notifications")
     )
-    newsletter = models.BooleanField(default=False, verbose_name=_("Yangiliklar"))
+    newsletter = models.BooleanField(
+        default=False,
+        verbose_name=_("Newsletter"),
+        help_text=_("Subscribe to newsletter")
+    )
 
-    # Статусы
-    is_verified = models.BooleanField(default=False, verbose_name=_("Tasdiqlangan"))
+    # Status
+    is_verified = models.BooleanField(
+        default=False,
+        verbose_name=_("Verified"),
+        help_text=_("Account verification status")
+    )
     is_active_employer = models.BooleanField(
-        default=False, verbose_name=_("Faol ish beruvchi")
+        default=False,
+        verbose_name=_("Active Employer"),
+        help_text=_("Whether this employer account is active")
     )
 
-    # Статистика
+    # Statistics
     profile_views = models.PositiveIntegerField(
-        default=0, verbose_name=_("Profil ko'rishlar")
+        default=0,
+        verbose_name=_("Profile Views"),
+        help_text=_("Number of times profile was viewed")
     )
     last_activity = models.DateTimeField(
-        null=True, blank=True, verbose_name=_("Oxirgi faollik")
+        null=True,
+        blank=True,
+        verbose_name=_("Last Activity"),
+        help_text=_("Timestamp of last user activity")
     )
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Created At")
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Updated At")
+    )
 
     class Meta:
-        verbose_name = _("Foydalanuvchi")
-        verbose_name_plural = _("Foydalanuvchilar")
+        verbose_name = _("User")
+        verbose_name_plural = _("Users")
         ordering = ["-date_joined"]
 
     def __str__(self):
@@ -152,84 +226,132 @@ class CustomUser(AbstractUser):
 
 
 class EmployerProfile(models.Model):
-    """Профиль работодателя"""
+    """Profile for employer users with company information"""
 
     COMPANY_SIZE_CHOICES = [
-        ("1-10", _("1-10 xodim")),
-        ("11-50", _("11-50 xodim")),
-        ("51-200", _("51-200 xodim")),
-        ("201-500", _("201-500 xodim")),
-        ("501-1000", _("501-1000 xodim")),
-        ("1000+", _("1000+ xodim")),
+        ("1-10", _("1-10 employees")),
+        ("11-50", _("11-50 employees")),
+        ("51-200", _("51-200 employees")),
+        ("201-500", _("201-500 employees")),
+        ("501-1000", _("501-1000 employees")),
+        ("1000+", _("1000+ employees")),
     ]
 
     user = models.OneToOneField(
         CustomUser,
         on_delete=models.CASCADE,
         related_name="employer_profile",
-        verbose_name=_("Foydalanuvchi"),
+        verbose_name=_("User"),
+        help_text=_("Associated user account")
     )
 
-    # Основная информация компании
-    company_name = models.CharField(max_length=255, verbose_name=_("Kompaniya nomi"))
+    # Company Basic Information
+    company_name = models.CharField(
+        max_length=255,
+        verbose_name=_("Company Name"),
+        help_text=_("Official company name")
+    )
     company_logo = models.ImageField(
         upload_to="company_logos/%Y/%m/%d/",
         null=True,
         blank=True,
-        verbose_name=_("Kompaniya logotipi"),
+        verbose_name=_("Company Logo"),
+        help_text=_("Company logo image")
     )
-    company_description = models.TextField(verbose_name=_("Kompaniya haqida"))
+    company_description = models.TextField(
+        verbose_name=_("Company Description"),
+        help_text=_("Detailed description of the company")
+    )
 
-    # Контактная информация компании
-    company_email = models.EmailField(blank=True, verbose_name=_("Kompaniya emaili"))
+    # Company Contact Information
+    company_email = models.EmailField(
+        blank=True,
+        verbose_name=_("Company Email"),
+        help_text=_("Primary company email address")
+    )
     company_phone = PhoneNumberField(
-        blank=True, null=True, verbose_name=_("Kompaniya telefoni")
+        blank=True,
+        null=True,
+        verbose_name=_("Company Phone"),
+        help_text=_("Company phone number")
     )
-    company_website = models.URLField(blank=True, verbose_name=_("Kompaniya veb sayti"))
+    company_website = models.URLField(
+        blank=True,
+        verbose_name=_("Company Website"),
+        help_text=_("Official company website")
+    )
 
-    # Социальные сети компании
-    company_linkedin = models.URLField(blank=True, verbose_name=_("Kompaniya LinkedIn"))
-    company_telegram = models.URLField(blank=True, verbose_name=_("Kompaniya Telegram"))
+    # Company Social Media
+    company_linkedin = models.URLField(
+        blank=True,
+        verbose_name=_("Company LinkedIn"),
+        help_text=_("Company LinkedIn page URL")
+    )
+    company_telegram = models.URLField(
+        blank=True,
+        verbose_name=_("Company Telegram"),
+        help_text=_("Company Telegram channel or group")
+    )
 
-    # Дополнительная информация
+    # Additional Company Information
     company_size = models.CharField(
         max_length=20,
         choices=COMPANY_SIZE_CHOICES,
         blank=True,
-        verbose_name=_("Kompaniya hajmi"),
+        verbose_name=_("Company Size"),
+        help_text=_("Number of employees in the company")
     )
     industry = models.ForeignKey(
         'jobs.Industry',
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        verbose_name=_("Soha")
+        verbose_name=_("Industry"),
+        help_text=_("Primary industry or sector")
     )
     founded_year = models.IntegerField(
-        null=True, blank=True, verbose_name=_("Tashkil etilgan yil")
+        null=True,
+        blank=True,
+        verbose_name=_("Founded Year"),
+        help_text=_("Year the company was founded")
     )
     headquarters = models.CharField(
-        max_length=255, blank=True, verbose_name=_("Bosh qarorgoh")
+        max_length=255,
+        blank=True,
+        verbose_name=_("Headquarters"),
+        help_text=_("Location of company headquarters")
     )
 
-    # Статистика
+    # Statistics
     jobs_posted = models.PositiveIntegerField(
-        default=0, verbose_name=_("E'lon qilingan ishlar")
+        default=0,
+        verbose_name=_("Jobs Posted"),
+        help_text=_("Number of job postings created")
     )
     total_views = models.PositiveIntegerField(
-        default=0, verbose_name=_("Jami ko'rishlar")
+        default=0,
+        verbose_name=_("Total Views"),
+        help_text=_("Total profile views")
     )
 
     is_verified = models.BooleanField(
-        default=False, verbose_name=_("Tasdiqlangan kompaniya")
+        default=False,
+        verbose_name=_("Verified Company"),
+        help_text=_("Whether the company is verified")
     )
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Created At")
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Updated At")
+    )
 
     class Meta:
-        verbose_name = _("Ish beruvchi profili")
-        verbose_name_plural = _("Ish beruvchi profillari")
+        verbose_name = _("Employer Profile")
+        verbose_name_plural = _("Employer Profiles")
 
     def __str__(self):
         return f"{self.company_name} - {self.user.username}"
@@ -239,85 +361,117 @@ class EmployerProfile(models.Model):
 
 
 class StudentProfile(models.Model):
-    """Профиль студента/выпускника"""
+    """Profile for student/graduate users with educational and career information"""
 
     EDUCATION_LEVEL_CHOICES = [
-        ("bachelor", _("Bakalavr")),
-        ("master", _("Magistr")),
+        ("bachelor", _("Bachelor")),
+        ("master", _("Master")),
         ("phd", _("PhD")),
-        ("college", _("Kollej")),
-        ("school", _("Maktab")),
+        ("college", _("College")),
+        ("school", _("School")),
     ]
 
     user = models.OneToOneField(
         CustomUser,
         on_delete=models.CASCADE,
         related_name="student_profile",
-        verbose_name=_("Foydalanuvchi"),
+        verbose_name=_("User"),
+        help_text=_("Associated user account")
     )
 
-    # Образовательная информация из Hemis
+    # Educational Information from Hemis
     student_id = models.CharField(
-        max_length=50, blank=True, verbose_name=_("Talaba ID")
+        max_length=50,
+        blank=True,
+        verbose_name=_("Student ID"),
+        help_text=_("Student identification number")
     )
-    faculty = models.CharField(max_length=255, blank=True, verbose_name=_("Fakultet"))
+    faculty = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name=_("Faculty"),
+        help_text=_("Academic faculty or department")
+    )
     specialty = models.CharField(
-        max_length=255, blank=True, verbose_name=_("Mutaxassislik")
+        max_length=255,
+        blank=True,
+        verbose_name=_("Specialty"),
+        help_text=_("Field of study or specialization")
     )
     education_level = models.CharField(
         max_length=20,
         choices=EDUCATION_LEVEL_CHOICES,
         blank=True,
-        verbose_name=_("Ta'lim darajasi"),
+        verbose_name=_("Education Level"),
+        help_text=_("Current or completed education level")
     )
     graduation_year = models.IntegerField(
-        null=True, blank=True, verbose_name=_("Bitirgan yili")
+        null=True,
+        blank=True,
+        verbose_name=_("Graduation Year"),
+        help_text=_("Year of graduation")
     )
     gpa = models.DecimalField(
         max_digits=3,
         decimal_places=2,
         null=True,
         blank=True,
-        verbose_name=_("O'rtacha baho"),
+        verbose_name=_("GPA"),
+        help_text=_("Grade Point Average (0.00-4.00)")
     )
 
-    # Карьерные предпочтения
+    # Career Preferences
     desired_position = models.CharField(
-        max_length=255, blank=True, verbose_name=_("Istagan lavozim")
+        max_length=255,
+        blank=True,
+        verbose_name=_("Desired Position"),
+        help_text=_("Preferred job position or title")
     )
     desired_salary = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         null=True,
         blank=True,
-        verbose_name=_("Istagan maosh"),
+        verbose_name=_("Desired Salary"),
+        help_text=_("Preferred salary range")
     )
     work_type = models.CharField(
         max_length=50,
         choices=[
-            ("full_time", _("To`liq kunlik")),
-            ("part_time", _("Yarim kunlik")),
-            ("remote", _("Uzoq ish")),
-            ("internship", _("Stajirovka")),
+            ("full_time", _("Full Time")),
+            ("part_time", _("Part Time")),
+            ("remote", _("Remote")),
+            ("internship", _("Internship")),
         ],
         blank=True,
-        verbose_name=_("Ish turi"),
+        verbose_name=_("Work Type"),
+        help_text=_("Preferred type of employment")
     )
 
-    # Статистика
+    # Statistics
     resumes_created = models.PositiveIntegerField(
-        default=0, verbose_name=_("Yaratilgan rezyumelar")
+        default=0,
+        verbose_name=_("Resumes Created"),
+        help_text=_("Number of resumes created")
     )
     jobs_applied = models.PositiveIntegerField(
-        default=0, verbose_name=_("Ariza berilgan ishlar")
+        default=0,
+        verbose_name=_("Jobs Applied"),
+        help_text=_("Number of job applications submitted")
     )
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Created At")
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Updated At")
+    )
 
     class Meta:
-        verbose_name = _("Talaba profili")
-        verbose_name_plural = _("Talaba profillari")
+        verbose_name = _("Student Profile")
+        verbose_name_plural = _("Student Profiles")
 
     def __str__(self):
         return f"{self.user.get_full_name()} - {self.specialty}"
@@ -327,49 +481,72 @@ class StudentProfile(models.Model):
 
 
 class AdminProfile(models.Model):
-    """Профиль администратора"""
+    """Profile for admin users with management permissions"""
 
     user = models.OneToOneField(
         CustomUser,
         on_delete=models.CASCADE,
         related_name="admin_profile",
-        verbose_name=_("Foydalanuvchi"),
+        verbose_name=_("User"),
+        help_text=_("Associated user account")
     )
 
-    # Права администратора
+    # Admin Permissions
     can_manage_students = models.BooleanField(
-        default=True, verbose_name=_("Talabalarni boshqarish")
+        default=True,
+        verbose_name=_("Manage Students"),
+        help_text=_("Permission to manage student accounts and profiles")
     )
     can_manage_employers = models.BooleanField(
-        default=True, verbose_name=_("Ish beruvchilarni boshqarish")
+        default=True,
+        verbose_name=_("Manage Employers"),
+        help_text=_("Permission to manage employer accounts and profiles")
     )
     can_manage_jobs = models.BooleanField(
-        default=True, verbose_name=_("Ishlarni boshqarish")
+        default=True,
+        verbose_name=_("Manage Jobs"),
+        help_text=_("Permission to manage job postings")
     )
     can_manage_resumes = models.BooleanField(
-        default=True, verbose_name=_("Rezyumelarni boshqarish")
+        default=True,
+        verbose_name=_("Manage Resumes"),
+        help_text=_("Permission to manage resumes and CVs")
     )
     can_view_statistics = models.BooleanField(
-        default=True, verbose_name=_("Statistikalarni ko'rish")
+        default=True,
+        verbose_name=_("View Statistics"),
+        help_text=_("Permission to view system statistics and analytics")
     )
 
-    # Статистика администрирования
+    # Administration Statistics
     students_managed = models.PositiveIntegerField(
-        default=0, verbose_name=_("Boshqarilgan talabalar")
+        default=0,
+        verbose_name=_("Students Managed"),
+        help_text=_("Number of student accounts managed")
     )
     employers_created = models.PositiveIntegerField(
-        default=0, verbose_name=_("Yaratilgan ish beruvchilar")
+        default=0,
+        verbose_name=_("Employers Created"),
+        help_text=_("Number of employer accounts created")
     )
     jobs_approved = models.PositiveIntegerField(
-        default=0, verbose_name=_("Tasdiqlangan ishlar")
+        default=0,
+        verbose_name=_("Jobs Approved"),
+        help_text=_("Number of job postings approved")
     )
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Created At")
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Updated At")
+    )
 
     class Meta:
-        verbose_name = _("Admin profili")
-        verbose_name_plural = _("Admin profillari")
+        verbose_name = _("Admin Profile")
+        verbose_name_plural = _("Admin Profiles")
 
     def __str__(self):
         return f"Admin: {self.user.username}"
@@ -377,91 +554,129 @@ class AdminProfile(models.Model):
 
 # accounts/models.py - часть с HemisAuth
 class HemisAuth(models.Model):
-    """Модель для аутентификации через Hemis API"""
+    """Model for authentication through Hemis API integration"""
 
     user = models.OneToOneField(
         CustomUser,
         on_delete=models.CASCADE,
         related_name="hemis_auth",
-        verbose_name=_("Foydalanuvchi"),
+        verbose_name=_("User"),
+        help_text=_("Associated user account")
     )
 
-    # Убедитесь что это поле существует (или добавьте его)
-    hemis_user_id = models.CharField(  # Добавьте это поле если нужно
-        max_length=100, blank=True, null=True, verbose_name=_("Hemis User ID")
+    hemis_user_id = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_("Hemis User ID"),
+        help_text=_("User ID from Hemis system")
     )
 
-    access_token = models.TextField(verbose_name=_("Access Token"))
-    refresh_token = models.TextField(verbose_name=_("Refresh Token"))
-    token_expires = models.DateTimeField(verbose_name=_("Token muddati"))
+    access_token = models.TextField(
+        verbose_name=_("Access Token"),
+        help_text=_("OAuth access token for Hemis API")
+    )
+    refresh_token = models.TextField(
+        verbose_name=_("Refresh Token"),
+        help_text=_("OAuth refresh token for Hemis API")
+    )
+    token_expires = models.DateTimeField(
+        verbose_name=_("Token Expires"),
+        help_text=_("Expiration date of the access token")
+    )
 
     hemis_user_data = models.JSONField(
-        verbose_name=_("Hemis foydalanuvchi ma'lumotlari")
+        verbose_name=_("Hemis User Data"),
+        help_text=_("JSON data retrieved from Hemis API")
     )
 
     last_sync = models.DateTimeField(
-        auto_now=True, verbose_name=_("Oxirgi sinxronizatsiya")
+        auto_now=True,
+        verbose_name=_("Last Sync"),
+        help_text=_("Timestamp of last data synchronization")
     )
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Created At")
+    )
 
     class Meta:
-        verbose_name = _("Hemis autentifikatsiya")
-        verbose_name_plural = _("Hemis autentifikatsiyalar")
+        verbose_name = _("Hemis Authentication")
+        verbose_name_plural = _("Hemis Authentications")
 
     def __str__(self):
         return f"Hemis auth for {self.user.username}"
 
     def is_token_valid(self):
-        """Проверка валидности токена"""
+        """Check if the access token is still valid"""
         from django.utils import timezone
 
         return timezone.now() < self.token_expires
 
 
 class UserActivity(models.Model):
-    """Модель для отслеживания активности пользователей"""
+    """Model for tracking user activities and interactions"""
 
     ACTIVITY_TYPES = [
-        ("login", _("Kirish")),
-        ("profile_view", _("Profil ko`rish")),
-        ("job_apply", _("Ishga ariza")),
-        ("resume_create", _("Rezyume yaratish")),
-        ("job_create", _("Ish yaratish")),
-        ("profile_update", _("Profil yangilash")),
-        ("password_change", _("Parol o`zgartirish")),
+        ("login", _("Login")),
+        ("profile_view", _("Profile View")),
+        ("job_apply", _("Job Application")),
+        ("resume_create", _("Resume Creation")),
+        ("job_create", _("Job Creation")),
+        ("profile_update", _("Profile Update")),
+        ("password_change", _("Password Change")),
     ]
 
     user = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, verbose_name=_("Foydalanuvchi")
+        CustomUser,
+        on_delete=models.CASCADE,
+        verbose_name=_("User"),
+        help_text=_("User who performed the activity")
     )
 
     activity_type = models.CharField(
-        max_length=50, choices=ACTIVITY_TYPES, verbose_name=_("Faollik turi")
+        max_length=50,
+        choices=ACTIVITY_TYPES,
+        verbose_name=_("Activity Type"),
+        help_text=_("Type of user activity")
     )
 
-    description = models.TextField(blank=True, verbose_name=_("Tavsif"))
+    description = models.TextField(
+        blank=True,
+        verbose_name=_("Description"),
+        help_text=_("Optional description of the activity")
+    )
 
     ip_address = models.GenericIPAddressField(
-        null=True, blank=True, verbose_name=_("IP manzil")
+        null=True,
+        blank=True,
+        verbose_name=_("IP Address"),
+        help_text=_("IP address of the user at the time of activity")
     )
 
-    user_agent = models.TextField(blank=True, verbose_name=_("User Agent"))
+    user_agent = models.TextField(
+        blank=True,
+        verbose_name=_("User Agent"),
+        help_text=_("Browser or device information")
+    )
 
     created_at = models.DateTimeField(
-        auto_now_add=True, verbose_name=_("Yaratilgan vaqt")
+        auto_now_add=True,
+        verbose_name=_("Created At"),
+        help_text=_("Timestamp when the activity occurred")
     )
 
     class Meta:
-        verbose_name = _("Foydalanuvchi faolligi")
-        verbose_name_plural = _("Foydalanuvchi faolliklari")
+        verbose_name = _("User Activity")
+        verbose_name_plural = _("User Activities")
         ordering = ["-created_at"]
 
     def __str__(self):
         return f"{self.user.username} — {self.get_activity_type_display()} — {self.created_at}"
 
     def save(self, *args, **kwargs):
-        """Обновляем last_activity пользователя при сохранении активности"""
+        """Update user's last_activity timestamp when saving activity"""
         super().save(*args, **kwargs)
         if self.user:
             self.user.last_activity = self.created_at
@@ -469,47 +684,70 @@ class UserActivity(models.Model):
 
 
 class Notification(models.Model):
-    """Модель для уведомлений пользователей"""
+    """Model for user notifications and system messages"""
 
     NOTIFICATION_TYPES = [
-        ("job_alert", _("Ish ogohlantirishi")),
-        ("application_update", _("Ariza yangilanishi")),
-        ("message", _("Xabar")),
-        ("system", _("Tizim xabari")),
-        ("event", _("Tadbir xabari")),
-        ("security", _("Xavfsizlik xabari")),
+        ("job_alert", _("Job Alert")),
+        ("application_update", _("Application Update")),
+        ("message", _("Message")),
+        ("system", _("System Message")),
+        ("event", _("Event Message")),
+        ("security", _("Security Message")),
     ]
 
     user = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, verbose_name=_("Foydalanuvchi")
+        CustomUser,
+        on_delete=models.CASCADE,
+        verbose_name=_("User"),
+        help_text=_("Recipient of the notification")
     )
 
     notification_type = models.CharField(
-        max_length=50, choices=NOTIFICATION_TYPES, verbose_name=_("Xabar turi")
+        max_length=50,
+        choices=NOTIFICATION_TYPES,
+        verbose_name=_("Notification Type"),
+        help_text=_("Category of the notification")
     )
 
-    title = models.CharField(max_length=255, verbose_name=_("Sarlavha"))
+    title = models.CharField(
+        max_length=255,
+        verbose_name=_("Title"),
+        help_text=_("Notification title or subject")
+    )
 
-    message = models.TextField(verbose_name=_("Xabar"))
+    message = models.TextField(
+        verbose_name=_("Message"),
+        help_text=_("Full notification content")
+    )
 
-    is_read = models.BooleanField(default=False, verbose_name=_("O`qilgan"))
+    is_read = models.BooleanField(
+        default=False,
+        verbose_name=_("Is Read"),
+        help_text=_("Whether the notification has been read")
+    )
 
-    related_url = models.URLField(blank=True, verbose_name=_("Bog`langan URL"))
+    related_url = models.URLField(
+        blank=True,
+        verbose_name=_("Related URL"),
+        help_text=_("Optional link related to the notification")
+    )
 
     created_at = models.DateTimeField(
-        auto_now_add=True, verbose_name=_("Yaratilgan vaqt")
+        auto_now_add=True,
+        verbose_name=_("Created At"),
+        help_text=_("Timestamp when the notification was created")
     )
 
     class Meta:
-        verbose_name = _("Xabar")
-        verbose_name_plural = _("Xabarlar")
+        verbose_name = _("Notification")
+        verbose_name_plural = _("Notifications")
         ordering = ["-created_at"]
 
     def __str__(self):
         return f"{self.title} — {self.user.username}"
 
     def mark_as_read(self):
-        """Пометить уведомление как прочитанное"""
+        """Mark the notification as read"""
         self.is_read = True
         self.save()
 
@@ -519,7 +757,7 @@ class Notification(models.Model):
 
 @receiver(post_save, sender=CustomUser)
 def create_user_profile(sender, instance, created, **kwargs):
-    """Создать соответствующий профиль при создании пользователя"""
+    """Create corresponding profile when user is created"""
     if created:
         if instance.is_student:
             StudentProfile.objects.create(user=instance)
@@ -531,18 +769,18 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=CustomUser)
 def create_user_activity_on_signup(sender, instance, created, **kwargs):
-    """Создать запись активности при регистрации пользователя"""
+    """Create activity record when user signs up"""
     if created:
         UserActivity.objects.create(
             user=instance,
             activity_type="profile_update",
-            description=str(_("Foydalanuvchi ro`yxatdan o`tdi")),
+            description=str(_("User registered")),
         )
 
 
 @receiver(post_save, sender=EmployerProfile)
 def activate_employer_user(sender, instance, created, **kwargs):
-    """Активировать пользователя работодателя при создании профиля"""
+    """Activate employer user when profile is created"""
     if created:
         instance.user.is_active_employer = True
         instance.user.save()

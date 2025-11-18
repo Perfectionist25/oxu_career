@@ -137,7 +137,7 @@ def job_list(request):
     context = {
         "page_obj": page_obj,
         "companies": Company.objects.all(),
-        "employment_types": Job.EMPLOYMENT_TYPES,
+        "employment_types": Job.EMPLOYMENT_TYPE_CHOICES,
     }
     return render(request, "alumni/job_list.html", context)
 

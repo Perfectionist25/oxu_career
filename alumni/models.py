@@ -12,52 +12,100 @@ User = get_user_model()
 
 
 class Company(models.Model):
-    """Модель компании"""
+    """Company model for alumni employment information"""
 
     INDUSTRY_CHOICES = [
-        ("it", _("IT va Texnologiya")),
-        ("finance", _("Moliya va Bank")),
-        ("education", _("Ta'lim")),
-        ("healthcare", _("Sog'liqni saqlash")),
-        ("manufacturing", _("Ishlab chiqarish")),
-        ("retail", _("Chakana savdo")),
-        ("energy", _("Energetika")),
-        ("telecom", _("Telekommunikatsiya")),
-        ("consulting", _("Konsalting")),
-        ("other", _("Boshqa")),
+        ("it", _("IT and Technology")),
+        ("finance", _("Finance and Banking")),
+        ("education", _("Education")),
+        ("healthcare", _("Healthcare")),
+        ("manufacturing", _("Manufacturing")),
+        ("retail", _("Retail")),
+        ("energy", _("Energy")),
+        ("telecom", _("Telecommunications")),
+        ("consulting", _("Consulting")),
+        ("other", _("Other")),
     ]
 
-    name = models.CharField(max_length=255, verbose_name=_("Kompaniya nomi"))
-    industry = models.CharField(
-        max_length=100, choices=INDUSTRY_CHOICES, verbose_name=_("Soha")
+    name = models.CharField(
+        max_length=255,
+        verbose_name=_("Company Name"),
+        help_text=_("Official company name")
     )
-    description = models.TextField(blank=True, verbose_name=_("Tavsif"))
-    website = models.URLField(blank=True, verbose_name=_("Veb sayt"))
+    industry = models.CharField(
+        max_length=100,
+        choices=INDUSTRY_CHOICES,
+        verbose_name=_("Industry"),
+        help_text=_("Primary industry sector")
+    )
+    description = models.TextField(
+        blank=True,
+        verbose_name=_("Description"),
+        help_text=_("Company description and overview")
+    )
+    website = models.URLField(
+        blank=True,
+        verbose_name=_("Website"),
+        help_text=_("Official company website")
+    )
     logo = models.ImageField(
         upload_to="company_logos/%Y/%m/%d/",
         blank=True,
         null=True,
-        verbose_name=_("Logotip"),
+        verbose_name=_("Logo"),
+        help_text=_("Company logo image")
     )
-    email = models.EmailField(blank=True, verbose_name=_("Email"))
-    phone = PhoneNumberField(blank=True, null=True, verbose_name=_("Telefon"))
-    address = models.TextField(blank=True, verbose_name=_("Manzil"))
+    email = models.EmailField(
+        blank=True,
+        verbose_name=_("Email"),
+        help_text=_("Primary company email")
+    )
+    phone = PhoneNumberField(
+        blank=True,
+        null=True,
+        verbose_name=_("Phone"),
+        help_text=_("Company phone number")
+    )
+    address = models.TextField(
+        blank=True,
+        verbose_name=_("Address"),
+        help_text=_("Company address")
+    )
     employees_count = models.PositiveIntegerField(
-        default=0, verbose_name=_("Xodimlar soni")
+        default=0,
+        verbose_name=_("Employees Count"),
+        help_text=_("Number of employees")
     )
     founded_year = models.PositiveIntegerField(
-        null=True, blank=True, verbose_name=_("Asos solingan yil")
+        null=True,
+        blank=True,
+        verbose_name=_("Founded Year"),
+        help_text=_("Year the company was founded")
     )
 
-    is_verified = models.BooleanField(default=False, verbose_name=_("Tasdiqlangan"))
-    is_active = models.BooleanField(default=True, verbose_name=_("Faol"))
+    is_verified = models.BooleanField(
+        default=False,
+        verbose_name=_("Verified"),
+        help_text=_("Whether the company is verified")
+    )
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name=_("Active"),
+        help_text=_("Whether the company is active")
+    )
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Created At")
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Updated At")
+    )
 
     class Meta:
-        verbose_name = _("Kompaniya")
-        verbose_name_plural = _("Kompaniyalar")
+        verbose_name = _("Company")
+        verbose_name_plural = _("Companies")
         ordering = ["name"]
 
     def __str__(self):
@@ -65,25 +113,42 @@ class Company(models.Model):
 
 
 class Skill(models.Model):
-    """Модель навыков"""
+    """Skill model for alumni professional competencies"""
 
     CATEGORY_CHOICES = [
-        ("technical", _("Texnik ko'nikmalar")),
-        ("soft", _("Yumshoq ko'nikmalar")),
-        ("language", _("Tillarni bilish")),
-        ("professional", _("Kasbiy ko'nikmalar")),
+        ("technical", _("Technical Skills")),
+        ("soft", _("Soft Skills")),
+        ("language", _("Language Skills")),
+        ("professional", _("Professional Skills")),
     ]
 
-    name = models.CharField(max_length=100, verbose_name=_("Ko'nikma nomi"))
-    category = models.CharField(
-        max_length=50, choices=CATEGORY_CHOICES, verbose_name=_("Kategoriya")
+    name = models.CharField(
+        max_length=100,
+        verbose_name=_("Skill Name"),
+        help_text=_("Name of the skill or competency")
     )
-    description = models.TextField(blank=True, verbose_name=_("Tavsif"))
-    slug = models.SlugField(max_length=100, unique=True, blank=True)
+    category = models.CharField(
+        max_length=50,
+        choices=CATEGORY_CHOICES,
+        verbose_name=_("Category"),
+        help_text=_("Category of the skill")
+    )
+    description = models.TextField(
+        blank=True,
+        verbose_name=_("Description"),
+        help_text=_("Detailed description of the skill")
+    )
+    slug = models.SlugField(
+        max_length=100,
+        unique=True,
+        blank=True,
+        verbose_name=_("Slug"),
+        help_text=_("URL-friendly identifier")
+    )
 
     class Meta:
-        verbose_name = _("Ko'nikma")
-        verbose_name_plural = _("Ko'nikmalar")
+        verbose_name = _("Skill")
+        verbose_name_plural = _("Skills")
         ordering = ["category", "name"]
 
     def __str__(self):
@@ -97,21 +162,21 @@ class Skill(models.Model):
 
 class Alumni(models.Model):
     FACULTY_CHOICES = [
-        ("engineering", _("Dasturiy injiniring")),
-        ("economics", _("Iqtisodiyot")),
-        ("management", _("Boshqaruv")),
-        ("law", _("Huquqshunoslik")),
-        ("philology", _("Filologiya")),
-        ("foreign_languages", _("Chet tillari")),
-        ("journalism", _("Jurnalistika")),
-        ("international_relations", _("Xalqaro munosabatlar")),
+        ("engineering", _("Software Engineering")),
+        ("economics", _("Economics")),
+        ("management", _("Management")),
+        ("law", _("Law")),
+        ("philology", _("Philology")),
+        ("foreign_languages", _("Foreign Languages")),
+        ("journalism", _("Journalism")),
+        ("international_relations", _("International Relations")),
     ]
 
     DEGREE_CHOICES = [
-        ("bachelor", _("Bakalavr")),
-        ("master", _("Magistr")),
+        ("bachelor", _("Bachelor")),
+        ("master", _("Master")),
         ("phd", _("PhD")),
-        ("doctorate", _("Doktorant")),
+        ("doctorate", _("Doctorate")),
     ]
 
     # Basic Information
@@ -120,117 +185,224 @@ class Alumni(models.Model):
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        verbose_name=_("Foydalanuvchi"),
+        verbose_name=_("User"),
+        help_text=_("Associated user account")
     )
-    name = models.CharField(max_length=255, verbose_name=_("To'liq ism"))
+    name = models.CharField(
+        max_length=255,
+        verbose_name=_("Full Name"),
+        help_text=_("Alumni's full name")
+    )
     slug = models.SlugField(
-        max_length=255, unique=True, blank=True, verbose_name=_("Slug")
+        max_length=255,
+        unique=True,
+        blank=True,
+        verbose_name=_("Slug"),
+        help_text=_("URL-friendly identifier")
     )
 
     # Education Information
     graduation_year = models.IntegerField(
-        verbose_name=_("Bitirgan yili"), help_text=_("YYYY formatida")
+        verbose_name=_("Graduation Year"),
+        help_text=_("Year of graduation (YYYY format)")
     )
     faculty = models.CharField(
-        max_length=100, choices=FACULTY_CHOICES, verbose_name=_("Fakultet")
+        max_length=100,
+        choices=FACULTY_CHOICES,
+        verbose_name=_("Faculty"),
+        help_text=_("Academic faculty or department")
     )
     degree = models.CharField(
         max_length=50,
         choices=DEGREE_CHOICES,
         default="bachelor",
-        verbose_name=_("Daraja"),
+        verbose_name=_("Degree"),
+        help_text=_("Academic degree obtained")
     )
     specialization = models.CharField(
-        max_length=255, blank=True, verbose_name=_("Mutaxassislik")
+        max_length=255,
+        blank=True,
+        verbose_name=_("Specialization"),
+        help_text=_("Field of specialization")
     )
 
     # Professional Information
     current_position = models.CharField(
-        max_length=255, blank=True, verbose_name=_("Lavozim")
-    )  # Исправлено: было position
-    company = models.ForeignKey(  # Исправлено: было CharField
+        max_length=255,
+        blank=True,
+        verbose_name=_("Current Position"),
+        help_text=_("Current job title or position")
+    )
+    company = models.ForeignKey(
         Company,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        verbose_name=_("Kompaniya"),
+        verbose_name=_("Company"),
+        help_text=_("Current or most recent employer")
     )
     profession = models.CharField(
-        max_length=255, blank=True, verbose_name=_("Kasb")
-    )  # Добавлено для совместимости
-    industry = models.CharField(max_length=100, blank=True, verbose_name=_("Soha"))
+        max_length=255,
+        blank=True,
+        verbose_name=_("Profession"),
+        help_text=_("Professional field or occupation")
+    )
+    industry = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_("Industry"),
+        help_text=_("Industry sector")
+    )
 
     # Contact Information
-    email = models.EmailField(blank=True, verbose_name=_("Elektron pochta"))
-    phone = PhoneNumberField(blank=True, null=True, verbose_name=_("Telefon"))
-    linkedin = models.URLField(blank=True, verbose_name=_("LinkedIn"))
-    website = models.URLField(blank=True, verbose_name=_("Shaxsiy veb sayt"))
+    email = models.EmailField(
+        blank=True,
+        verbose_name=_("Email"),
+        help_text=_("Contact email address")
+    )
+    phone = PhoneNumberField(
+        blank=True,
+        null=True,
+        verbose_name=_("Phone"),
+        help_text=_("Contact phone number")
+    )
+    linkedin = models.URLField(
+        blank=True,
+        verbose_name=_("LinkedIn"),
+        help_text=_("LinkedIn profile URL")
+    )
+    website = models.URLField(
+        blank=True,
+        verbose_name=_("Website"),
+        help_text=_("Personal or professional website")
+    )
 
     # Location
-    country = CountryField(blank=True, verbose_name=_("Mamlakat"))
-    city = models.CharField(max_length=100, blank=True, verbose_name=_("Shahar"))
+    country = CountryField(
+        blank=True,
+        verbose_name=_("Country"),
+        help_text=_("Country of residence")
+    )
+    city = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_("City"),
+        help_text=_("City of residence")
+    )
 
     # Bio and Media
-    bio = models.TextField(blank=True, verbose_name=_("Bio"))
+    bio = models.TextField(
+        blank=True,
+        verbose_name=_("Bio"),
+        help_text=_("Professional biography or summary")
+    )
     photo = models.ImageField(
         upload_to="alumni_photos/%Y/%m/%d/",
         blank=True,
         null=True,
-        verbose_name=_("Profil rasmi"),
+        verbose_name=_("Profile Photo"),
+        help_text=_("Profile picture")
     )
     resume = models.FileField(
         upload_to="alumni_resumes/%Y/%m/%d/",
         blank=True,
         null=True,
-        verbose_name=_("Rezyume"),
+        verbose_name=_("Resume"),
+        help_text=_("Resume or CV file")
     )
 
     # Status and Preferences
-    is_mentor = models.BooleanField(default=False, verbose_name=_("Mentor"))
-    is_visible = models.BooleanField(default=True, verbose_name=_("Profil ko'rinadi"))
+    is_mentor = models.BooleanField(
+        default=False,
+        verbose_name=_("Is Mentor"),
+        help_text=_("Whether this alumni offers mentoring")
+    )
+    is_visible = models.BooleanField(
+        default=True,
+        verbose_name=_("Profile Visible"),
+        help_text=_("Whether profile is publicly visible")
+    )
     show_contact_info = models.BooleanField(
-        default=False, verbose_name=_("Kontakt ma'lumotlarini ko'rsatish")
-    )  # Добавлено для admin
+        default=False,
+        verbose_name=_("Show Contact Info"),
+        help_text=_("Whether to display contact information publicly")
+    )
 
-    # Skills - ИСПРАВЛЕНО: связь ManyToMany вместо TextField
-    skills = models.ManyToManyField(Skill, blank=True, verbose_name=_("Ko'nikmalar"))
+    # Skills
+    skills = models.ManyToManyField(
+        Skill,
+        blank=True,
+        verbose_name=_("Skills"),
+        help_text=_("Professional skills and competencies")
+    )
     expertise_areas = models.TextField(
         blank=True,
-        help_text=_("Mutaxassislik sohalarini vergul bilan ajrating"),
-        verbose_name=_("Mutaxassislik sohalari"),
+        help_text=_("Separate expertise areas with commas"),
+        verbose_name=_("Expertise Areas")
     )
 
     # Career Information
     years_of_experience = models.PositiveIntegerField(
-        default=0, verbose_name=_("Tajriba yillari")
+        default=0,
+        verbose_name=_("Years of Experience"),
+        help_text=_("Total years of professional experience")
     )
     is_open_to_opportunities = models.BooleanField(
-        default=False, verbose_name=_("Yangi imkoniyatlar qidirmoqda")
+        default=False,
+        verbose_name=_("Open to Opportunities"),
+        help_text=_("Whether open to new career opportunities")
     )
 
     # Social Media
-    telegram = models.CharField(max_length=100, blank=True, verbose_name=_("Telegram"))
-    twitter = models.URLField(blank=True, verbose_name=_("Twitter"))
-    facebook = models.URLField(blank=True, verbose_name=_("Facebook"))
-    instagram = models.URLField(blank=True, verbose_name=_("Instagram"))
+    telegram = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_("Telegram"),
+        help_text=_("Telegram username or handle")
+    )
+    twitter = models.URLField(
+        blank=True,
+        verbose_name=_("Twitter"),
+        help_text=_("Twitter profile URL")
+    )
+    facebook = models.URLField(
+        blank=True,
+        verbose_name=_("Facebook"),
+        help_text=_("Facebook profile URL")
+    )
+    instagram = models.URLField(
+        blank=True,
+        verbose_name=_("Instagram"),
+        help_text=_("Instagram profile URL")
+    )
     github = models.URLField(
-        blank=True, verbose_name=_("GitHub")
-    )  # Добавлено для admin
+        blank=True,
+        verbose_name=_("GitHub"),
+        help_text=_("GitHub profile URL")
+    )
 
     # Statistics
     profile_views = models.PositiveIntegerField(
-        default=0, verbose_name=_("Profil ko'rishlar")
+        default=0,
+        verbose_name=_("Profile Views"),
+        help_text=_("Number of profile views")
     )
 
     # Timestamps
     created_at = models.DateTimeField(
-        auto_now_add=True, verbose_name=_("Yaratilgan sana")
+        auto_now_add=True,
+        verbose_name=_("Created At"),
+        help_text=_("Profile creation timestamp")
     )
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Yangilangan sana"))
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Updated At"),
+        help_text=_("Last profile update timestamp")
+    )
 
     class Meta:
-        verbose_name = _("Bitiruvchi")
-        verbose_name_plural = _("Bitiruvchilar")
+        verbose_name = _("Alumni")
+        verbose_name_plural = _("Alumni")
         ordering = ["-graduation_year", "name"]
         indexes = [
             models.Index(fields=["graduation_year"]),
@@ -286,44 +458,56 @@ class Alumni(models.Model):
 
 
 class Connection(models.Model):
-    """Модель для связей между выпускниками"""
+    """Model for networking connections between alumni"""
 
     STATUS_CHOICES = [
-        ("pending", _("Kutilmoqda")),
-        ("accepted", _("Qabul qilindi")),
-        ("rejected", _("Rad etildi")),
-        ("blocked", _("Bloklangan")),
+        ("pending", _("Pending")),
+        ("accepted", _("Accepted")),
+        ("rejected", _("Rejected")),
+        ("blocked", _("Blocked")),
     ]
 
     from_user = models.ForeignKey(
         Alumni,
         on_delete=models.CASCADE,
         related_name="sent_connections",
-        verbose_name=_("Kimdan"),
+        verbose_name=_("From User"),
+        help_text=_("User initiating the connection")
     )
     to_user = models.ForeignKey(
         Alumni,
         on_delete=models.CASCADE,
         related_name="received_connections",
-        verbose_name=_("Kimga"),
+        verbose_name=_("To User"),
+        help_text=_("User receiving the connection request")
     )
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
         default="pending",
-        verbose_name=_("Holat"),
+        verbose_name=_("Status"),
+        help_text=_("Current status of the connection")
     )
-    message = models.TextField(blank=True, verbose_name=_("Xabar"))
+    message = models.TextField(
+        blank=True,
+        verbose_name=_("Message"),
+        help_text=_("Optional message with connection request")
+    )
     created_at = models.DateTimeField(
-        auto_now_add=True, verbose_name=_("Yaratilgan sana")
+        auto_now_add=True,
+        verbose_name=_("Created At"),
+        help_text=_("When the connection was initiated")
     )
     responded_at = models.DateTimeField(
-        null=True, blank=True, verbose_name=_("Javob berilgan sana")
+        null=True,
+        blank=True,
+        verbose_name=_("Responded At"),
+        help_text=_("When the connection was responded to")
     )
 
     class Meta:
-        verbose_name = _("Bog'lanish")
-        verbose_name_plural = _("Bog'lanishlar")
+        verbose_name = _("Connection")
+        verbose_name_plural = _("Connections")
         unique_together = ["from_user", "to_user"]
 
     def __str__(self):
@@ -331,20 +515,20 @@ class Connection(models.Model):
 
 
 class Mentorship(models.Model):
-    """Модель менторства"""
+    """Model for mentorship relationships between alumni"""
 
     STATUS_CHOICES = [
-        ("pending", _("Kutilmoqda")),
-        ("active", _("Faol")),
-        ("completed", _("Yakunlangan")),
-        ("cancelled", _("Bekor qilingan")),
+        ("pending", _("Pending")),
+        ("active", _("Active")),
+        ("completed", _("Completed")),
+        ("cancelled", _("Cancelled")),
     ]
 
     COMMUNICATION_CHOICES = [
         ("email", _("Email")),
-        ("video_call", _("Video qo'ng'iroq")),
-        ("in_person", _("Shaxsan")),
-        ("phone", _("Telefon")),
+        ("video_call", _("Video Call")),
+        ("in_person", _("In Person")),
+        ("phone", _("Phone")),
     ]
 
     mentor = models.ForeignKey(
@@ -352,49 +536,85 @@ class Mentorship(models.Model):
         on_delete=models.CASCADE,
         related_name="mentor_relationships",
         verbose_name=_("Mentor"),
+        help_text=_("Alumni acting as mentor")
     )
     mentee = models.ForeignKey(
         Alumni,
         on_delete=models.CASCADE,
         related_name="mentee_relationships",
-        verbose_name=_("Menti"),
+        verbose_name=_("Mentee"),
+        help_text=_("Alumni seeking mentorship")
     )
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
         default="pending",
-        verbose_name=_("Holat"),
+        verbose_name=_("Status"),
+        help_text=_("Current status of the mentorship")
     )
-    message = models.TextField(blank=True, verbose_name=_("Xabar"))
+    message = models.TextField(
+        blank=True,
+        verbose_name=_("Message"),
+        help_text=_("Initial message or request for mentorship")
+    )
     expected_duration = models.CharField(
-        max_length=100, blank=True, verbose_name=_("Kutilayotgan davomiylik")
+        max_length=100,
+        blank=True,
+        verbose_name=_("Expected Duration"),
+        help_text=_("Expected duration of the mentorship program")
     )
     communication_preference = models.CharField(
         max_length=20,
         choices=COMMUNICATION_CHOICES,
         default="video_call",
-        verbose_name=_("Muloqot usuli"),
+        verbose_name=_("Communication Preference"),
+        help_text=_("Preferred method of communication")
     )
     start_date = models.DateField(
-        null=True, blank=True, verbose_name=_("Boshlanish sanasi")
+        null=True,
+        blank=True,
+        verbose_name=_("Start Date"),
+        help_text=_("When the mentorship began")
     )
-    end_date = models.DateField(null=True, blank=True, verbose_name=_("Tugash sanasi"))
+    end_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_("End Date"),
+        help_text=_("When the mentorship ended")
+    )
 
     # Feedback
-    mentee_feedback = models.TextField(blank=True, verbose_name=_("Menti fikri"))
-    mentor_feedback = models.TextField(blank=True, verbose_name=_("Mentor fikri"))
+    mentee_feedback = models.TextField(
+        blank=True,
+        verbose_name=_("Mentee Feedback"),
+        help_text=_("Feedback from the mentee")
+    )
+    mentor_feedback = models.TextField(
+        blank=True,
+        verbose_name=_("Mentor Feedback"),
+        help_text=_("Feedback from the mentor")
+    )
     rating = models.PositiveIntegerField(
-        null=True, blank=True, verbose_name=_("Reyting (1-5)")
+        null=True,
+        blank=True,
+        verbose_name=_("Rating (1-5)"),
+        help_text=_("Overall rating of the mentorship experience")
     )
 
     created_at = models.DateTimeField(
-        auto_now_add=True, verbose_name=_("Yaratilgan sana")
+        auto_now_add=True,
+        verbose_name=_("Created At"),
+        help_text=_("When the mentorship request was created")
     )
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Yangilangan sana"))
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Updated At"),
+        help_text=_("Last update to the mentorship")
+    )
 
     class Meta:
-        verbose_name = _("Mentorlik")
-        verbose_name_plural = _("Mentorliklar")
+        verbose_name = _("Mentorship")
+        verbose_name_plural = _("Mentorships")
         unique_together = ["mentor", "mentee"]
 
     def __str__(self):
@@ -402,14 +622,14 @@ class Mentorship(models.Model):
 
 
 class Job(models.Model):
-    """Модель вакансий"""
+    """Model for job postings by alumni"""
 
     EMPLOYMENT_TYPES = [
-        ("full_time", _("To'liq stavka")),
-        ("part_time", _("Yarim stavka")),
-        ("contract", _("Kontrakt")),
-        ("internship", _("Stajirovka")),
-        ("remote", _("Masofaviy ish")),
+        ("full_time", _("Full Time")),
+        ("part_time", _("Part Time")),
+        ("contract", _("Contract")),
+        ("internship", _("Internship")),
+        ("remote", _("Remote")),
     ]
 
     CURRENCY_CHOICES = [
@@ -419,18 +639,39 @@ class Job(models.Model):
         ("RUB", "RUB"),
     ]
 
-    title = models.CharField(max_length=255, verbose_name=_("Lavozim"))
+    title = models.CharField(
+        max_length=255,
+        verbose_name=_("Job Title"),
+        help_text=_("Position or job title")
+    )
     company = models.ForeignKey(
-        Company, on_delete=models.CASCADE, verbose_name=_("Kompaniya")
+        Company,
+        on_delete=models.CASCADE,
+        verbose_name=_("Company"),
+        help_text=_("Company offering the position")
     )
     posted_by = models.ForeignKey(
-        Alumni, on_delete=models.CASCADE, verbose_name=_("E'lon qilgan")
+        Alumni,
+        on_delete=models.CASCADE,
+        verbose_name=_("Posted By"),
+        help_text=_("Alumni who posted this job")
     )
     employment_type = models.CharField(
-        max_length=20, choices=EMPLOYMENT_TYPES, verbose_name=_("Ish turi")
+        max_length=20,
+        choices=EMPLOYMENT_TYPES,
+        verbose_name=_("Employment Type"),
+        help_text=_("Type of employment offered")
     )
-    location = models.CharField(max_length=255, verbose_name=_("Manzil"))
-    remote_work = models.BooleanField(default=False, verbose_name=_("Masofaviy ish"))
+    location = models.CharField(
+        max_length=255,
+        verbose_name=_("Location"),
+        help_text=_("Job location or work location")
+    )
+    remote_work = models.BooleanField(
+        default=False,
+        verbose_name=_("Remote Work"),
+        help_text=_("Whether remote work is allowed")
+    )
 
     # Salary
     salary_min = models.DecimalField(
@@ -438,46 +679,93 @@ class Job(models.Model):
         decimal_places=2,
         null=True,
         blank=True,
-        verbose_name=_("Minimal maosh"),
+        verbose_name=_("Minimum Salary"),
+        help_text=_("Minimum salary offered")
     )
     salary_max = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         null=True,
         blank=True,
-        verbose_name=_("Maksimal maosh"),
+        verbose_name=_("Maximum Salary"),
+        help_text=_("Maximum salary offered")
     )
     currency = models.CharField(
-        max_length=3, choices=CURRENCY_CHOICES, default="USD", verbose_name=_("Valyuta")
+        max_length=3,
+        choices=CURRENCY_CHOICES,
+        default="USD",
+        verbose_name=_("Currency"),
+        help_text=_("Currency for salary figures")
     )
 
     # Description
-    description = models.TextField(verbose_name=_("Tavsif"))
-    requirements = models.TextField(verbose_name=_("Talablar"))
-    benefits = models.TextField(blank=True, verbose_name=_("Afzalliklar"))
+    description = models.TextField(
+        verbose_name=_("Description"),
+        help_text=_("Detailed job description")
+    )
+    requirements = models.TextField(
+        verbose_name=_("Requirements"),
+        help_text=_("Job requirements and qualifications")
+    )
+    benefits = models.TextField(
+        blank=True,
+        verbose_name=_("Benefits"),
+        help_text=_("Job benefits and perks")
+    )
 
     # Contact
-    contact_email = models.EmailField(verbose_name=_("Aloqa emaili"))
-    application_url = models.URLField(blank=True, verbose_name=_("Ariza uchun havola"))
+    contact_email = models.EmailField(
+        verbose_name=_("Contact Email"),
+        help_text=_("Email for job applications")
+    )
+    application_url = models.URLField(
+        blank=True,
+        verbose_name=_("Application URL"),
+        help_text=_("External URL for job applications")
+    )
 
     # Status
-    is_active = models.BooleanField(default=True, verbose_name=_("Faol"))
-    expires_at = models.DateField(null=True, blank=True, verbose_name=_("Muddati"))
-    views = models.PositiveIntegerField(default=0, verbose_name=_("Ko'rishlar soni"))
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name=_("Active"),
+        help_text=_("Whether the job posting is active")
+    )
+    expires_at = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_("Expires At"),
+        help_text=_("When the job posting expires")
+    )
+    views = models.PositiveIntegerField(
+        default=0,
+        verbose_name=_("Views"),
+        help_text=_("Number of times the job has been viewed")
+    )
 
     # Applicants
-    applicants: models.ManyToManyField = models.ManyToManyField(
-        Alumni, through="JobApplication", related_name="applied_jobs", blank=True
+    applicants = models.ManyToManyField(
+        Alumni,
+        through="JobApplication",
+        related_name="applied_jobs",
+        blank=True,
+        verbose_name=_("Applicants"),
+        help_text=_("Alumni who have applied for this job")
     )
 
     created_at = models.DateTimeField(
-        auto_now_add=True, verbose_name=_("Yaratilgan sana")
+        auto_now_add=True,
+        verbose_name=_("Created At"),
+        help_text=_("When the job was posted")
     )
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Yangilangan sana"))
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Updated At"),
+        help_text=_("Last update to the job posting")
+    )
 
     class Meta:
-        verbose_name = _("Vakansiya")
-        verbose_name_plural = _("Vakansiyalar")
+        verbose_name = _("Job")
+        verbose_name_plural = _("Jobs")
         ordering = ["-created_at"]
 
     def __str__(self):
@@ -485,39 +773,61 @@ class Job(models.Model):
 
 
 class JobApplication(models.Model):
-    """Модель заявок на вакансии"""
+    """Model for job applications submitted by alumni"""
 
     STATUS_CHOICES = [
-        ("applied", _("Ariza yuborilgan")),
-        ("reviewed", _("Ko'rib chiqilgan")),
-        ("interview", _("Intervyu")),
-        ("rejected", _("Rad etilgan")),
-        ("accepted", _("Qabul qilingan")),
+        ("applied", _("Applied")),
+        ("reviewed", _("Reviewed")),
+        ("interview", _("Interview")),
+        ("rejected", _("Rejected")),
+        ("accepted", _("Accepted")),
     ]
 
-    job = models.ForeignKey(Job, on_delete=models.CASCADE, verbose_name=_("Vakansiya"))
+    job = models.ForeignKey(
+        Job,
+        on_delete=models.CASCADE,
+        verbose_name=_("Job"),
+        help_text=_("Job being applied for")
+    )
     applicant = models.ForeignKey(
-        Alumni, on_delete=models.CASCADE, verbose_name=_("Arizachi")
+        Alumni,
+        on_delete=models.CASCADE,
+        verbose_name=_("Applicant"),
+        help_text=_("Alumni applying for the job")
     )
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
         default="applied",
-        verbose_name=_("Holat"),
+        verbose_name=_("Status"),
+        help_text=_("Current status of the application")
     )
-    cover_letter = models.TextField(blank=True, verbose_name=_("Xat"))
+    cover_letter = models.TextField(
+        blank=True,
+        verbose_name=_("Cover Letter"),
+        help_text=_("Applicant's cover letter")
+    )
     resume = models.FileField(
         upload_to="job_applications/%Y/%m/%d/",
         blank=True,
         null=True,
-        verbose_name=_("Rezyume"),
+        verbose_name=_("Resume"),
+        help_text=_("Applicant's resume file")
     )
-    applied_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Ariza vaqti"))
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Yangilangan sana"))
+    applied_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Applied At"),
+        help_text=_("When the application was submitted")
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Updated At"),
+        help_text=_("Last update to the application")
+    )
 
     class Meta:
-        verbose_name = _("Ish arizasi")
-        verbose_name_plural = _("Ish arizalari")
+        verbose_name = _("Job Application")
+        verbose_name_plural = _("Job Applications")
         unique_together = ["job", "applicant"]
 
     def __str__(self):
@@ -525,51 +835,93 @@ class JobApplication(models.Model):
 
 
 class Event(models.Model):
-    """Модель мероприятий"""
+    """Model for alumni events and gatherings"""
 
     EVENT_TYPES = [
-        ("networking", _("Tarmoq tadbiri")),
-        ("workshop", _("Trening")),
-        ("conference", _("Konferensiya")),
+        ("networking", _("Networking")),
+        ("workshop", _("Workshop")),
+        ("conference", _("Conference")),
         ("seminar", _("Seminar")),
-        ("career_fair", _("Karyera yarmarkasi")),
-        ("reunion", _("Uchrashuv")),
+        ("career_fair", _("Career Fair")),
+        ("reunion", _("Reunion")),
     ]
 
-    title = models.CharField(max_length=255, verbose_name=_("Sarlavha"))
-    description = models.TextField(verbose_name=_("Tavsif"))
-    event_type = models.CharField(
-        max_length=50, choices=EVENT_TYPES, verbose_name=_("Tadbir turi")
+    title = models.CharField(
+        max_length=255,
+        verbose_name=_("Title"),
+        help_text=_("Event title or name")
     )
-    date = models.DateField(verbose_name=_("Sana"))
-    time = models.TimeField(verbose_name=_("Vaqt"))
-    location = models.CharField(max_length=255, verbose_name=_("Manzil"))
+    description = models.TextField(
+        verbose_name=_("Description"),
+        help_text=_("Detailed event description")
+    )
+    event_type = models.CharField(
+        max_length=50,
+        choices=EVENT_TYPES,
+        verbose_name=_("Event Type"),
+        help_text=_("Type or category of the event")
+    )
+    date = models.DateField(
+        verbose_name=_("Date"),
+        help_text=_("Date when the event occurs")
+    )
+    time = models.TimeField(
+        verbose_name=_("Time"),
+        help_text=_("Time when the event starts")
+    )
+    location = models.CharField(
+        max_length=255,
+        verbose_name=_("Location"),
+        help_text=_("Physical location of the event")
+    )
     organizer = models.ForeignKey(
-        Alumni, on_delete=models.CASCADE, verbose_name=_("Tashkilotchi")
+        Alumni,
+        on_delete=models.CASCADE,
+        verbose_name=_("Organizer"),
+        help_text=_("Alumni organizing the event")
     )
 
     # Registration
     registration_required = models.BooleanField(
-        default=False, verbose_name=_("Ro'yxatdan o'tish talab qilinadi")
+        default=False,
+        verbose_name=_("Registration Required"),
+        help_text=_("Whether registration is required to attend")
     )
     max_participants = models.PositiveIntegerField(
-        null=True, blank=True, verbose_name=_("Maksimal ishtirokchilar")
+        null=True,
+        blank=True,
+        verbose_name=_("Max Participants"),
+        help_text=_("Maximum number of participants allowed")
     )
     participants = models.ManyToManyField(
-        Alumni, related_name="events", blank=True, verbose_name=_("Ishtirokchilar")
+        Alumni,
+        related_name="events",
+        blank=True,
+        verbose_name=_("Participants"),
+        help_text=_("Alumni registered to attend the event")
     )
 
     # Status
-    is_active = models.BooleanField(default=True, verbose_name=_("Faol"))
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name=_("Active"),
+        help_text=_("Whether the event is active and upcoming")
+    )
 
     created_at = models.DateTimeField(
-        auto_now_add=True, verbose_name=_("Yaratilgan sana")
+        auto_now_add=True,
+        verbose_name=_("Created At"),
+        help_text=_("When the event was created")
     )
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Yangilangan sana"))
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Updated At"),
+        help_text=_("Last update to the event")
+    )
 
     class Meta:
-        verbose_name = _("Tadbir")
-        verbose_name_plural = _("Tadbirlar")
+        verbose_name = _("Event")
+        verbose_name_plural = _("Events")
         ordering = ["-date"]
 
     def __str__(self):
@@ -577,49 +929,85 @@ class Event(models.Model):
 
 
 class News(models.Model):
-    """Модель новостей"""
+    """Model for alumni news and announcements"""
 
     CATEGORY_CHOICES = [
-        ("alumni", _("Bitiruvchilar yangiliklari")),
-        ("career", _("Karyera yangiliklari")),
-        ("education", _("Ta'lim yangiliklari")),
-        ("events", _("Tadbirlar")),
-        ("opportunities", _("Imkoniyatlar")),
+        ("alumni", _("Alumni News")),
+        ("career", _("Career News")),
+        ("education", _("Education News")),
+        ("events", _("Events")),
+        ("opportunities", _("Opportunities")),
     ]
 
-    title = models.CharField(max_length=255, verbose_name=_("Sarlavha"))
-    slug = models.SlugField(
-        max_length=255, unique=True, blank=True, verbose_name=_("Slug")
+    title = models.CharField(
+        max_length=255,
+        verbose_name=_("Title"),
+        help_text=_("News article title")
     )
-    content = models.TextField(verbose_name=_("Mazmuni"))
+    slug = models.SlugField(
+        max_length=255,
+        unique=True,
+        blank=True,
+        verbose_name=_("Slug"),
+        help_text=_("URL-friendly identifier")
+    )
+    content = models.TextField(
+        verbose_name=_("Content"),
+        help_text=_("Full news article content")
+    )
     author = models.ForeignKey(
-        Alumni, on_delete=models.CASCADE, verbose_name=_("Muallif")
+        Alumni,
+        on_delete=models.CASCADE,
+        verbose_name=_("Author"),
+        help_text=_("Alumni who wrote the news article")
     )
     category = models.CharField(
         max_length=50,
         choices=CATEGORY_CHOICES,
         default="alumni",
-        verbose_name=_("Kategoriya"),
+        verbose_name=_("Category"),
+        help_text=_("News category or topic")
     )
     image = models.ImageField(
-        upload_to="news_images/%Y/%m/%d/", blank=True, null=True, verbose_name=_("Rasm")
+        upload_to="news_images/%Y/%m/%d/",
+        blank=True,
+        null=True,
+        verbose_name=_("Image"),
+        help_text=_("Featured image for the news article")
     )
     tags = models.CharField(
-        max_length=255, blank=True, verbose_name=_("Teglar")
-    )  # Добавлено для admin
+        max_length=255,
+        blank=True,
+        verbose_name=_("Tags"),
+        help_text=_("Comma-separated tags for the article")
+    )
 
     # Status
-    is_published = models.BooleanField(default=True, verbose_name=_("Nashr etilgan"))
-    views = models.PositiveIntegerField(default=0, verbose_name=_("Ko'rishlar soni"))
+    is_published = models.BooleanField(
+        default=True,
+        verbose_name=_("Published"),
+        help_text=_("Whether the news article is published")
+    )
+    views = models.PositiveIntegerField(
+        default=0,
+        verbose_name=_("Views"),
+        help_text=_("Number of times the article has been viewed")
+    )
 
     created_at = models.DateTimeField(
-        auto_now_add=True, verbose_name=_("Yaratilgan sana")
+        auto_now_add=True,
+        verbose_name=_("Created At"),
+        help_text=_("When the news article was created")
     )
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Yangilangan sana"))
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Updated At"),
+        help_text=_("Last update to the news article")
+    )
 
     class Meta:
-        verbose_name = _("Yangilik")
-        verbose_name_plural = _("Yangiliklar")
+        verbose_name = _("News")
+        verbose_name_plural = _("News")
         ordering = ["-created_at"]
 
     def __str__(self):
@@ -632,38 +1020,54 @@ class News(models.Model):
 
 
 class Message(models.Model):
-    """Модель сообщений"""
+    """Model for internal messaging between alumni"""
 
     sender = models.ForeignKey(
         Alumni,
         on_delete=models.CASCADE,
         related_name="sent_messages",
-        verbose_name=_("Yuboruvchi"),
+        verbose_name=_("Sender"),
+        help_text=_("Alumni sending the message")
     )
     receiver = models.ForeignKey(
         Alumni,
         on_delete=models.CASCADE,
         related_name="received_messages",
-        verbose_name=_("Qabul qiluvchi"),
+        verbose_name=_("Receiver"),
+        help_text=_("Alumni receiving the message")
     )
-    subject = models.CharField(max_length=255, verbose_name=_("Mavzu"))
-    body = models.TextField(verbose_name=_("Xabar matni"))
-    is_read = models.BooleanField(default=False, verbose_name=_("O'qilgan"))
+    subject = models.CharField(
+        max_length=255,
+        verbose_name=_("Subject"),
+        help_text=_("Message subject line")
+    )
+    body = models.TextField(
+        verbose_name=_("Body"),
+        help_text=_("Message content")
+    )
+    is_read = models.BooleanField(
+        default=False,
+        verbose_name=_("Read"),
+        help_text=_("Whether the message has been read")
+    )
     parent_message = models.ForeignKey(
         "self",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
         related_name="replies",
-        verbose_name=_("Asosiy xabar"),
+        verbose_name=_("Parent Message"),
+        help_text=_("Parent message for replies")
     )
     created_at = models.DateTimeField(
-        auto_now_add=True, verbose_name=_("Yaratilgan sana")
+        auto_now_add=True,
+        verbose_name=_("Created At"),
+        help_text=_("When the message was sent")
     )
 
     class Meta:
-        verbose_name = _("Xabar")
-        verbose_name_plural = _("Xabarlar")
+        verbose_name = _("Message")
+        verbose_name_plural = _("Messages")
         ordering = ["-created_at"]
 
     def __str__(self):

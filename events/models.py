@@ -9,12 +9,30 @@ User = get_user_model()
 
 
 class EventCategory(models.Model):
-    """Категории мероприятий"""
+    """Represents categories for organizing events"""
 
-    name = models.CharField(max_length=100, verbose_name=_("Category Name"))
-    description = models.TextField(blank=True, verbose_name=_("Description"))
-    color = models.CharField(max_length=7, default="#007cba", verbose_name=_("Color"))
-    icon = models.CharField(max_length=50, blank=True, verbose_name=_("Icon"))
+    name = models.CharField(
+        max_length=100,
+        verbose_name=_("Category Name"),
+        help_text=_("Name of the event category")
+    )
+    description = models.TextField(
+        blank=True,
+        verbose_name=_("Description"),
+        help_text=_("Optional description of the category")
+    )
+    color = models.CharField(
+        max_length=7,
+        default="#007cba",
+        verbose_name=_("Color"),
+        help_text=_("Hex color code for UI display")
+    )
+    icon = models.CharField(
+        max_length=50,
+        blank=True,
+        verbose_name=_("Icon"),
+        help_text=_("Icon identifier for UI display")
+    )
 
     class Meta:
         verbose_name = _("Event Category")
@@ -26,7 +44,7 @@ class EventCategory(models.Model):
 
 
 class Event(models.Model):
-    """Мероприятие"""
+    """Stores event information with multilingual support"""
 
     EVENT_TYPE_CHOICES = [
         ("conference", _("Conference")),
@@ -55,117 +73,224 @@ class Event(models.Model):
         ("paid", _("Paid Registration")),
     ]
 
-    # Основная информация
-    title = models.CharField(max_length=200, verbose_name=_("Event Title"))
-    description = models.TextField(verbose_name=_("Description"))
+    # Basic Information
+    title = models.CharField(
+        max_length=200,
+        verbose_name=_("Event Title"),
+        help_text=_("Title of the event")
+    )
+    description = models.TextField(
+        verbose_name=_("Description"),
+        help_text=_("Detailed description of the event")
+    )
     short_description = models.TextField(
-        max_length=300, verbose_name=_("Short Description")
+        max_length=300,
+        verbose_name=_("Short Description"),
+        help_text=_("Brief summary of the event")
     )
     category = models.ForeignKey(
-        EventCategory, on_delete=models.SET_NULL, null=True, verbose_name=_("Category")
+        EventCategory,
+        on_delete=models.SET_NULL,
+        null=True,
+        verbose_name=_("Category"),
+        help_text=_("Event category for organization")
     )
     event_type = models.CharField(
-        max_length=20, choices=EVENT_TYPE_CHOICES, verbose_name=_("Event Type")
+        max_length=20,
+        choices=EVENT_TYPE_CHOICES,
+        verbose_name=_("Event Type"),
+        help_text=_("Type of event")
     )
 
-    # Даты и время
-    start_date = models.DateTimeField(verbose_name=_("Start Date"))
-    end_date = models.DateTimeField(verbose_name=_("End Date"))
+    # Dates and Time
+    start_date = models.DateTimeField(
+        verbose_name=_("Start Date"),
+        help_text=_("Event start date and time")
+    )
+    end_date = models.DateTimeField(
+        verbose_name=_("End Date"),
+        help_text=_("Event end date and time")
+    )
 
-    # Местоположение
-    location = models.CharField(max_length=200, verbose_name=_("Location"))
-    venue = models.CharField(max_length=200, blank=True, verbose_name=_("Venue"))
-    online_event = models.BooleanField(default=False, verbose_name=_("Online Event"))
-    online_link = models.URLField(blank=True, verbose_name=_("Online Meeting Link"))
-    address = models.TextField(blank=True, verbose_name=_("Full Address"))
+    # Location
+    location = models.CharField(
+        max_length=200,
+        verbose_name=_("Location"),
+        help_text=_("General location of the event")
+    )
+    venue = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name=_("Venue"),
+        help_text=_("Specific venue name")
+    )
+    online_event = models.BooleanField(
+        default=False,
+        verbose_name=_("Online Event"),
+        help_text=_("Whether this is an online event")
+    )
+    online_link = models.URLField(
+        blank=True,
+        verbose_name=_("Online Meeting Link"),
+        help_text=_("Link for online participation")
+    )
+    address = models.TextField(
+        blank=True,
+        verbose_name=_("Full Address"),
+        help_text=_("Complete address of the venue")
+    )
 
-    # Организатор
+    # Organizer
     organizer = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name="organized_events",
         verbose_name=_("Organizer"),
+        help_text=_("Primary organizer of the event")
     )
-    co_organizers: models.ManyToManyField = models.ManyToManyField(
+    co_organizers = models.ManyToManyField(
         User,
         blank=True,
         related_name="co_organized_events",
         verbose_name=_("Co-organizers"),
+        help_text=_("Additional organizers of the event")
     )
 
-    # Изображения
+    # Images
     banner_image = models.ImageField(
         upload_to="event_banners/",
         null=True,
         blank=True,
         verbose_name=_("Banner Image"),
+        help_text=_("Main banner image for the event")
     )
     thumbnail = models.ImageField(
         upload_to="event_thumbnails/",
         null=True,
         blank=True,
         verbose_name=_("Thumbnail"),
+        help_text=_("Small thumbnail image")
     )
 
-    # Регистрация
+    # Registration
     registration_required = models.BooleanField(
-        default=True, verbose_name=_("Registration Required")
+        default=True,
+        verbose_name=_("Registration Required"),
+        help_text=_("Whether registration is required to attend")
     )
     registration_type = models.CharField(
         max_length=20,
         choices=REGISTRATION_TYPE_CHOICES,
         default="open",
         verbose_name=_("Registration Type"),
+        help_text=_("Type of registration process")
     )
     registration_deadline = models.DateTimeField(
-        null=True, blank=True, verbose_name=_("Registration Deadline")
+        null=True,
+        blank=True,
+        verbose_name=_("Registration Deadline"),
+        help_text=_("Deadline for registration")
     )
     max_participants = models.IntegerField(
-        null=True, blank=True, verbose_name=_("Maximum Participants")
+        null=True,
+        blank=True,
+        verbose_name=_("Maximum Participants"),
+        help_text=_("Maximum number of participants allowed")
     )
     waitlist_enabled = models.BooleanField(
-        default=False, verbose_name=_("Waitlist Enabled")
+        default=False,
+        verbose_name=_("Waitlist Enabled"),
+        help_text=_("Whether waitlist is available when full")
     )
 
-    # Стоимость
-    is_free = models.BooleanField(default=True, verbose_name=_("Free Event"))
+    # Cost
+    is_free = models.BooleanField(
+        default=True,
+        verbose_name=_("Free Event"),
+        help_text=_("Whether the event is free")
+    )
     price = models.DecimalField(
-        max_digits=10, decimal_places=2, default=0, verbose_name=_("Price")
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        verbose_name=_("Price"),
+        help_text=_("Event price if not free")
     )
     currency = models.CharField(
         max_length=3,
         choices=[("UZS", "UZS"), ("USD", "USD")],
         default="UZS",
         verbose_name=_("Currency"),
+        help_text=_("Currency for the price")
     )
 
-    # Настройки
+    # Settings
     status = models.CharField(
         max_length=20,
         choices=EVENT_STATUS_CHOICES,
         default="draft",
         verbose_name=_("Status"),
+        help_text=_("Current status of the event")
     )
-    is_featured = models.BooleanField(default=False, verbose_name=_("Featured Event"))
+    is_featured = models.BooleanField(
+        default=False,
+        verbose_name=_("Featured Event"),
+        help_text=_("Whether to feature this event prominently")
+    )
     show_attendee_list = models.BooleanField(
-        default=True, verbose_name=_("Show Attendee List")
+        default=True,
+        verbose_name=_("Show Attendee List"),
+        help_text=_("Whether to show list of registered attendees")
     )
-    allow_comments = models.BooleanField(default=True, verbose_name=_("Allow Comments"))
+    allow_comments = models.BooleanField(
+        default=True,
+        verbose_name=_("Allow Comments"),
+        help_text=_("Whether to allow comments on the event")
+    )
 
-    # SEO и дополнительные поля
-    slug = models.SlugField(unique=True, verbose_name=_("Slug"))
-    tags = models.CharField(max_length=500, blank=True, verbose_name=_("Tags"))
-    registration_link = models.URLField(blank=True, verbose_name=_("Registration Link"))
-    materials_link = models.URLField(blank=True, verbose_name=_("Materials Link"))
+    # SEO and Additional Fields
+    slug = models.SlugField(
+        unique=True,
+        verbose_name=_("Slug"),
+        help_text=_("URL-friendly identifier")
+    )
+    tags = models.CharField(
+        max_length=500,
+        blank=True,
+        verbose_name=_("Tags"),
+        help_text=_("Comma-separated tags for the event")
+    )
+    registration_link = models.URLField(
+        blank=True,
+        verbose_name=_("Registration Link"),
+        help_text=_("External registration link")
+    )
+    materials_link = models.URLField(
+        blank=True,
+        verbose_name=_("Materials Link"),
+        help_text=_("Link to event materials")
+    )
 
-    # Статистика
-    views_count = models.IntegerField(default=0, verbose_name=_("Views Count"))
+    # Statistics
+    views_count = models.IntegerField(
+        default=0,
+        verbose_name=_("Views Count"),
+        help_text=_("Number of times the event was viewed")
+    )
     registration_count = models.IntegerField(
-        default=0, verbose_name=_("Registration Count")
+        default=0,
+        verbose_name=_("Registration Count"),
+        help_text=_("Number of registered participants")
     )
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Created At")
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Updated At")
+    )
 
     class Meta:
         verbose_name = _("Event")
@@ -227,7 +352,7 @@ class Event(models.Model):
 
 
 class EventRegistration(models.Model):
-    """Регистрация на мероприятие"""
+    """Stores event registration information"""
 
     STATUS_CHOICES = [
         ("registered", _("Registered")),
@@ -242,35 +367,48 @@ class EventRegistration(models.Model):
         on_delete=models.CASCADE,
         related_name="registrations",
         verbose_name=_("Event"),
+        help_text=_("The event being registered for")
     )
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name="event_registrations",
         verbose_name=_("User"),
+        help_text=_("User registering for the event")
     )
 
-    # Информация о регистрации
+    # Registration Information
     registration_date = models.DateTimeField(
-        auto_now_add=True, verbose_name=_("Registration Date")
+        auto_now_add=True,
+        verbose_name=_("Registration Date"),
+        help_text=_("When the registration was made")
     )
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
         default="registered",
         verbose_name=_("Status"),
+        help_text=_("Current registration status")
     )
 
-    # Дополнительная информация
+    # Additional Information
     dietary_restrictions = models.TextField(
-        blank=True, verbose_name=_("Dietary Restrictions")
+        blank=True,
+        verbose_name=_("Dietary Restrictions"),
+        help_text=_("Any dietary restrictions for catering")
     )
     special_requirements = models.TextField(
-        blank=True, verbose_name=_("Special Requirements")
+        blank=True,
+        verbose_name=_("Special Requirements"),
+        help_text=_("Any special requirements or accommodations")
     )
-    comments = models.TextField(blank=True, verbose_name=_("Comments"))
+    comments = models.TextField(
+        blank=True,
+        verbose_name=_("Comments"),
+        help_text=_("Additional comments from the registrant")
+    )
 
-    # Для платных мероприятий
+    # For Paid Events
     payment_status = models.CharField(
         max_length=20,
         choices=[
@@ -280,6 +418,7 @@ class EventRegistration(models.Model):
         ],
         default="pending",
         verbose_name=_("Payment Status"),
+        help_text=_("Status of payment for the event")
     )
     payment_amount = models.DecimalField(
         max_digits=10,
@@ -287,14 +426,22 @@ class EventRegistration(models.Model):
         null=True,
         blank=True,
         verbose_name=_("Payment Amount"),
+        help_text=_("Amount paid for the event")
     )
 
-    # QR код для проверки
+    # QR Code for Check-in
     qr_code = models.ImageField(
-        upload_to="event_qr_codes/", null=True, blank=True, verbose_name=_("QR Code")
+        upload_to="event_qr_codes/",
+        null=True,
+        blank=True,
+        verbose_name=_("QR Code"),
+        help_text=_("QR code for event check-in")
     )
     check_in_time = models.DateTimeField(
-        null=True, blank=True, verbose_name=_("Check-in Time")
+        null=True,
+        blank=True,
+        verbose_name=_("Check-in Time"),
+        help_text=_("Time when the user checked in")
     )
 
     class Meta:
@@ -311,30 +458,70 @@ class EventRegistration(models.Model):
 
 
 class EventSpeaker(models.Model):
-    """Спикеры мероприятий"""
+    """Stores speaker information for events"""
 
     event = models.ForeignKey(
         Event,
         on_delete=models.CASCADE,
         related_name="speakers",
         verbose_name=_("Event"),
+        help_text=_("The event this speaker is associated with")
     )
-    name = models.CharField(max_length=100, verbose_name=_("Speaker Name"))
-    title = models.CharField(max_length=200, verbose_name=_("Speaker Title"))
+    name = models.CharField(
+        max_length=100,
+        verbose_name=_("Speaker Name"),
+        help_text=_("Full name of the speaker")
+    )
+    title = models.CharField(
+        max_length=200,
+        verbose_name=_("Speaker Title"),
+        help_text=_("Professional title or position")
+    )
     organization = models.CharField(
-        max_length=200, blank=True, verbose_name=_("Organization")
+        max_length=200,
+        blank=True,
+        verbose_name=_("Organization"),
+        help_text=_("Organization or company affiliation")
     )
-    bio = models.TextField(blank=True, verbose_name=_("Biography"))
+    bio = models.TextField(
+        blank=True,
+        verbose_name=_("Biography"),
+        help_text=_("Brief biography of the speaker")
+    )
     photo = models.ImageField(
-        upload_to="speaker_photos/", null=True, blank=True, verbose_name=_("Photo")
+        upload_to="speaker_photos/",
+        null=True,
+        blank=True,
+        verbose_name=_("Photo"),
+        help_text=_("Profile photo of the speaker")
     )
-    email = models.EmailField(blank=True, verbose_name=_("Email"))
-    website = models.URLField(blank=True, verbose_name=_("Website"))
-    linkedin = models.URLField(blank=True, verbose_name=_("LinkedIn"))
-    twitter = models.URLField(blank=True, verbose_name=_("Twitter"))
+    email = models.EmailField(
+        blank=True,
+        verbose_name=_("Email"),
+        help_text=_("Contact email for the speaker")
+    )
+    website = models.URLField(
+        blank=True,
+        verbose_name=_("Website"),
+        help_text=_("Personal or professional website")
+    )
+    linkedin = models.URLField(
+        blank=True,
+        verbose_name=_("LinkedIn"),
+        help_text=_("LinkedIn profile URL")
+    )
+    twitter = models.URLField(
+        blank=True,
+        verbose_name=_("Twitter"),
+        help_text=_("Twitter profile URL")
+    )
 
-    # Порядок отображения
-    order = models.IntegerField(default=0, verbose_name=_("Display Order"))
+    # Display Order
+    order = models.IntegerField(
+        default=0,
+        verbose_name=_("Display Order"),
+        help_text=_("Order in which to display this speaker")
+    )
 
     class Meta:
         verbose_name = _("Event Speaker")
@@ -346,7 +533,7 @@ class EventSpeaker(models.Model):
 
 
 class EventSession(models.Model):
-    """Сессии/доклады в рамках мероприятия"""
+    """Stores session information within events"""
 
     SESSION_TYPE_CHOICES = [
         ("keynote", _("Keynote")),
@@ -363,30 +550,69 @@ class EventSession(models.Model):
         on_delete=models.CASCADE,
         related_name="sessions",
         verbose_name=_("Event"),
+        help_text=_("The event this session belongs to")
     )
-    title = models.CharField(max_length=200, verbose_name=_("Session Title"))
-    description = models.TextField(blank=True, verbose_name=_("Description"))
+    title = models.CharField(
+        max_length=200,
+        verbose_name=_("Session Title"),
+        help_text=_("Title of the session")
+    )
+    description = models.TextField(
+        blank=True,
+        verbose_name=_("Description"),
+        help_text=_("Detailed description of the session")
+    )
     session_type = models.CharField(
-        max_length=20, choices=SESSION_TYPE_CHOICES, verbose_name=_("Session Type")
+        max_length=20,
+        choices=SESSION_TYPE_CHOICES,
+        verbose_name=_("Session Type"),
+        help_text=_("Type of session")
     )
 
-    # Время проведения
-    start_time = models.DateTimeField(verbose_name=_("Start Time"))
-    end_time = models.DateTimeField(verbose_name=_("End Time"))
+    # Timing
+    start_time = models.DateTimeField(
+        verbose_name=_("Start Time"),
+        help_text=_("When the session starts")
+    )
+    end_time = models.DateTimeField(
+        verbose_name=_("End Time"),
+        help_text=_("When the session ends")
+    )
 
-    # Местоположение (для больших мероприятий)
-    location = models.CharField(max_length=100, blank=True, verbose_name=_("Location"))
+    # Location (for large events)
+    location = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_("Location"),
+        help_text=_("Specific location within the venue")
+    )
 
-    # Спикеры сессии
+    # Session Speakers
     speakers = models.ManyToManyField(
-        EventSpeaker, blank=True, related_name="sessions", verbose_name=_("Speakers")
+        EventSpeaker,
+        blank=True,
+        related_name="sessions",
+        verbose_name=_("Speakers"),
+        help_text=_("Speakers for this session")
     )
 
-    # Материалы
-    presentation_url = models.URLField(blank=True, verbose_name=_("Presentation URL"))
-    materials_url = models.URLField(blank=True, verbose_name=_("Materials URL"))
+    # Materials
+    presentation_url = models.URLField(
+        blank=True,
+        verbose_name=_("Presentation URL"),
+        help_text=_("Link to presentation slides or materials")
+    )
+    materials_url = models.URLField(
+        blank=True,
+        verbose_name=_("Materials URL"),
+        help_text=_("Link to additional session materials")
+    )
 
-    order = models.IntegerField(default=0, verbose_name=_("Display Order"))
+    order = models.IntegerField(
+        default=0,
+        verbose_name=_("Display Order"),
+        help_text=_("Order in which to display this session")
+    )
 
     class Meta:
         verbose_name = _("Event Session")
@@ -404,15 +630,21 @@ class EventSession(models.Model):
 
 
 class EventComment(models.Model):
-    """Комментарии к мероприятиям"""
+    """Stores comments on events"""
 
     event = models.ForeignKey(
         Event,
         on_delete=models.CASCADE,
         related_name="comments",
         verbose_name=_("Event"),
+        help_text=_("The event being commented on")
     )
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_("User"))
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name=_("User"),
+        help_text=_("User who made the comment")
+    )
     parent_comment = models.ForeignKey(
         "self",
         on_delete=models.CASCADE,
@@ -420,13 +652,27 @@ class EventComment(models.Model):
         blank=True,
         related_name="replies",
         verbose_name=_("Parent Comment"),
+        help_text=_("Parent comment for nested replies")
     )
 
-    comment = models.TextField(verbose_name=_("Comment"))
-    is_approved = models.BooleanField(default=True, verbose_name=_("Approved"))
+    comment = models.TextField(
+        verbose_name=_("Comment"),
+        help_text=_("The comment text")
+    )
+    is_approved = models.BooleanField(
+        default=True,
+        verbose_name=_("Approved"),
+        help_text=_("Whether this comment is approved for display")
+    )
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Created At")
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Updated At")
+    )
 
     class Meta:
         verbose_name = _("Event Comment")
@@ -438,20 +684,44 @@ class EventComment(models.Model):
 
 
 class EventPhoto(models.Model):
-    """Фотографии с мероприятий"""
+    """Stores photos from events"""
 
     event = models.ForeignKey(
-        Event, on_delete=models.CASCADE, related_name="photos", verbose_name=_("Event")
+        Event,
+        on_delete=models.CASCADE,
+        related_name="photos",
+        verbose_name=_("Event"),
+        help_text=_("The event this photo belongs to")
     )
-    image = models.ImageField(upload_to="event_photos/", verbose_name=_("Image"))
-    caption = models.CharField(max_length=200, blank=True, verbose_name=_("Caption"))
+    image = models.ImageField(
+        upload_to="event_photos/",
+        verbose_name=_("Image"),
+        help_text=_("The photo file")
+    )
+    caption = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name=_("Caption"),
+        help_text=_("Optional caption for the photo")
+    )
     uploaded_by = models.ForeignKey(
-        User, on_delete=models.CASCADE, verbose_name=_("Uploaded By")
+        User,
+        on_delete=models.CASCADE,
+        verbose_name=_("Uploaded By"),
+        help_text=_("User who uploaded this photo")
     )
-    uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Uploaded At"))
+    uploaded_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Uploaded At"),
+        help_text=_("When the photo was uploaded")
+    )
 
-    # Для сортировки
-    order = models.IntegerField(default=0, verbose_name=_("Display Order"))
+    # For Sorting
+    order = models.IntegerField(
+        default=0,
+        verbose_name=_("Display Order"),
+        help_text=_("Order in which to display this photo")
+    )
 
     class Meta:
         verbose_name = _("Event Photo")
@@ -463,37 +733,60 @@ class EventPhoto(models.Model):
 
 
 class EventRating(models.Model):
-    """Оценки мероприятий"""
+    """Stores user ratings for events"""
 
     event = models.ForeignKey(
-        Event, on_delete=models.CASCADE, related_name="ratings", verbose_name=_("Event")
+        Event,
+        on_delete=models.CASCADE,
+        related_name="ratings",
+        verbose_name=_("Event"),
+        help_text=_("The event being rated")
     )
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_("User"))
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name=_("User"),
+        help_text=_("User who provided the rating")
+    )
 
     rating = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(5)],
         verbose_name=_("Rating"),
+        help_text=_("Overall rating (1-5)")
     )
-    comment = models.TextField(blank=True, verbose_name=_("Comment"))
+    comment = models.TextField(
+        blank=True,
+        verbose_name=_("Comment"),
+        help_text=_("Optional comment with the rating")
+    )
 
-    # Категории оценки
+    # Rating Categories
     content_rating = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(5)],
         verbose_name=_("Content Rating"),
+        help_text=_("Rating for event content quality")
     )
     organization_rating = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(5)],
         verbose_name=_("Organization Rating"),
+        help_text=_("Rating for event organization")
     )
     venue_rating = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(5)],
         null=True,
         blank=True,
         verbose_name=_("Venue Rating"),
+        help_text=_("Rating for venue quality (optional)")
     )
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Created At")
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Updated At")
+    )
 
     class Meta:
         verbose_name = _("Event Rating")

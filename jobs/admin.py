@@ -37,6 +37,8 @@ class JobApplicationInline(admin.TabularInline):
 
 @admin.register(Job)
 class JobAdmin(TranslationAdmin):
+    """Admin interface for Job model with optimized display and filters"""
+
     list_display = (
         "title",
         "employer_company",
@@ -50,10 +52,8 @@ class JobAdmin(TranslationAdmin):
     list_filter = (
         "employment_type",
         "experience_level",
-        "education_level",
         "is_active",
         "is_featured",
-        "is_urgent",
         "created_at",
     )
     search_fields = ("title", "employer__company_name", "description", "location")
@@ -70,18 +70,15 @@ class JobAdmin(TranslationAdmin):
     fieldsets = (
         (
             _("Job Information"),
-            {"fields": ("title", "short_description", "description", "employer")},
+            {"fields": ("title", "description", "employer")},
         ),
         (
             _("Location & Type"),
             {
                 "fields": (
                     "location",
-                    "remote_work",
-                    "hybrid_work",
                     "employment_type",
                     "experience_level",
-                    "education_level",
                 )
             },
         ),
@@ -93,22 +90,21 @@ class JobAdmin(TranslationAdmin):
                     "salary_max",
                     "currency",
                     "hide_salary",
-                    "salary_negotiable",
                 )
             },
         ),
         (
             _("Job Details"),
-            {"fields": ("requirements", "responsibilities", "benefits")},
+            {"fields": ("requirements", "responsibilities", "benefits")}
         ),
-        (_("Skills"), {"fields": ("skills_required", "preferred_skills")}),
+        (_("Skills"), {"fields": ("skills_required",)}),
         (
             _("Contact Information"),
-            {"fields": ("contact_email", "contact_person", "application_url")},
+            {"fields": ("contact_email",)},
         ),
         (
             _("Status"),
-            {"fields": ("is_active", "is_featured", "is_urgent", "expires_at")},
+            {"fields": ("is_active", "is_featured", "expires_at")},
         ),
         (_("Statistics"), {"fields": ("views_count", "applications_count")}),
         (_("Timestamps"), {"fields": ("created_at", "updated_at")}),
@@ -124,7 +120,7 @@ class JobAdmin(TranslationAdmin):
             return f"{obj.employer.company_name} ({obj.employer.user.username})"
         return "-"
 
-    actions = ["activate_jobs", "deactivate_jobs", "mark_as_featured", "mark_as_urgent"]
+    actions = ["activate_jobs", "deactivate_jobs", "mark_as_featured"]
 
     @display(description=_("Activate selected jobs"))
     def activate_jobs(self, request, queryset):
@@ -143,12 +139,7 @@ class JobAdmin(TranslationAdmin):
             request, _("%(count)d jobs marked as featured") % {"count": updated}
         )
 
-    @display(description=_("Mark as urgent"))
-    def mark_as_urgent(self, request, queryset):
-        updated = queryset.update(is_urgent=True)
-        self.message_user(
-            request, _("%(count)d jobs marked as urgent") % {"count": updated}
-        )
+
 
 
 
@@ -171,7 +162,7 @@ class JobApplicationAdmin(TranslationAdmin):
         ),
         (
             _("Candidate Details"),
-            {"fields": ("expected_salary", "notice_period", "available_from")},
+            {"fields": ("expected_salary", "notice_period")},
         ),
         (_("Status"), {"fields": ("status", "is_read", "status_changed_at", "source")}),
         (_("Timestamps"), {"fields": ("created_at", "updated_at")}),
