@@ -80,7 +80,7 @@ class CustomUserAdmin(UserAdmin):
 
 
 @admin.register(EmployerProfile)
-class EmployerProfileAdmin(admin.ModelAdmin):
+class EmployerProfileAdmin(TranslationAdmin):
     list_display = (
         "company_name",
         "user",

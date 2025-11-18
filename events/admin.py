@@ -36,7 +36,7 @@ class EventSessionInline(admin.TabularInline):
 
 
 @admin.register(EventCategory)
-class EventCategoryAdmin(admin.ModelAdmin):
+class EventCategoryAdmin(TranslationAdmin):
     list_display = ("name", "event_count", "color_display")
     list_filter = ("name",)
     search_fields = ("name", "description")

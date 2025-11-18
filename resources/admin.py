@@ -7,7 +7,7 @@ from .models import Resource, ResourceCategory
 
 
 @admin.register(ResourceCategory)
-class ResourceCategoryAdmin(admin.ModelAdmin):
+class ResourceCategoryAdmin(TranslationAdmin):
     list_display = ("name", "resource_count")  # Убрали 'created_at'
     list_filter = ()  # Убрали 'created_at'
     search_fields = ("name", "description")

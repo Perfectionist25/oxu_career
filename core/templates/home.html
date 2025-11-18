@@ -8,14 +8,14 @@
   <section class="text-center mb-5">
     <div class="row justify-content-center">
       <div class="col-lg-8">
-        <div class="display-5 h4 fw-bold text-primary mb-4">{% trans "OXU Career Center-ga xush kelibsiz" %}</div>
-        <p class="lead mb-4 h6">{% trans "Kelajagingizni biz bilan quring. Sizga orzu qilgan ishingizni topishda va kasbiy ko'nikmalaringizni rivojlantirishda yordam beramiz." %}</p>
+        <div class="display-5 h4 fw-bold text-primary mb-4">{% trans "Welcome to OXU Career Center" %}</div>
+        <p class="lead mb-4 h6">{% trans "Build your future with us. We help you find your dream job and develop your professional skills." %}</p>
         <div class="d-flex justify-content-center flex-wrap gap-3">
           <a href="{% url 'jobs:list' %}" class="btn btn-primary btn-lg px-4 py-3">
-            <i class="fas fa-briefcase me-2"></i>{% trans "Ish o'rinlarini topish" %}
+            <i class="fas fa-briefcase me-2"></i>{% trans "Find Jobs" %}
           </a>
           <a href="{% url 'cvbuilder:cv_create' %}" class="btn btn-outline-primary btn-lg px-4 py-3">
-            <i class="fas fa-file-alt me-2"></i>{% trans "Rezyume yaratish" %}
+            <i class="fas fa-file-alt me-2"></i>{% trans "Create Resume" %}
           </a>
         </div>
         
@@ -23,15 +23,15 @@
         <div class="row mt-5 pt-4 border-top">
           <div class="col-md-4 col-6">
             <div class="h5 fw-bold text-primary mb-1">{{ stats.alumni_count|default:"0" }}+</div>
-            <small class="text-muted">{% trans "Talabalar/Bitiruvchilar" %}</small>
+            <small class="text-muted">{% trans "Students/Alumni" %}</small>
           </div>
           <div class="col-md-4 col-6">
             <div class="h5 fw-bold text-primary mb-1">{{ stats.jobs_count|default:"0" }}+</div>
-            <small class="text-muted">{% trans "Aktiv vakansiyalar" %}</small>
+            <small class="text-muted">{% trans "Active Jobs" %}</small>
           </div>
           <div class="col-md-4 col-6">
             <div class="h5 fw-bold text-primary mb-1">{{ resources_stats.total_resources|default:"0" }}+</div>
-            <small class="text-muted">{% trans "Karyera resurslari" %}</small>
+            <small class="text-muted">{% trans "Career Resources" %}</small>
           </div>
         </div>
       </div>
@@ -41,35 +41,35 @@
   <!-- Features Section -->
   <section class="row align-items-center mb-5 py-4">
     <div class="col-lg-6 mb-4 mb-lg-0">
-      <h2 class="fw-bold text-dark mb-4">{% trans "Nima uchun aynan biz?" %}</h2>
-      
+      <h2 class="fw-bold text-dark mb-4">{% trans "Why Choose Us?" %}</h2>
+
       <div class="feature-item d-flex mb-4 p-3 rounded hover-card">
         <div class="feature-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-4" style="width: 60px; height: 60px;">
           <i class="fas fa-user-check fa-lg"></i>
         </div>
         <div>
-          <h5 class="fw-bold text-dark mb-2">{% trans "Shaxsiy yondashuv" %}</h5>
-          <p class="text-muted mb-0">{% trans "Har bir talaba va bitiruvchi uchun individual maslahat va yo'naltirish" %}</p>
+          <h5 class="fw-bold text-dark mb-2">{% trans "Personal Approach" %}</h5>
+          <p class="text-muted mb-0">{% trans "Individual counseling and guidance for every student and graduate" %}</p>
         </div>
       </div>
-      
+
       <div class="feature-item d-flex mb-4 p-3 rounded hover-card">
         <div class="feature-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-4" style="width: 60px; height: 60px;">
           <i class="fas fa-handshake fa-lg"></i>
         </div>
         <div>
-          <h5 class="fw-bold text-dark mb-2">{% trans "Keng hamkorlar tarmog'i" %}</h5>
-          <p class="text-muted mb-0">{% trans "Turli sohalardagi etakchi kompaniyalar bilan mustahkam hamkorlik" %}</p>
+          <h5 class="fw-bold text-dark mb-2">{% trans "Extensive Partner Network" %}</h5>
+          <p class="text-muted mb-0">{% trans "Strong partnerships with leading companies in various industries" %}</p>
         </div>
       </div>
-      
+
       <div class="feature-item d-flex mb-4 p-3 rounded hover-card">
         <div class="feature-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-4" style="width: 60px; height: 60px;">
           <i class="fas fa-tools fa-lg"></i>
         </div>
         <div>
-          <h5 class="fw-bold text-dark mb-2">{% trans "Zamonaviy resurslar" %}</h5>
-          <p class="text-muted mb-0">{% trans "Karyerangizni rivojlantirish uchun barcha zamonaviy resurslar" %}</p>
+          <h5 class="fw-bold text-dark mb-2">{% trans "Modern Resources" %}</h5>
+          <p class="text-muted mb-0">{% trans "All modern resources to develop your career" %}</p>
         </div>
       </div>
     </div>
@@ -78,7 +78,7 @@
       <div class="position-relative p-6">
         <img src="{% static 'img/progress.jpg' %}" style="width: 70vh;" alt="Career Center" class="img-fluid rounded shadow-lg">
         <div class="position-absolute bottom-0 start-0 bg-primary text-white p-3 rounded-end">
-          <h5 class="mb-0">{% trans "Biz bilan karyera quring!" %}</h5>
+          <h5 class="mb-0">{% trans "Build your career with us!" %}</h5>
         </div>
       </div>
     </div>
@@ -86,7 +86,7 @@
 
   <!-- Quick Links -->
   <section class="mb-5 py-4">
-    <h2 class="text-center fw-bold text-dark mb-5">{% trans "Tezkor kirish" %}</h2>
+    <h2 class="text-center fw-bold text-dark mb-5">{% trans "Quick Access" %}</h2>
     <div class="row g-4">
       <div class="col-xl-3 col-md-6">
         <div class="card border-0 shadow-sm h-100 quick-link-card">
@@ -94,55 +94,55 @@
             <div class="text-primary mb-3">
               <i class="fas fa-briefcase fa-3x"></i>
             </div>
-            <h5 class="card-title fw-bold text-dark mb-3">{% trans "Ish o'rinlari" %}</h5>
-            <p class="card-text text-muted small mb-4">{% trans "Etakchi kompaniyalarning dolzarb takliflari va stajirovka imkoniyatlari" %}</p>
+            <h5 class="card-title fw-bold text-dark mb-3">{% trans "Job Opportunities" %}</h5>
+            <p class="card-text text-muted small mb-4">{% trans "Current offers and internship opportunities from leading companies" %}</p>
             <a href="{% url 'jobs:list' %}" class="btn btn-primary w-100">
-              {% trans "Ko'rish" %} <i class="fas fa-arrow-right ms-2"></i>
+              {% trans "View" %} <i class="fas fa-arrow-right ms-2"></i>
             </a>
           </div>
         </div>
       </div>
-      
+
       <div class="col-xl-3 col-md-6">
         <div class="card border-0 shadow-sm h-100 quick-link-card">
           <div class="card-body text-center p-4">
             <div class="text-primary mb-3">
               <i class="fas fa-users fa-3x"></i>
             </div>
-            <h5 class="card-title fw-bold text-dark mb-3">{% trans "Bitiruvchilar rezyumelari" %}</h5>
-            <p class="card-text text-muted small mb-4">{% trans "Kuchli bitiruvchilar jamoasiga qo'shiling va tarmoq quring" %}</p>
+            <h5 class="card-title fw-bold text-dark mb-3">{% trans "Alumni Resumes" %}</h5>
+            <p class="card-text text-muted small mb-4">{% trans "Join the strong alumni community and network" %}</p>
             <a href="{% url 'cvbuilder:public_cv_list' %}" class="btn btn-primary w-100">
-              {% trans "Qo'shilish" %} <i class="fas fa-arrow-right ms-2"></i>
+              {% trans "Join" %} <i class="fas fa-arrow-right ms-2"></i>
             </a>
           </div>
         </div>
       </div>
-      
+
       <div class="col-xl-3 col-md-6">
         <div class="card border-0 shadow-sm h-100 quick-link-card">
           <div class="card-body text-center p-4">
             <div class="text-primary mb-3">
               <i class="fas fa-book-open fa-3x"></i>
             </div>
-            <h5 class="card-title fw-bold text-dark mb-3">{% trans "Karyera resurslari" %}</h5>
-            <p class="card-text text-muted small mb-4">{% trans "Intervyu, rezyume va kasbiy rivojlanish uchun foydali materiallar" %}</p>
+            <h5 class="card-title fw-bold text-dark mb-3">{% trans "Career Resources" %}</h5>
+            <p class="card-text text-muted small mb-4">{% trans "Useful materials for interviews, resumes and professional development" %}</p>
             <a href="{% url 'resources:list' %}" class="btn btn-primary w-100">
-              {% trans "O'rganish" %} <i class="fas fa-arrow-right ms-2"></i>
+              {% trans "Learn" %} <i class="fas fa-arrow-right ms-2"></i>
             </a>
           </div>
         </div>
       </div>
-      
+
       <div class="col-xl-3 col-md-6">
         <div class="card border-0 shadow-sm h-100 quick-link-card">
           <div class="card-body text-center p-4">
             <div class="text-primary mb-3">
               <i class="fas fa-calendar-check fa-3x"></i>
             </div>
-            <h5 class="card-title fw-bold text-dark mb-3">{% trans "Tadbirlar" %}</h5>
-            <p class="card-text text-muted small mb-4">{% trans "Kasbiy rivojlanish va tarmoq qurish uchun tadbirlar" %}</p>
+            <h5 class="card-title fw-bold text-dark mb-3">{% trans "Events" %}</h5>
+            <p class="card-text text-muted small mb-4">{% trans "Events for professional development and networking" %}</p>
             <a href="{% url 'events:event_list' %}" class="btn btn-primary w-100">
-              {% trans "Ishtirok etish" %} <i class="fas fa-arrow-right ms-2"></i>
+              {% trans "Participate" %} <i class="fas fa-arrow-right ms-2"></i>
             </a>
           </div>
         </div>
@@ -154,9 +154,9 @@
   {% if featured_resources %}
   <section class="mb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <div class="fw-bold text-dark h5">{% trans "Mashhur Resurslar" %}</div>
+      <div class="fw-bold text-dark h5">{% trans "Popular Resources" %}</div>
       <a href="{% url 'resources:list' %}" class="btn btn-outline-primary">
-        {% trans "Barcha resurslar" %} <i class="fas fa-arrow-right ms-2"></i>
+        {% trans "All Resources" %} <i class="fas fa-arrow-right ms-2"></i>
       </a>
     </div>
     <div class="row g-3">
@@ -184,7 +184,7 @@
           </div>
           <div class="card-footer bg-transparent py-2">
             <a href="{% url 'resources:resource_detail' resource.pk %}" class="btn btn-sm btn-outline-primary w-100">
-              {% trans "Ko'rish" %}
+              {% trans "View" %}
             </a>
           </div>
         </div>
@@ -198,14 +198,14 @@
   <!-- Latest Jobs Preview -->
 <section class="mb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="fw-bold text-dark h5">{% trans "So'ngi vakansiyalar" %}</div>
+        <div class="fw-bold text-dark h5">{% trans "Latest Jobs" %}</div>
         {% if user.is_authenticated and user.is_student or user.is_authenticated and user.is_main_admin or user.is_authenticated and user.is_admin %}
         <a href="{% url 'jobs:list' %}" class="btn btn-outline-primary">
-            {% trans "Barchasini ko'rish" %} <i class="fas fa-arrow-right ms-2"></i>
+            {% trans "View All" %} <i class="fas fa-arrow-right ms-2"></i>
         </a>
         {% else %}
         <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary">
-            {% trans "Barchasini ko'rish" %} <i class="fas fa-arrow-right ms-2"></i>
+            {% trans "View All" %} <i class="fas fa-arrow-right ms-2"></i>
         </a>
         {% endif %}
     </div>
@@ -225,7 +225,7 @@
                 </div>
                 <div class="card-footer bg-transparent py-2">
                     <a href="{% url 'jobs:job_detail' job.pk %}" class="btn btn-sm btn-outline-primary w-100">
-                        {% trans "Batafsil" %}
+                        {% trans "Details" %}
                     </a>
                 </div>
             </div>
@@ -233,16 +233,16 @@
         {% empty %}
         <div class="col-12">
             <div class="alert alert-info text-center">
-                {% trans "Hozircha vakansiyalar mavjud emas" %}
+                {% trans "No jobs available at the moment" %}
             </div>
         </div>
         {% endfor %}
     </div>
     {% else %}
     <div class="alert alert-info text-center">
-        <p class="mb-2">{% trans "Vakansiyalarni ko'rish uchun tizimga kiring" %}</p>
+        <p class="mb-2">{% trans "Please log in to view jobs" %}</p>
         <a href="{% url 'accounts:login' %}" class="btn btn-primary btn-sm">
-            {% trans "Tizimga kirish" %}
+            {% trans "Log In" %}
         </a>
     </div>
     {% endif %}
@@ -251,9 +251,9 @@
   <!-- Upcoming Events -->
   <section class="mb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <div class="fw-bold h5 text-dark">{% trans "Yaqinlashayotgan tadbirlar" %}</div>
+      <div class="fw-bold h5 text-dark">{% trans "Upcoming Events" %}</div>
       <a href="{% url 'events:event_list' %}" class="btn btn-outline-primary">
-        {% trans "Barcha tadbirlar" %} <i class="fas fa-arrow-right ms-2"></i>
+        {% trans "All Events" %} <i class="fas fa-arrow-right ms-2"></i>
       </a>
     </div>
     <div class="row g-3">
@@ -277,7 +277,7 @@
           </div>
           <div class="card-footer bg-transparent py-2">
             <a href="{% url 'events:event_detail' event.slug %}" class="btn btn-sm btn-outline-primary w-100">
-              {% trans "Ko'rish" %}
+              {% trans "View" %}
             </a>
           </div>
         </div>
@@ -285,7 +285,7 @@
       {% empty %}
       <div class="col-12">
         <div class="alert alert-info text-center">
-          {% trans "Yaqinlashayotgan tadbirlar mavjud emas" %}
+          {% trans "No upcoming events available" %}
         </div>
       </div>
       {% endfor %}
@@ -299,29 +299,29 @@
       <div class="card-header bg-warning text-dark">
         <h5 class="mb-0">
           <i class="fas fa-cog me-2"></i>
-          {% trans "Resurslar Boshqaruvi" %}
+          {% trans "Resource Management" %}
         </h5>
       </div>
       <div class="card-body">
         <div class="row text-center">
           <div class="col-md-4">
             <div class="h4 text-primary mb-1">{{ resources_admin_stats.total_resources }}</div>
-            <small class="text-muted">{% trans "Jami Resurslar" %}</small>
+            <small class="text-muted">{% trans "Total Resources" %}</small>
           </div>
           <div class="col-md-4">
             <div class="h4 text-warning mb-1">{{ resources_admin_stats.unpublished_count }}</div>
-            <small class="text-muted">{% trans "Tasdiqlanmagan" %}</small>
+            <small class="text-muted">{% trans "Unpublished" %}</small>
           </div>
           <div class="col-md-4">
             {% if resources_admin_stats.approval_needed %}
             <a href="{% url 'resources:unpublished_resources' %}" class="btn btn-danger">
               <i class="fas fa-exclamation-triangle me-2"></i>
-              {% trans "Tasdiqlash Kerak" %}
+              {% trans "Approval Needed" %}
             </a>
             {% else %}
             <span class="text-success">
               <i class="fas fa-check-circle me-2"></i>
-              {% trans "Barchasi Tasdiqlangan" %}
+              {% trans "All Approved" %}
             </span>
             {% endif %}
           </div>

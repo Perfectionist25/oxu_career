@@ -153,7 +153,7 @@ class JobAdmin(TranslationAdmin):
 
 
 @admin.register(JobApplication)
-class JobApplicationAdmin(admin.ModelAdmin):
+class JobApplicationAdmin(TranslationAdmin):
     list_display = ("candidate", "job_with_company", "status", "is_read", "created_at")
     list_filter = ("status", "is_read", "created_at")
     search_fields = (

@@ -17,7 +17,7 @@ from .models import (
 
 
 @admin.register(Alumni)
-class AlumniAdmin(admin.ModelAdmin):
+class AlumniAdmin(TranslationAdmin):
     """Админ-панель для выпускников"""
 
     list_display = (

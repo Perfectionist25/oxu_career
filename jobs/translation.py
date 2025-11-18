@@ -1,5 +1,5 @@
 from modeltranslation.translator import translator, TranslationOptions
-from .models import Job, Industry
+from .models import Job, Industry, JobApplication, SavedJob, JobAlert
 
 class IndustryTranslationOptions(TranslationOptions):
     fields = ('name', 'description')
@@ -23,5 +23,21 @@ class JobTranslationOptions(TranslationOptions):
         'contact_person',
     )
 
+class JobApplicationTranslationOptions(TranslationOptions):
+    fields = ('cover_letter',)
+
+class SavedJobTranslationOptions(TranslationOptions):
+    fields = ()  # No text fields to translate
+
+class JobAlertTranslationOptions(TranslationOptions):
+    fields = (
+        'name',
+        'keywords',
+        'location',
+    )
+
 translator.register(Industry, IndustryTranslationOptions)
 translator.register(Job, JobTranslationOptions)
+translator.register(JobApplication, JobApplicationTranslationOptions)
+translator.register(SavedJob, SavedJobTranslationOptions)
+translator.register(JobAlert, JobAlertTranslationOptions)

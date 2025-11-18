@@ -111,7 +111,7 @@ LANGUAGES = [
 
 LOCALE_PATHS = [BASE_DIR / "locale"]
 
-LANGUAGE_CODE = "uz"
+LANGUAGE_CODE = "en"
 
 TIME_ZONE = "Asia/Tashkent"
 
@@ -122,7 +122,7 @@ USE_L10N = True
 USE_TZ = True
 
 # Modeltranslation configuration
-MODELTRANSLATION_DEFAULT_LANGUAGE = 'uz'
+MODELTRANSLATION_DEFAULT_LANGUAGE = 'en'
 MODELTRANSLATION_LANGUAGES = ('uz', 'ru', 'en')
 
 # Статические файлы
@@ -158,13 +158,13 @@ JAZZMIN_SETTINGS = {
     "site_title": "OXU University Admin",
     "site_header": "OXU University",
     "site_brand": "OXU University",
-    "welcome_sign": "Добро пожаловать в панель управления OXU University",
+    "welcome_sign": "Welcome to OXU University Admin Panel",
     "copyright": "OXU University",
     "search_model": ["auth.User", "alumni.Alumni"],
     "user_avatar": None,
     "topmenu_links": [
-        {"name": "Главная", "url": "admin:index", "permissions": ["auth.view_user"]},
-        {"name": "Сайт", "url": "/", "new_window": True},
+        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "Site", "url": "/", "new_window": True},
     ],
     "show_sidebar": True,
     "navigation_expanded": True,

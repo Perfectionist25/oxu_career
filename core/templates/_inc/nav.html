@@ -51,52 +51,52 @@
         <div class="collapse navbar-collapse d-md-flex" id="navbarNav">
             <ul class="nav flex-column flex-md-row">
                 <li class="nav-item">
-                    <a style="color: white !important;" class="nav-link" href="/">{% trans "Bosh sahifa" %}</a>
+                    <a style="color: white !important;" class="nav-link" href="/">{% trans "Home" %}</a>
                 </li>
                 <li class="nav-item">
-                    <a style="color: white !important;" class="nav-link" href="https://oxu.uz/university">{% trans "Universitet" %}</a>
+                    <a style="color: white !important;" class="nav-link" href="https://oxu.uz/university">{% trans "University" %}</a>
                 </li>
                 <li class="nav-item">
-                    <a style="color: white !important;" class="nav-link" href="{% url 'resources:list' %}">{% trans "Resurslar" %}</a>
+                    <a style="color: white !important;" class="nav-link" href="{% url 'resources:list' %}">{% trans "Resources" %}</a>
                 </li>
                 <li class="nav-item">
-                    <a style="color: white !important;" class="nav-link" href="{% url 'events:event_list' %}">{% trans "Tadbirlar" %}</a>
+                    <a style="color: white !important;" class="nav-link" href="{% url 'events:event_list' %}">{% trans "Events" %}</a>
                 </li>
 
 
                 {% if user.is_authenticated %}
                     {% if user.is_student %}
                     <li class="nav-item">
-                        <a style="color: white !important;" class="nav-link" href="{% url 'jobs:list' %}">{% trans "Vakansiyalar" %}</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'jobs:list' %}">{% trans "Jobs" %}</a>
                     </li>
                     <li class="nav-item">
-                        <a style="color: white !important;" class="nav-link" href="{% url 'cvbuilder:cv_list' %}">{% trans "Mening rezyumelarim" %}</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'cvbuilder:cv_list' %}">{% trans "My Resumes" %}</a>
                     </li>
                     <li class="nav-item">
-                        <a style="color: white !important;" class="nav-link" href="{% url 'cvbuilder:cv_create' %}">{% trans "Rezyume yaratish" %}</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'cvbuilder:cv_create' %}">{% trans "Create Resume" %}</a>
                     </li>
                     {% elif user.is_employer %}
                     <li class="nav-item">
-                        <a style="color: white !important;" class="nav-link" href="{% url 'jobs:my_jobs' %}">{% trans "Mening vakansiyalarim" %}</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'jobs:my_jobs' %}">{% trans "My Jobs" %}</a>
                     </li>
                     <li class="nav-item">
-                        <a style="color: white !important;" class="nav-link" href="{% url 'jobs:job_create' %}">{% trans "Vakansiya qo'shish" %}</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'jobs:job_create' %}">{% trans "Add Job" %}</a>
                     </li>
                     <li class="nav-item">
-                        <a style="color: white !important;" class="nav-link" href="{% url 'cvbuilder:public_cv_list' %}">{% trans "Jamoat rezyumelari" %}</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'cvbuilder:public_cv_list' %}">{% trans "Public Resumes" %}</a>
                     </li>
                     {% elif user.is_admin or user.is_main_admin %}
                     <li class="nav-item">
-                        <a style="color: white !important;" class="nav-link" href="{% url 'jobs:list' %}">{% trans "Vakansiyalar" %}</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'jobs:list' %}">{% trans "Jobs" %}</a>
                     </li>
                     <li class="nav-item">
-                        <a style="color: white !important;" class="nav-link" href="{% url 'accounts:admin_dashboard' %}">{% trans "Admin panel" %}</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'accounts:admin_dashboard' %}">{% trans "Admin Panel" %}</a>
                     </li>
                     <li class="nav-item">
-                        <a style="color: white !important;" class="nav-link" href="{% url 'accounts:user_management' %}">{% trans "Foydalanuvchilar" %}</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'accounts:user_management' %}">{% trans "Users" %}</a>
                     </li>
                     <li class="nav-item">
-                        <a style="color: white !important;" class="nav-link" href="{% url 'cvbuilder:public_cv_list' %}">{% trans "Jamoat rezyumelari" %}</a>
+                        <a style="color: white !important;" class="nav-link" href="{% url 'cvbuilder:public_cv_list' %}">{% trans "Public Resumes" %}</a>
                     </li>
                     {% endif %}
                 {% endif %}
@@ -118,19 +118,19 @@
                         {% if user.is_student %}
                         <li>
                             <a class="dropdown-item" href="{% url 'accounts:student_dashboard' %}">
-                                <i class="fas fa-tachometer-alt me-2"></i>{% trans "Shaxsiy kabinet" %}
+                                <i class="fas fa-tachometer-alt me-2"></i>{% trans "Personal Cabinet" %}
                             </a>
                         </li>
                         {% elif user.is_employer %}
                         <li>
                             <a class="dropdown-item" href="{% url 'accounts:employer_dashboard' %}">
-                                <i class="fas fa-building me-2"></i>{% trans "Kompaniya kabineti" %}
+                                <i class="fas fa-building me-2"></i>{% trans "Company Cabinet" %}
                             </a>
                         </li>
                         {% elif user.is_admin or user.is_main_admin %}
                         <li>
                             <a class="dropdown-item" href="{% url 'accounts:admin_dashboard' %}">
-                                <i class="fas fa-cogs me-2"></i>{% trans "Admin panel" %}
+                                <i class="fas fa-cogs me-2"></i>{% trans "Admin Panel" %}
                             </a>
                         </li>
                         {% endif %}
@@ -138,12 +138,12 @@
                         <!-- Общие ссылки -->
                         <li>
                             <a class="dropdown-item" href="{% url 'accounts:profile_view' %}">
-                                <i class="fas fa-user-edit me-2"></i>{% trans "Profil" %}
+                                <i class="fas fa-user-edit me-2"></i>{% trans "Profile" %}
                             </a>
                         </li>
                         <li>
                             <a class="dropdown-item" href="{% url 'accounts:notifications' %}">
-                                <i class="fas fa-bell me-2"></i>{% trans "Xabarlar" %}
+                                <i class="fas fa-bell me-2"></i>{% trans "Messages" %}
                                 {% if user.unread_notifications_count > 0 %}
                                 <span class="badge bg-danger float-end">{{ user.unread_notifications_count }}</span>
                                 {% endif %}
@@ -155,7 +155,7 @@
                         {% if user.is_main_admin %}
                         <li>
                             <a class="dropdown-item" href="{% url 'accounts:create_admin_account' %}">
-                                <i class="fas fa-user-plus me-2"></i>{% trans "Yangi admin" %}
+                                <i class="fas fa-user-plus me-2"></i>{% trans "New Admin" %}
                             </a>
                         </li>
                         {% endif %}
@@ -163,7 +163,7 @@
                         {% if user.is_admin or user.is_main_admin %}
                         <li>
                             <a class="dropdown-item" href="{% url 'accounts:create_employer_account' %}">
-                                <i class="fas fa-building me-2"></i>{% trans "Yangi ish beruvchi" %}
+                                <i class="fas fa-building me-2"></i>{% trans "New Employer" %}
                             </a>
                         </li>
                         {% endif %}
@@ -171,7 +171,7 @@
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}">
-                                <i class="fas fa-sign-out-alt me-2"></i>{% trans "Chiqish" %}
+                                <i class="fas fa-sign-out-alt me-2"></i>{% trans "Logout" %}
                             </a>
                         </li>
                     </ul>
@@ -181,7 +181,7 @@
                 <div class="dropdown">
                     <button class="btn btn-primary dropdown-toggle" type="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-sign-in-alt me-1"></i>{% trans "Kirish" %}
+                        <i class="fas fa-sign-in-alt me-1"></i>{% trans "Login" %}
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end p-3">
                         <li class="menu-section">
@@ -189,8 +189,8 @@
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-graduation-cap text-success me-2"></i>
                                     <div>
-                                        <div class="fw-bold">{% trans "Talaba sifatida" %}</div>
-                                        <small class="text-muted">{% trans "Hemis orqali kirish" %}</small>
+                                        <div class="fw-bold">{% trans "As Student" %}</div>
+                                        <small class="text-muted">{% trans "Login via Hemis" %}</small>
                                     </div>
                                 </div>
                             </a>
@@ -200,8 +200,8 @@
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-building text-primary me-2"></i>
                                     <div>
-                                        <div class="fw-bold">{% trans "Ish beruvchi sifatida" %}</div>
-                                        <small class="text-muted">{% trans "Kompaniya akkaunti" %}</small>
+                                        <div class="fw-bold">{% trans "As Employer" %}</div>
+                                        <small class="text-muted">{% trans "Company Account" %}</small>
                                     </div>
                                 </div>
                             </a>
@@ -211,8 +211,8 @@
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-user-shield text-warning me-2"></i>
                                     <div>
-                                        <div class="fw-bold">{% trans "Admin sifatida" %}</div>
-                                        <small class="text-muted">{% trans "Tizim ma'muriyati" %}</small>
+                                        <div class="fw-bold">{% trans "As Admin" %}</div>
+                                        <small class="text-muted">{% trans "System Administration" %}</small>
                                     </div>
                                 </div>
                             </a>
