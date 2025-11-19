@@ -1,16 +1,373 @@
 {% extends 'base.html' %}
 {% load i18n %}
+{% load static %}
+
 {% block content %}
 <div class="container py-5">
-	<h1 class="display-5 fw-bold text-primary mb-4">{% trans "Notifications" %}</h1>
-	<div class="card shadow-sm mb-4">
-		<div class="card-body">
-			<ul class="list-group">
-				<li class="list-group-item d-flex justify-content-between align-items-center">
-					{% trans "No new notifications." %}
-				</li>
-			</ul>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="display-5 fw-bold text-primary mb-0">{% trans "Notifications" %}</h1>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary btn-sm" onclick="markAllAsRead()">
+                        <i class="fas fa-check-double me-1"></i>{% trans "Mark all as read" %}
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm" onclick="clearAllNotifications()">
+                        <i class="fas fa-trash me-1"></i>{% trans "Clear all" %}
+                    </button>
+                </div>
+            </div>
+
+            <!-- Notification Filters -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body py-3">
+                    <div class="d-flex flex-wrap gap-2">
+                        <button class="btn btn-outline-primary btn-sm active" data-filter="all">
+                            {% trans "All" %} <span class="badge bg-primary ms-1">{{ notifications.count }}</span>
+                        </button>
+                        <button class="btn btn-outline-success btn-sm" data-filter="unread">
+                            {% trans "Unread" %} <span class="badge bg-success ms-1">{{ unread_count }}</span>
+                        </button>
+                        <button class="btn btn-outline-info btn-sm" data-filter="system">
+                            {% trans "System" %} <span class="badge bg-info ms-1">{{ system_count }}</span>
+                        </button>
+                        <button class="btn btn-outline-warning btn-sm" data-filter="event">
+                            {% trans "Events" %} <span class="badge bg-warning ms-1">{{ event_count }}</span>
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm" data-filter="job">
+                            {% trans "Jobs" %} <span class="badge bg-secondary ms-1">{{ job_count }}</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications List -->
+            <div class="card shadow-sm">
+                <div class="card-body p-0">
+                    {% if notifications %}
+                    <div class="list-group list-group-flush" id="notificationsList">
+                        {% for notification in notifications %}
+                        <div class="list-group-item notification-item {% if not notification.is_read %}unread{% endif %}" 
+                             data-type="{{ notification.notification_type }}">
+                            <div class="d-flex align-items-start">
+                                <!-- Notification Icon -->
+                                <div class="flex-shrink-0 me-3">
+                                    <div class="notification-icon bg-{{ notification.get_priority_class }} rounded-circle d-flex align-items-center justify-content-center"
+                                         style="width: 40px; height: 40px;">
+                                        <i class="fas fa-{{ notification.get_icon }} text-white"></i>
+                                    </div>
+                                </div>
+                                
+                                <!-- Notification Content -->
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-start mb-1">
+                                        <h6 class="mb-0 fw-semibold">{{ notification.title }}</h6>
+                                        <small class="text-muted">{{ notification.created_at|timesince }} {% trans "ago" %}</small>
+                                    </div>
+                                    <p class="text-muted mb-2">{{ notification.message }}</p>
+                                    
+                                    <!-- Notification Actions -->
+                                    <div class="d-flex gap-2 align-items-center">
+                                        {% if notification.action_url %}
+                                        <a href="{{ notification.action_url }}" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-external-link-alt me-1"></i>{% trans "View" %}
+                                        </a>
+                                        {% endif %}
+                                        
+                                        {% if not notification.is_read %}
+                                        <button class="btn btn-outline-success btn-sm" onclick="markAsRead('{{ notification.id }}')">
+                                            <i class="fas fa-check me-1"></i>{% trans "Mark as read" %}
+                                        </button>
+                                        {% endif %}
+                                        
+                                        <button class="btn btn-outline-danger btn-sm" onclick="deleteNotification('{{ notification.id }}')">
+                                            <i class="fas fa-times me-1"></i>{% trans "Delete" %}
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Notification Metadata -->
+                                    <div class="mt-2">
+                                        <small class="text-muted">
+                                            <i class="fas fa-tag me-1"></i>
+                                            {% trans "Type" %}: {{ notification.get_notification_type_display }}
+                                            {% if notification.related_object %}
+                                            • {% trans "Related to" %}: {{ notification.related_object }}
+                                            {% endif %}
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <!-- Empty State -->
+                    <div class="text-center py-5">
+                        <div class="mb-4">
+                            <i class="fas fa-bell-slash fa-4x text-muted"></i>
+                        </div>
+                        <h4 class="text-muted mb-3">{% trans "No notifications" %}</h4>
+                        <p class="text-muted mb-4">{% trans "You're all caught up! When you have new notifications, they'll appear here." %}</p>
+                        <a href="{% url 'jobs:list' %}" class="btn btn-primary">
+                            <i class="fas fa-briefcase me-2"></i>{% trans "Browse Jobs" %}
+                        </a>
+                        <a href="{% url 'events:event_list' %}" class="btn btn-outline-primary ms-2">
+                            <i class="fas fa-calendar me-2"></i>{% trans "View Events" %}
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Sample Notifications (для демонстрации) -->
+            {% if not notifications %}
+            <div class="mt-4">
+                <h5 class="text-muted mb-3">{% trans "Example notifications you might receive:" %}</h5>
+                <div class="row g-3">
+                    <!-- Event Notifications -->
+                    <div class="col-md-6">
+                        <div class="card border-warning">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-calendar-plus text-warning me-2"></i>
+                                    <small class="text-muted">{% trans "Event Notification" %}</small>
+                                </div>
+                                <h6 class="mb-1">{% trans "New event created" %}</h6>
+                                <p class="text-muted small mb-2">{% trans "Admin created a new career fair event" %}</p>
+                                <small class="text-muted">{% trans "You would receive this when admin creates events" %}</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Job Notifications -->
+                    <div class="col-md-6">
+                        <div class="card border-info">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-briefcase text-info me-2"></i>
+                                    <small class="text-muted">{% trans "Job Notification" %}</small>
+                                </div>
+                                <h6 class="mb-1">{% trans "Job application status updated" %}</h6>
+                                <p class="text-muted small mb-2">{% trans "Your application has been reviewed" %}</p>
+                                <small class="text-muted">{% trans "Employers update application status" %}</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- System Notifications -->
+                    <div class="col-md-6">
+                        <div class="card border-primary">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-cog text-primary me-2"></i>
+                                    <small class="text-muted">{% trans "System Notification" %}</small>
+                                </div>
+                                <h6 class="mb-1">{% trans "Profile verification completed" %}</h6>
+                                <p class="text-muted small mb-2">{% trans "Your company profile has been verified" %}</p>
+                                <small class="text-muted">{% trans "System updates about your account" %}</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Interaction Notifications -->
+                    <div class="col-md-6">
+                        <div class="card border-success">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-users text-success me-2"></i>
+                                    <small class="text-muted">{% trans "Interaction Notification" %}</small>
+                                </div>
+                                <h6 class="mb-1">{% trans "Someone viewed your profile" %}</h6>
+                                <p class="text-muted small mb-2">{% trans "A student viewed your company profile" %}</p>
+                                <small class="text-muted">{% trans "When users interact with your content" %}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
 </div>
+
+<style>
+.notification-item {
+    border-left: 4px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.notification-item.unread {
+    border-left-color: #012152;
+    background-color: #f8f9fa;
+}
+
+.notification-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(2px);
+}
+
+.notification-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bg-high { background-color: #dc3545; }
+.bg-medium { background-color: #ffc107; }
+.bg-low { background-color: #28a745; }
+.bg-info { background-color: #17a2b8; }
+
+/* Filter active state */
+.btn[data-filter].active {
+    background-color: #012152;
+    border-color: #012152;
+    color: white;
+}
+</style>
+
+<script>
+// Filter notifications by type
+document.addEventListener('DOMContentLoaded', function() {
+    const filterButtons = document.querySelectorAll('[data-filter]');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const filter = this.dataset.filter;
+            
+            // Update active button
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Filter notifications
+            const notifications = document.querySelectorAll('.notification-item');
+            notifications.forEach(notification => {
+                if (filter === 'all' || notification.dataset.type === filter) {
+                    notification.style.display = 'flex';
+                } else {
+                    notification.style.display = 'none';
+                }
+            });
+        });
+    });
+});
+
+// Mark notification as read
+function markAsRead(notificationId) {
+    fetch(`/notifications/${notificationId}/mark-read/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const notification = document.querySelector(`[onclick*="${notificationId}"]`).closest('.notification-item');
+            notification.classList.remove('unread');
+            updateUnreadCount();
+        }
+    });
+}
+
+// Mark all as read
+function markAllAsRead() {
+    if (confirm('{% trans "Mark all notifications as read?" %}')) {
+        fetch('/notifications/mark-all-read/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.querySelectorAll('.notification-item').forEach(item => {
+                    item.classList.remove('unread');
+                });
+                updateUnreadCount();
+            }
+        });
+    }
+}
+
+// Delete single notification
+function deleteNotification(notificationId) {
+    if (confirm('{% trans "Delete this notification?" %}')) {
+        fetch(`/notifications/${notificationId}/delete/`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.querySelector(`[onclick*="${notificationId}"]`).closest('.notification-item').remove();
+                updateNotificationCounts();
+            }
+        });
+    }
+}
+
+// Clear all notifications
+function clearAllNotifications() {
+    if (confirm('{% trans "Delete all notifications? This action cannot be undone." %}')) {
+        fetch('/notifications/clear-all/', {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('notificationsList').innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                        <h5>{% trans "All notifications cleared" %}</h5>
+                    </div>
+                `;
+                updateNotificationCounts();
+            }
+        });
+    }
+}
+
+// Update notification counts
+function updateUnreadCount() {
+    const unreadCount = document.querySelectorAll('.notification-item.unread').length;
+    document.querySelector('[data-filter="unread"] .badge').textContent = unreadCount;
+}
+
+function updateNotificationCounts() {
+    // This would typically make an API call to get updated counts
+    // For now, we'll just update based on visible elements
+    const total = document.querySelectorAll('.notification-item').length;
+    const unread = document.querySelectorAll('.notification-item.unread').length;
+    
+    document.querySelector('[data-filter="all"] .badge').textContent = total;
+    document.querySelector('[data-filter="unread"] .badge').textContent = unread;
+}
+
+// CSRF token helper
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
 {% endblock %}

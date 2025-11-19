@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load static %}
 {% block content %}
 <div class="container py-4">
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'resources:list' %}">Barcha Resurslar</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'resources:list' %}">{% trans "All Resources" %}</a></li>
             <li class="breadcrumb-item active">{{ resource.title }}</li>
         </ol>
     </nav>
@@ -19,7 +20,7 @@
                         <span class="badge bg-primary">{{ resource.category.name }}</span>
                         <span class="badge bg-{{ resource.is_published|yesno:'success,warning' }}">
                             <i class="fas fa-{{ resource.is_published|yesno:'eye,eye-slash' }} me-1"></i>
-                            {{ resource.is_published|yesno:"Nashr etilgan,Nashr etilmagan" }}
+                            {{ resource.is_published|yesno:"Published,Unpublished" }}
                         </span>
                     </div>
                     
@@ -28,12 +29,12 @@
                     <div class="d-flex flex-wrap gap-3 text-muted">
                         <small>
                             <i class="fas fa-calendar me-1"></i>
-                            Qo'shilgan: {{ resource.created_at|date:"d.m.Y" }}
+                            {% trans "Added" %}: {{ resource.created_at|date:"d.m.Y" }}
                         </small>
                         {% if resource.updated_at != resource.created_at %}
                         <small>
                             <i class="fas fa-sync me-1"></i>
-                            Yangilangan: {{ resource.updated_at|date:"d.m.Y" }}
+                            {% trans "Updated" %}: {{ resource.updated_at|date:"d.m.Y" }}
                         </small>
                         {% endif %}
                     </div>
@@ -42,7 +43,7 @@
                 <div class="col-md-4 text-md-end">
                     <button class="btn btn-outline-primary" onclick="shareResource()">
                         <i class="fas fa-share-alt me-1"></i>
-                        Ulashish
+                        {% trans "Share" %}
                     </button>
                 </div>
             </div>
@@ -66,7 +67,7 @@
                 <div class="card-body">
                     <h3 class="h4 text-primary mb-3">
                         <i class="fas fa-info-circle me-2"></i>
-                        Resurs haqida
+                        {% trans "About Resource" %}
                     </h3>
                     <div class="description-content">
                         {{ resource.description|linebreaks }}
@@ -80,7 +81,7 @@
                 <div class="card-body">
                     <h3 class="h4 text-primary mb-3">
                         <i class="fab fa-youtube text-danger me-2"></i>
-                        Video Material
+                        {% trans "Video Material" %}
                     </h3>
                     
                     {% if youtube_data and youtube_data.is_embeddable %}
@@ -91,16 +92,16 @@
                                 <div class="spinner-border text-danger mb-3" role="status">
                                     <span class="visually-hidden">Loading...</span>
                                 </div>
-                                <p class="text-muted">Video yuklanmoqda...</p>
+                                <p class="text-muted">{% trans "Video is loading..." %}</p>
                             </div>
                         </div>
                         
                         <!-- Debug info -->
                         <div class="mt-2 text-center">
                             <small class="text-muted">
-                                Video ID: {{ youtube_data.video_id }} | 
+                                Video ID: {{ youtube_data.video_id }} |
                                 <a href="{{ resource.url_youtube }}" target="_blank" class="text-danger">
-                                    YouTubeda ochish
+                                    {% trans "Open on YouTube" %}
                                 </a>
                             </small>
                         </div>
@@ -111,17 +112,17 @@
                             <div class="mb-4">
                                 <i class="fab fa-youtube fa-3x text-danger mb-3"></i>
                                 <h5 class="text-dark">{{ youtube_data.title|default:resource.title }}</h5>
-                                <p class="text-muted">Video YouTube platformasida mavjud</p>
+                                <p class="text-muted">{% trans "Video is available on YouTube platform" %}</p>
                             </div>
-                            
+
                             <a href="{{ resource.url_youtube }}" target="_blank" rel="noopener noreferrer" class="btn btn-danger btn-lg">
                                 <i class="fab fa-youtube me-2"></i>
-                                YouTubeda ko'rish
+                                {% trans "Watch on YouTube" %}
                             </a>
-                            
+
                             <div class="mt-3">
                                 <small class="text-muted">
-                                    Video yangi oynada ochiladi
+                                    {% trans "Video will open in a new window" %}
                                 </small>
                             </div>
                             
@@ -130,9 +131,9 @@
                                 <small>
                                     <i class="fas fa-info-circle me-1"></i>
                                     {% if youtube_data %}
-                                        Video embedding mumkin emas yoki cheklangan.
+                                        {% trans "Video embedding is not possible or restricted." %}
                                     {% else %}
-                                        YouTube video havolasi tekshirilmadi.
+                                        {% trans "YouTube video link not checked." %}
                                     {% endif %}
                                 </small>
                             </div>
@@ -151,7 +152,7 @@
                 <div class="card-header bg-light">
                     <h5 class="card-title mb-0">
                         <i class="fas fa-info-circle me-2"></i>
-                        Tezkor Ma'lumot
+                        {% trans "Quick Information" %}
                     </h5>
                 </div>
                 <div class="card-body">
@@ -159,31 +160,31 @@
                         <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-layer-group text-primary me-3"></i>
-                                <span class="fw-semibold">Kategoriya</span>
+                                <span class="fw-semibold">{% trans "Category" %}</span>
                             </div>
                             <span class="badge bg-primary">{{ resource.category.name }}</span>
                         </div>
                         <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-calendar-plus text-success me-3"></i>
-                                <span class="fw-semibold">Qo'shilgan sana</span>
+                                <span class="fw-semibold">{% trans "Added date" %}</span>
                             </div>
                             <span>{{ resource.created_at|date:"d.m.Y" }}</span>
                         </div>
                         <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-sync text-warning me-3"></i>
-                                <span class="fw-semibold">Yangilangan sana</span>
+                                <span class="fw-semibold">{% trans "Updated date" %}</span>
                             </div>
                             <span>{{ resource.updated_at|date:"d.m.Y" }}</span>
                         </div>
                         <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-eye text-info me-3"></i>
-                                <span class="fw-semibold">Holati</span>
+                                <span class="fw-semibold">{% trans "Status" %}</span>
                             </div>
                             <span class="badge bg-{{ resource.is_published|yesno:'success,warning' }}">
-                                {{ resource.is_published|yesno:"Nashr etilgan,Nashr etilmagan" }}
+                                {{ resource.is_published|yesno:"Published,Unpublished" }}
                             </span>
                         </div>
                     </div>
@@ -196,29 +197,29 @@
                 <div class="card-header bg-light">
                     <h5 class="card-title mb-0">
                         <i class="fas fa-cog me-2"></i>
-                        Boshqaruv
+                        {% trans "Management" %}
                     </h5>
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-2">
                         <a href="{% url 'resources:resource_edit' resource.pk %}" class="btn btn-outline-primary btn-sm">
                             <i class="fas fa-edit me-1"></i>
-                            Tahrirlash
+                            {% trans "Edit" %}
                         </a>
                         {% if resource.is_published %}
                         <a href="{% url 'resources:unpublish_resource' resource.pk %}" class="btn btn-outline-warning btn-sm">
                             <i class="fas fa-eye-slash me-1"></i>
-                            Yashirish
+                            {% trans "Hide" %}
                         </a>
                         {% else %}
                         <a href="{% url 'resources:publish_resource' resource.pk %}" class="btn btn-outline-success btn-sm">
                             <i class="fas fa-check me-1"></i>
-                            Nashr etish
+                            {% trans "Publish" %}
                         </a>
                         {% endif %}
                         <a href="{% url 'resources:resource_delete' resource.pk %}" class="btn btn-outline-danger btn-sm">
                             <i class="fas fa-trash me-1"></i>
-                            O'chirish
+                            {% trans "Delete" %}
                         </a>
                     </div>
                 </div>
@@ -230,38 +231,38 @@
                 <div class="card-header bg-light">
                     <h5 class="card-title mb-0">
                         <i class="fas fa-share-alt me-2"></i>
-                        Ulashish
+                        {% trans "Share" %}
                     </h5>
                 </div>
                 <div class="card-body">
                     <div class="row g-2 text-center">
                         <div class="col-4">
-                            <button class="btn btn-outline-primary w-100" onclick="shareOnSocial('facebook')">
+                            <button class="btn btn-outline-primary w-100" onclick="shareOnSocial('facebook')" title="{% trans 'Share on Facebook' %}">
                                 <i class="fab fa-facebook-f"></i>
                             </button>
                         </div>
                         <div class="col-4">
-                            <button class="btn btn-outline-info w-100" onclick="shareOnSocial('twitter')">
+                            <button class="btn btn-outline-info w-100" onclick="shareOnSocial('twitter')" title="{% trans 'Share on Twitter' %}">
                                 <i class="fab fa-twitter"></i>
                             </button>
                         </div>
                         <div class="col-4">
-                            <button class="btn btn-outline-primary w-100" onclick="shareOnSocial('telegram')">
+                            <button class="btn btn-outline-primary w-100" onclick="shareOnSocial('telegram')" title="{% trans 'Share on Telegram' %}">
                                 <i class="fab fa-telegram"></i>
                             </button>
                         </div>
                         <div class="col-4">
-                            <button class="btn btn-outline-success w-100" onclick="shareOnSocial('whatsapp')">
+                            <button class="btn btn-outline-success w-100" onclick="shareOnSocial('whatsapp')" title="{% trans 'Share on WhatsApp' %}">
                                 <i class="fab fa-whatsapp"></i>
                             </button>
                         </div>
                         <div class="col-4">
-                            <button class="btn btn-outline-secondary w-100" onclick="copyLink()">
+                            <button class="btn btn-outline-secondary w-100" onclick="copyLink()" title="{% trans 'Copy link' %}">
                                 <i class="fas fa-link"></i>
                             </button>
                         </div>
                         <div class="col-4">
-                            <button class="btn btn-outline-danger w-100" onclick="shareResource()">
+                            <button class="btn btn-outline-danger w-100" onclick="shareResource()" title="{% trans 'Share resource' %}">
                                 <i class="fas fa-share-alt"></i>
                             </button>
                         </div>
@@ -275,8 +276,8 @@
     {% if similar_resources %}
     <div class="mt-5 pt-4 border-top">
         <div class="text-center mb-4">
-            <h3 class="h4 text-primary">O'xshash Resurslar</h3>
-            <p class="text-muted">Bu kategoriyadagi boshqa foydali materiallar</p>
+            <h3 class="h4 text-primary">{% trans "Similar Resources" %}</h3>
+            <p class="text-muted">{% trans "Other useful materials in this category" %}</p>
         </div>
         
         <div class="row g-4">
@@ -301,7 +302,7 @@
                         <div class="mt-auto">
                             <small class="text-muted">
                                 <i class="fas fa-calendar me-1"></i>
-                                {{ similar.created_at|date:"d.m.Y" }}
+                                {% trans "Added" %}: {{ similar.created_at|date:"d.m.Y" }}
                             </small>
                         </div>
                     </div>
@@ -316,13 +317,13 @@
     <div class="d-flex justify-content-between align-items-center mt-5 pt-4 border-top">
         <a href="{% url 'resources:list' %}" class="btn btn-outline-primary">
             <i class="fas fa-arrow-left me-1"></i>
-            Barcha Resurslarga qaytish
+            {% trans "Back to All Resources" %}
         </a>
-        
+
         {% if request.user.is_authenticated and request.user.is_staff %}
         <a href="{% url 'resources:unpublished_resources' %}" class="btn btn-outline-secondary">
             <i class="fas fa-eye-slash me-1"></i>
-            Nashr etilmagan resurslar
+            {% trans "Unpublished resources" %}
         </a>
         {% endif %}
     </div>
@@ -418,8 +419,8 @@ function shareResource() {
             text: text,
             url: url,
         })
-        .then(() => console.log('Resurs muvaffaqiyatli ulashildi'))
-        .catch((error) => console.log('Ulashishda xatolik', error));
+        .then(() => console.log('Resource shared successfully'))
+        .catch((error) => console.log('Error sharing', error));
     } else {
         copyLink();
     }
@@ -460,7 +461,7 @@ function copyLink() {
         alert.style.zIndex = '9999';
         alert.innerHTML = `
             <i class="fas fa-check-circle me-2"></i>
-            Havola buferga nusxalandi!
+            Link copied to clipboard!
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         `;
         document.body.appendChild(alert);
@@ -502,7 +503,7 @@ function initializeYouTubePlayer(videoId) {
                 },
                 'onError': function(event) {
                     console.error('YouTube Player error:', event.data);
-                    showYouTubeFallback('Video o‘ynatilmadi. Xatolik kodi: ' + event.data);
+                    showYouTubeFallback('Video failed to play. Error code: ' + event.data);
                 }
             }
         });
@@ -517,7 +518,7 @@ function initializeYouTubePlayer(videoId) {
         
     } catch (error) {
         console.error('YouTube Player initialization error:', error);
-        showYouTubeFallback('Video pleer ishga tushirilmadi.');
+        showYouTubeFallback('Video player could not be initialized.');
     }
 }
 
@@ -532,7 +533,7 @@ function showYouTubeFallback(message) {
                     <div class="mt-3">
                         <a href="{{ resource.url_youtube }}" target="_blank" rel="noopener noreferrer" class="btn btn-danger">
                             <i class="fab fa-youtube me-1"></i>
-                            YouTubeda ko'rish
+                            Watch on YouTube
                         </a>
                     </div>
                 </div>
@@ -541,12 +542,12 @@ function showYouTubeFallback(message) {
     }
 }
 
-// Fallback if YouTube API doesn't load
+<!-- Fallback if YouTube API doesn't load -->
 setTimeout(function() {
     {% if youtube_data and youtube_data.is_embeddable %}
     if (typeof YT === 'undefined' && document.getElementById('youtubeLoading')) {
         console.log('YouTube API not loaded, using fallback');
-        showYouTubeFallback('YouTube API yuklanmadi.');
+        showYouTubeFallback('YouTube API not loaded.');
     }
     {% endif %}
 }, 10000);

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load static %}
 {% block content %}
 <div class="container py-5">
@@ -8,8 +9,8 @@
             <div class="header-icon">
                 <i class="fas fa-exclamation-triangle"></i>
             </div>
-            <h1 class="confirmation-title">Resursni O'chirish</h1>
-            <p class="confirmation-subtitle">Quyidagi resursni o'chirishni tasdiqlang</p>
+            <h1 class="confirmation-title">Delete Resource</h1>
+            <p class="confirmation-subtitle">Confirm deletion of the following resource</p>
         </div>
 
         <!-- Resource Info Card -->
@@ -17,7 +18,7 @@
             <div class="preview-header">
                 <div class="preview-badge">
                     <i class="fas fa-trash"></i>
-                    O'chirilmoqda
+                    Being deleted
                 </div>
                 <div class="preview-category">
                     {{ resource.category.name|default:"Kategoriyasiz" }}
@@ -37,10 +38,10 @@
 
                     <div class="preview-meta">
                         <div class="meta-grid">
-                            <div class="meta-item">
+                    <div class="meta-item">
                                 <i class="fas fa-calendar-plus"></i>
                                 <div class="meta-info">
-                                    <span class="meta-label">Qo'shilgan sana</span>
+                                    <span class="meta-label">Added date</span>
                                     <span class="meta-value">{{ resource.created_at|date:"d.m.Y H:i" }}</span>
                                 </div>
                             </div>
@@ -48,7 +49,7 @@
                             <div class="meta-item">
                                 <i class="fas fa-sync"></i>
                                 <div class="meta-info">
-                                    <span class="meta-label">Yangilangan sana</span>
+                                    <span class="meta-label">Updated date</span>
                                     <span class="meta-value">{{ resource.updated_at|date:"d.m.Y H:i" }}</span>
                                 </div>
                             </div>
@@ -56,9 +57,9 @@
                             <div class="meta-item">
                                 <i class="fas fa-eye"></i>
                                 <div class="meta-info">
-                                    <span class="meta-label">Holati</span>
+                                    <span class="meta-label">Status</span>
                                     <span class="meta-value status-{{ resource.is_published|yesno:'published,unpublished' }}">
-                                        {{ resource.is_published|yesno:"Nashr etilgan,Nashr etilmagan" }}
+                                        {{ resource.is_published|yesno:"Published,Unpublished" }}
                                     </span>
                                 </div>
                             </div>
@@ -84,13 +85,13 @@
                 <i class="fas fa-exclamation-circle"></i>
             </div>
             <div class="alert-content">
-                <h4>Diqqat! Bu amalni qaytarib bo'lmaydi</h4>
-                <p>Resursni o'chirish quyidagi oqibatlarga olib keladi:</p>
+                <h4>Warning! This action cannot be undone</h4>
+                <p>Deleting the resource will have the following consequences:</p>
                 <ul class="warning-list">
-                    <li>Resurs butunlay o'chiriladi</li>
-                    <li>Barcha bog'liq ma'lumotlar yo'qoladi</li>
-                    <li>Foydalanuvchilar bu resursga boshqa kira olmaydi</li>
-                    <li>Bu amalni qaytarib bo'lmaydi</li>
+                    <li>The resource will be completely deleted</li>
+                    <li>All related data will be lost</li>
+                    <li>Users will no longer be able to access this resource</li>
+                    <li>This action cannot be undone</li>
                 </ul>
             </div>
         </div>
@@ -103,17 +104,17 @@
                 <div class="form-actions">
                     <a href="{% url 'resources:resource_detail' resource.pk %}" class="btn-secondary">
                         <i class="fas fa-arrow-left"></i>
-                        Ortga qaytish
+                        Go back
                     </a>
-                    
+
                     <div class="danger-actions">
                         <button type="button" class="btn-outline" onclick="toggleFinalConfirmation()">
                             <i class="fas fa-times"></i>
-                            Bekor qilish
+                            Cancel
                         </button>
                         <button type="submit" class="btn-danger" id="deleteButton">
                             <i class="fas fa-trash"></i>
-                            Resursni o'chirish
+                            Delete resource
                         </button>
                     </div>
                 </div>
@@ -122,16 +123,16 @@
                 <div class="final-confirmation" id="finalConfirmation">
                     <div class="final-warning">
                         <i class="fas fa-radiation"></i>
-                        <h4>Yakuniy tasdiq</h4>
-                        <p>Ishonchingiz komilmi? Bu amalni qaytarib bo'lmaydi.</p>
+                        <h4>Final Confirmation</h4>
+                        <p>Are you sure? This action cannot be undone.</p>
                     </div>
                     <div class="final-actions">
                         <button type="button" class="btn-outline" onclick="toggleFinalConfirmation()">
-                            Yo'q, bekor qilish
+                            No, cancel
                         </button>
                         <button type="submit" class="btn-danger-final">
                             <i class="fas fa-skull-crossbones"></i>
-                            Ha, o'chirishni tasdiqlayman
+                            Yes, confirm deletion
                         </button>
                     </div>
                 </div>
@@ -140,22 +141,22 @@
 
         <!-- Alternative Actions -->
         <div class="alternative-actions">
-            <h4>Boshqa variantlar</h4>
+            <h4>Other options</h4>
             <div class="alternative-buttons">
                 {% if not resource.is_published %}
                 <a href="{% url 'resources:publish_resource' resource.pk %}" class="btn-success">
                     <i class="fas fa-check"></i>
-                    Nashr etish
+                    Publish
                 </a>
                 {% else %}
                 <a href="{% url 'resources:unpublish_resource' resource.pk %}" class="btn-warning">
                     <i class="fas fa-eye-slash"></i>
-                    Nashrdan olish
+                    Unpublish
                 </a>
                 {% endif %}
                 <a href="{% url 'resources:resource_edit' resource.pk %}" class="btn-primary">
                     <i class="fas fa-edit"></i>
-                    Tahrirlash
+                    Edit
                 </a>
             </div>
         </div>

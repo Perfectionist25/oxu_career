@@ -1,11 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
+
 {% block content %}
 <div class="container py-5">
     <!-- Header Section -->
     <div class="header-section">
-        <h1 class="main-title">Nashr Etilmagan Resurslar</h1>
-        <p class="subtitle">Tekshirish va nashr etish uchun kutayotgan barcha materiallar</p>
+        <h1 class="main-title">{% trans "Unpublished Resources" %}</h1>
+        <p class="subtitle">{% trans "All materials waiting for review and publication" %}</p>
     </div>
 
     <!-- Stats Cards -->
@@ -16,7 +18,7 @@
             </div>
             <div class="stat-info">
                 <div class="stat-number">{{ total_resources }}</div>
-                <div class="stat-label">Jami nashr etilmagan</div>
+                <div class="stat-label">{% trans "Total unpublished" %}</div>
             </div>
         </div>
         <div class="stat-card">
@@ -25,7 +27,7 @@
             </div>
             <div class="stat-info">
                 <div class="stat-number">{{ today_count }}</div>
-                <div class="stat-label">Bugun qo'shilgan</div>
+                <div class="stat-label">{% trans "Added today" %}</div>
             </div>
         </div>
         <div class="stat-card">
@@ -34,7 +36,7 @@
             </div>
             <div class="stat-info">
                 <div class="stat-number">{{ categories_count }}</div>
-                <div class="stat-label">Kategoriyalar</div>
+                <div class="stat-label">{% trans "Categories" %}</div>
             </div>
         </div>
     </div>
@@ -43,15 +45,15 @@
     <div class="actions-bar">
         <div class="action-buttons">
             <a href="{% url 'resources:resource_create' %}" class="btn-success">
-                <i class="fas fa-plus"></i>Yangi resurs qo'shish
+                <i class="fas fa-plus"></i>{% trans "Add new resource" %}
             </a>
             <a href="{% url 'resources:list' %}" class="btn-secondary">
-                <i class="fas fa-eye"></i>Nashr etilgan resurslar
+                <i class="fas fa-eye"></i>{% trans "Published resources" %}
             </a>
         </div>
         
         <div class="view-options">
-            <span class="view-label">Ko'rinish:</span>
+            <span class="view-label">{% trans "View" %}:</span>
             <button class="view-btn active" data-view="grid">
                 <i class="fas fa-th"></i>
             </button>
@@ -69,7 +71,7 @@
             <div class="card-header">
                 <div class="status-badge">
                     <i class="fas fa-eye-slash"></i>
-                    Nashr etilmagan
+                    {% trans "Unpublished" %}
                 </div>
                 <div class="card-actions">
                     <div class="dropdown">
@@ -79,20 +81,20 @@
                         <div class="dropdown-menu">
                             <a href="{% url 'resources:publish_resource' resource.pk %}" 
                                class="dropdown-item publish-btn"
-                               onclick="return confirm('Ushbu resursni nashr etishni xohlaysizmi?')">
-                                <i class="fas fa-check"></i>Nashr etish
+                               onclick="return confirm('{% trans "Do you want to publish this resource?" %}')">
+                                <i class="fas fa-check"></i>{% trans "Publish" %}
                             </a>
                             <a href="{% url 'resources:resource_edit' resource.pk %}" class="dropdown-item">
-                                <i class="fas fa-edit"></i>Tahrirlash
+                                <i class="fas fa-edit"></i>{% trans "Edit" %}
                             </a>
                             <a href="{% url 'resources:resource_detail' resource.pk %}" class="dropdown-item">
-                                <i class="fas fa-eye"></i>Ko'rish
+                                <i class="fas fa-eye"></i>{% trans "View" %}
                             </a>
                             <div class="dropdown-divider"></div>
                             <a href="{% url 'resources:resource_delete' resource.pk %}" 
                                class="dropdown-item delete-btn"
-                               onclick="return confirm('Ushbu resursni o\'chirishni tasdiqlaysizmi?')">
-                                <i class="fas fa-trash"></i>O'chirish
+                               onclick="return confirm('{% trans "Do you confirm deletion of this resource?" %}')">
+                                <i class="fas fa-trash"></i>{% trans "Delete" %}
                             </a>
                         </div>
                     </div>
@@ -114,7 +116,7 @@
                 <!-- Resource Info -->
                 <div class="resource-info">
                     <div class="category-badge">
-                        {{ resource.category.name|default:"Kategoriyasiz" }}
+                        {{ resource.category.name|default:_("No category") }}
                     </div>
                     <h3 class="resource-title">{{ resource.title }}</h3>
                     <p class="resource-description">{{ resource.description|truncatewords:20 }}</p>
@@ -123,16 +125,16 @@
                     <div class="resource-meta">
                         <div class="meta-item">
                             <i class="fas fa-calendar-plus"></i>
-                            Qo'shilgan: {{ resource.created_at|date:"d.m.Y" }}
+                            {% trans "Added" %}: {{ resource.created_at|date:"d.m.Y" }}
                         </div>
                         <div class="meta-item">
                             <i class="fas fa-sync"></i>
-                            Yangilangan: {{ resource.updated_at|date:"d.m.Y" }}
+                            {% trans "Updated" %}: {{ resource.updated_at|date:"d.m.Y" }}
                         </div>
                         {% if resource.url_youtube %}
                         <div class="meta-item">
                             <i class="fab fa-youtube"></i>
-                            YouTube video mavjud
+                            {% trans "YouTube video available" %}
                         </div>
                         {% endif %}
                     </div>
@@ -142,15 +144,15 @@
                 <div class="quick-actions">
                     <form method="post" action="{% url 'resources:publish_resource' resource.pk %}" class="quick-form">
                         {% csrf_token %}
-                        <button type="submit" class="btn-success btn-sm" onclick="return confirm('Nashr etishni tasdiqlaysizmi?')">
-                            <i class="fas fa-check"></i>Nashr etish
+                        <button type="submit" class="btn-success btn-sm" onclick="return confirm('{% trans "Do you confirm publishing?" %}')">
+                            <i class="fas fa-check"></i>{% trans "Publish" %}
                         </button>
                     </form>
                     <a href="{% url 'resources:resource_edit' resource.pk %}" class="btn-secondary btn-sm">
-                        <i class="fas fa-edit"></i>Tahrirlash
+                        <i class="fas fa-edit"></i>{% trans "Edit" %}
                     </a>
                     <a href="{% url 'resources:resource_detail' resource.pk %}" class="btn-primary btn-sm">
-                        <i class="fas fa-eye"></i>Ko'rish
+                        <i class="fas fa-eye"></i>{% trans "View" %}
                     </a>
                 </div>
             </div>
@@ -163,7 +165,7 @@
     <div class="pagination">
         {% if page_obj.has_previous %}
             <a href="?page={{ page_obj.previous_page_number }}" class="page-link">
-                <i class="fas fa-chevron-left"></i> Oldingi
+                <i class="fas fa-chevron-left"></i> {% trans "Previous" %}
             </a>
         {% endif %}
 
@@ -179,7 +181,7 @@
 
         {% if page_obj.has_next %}
             <a href="?page={{ page_obj.next_page_number }}" class="page-link">
-                Keyingi <i class="fas fa-chevron-right"></i>
+                {% trans "Next" %} <i class="fas fa-chevron-right"></i>
             </a>
         {% endif %}
     </div>
@@ -191,14 +193,14 @@
         <div class="empty-icon">
             <i class="fas fa-check-circle"></i>
         </div>
-        <h3>Barcha resurslar nashr etilgan</h3>
-        <p>Hozirda nashr etilmagan resurslar mavjud emas. Barcha materiallar allaqachon nashr etilgan.</p>
+        <h3>{% trans "All resources are published" %}</h3>
+        <p>{% trans "There are currently no unpublished resources. All materials have already been published." %}</p>
         <div class="empty-actions">
             <a href="{% url 'resources:resource_create' %}" class="btn-success">
-                <i class="fas fa-plus"></i>Yangi resurs qo'shish
+                <i class="fas fa-plus"></i>{% trans "Add new resource" %}
             </a>
             <a href="{% url 'resources:list' %}" class="btn-primary">
-                <i class="fas fa-eye"></i>Nashr etilgan resurslarni ko'rish
+                <i class="fas fa-eye"></i>{% trans "View published resources" %}
             </a>
         </div>
     </div>
@@ -208,20 +210,21 @@
     {% if page_obj %}
     <div class="bulk-actions">
         <div class="bulk-header">
-            <h4>Ommaviy amallar</h4>
-            <p>Bir nechta resurslarni bir vaqtda boshqarish</p>
+            <h4>{% trans "Bulk Actions" %}</h4>
+            <p>{% trans "Manage multiple resources at once" %}</p>
         </div>
         <div class="bulk-buttons">
             <button class="btn-warning" onclick="bulkPublish()">
-                <i class="fas fa-check-double"></i>Tanlilarni nashr etish
+                <i class="fas fa-check-double"></i>{% trans "Publish selected" %}
             </button>
             <button class="btn-secondary" onclick="selectAll()">
-                <i class="fas fa-check-square"></i>Barchasini tanlash
+                <i class="fas fa-check-square"></i>{% trans "Select all" %}
             </button>
         </div>
     </div>
     {% endif %}
 </div>
+
 
 <style>
 .container {
@@ -726,13 +729,13 @@ document.addEventListener('DOMContentLoaded', function() {
 function bulkPublish() {
     const selectedResources = document.querySelectorAll('.resource-checkbox:checked');
     if (selectedResources.length === 0) {
-        alert('Iltimos, nashr etish uchun kamida bitta resursni tanlang.');
+        alert('Please select at least one resource to publish.');
         return;
     }
-    
-    if (confirm(`Siz ${selectedResources.length} ta resursni nashr etishni xohlaysizmi?`)) {
+
+    if (confirm(`Do you want to publish ${selectedResources.length} resources?`)) {
         // Simulate bulk publish action
-        alert(`${selectedResources.length} ta resurs nashr etildi!`);
+        alert(`${selectedResources.length} resources published!`);
         // In real implementation, you would submit a form or make an API call
     }
 }

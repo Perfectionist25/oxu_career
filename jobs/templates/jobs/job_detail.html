@@ -471,28 +471,28 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Обработка формы отклика
+    // Handle application form
     const applyModal = document.getElementById('applyModal');
     if (applyModal) {
         applyModal.addEventListener('shown.bs.modal', function () {
-            // Можно добавить дополнительную логику при открытии модального окна
+            // Additional logic when modal opens
         });
     }
 
-    // Подсветка навыков
+    // Skill badges hover effect
     const skillBadges = document.querySelectorAll('.skills-tags .badge');
     skillBadges.forEach(badge => {
         badge.addEventListener('mouseenter', function() {
             this.style.transform = 'scale(1.05)';
             this.style.transition = 'transform 0.2s ease';
         });
-        
+
         badge.addEventListener('mouseleave', function() {
             this.style.transform = 'scale(1)';
         });
     });
 
-    // Плавная прокрутка к секциям
+    // Smooth scroll to sections
     const sectionLinks = document.querySelectorAll('a[href^="#"]');
     sectionLinks.forEach(link => {
         link.addEventListener('click', function(e) {

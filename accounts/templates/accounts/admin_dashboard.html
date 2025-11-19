@@ -3,7 +3,7 @@
 {% load static %}
 {% load i18n %}
 
-{% block title %}{% trans "Admin paneli" %}{% endblock %}
+{% block title %}{% trans "Admin Panel" %}{% endblock %}
 
 {% block content %}
 <div class="container-fluid py-4">
@@ -12,17 +12,17 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h1 class="h3 fw-bold text-primary mb-1">{% trans "Admin paneli" %}</h1>
+                    <h1 class="h3 fw-bold text-primary mb-1">{% trans "Admin Panel" %}</h1>
                     <p class="text-muted mb-0">
-                        {% trans "Tizim boshqaruvi" %} | 
+                        {% trans "System Management" %} |
                         <strong style="color: black;">{{ user.get_full_name|default:user.username }}</strong>
-                        {% if user.is_main_admin %}({% trans "Bosh Admin" %}){% endif %}
+                        {% if user.is_main_admin %}({% trans "Main Admin" %}){% endif %}
                     </p>
                 </div>
                 <div class="text-end">
-                    <small class="text-muted d-block">{% trans "Oxirgi faollik" %}:</small>
+                    <small class="text-muted d-block">{% trans "Last Activity" %}:</small>
                     <small class="text-muted">
-                        {% now "H:i" %} {% trans "soat" %}
+                        {% now "H:i" %} {% trans "hour" %}
                     </small>
                 </div>
             </div>
@@ -36,7 +36,7 @@
                 <div class="card-body text-center py-4">
                     <i class="fas fa-users fa-2x mb-2 opacity-50"></i>
                     <div class="fw-bold mb-1 h4">{{ stats.total_users|default:0 }}</div>
-                    <small>{% trans "Jami foydalanuvchilar" %}</small>
+                    <small>{% trans "Total Users" %}</small>
                 </div>
             </div>
         </div>
@@ -46,7 +46,7 @@
                 <div class="card-body text-center py-4">
                     <i class="fas fa-graduation-cap fa-2x mb-2 opacity-50"></i>
                     <div class="fw-bold mb-1 h4">{{ stats.total_students|default:0 }}</div>
-                    <small>{% trans "Talabalar" %}</small>
+                    <small>{% trans "Students" %}</small>
                 </div>
             </div>
         </div>
@@ -56,7 +56,7 @@
                 <div class="card-body text-center py-4">
                     <i class="fas fa-building fa-2x mb-2 opacity-50"></i>
                     <div class="fw-bold mb-1 h4">{{ stats.total_employers|default:0 }}</div>
-                    <small>{% trans "Ish beruvchilar" %}</small>
+                    <small>{% trans "Employers" %}</small>
                 </div>
             </div>
         </div>
@@ -66,7 +66,7 @@
                 <div class="card-body text-center py-4">
                     <i class="fas fa-briefcase fa-2x mb-2 opacity-50"></i>
                     <div class="fw-bold mb-1 h4">{{ stats.total_jobs|default:0 }}</div>
-                    <small>{% trans "Vakansiyalar" %}</small>
+                    <small>{% trans "Jobs" %}</small>
                 </div>
             </div>
         </div>
@@ -76,7 +76,7 @@
                 <div class="card-body text-center py-4">
                     <i class="fas fa-file-alt fa-2x mb-2 opacity-50"></i>
                     <div class="fw-bold mb-1 h4">{{ stats.total_resumes|default:0 }}</div>
-                    <small>{% trans "Rezyumelar" %}</small>
+                    <small>{% trans "Resumes" %}</small>
                 </div>
             </div>
         </div>
@@ -86,7 +86,7 @@
                 <div class="card-body text-center py-4">
                     <i class="fas fa-user-clock fa-2x mb-2 opacity-50"></i>
                     <div class="fw-bold mb-1 h4">{{ stats.active_today|default:0 }}</div>
-                    <small>{% trans "Bugun faol" %}</small>
+                    <small>{% trans "Active Today" %}</small>
                 </div>
             </div>
         </div>
@@ -95,13 +95,13 @@
     <!-- Действия администратора -->
     <div class="row mb-5">
         <div class="col-12">
-            <h4 class="fw-bold text-dark mb-4">{% trans "Boshqaruv paneli" %}</h4>
+            <h4 class="fw-bold text-dark mb-4">{% trans "Control Panel" %}</h4>
             <div class="row g-3">
                 {% if user.is_main_admin %}
                 <div class="col-xl-2 col-md-3 col-6">
                     <a href="{% url 'accounts:create_admin_account' %}" class="btn btn-primary w-100 h-100 py-4">
                         <i class="fas fa-user-plus fa-2x mb-2"></i>
-                        <div>{% trans "Yangi admin" %}</div>
+                        <div>{% trans "New Admin" %}</div>
                     </a>
                 </div>
                 {% endif %}
@@ -109,42 +109,42 @@
                 <div class="col-xl-2 col-md-3 col-6">
                     <a href="{% url 'accounts:create_employer_account' %}" class="btn btn-success w-100 h-100 py-4">
                         <i class="fas fa-building fa-2x mb-2"></i>
-                        <div>{% trans "Yangi ish beruvchi" %}</div>
+                        <div>{% trans "New Employer" %}</div>
                     </a>
                 </div>
                 
                 <div class="col-xl-2 col-md-3 col-6">
                     <a href="{% url 'accounts:user_management' %}" class="btn btn-info w-100 h-100 py-4">
                         <i class="fas fa-users-cog fa-2x mb-2"></i>
-                        <div>{% trans "Foydalanuvchilar" %}</div>
+                        <div>{% trans "Users" %}</div>
                     </a>
                 </div>
                 
                 <div class="col-xl-2 col-md-3 col-6">
                     <a href="{% url 'jobs:list' %}" class="btn btn-warning w-100 h-100 py-4" onclick="alert('{% trans "Tez orada qo'shiladi" %}')">
                         <i class="fas fa-briefcase fa-2x mb-2"></i>
-                        <div>{% trans "Vakansiyalar" %}</div>
+                        <div>{% trans "Jobs" %}</div>
                     </a>
                 </div>
                 
                 <div class="col-xl-2 col-md-3 col-6">
-                    <a href="{% url 'cvbuilder:public_cv_list' %}" class="btn btn-secondary w-100 h-100 py-4" onclick="alert('{% trans "Tez orada qo'shiladi" %}')">
+                    <a href="{% url 'cvbuilder:public_cv_list' %}" class="btn btn-secondary w-100 h-100 py-4" onclick="alert('{% trans "Coming soon" %}')">
                         <i class="fas fa-file-alt fa-2x mb-2"></i>
-                        <div>{% trans "Rezyumelar" %}</div>
+                        <div>{% trans "Resumes" %}</div>
                     </a>
                 </div>
                 
                 <div class="col-xl-2 col-md-3 col-6">
                     <a href="{% url 'events:admin_event_list' %}" class="btn btn-info w-100 h-100 py-4">
                         <i class="fas fa-calendar-alt fa-2x mb-2"></i>
-                        <div>{% trans "Tadbirlar" %}</div>
+                        <div>{% trans "Events" %}</div>
                     </a>
                 </div>
 
                 <div class="col-xl-2 col-md-3 col-6">
                     <a href="#" class="btn btn-dark w-100 h-100 py-4" onclick="alert('{% trans "Tez orada qo'shiladi" %}')">
                         <i class="fas fa-chart-bar fa-2x mb-2"></i>
-                        <div>{% trans "Statistika" %}</div>
+                        <div>{% trans "Statistics" %}</div>
                     </a>
                 </div>
             </div>
@@ -157,17 +157,17 @@
         <div class="col-lg-8 mb-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h5 class="fw-bold mb-0">{% trans "So'nggi tizim faolligi" %}</h5>
-                    <a href="{% url 'accounts:user_management' %}" class="btn btn-sm btn-outline-primary">{% trans "Barchasini ko'rish" %}</a>
+                    <h5 class="fw-bold mb-0">{% trans "Recent System Activity" %}</h5>
+                    <a href="{% url 'accounts:user_management' %}" class="btn btn-sm btn-outline-primary">{% trans "View All" %}</a>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th style="color: black;">{% trans "Foydalanuvchi" %}</th>
-                                    <th style="color: black;">{% trans "Faollik" %}</th>
-                                    <th style="color: black;">{% trans "Vaqt" %}</th>
+                                    <th style="color: black;">{% trans "User" %}</th>
+                                    <th style="color: black;">{% trans "Activity" %}</th>
+                                    <th style="color: black;">{% trans "Time" %}</th>
                                     <th style="color: black;">{% trans "IP" %}</th>
                                 </tr>
                             </thead>
@@ -199,7 +199,7 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <small class="text-muted">{{ activity.created_at|timesince }} {% trans "oldin" %}</small>
+                                        <small class="text-muted">{{ activity.created_at|timesince }} {% trans "ago" %}</small>
                                     </td>
                                     <td>
                                         <small class="text-muted">{{ activity.ip_address|default:"-" }}</small>
@@ -208,7 +208,7 @@
                                 {% empty %}
                                 <tr>
                                     <td colspan="4" class="text-center text-muted py-4">
-                                        {% trans "Hozircha faollik mavjud emas" %}
+                                        {% trans "No activity yet" %}
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -224,23 +224,23 @@
             <!-- Статистика за неделю -->
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white">
-                    <h5 class="fw-bold mb-0">{% trans "Haftalik o'sish" %}</h5>
+                    <h5 class="fw-bold mb-0">{% trans "Weekly Growth" %}</h5>
                 </div>
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span>{% trans "Yangi talabalar" %}</span>
+                        <span>{% trans "New Students" %}</span>
                         <span class="badge bg-success">+{{ stats.new_this_week|default:0 }}</span>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span>{% trans "Yangi ish beruvchilar" %}</span>
+                        <span>{% trans "New Employers" %}</span>
                         <span class="badge bg-info">+{{ stats.new_employers_week|default:0 }}</span>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span>{% trans "Yangi vakansiyalar" %}</span>
+                        <span>{% trans "New Jobs" %}</span>
                         <span class="badge bg-warning">+{{ stats.new_jobs_week|default:0 }}</span>
                     </div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <span>{% trans "Yangi rezyumelar" %}</span>
+                        <span>{% trans "New Resumes" %}</span>
                         <span class="badge bg-secondary">+{{ stats.new_resumes_week|default:0 }}</span>
                     </div>
                 </div>
@@ -249,19 +249,19 @@
             <!-- Системная информация -->
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white">
-                    <h5 class="fw-bold mb-0">{% trans "Tizim holati" %}</h5>
+                    <h5 class="fw-bold mb-0">{% trans "System Status" %}</h5>
                 </div>
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <small>{% trans "Server vaqti" %}</small>
+                        <small>{% trans "Server Time" %}</small>
                         <small class="text-muted" id="server-time">{% now "H:i" %}</small>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <small>{% trans "Tizim versiyasi" %}</small>
+                        <small>{% trans "System Version" %}</small>
                         <small class="text-muted">v1.0.0</small>
                     </div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <small>{% trans "So'ngi zaxira" %}</small>
+                        <small>{% trans "Last Backup" %}</small>
                         <small class="text-muted">{% now "d.m.Y" %}</small>
                     </div>
                 </div>

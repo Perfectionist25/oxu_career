@@ -15,7 +15,7 @@
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="{% url 'accounts:admin_dashboard' %}">{% trans "Admin" %}</a></li>
-                            <li class="breadcrumb-item"><a href="{% url 'accounts:user_management' %}">{% trans "Foydalanuvchilar" %}</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'accounts:user_management' %}">{% trans "Users" %}</a></li>
                             <li class="breadcrumb-item active">{{ user.get_full_name|default:user.username }}</li>
                         </ol>
                     </nav>
@@ -76,7 +76,7 @@
                         {% csrf_token %}
                         <button type="submit" class="btn {% if user.is_active %}btn-warning{% else %}btn-success{% endif %} btn-sm">
                             <i class="fas {% if user.is_active %}fa-times{% else %}fa-check{% endif %} me-1"></i>
-                            {% if user.is_active %}{% trans "Deaktiv qilish" %}{% else %}{% trans "Faollashtirish" %}{% endif %}
+                            {% if user.is_active %}{% trans "Deactivate" %}{% else %}{% trans "Activate" %}{% endif %}
                         </button>
                     </form>
                     {% endif %}

@@ -7,28 +7,28 @@
     <div class="card-header bg-white">
         <h5 class="fw-bold mb-0">
             <i class="fas fa-graduation-cap me-2 text-primary"></i>
-            {% trans "Ta'lim ma'lumotlari" %}
+            {% trans "Education Information" %}
         </h5>
     </div>
     <div class="card-body">
         <div class="row">
             <div class="col-md-6">
                 <div class="mb-3">
-                    <strong class="text-muted">{% trans "Talaba ID" %}:</strong>
+                    <strong class="text-muted">{% trans "Student ID" %}:</strong>
                     <p class="mb-0">{{ profile.student_id|default:"—" }}</p>
                 </div>
                 <div class="mb-3">
-                    <strong class="text-muted">{% trans "Fakultet" %}:</strong>
+                    <strong class="text-muted">{% trans "Faculty" %}:</strong>
                     <p class="mb-0">{{ profile.faculty|default:"—" }}</p>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="mb-3">
-                    <strong class="text-muted">{% trans "Mutaxassislik" %}:</strong>
+                    <strong class="text-muted">{% trans "Specialty" %}:</strong>
                     <p class="mb-0">{{ profile.specialty|default:"—" }}</p>
                 </div>
                 <div class="mb-3">
-                    <strong class="text-muted">{% trans "Ta'lim darajasi" %}:</strong>
+                    <strong class="text-muted">{% trans "Education Level" %}:</strong>
                     <p class="mb-0">{{ profile.get_education_level_display|default:"—" }}</p>
                 </div>
             </div>
@@ -36,14 +36,14 @@
         
         {% if profile.course %}
         <div class="mb-3">
-            <strong class="text-muted">{% trans "Kurs" %}:</strong>
-            <p class="mb-0">{{ profile.course }}-{% trans "kurs" %}</p>
+                    <strong class="text-muted">{% trans "Course" %}:</strong>
+                    <p class="mb-0">{{ profile.course }}-{% trans "course" %}</p>
         </div>
         {% endif %}
         
         {% if profile.gpa %}
         <div class="mb-3">
-            <strong class="text-muted">{% trans "O'rtacha baho (GPA)" %}:</strong>
+                    <strong class="text-muted">{% trans "Average Grade (GPA)" %}:</strong>
             <p class="mb-0">{{ profile.gpa }}</p>
         </div>
         {% endif %}
@@ -55,7 +55,7 @@
     <div class="card-header bg-white">
         <h5 class="fw-bold mb-0">
             <i class="fas fa-tools me-2 text-primary"></i>
-            {% trans "Ko'nikmalar va qobiliyatlar" %}
+            {% trans "Skills and Abilities" %}
         </h5>
     </div>
     <div class="card-body">
@@ -66,7 +66,7 @@
                 {% endfor %}
             </div>
         {% else %}
-            <p class="text-muted mb-0">{% trans "Ko'nikmalar hali qo'shilmagan" %}</p>
+            <p class="text-muted mb-0">{% trans "Skills not added yet" %}</p>
         {% endif %}
     </div>
 </div>
@@ -77,14 +77,14 @@
     <div class="card-header bg-white">
         <h5 class="fw-bold mb-0">
             <i class="fas fa-briefcase me-2 text-primary"></i>
-            {% trans "Ish tajribasi" %}
+            {% trans "Work Experience" %}
         </h5>
     </div>
     <div class="card-body">
         {% if profile.work_experience %}
             <p>{{ profile.work_experience }}</p>
         {% else %}
-            <p class="text-muted mb-0">{% trans "Ish tajribasi hali qo'shilmagan" %}</p>
+            <p class="text-muted mb-0">{% trans "Work experience not added yet" %}</p>
         {% endif %}
     </div>
 </div>
@@ -94,11 +94,11 @@
 {% block profile_stats %}
 {{ block.super }}
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <span>{% trans "Yaratilgan rezyume" %}</span>
+    <span>{% trans "Created Resumes" %}</span>
     <span class="badge bg-info">{{ profile.resumes_created|default:0 }}</span>
 </div>
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <span>{% trans "Ariza berilgan ishlar" %}</span>
+    <span>{% trans "Applied Jobs" %}</span>
     <span class="badge bg-warning">{{ profile.jobs_applied|default:0 }}</span>
 </div>
 {% endblock %}
@@ -107,10 +107,10 @@
 {{ block.super }}
 <div class="d-grid gap-2 mt-2">
     <a href="{% url 'cvbuilder:cv_create' %}" class="btn btn-success btn-sm">
-        <i class="fas fa-file-alt me-2"></i>{% trans "Rezyume yaratish" %}
+        <i class="fas fa-file-alt me-2"></i>{% trans "Create Resume" %}
     </a>
     <a href="{% url 'jobs:list' %}" class="btn btn-primary btn-sm">
-        <i class="fas fa-briefcase me-2"></i>{% trans "Ishlar" %}
+        <i class="fas fa-briefcase me-2"></i>{% trans "Jobs" %}
     </a>
 </div>
 {% endblock %}

@@ -2,7 +2,7 @@
 {% load static %}
 {% load i18n %}
 
-{% block title %}{% if saved %}{% trans "Вакансия сохранена" %}{% else %}{% trans "Вакансия удалена из сохраненных" %}{% endif %} | OXU Career{% endblock %}
+{% block title %}{% if saved %}{% trans "Job Saved" %}{% else %}{% trans "Job Removed from Saved" %}{% endif %} | OXU Career{% endblock %}
 
 {% block content %}
 <div class="container py-5">
@@ -26,18 +26,18 @@
                     <!-- Заголовок -->
                     <h2 class="h4 mb-3">
                         {% if saved %}
-                        {% trans "Вакансия сохранена!" %}
+                        {% trans "Job Saved!" %}
                         {% else %}
-                        {% trans "Вакансия удалена из сохраненных" %}
+                        {% trans "Job Removed from Saved" %}
                         {% endif %}
                     </h2>
 
                     <!-- Описание -->
                     <p class="text-muted mb-4">
                         {% if saved %}
-                        {% trans "Вы сохранили вакансию" %} "<strong>{{ job.title }}</strong>" {% trans "в свой список избранных." %}
+                        {% trans "You have saved the job" %} "<strong>{{ job.title }}</strong>" {% trans "to your favorites list." %}
                         {% else %}
-                        {% trans "Вы удалили вакансию" %} "<strong>{{ job.title }}</strong>" {% trans "из своего списка избранных." %}
+                        {% trans "You have removed the job" %} "<strong>{{ job.title }}</strong>" {% trans "from your favorites list." %}
                         {% endif %}
                     </p>
 
@@ -72,18 +72,18 @@
                         {% if saved %}
                         <a href="{% url 'jobs:saved_jobs' %}" class="btn btn-primary">
                             <i class="fas fa-bookmark me-2"></i>
-                            {% trans "Перейти к сохраненным" %}
+                            {% trans "Go to Saved" %}
                         </a>
                         {% else %}
                         <button type="button" class="btn btn-outline-primary" onclick="window.history.back()">
                             <i class="fas fa-arrow-left me-2"></i>
-                            {% trans "Вернуться назад" %}
+                            {% trans "Go Back" %}
                         </button>
                         {% endif %}
                         
                         <a href="{% url 'jobs:job_detail' job.pk %}" class="btn btn-outline-secondary">
                             <i class="fas fa-eye me-2"></i>
-                            {% trans "Посмотреть вакансию" %}
+                            {% trans "View Job" %}
                         </a>
                     </div>
 
@@ -92,12 +92,12 @@
                         {% if saved %}
                         <p class="mb-1">
                             <i class="fas fa-info-circle me-1"></i>
-                            {% trans "Вы можете просмотреть все сохраненные вакансии в своем профиле." %}
+                            {% trans "You can view all saved jobs in your profile." %}
                         </p>
                         {% else %}
                         <p class="mb-1">
                             <i class="fas fa-info-circle me-1"></i>
-                            {% trans "Вы всегда можете сохранить эту вакансию снова." %}
+                            {% trans "You can always save this job again." %}
                         </p>
                         {% endif %}
                     </div>
@@ -109,16 +109,16 @@
                 <div class="btn-group" role="group">
                     <a href="{% url 'jobs:job_list' %}" class="btn btn-outline-primary btn-sm">
                         <i class="fas fa-search me-1"></i>
-                        {% trans "Все вакансии" %}
+                        {% trans "All Jobs" %}
                     </a>
                     <a href="{% url 'jobs:company_detail' job.company.pk %}" class="btn btn-outline-primary btn-sm">
                         <i class="fas fa-building me-1"></i>
-                        {% trans "Вакансии компании" %}
+                        {% trans "Company Jobs" %}
                     </a>
                     {% if user.is_authenticated %}
                     <a href="{% url 'jobs:saved_jobs' %}" class="btn btn-outline-primary btn-sm">
                         <i class="fas fa-bookmark me-1"></i>
-                        {% trans "Мои сохраненные" %}
+                        {% trans "My Saved" %}
                     </a>
                     {% endif %}
                 </div>

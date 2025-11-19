@@ -2,7 +2,7 @@
 {% load static %}
 {% load i18n %}
 
-{% block title %}{% trans "Profil" %} - {{ profile_user.get_full_name|default:profile_user.username }}{% endblock %}
+{% block title %}{% trans "Profile" %} - {{ profile_user.get_full_name|default:profile_user.username }}{% endblock %}
 
 {% block content %}
 <div class="container py-4">
@@ -32,16 +32,16 @@
                             <div class="d-flex flex-wrap gap-2">
                                 <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">
                                     <i class="fas fa-eye me-1"></i>
-                                    {{ profile_user.profile_views }} {% trans "ko'rish" %}
+                                    {{ profile_user.profile_views }} {% trans "views" %}
                                 </span>
                                 <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">
                                     <i class="fas fa-calendar me-1"></i>
-                                    {{ profile_user.date_joined|date:"d.m.Y" }} {% trans "dan" %}
+                                    {{ profile_user.date_joined|date:"d.m.Y" }} {% trans "since" %}
                                 </span>
                                 {% if profile_user.last_login %}
                                 <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">
                                     <i class="fas fa-sign-in-alt me-1"></i>
-                                    {{ profile_user.last_login|timesince }} {% trans "oldin" %}
+                                    {{ profile_user.last_login|timesince }} {% trans "ago" %}
                                 </span>
                                 {% endif %}
                             </div>
@@ -50,11 +50,11 @@
                         <div class="col-auto">
                             {% if profile_user.user_type == 'employer' %}
                                 <a href="{% url 'accounts:employer_profile_update' %}" class="btn btn-primary px-4">
-                                    <i class="fas fa-edit me-2"></i>{% trans "Profilni tahrirlash" %}
+                                    <i class="fas fa-edit me-2"></i>{% trans "Edit Profile" %}
                                 </a>
                             {% elif profile_user.user_type == 'student' %}
                                 <a href="{% url 'accounts:student_profile_update' %}" class="btn btn-primary px-4">
-                                    <i class="fas fa-edit me-2"></i>{% trans "Profilni tahrirlash" %}
+                                    <i class="fas fa-edit me-2"></i>{% trans "Edit Profile" %}
                                 </a>
                             {% else %}
                                 <a href="#" class="btn btn-primary px-4">
@@ -65,7 +65,7 @@
                         {% else %}
                         <div class="col-auto">
                             <button class="btn btn-outline-primary px-4">
-                                <i class="fas fa-envelope me-2"></i>{% trans "Xabar yuborish" %}
+                                <i class="fas fa-envelope me-2"></i>{% trans "Send Message" %}
                             </button>
                         </div>
                         {% endif %}
@@ -81,45 +81,45 @@
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm mb-4" style="border-left: 4px solid #012152;">
                 <div class="card-header bg-white py-3">
-                    <h5 class="fw-bold mb-0 text-dark">
-                        <i class="fas fa-info-circle me-2 text-primary"></i>
-                        {% trans "Asosiy ma'lumotlar" %}
-                    </h5>
+                                <h5 class="fw-bold mb-0 text-dark">
+                                    <i class="fas fa-info-circle me-2 text-primary"></i>
+                                    {% trans "Basic Info" %}
+                                </h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3 p-3 bg-light rounded">
-                                <strong class="text-primary d-block mb-1">{% trans "F.I.SH" %}:</strong>
+                                <strong class="text-primary d-block mb-1">{% trans "Full Name" %}:</strong>
                                 <p class="mb-0 text-dark fw-semibold">{{ profile_user.get_full_name|default:"—" }}</p>
                             </div>
                             <div class="mb-3 p-3 bg-light rounded">
-                                <strong class="text-primary d-block mb-1">{% trans "Elektron pochta" %}:</strong>
+                                <strong class="text-primary d-block mb-1">{% trans "Email" %}:</strong>
                                 <p class="mb-0 text-dark fw-semibold">{{ profile_user.email|default:"—" }}</p>
                             </div>
                             <div class="mb-3 p-3 bg-light rounded">
-                                <strong class="text-primary d-block mb-1">{% trans "Telefon raqam" %}:</strong>
+                                <strong class="text-primary d-block mb-1">{% trans "Phone" %}:</strong>
                                 <p class="mb-0 text-dark fw-semibold">{{ profile.phone|default:"—" }}</p>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3 p-3 bg-light rounded">
-                                <strong class="text-primary d-block mb-1">{% trans "Foydalanuvchi turi" %}:</strong>
+                                <strong class="text-primary d-block mb-1">{% trans "User Type" %}:</strong>
                                 <p class="mb-0">
                                     <span class="badge bg-primary px-3 py-2">{{ profile_user.get_user_type_display }}</span>
                                 </p>
                             </div>
                             <div class="mb-3 p-3 bg-light rounded">
-                                <strong class="text-primary d-block mb-1">{% trans "Ro'yxatdan o'tgan sana" %}:</strong>
+                                <strong class="text-primary d-block mb-1">{% trans "Registration Date" %}:</strong>
                                 <p class="mb-0 text-dark fw-semibold">{{ profile_user.date_joined|date:"d.m.Y H:i" }}</p>
                             </div>
                             <div class="mb-3 p-3 bg-light rounded">
-                                <strong class="text-primary d-block mb-1">{% trans "Holati" %}:</strong>
+                                <strong class="text-primary d-block mb-1">{% trans "Status" %}:</strong>
                                 <p class="mb-0">
                                     {% if profile_user.is_active %}
-                                        <span class="badge bg-success px-3 py-2">{% trans "Faol" %}</span>
+                                        <span class="badge bg-success px-3 py-2">{% trans "Active" %}</span>
                                     {% else %}
-                                        <span class="badge bg-danger px-3 py-2">{% trans "Faol emas" %}</span>
+                                        <span class="badge bg-danger px-3 py-2">{% trans "Inactive" %}</span>
                                     {% endif %}
                                 </p>
                             </div>
@@ -129,14 +129,14 @@
                     <!-- Дополнительные поля профиля -->
                     {% if profile.bio %}
                     <div class="mt-4 p-3 bg-primary bg-opacity-5 rounded border-start border-4 border-primary">
-                        <strong class="text-primary d-block mb-2">{% trans "O'zim haqimda" %}:</strong>
+                        <strong class="text-primary d-block mb-2">{% trans "Bio" %}:</strong>
                         <p class="mb-0 text-dark">{{ profile.bio|linebreaks }}</p>
                     </div>
                     {% endif %}
 
                     {% if profile.company_name %}
                     <div class="mt-3 p-3 bg-primary bg-opacity-5 rounded border-start border-4 border-primary">
-                        <strong class="text-primary d-block mb-2">{% trans "Kompaniya" %}:</strong>
+                        <strong class="text-primary d-block mb-2">{% trans "Company" %}:</strong>
                         <p class="mb-0 text-dark fw-semibold">{{ profile.company_name }}</p>
                         {% if profile.position %}
                         <p class="mb-0 text-muted mt-1">{{ profile.position }}</p>
@@ -146,7 +146,7 @@
 
                     {% if profile.faculty %}
                     <div class="mt-3 p-3 bg-primary bg-opacity-5 rounded border-start border-4 border-primary">
-                        <strong class="text-primary d-block mb-2">{% trans "Ta'lim" %}:</strong>
+                        <strong class="text-primary d-block mb-2">{% trans "Education" %}:</strong>
                         <p class="mb-0 text-dark fw-semibold">{{ profile.faculty }}</p>
                         {% if profile.specialization %}
                         <p class="mb-0 text-muted mt-1">{{ profile.specialization }}</p>
@@ -167,18 +167,18 @@
                 <div class="card-header bg-white py-3">
                     <h5 class="fw-bold mb-0 text-dark">
                         <i class="fas fa-chart-bar me-2 text-primary"></i>
-                        {% trans "Statistika" %}
+                        {% trans "Statistics" %}
                     </h5>
                 </div>
                 <div class="card-body">
                     {% block profile_stats %}
                     <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
-                        <span class="text-primary fw-semibold">{% trans "Profil ko'rishlar" %}</span>
+                        <span class="text-primary fw-semibold">{% trans "Profile Views" %}</span>
                         <span class="badge bg-primary">{{ profile_user.profile_views }}</span>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
-                        <span class="text-primary fw-semibold">{% trans "Faollik" %}</span>
-                        <span class="badge bg-success">{% trans "Faol" %}</span>
+                        <span class="text-primary fw-semibold">{% trans "Activity" %}</span>
+                        {% trans "Active" %}
                     </div>
                     {% if stats %}
                         {% for key, value in stats.items %}
@@ -195,10 +195,10 @@
             <!-- Контактная информация -->
             <div class="card border-0 shadow-sm mb-4" style="border-left: 4px solid #012152;">
                 <div class="card-header bg-white py-3">
-                    <h5 class="fw-bold mb-0 text-dark">
-                        <i class="fas fa-address-card me-2 text-primary"></i>
-                        {% trans "Aloqa" %}
-                    </h5>
+                        <h5 class="fw-bold mb-0 text-dark">
+                            <i class="fas fa-address-card me-2 text-primary"></i>
+                            {% trans "Contact Info" %}
+                        </h5>
                 </div>
                 <div class="card-body">
                     {% block profile_contact %}
@@ -228,7 +228,7 @@
                 <div class="card-header bg-white py-3">
                     <h5 class="fw-bold mb-0 text-dark">
                         <i class="fas fa-bolt me-2 text-primary"></i>
-                        {% trans "Tezkor amallar" %}
+                        {% trans "Quick Actions" %}
                     </h5>
                 </div>
                 <div class="card-body">
@@ -236,22 +236,22 @@
                     <div class="d-grid gap-2">
                         {% if profile_user.user_type == 'employer' %}
                             <a href="{% url 'accounts:employer_profile_update' %}" class="btn btn-outline-primary btn-sm py-2">
-                                <i class="fas fa-edit me-2"></i>{% trans "Profilni tahrirlash" %}
+                                <i class="fas fa-edit me-2"></i>{% trans "Edit Profile" %}
                             </a>
                         {% elif profile_user.user_type == 'student' %}
                             <a href="{% url 'accounts:student_profile_update' %}" class="btn btn-outline-primary btn-sm py-2">
-                                <i class="fas fa-edit me-2"></i>{% trans "Profilni tahrirlash" %}
+                                <i class="fas fa-edit me-2"></i>{% trans "Edit Profile" %}
                             </a>
                         {% endif %}
                         <a href="{% url 'accounts:password_change' %}" class="btn btn-outline-primary btn-sm py-2">
-                            <i class="fas fa-lock me-2"></i>{% trans "Parolni o'zgartirish" %}
+                            <i class="fas fa-lock me-2"></i>{% trans "Change Password" %}
                         </a>
                         <a href="{% url 'accounts:notifications' %}" class="btn btn-outline-primary btn-sm py-2">
-                            <i class="fas fa-bell me-2"></i>{% trans "Bildirishnomalar" %}
+                            <i class="fas fa-bell me-2"></i>{% trans "Notifications" %}
                         </a>
                         {% if profile_user.user_type == 'student' %}
                         <a href="{% url 'cvbuilder:cv_list' %}" class="btn btn-outline-primary btn-sm py-2">
-                            <i class="fas fa-file-alt me-2"></i>{% trans "Rezyumelarim" %}
+                            <i class="fas fa-file-alt me-2"></i>{% trans "My Resumes" %}
                         </a>
                         {% endif %}
                     </div>

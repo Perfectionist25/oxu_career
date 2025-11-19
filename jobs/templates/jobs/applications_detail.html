@@ -1,31 +1,31 @@
 <div class="application-detail">
-    <h6 class="text-primary mb-3">{% trans "Ariza tafsilotlari" %}</h6>
+    <h6 class="text-primary mb-3">{% trans "Application Details" %}</h6>
     
     <div class="row">
         <div class="col-md-6">
-            <h6>{% trans "Kanditat ma'lumotlari" %}</h6>
+            <h6>{% trans "Candidate Information" %}</h6>
             <div class="mb-3">
-                <strong>{% trans "Ism" %}:</strong> {{ application.candidate.get_full_name }}<br>
+                <strong>{% trans "Name" %}:</strong> {{ application.candidate.get_full_name }}<br>
                 <strong>{% trans "Email" %}:</strong> {{ application.candidate.email }}<br>
                 {% if application.candidate.phone_number %}
-                    <strong>{% trans "Telefon" %}:</strong> {{ application.candidate.phone_number }}<br>
+                    <strong>{% trans "Phone" %}:</strong> {{ application.candidate.phone_number }}<br>
                 {% endif %}
             </div>
         </div>
-        
+
         <div class="col-md-6">
-            <h6>{% trans "Vakansiya" %}</h6>
+            <h6>{% trans "Job" %}</h6>
             <div class="mb-3">
-                <strong>{% trans "Lavozim" %}:</strong> {{ application.job.title }}<br>
-                <strong>{% trans "Kompaniya" %}:</strong> {{ application.job.employer.company_name }}<br>
-                <strong>{% trans "Manzil" %}:</strong> {{ application.job.location }}
+                <strong>{% trans "Position" %}:</strong> {{ application.job.title }}<br>
+                <strong>{% trans "Company" %}:</strong> {{ application.job.employer.company_name }}<br>
+                <strong>{% trans "Location" %}:</strong> {{ application.job.location }}
             </div>
         </div>
     </div>
     
     {% if application.cover_letter %}
     <div class="mb-3">
-        <h6>{% trans "Motivatsion xat" %}</h6>
+        <h6>{% trans "Cover Letter" %}</h6>
         <div class="border p-3 bg-light rounded">
             {{ application.cover_letter|linebreaks }}
         </div>
@@ -34,37 +34,37 @@
     
     <div class="row">
         <div class="col-md-6">
-            <h6>{% trans "Qo'shimcha ma'lumotlar" %}</h6>
+            <h6>{% trans "Additional Information" %}</h6>
             <div class="small">
-                <strong>{% trans "Kutilayotgan maosh" %}:</strong> 
+                <strong>{% trans "Expected Salary" %}:</strong>
                 {% if application.expected_salary %}
                     {{ application.expected_salary }} {{ application.job.currency }}
                 {% else %}
-                    {% trans "Ko'rsatilmagan" %}
+                    {% trans "Not Specified" %}
                 {% endif %}<br>
-                
-                <strong>{% trans "Ishga kirish muddati" %}:</strong> 
+
+                <strong>{% trans "Available From" %}:</strong>
                 {% if application.available_from %}
                     {{ application.available_from|date:"d.m.Y" }}
                 {% else %}
-                    {% trans "Darhol" %}
+                    {% trans "Immediately" %}
                 {% endif %}<br>
-                
-                <strong>{% trans "Notice period" %}:</strong> 
-                {{ application.notice_period }} {% trans "kun" %}
+
+                <strong>{% trans "Notice Period" %}:</strong>
+                {{ application.notice_period }} {% trans "days" %}
             </div>
         </div>
         
         <div class="col-md-6">
-            <h6>{% trans "Ariza holati" %}</h6>
+            <h6>{% trans "Application Status" %}</h6>
             <div class="small">
-                <strong>{% trans "Status" %}:</strong> 
+                <strong>{% trans "Status" %}:</strong>
                 <span class="badge {% if application.status == 'applied' %}bg-warning{% elif application.status == 'reviewed' %}bg-info{% elif application.status == 'shortlisted' %}bg-primary{% elif application.status == 'interview' %}bg-orange{% elif application.status == 'hired' %}bg-success{% elif application.status == 'rejected' %}bg-danger{% else %}bg-secondary{% endif %}">
                     {{ application.get_status_display }}
                 </span><br>
-                
-                <strong>{% trans "Ariza sanasi" %}:</strong> {{ application.created_at|date:"d.m.Y H:i" }}<br>
-                <strong>{% trans "Status o'zgartirilgan" %}:</strong> {{ application.status_changed_at|date:"d.m.Y H:i" }}
+
+                <strong>{% trans "Application Date" %}:</strong> {{ application.created_at|date:"d.m.Y H:i" }}<br>
+                <strong>{% trans "Status Changed" %}:</strong> {{ application.status_changed_at|date:"d.m.Y H:i" }}
             </div>
         </div>
     </div>
@@ -72,7 +72,7 @@
     {% if application.cv %}
     <div class="mt-3">
         <a href="{{ application.cv.get_absolute_url }}" class="btn btn-primary btn-sm" target="_blank">
-            <i class="fas fa-file-pdf me-2"></i>{% trans "CV ni ko'rish" %}
+            <i class="fas fa-file-pdf me-2"></i>{% trans "View CV" %}
         </a>
     </div>
     {% endif %}

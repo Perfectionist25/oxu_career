@@ -3,11 +3,11 @@
 {% load static %}
 {% load i18n %}
 
-{% block title %}{% trans "Ish beruvchi kabineti" %}{% endblock %}
+{% block title %}{% trans "Employer Dashboard" %}{% endblock %}
 
 {% block content %}
 <div class="container py-4">
-    <!-- Заголовок и приветствие -->
+    <!-- Header and Welcome -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
@@ -19,21 +19,21 @@
                     <div>
                         <h1 class="h3 fw-bold text-primary mb-1">{{ employer_profile.company_name }}</h1>
                         <p class="text-muted mb-0">
-                            {% trans "Xush kelibsiz" %}, <strong style="color: black;">{{ user.get_full_name|default:user.username }}!</strong>
+                            {% trans "Welcome" %}, <strong style="color: black;">{{ user.get_full_name|default:user.username }}!</strong>
                         </p>
                     </div>
                 </div>
                 <div class="text-end">
-                    <small class="text-muted d-block">{% trans "Kompaniya holati" %}:</small>
+                    <small class="text-muted d-block">{% trans "Company Status" %}:</small>
                     <span class="badge bg-{% if employer_profile.is_verified %}success{% else %}warning{% endif %}">
-                        {% if employer_profile.is_verified %}{% trans "Tasdiqlangan" %}{% else %}{% trans "Tasdiqlanmagan" %}{% endif %}
+                        {% if employer_profile.is_verified %}{% trans "Verified" %}{% else %}{% trans "Unverified" %}{% endif %}
                     </span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Статистика работодателя -->
+    <!-- Employer Statistics -->
     <div class="row mb-5">
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-0 bg-primary text-white shadow-sm">
@@ -41,7 +41,7 @@
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1">
                             <h4 class="fw-bold mb-0">{{ stats.active_jobs|default:0 }}</h4>
-                            <small>{% trans "Aktiv vakansiyalar" %}</small>
+                            <small>{% trans "Active Jobs" %}</small>
                         </div>
                         <div class="flex-shrink-0">
                             <i class="fas fa-briefcase fa-2x opacity-50"></i>
@@ -57,7 +57,7 @@
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1">
                             <h4 class="fw-bold mb-0">{{ stats.total_applications|default:0 }}</h4>
-                            <small>{% trans "Jami arizalar" %}</small>
+                            <small>{% trans "Total Applications" %}</small>
                         </div>
                         <div class="flex-shrink-0">
                             <i class="fas fa-file-alt fa-2x opacity-50"></i>
@@ -73,7 +73,7 @@
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1">
                             <h4 class="fw-bold mb-0">{{ stats.profile_views|default:0 }}</h4>
-                            <small>{% trans "Profil ko'rishlar" %}</small>
+                            <small>{% trans "Profile Views" %}</small>
                         </div>
                         <div class="flex-shrink-0">
                             <i class="fas fa-eye fa-2x opacity-50"></i>
@@ -89,7 +89,7 @@
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1">
                             <h4 class="fw-bold mb-0">{{ stats.jobs_posted|default:0 }}</h4>
-                            <small>{% trans "E'lon qilingan ishlar" %}</small>
+                            <small>{% trans "Jobs Posted" %}</small>
                         </div>
                         <div class="flex-shrink-0">
                             <i class="fas fa-chart-line fa-2x opacity-50"></i>
@@ -100,70 +100,70 @@
         </div>
     </div>
 
-    <!-- Быстрые действия -->
+    <!-- Quick Actions -->
     <div class="row mb-5">
         <div class="col-12">
-            <h4 class="fw-bold text-dark mb-4">{% trans "Tezkor amallar" %}</h4>
+            <h4 class="fw-bold text-dark mb-4">{% trans "Quick Actions" %}</h4>
             <div class="row g-3">
                 <div class="col-xl-2 col-md-4 col-6">
                     <a href="{% url 'jobs:job_create' %}" class="btn btn-primary w-100 h-100 py-3">
                         <i class="fas fa-plus fa-2x mb-2"></i>
-                        <div>{% trans "Yangi vakansiya" %}</div>
+                        <div>{% trans "New Job" %}</div>
                     </a>
                 </div>
                 <div class="col-xl-2 col-md-4 col-6">
                     <a href="{% url 'jobs:my_jobs' %}" class="btn btn-success w-100 h-100 py-3">
                         <i class="fas fa-list fa-2x mb-2"></i>
-                        <div>{% trans "Mening vakansiyalarim" %}</div>
+                        <div>{% trans "My Jobs" %}</div>
                     </a>
                 </div>
                 <div class="col-xl-2 col-md-4 col-6">
                     <a href="{% url 'accounts:employer_profile_update' %}" class="btn btn-info w-100 h-100 py-3">
                         <i class="fas fa-building fa-2x mb-2"></i>
-                        <div>{% trans "Kompaniya ma'lumotlari" %}</div>
+                        <div>{% trans "Company Information" %}</div>
                     </a>
                 </div>
                 <div class="col-xl-2 col-md-4 col-6">
                     <a href="{% url 'jobs:employer_applications' %}" class="btn btn-warning w-100 h-100 py-3">
                         <i class="fas fa-users fa-2x mb-2"></i>
-                        <div>{% trans "Arizalar" %}</div>
+                        <div>{% trans "Applications" %}</div>
                     </a>
                 </div>
                 <div class="col-xl-2 col-md-4 col-6">
                     <a href="{% url 'cvbuilder:public_cv_list' %}" class="btn btn-secondary w-100 h-100 py-3">
                         <i class="fas fa-search fa-2x mb-2"></i>
-                        <div>{% trans "Talabalar qidirish" %}</div>
+                        <div>{% trans "Search Students" %}</div>
                     </a>
                 </div>
                 <div class="col-xl-2 col-md-4 col-6">
                     <a href="{% url 'accounts:notifications' %}" class="btn btn-dark w-100 h-100 py-3">
                         <i class="fas fa-bell fa-2x mb-2"></i>
-                        <div>{% trans "Xabarlar" %}</div>
+                        <div>{% trans "Notifications" %}</div>
                     </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Информация о компании -->
+    <!-- Company Information -->
     <div class="row">
         <div class="col-lg-8 mb-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white">
-                    <h5 class="fw-bold mb-0">{% trans "Kompaniya ma'lumotlari" %}</h5>
+                    <h5 class="fw-bold mb-0">{% trans "Company Information" %}</h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <p><strong style="color: black;">{% trans "Soha" %}:</strong> {{ employer_profile.industry|default:"-" }}</p>
-                            <p><strong style="color: black;">{% trans "Kompaniya hajmi" %}:</strong> {{ employer_profile.get_company_size_display|default:"-" }}</p>
-                            <p><strong style="color: black;">{% trans "Tashkil etilgan yil" %}:</strong> {{ employer_profile.founded_year|default:"-" }}</p>
-                            <p><strong style="color: black;">{% trans "Bosh qarorgoh" %}:</strong> {{ employer_profile.headquarters|default:"-" }}</p>
+                            <p><strong style="color: black;">{% trans "Industry" %}:</strong> {{ employer_profile.industry|default:"-" }}</p>
+                            <p><strong style="color: black;">{% trans "Company Size" %}:</strong> {{ employer_profile.get_company_size_display|default:"-" }}</p>
+                            <p><strong style="color: black;">{% trans "Founded Year" %}:</strong> {{ employer_profile.founded_year|default:"-" }}</p>
+                            <p><strong style="color: black;">{% trans "Headquarters" %}:</strong> {{ employer_profile.headquarters|default:"-" }}</p>
                         </div>
                         <div class="col-md-6">
                             <p><strong style="color: black;">{% trans "Email" %}:</strong> {{ employer_profile.company_email|default:"-" }}</p>
-                            <p><strong style="color: black;">{% trans "Telefon" %}:</strong> {{ employer_profile.company_phone|default:"-" }}</p>
-                            <p><strong style="color: black;">{% trans "Veb sayt" %}:</strong> 
+                            <p><strong style="color: black;">{% trans "Phone" %}:</strong> {{ employer_profile.company_phone|default:"-" }}</p>
+                            <p><strong style="color: black;">{% trans "Website" %}:</strong> 
                                 {% if employer_profile.company_website %}
                                 <a href="{{ employer_profile.company_website }}" target="_blank">{{ employer_profile.company_website }}</a>
                                 {% else %}-{% endif %}
@@ -172,13 +172,13 @@
                     </div>
                     {% if employer_profile.company_description %}
                     <div class="mt-3">
-                        <strong>{% trans "Kompaniya haqida" %}:</strong>
+                        <strong>{% trans "About Company" %}:</strong>
                         <p class="mb-0">{{ employer_profile.company_description|truncatewords:50 }}</p>
                     </div>
                     {% endif %}
                     <div class="mt-3">
                         <a href="{% url 'accounts:employer_profile_update' %}" class="btn btn-outline-primary btn-sm">
-                            <i class="fas fa-edit me-1"></i>{% trans "Ma'lumotlarni tahrirlash" %}
+                            <i class="fas fa-edit me-1"></i>{% trans "Edit Information" %}
                         </a>
                     </div>
                 </div>
@@ -186,10 +186,10 @@
         </div>
 
         <div class="col-lg-4 mb-4">
-            <!-- Социальные сети -->
+            <!-- Social Networks -->
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white">
-                    <h5 class="fw-bold mb-0">{% trans "Ijtimoiy tarmoqlar" %}</h5>
+                    <h5 class="fw-bold mb-0">{% trans "Social Networks" %}</h5>
                 </div>
                 <div class="card-body">
                     <div class="d-flex gap-3">
@@ -207,15 +207,15 @@
                 </div>
             </div>
 
-            <!-- Последние аризы -->
+            <!-- Recent Applications -->
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white">
-                    <h5 class="fw-bold mb-0">{% trans "So'nggi arizalar" %}</h5>
+                    <h5 class="fw-bold mb-0">{% trans "Recent Applications" %}</h5>
                 </div>
                 <div class="card-body">
-                    <p class="text-muted">{% trans "Bu yerda so'nggi arizalar ko'rsatiladi" %}</p>
+                    <p class="text-muted">{% trans "Recent applications will be displayed here" %}</p>
                     <a href="{% url 'jobs:employer_applications' %}" class="btn btn-outline-primary btn-sm w-100">
-                        {% trans "Barcha arizalarni ko'rish" %}
+                        {% trans "View All Applications" %}
                     </a>
                 </div>
             </div>

@@ -1,12 +1,13 @@
+
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
 
 {% block title %}
     {% if is_employer_view %}
-        {% trans "Mening vakansiyalarim" %}
+        {% trans "My Jobs" %}
     {% else %}
-        {% trans "Mening arizalarim" %}
+        {% trans "My Applications" %}
     {% endif %}
 {% endblock %}
 
@@ -19,16 +20,16 @@
                 <div>
                     <h1 class="h3 fw-bold text-primary mb-1">
                         {% if is_employer_view %}
-                            <i class="fas fa-briefcase me-2"></i>{% trans "Mening vakansiyalarim" %}
+                            <i class="fas fa-briefcase me-2"></i>{% trans "My Jobs" %}
                         {% else %}
-                            <i class="fas fa-file-alt me-2"></i>{% trans "Mening arizalarim" %}
+                            <i class="fas fa-file-alt me-2"></i>{% trans "My Applications" %}
                         {% endif %}
                     </h1>
                     <p class="text-muted mb-0">
                         {% if is_employer_view %}
-                            {% trans "Yaratilgan barcha vakansiyalar ro'yxati" %}
+                            {% trans "List of all created jobs" %}
                         {% else %}
-                            {% trans "Barcha yuborilgan ish arizalari" %}
+                            {% trans "All submitted job applications" %}
                         {% endif %}
                     </p>
                 </div>
@@ -36,10 +37,10 @@
                     {% if is_employer_view %}
                         <div class="btn-group">
                             <a href="{% url 'jobs:job_create' %}" class="btn btn-primary">
-                                <i class="fas fa-plus me-2"></i>{% trans "Yangi vakansiya" %}
+                                <i class="fas fa-plus me-2"></i>{% trans "New Job" %}
                             </a>
                             <a href="{% url 'jobs:employer_applications' %}" class="btn btn-outline-info position-relative">
-                                <i class="fas fa-users me-2"></i>{% trans "Arizalar" %}
+                                <i class="fas fa-users me-2"></i>{% trans "Applications" %}
                                 {% if total_applications_count > 0 %}
                                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                                     {{ total_applications_count }}
@@ -50,10 +51,10 @@
                     {% else %}
                         <div class="btn-group">
                             <a href="{% url 'jobs:job_list' %}" class="btn btn-primary">
-                                <i class="fas fa-search me-2"></i>{% trans "Ish qidirish" %}
+                                <i class="fas fa-search me-2"></i>{% trans "Job Search" %}
                             </a>
                             <a href="{% url 'jobs:saved_jobs' %}" class="btn btn-outline-primary">
-                                <i class="fas fa-bookmark me-2"></i>{% trans "Saqlanganlar" %}
+                                <i class="fas fa-bookmark me-2"></i>{% trans "Saved" %}
                             </a>
                         </div>
                     {% endif %}
@@ -65,13 +66,13 @@
     <!-- Статистика -->
     <div class="row mb-4">
         {% if is_employer_view %}
-        <!-- Статистика работодателя -->
+        <!-- Employer Statistics -->
         <div class="col-xl-3 col-md-6 mb-3">
             <div class="card border-0 bg-primary text-white shadow-sm">
                 <div class="card-body text-center py-3">
                     <i class="fas fa-briefcase fa-2x mb-2 opacity-50"></i>
                     <h4 class="fw-bold mb-1">{{ total_jobs }}</h4>
-                    <small>{% trans "Jami vakansiyalar" %}</small>
+                    <small>{% trans "Total Jobs" %}</small>
                 </div>
             </div>
         </div>
@@ -80,7 +81,7 @@
                 <div class="card-body text-center py-3">
                     <i class="fas fa-play-circle fa-2x mb-2 opacity-50"></i>
                     <h4 class="fw-bold mb-1">{{ active_jobs }}</h4>
-                    <small>{% trans "Faol vakansiyalar" %}</small>
+                    <small>{% trans "Active Jobs" %}</small>
                 </div>
             </div>
         </div>
@@ -89,7 +90,7 @@
                 <div class="card-body text-center py-3">
                     <i class="fas fa-edit fa-2x mb-2 opacity-50"></i>
                     <h4 class="fw-bold mb-1">{{ draft_jobs }}</h4>
-                    <small>{% trans "Qoralama vakansiyalar" %}</small>
+                    <small>{% trans "Draft Jobs" %}</small>
                 </div>
             </div>
         </div>
@@ -98,18 +99,18 @@
                 <div class="card-body text-center py-3">
                     <i class="fas fa-eye fa-2x mb-2 opacity-50"></i>
                     <h4 class="fw-bold mb-1">{{ total_views }}</h4>
-                    <small>{% trans "Jami ko'rishlar" %}</small>
+                    <small>{% trans "Total Views" %}</small>
                 </div>
             </div>
         </div>
         {% else %}
-        <!-- Статистика студента -->
+        <!-- Student Statistics -->
         <div class="col-xl-2 col-md-4 col-6 mb-3">
             <div class="card border-0 bg-primary text-white shadow-sm">
                 <div class="card-body text-center py-3">
                     <i class="fas fa-paper-plane fa-2x mb-2 opacity-50"></i>
                     <h4 class="fw-bold mb-1">{{ total_applications }}</h4>
-                    <small>{% trans "Jami arizalar" %}</small>
+                    <small>{% trans "Total Applications" %}</small>
                 </div>
             </div>
         </div>
@@ -118,7 +119,7 @@
                 <div class="card-body text-center py-3">
                     <i class="fas fa-clock fa-2x mb-2 opacity-50"></i>
                     <h4 class="fw-bold mb-1">{{ pending_applications }}</h4>
-                    <small>{% trans "Yuborilgan" %}</small>
+                    <small>{% trans "Submitted" %}</small>
                 </div>
             </div>
         </div>
@@ -127,7 +128,7 @@
                 <div class="card-body text-center py-3">
                     <i class="fas fa-search fa-2x mb-2 opacity-50"></i>
                     <h4 class="fw-bold mb-1">{{ reviewed_applications }}</h4>
-                    <small>{% trans "Ko'rib chiqilmoqda" %}</small>
+                    <small>{% trans "Under Review" %}</small>
                 </div>
             </div>
         </div>
@@ -136,7 +137,7 @@
                 <div class="card-body text-center py-3">
                     <i class="fas fa-comments fa-2x mb-2 opacity-50"></i>
                     <h4 class="fw-bold mb-1">{{ interview_applications }}</h4>
-                    <small>{% trans "Intervyu" %}</small>
+                    <small>{% trans "Interview" %}</small>
                 </div>
             </div>
         </div>
@@ -145,7 +146,7 @@
                 <div class="card-body text-center py-3">
                     <i class="fas fa-check-circle fa-2x mb-2 opacity-50"></i>
                     <h4 class="fw-bold mb-1">{{ accepted_applications }}</h4>
-                    <small>{% trans "Qabul qilingan" %}</small>
+                    <small>{% trans "Accepted" %}</small>
                 </div>
             </div>
         </div>
@@ -154,7 +155,7 @@
                 <div class="card-body text-center py-3">
                     <i class="fas fa-times-circle fa-2x mb-2 opacity-50"></i>
                     <h4 class="fw-bold mb-1">{{ rejected_applications }}</h4>
-                    <small>{% trans "Rad etilgan" %}</small>
+                    <small>{% trans "Rejected" %}</small>
                 </div>
             </div>
         </div>
@@ -171,19 +172,19 @@
                         <div class="col-md-6">
                             <div class="btn-group" role="group">
                                 <a href="?status=all" class="btn {% if not status_filter %}btn-primary{% else %}btn-outline-primary{% endif %} btn-sm">
-                                    {% trans "Barchasi" %}
+                                    {% trans "All" %}
                                 </a>
                                 <a href="?status=active" class="btn {% if status_filter == 'active' %}btn-success{% else %}btn-outline-success{% endif %} btn-sm">
-                                    {% trans "Faol" %}
+                                    {% trans "Active" %}
                                 </a>
                                 <a href="?status=draft" class="btn {% if status_filter == 'draft' %}btn-warning{% else %}btn-outline-warning{% endif %} btn-sm">
-                                    {% trans "Qoralama" %}
+                                    {% trans "Draft" %}
                                 </a>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="input-group input-group-sm">
-                                <input type="text" class="form-control" placeholder="{% trans 'Vakansiya nomi boʻyicha qidirish...' %}" id="searchInput">
+                                <input type="text" class="form-control" placeholder="{% trans 'Search by job title...' %}" id="searchInput">
                                 <button class="btn btn-outline-secondary" type="button" id="searchButton">
                                     <i class="fas fa-search"></i>
                                 </button>
@@ -208,13 +209,13 @@
                                 <table class="table table-hover" id="jobsTable">
                                     <thead class="table-light">
                                         <tr>
-                                            <th>{% trans "Vakansiya nomi" %}</th>
-                                            <th>{% trans "Kompaniya" %}</th>
-                                            <th>{% trans "Holati" %}</th>
-                                            <th>{% trans "Arizalar" %}</th>
-                                            <th>{% trans "Ko'rishlar" %}</th>
-                                            <th>{% trans "Yaratilgan sana" %}</th>
-                                            <th>{% trans "Amallar" %}</th>
+                                            <th>{% trans "Job Title" %}</th>
+                                            <th>{% trans "Company" %}</th>
+                                            <th>{% trans "Status" %}</th>
+                                            <th>{% trans "Applications" %}</th>
+                                            <th>{% trans "Views" %}</th>
+                                            <th>{% trans "Created Date" %}</th>
+                                            <th>{% trans "Actions" %}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -227,19 +228,19 @@
                                                             {{ job.title }}
                                                         </a>
                                                         {% if job.is_urgent %}
-                                                            <span class="badge bg-danger ms-1">{% trans "Shoshilinch" %}</span>
+                                                            <span class="badge bg-danger ms-1">{% trans "Urgent" %}</span>
                                                         {% endif %}
                                                         {% if job.is_featured %}
-                                                            <span class="badge bg-warning ms-1">{% trans "Tavsiya etilgan" %}</span>
+                                                            <span class="badge bg-warning ms-1">{% trans "Featured" %}</span>
                                                         {% endif %}
                                                     </h6>
                                                     <small class="text-muted">
                                                         <i class="fas fa-map-marker-alt me-1"></i>{{ job.location }}
                                                         {% if job.remote_work %}
-                                                            <span class="badge bg-success ms-2">{% trans "Uzoq ish" %}</span>
+                                                            <span class="badge bg-success ms-2">{% trans "Remote" %}</span>
                                                         {% endif %}
                                                         {% if job.hybrid_work %}
-                                                            <span class="badge bg-info ms-2">{% trans "Gibrid" %}</span>
+                                                            <span class="badge bg-info ms-2">{% trans "Hybrid" %}</span>
                                                         {% endif %}
                                                     </small>
                                                 </div>
@@ -260,12 +261,12 @@
                                             </td>
                                             <td>
                                                 {% if job.is_active %}
-                                                    <span class="badge bg-success">{% trans "Faol" %}</span>
+                                                    <span class="badge bg-success">{% trans "Active" %}</span>
                                                 {% else %}
-                                                    <span class="badge bg-secondary">{% trans "Qoralama" %}</span>
+                                                    <span class="badge bg-secondary">{% trans "Draft" %}</span>
                                                 {% endif %}
                                                 {% if job.expires_at and job.is_expired %}
-                                                    <span class="badge bg-danger mt-1">{% trans "Muddati o'tgan" %}</span>
+                                                    <span class="badge bg-danger mt-1">{% trans "Expired" %}</span>
                                                 {% endif %}
                                             </td>
                                             <td>
@@ -277,36 +278,35 @@
                                                 <span class="badge bg-warning">{{ job.views_count }}</span>
                                             </td>
                                             <td>
-                                                <small class="text-muted">{{ job.created_at|date:"d.m.Y" }}</small>
                                                 {% if job.expires_at %}
                                                     <br>
                                                     <small class="text-muted">
-                                                        {% trans "Muddati" %}: {{ job.expires_at|date:"d.m.Y" }}
+                                                        {% trans "Expires" %}: {{ job.expires_at|date:"d.m.Y" }}
                                                     </small>
                                                 {% endif %}
                                             </td>
                                             <td>
                                                 <div class="btn-group btn-group-sm">
-                                                    <a href="{% url 'jobs:job_detail' job.id %}" class="btn btn-outline-primary" title="{% trans 'Koʻrish' %}">
+                                                    <a href="{% url 'jobs:job_detail' job.id %}" class="btn btn-outline-primary" title="{% trans 'View' %}">
                                                         <i class="fas fa-eye"></i>
                                                     </a>
-                                                    <a href="{% url 'jobs:job_edit' job.id %}" class="btn btn-outline-secondary" title="{% trans 'Tahrirlash' %}">
+                                                    <a href="{% url 'jobs:job_edit' job.id %}" class="btn btn-outline-secondary" title="{% trans 'Edit' %}">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
                                                     <div class="dropdown">
-                                                        <button class="btn btn-outline-info dropdown-toggle" type="button" data-bs-toggle="dropdown" title="{% trans 'Qoʻshimcha amallar' %}">
+                                                        <button class="btn btn-outline-info dropdown-toggle" type="button" data-bs-toggle="dropdown" title="{% trans 'More Actions' %}">
                                                             <i class="fas fa-cog"></i>
                                                         </button>
                                                         <ul class="dropdown-menu">
                                                             <li>
                                                                 <a class="dropdown-item" href="{% url 'jobs:employer_applications' %}?job={{ job.id }}">
-                                                                    <i class="fas fa-users me-2"></i>{% trans "Arizalarni ko'rish" %}
+                                                                    <i class="fas fa-users me-2"></i>{% trans "View Applications" %}
                                                                 </a>
                                                             </li>
                                                             <li><hr class="dropdown-divider"></li>
                                                             <li>
-                                                                <a class="dropdown-item text-danger" href="{% url 'jobs:job_delete' job.id %}" onclick="return confirm('{% trans 'Haqiqatan ham bu vakansiyani o\'chirmoqchimisiz?' %}')">
-                                                                    <i class="fas fa-trash me-2"></i>{% trans "O'chirish" %}
+                                                                <a class="dropdown-item text-danger" href="{% url 'jobs:job_delete' job.id %}" onclick="return confirm('{% trans 'Are you sure you want to delete this job?' %}')">
+                                                                    <i class="fas fa-trash me-2"></i>{% trans "Delete" %}
                                                                 </a>
                                                             </li>
                                                         </ul>
@@ -325,7 +325,7 @@
                                 <ul class="pagination justify-content-center">
                                     {% if jobs.has_previous %}
                                         <li class="page-item">
-                                            <a class="page-link" href="?page={{ jobs.previous_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}">{% trans "Oldingi" %}</a>
+                                            <a class="page-link" href="?page={{ jobs.previous_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}">{% trans "Previous" %}</a>
                                         </li>
                                     {% endif %}
                                     
@@ -343,7 +343,7 @@
                                     
                                     {% if jobs.has_next %}
                                         <li class="page-item">
-                                            <a class="page-link" href="?page={{ jobs.next_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}">{% trans "Keyingi" %}</a>
+                                            <a class="page-link" href="?page={{ jobs.next_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}">{% trans "Next" %}</a>
                                         </li>
                                     {% endif %}
                                 </ul>
@@ -352,27 +352,27 @@
                         {% else %}
                             <div class="text-center py-5">
                                 <i class="fas fa-briefcase fa-4x text-muted mb-3"></i>
-                                <h5 class="text-muted">{% trans "Hozircha vakansiyalar mavjud emas" %}</h5>
-                                <p class="text-muted mb-4">{% trans "Birinchi vakansiyangizni yarating va sizga mos kanditatlarni toping" %}</p>
+                                <h5 class="text-muted">{% trans "No jobs available yet" %}</h5>
+                                <p class="text-muted mb-4">{% trans "Create your first job and find suitable candidates" %}</p>
                                 <a href="{% url 'jobs:job_create' %}" class="btn btn-primary">
-                                    <i class="fas fa-plus me-2"></i>{% trans "Yangi vakansiya" %}
+                                    <i class="fas fa-plus me-2"></i>{% trans "New Job" %}
                                 </a>
                             </div>
                         {% endif %}
 
                     {% else %}
-                        <!-- Таблица заявок для студента -->
+                        <!-- Student Applications Table -->
                         {% if applications %}
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead class="table-light">
                                         <tr>
-                                            <th>{% trans "Vakansiya" %}</th>
-                                            <th>{% trans "Kompaniya" %}</th>
-                                            <th>{% trans "Holati" %}</th>
-                                            <th>{% trans "Kutilayotgan maosh" %}</th>
-                                            <th>{% trans "Ariza sanasi" %}</th>
-                                            <th>{% trans "Amallar" %}</th>
+                                            <th>{% trans "Job" %}</th>
+                                            <th>{% trans "Company" %}</th>
+                                            <th>{% trans "Status" %}</th>
+                                            <th>{% trans "Expected Salary" %}</th>
+                                            <th>{% trans "Application Date" %}</th>
+                                            <th>{% trans "Actions" %}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -412,18 +412,18 @@
                                                         {{ application.get_status_display }}
                                                     </button>
                                                     <ul class="dropdown-menu">
-                                                        <li><span class="dropdown-item-text small">{% trans "Oxirgi yangilangan" %}: {{ application.status_changed_at|date:"d.m.Y H:i" }}</span></li>
+                                                        <li><span class="dropdown-item-text small">{% trans "Last Updated" %}: {{ application.status_changed_at|date:"d.m.Y H:i" }}</span></li>
                                                     </ul>
                                                 </div>
                                                 {% if application.is_read %}
-                                                    <small class="text-success d-block mt-1"><i class="fas fa-check-circle"></i> {% trans "Ko'rib chiqilgan" %}</small>
+                                                    <small class="text-success d-block mt-1"><i class="fas fa-check-circle"></i> {% trans "Read" %}</small>
                                                 {% endif %}
                                             </td>
                                             <td>
                                                 {% if application.expected_salary %}
                                                     <strong>{{ application.expected_salary }} {{ application.job.currency }}</strong>
                                                 {% else %}
-                                                    <span class="text-muted">{% trans "Ko'rsatilmagan" %}</span>
+                                                    <span class="text-muted">{% trans "Not Specified" %}</span>
                                                 {% endif %}
                                             </td>
                                             <td>
@@ -433,12 +433,12 @@
                                             </td>
                                             <td>
                                                 <div class="btn-group btn-group-sm">
-                                                    <a href="{% url 'jobs:job_detail' application.job.id %}" class="btn btn-outline-primary" title="{% trans 'Vakansiyani koʻrish' %}">
+                                                    <a href="{% url 'jobs:job_detail' application.job.id %}" class="btn btn-outline-primary" title="{% trans 'View Job' %}">
                                                         <i class="fas fa-eye"></i>
                                                     </a>
                                                     <button class="btn btn-outline-info view-application-details" 
                                                             data-application-id="{{ application.id }}"
-                                                            title="{% trans 'Ariza tafsilotlari' %}">
+                                                            title="{% trans 'Application Details' %}">
                                                         <i class="fas fa-info-circle"></i>
                                                     </button>
                                                     {% if application.status == 'applied' or application.status == 'reviewed' %}
@@ -446,8 +446,8 @@
                                                             {% csrf_token %}
                                                             <input type="hidden" name="status" value="withdrawn">
                                                             <button type="submit" class="btn btn-outline-danger" 
-                                                                    onclick="return confirm('{% trans 'Haqiqatan ham arizani bekor qilmoqchimisiz?' %}')"
-                                                                    title="{% trans 'Arizani bekor qilish' %}">
+                                                                    onclick="return confirm('{% trans 'Are you sure you want to withdraw the application?' %}')"
+                                                                    title="{% trans 'Withdraw Application' %}">
                                                                 <i class="fas fa-times"></i>
                                                             </button>
                                                         </form>
@@ -466,7 +466,7 @@
                                 <ul class="pagination justify-content-center">
                                     {% if applications.has_previous %}
                                         <li class="page-item">
-                                            <a class="page-link" href="?page={{ applications.previous_page_number }}">{% trans "Oldingi" %}</a>
+                                            <a class="page-link" href="?page={{ applications.previous_page_number }}">{% trans "Previous" %}</a>
                                         </li>
                                     {% endif %}
                                     
@@ -484,7 +484,7 @@
                                     
                                     {% if applications.has_next %}
                                         <li class="page-item">
-                                            <a class="page-link" href="?page={{ applications.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{% trans "Keyingi" %}</a>
+                                            <a class="page-link" href="?page={{ applications.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{% trans "Next" %}</a>
                                         </li>
                                     {% endif %}
                                 </ul>
@@ -493,10 +493,10 @@
                         {% else %}
                             <div class="text-center py-5">
                                 <i class="fas fa-file-alt fa-4x text-muted mb-3"></i>
-                                <h5 class="text-muted">{% trans "Hozircha arizalar mavjud emas" %}</h5>
-                                <p class="text-muted mb-4">{% trans "Birinchi ish arizangizni yuboring va karyera imkoniyatlarini oching" %}</p>
+                                <h5 class="text-muted">{% trans "No applications yet" %}</h5>
+                                <p class="text-muted mb-4">{% trans "Submit your first job application and open career opportunities" %}</p>
                                 <a href="{% url 'jobs:job_list' %}" class="btn btn-primary">
-                                    <i class="fas fa-search me-2"></i>{% trans "Ish qidirish" %}
+                                    <i class="fas fa-search me-2"></i>{% trans "Job Search" %}
                                 </a>
                             </div>
                         {% endif %}
@@ -512,7 +512,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="applicationDetailsModalLabel">{% trans "Ariza tafsilotlari" %}</h5>
+                <h5 class="modal-title" id="applicationDetailsModalLabel">{% trans "Application Details" %}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="applicationDetailsContent">
@@ -572,15 +572,15 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', function() {
             const applicationId = this.getAttribute('data-application-id');
             
-            // Показываем индикатор загрузки
-            document.getElementById('applicationDetailsContent').innerHTML = `
-                <div class="text-center py-4">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">{% trans "Yuklanmoqda..." %}</span>
-                    </div>
-                    <p class="mt-2 text-muted">{% trans "Ma'lumotlar yuklanmoqda..." %}</p>
-                </div>
-            `;
+                    // Show loading indicator
+                    document.getElementById('applicationDetailsContent').innerHTML = `
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">{% trans "Loading..." %}</span>
+                            </div>
+                            <p class="mt-2 text-muted">{% trans "Loading data..." %}</p>
+                        </div>
+                    `;
             
             applicationModal.show();
             
@@ -600,7 +600,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('applicationDetailsContent').innerHTML = `
                         <div class="alert alert-danger">
                             <i class="fas fa-exclamation-triangle me-2"></i>
-                            {% trans "Ma'lumotlarni yuklashda xatolik yuz berdi. Iltimos, keyinroq urinib ko'ring." %}
+                            {% trans "Error loading data. Please try again later." %}
                         </div>
                     `;
                 });

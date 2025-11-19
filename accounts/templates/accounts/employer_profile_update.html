@@ -14,8 +14,8 @@
                             <i class="fas fa-user-edit text-white fa-lg"></i>
                         </div>
                         <div>
-                            <h1 class="h3 fw-bold text-dark mb-1">Profilni yangilash</h1>
-                            <p class="text-muted mb-0">Shaxsiy ma'lumotlaringizni tahrirlang</p>
+                            <h1 class="h3 fw-bold text-dark mb-1">{% trans "Update Profile" %}</h1>
+                            <p class="text-muted mb-0">{% trans "Edit your personal information" %}</p>
                         </div>
                     </div>
                 </div>
@@ -43,21 +43,21 @@
                         <div class="mb-5">
                             <h4 class="fw-bold text-dark mb-4 border-bottom pb-2">
                                 <i class="fas fa-user me-2 text-primary"></i>
-                                Asosiy ma'lumotlar
+                                {% trans "Basic Information" %}
                             </h4>
                             
                             <div class="row">
                                 <!-- First Name -->
                                 <div class="col-md-6 mb-3">
                                     <label for="{{ user_form.first_name.id_for_label }}" class="form-label fw-semibold">
-                                        <i class="fas fa-signature me-2 text-primary"></i>Ism
+                                        <i class="fas fa-signature me-2 text-primary"></i>{% trans "First Name" %}
                                     </label>
                                     <input type="text" 
                                            name="{{ user_form.first_name.name }}"
                                            id="{{ user_form.first_name.id_for_label }}"
                                            class="form-control {% if user_form.first_name.errors %}is-invalid{% endif %}"
                                            value="{{ user_form.first_name.value|default:'' }}"
-                                           placeholder="Ismingiz">
+                                           placeholder="{% trans 'Your first name' %}">
                                     {% if user_form.first_name.errors %}
                                     <div class="invalid-feedback d-block">
                                         {% for error in user_form.first_name.errors %}
@@ -70,14 +70,14 @@
                                 <!-- Last Name -->
                                 <div class="col-md-6 mb-3">
                                     <label for="{{ user_form.last_name.id_for_label }}" class="form-label fw-semibold">
-                                        <i class="fas fa-signature me-2 text-primary"></i>Familiya
+                                        <i class="fas fa-signature me-2 text-primary"></i>{% trans "Last Name" %}
                                     </label>
                                     <input type="text" 
                                            name="{{ user_form.last_name.name }}"
                                            id="{{ user_form.last_name.id_for_label }}"
                                            class="form-control {% if user_form.last_name.errors %}is-invalid{% endif %}"
                                            value="{{ user_form.last_name.value|default:'' }}"
-                                           placeholder="Familiyangiz">
+                                           placeholder="{% trans 'Your last name' %}">
                                     {% if user_form.last_name.errors %}
                                     <div class="invalid-feedback d-block">
                                         {% for error in user_form.last_name.errors %}
@@ -91,7 +91,7 @@
                             <!-- Email -->
                             <div class="mb-3">
                                 <label for="{{ user_form.email.id_for_label }}" class="form-label fw-semibold">
-                                    <i class="fas fa-envelope me-2 text-primary"></i>Elektron pochta
+                                    <i class="fas fa-envelope me-2 text-primary"></i>{% trans "Email" %}
                                 </label>
                                 <input type="email" 
                                        name="{{ user_form.email.name }}"
@@ -113,14 +113,14 @@
                         <div class="mb-5">
                             <h4 class="fw-bold text-dark mb-4 border-bottom pb-2">
                                 <i class="fas fa-id-card me-2 text-primary"></i>
-                                Profil ma'lumotlari
+                                {% trans "Profile Information" %}
                             </h4>
 
                             {% if profile_form.phone %}
                             <!-- Phone -->
                             <div class="mb-3">
                                 <label for="{{ profile_form.phone.id_for_label }}" class="form-label fw-semibold">
-                                    <i class="fas fa-phone me-2 text-primary"></i>Telefon raqam
+                                    <i class="fas fa-phone me-2 text-primary"></i>{% trans "Phone Number" %}
                                 </label>
                                 <input type="text" 
                                        name="{{ profile_form.phone.name }}"
@@ -142,13 +142,13 @@
                             <!-- Bio -->
                             <div class="mb-3">
                                 <label for="{{ profile_form.bio.id_for_label }}" class="form-label fw-semibold">
-                                    <i class="fas fa-info-circle me-2 text-primary"></i>O'zim haqimda
+                                    <i class="fas fa-info-circle me-2 text-primary"></i>{% trans "About Me" %}
                                 </label>
                                 <textarea name="{{ profile_form.bio.name }}"
                                           id="{{ profile_form.bio.id_for_label }}"
                                           class="form-control {% if profile_form.bio.errors %}is-invalid{% endif %}"
                                           rows="4"
-                                          placeholder="O'zingiz haqingizda qisqacha ma'lumot...">{{ profile_form.bio.value|default:'' }}</textarea>
+                                          placeholder="{% trans 'Brief information about yourself...' %}">{{ profile_form.bio.value|default:'' }}</textarea>
                                 {% if profile_form.bio.errors %}
                                 <div class="invalid-feedback d-block">
                                     {% for error in profile_form.bio.errors %}
@@ -163,7 +163,7 @@
                             <!-- Date of Birth -->
                             <div class="mb-3">
                                 <label for="{{ profile_form.date_of_birth.id_for_label }}" class="form-label fw-semibold">
-                                    <i class="fas fa-birthday-cake me-2 text-primary"></i>Tug'ilgan sana
+                                    <i class="fas fa-birthday-cake me-2 text-primary"></i>{% trans "Date of Birth" %}
                                 </label>
                                 <input type="date" 
                                        name="{{ profile_form.date_of_birth.name }}"
@@ -184,7 +184,7 @@
                             <!-- Avatar Upload -->
                             <div class="mb-3">
                                 <label for="{{ profile_form.avatar.id_for_label }}" class="form-label fw-semibold">
-                                    <i class="fas fa-camera me-2 text-primary"></i>Profil rasmi
+                                    <i class="fas fa-camera me-2 text-primary"></i>{% trans "Profile Picture" %}
                                 </label>
                                 <input type="file" 
                                        name="{{ profile_form.avatar.name }}"
@@ -200,8 +200,8 @@
                                 {% endif %}
                                 {% if profile_form.instance.avatar %}
                                 <div class="mt-2">
-                                    <small class="text-muted">Joriy rasm:</small>
-                                    <img src="{{ profile_form.instance.avatar.url }}" alt="Profil rasmi" class="rounded ms-2" style="width: 50px; height: 50px; object-fit: cover;">
+                                    <small class="text-muted">{% trans "Current image" %}:</small>
+                                    <img src="{{ profile_form.instance.avatar.url }}" alt="{% trans 'Profile picture' %}" class="rounded ms-2" style="width: 50px; height: 50px; object-fit: cover;">
                                 </div>
                                 {% endif %}
                             </div>
@@ -213,13 +213,13 @@
                                 <div class="mb-3">
                                     <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
                                         {% if field.name == 'company_name' %}
-                                            <i class="fas fa-building me-2 text-primary"></i>Kompaniya nomi
+                                            <i class="fas fa-building me-2 text-primary"></i>{% trans "Company Name" %}
                                         {% elif field.name == 'position' %}
-                                            <i class="fas fa-briefcase me-2 text-primary"></i>Lavozim
+                                            <i class="fas fa-briefcase me-2 text-primary"></i>{% trans "Position" %}
                                         {% elif field.name == 'faculty' %}
-                                            <i class="fas fa-graduation-cap me-2 text-primary"></i>Fakultet
+                                            <i class="fas fa-graduation-cap me-2 text-primary"></i>{% trans "Faculty" %}
                                         {% elif field.name == 'specialization' %}
-                                            <i class="fas fa-book me-2 text-primary"></i>Mutaxassislik
+                                            <i class="fas fa-book me-2 text-primary"></i>{% trans "Specialization" %}
                                         {% else %}
                                             {{ field.label }}
                                         {% endif %}
@@ -238,7 +238,7 @@
                                                id="{{ field.id_for_label }}"
                                                class="form-control {% if field.errors %}is-invalid{% endif %}"
                                                value="{{ field.value|default:'' }}"
-                                               placeholder="{% if field.name == 'company_name' %}Kompaniya nomi{% elif field.name == 'position' %}Lavozimingiz{% elif field.name == 'faculty' %}Fakultet nomi{% elif field.name == 'specialization' %}Mutaxassislik{% endif %}">
+                                               placeholder="{% if field.name == 'company_name' %}{% trans 'Company name' %}{% elif field.name == 'position' %}{% trans 'Your position' %}{% elif field.name == 'faculty' %}{% trans 'Faculty name' %}{% elif field.name == 'specialization' %}{% trans 'Specialization' %}{% endif %}">
                                     {% endif %}
                                     {% if field.errors %}
                                     <div class="invalid-feedback d-block">
@@ -259,14 +259,14 @@
                         <div class="d-flex justify-content-between align-items-center pt-4 border-top">
                             <a href="{% if request.user.user_type == 'student' %}{% url 'accounts:student_dashboard' %}{% elif request.user.user_type == 'employer' %}{% url 'accounts:employer_dashboard' %}{% else %}{% url 'accounts:admin_dashboard' %}{% endif %}" 
                                class="btn btn-outline-secondary">
-                                <i class="fas fa-arrow-left me-2"></i>Ortga qaytish
+                                <i class="fas fa-arrow-left me-2"></i>{% trans "Go Back" %}
                             </a>
                             <div class="d-flex gap-3">
                                 <button type="reset" class="btn btn-outline-primary">
-                                    <i class="fas fa-undo me-2"></i>Bekor qilish
+                                    <i class="fas fa-undo me-2"></i>{% trans "Cancel" %}
                                 </button>
                                 <button type="submit" class="btn btn-primary px-4">
-                                    <i class="fas fa-save me-2"></i>Saqlash
+                                    <i class="fas fa-save me-2"></i>{% trans "Save" %}
                                 </button>
                             </div>
                         </div>
@@ -279,25 +279,25 @@
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="fw-bold text-dark mb-0">
                         <i class="fas fa-lightbulb me-2 text-primary"></i>
-                        Foydali maslahatlar
+                        {% trans "Useful Tips" %}
                     </h5>
                 </div>
                 <div class="card-body">
                     <div class="d-flex mb-3">
                         <i class="fas fa-check text-success me-2 mt-1"></i>
-                        <small>Ma'lumotlarni aniq va to'g'ri kiriting</small>
+                        <small>{% trans "Enter information accurately and correctly" %}</small>
                     </div>
                     <div class="d-flex mb-3">
                         <i class="fas fa-check text-success me-2 mt-1"></i>
-                        <small>Profil rasmi o'lchami 2MB dan oshmasligi kerak</small>
+                        <small>{% trans "Profile picture size should not exceed 2MB" %}</small>
                     </div>
                     <div class="d-flex mb-3">
                         <i class="fas fa-check text-success me-2 mt-1"></i>
-                        <small>Telefon raqamini xalqaro formatda kiriting</small>
+                        <small>{% trans "Enter phone number in international format" %}</small>
                     </div>
                     <div class="d-flex">
                         <i class="fas fa-check text-success me-2 mt-1"></i>
-                        <small>Ma'lumotlarni muntazam yangilab turish maqsadga muvofiq</small>
+                        <small>{% trans "Regularly updating information is recommended" %}</small>
                     </div>
                 </div>
             </div>
@@ -362,7 +362,7 @@ document.addEventListener('DOMContentLoaded', function() {
         form.addEventListener('submit', function() {
             const submitButton = this.querySelector('button[type="submit"]');
             if (submitButton) {
-                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saqlanmoqda...';
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{% trans "Saving..." %}';
                 submitButton.disabled = true;
             }
         });
@@ -382,7 +382,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         preview = document.createElement('div');
                         preview.id = 'avatar-preview';
                         preview.className = 'mt-2';
-                        preview.innerHTML = '<small class="text-muted">Yangi rasm:</small>';
+                        preview.innerHTML = '<small class="text-muted">{% trans "New image" %}:</small>';
                         const img = document.createElement('img');
                         img.className = 'rounded ms-2';
                         img.style.cssText = 'width: 50px; height: 50px; object-fit: cover;';

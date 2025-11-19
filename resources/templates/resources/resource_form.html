@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load static %}
 {% block content %}
 <div class="container py-5">
@@ -8,11 +9,15 @@
             <div class="header-content">
                 <h1 class="form-title">
                     <i class="fas fa-{{ form.instance.pk|yesno:'edit,plus' }}"></i>
-                    {{ form.instance.pk|yesno:"Resursni Tahrirlash,Yangi Resurs Qo'shish" }}
+                    {% if form.instance.pk %}
+                        {% trans "Edit Resource" %}
+                    {% else %}
+                        {% trans "Add New Resource" %}
+                    {% endif %}
                 </h1>
                 <a href="{% url 'resources:list' %}" class="back-button">
                     <i class="fas fa-arrow-left"></i>
-                    Resurslar ro'yxatiga qaytish
+                    {% trans "Back to Resources List" %}
                 </a>
             </div>
         </div>
@@ -42,14 +47,14 @@
                 <div class="form-section">
                     <h2 class="section-title">
                         <i class="fas fa-info-circle"></i>
-                        Asosiy Ma'lumotlar
+                        {% trans "Basic Information" %}
                     </h2>
                     
                     <div class="form-grid">
                         <!-- Title -->
                         <div class="form-group full-width">
                             <label for="{{ form.title.id_for_label }}" class="form-label">
-                                Sarlavha *
+                                {% trans "Title" %} *
                             </label>
                             {{ form.title }}
                             {% if form.title.errors %}
@@ -60,14 +65,14 @@
                                 </div>
                             {% endif %}
                             <div class="form-help">
-                                Resursning sarlavhasini kiriting (maksimum 200 belgi)
+                                {% trans "Enter resource title (maximum 200 characters)" %}
                             </div>
                         </div>
 
                         <!-- Category -->
                         <div class="form-group">
                             <label for="{{ form.category.id_for_label }}" class="form-label">
-                                Kategoriya *
+                                {% trans "Category" %} *
                             </label>
                             {{ form.category }}
                             {% if form.category.errors %}
@@ -82,12 +87,12 @@
                         <!-- Publication Status -->
                         <div class="form-group">
                             <label class="form-label">
-                                Nashr Holati
+                                {% trans "Publication Status" %}
                             </label>
                             <div class="checkbox-group">
                                 {{ form.is_published }}
                                 <label for="{{ form.is_published.id_for_label }}" class="checkbox-label">
-                                    Darhol nashr etish
+                                    {% trans "Publish immediately" %}
                                 </label>
                             </div>
                             {% if form.is_published.errors %}
@@ -98,7 +103,7 @@
                                 </div>
                             {% endif %}
                             <div class="form-help">
-                                Belgilansa, resurs darhol foydalanuvchilar uchun ko'rinadi
+                                {% trans "If checked, resource will be immediately visible to users" %}
                             </div>
                         </div>
                     </div>
@@ -108,12 +113,12 @@
                 <div class="form-section">
                     <h2 class="section-title">
                         <i class="fas fa-align-left"></i>
-                        Tavsif
+                        {% trans "Description" %}
                     </h2>
-                    
+
                     <div class="form-group full-width">
                         <label for="{{ form.description.id_for_label }}" class="form-label">
-                            Batafsil Tavsif *
+                            {% trans "Detailed Description" %} *
                         </label>
                         {{ form.description }}
                         {% if form.description.errors %}
@@ -124,10 +129,10 @@
                             </div>
                         {% endif %}
                         <div class="form-help">
-                            Resurs haqida batafsil ma'lumot bering. Foydalanuvchilar nima o'rganishlari mumkinligini tushuntiring.
+                            {% trans "Provide detailed information about the resource. Explain what users can learn from it." %}
                         </div>
                         <div class="char-counter">
-                            <span id="descriptionCount">0</span> / 5000 belgi
+                            <span id="descriptionCount">0</span> / 5000 {% trans "characters" %}
                         </div>
                     </div>
                 </div>
@@ -136,31 +141,31 @@
                 <div class="form-section">
                     <h2 class="section-title">
                         <i class="fas fa-images"></i>
-                        Media va Havolalar
+                        {% trans "Media and Links" %}
                     </h2>
                     
                     <div class="form-grid">
                         <!-- Image Upload -->
                         <div class="form-group">
                             <label for="{{ form.image.id_for_label }}" class="form-label">
-                                Asosiy Rasm
-                            <div class="file-upload">
-                                {{ form.image }}
-                                <div class="upload-preview" id="imagePreview">
-                                    {% if form.instance.image %}
-                                        <img src="{{ form.instance.image.url }}" alt="Current image">
+                                {% trans "Main Image" %}
+                                <div class="file-upload">
+                                    {{ form.image }}
+                                    <div class="upload-preview" id="imagePreview">
+                                        {% if form.instance.image %}
+                                        <img src="{{ form.instance.image.url }}" alt="{% trans 'Current image' %}">
                                         <div class="preview-overlay">
                                             <i class="fas fa-sync"></i>
-                                            Rasmni almashtirish
+                                            {% trans "Replace image" %}
                                         </div>
-                                    {% else %}
+                                        {% else %}
                                         <div class="upload-placeholder">
                                             <i class="fas fa-cloud-upload-alt"></i>
-                                            <span>Rasm yuklash</span>
+                                            <span>{% trans "Upload image" %}</span>
                                         </div>
-                                    {% endif %}
+                                        {% endif %}
+                                    </div>
                                 </div>
-                            </div>
                             </label>
                             {% if form.image.errors %}
                                 <div class="field-error">
@@ -170,14 +175,14 @@
                                 </div>
                             {% endif %}
                             <div class="form-help">
-                                PNG, JPG yoki WEBP formatida. Maksimum hajm: 5MB
+                                {% trans "PNG, JPG or WEBP format. Maximum size: 5MB" %}
                             </div>
                         </div>
 
                         <!-- YouTube URL -->
                         <div class="form-group">
                             <label for="{{ form.url_youtube.id_for_label }}" class="form-label">
-                                YouTube Havolasi
+                                {% trans "YouTube URL" %}
                             </label>
                             {{ form.url_youtube }}
                             {% if form.url_youtube.errors %}
@@ -188,7 +193,7 @@
                                 </div>
                             {% endif %}
                             <div class="form-help">
-                                Ixtiyoriy: YouTube video havolasini qo'shing
+                                {% trans "Optional: Add YouTube video URL" %}
                             </div>
                             
                             <!-- YouTube Preview -->
@@ -196,10 +201,10 @@
                             <div class="youtube-preview">
                                 <div class="preview-header">
                                     <i class="fab fa-youtube"></i>
-                                    YouTube video mavjud
+                                    {% trans "YouTube video available" %}
                                 </div>
                                 <a href="{{ form.instance.url_youtube }}" target="_blank" class="preview-link">
-                                    Havolani tekshirish
+                                    {% trans "Check link" %}
                                 </a>
                             </div>
                             {% endif %}
@@ -211,42 +216,42 @@
                 <div class="form-section">
                     <h2 class="section-title">
                         <i class="fas fa-eye"></i>
-                        Oldindan Ko'rish
+                        {% trans "Preview" %}
                     </h2>
                     
                     <div class="preview-card">
                         <div class="preview-header">
                             <div class="preview-badge" id="previewCategory">
-                                {{ form.instance.category.name|default:"Kategoriya" }}
+                                {{ form.instance.category.name|default:_("Category") }}
                             </div>
                             <div class="preview-status" id="previewStatus">
-                                {{ form.instance.is_published|yesno:"Nashr etilgan,Nashr etilmagan" }}
+                                {{ form.instance.is_published|yesno:_("Published,Unpublished") }}
                             </div>
                         </div>
                         
                         <h3 class="preview-title" id="previewTitle">
-                            {{ form.instance.title|default:"Resurs sarlavhasi" }}
+                            {{ form.instance.title|default:_("Resource title") }}
                         </h3>
                         
                         <div class="preview-image" id="previewImage">
                             {% if form.instance.image %}
-                                <img src="{{ form.instance.image.url }}" alt="Preview image">
+                                <img src="{{ form.instance.image.url }}" alt="{% trans 'Preview image' %}">
                             {% else %}
                                 <div class="no-image">
                                     <i class="fas fa-image"></i>
-                                    Rasm mavjud emas
+                                    {% trans "No image available" %}
                                 </div>
                             {% endif %}
                         </div>
                         
                         <p class="preview-description" id="previewDescription">
-                            {{ form.instance.description|default:"Resurs tavsifi bu yerda ko'rinadi..."|truncatewords:30 }}
+                            {{ form.instance.description|default:_("Resource description will appear here...")|truncatewords:30 }}
                         </p>
                         
                         {% if form.instance.url_youtube %}
                         <div class="preview-youtube">
                             <i class="fab fa-youtube"></i>
-                            YouTube video mavjud
+                            {% trans "YouTube video available" %}
                         </div>
                         {% endif %}
                     </div>
@@ -255,28 +260,32 @@
                 <!-- Form Actions -->
                 <div class="form-actions">
                     <div class="action-buttons">
-                        <a href="{% if form.instance.pk %}{% url 'resources:resource_detail' form.instance.pk %}{% else %}{% url 'resources:list' %}{% endif %}" 
+                        <a href="{% if form.instance.pk %}{% url 'resources:resource_detail' form.instance.pk %}{% else %}{% url 'resources:list' %}{% endif %}"
                            class="btn-secondary">
                             <i class="fas fa-times"></i>
-                            Bekor qilish
+                            {% trans "Cancel" %}
                         </a>
                         
                         <div class="primary-actions">
                             {% if form.instance.pk %}
                             <a href="{% url 'resources:resource_delete' form.instance.pk %}" class="btn-danger">
                                 <i class="fas fa-trash"></i>
-                                O'chirish
+                                {% trans "Delete" %}
                             </a>
                             {% endif %}
                             
                             <button type="submit" name="save_draft" class="btn-outline">
                                 <i class="fas fa-save"></i>
-                                Qoralama sifatida saqlash
+                                {% trans "Save as Draft" %}
                             </button>
                             
                             <button type="submit" name="publish" class="btn-primary">
                                 <i class="fas fa-paper-plane"></i>
-                                {{ form.instance.pk|yesno:"Yangilash,Saqlash va Nashr etish" }}
+                                {% if form.instance.pk %}
+                                    {% trans "Update" %}
+                                {% else %}
+                                    {% trans "Save and Publish" %}
+                                {% endif %}
                             </button>
                         </div>
                     </div>
@@ -285,6 +294,7 @@
         </div>
     </div>
 </div>
+
 
 <style>
 .container {
@@ -837,7 +847,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (!title || !category || !description) {
                 e.preventDefault();
-                alert('Iltimos, barcha majburiy maydonlarni to\'ldiring (sarlavha, kategoriya va tavsif)');
+                alert('Please fill in all required fields (title, category and description)');
                 return;
             }
         }
