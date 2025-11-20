@@ -3,12 +3,12 @@
 
 {% block content %}
 <div class="container py-5">
-  <h2 class="mb-4">{% trans "Talabalar qidirish" %}</h2>
+  <h2 class="mb-4">{% trans "Student Search" %}</h2>
 
   <form method="get" class="mb-4">
     <div class="input-group">
-      <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="{% trans 'Ism, familiya yoki username' %}">
-      <button class="btn btn-primary" type="submit">{% trans "Qidirish" %}</button>
+      <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="{% trans 'Name, surname or username' %}">
+      <button class="btn btn-primary" type="submit">{% trans "Search" %}</button>
     </div>
   </form>
 
@@ -39,7 +39,7 @@
     </ul>
   </nav>
   {% else %}
-  <p class="text-muted">{% trans "Hech narsa topilmadi" %}</p>
+  <p class="text-muted">{% trans "Nothing found" %}</p>
   {% endif %}
 </div>
 {% endblock %}
