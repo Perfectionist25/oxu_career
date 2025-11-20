@@ -41,13 +41,53 @@
         </div>
     </div>
 
+    <!-- Bulk Actions Bar -->
+    <div class="bulk-actions-bar" id="bulkActionsBar" style="display: none;">
+        <div class="bulk-info">
+            <span id="selectedCount">0</span> {% trans "resources selected" %}
+        </div>
+        <div class="bulk-buttons">
+            <form method="post" action="{% url 'resources:bulk_publish' %}" id="bulkPublishForm" class="d-inline">
+                {% csrf_token %}
+                <input type="hidden" name="resource_ids" id="bulkPublishIds">
+                <button type="submit" class="btn btn-success btn-sm" onclick="return confirmBulkAction('publish')">
+                    <i class="fas fa-check-double"></i>{% trans "Publish selected" %}
+                </button>
+            </form>
+            <form method="post" action="{% url 'resources:bulk_delete' %}" id="bulkDeleteForm" class="d-inline">
+                {% csrf_token %}
+                <input type="hidden" name="resource_ids" id="bulkDeleteIds">
+                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirmBulkAction('delete')">
+                    <i class="fas fa-trash"></i>{% trans "Delete selected" %}
+                </button>
+            </form>
+            <button class="btn btn-secondary btn-sm" onclick="clearSelection()">
+                <i class="fas fa-times"></i>{% trans "Clear selection" %}
+            </button>
+        </div>
+    </div>
+
+    <!-- Selection Controls - ПЕРЕМЕЩЕН НАВЕРХ -->
+    <div class="selection-controls-bar">
+        <div class="selection-info">
+            <label class="select-all-label">
+                <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)">
+                {% trans "Select all on this page" %}
+            </label>
+            <span class="selection-count" id="pageSelectionCount">0 {% trans "selected" %}</span>
+        </div>
+        <div class="selection-stats">
+            <span class="total-count">{{ page_obj.paginator.count }} {% trans "total resources" %}</span>
+        </div>
+    </div>
+
     <!-- Actions Bar -->
     <div class="actions-bar">
         <div class="action-buttons">
-            <a href="{% url 'resources:resource_create' %}" class="btn-success">
+            <a href="{% url 'resources:resource_create' %}" class="btn btn-success">
                 <i class="fas fa-plus"></i>{% trans "Add new resource" %}
             </a>
-            <a href="{% url 'resources:list' %}" class="btn-secondary">
+            <a href="{% url 'resources:list' %}" class="btn btn-secondary">
                 <i class="fas fa-eye"></i>{% trans "Published resources" %}
             </a>
         </div>
@@ -65,100 +105,118 @@
 
     {% if page_obj %}
     <!-- Resources Table/Grid -->
-    <div class="resources-container view-grid" id="resourcesView">
-        {% for resource in page_obj %}
-        <div class="resource-card unpublished">
-            <div class="card-header">
-                <div class="status-badge">
-                    <i class="fas fa-eye-slash"></i>
-                    {% trans "Unpublished" %}
+    <form id="resourcesForm">
+        <div class="resources-container view-grid" id="resourcesView">
+            {% for resource in page_obj %}
+            <div class="resource-card unpublished">
+                <div class="card-header">
+                    <div class="selection-checkbox">
+                        <input type="checkbox" class="resource-checkbox" name="resource_ids" value="{{ resource.pk }}" 
+                               onchange="updateBulkActions()">
+                    </div>
+                    <div class="status-badge">
+                        <i class="fas fa-eye-slash"></i>
+                        {% trans "Unpublished" %}
+                    </div>
+                    <div class="card-actions">
+                        <div class="dropdown">
+                            <button class="dropdown-btn">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <div class="dropdown-menu">
+                                <a href="{% url 'resources:publish_resource' resource.pk %}" 
+                                   class="dropdown-item publish-btn"
+                                   onclick="return confirm('{% trans "Do you want to publish this resource?" %}')">
+                                    <i class="fas fa-check"></i>{% trans "Publish" %}
+                                </a>
+                                <a href="{% url 'resources:resource_edit' resource.pk %}" class="dropdown-item">
+                                    <i class="fas fa-edit"></i>{% trans "Edit" %}
+                                </a>
+                                <a href="{% url 'resources:resource_detail' resource.pk %}" class="dropdown-item">
+                                    <i class="fas fa-eye"></i>{% trans "View" %}
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a href="{% url 'resources:resource_delete' resource.pk %}" 
+                                   class="dropdown-item delete-btn"
+                                   onclick="return confirm('{% trans "Do you confirm deletion of this resource?" %}')">
+                                    <i class="fas fa-trash"></i>{% trans "Delete" %}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-actions">
-                    <div class="dropdown">
-                        <button class="dropdown-btn">
-                            <i class="fas fa-ellipsis-v"></i>
-                        </button>
-                        <div class="dropdown-menu">
-                            <a href="{% url 'resources:publish_resource' resource.pk %}" 
-                               class="dropdown-item publish-btn"
-                               onclick="return confirm('{% trans "Do you want to publish this resource?" %}')">
+
+                <div class="card-content">
+                    <!-- Resource Image -->
+                    {% if resource.image %}
+                    <div class="resource-image">
+                        <img src="{{ resource.image.url }}" alt="{{ resource.title }}">
+                    </div>
+                    {% else %}
+                    <div class="resource-image placeholder">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    {% endif %}
+
+                    <!-- Resource Info -->
+                    <div class="resource-info">
+                        <div class="category-badge">
+                            {{ resource.category.name|default:_("No category") }}
+                        </div>
+                        <h3 class="resource-title">{{ resource.title }}</h3>
+                        <p class="resource-description">{{ resource.description|truncatechars:100 }}</p>
+                        
+                        <!-- Resource Meta -->
+                        <div class="resource-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-calendar-plus"></i>
+                                {% trans "Added" %}: {{ resource.created_at|date:"d.m.Y" }}
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-sync"></i>
+                                {% trans "Updated" %}: {{ resource.updated_at|date:"d.m.Y" }}
+                            </div>
+                            {% if resource.url_youtube %}
+                            <div class="meta-item">
+                                <i class="fab fa-youtube"></i>
+                                {% trans "YouTube video available" %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="quick-actions">
+                        <form method="post" action="{% url 'resources:publish_resource' resource.pk %}" class="quick-form">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('{% trans "Do you confirm publishing?" %}')">
                                 <i class="fas fa-check"></i>{% trans "Publish" %}
-                            </a>
-                            <a href="{% url 'resources:resource_edit' resource.pk %}" class="dropdown-item">
-                                <i class="fas fa-edit"></i>{% trans "Edit" %}
-                            </a>
-                            <a href="{% url 'resources:resource_detail' resource.pk %}" class="dropdown-item">
-                                <i class="fas fa-eye"></i>{% trans "View" %}
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <a href="{% url 'resources:resource_delete' resource.pk %}" 
-                               class="dropdown-item delete-btn"
-                               onclick="return confirm('{% trans "Do you confirm deletion of this resource?" %}')">
-                                <i class="fas fa-trash"></i>{% trans "Delete" %}
-                            </a>
-                        </div>
+                            </button>
+                        </form>
+                        <a href="{% url 'resources:resource_edit' resource.pk %}" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-edit"></i>{% trans "Edit" %}
+                        </a>
+                        <a href="{% url 'resources:resource_detail' resource.pk %}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-eye"></i>{% trans "View" %}
+                        </a>
                     </div>
                 </div>
             </div>
-
-            <div class="card-content">
-                <!-- Resource Image -->
-                {% if resource.image %}
-                <div class="resource-image">
-                    <img src="{{ resource.image.url }}" alt="{{ resource.title }}">
-                </div>
-                {% else %}
-                <div class="resource-image placeholder">
-                    <i class="fas fa-image"></i>
-                </div>
-                {% endif %}
-
-                <!-- Resource Info -->
-                <div class="resource-info">
-                    <div class="category-badge">
-                        {{ resource.category.name|default:_("No category") }}
-                    </div>
-                    <h3 class="resource-title">{{ resource.title }}</h3>
-                    <p class="resource-description">{{ resource.description|truncatewords:20 }}</p>
-                    
-                    <!-- Resource Meta -->
-                    <div class="resource-meta">
-                        <div class="meta-item">
-                            <i class="fas fa-calendar-plus"></i>
-                            {% trans "Added" %}: {{ resource.created_at|date:"d.m.Y" }}
-                        </div>
-                        <div class="meta-item">
-                            <i class="fas fa-sync"></i>
-                            {% trans "Updated" %}: {{ resource.updated_at|date:"d.m.Y" }}
-                        </div>
-                        {% if resource.url_youtube %}
-                        <div class="meta-item">
-                            <i class="fab fa-youtube"></i>
-                            {% trans "YouTube video available" %}
-                        </div>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <!-- Quick Actions -->
-                <div class="quick-actions">
-                    <form method="post" action="{% url 'resources:publish_resource' resource.pk %}" class="quick-form">
-                        {% csrf_token %}
-                        <button type="submit" class="btn-success btn-sm" onclick="return confirm('{% trans "Do you confirm publishing?" %}')">
-                            <i class="fas fa-check"></i>{% trans "Publish" %}
-                        </button>
-                    </form>
-                    <a href="{% url 'resources:resource_edit' resource.pk %}" class="btn-secondary btn-sm">
-                        <i class="fas fa-edit"></i>{% trans "Edit" %}
-                    </a>
-                    <a href="{% url 'resources:resource_detail' resource.pk %}" class="btn-primary btn-sm">
-                        <i class="fas fa-eye"></i>{% trans "View" %}
-                    </a>
-                </div>
-            </div>
+            {% endfor %}
+            
+            <!-- Fill empty cards to maintain grid layout -->
+            {% with resources_count=page_obj.object_list.count %}
+                {% with remainder=resources_count|add:"0"|divisibleby:3 %}
+                    {% if remainder == 1 %}
+                        <div class="resource-card empty-card"></div>
+                        <div class="resource-card empty-card"></div>
+                    {% elif remainder == 2 %}
+                        <div class="resource-card empty-card"></div>
+                    {% endif %}
+                {% endwith %}
+            {% endwith %}
         </div>
-        {% endfor %}
-    </div>
+    </form>
 
     <!-- Pagination -->
     {% if page_obj.has_other_pages %}
@@ -196,35 +254,16 @@
         <h3>{% trans "All resources are published" %}</h3>
         <p>{% trans "There are currently no unpublished resources. All materials have already been published." %}</p>
         <div class="empty-actions">
-            <a href="{% url 'resources:resource_create' %}" class="btn-success">
+            <a href="{% url 'resources:resource_create' %}" class="btn btn-success">
                 <i class="fas fa-plus"></i>{% trans "Add new resource" %}
             </a>
-            <a href="{% url 'resources:list' %}" class="btn-primary">
+            <a href="{% url 'resources:list' %}" class="btn btn-primary">
                 <i class="fas fa-eye"></i>{% trans "View published resources" %}
             </a>
         </div>
     </div>
     {% endif %}
-
-    <!-- Bulk Actions -->
-    {% if page_obj %}
-    <div class="bulk-actions">
-        <div class="bulk-header">
-            <h4>{% trans "Bulk Actions" %}</h4>
-            <p>{% trans "Manage multiple resources at once" %}</p>
-        </div>
-        <div class="bulk-buttons">
-            <button class="btn-warning" onclick="bulkPublish()">
-                <i class="fas fa-check-double"></i>{% trans "Publish selected" %}
-            </button>
-            <button class="btn-secondary" onclick="selectAll()">
-                <i class="fas fa-check-square"></i>{% trans "Select all" %}
-            </button>
-        </div>
-    </div>
-    {% endif %}
 </div>
-
 
 <style>
 .container {
@@ -268,6 +307,11 @@
     display: flex;
     align-items: center;
     gap: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
 }
 
 .stat-icon {
@@ -300,6 +344,90 @@
     color: #666;
     font-size: 0.9rem;
     margin-top: 0.25rem;
+}
+
+/* Bulk Actions Bar */
+.bulk-actions-bar {
+    background: #e3f2fd;
+    border: 1px solid #bbdefb;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.bulk-info {
+    font-weight: 600;
+    color: #1976d2;
+}
+
+.bulk-info span {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.bulk-buttons {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+/* Selection Controls Bar - НОВЫЙ СТИЛЬ */
+.selection-controls-bar {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.selection-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.select-all-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-weight: 500;
+    color: #495057;
+    margin: 0;
+}
+
+.selection-count {
+    font-weight: 600;
+    color: #012152;
+    background: #e9ecef;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.9rem;
+}
+
+.selection-stats {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.total-count {
+    background: #012152;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-weight: 500;
 }
 
 /* Actions Bar */
@@ -352,17 +480,6 @@
     margin-bottom: 3rem;
 }
 
-.view-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-    gap: 2rem;
-}
-
-.view-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
 
 /* Resource Card */
 .resource-card.unpublished {
@@ -371,11 +488,20 @@
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     border-left: 4px solid #ffc107;
     transition: all 0.3s ease;
+    overflow: hidden;
+    min-height: 450px; /* Фиксированная высота для выравнивания */
 }
 
-.resource-card.unpublished:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+/* Убрать empty-card - они не нужны с CSS Grid */
+.resource-card.empty-card {
+    display: none;
+}
+
+.view-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 1.5rem;
+    align-items: start; /* Выравнивание по верху */
 }
 
 .card-header {
@@ -384,6 +510,30 @@
     align-items: flex-start;
     padding: 1.5rem 1.5rem 0;
     margin-bottom: 1rem;
+}
+
+.card-header .selection-checkbox {
+    flex-shrink: 0;
+    margin-right: 0.75rem;
+}
+
+.card-header .status-badge {
+    flex-grow: 1;
+    margin: 0 1rem;
+}
+
+.card-header .card-actions {
+    flex-shrink: 0;
+}
+
+.selection-checkbox {
+    margin-right: 0.75rem;
+}
+
+.resource-checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
 }
 
 .status-badge {
@@ -537,40 +687,36 @@
     flex: 1;
 }
 
-.btn-sm {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.85rem;
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-}
-
-/* Buttons */
-.btn-primary, .btn-secondary, .btn-success, .btn-warning {
-    padding: 0.75rem 1.5rem;
+.btn {
+    padding: 0.5rem 1rem;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     text-decoration: none;
-    font-size: 1rem;
-    font-weight: 500;
+    font-size: 0.9rem;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
     transition: all 0.3s ease;
     text-align: center;
+    justify-content: center;
+}
+
+.btn-sm {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
 }
 
 .btn-primary { background: #012152; color: white; }
 .btn-secondary { background: #6c757d; color: white; }
 .btn-success { background: #28a745; color: white; }
+.btn-danger { background: #dc3545; color: white; }
 .btn-warning { background: #ffc107; color: #212529; }
 
 .btn-primary:hover { background: #012d6e; }
 .btn-secondary:hover { background: #5a6268; }
 .btn-success:hover { background: #218838; }
+.btn-danger:hover { background: #c82333; }
 .btn-warning:hover { background: #e0a800; }
 
 /* Pagination */
@@ -616,6 +762,7 @@
 .empty-state h3 {
     margin: 0 0 1rem 0;
     color: #333;
+    font-size: 1.5rem;
 }
 
 .empty-state p {
@@ -624,6 +771,7 @@
     max-width: 500px;
     margin-left: auto;
     margin-right: auto;
+    line-height: 1.6;
 }
 
 .empty-actions {
@@ -632,38 +780,27 @@
     justify-content: center;
 }
 
-/* Bulk Actions */
-.bulk-actions {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    padding: 1.5rem;
-    margin-top: 2rem;
-}
-
-.bulk-header {
-    margin-bottom: 1rem;
-}
-
-.bulk-header h4 {
-    margin: 0 0 0.5rem 0;
-    color: #333;
-}
-
-.bulk-header p {
-    margin: 0;
-    color: #666;
-}
-
-.bulk-buttons {
-    display: flex;
-    gap: 1rem;
-}
-
 /* Responsive */
+@media (max-width: 1200px) {
+    .view-grid {
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    }
+}
+
 @media (max-width: 768px) {
     .view-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .selection-controls-bar {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+        text-align: center;
+    }
+    
+    .selection-info {
+        justify-content: center;
     }
     
     .actions-bar {
@@ -684,6 +821,12 @@
         flex-direction: column;
     }
     
+    .bulk-actions-bar {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
     .bulk-buttons {
         flex-direction: column;
     }
@@ -698,14 +841,106 @@
         align-items: flex-start;
     }
     
+    .card-header .status-badge {
+        margin: 0;
+        order: 2;
+    }
+    
+    .card-header .selection-checkbox {
+        order: 1;
+    }
+    
+    .card-header .card-actions {
+        order: 3;
+        align-self: flex-end;
+    }
+    
     .dropdown-menu {
         right: auto;
         left: 0;
+    }
+    
+    .main-title {
+        font-size: 2rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .view-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .container {
+        padding: 0 15px;
     }
 }
 </style>
 
 <script>
+// Selection management
+function updateBulkActions() {
+    const checkboxes = document.querySelectorAll('.resource-checkbox:checked');
+    const selectedCount = checkboxes.length;
+    
+    // Update counters
+    document.getElementById('selectedCount').textContent = selectedCount;
+    document.getElementById('pageSelectionCount').textContent = selectedCount + ' {% trans "selected" %}';
+    
+    // Show/hide bulk actions bar
+    const bulkActionsBar = document.getElementById('bulkActionsBar');
+    if (selectedCount > 0) {
+        bulkActionsBar.style.display = 'flex';
+        
+        // Update form hidden fields
+        const selectedIds = Array.from(checkboxes).map(cb => cb.value).join(',');
+        document.getElementById('bulkPublishIds').value = selectedIds;
+        document.getElementById('bulkDeleteIds').value = selectedIds;
+    } else {
+        bulkActionsBar.style.display = 'none';
+    }
+    
+    // Update select all checkbox
+    const totalCheckboxes = document.querySelectorAll('.resource-checkbox').length;
+    const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+    selectAllCheckbox.checked = selectedCount === totalCheckboxes;
+    selectAllCheckbox.indeterminate = selectedCount > 0 && selectedCount < totalCheckboxes;
+}
+
+function toggleSelectAll(checkbox) {
+    const checkboxes = document.querySelectorAll('.resource-checkbox');
+    checkboxes.forEach(cb => {
+        cb.checked = checkbox.checked;
+    });
+    updateBulkActions();
+}
+
+function clearSelection() {
+    const checkboxes = document.querySelectorAll('.resource-checkbox');
+    checkboxes.forEach(cb => {
+        cb.checked = false;
+    });
+    updateBulkActions();
+}
+
+function confirmBulkAction(action) {
+    const selectedCount = document.querySelectorAll('.resource-checkbox:checked').length;
+    if (selectedCount === 0) {
+        alert('{% trans "Please select at least one resource" %}');
+        return false;
+    }
+    
+    const messages = {
+        'publish': '{% trans "Do you want to publish" %}',
+        'delete': '{% trans "Do you confirm deletion of" %}'
+    };
+    
+    return confirm(messages[action] + ' ' + selectedCount + ' {% trans "resources" %}?');
+}
+
 // View toggle functionality
 document.addEventListener('DOMContentLoaded', function() {
     const viewBtns = document.querySelectorAll('.view-btn');
@@ -725,30 +960,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Bulk actions functionality
-function bulkPublish() {
-    const selectedResources = document.querySelectorAll('.resource-checkbox:checked');
-    if (selectedResources.length === 0) {
-        alert('Please select at least one resource to publish.');
-        return;
-    }
-
-    if (confirm(`Do you want to publish ${selectedResources.length} resources?`)) {
-        // Simulate bulk publish action
-        alert(`${selectedResources.length} resources published!`);
-        // In real implementation, you would submit a form or make an API call
-    }
-}
-
-function selectAll() {
-    const checkboxes = document.querySelectorAll('.resource-checkbox');
-    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-    
-    checkboxes.forEach(cb => {
-        cb.checked = !allChecked;
-    });
-}
-
 // Auto-hide dropdown when clicking outside
 document.addEventListener('click', function(event) {
     if (!event.target.closest('.dropdown')) {
@@ -757,5 +968,31 @@ document.addEventListener('click', function(event) {
         });
     }
 });
+
+// Grid layout optimization - ensure proper number of items per row
+function optimizeGridLayout() {
+    const container = document.getElementById('resourcesView');
+    const cards = container.querySelectorAll('.resource-card:not(.empty-card)');
+    const itemsPerRow = window.innerWidth > 1200 ? 3 : window.innerWidth > 768 ? 2 : 1;
+    
+    // Remove existing empty cards
+    const existingEmptyCards = container.querySelectorAll('.empty-card');
+    existingEmptyCards.forEach(card => card.remove());
+    
+    // Calculate needed empty slots
+    const remainingItems = cards.length % itemsPerRow;
+    const emptySlotsNeeded = remainingItems === 0 ? 0 : itemsPerRow - remainingItems;
+    
+    // Add empty cards to fill the grid
+    for (let i = 0; i < emptySlotsNeeded; i++) {
+        const emptyCard = document.createElement('div');
+        emptyCard.className = 'resource-card empty-card';
+        container.appendChild(emptyCard);
+    }
+}
+
+// Run on load and resize
+document.addEventListener('DOMContentLoaded', optimizeGridLayout);
+window.addEventListener('resize', optimizeGridLayout);
 </script>
 {% endblock %}
