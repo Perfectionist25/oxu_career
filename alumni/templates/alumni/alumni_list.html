@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block content %}
 <div class="container py-5">
     <!-- Header Section -->
     <div class="row mb-5">
         <div class="col-lg-8 mx-auto text-center">
-            <h1 class="display-5 fw-bold text-primary mb-3">Bitiruvchilar Tarmog'i</h1>
-            <p class="lead text-muted">Osiyo Xalqaro Universiteti bitiruvchilari bilan bog'laning va karyera imkoniyatlarini kashf eting</p>
+            <h1 class="display-5 fw-bold text-primary mb-3">Graduates Network</h1>
+            <p class="lead text-muted">Connect with Asia International University graduates and explore career opportunities</p>
         </div>
     </div>
 
@@ -16,23 +17,23 @@
             <form method="get" class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label fw-semibold">
-                        <i class="fas fa-university me-2 text-primary"></i>Fakultet
+                        <i class="fas fa-university me-2 text-primary"></i>Faculty
                     </label>
                     <select name="faculty" class="form-select">
-                        <option value="">Barcha fakultetlar</option>
-                        <option value="Dasturiy injiniring" {% if request.GET.faculty == "Dasturiy injiniring" %}selected{% endif %}>Dasturiy injiniring</option>
-                        <option value="Iqtisodiyot" {% if request.GET.faculty == "Iqtisodiyot" %}selected{% endif %}>Iqtisodiyot</option>
-                        <option value="Boshqaruv" {% if request.GET.faculty == "Boshqaruv" %}selected{% endif %}>Boshqaruv</option>
-                        <option value="Huquqshunoslik" {% if request.GET.faculty == "Huquqshunoslik" %}selected{% endif %}>Huquqshunoslik</option>
+                        <option value="">All faculties</option>
+                        <option value="Software Engineering" {% if request.GET.faculty == "Software Engineering" %}selected{% endif %}>Software Engineering</option>
+                        <option value="Economics" {% if request.GET.faculty == "Economics" %}selected{% endif %}>Economics</option>
+                        <option value="Management" {% if request.GET.faculty == "Management" %}selected{% endif %}>Management</option>
+                        <option value="Law" {% if request.GET.faculty == "Law" %}selected{% endif %}>Law</option>
                     </select>
                 </div>
                 
                 <div class="col-md-3">
                     <label class="form-label fw-semibold">
-                        <i class="fas fa-graduation-cap me-2 text-primary"></i>Bitirgan yili
+                        <i class="fas fa-graduation-cap me-2 text-primary"></i>Graduation Year
                     </label>
                     <select name="year" class="form-select">
-                        <option value="">Barcha yillar</option>
+                        <option value="">All years</option>
                         {% for year in years %}
                         <option value="{{ year }}" {% if request.GET.year == year %}selected{% endif %}>{{ year }}</option>
                         {% endfor %}
@@ -41,23 +42,23 @@
                 
                 <div class="col-md-3">
                     <label class="form-label fw-semibold">
-                        <i class="fas fa-briefcase me-2 text-primary"></i>Kasb
+                        <i class="fas fa-briefcase me-2 text-primary"></i>Profession
                     </label>
                     <input type="text" 
                            name="profession" 
                            class="form-control" 
-                           placeholder="Kasb bo'yicha qidirish"
+                           placeholder="Search by profession"
                            value="{{ request.GET.profession }}">
                 </div>
                 
                 <div class="col-md-3">
                     <label class="form-label fw-semibold">
-                        <i class="fas fa-building me-2 text-primary"></i>Kompaniya
+                        <i class="fas fa-building me-2 text-primary"></i>Company
                     </label>
                     <input type="text" 
                            name="company" 
                            class="form-control" 
-                           placeholder="Kompaniya nomi"
+                           placeholder="Company name"
                            value="{{ request.GET.company }}">
                 </div>
                 
@@ -70,16 +71,16 @@
                                    id="mentors" 
                                    {% if request.GET.mentors %}checked{% endif %}>
                             <label class="form-check-label fw-semibold" for="mentors">
-                                Faqat mentorlar
+                                Only mentors
                             </label>
                         </div>
                         
                         <div class="d-flex gap-2">
                             <button type="submit" class="btn btn-primary px-4">
-                                <i class="fas fa-search me-2"></i>Qidirish
+                                <i class="fas fa-search me-2"></i>Search
                             </button>
                             <a href="{% url 'alumni:list' %}" class="btn btn-outline-secondary">
-                                <i class="fas fa-redo me-2"></i>Tozalash
+                                <i class="fas fa-redo me-2"></i>Clear
                             </a>
                         </div>
                     </div>
@@ -91,22 +92,22 @@
     <!-- Results Summary -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h4 class="fw-bold text-dark mb-0">Bitiruvchilar</h4>
+            <h4 class="fw-bold text-dark mb-0">Graduates</h4>
             <p class="text-muted mb-0">
                 {% if alumni %}
-                    {{ alumni.paginator.count }} ta natija topildi
+                    {{ alumni.paginator.count }} results found
                 {% else %}
-                    Natija topilmadi
+                    No results found
                 {% endif %}
             </p>
         </div>
         
         <div class="d-flex align-items-center gap-3">
-            <span class="text-muted small">Saralash:</span>
+            <span class="text-muted small">Sort by:</span>
             <select class="form-select form-select-sm w-auto" onchange="location = this.value;">
-                <option value="?sort=name">Ism bo'yicha</option>
-                <option value="?sort=year">Bitirgan yili</option>
-                <option value="?sort=recent">Eng yangi</option>
+                <option value="?sort=name">By name</option>
+                <option value="?sort=year">Graduation year</option>
+                <option value="?sort=recent">Most recent</option>
             </select>
         </div>
     </div>
@@ -149,7 +150,7 @@
                         </div>
                         <div class="d-flex text-muted small">
                             <i class="fas fa-graduation-cap me-2"></i>
-                            <span>{{ alum.graduation_year }} yil</span>
+                            <span>Year {{ alum.graduation_year }}</span>
                         </div>
                     </div>
                     
@@ -159,7 +160,7 @@
                     
                     <div class="d-flex justify-content-between align-items-center">
                         <a href="{% url 'alumni:alumni_detail' alum.slug %}" class="btn btn-outline-primary btn-sm">
-                            <i class="fas fa-eye me-1"></i>Profilni ko'rish
+                            <i class="fas fa-eye me-1"></i>View Profile
                         </a>
                         
                         <div class="d-flex gap-2">
@@ -221,11 +222,11 @@
     <div class="text-center py-5">
         <div class="mb-4">
             <i class="fas fa-users fa-4x text-muted mb-3"></i>
-            <h4 class="text-muted">Bitiruvchilar topilmadi</h4>
-            <p class="text-muted">Qidiruv shartlarini o'zgartirib ko'ring yoki keyinroq qayta urinib ko'ring.</p>
+            <h4 class="text-muted">No graduates found</h4>
+            <p class="text-muted">Try changing your search criteria or try again later.</p>
         </div>
         <a href="{% url 'alumni:list' %}" class="btn btn-primary">
-            <i class="fas fa-redo me-2"></i>Barcha bitiruvchilarni ko'rish
+            <i class="fas fa-redo me-2"></i>View all graduates
         </a>
     </div>
     {% endif %}
@@ -234,19 +235,19 @@
     <div class="row mt-5 pt-5 border-top">
         <div class="col-md-3 text-center">
             <div class="h2 fw-bold text-primary mb-1">{{ total_alumni }}+</div>
-            <small class="text-muted">Jami bitiruvchilar</small>
+            <small class="text-muted">Total graduates</small>
         </div>
         <div class="col-md-3 text-center">
             <div class="h2 fw-bold text-primary mb-1">{{ mentor_count }}+</div>
-            <small class="text-muted">Faol mentorlar</small>
+            <small class="text-muted">Active mentors</small>
         </div>
         <div class="col-md-3 text-center">
             <div class="h2 fw-bold text-primary mb-1">{{ companies_count }}+</div>
-            <small class="text-muted">Kompaniyalar</small>
+            <small class="text-muted">Companies</small>
         </div>
         <div class="col-md-3 text-center">
             <div class="h2 fw-bold text-primary mb-1">{{ countries_count }}+</div>
-            <small class="text-muted">Mamlakatlar</small>
+            <small class="text-muted">Countries</small>
         </div>
     </div>
 </div>
@@ -287,7 +288,7 @@ document.addEventListener('DOMContentLoaded', function() {
         searchForm.addEventListener('submit', function() {
             const submitButton = this.querySelector('button[type="submit"]');
             if (submitButton) {
-                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Qidirilmoqda...';
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Searching...';
                 submitButton.disabled = true;
             }
         });

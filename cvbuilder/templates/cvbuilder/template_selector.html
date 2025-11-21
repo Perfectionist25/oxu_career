@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block content %}
 <div class="container py-5">
     <!-- Header Section -->
     <div class="row mb-5">
         <div class="col-lg-8 mx-auto text-center">
-            <h1 class="display-5 fw-bold text-primary mb-3">Rezyume Shablonini Tanlang</h1>
-            <p class="lead text-muted">Karyerangizga mos professional shablonni tanlang va bir necha daqiqada rezyumeningizni yarating</p>
+            <h1 class="display-5 fw-bold text-primary mb-3">Choose Resume Template</h1>
+            <p class="lead text-muted">Choose a professional template that fits your career and create your resume in just a few minutes</p>
             
             <!-- Progress Steps -->
             <div class="row justify-content-center mt-4">
@@ -16,21 +17,21 @@
                             <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 40px; height: 40px;">
                                 <span class="text-white fw-bold">1</span>
                             </div>
-                            <small class="fw-semibold">Shablon tanlash</small>
+                            <small class="fw-semibold">Template selection</small>
                         </div>
                         <div class="flex-grow-1 border-top border-2 border-light mx-2"></div>
                         <div class="text-center">
                             <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 40px; height: 40px;">
                                 <span class="text-muted fw-bold">2</span>
                             </div>
-                            <small class="text-muted">Ma'lumotlarni kiritish</small>
+                            <small class="text-muted">Enter information</small>
                         </div>
                         <div class="flex-grow-1 border-top border-2 border-light mx-2"></div>
                         <div class="text-center">
                             <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 40px; height: 40px;">
                                 <span class="text-muted fw-bold">3</span>
                             </div>
-                            <small class="text-muted">Yuklab olish</small>
+                            <small class="text-muted">Download</small>
                         </div>
                     </div>
                 </div>
@@ -43,16 +44,16 @@
         <div class="col-12">
             <div class="d-flex justify-content-center flex-wrap gap-2">
                 <button class="btn btn-outline-primary active" data-filter="all">
-                    <i class="fas fa-th me-2"></i>Barchasi
+                    <i class="fas fa-th me-2"></i>All
                 </button>
                 <button class="btn btn-outline-primary" data-filter="modern">
-                    <i class="fas fa-bolt me-2"></i>Zamonaviy
+                    <i class="fas fa-bolt me-2"></i>Modern
                 </button>
                 <button class="btn btn-outline-primary" data-filter="professional">
                     <i class="fas fa-briefcase me-2"></i>Professional
                 </button>
                 <button class="btn btn-outline-primary" data-filter="creative">
-                    <i class="fas fa-paint-brush me-2"></i>Ijodiy
+                    <i class="fas fa-paint-brush me-2"></i>Creative
                 </button>
                 <button class="btn btn-outline-primary" data-filter="minimal">
                     <i class="fas fa-minimize me-2"></i>Minimal
@@ -92,7 +93,7 @@
                         <div class="d-flex justify-content-between text-muted small mb-3">
                             <span>
                                 <i class="fas fa-download me-1"></i>
-                                {{ template.downloads }} marta
+                                {{ template.downloads }} times
                             </span>
                             <span>
                                 <i class="fas fa-star me-1"></i>
@@ -103,7 +104,7 @@
                     
                     <!-- Action Button -->
                     <a href="{% url 'cvbuilder:create_cv' template.id %}" class="btn btn-primary w-100 mt-auto">
-                        <i class="fas fa-check me-2"></i>Tanlash
+                        <i class="fas fa-check me-2"></i>Select
                     </a>
                 </div>
                 
@@ -111,7 +112,7 @@
                 {% if template.is_popular %}
                 <div class="position-absolute top-0 start-0">
                     <span class="badge bg-warning text-dark m-2">
-                        <i class="fas fa-fire me-1"></i>Mashhur
+                        <i class="fas fa-fire me-1"></i>Popular
                     </span>
                 </div>
                 {% endif %}
@@ -120,7 +121,7 @@
                 {% if template.is_new %}
                 <div class="position-absolute top-0 end-0">
                     <span class="badge bg-success m-2">
-                        <i class="fas fa-star me-1"></i>Yangi
+                        <i class="fas fa-star me-1"></i>New
                     </span>
                 </div>
                 {% endif %}
@@ -131,8 +132,8 @@
         <div class="col-12">
             <div class="text-center py-5">
                 <i class="fas fa-file-alt fa-4x text-muted mb-3"></i>
-                <h4 class="text-muted">Hozircha shablonlar mavjud emas</h4>
-                <p class="text-muted">Tez orada yangi shablonlar qo'shiladi</p>
+                <h4 class="text-muted">No templates available yet</h4>
+                <p class="text-muted">New templates will be added soon</p>
             </div>
         </div>
         {% endfor %}
@@ -143,7 +144,7 @@
         <div class="col-12">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-0 py-4">
-                    <h3 class="fw-bold text-dark text-center mb-0">Shablonlarni solishtirish</h3>
+                    <h3 class="fw-bold text-dark text-center mb-0">Template Comparison</h3>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -152,40 +153,40 @@
                                 <tr>
                                     <th class="border-0"></th>
                                     <th class="text-center border-0">
-                                        <div class="fw-bold text-primary">Zamonaviy</div>
-                                        <small class="text-muted">Yosh mutaxassislar uchun</small>
+                                        <div class="fw-bold text-primary">Modern</div>
+                                        <small class="text-muted">For young professionals</small>
                                     </th>
                                     <th class="text-center border-0">
                                         <div class="fw-bold text-primary">Professional</div>
-                                        <small class="text-muted">Korporativ ish uchun</small>
+                                        <small class="text-muted">For corporate work</small>
                                     </th>
                                     <th class="text-center border-0">
-                                        <div class="fw-bold text-primary">Ijodiy</div>
-                                        <small class="text-muted">Dizayn va marketing uchun</small>
+                                        <div class="fw-bold text-primary">Creative</div>
+                                        <small class="text-muted">For design and marketing</small>
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td class="fw-semibold">Mobil moslashuvchan</td>
+                                    <td class="fw-semibold">Mobile responsive</td>
                                     <td class="text-center"><i class="fas fa-check text-success"></i></td>
                                     <td class="text-center"><i class="fas fa-check text-success"></i></td>
                                     <td class="text-center"><i class="fas fa-check text-success"></i></td>
                                 </tr>
                                 <tr>
-                                    <td class="fw-semibold">PDF formatida</td>
+                                    <td class="fw-semibold">PDF format</td>
                                     <td class="text-center"><i class="fas fa-check text-success"></i></td>
                                     <td class="text-center"><i class="fas fa-check text-success"></i></td>
                                     <td class="text-center"><i class="fas fa-check text-success"></i></td>
                                 </tr>
                                 <tr>
-                                    <td class="fw-semibold">Rangli dizayn</td>
+                                    <td class="fw-semibold">Color design</td>
                                     <td class="text-center"><i class="fas fa-check text-success"></i></td>
                                     <td class="text-center"><i class="fas fa-times text-muted"></i></td>
                                     <td class="text-center"><i class="fas fa-check text-success"></i></td>
                                 </tr>
                                 <tr>
-                                    <td class="fw-semibold">Ikki ustunli</td>
+                                    <td class="fw-semibold">Two columns</td>
                                     <td class="text-center"><i class="fas fa-check text-success"></i></td>
                                     <td class="text-center"><i class="fas fa-times text-muted"></i></td>
                                     <td class="text-center"><i class="fas fa-check text-success"></i></td>
@@ -202,42 +203,42 @@
     <div class="row mt-5">
         <div class="col-lg-8 mx-auto">
             <div class="text-center mb-4">
-                <h3 class="fw-bold text-dark">Tez-tez so'raladigan savollar</h3>
+                <h3 class="fw-bold text-dark">Frequently Asked Questions</h3>
             </div>
             <div class="accordion" id="faqAccordion">
                 <div class="accordion-item border-0 shadow-sm mb-3">
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                            Qaysi shablonni tanlashim kerak?
+                            Which template should I choose?
                         </button>
                     </h2>
                     <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                         <div class="accordion-body">
-                            Sohangizga qarab shablon tanlang. Texnik sohalar uchun professional, kreativ sohalar uchun esa ijodiy shablonlar tavsiya etiladi.
+                            Choose a template based on your industry. Professional templates are recommended for technical fields, while creative templates are suitable for creative industries.
                         </div>
                     </div>
                 </div>
                 <div class="accordion-item border-0 shadow-sm mb-3">
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-                            Shablondan keyin o'zgartirish mumkinmi?
+                            Can I change the template later?
                         </button>
                     </h2>
                     <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                         <div class="accordion-body">
-                            Ha, istalgan vaqt rezyumeningizni tahrirlashingiz yoki boshqa shablonga o'zgartirishingiz mumkin.
+                            Yes, you can edit your resume at any time or switch to another template.
                         </div>
                     </div>
                 </div>
                 <div class="accordion-item border-0 shadow-sm">
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
-                            Rezyumeni qayta yuklab olish mumkinmi?
+                            Can I download the resume again?
                         </button>
                     </h2>
                     <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                         <div class="accordion-body">
-                            Ha, yaratilgan rezyumelaringizni istalgan vaqt PDF formatida qayta yuklab olishingiz mumkin.
+                            Yes, you can download your created resumes in PDF format at any time.
                         </div>
                     </div>
                 </div>
@@ -337,7 +338,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.createElement('input');
     searchInput.type = 'text';
     searchInput.className = 'form-control form-control-lg';
-    searchInput.placeholder = 'Shablonlarni qidirish...';
+    searchInput.placeholder = 'Search templates...';
     searchInput.style.maxWidth = '400px';
     searchInput.style.margin = '0 auto 2rem auto';
     

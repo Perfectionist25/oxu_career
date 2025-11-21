@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block content %}
 <div class="container py-5">
     <!-- Back Button -->
     <div class="mb-4">
         <a href="{% url 'alumni_list' %}" class="btn btn-outline-primary">
-            <i class="fas fa-arrow-left me-2"></i>Bitiruvchilar ro'yxatiga qaytish
+            <i class="fas fa-arrow-left me-2"></i>Back to Graduates List
         </a>
     </div>
 
@@ -63,7 +64,7 @@
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="fw-bold text-dark mb-0">
                         <i class="fas fa-user-circle me-2 text-primary"></i>
-                        Shaxsiy ma'lumotlar
+                        Personal Information
                     </h5>
                 </div>
                 <div class="card-body">
@@ -76,7 +77,7 @@
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="fw-bold text-dark mb-0">
                         <i class="fas fa-briefcase me-2 text-primary"></i>
-                        Karyera yo'li
+                        Career Journey
                     </h5>
                 </div>
                 <div class="card-body">
@@ -84,8 +85,8 @@
                         <div class="timeline-item">
                             <div class="timeline-marker bg-primary"></div>
                             <div class="timeline-content">
-                                <h6 class="fw-bold">{{ alum.graduation_year }} - Osiyo Xalqaro Universiteti</h6>
-                                <p class="text-muted mb-0">{{ alum.faculty }} fakulteti tamomlagan</p>
+                                <h6 class="fw-bold">{{ alum.graduation_year }} - Asia International University</h6>
+                                <p class="text-muted mb-0">Graduated from {{ alum.faculty }} faculty</p>
                             </div>
                         </div>
                         {% if alum.career_events %}
@@ -111,7 +112,7 @@
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="fw-bold text-dark mb-0">
                         <i class="fas fa-info-circle me-2 text-primary"></i>
-                        Qisqa ma'lumot
+                        Quick Information
                     </h5>
                 </div>
                 <div class="card-body">
@@ -119,7 +120,7 @@
                         <div class="d-flex align-items-center mb-2">
                             <i class="fas fa-graduation-cap text-primary me-3"></i>
                             <div>
-                                <small class="text-muted d-block">Bitirgan yili</small>
+                                <small class="text-muted d-block">Graduation Year</small>
                                 <strong>{{ alum.graduation_year }}</strong>
                             </div>
                         </div>
@@ -129,7 +130,7 @@
                         <div class="d-flex align-items-center mb-2">
                             <i class="fas fa-university text-primary me-3"></i>
                             <div>
-                                <small class="text-muted d-block">Fakultet</small>
+                                <small class="text-muted d-block">Faculty</small>
                                 <strong>{{ alum.faculty }}</strong>
                             </div>
                         </div>
@@ -139,7 +140,7 @@
                         <div class="d-flex align-items-center mb-2">
                             <i class="fas fa-briefcase text-primary me-3"></i>
                             <div>
-                                <small class="text-muted d-block">Kasb</small>
+                                <small class="text-muted d-block">Profession</small>
                                 <strong>{{ alum.profession }}</strong>
                             </div>
                         </div>
@@ -149,7 +150,7 @@
                         <div class="d-flex align-items-center mb-2">
                             <i class="fas fa-building text-primary me-3"></i>
                             <div>
-                                <small class="text-muted d-block">Kompaniya</small>
+                                <small class="text-muted d-block">Company</small>
                                 <strong>{{ alum.company }}</strong>
                             </div>
                         </div>
@@ -160,7 +161,7 @@
                         <div class="d-flex align-items-center mb-2">
                             <i class="fas fa-map-marker-alt text-primary me-3"></i>
                             <div>
-                                <small class="text-muted d-block">Manzil</small>
+                                <small class="text-muted d-block">Location</small>
                                 <strong>{{ alum.location }}</strong>
                             </div>
                         </div>
@@ -185,7 +186,7 @@
                             <i class="fab fa-linkedin text-primary me-3"></i>
                             <div>
                                 <small class="text-muted d-block">LinkedIn</small>
-                                <strong><a href="{{ alum.linkedin }}" target="_blank" class="text-decoration-none">Profilga o'tish</a></strong>
+                                <strong><a href="{{ alum.linkedin }}" target="_blank" class="text-decoration-none">Go to Profile</a></strong>
                             </div>
                         </div>
                     </div>
@@ -203,9 +204,9 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <p class="mb-3">Ushbu bitiruvchi talabalar va yosh mutaxassislarga maslahat berishga tayyor.</p>
+                    <p class="mb-3">This graduate is ready to advise students and young professionals.</p>
                     <button class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#contactModal">
-                        <i class="fas fa-envelope me-2"></i>Murojaat qilish
+                        <i class="fas fa-envelope me-2"></i>Contact
                     </button>
                 </div>
             </div>
@@ -217,7 +218,7 @@
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="fw-bold text-dark mb-0">
                         <i class="fas fa-star me-2 text-primary"></i>
-                        Ko'nikmalar
+                        Skills
                     </h5>
                 </div>
                 <div class="card-body">
@@ -238,24 +239,24 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title fw-bold">{{ alum.name }} bilan bog'lanish</h5>
+                <h5 class="modal-title fw-bold">Contact {{ alum.name }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <form id="contactForm">
                     <div class="mb-3">
-                        <label class="form-label">Xabar mavzusi</label>
-                        <input type="text" class="form-control" placeholder="Murojaatingiz mavzusini yozing">
+                        <label class="form-label">Message Subject</label>
+                        <input type="text" class="form-control" placeholder="Enter your message subject">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Xabar matni</label>
-                        <textarea class="form-control" rows="4" placeholder="Xabaringizni bu yerda yozing..."></textarea>
+                        <label class="form-label">Message Text</label>
+                        <textarea class="form-control" rows="4" placeholder="Write your message here..."></textarea>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
-                <button type="button" class="btn btn-primary">Xabarni yuborish</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary">Send Message</button>
             </div>
         </div>
     </div>
@@ -314,7 +315,7 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             const platform = this.querySelector('i').className;
             // Add actual share functionality here
-            alert('Ulashish funksiyasi ishga tushadi');
+            alert('Share function will be activated');
         });
     });
 
@@ -324,7 +325,7 @@ document.addEventListener('DOMContentLoaded', function() {
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
             // Add form submission logic here
-            alert('Xabar yuborildi!');
+            alert('Message sent!');
             const modal = bootstrap.Modal.getInstance(document.getElementById('contactModal'));
             modal.hide();
         });

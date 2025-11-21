@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block content %}
 <div class="container py-5">
     <!-- Header Section -->
@@ -7,20 +8,20 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h1 class="display-6 fw-bold text-primary mb-2">Rezyume Ko'rinishi</h1>
+                    <h1 class="display-6 fw-bold text-primary mb-2">Resume View</h1>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{% url 'cvbuilder:cv_list' %}" class="text-decoration-none">Rezyumelarim</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Ko'rish</li>
+                            <li class="breadcrumb-item"><a href="{% url 'cvbuilder:cv_list' %}" class="text-decoration-none">My Resumes</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">View</li>
                         </ol>
                     </nav>
                 </div>
                 <div class="d-flex gap-2">
                     <a href="{% url 'cvbuilder:edit_cv' cv.id %}" class="btn btn-outline-primary">
-                        <i class="fas fa-edit me-2"></i>Tahrirlash
+                        <i class="fas fa-edit me-2"></i>Edit
                     </a>
                     <a href="{% url 'cvbuilder:cv_list' %}" class="btn btn-outline-secondary">
-                        <i class="fas fa-arrow-left me-2"></i>Ortga
+                        <i class="fas fa-arrow-left me-2"></i>Back
                     </a>
                 </div>
             </div>
@@ -34,7 +35,7 @@
                 <div class="card-body p-4">
                     <!-- CV Header -->
                     <div class="text-center mb-4 pb-4 border-bottom">
-                        <h2 class="fw-bold text-dark mb-2">{{ cv.full_name|default:"Ism Familiya" }}</h2>
+                        <h2 class="fw-bold text-dark mb-2">{{ cv.full_name|default:"Full Name" }}</h2>
                         {% if cv.position %}
                         <h4 class="text-primary mb-3">{{ cv.position }}</h4>
                         {% endif %}
@@ -73,7 +74,7 @@
                     {% if cv.professional_summary %}
                     <div class="mb-4">
                         <h5 class="fw-bold text-primary mb-3 border-bottom pb-2">
-                            <i class="fas fa-user-tie me-2"></i>Professional Tavsif
+                            <i class="fas fa-user-tie me-2"></i>Professional Summary
                         </h5>
                         <p class="text-dark">{{ cv.professional_summary|linebreaks }}</p>
                     </div>
@@ -86,7 +87,7 @@
                             {% if cv.education %}
                             <div class="mb-4">
                                 <h5 class="fw-bold text-primary mb-3">
-                                    <i class="fas fa-graduation-cap me-2"></i>Ta'lim
+                                    <i class="fas fa-graduation-cap me-2"></i>Education
                                 </h5>
                                 <div class="ps-3">
                                     {% if cv.degree %}
@@ -96,7 +97,7 @@
                                     <p class="text-muted mb-1">{{ cv.institution }}</p>
                                     {% endif %}
                                     {% if cv.graduation_year %}
-                                    <small class="text-muted">{{ cv.graduation_year }} yil</small>
+                                    <small class="text-muted">{{ cv.graduation_year }} year</small>
                                     {% endif %}
                                     <p class="mt-2">{{ cv.education|linebreaks }}</p>
                                 </div>
@@ -107,7 +108,7 @@
                             {% if cv.skills %}
                             <div class="mb-4">
                                 <h5 class="fw-bold text-primary mb-3">
-                                    <i class="fas fa-tools me-2"></i>Ko'nikmalar
+                                    <i class="fas fa-tools me-2"></i>Skills
                                 </h5>
                                 <div class="d-flex flex-wrap gap-2 ps-3">
                                     {% for skill in cv.skills_list %}
@@ -123,7 +124,7 @@
                             {% if cv.languages %}
                             <div class="mb-4">
                                 <h5 class="fw-bold text-primary mb-3">
-                                    <i class="fas fa-language me-2"></i>Tillar
+                                    <i class="fas fa-language me-2"></i>Languages
                                 </h5>
                                 <div class="ps-3">
                                     {% for language in cv.languages_list %}
@@ -147,7 +148,7 @@
                             {% if cv.experience %}
                             <div class="mb-4">
                                 <h5 class="fw-bold text-primary mb-3">
-                                    <i class="fas fa-briefcase me-2"></i>Ish Tajribasi
+                                    <i class="fas fa-briefcase me-2"></i>Work Experience
                                 </h5>
                                 <div class="ps-3">
                                     <p>{{ cv.experience|linebreaks }}</p>
@@ -159,7 +160,7 @@
                             {% if cv.achievements %}
                             <div class="mb-4">
                                 <h5 class="fw-bold text-primary mb-3">
-                                    <i class="fas fa-trophy me-2"></i>Yutuqlar
+                                    <i class="fas fa-trophy me-2"></i>Achievements
                                 </h5>
                                 <div class="ps-3">
                                     <p>{{ cv.achievements|linebreaks }}</p>
@@ -171,16 +172,16 @@
                             {% if cv.interests or cv.certifications %}
                             <div class="mb-4">
                                 <h5 class="fw-bold text-primary mb-3">
-                                    <i class="fas fa-star me-2"></i>Qo'shimcha Ma'lumot
+                                    <i class="fas fa-star me-2"></i>Additional Information
                                 </h5>
                                 <div class="ps-3">
                                     {% if cv.certifications %}
-                                    <h6 class="fw-semibold text-dark mb-2">Sertifikatlar:</h6>
+                                    <h6 class="fw-semibold text-dark mb-2">Certifications:</h6>
                                     <p class="mb-3">{{ cv.certifications|linebreaks }}</p>
                                     {% endif %}
                                     
                                     {% if cv.interests %}
-                                    <h6 class="fw-semibold text-dark mb-2">Qiziqishlar:</h6>
+                                    <h6 class="fw-semibold text-dark mb-2">Interests:</h6>
                                     <div class="d-flex flex-wrap gap-2">
                                         {% for interest in cv.interests_list %}
                                         <span class="badge bg-light text-dark border">{{ interest }}</span>
@@ -200,12 +201,12 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <small class="text-muted">
-                                    <strong>Shablon:</strong> {{ cv.get_template_choice_display }}
+                                    <strong>Template:</strong> {{ cv.get_template_choice_display }}
                                 </small>
                             </div>
                             <div class="col-md-6 text-end">
                                 <small class="text-muted">
-                                    <strong>Yaratilgan:</strong> {{ cv.created_at|date:"d.m.Y H:i" }}
+                                    <strong>Created:</strong> {{ cv.created_at|date:"d.m.Y H:i" }}
                                 </small>
                             </div>
                         </div>
@@ -221,19 +222,19 @@
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="fw-bold text-dark mb-0">
                         <i class="fas fa-download me-2 text-primary"></i>
-                        Yuklab olish
+                        Download
                     </h5>
                 </div>
                 <div class="card-body text-center">
                     <div class="mb-3">
                         <i class="fas fa-file-pdf fa-3x text-danger mb-3"></i>
-                        <h6 class="fw-bold text-dark">PDF formatida</h6>
-                        <p class="text-muted small">Professional ko'rinishda saqlang</p>
+                        <h6 class="fw-bold text-dark">PDF Format</h6>
+                        <p class="text-muted small">Save in professional appearance</p>
                     </div>
                     <a href="{% url 'cvbuilder:export_pdf' cv.id %}" class="btn btn-danger w-100 mb-2" target="_blank">
-                        <i class="fas fa-download me-2"></i>PDF Yuklab olish
+                        <i class="fas fa-download me-2"></i>Download PDF
                     </a>
-                    <small class="text-muted">Yuqori sifatli chop etish uchun</small>
+                    <small class="text-muted">For high-quality printing</small>
                 </div>
             </div>
 
@@ -242,7 +243,7 @@
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="fw-bold text-dark mb-0">
                         <i class="fas fa-qrcode me-2 text-primary"></i>
-                        QR Kod
+                        QR Code
                     </h5>
                 </div>
                 <div class="card-body text-center">
@@ -250,7 +251,7 @@
                         <img src="{% url 'cvbuilder:generate_qr' cv.id %}" alt="QR Code" class="img-fluid rounded border" style="max-width: 200px;">
                     </div>
                     <p class="text-muted small mb-0">
-                        Ushbu QR kod orqali rezyumega tez kirish
+                        Quick access to resume via this QR code
                     </p>
                 </div>
             </div>
@@ -260,16 +261,16 @@
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="fw-bold text-dark mb-0">
                         <i class="fas fa-share-alt me-2 text-primary"></i>
-                        Ulashish
+                        Share
                     </h5>
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-2">
                         <button class="btn btn-outline-primary btn-sm" onclick="copyToClipboard()">
-                            <i class="fas fa-link me-2"></i>Havolani nusxalash
+                            <i class="fas fa-link me-2"></i>Copy Link
                         </button>
                         <button class="btn btn-outline-primary btn-sm" onclick="shareCV()">
-                            <i class="fas fa-share me-2"></i>Ijtimoiy tarmoqlarda ulashish
+                            <i class="fas fa-share me-2"></i>Share on Social Media
                         </button>
                     </div>
                 </div>
@@ -282,8 +283,8 @@
         <div class="d-flex align-items-center">
             <i class="fas fa-info-circle me-2"></i>
             <div>
-                <strong>Eslatma:</strong> PDF formatida yuklab olingan rezyume chop etish uchun moslashtirilgan. 
-                <a href="{% url 'cvbuilder:export_pdf' cv.id %}" class="alert-link">PDF ni yuklab oling</a> va professional ko'rinishga ega bo'ling.
+                <strong>Note:</strong> Resume downloaded in PDF format is optimized for printing. 
+                <a href="{% url 'cvbuilder:export_pdf' cv.id %}" class="alert-link">Download PDF</a> and get professional appearance.
             </div>
         </div>
     </div>
@@ -320,7 +321,7 @@ function copyToClipboard() {
     navigator.clipboard.writeText(url).then(() => {
         // Show success message
         const originalText = event.target.innerHTML;
-        event.target.innerHTML = '<i class="fas fa-check me-2"></i>Nusxalandi!';
+        event.target.innerHTML = '<i class="fas fa-check me-2"></i>Copied!';
         event.target.classList.remove('btn-outline-primary');
         event.target.classList.add('btn-success');
         
@@ -330,8 +331,8 @@ function copyToClipboard() {
             event.target.classList.add('btn-outline-primary');
         }, 2000);
     }).catch(err => {
-        console.error('Nusxalashda xatolik: ', err);
-        alert('Havolani nusxalashda xatolik yuz berdi');
+        console.error('Error copying: ', err);
+        alert('Error copying link');
     });
 }
 
@@ -339,16 +340,16 @@ function copyToClipboard() {
 function shareCV() {
     if (navigator.share) {
         navigator.share({
-            title: 'Mening rezyumem - {{ cv.full_name }}',
+            title: 'My resume - {{ cv.full_name }}',
             text: '{{ cv.position }} - {{ cv.professional_summary|truncatewords:10 }}',
             url: window.location.href,
         })
-        .then(() => console.log('Muvaffaqiyatli ulashildi'))
-        .catch((error) => console.log('Ulashishda xatolik', error));
+        .then(() => console.log('Successfully shared'))
+        .catch((error) => console.log('Error sharing', error));
     } else {
         // Fallback for browsers that don't support Web Share API
         copyToClipboard();
-        alert('Havola buferga nusxalandi. Endi uni ijtimoiy tarmoqlarda ulashishingiz mumkin.');
+        alert('Link copied to clipboard. You can now share it on social media.');
     }
 }
 

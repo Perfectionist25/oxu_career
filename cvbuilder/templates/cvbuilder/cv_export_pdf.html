@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <style>
@@ -172,7 +172,7 @@
 <body>
     <!-- Header Section -->
     <div class="header">
-        <div class="name">{{ cv.full_name|default:"Ism Familiya" }}</div>
+        <div class="name">{{ cv.full_name|default:"Full Name" }}</div>
         {% if cv.position %}
         <div class="position">{{ cv.position }}</div>
         {% endif %}
@@ -215,7 +215,7 @@
             <!-- Professional Summary -->
             {% if cv.professional_summary %}
             <div class="section no-break">
-                <div class="section-title">Professional Tavsif</div>
+                <div class="section-title">Professional Summary</div>
                 <div class="section-content">
                     <div class="item-description">{{ cv.professional_summary|linebreaks }}</div>
                 </div>
@@ -225,7 +225,7 @@
             <!-- Work Experience -->
             {% if cv.experience %}
             <div class="section">
-                <div class="section-title">Ish Tajribasi</div>
+                <div class="section-title">Work Experience</div>
                 <div class="section-content">
                     <div class="item-description">{{ cv.experience|linebreaks }}</div>
                 </div>
@@ -235,7 +235,7 @@
             <!-- Education -->
             {% if cv.education %}
             <div class="section">
-                <div class="section-title">Ta'lim</div>
+                <div class="section-title">Education</div>
                 <div class="section-content">
                     <div class="item">
                         {% if cv.degree %}
@@ -247,7 +247,7 @@
                         {% endif %}
                         
                         {% if cv.graduation_year %}
-                        <div class="item-date">{{ cv.graduation_year }} yil</div>
+                        <div class="item-date">{{ cv.graduation_year }} year</div>
                         {% endif %}
                         
                         <div class="item-description">{{ cv.education|linebreaks }}</div>
@@ -259,7 +259,7 @@
             <!-- Achievements -->
             {% if cv.achievements %}
             <div class="section">
-                <div class="section-title">Yutuqlar</div>
+                <div class="section-title">Achievements</div>
                 <div class="section-content">
                     <div class="item-description">{{ cv.achievements|linebreaks }}</div>
                 </div>
@@ -272,7 +272,7 @@
             <!-- Skills -->
             {% if cv.skills %}
             <div class="section no-break">
-                <div class="section-title">Ko'nikmalar</div>
+                <div class="section-title">Skills</div>
                 <div class="section-content">
                     <div class="skills-list">
                         {% for skill in cv.skills_list %}
@@ -288,7 +288,7 @@
             <!-- Languages -->
             {% if cv.languages %}
             <div class="section">
-                <div class="section-title">Tillarni bilish</div>
+                <div class="section-title">Languages</div>
                 <div class="section-content">
                     <div class="languages-list">
                         {% for language in cv.languages_list %}
@@ -309,7 +309,7 @@
             <!-- Certifications -->
             {% if cv.certifications %}
             <div class="section">
-                <div class="section-title">Sertifikatlar</div>
+                <div class="section-title">Certifications</div>
                 <div class="section-content">
                     <div class="item-description">{{ cv.certifications|linebreaks }}</div>
                 </div>
@@ -319,7 +319,7 @@
             <!-- Projects -->
             {% if cv.projects %}
             <div class="section">
-                <div class="section-title">Loyihalar</div>
+                <div class="section-title">Projects</div>
                 <div class="section-content">
                     <div class="item-description">{{ cv.projects|linebreaks }}</div>
                 </div>
@@ -329,7 +329,7 @@
             <!-- Interests -->
             {% if cv.interests %}
             <div class="section">
-                <div class="section-title">Qiziqishlar</div>
+                <div class="section-title">Interests</div>
                 <div class="section-content">
                     <div class="skills-list">
                         {% for interest in cv.interests_list %}
@@ -347,7 +347,7 @@
     <!-- Additional Sections (Full Width) -->
     {% if cv.references %}
     <div class="section">
-        <div class="section-title">Ma'lumot beruvchilar</div>
+        <div class="section-title">References</div>
         <div class="section-content">
             <div class="item-description">{{ cv.references|linebreaks }}</div>
         </div>
@@ -356,7 +356,7 @@
 
     <!-- Footer -->
     <div class="footer">
-        Ushbu rezyume OXU Career Center platformasida yaratilgan • {{ cv.created_at|date:"d.m.Y" }}
+        This resume was created on AIU Career Center platform • {{ cv.created_at|date:"d.m.Y" }}
     </div>
 
     <script>
@@ -414,7 +414,7 @@
         const interestsElements = document.querySelectorAll('.skills-list');
         interestsElements.forEach(element => {
             const interestsText = element.textContent;
-            if (interestsText && interestsText.includes(',') && element.closest('.section-title').textContent.includes('Qiziqishlar')) {
+            if (interestsText && interestsText.includes(',') && element.closest('.section').querySelector('.section-title').textContent.includes('Interests')) {
                 element.innerHTML = '';
                 const interests = interestsText.split(',').map(interest => interest.trim()).filter(interest => interest);
                 interests.forEach(interest => {

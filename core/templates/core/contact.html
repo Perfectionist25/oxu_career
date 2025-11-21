@@ -5,8 +5,8 @@
     <!-- Header Section -->
     <div class="row mb-5">
         <div class="col-lg-8 mx-auto text-center">
-            <h1 class="display-5 fw-bold text-primary mb-3">Aloqa</h1>
-            <p class="lead text-muted">Biz bilan bog'laning va savollaringizga javob oling. Sizga yordam berishdan mamnunmiz!</p>
+            <h1 class="display-5 fw-bold text-primary mb-3">Contact</h1>
+            <p class="lead text-muted">Contact us and get answers to your questions. We are happy to help you!</p>
         </div>
     </div>
 
@@ -17,7 +17,7 @@
                 <div class="card-body p-4">
                     <h4 class="fw-bold text-dark mb-4">
                         <i class="fas fa-info-circle me-2 text-primary"></i>
-                        Kontakt ma'lumotlari
+                        Contact Information
                     </h4>
                     
                     <!-- Address -->
@@ -28,10 +28,10 @@
                             </div>
                         </div>
                         <div class="flex-grow-1 ms-3">
-                            <h6 class="fw-bold text-dark mb-1">Manzil</h6>
+                            <h6 class="fw-bold text-dark mb-1">Address</h6>
                             <p class="text-muted mb-0">
-                                Buxoro sh., Yangibod MFY,<br>
-                                G'ijduvon ko'chasi, 74-uy
+                                Bukhara city, Yangibod MFY,<br>
+                                G'ijduvon street, 74-house
                             </p>
                         </div>
                     </div>
@@ -44,7 +44,7 @@
                             </div>
                         </div>
                         <div class="flex-grow-1 ms-3">
-                            <h6 class="fw-bold text-dark mb-1">Telefon</h6>
+                            <h6 class="fw-bold text-dark mb-1">Phone</h6>
                             <p class="text-muted mb-0">
                                 <a href="tel:+998553050009" class="text-decoration-none text-muted">+998 55 305 00 09</a>
                             </p>
@@ -59,7 +59,7 @@
                             </div>
                         </div>
                         <div class="flex-grow-1 ms-3">
-                            <h6 class="fw-bold text-dark mb-1">Elektron pochta</h6>
+                            <h6 class="fw-bold text-dark mb-1">Email</h6>
                             <p class="text-muted mb-0">
                                 <a href="mailto:info@oxu.uz" class="text-decoration-none text-muted">info@oxu.uz</a>
                             </p>
@@ -74,17 +74,17 @@
                             </div>
                         </div>
                         <div class="flex-grow-1 ms-3">
-                            <h6 class="fw-bold text-dark mb-1">Ish vaqtlari</h6>
+                            <h6 class="fw-bold text-dark mb-1">Working Hours</h6>
                             <p class="text-muted mb-0">
-                                Dushanba - Juma: 9:00 - 18:00<br>
-                                Shanba - Yakshanba: Dam olish kuni
+                                Monday - Friday: 9:00 - 18:00<br>
+                                Saturday - Sunday: Day off
                             </p>
                         </div>
                     </div>
                     
                     <!-- Social Media -->
                     <div class="mt-4">
-                        <h6 class="fw-bold text-dark mb-3">Ijtimoiy tarmoqlar</h6>
+                        <h6 class="fw-bold text-dark mb-3">Social Media</h6>
                         <div class="d-flex gap-3">
                             <a href="https://t.me/Oxu_uz" class="btn btn-outline-primary btn-sm p-2">
                                 <i class="fab fa-telegram"></i>
@@ -110,7 +110,7 @@
                 <div class="card-body p-4">
                     <h4 class="fw-bold text-dark mb-4">
                         <i class="fas fa-paper-plane me-2 text-primary"></i>
-                        Xabar yuborish
+                        Send Message
                     </h4>
                     
                     <form method="post" novalidate>
@@ -127,13 +127,13 @@
                             <!-- Name -->
                             <div class="col-md-6 mb-3">
                                 <label for="{{ form.name.id_for_label }}" class="form-label fw-semibold">
-                                    <i class="fas fa-user me-2 text-primary"></i>Ismingiz
+                                    <i class="fas fa-user me-2 text-primary"></i>Your Name
                                 </label>
                                 <input type="text" 
                                        name="{{ form.name.name }}" 
                                        id="{{ form.name.id_for_label }}" 
                                        class="form-control {% if form.name.errors %}is-invalid{% endif %}" 
-                                       placeholder="Ismingizni kiriting"
+                                       placeholder="Enter your name"
                                        value="{{ form.name.value|default:'' }}">
                                 {% if form.name.errors %}
                                 <div class="invalid-feedback d-block">
@@ -145,13 +145,13 @@
                             <!-- Email -->
                             <div class="col-md-6 mb-3">
                                 <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold">
-                                    <i class="fas fa-envelope me-2 text-primary"></i>Elektron pochta
+                                    <i class="fas fa-envelope me-2 text-primary"></i>Email
                                 </label>
                                 <input type="email" 
                                        name="{{ form.email.name }}" 
                                        id="{{ form.email.id_for_label }}" 
                                        class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
-                                       placeholder="sizning@email.uz"
+                                       placeholder="your@email.uz"
                                        value="{{ form.email.value|default:'' }}">
                                 {% if form.email.errors %}
                                 <div class="invalid-feedback d-block">
@@ -164,17 +164,17 @@
                         <!-- Subject -->
                         <div class="mb-3">
                             <label for="{{ form.subject.id_for_label }}" class="form-label fw-semibold">
-                                <i class="fas fa-tag me-2 text-primary"></i>Mavzu
+                                <i class="fas fa-tag me-2 text-primary"></i>Subject
                             </label>
                             <select name="{{ form.subject.name }}" 
                                     id="{{ form.subject.id_for_label }}" 
                                     class="form-select {% if form.subject.errors %}is-invalid{% endif %}">
-                                <option value="">Mavzuni tanlang</option>
-                                <option value="career" {% if form.subject.value == "career" %}selected{% endif %}>Karyera masalalari</option>
-                                <option value="partnership" {% if form.subject.value == "partnership" %}selected{% endif %}>Hamkorlik</option>
-                                <option value="technical" {% if form.subject.value == "technical" %}selected{% endif %}>Texnik yordam</option>
-                                <option value="general" {% if form.subject.value == "general" %}selected{% endif %}>Umumiy savollar</option>
-                                <option value="other" {% if form.subject.value == "other" %}selected{% endif %}>Boshqa</option>
+                                <option value="">Select subject</option>
+                                <option value="career" {% if form.subject.value == "career" %}selected{% endif %}>Career matters</option>
+                                <option value="partnership" {% if form.subject.value == "partnership" %}selected{% endif %}>Partnership</option>
+                                <option value="technical" {% if form.subject.value == "technical" %}selected{% endif %}>Technical support</option>
+                                <option value="general" {% if form.subject.value == "general" %}selected{% endif %}>General questions</option>
+                                <option value="other" {% if form.subject.value == "other" %}selected{% endif %}>Other</option>
                             </select>
                             {% if form.subject.errors %}
                             <div class="invalid-feedback d-block">
@@ -186,13 +186,13 @@
                         <!-- Message -->
                         <div class="mb-4">
                             <label for="{{ form.message.id_for_label }}" class="form-label fw-semibold">
-                                <i class="fas fa-comment me-2 text-primary"></i>Xabar
+                                <i class="fas fa-comment me-2 text-primary"></i>Message
                             </label>
                             <textarea name="{{ form.message.name }}" 
                                       id="{{ form.message.id_for_label }}" 
                                       class="form-control {% if form.message.errors %}is-invalid{% endif %}" 
                                       rows="6" 
-                                      placeholder="Xabaringizni batafsil yozing...">{{ form.message.value|default:'' }}</textarea>
+                                      placeholder="Write your message in detail...">{{ form.message.value|default:'' }}</textarea>
                             {% if form.message.errors %}
                             <div class="invalid-feedback d-block">
                                 {{ form.message.errors }}
@@ -202,7 +202,7 @@
 
                         <!-- Submit Button -->
                         <button type="submit" class="btn btn-primary btn-lg w-100 py-3">
-                            <i class="fas fa-paper-plane me-2"></i>Xabarni yuborish
+                            <i class="fas fa-paper-plane me-2"></i>Send Message
                         </button>
                     </form>
                 </div>
@@ -217,7 +217,7 @@
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="fw-bold text-dark mb-0">
                         <i class="fas fa-map-marked-alt me-2 text-primary"></i>
-                        Bizning manzil
+                        Our Location
                     </h5>
                 </div>
                 <div class="card-body p-0">
@@ -242,7 +242,7 @@
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="fw-bold text-dark mb-0">
                         <i class="fas fa-question-circle me-2 text-primary"></i>
-                        Tez-tez so'raladigan savollar
+                        Frequently Asked Questions
                     </h5>
                 </div>
                 <div class="card-body">
@@ -250,12 +250,12 @@
                         <div class="accordion-item border-0">
                             <h2 class="accordion-header">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                                    Karyera markazi qanday xizmatlar ko'rsatadi?
+                                    What services does the Career Center provide?
                                 </button>
                             </h2>
                             <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                                 <div class="accordion-body">
-                                    Biz talaba va bitiruvchilarga ish qidirish, rezyume yaratish, intervyuga tayyorgarlik va karyera maslahatlari kabi xizmatlarni taklif etamiz.
+                                    We offer services such as job search, resume creation, interview preparation, and career counseling for students and graduates.
                                 </div>
                             </div>
                         </div>
@@ -263,12 +263,12 @@
                         <div class="accordion-item border-0">
                             <h2 class="accordion-header">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-                                    Mentorlik dasturiga qanday qo'shilish mumkin?
+                                    How can I join the mentorship program?
                                 </button>
                             </h2>
                             <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                                 <div class="accordion-body">
-                                    Mentor bo'lish uchun "Bitiruvchilar" bo'limidagi profilizingizda mentorlik imkoniyatini yoqishingiz yoki biz bilan to'g'ridan-to'g'ri bog'laning.
+                                    To become a mentor, enable the mentorship option in your profile in the "Graduates" section or contact us directly.
                                 </div>
                             </div>
                         </div>
@@ -276,12 +276,12 @@
                         <div class="accordion-item border-0">
                             <h2 class="accordion-header">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
-                                    Ish beruvchi sifatida qanday ro'yxatdan o'tish mumkin?
+                                    How can I register as an employer?
                                 </button>
                             </h2>
                             <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                                 <div class="accordion-body">
-                                    Ro'yxatdan o'tish jarayonida "Ish beruvchi" hisob turini tanlang va kompaniya ma'lumotlarini to'ldiring.
+                                    During the registration process, select the "Employer" account type and fill in the company information.
                                 </div>
                             </div>
                         </div>
@@ -332,7 +332,7 @@ document.addEventListener('DOMContentLoaded', function() {
         form.addEventListener('submit', function() {
             const submitButton = this.querySelector('button[type="submit"]');
             if (submitButton) {
-                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Yuborilmoqda...';
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending...';
                 submitButton.disabled = true;
             }
         });

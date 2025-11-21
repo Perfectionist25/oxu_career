@@ -1,20 +1,21 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block content %}
 <div class="container-fluid py-4">
     <div class="row">
-        <!-- Основное содержимое резюме -->
+        <!-- Main Resume Content -->
         <div class="col-lg-8 mx-auto">
-            <!-- Панель действий -->
+            <!-- Action Panel -->
             <div class="card shadow-sm mb-4">
                 <div class="card-body py-3">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h4 class="mb-0 text-dark">{{ cv.title }}</h4>
-                            <small class="text-muted">Yaratilgan: {{ cv.created_at|date:"d.m.Y" }}</small>
+                            <small class="text-muted">Created: {{ cv.created_at|date:"d.m.Y" }}</small>
                         </div>
                         <div class="d-flex gap-2">
-                            <!-- Статус резюме -->
+                            <!-- Resume Status -->
                             <span class="badge 
                                 {% if cv.status == 'published' %}bg-success
                                 {% elif cv.status == 'draft' %}bg-warning text-dark
@@ -25,36 +26,36 @@
                             <div class="dropdown">
                                 <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" 
                                         data-bs-toggle="dropdown">
-                                    <i class="fas fa-cog me-1"></i>Amallar
+                                    <i class="fas fa-cog me-1"></i>Actions
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li>
                                         <a class="dropdown-item" href="{% url 'cvbuilder:cv_edit' cv.pk %}">
-                                            <i class="fas fa-edit me-2"></i>Tahrirlash
+                                            <i class="fas fa-edit me-2"></i>Edit
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="{% url 'cvbuilder:cv_export_pdf' cv.pk %}">
-                                            <i class="fas fa-download me-2"></i>PDF yuklab olish
+                                            <i class="fas fa-download me-2"></i>Download PDF
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="{% url 'cvbuilder:cv_preview' cv.pk %}">
-                                            <i class="fas fa-eye me-2"></i>Oldindan ko'rish
+                                            <i class="fas fa-eye me-2"></i>Preview
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="{% url 'cvbuilder:cv_duplicate' cv.pk %}" 
-                                           onclick="return confirm('Ushbu rezyumeni nusxalashni xohlaysizmi?')">
-                                            <i class="fas fa-copy me-2"></i>Nusxalash
+                                           onclick="return confirm('Do you want to duplicate this resume?')">
+                                            <i class="fas fa-copy me-2"></i>Duplicate
                                         </a>
                                     </li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li>
                                         <a class="dropdown-item text-danger" 
                                            href="{% url 'cvbuilder:cv_delete' cv.pk %}"
-                                           onclick="return confirm('Haqiqatan ham ushbu rezyumeni o\'chirmoqchimisiz?')">
-                                            <i class="fas fa-trash me-2"></i>O'chirish
+                                           onclick="return confirm('Are you sure you want to delete this resume?')">
+                                            <i class="fas fa-trash me-2"></i>Delete
                                         </a>
                                     </li>
                                 </ul>
@@ -64,10 +65,10 @@
                 </div>
             </div>
 
-            <!-- Основное содержимое резюме -->
+            <!-- Main Resume Content -->
             <div class="card shadow-sm">
                 <div class="card-body p-5">
-                    <!-- Заголовок и контактная информация -->
+                    <!-- Header and Contact Information -->
                     <div class="row mb-5">
                         <div class="col-md-8">
                             <h1 class="display-6 fw-bold text-primary mb-2">{{ cv.full_name }}</h1>
@@ -135,11 +136,11 @@
 
                     <hr class="my-5">
 
-                    <!-- Опыт работы -->
+                    <!-- Work Experience -->
                     {% if cv.experiences.all %}
                     <section class="mb-5">
                         <h2 class="h3 fw-bold text-primary mb-4">
-                            <i class="fas fa-briefcase me-2"></i>Ish Tajribasi
+                            <i class="fas fa-briefcase me-2"></i>Work Experience
                         </h2>
                         {% for experience in cv.experiences.all %}
                         <div class="mb-4">
@@ -157,7 +158,7 @@
                                     <span class="badge bg-primary">
                                         {{ experience.start_date|date:"M Y" }} - 
                                         {% if experience.is_current %}
-                                            Hozirgacha
+                                            Present
                                         {% else %}
                                             {{ experience.end_date|date:"M Y" }}
                                         {% endif %}
@@ -173,11 +174,11 @@
                     </section>
                     {% endif %}
 
-                    <!-- Образование -->
+                    <!-- Education -->
                     {% if cv.educations.all %}
                     <section class="mb-5">
                         <h2 class="h3 fw-bold text-primary mb-4">
-                            <i class="fas fa-graduation-cap me-2"></i>Ta'lim
+                            <i class="fas fa-graduation-cap me-2"></i>Education
                         </h2>
                         {% for education in cv.educations.all %}
                         <div class="mb-4">
@@ -193,7 +194,7 @@
                                     <span class="badge bg-primary">
                                         {{ education.start_date|date:"M Y" }} - 
                                         {% if education.is_current %}
-                                            Hozirgacha
+                                            Present
                                         {% else %}
                                             {{ education.end_date|date:"M Y" }}
                                         {% endif %}
@@ -209,11 +210,11 @@
                     </section>
                     {% endif %}
 
-                    <!-- Навыки -->
+                    <!-- Skills -->
                     {% if cv.skills.all %}
                     <section class="mb-5">
                         <h2 class="h3 fw-bold text-primary mb-4">
-                            <i class="fas fa-code me-2"></i>Ko'nikmalar
+                            <i class="fas fa-code me-2"></i>Skills
                         </h2>
                         <div class="row">
                             {% for skill in cv.skills.all %}
@@ -223,7 +224,7 @@
                                     <div>
                                         <span class="badge bg-secondary me-2">{{ skill.get_level_display }}</span>
                                         {% if skill.years_of_experience %}
-                                        <small class="text-muted">{{ skill.years_of_experience }} yil</small>
+                                        <small class="text-muted">{{ skill.years_of_experience }} years</small>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -236,11 +237,11 @@
                     </section>
                     {% endif %}
 
-                    <!-- Проекты -->
+                    <!-- Projects -->
                     {% if cv.projects.all %}
                     <section class="mb-5">
                         <h2 class="h3 fw-bold text-primary mb-4">
-                            <i class="fas fa-project-diagram me-2"></i>Loyihalar
+                            <i class="fas fa-project-diagram me-2"></i>Projects
                         </h2>
                         <div class="row">
                             {% for project in cv.projects.all %}
@@ -258,7 +259,7 @@
                                         <p class="card-text text-muted">{{ project.description }}</p>
                                         {% if project.url %}
                                         <a href="{{ project.url }}" target="_blank" class="btn btn-outline-primary btn-sm">
-                                            <i class="fas fa-external-link-alt me-1"></i>Loyihani ko'rish
+                                            <i class="fas fa-external-link-alt me-1"></i>View Project
                                         </a>
                                         {% endif %}
                                     </div>
@@ -269,11 +270,11 @@
                     </section>
                     {% endif %}
 
-                    <!-- Языки -->
+                    <!-- Languages -->
                     {% if cv.languages.all %}
                     <section class="mb-5">
                         <h2 class="h3 fw-bold text-primary mb-4">
-                            <i class="fas fa-language me-2"></i>Tillar
+                            <i class="fas fa-language me-2"></i>Languages
                         </h2>
                         <div class="row">
                             {% for language in cv.languages.all %}
@@ -288,11 +289,11 @@
                     </section>
                     {% endif %}
 
-                    <!-- Сертификаты -->
+                    <!-- Certificates -->
                     {% if cv.certificates.all %}
                     <section class="mb-5">
                         <h2 class="h3 fw-bold text-primary mb-4">
-                            <i class="fas fa-certificate me-2"></i>Sertifikatlar
+                            <i class="fas fa-certificate me-2"></i>Certificates
                         </h2>
                         {% for certificate in cv.certificates.all %}
                         <div class="mb-3">
@@ -315,7 +316,7 @@
                             </div>
                             {% if certificate.url %}
                             <a href="{{ certificate.url }}" target="_blank" class="btn btn-outline-primary btn-sm mt-2">
-                                <i class="fas fa-external-link-alt me-1"></i>Sertifikatni ko'rish
+                                <i class="fas fa-external-link-alt me-1"></i>View Certificate
                             </a>
                             {% endif %}
                         </div>
@@ -326,18 +327,18 @@
                 </div>
             </div>
 
-            <!-- Информация о шаблоне -->
+            <!-- Template Information -->
             <div class="card shadow-sm mt-4">
                 <div class="card-body text-center py-3">
                     <small class="text-muted">
-                        Ushbu rezyume 
+                        This resume was created using 
                         {% if cv.template %}
-                        "{{ cv.template.name }}" shabloni yordamida yaratilgan
+                        "{{ cv.template.name }}" template
                         {% else %}
-                        standart shablon yordamida yaratilgan
+                        standard template
                         {% endif %}
                         | 
-                        Oxirgi yangilangan: {{ cv.updated_at|date:"d.m.Y H:i" }}
+                        Last updated: {{ cv.updated_at|date:"d.m.Y H:i" }}
                     </small>
                 </div>
             </div>
@@ -379,13 +380,13 @@
     box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
 }
 
-/* Анимации при наведении */
+/* Hover animations */
 .card:hover {
     transform: translateY(-2px);
     transition: all 0.3s ease;
 }
 
-/* Отступы для секций */
+/* Section spacing */
 section {
     padding-top: 1rem;
     padding-bottom: 1rem;
@@ -394,7 +395,7 @@ section {
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Плавная прокрутка к секциям
+    // Smooth scrolling to sections
     const links = document.querySelectorAll('a[href^="#"]');
     links.forEach(link => {
         link.addEventListener('click', function(e) {
@@ -409,7 +410,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Подсветка активной секции при прокрутке
+    // Highlight active section on scroll
     const sections = document.querySelectorAll('section');
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -423,7 +424,7 @@ document.addEventListener('DOMContentLoaded', function() {
         observer.observe(section);
     });
 
-    // Копирование контактной информации
+    // Copy contact information
     const contactItems = document.querySelectorAll('.contact-info div');
     contactItems.forEach(item => {
         item.style.cursor = 'pointer';
@@ -431,7 +432,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const text = this.textContent || this.innerText;
             navigator.clipboard.writeText(text.trim()).then(() => {
                 const originalText = this.innerHTML;
-                this.innerHTML = '<i class="fas fa-check text-success me-2"></i>Nusxalandi!';
+                this.innerHTML = '<i class="fas fa-check text-success me-2"></i>Copied!';
                 setTimeout(() => {
                     this.innerHTML = originalText;
                 }, 2000);

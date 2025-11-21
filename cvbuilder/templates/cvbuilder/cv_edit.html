@@ -1,22 +1,22 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Rezyumeni tahrirlash - {{ cv.title }}{% endblock %}
+{% block title %}Edit Resume - {{ cv.title }}{% endblock %}
 
 {% block content %}
 <div class="container-fluid py-4">
     <div class="row">
-        <!-- Основная информация -->
+        <!-- Main Information -->
         <div class="col-lg-8">
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-primary text-white">
                     <h4 class="mb-0">
                         <i class="fas fa-edit me-2"></i>
-                        Rezyumeni tahrirlash: {{ cv.title }}
+                        Edit Resume: {{ cv.title }}
                     </h4>
                 </div>
                 <div class="card-body">
-                    <!-- Сообщения -->
+                    <!-- Messages -->
                     {% if messages %}
                     <div class="mb-4">
                         {% for message in messages %}
@@ -28,7 +28,7 @@
                     </div>
                     {% endif %}
 
-                    <!-- Основная форма резюме -->
+                    <!-- Main Resume Form -->
                     <form method="post" enctype="multipart/form-data" id="cvForm">
                         {% csrf_token %}
                         
@@ -36,7 +36,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="{{ form.title.id_for_label }}" class="form-label">
-                                        <i class="fas fa-heading me-1"></i>Rezyume sarlavhasi *
+                                        <i class="fas fa-heading me-1"></i>Resume Title *
                                     </label>
                                     {{ form.title }}
                                     {% if form.title.errors %}
@@ -47,7 +47,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="{{ form.template.id_for_label }}" class="form-label">
-                                        <i class="fas fa-palette me-1"></i>Shablon
+                                        <i class="fas fa-palette me-1"></i>Template
                                     </label>
                                     {{ form.template }}
                                 </div>
@@ -58,7 +58,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="{{ form.full_name.id_for_label }}" class="form-label">
-                                        <i class="fas fa-user me-1"></i>To'liq ism *
+                                        <i class="fas fa-user me-1"></i>Full Name *
                                     </label>
                                     {{ form.full_name }}
                                 </div>
@@ -66,7 +66,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="{{ form.profession.id_for_label }}" class="form-label">
-                                        <i class="fas fa-briefcase me-1"></i>Mutaxassislik *
+                                        <i class="fas fa-briefcase me-1"></i>Profession *
                                     </label>
                                     {{ form.profession }}
                                 </div>
@@ -85,7 +85,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="{{ form.phone.id_for_label }}" class="form-label">
-                                        <i class="fas fa-phone me-1"></i>Telefon
+                                        <i class="fas fa-phone me-1"></i>Phone
                                     </label>
                                     {{ form.phone }}
                                 </div>
@@ -94,22 +94,22 @@
 
                         <div class="mb-3">
                             <label for="{{ form.location.id_for_label }}" class="form-label">
-                                <i class="fas fa-map-marker-alt me-1"></i>Manzil
+                                <i class="fas fa-map-marker-alt me-1"></i>Location
                             </label>
                             {{ form.location }}
                         </div>
 
                         <div class="mb-3">
                             <label for="{{ form.summary.id_for_label }}" class="form-label">
-                                <i class="fas fa-file-alt me-1"></i>Qisqacha ma'lumot
+                                <i class="fas fa-file-alt me-1"></i>Summary
                             </label>
                             {{ form.summary }}
-                            <div class="form-text">O'zingiz va karyerangiz haqida qisqacha ma'lumot</div>
+                            <div class="form-text">Brief information about yourself and your career</div>
                         </div>
 
                         <div class="mb-3">
                             <label for="{{ form.photo.id_for_label }}" class="form-label">
-                                <i class="fas fa-camera me-1"></i>Profil rasmi
+                                <i class="fas fa-camera me-1"></i>Profile Photo
                             </label>
                             {{ form.photo }}
                             {% if cv.photo %}
@@ -119,7 +119,7 @@
                             {% endif %}
                         </div>
 
-                        <!-- Социальные сети -->
+                        <!-- Social Networks -->
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -151,7 +151,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="{{ form.status.id_for_label }}" class="form-label">
-                                        <i class="fas fa-eye me-1"></i>Holati
+                                        <i class="fas fa-eye me-1"></i>Status
                                     </label>
                                     {{ form.status }}
                                 </div>
@@ -160,13 +160,13 @@
 
                         <div class="d-flex gap-2">
                             <button type="submit" class="btn btn-success">
-                                <i class="fas fa-save me-1"></i>Saqlash
+                                <i class="fas fa-save me-1"></i>Save
                             </button>
                             <a href="{% url 'cvbuilder:cv_detail' cv.pk %}" class="btn btn-outline-primary">
-                                <i class="fas fa-eye me-1"></i>Ko'rish
+                                <i class="fas fa-eye me-1"></i>View
                             </a>
                             <a href="{% url 'cvbuilder:cv_list' %}" class="btn btn-outline-secondary">
-                                <i class="fas fa-arrow-left me-1"></i>Ortga
+                                <i class="fas fa-arrow-left me-1"></i>Back
                             </a>
                         </div>
                     </form>
@@ -174,19 +174,19 @@
             </div>
         </div>
 
-        <!-- Боковая панель с дополнительными разделами -->
+        <!-- Sidebar with Additional Sections -->
         <div class="col-lg-4">
-            <!-- Образование -->
+            <!-- Education -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-info text-white">
                     <h6 class="mb-0">
-                        <i class="fas fa-graduation-cap me-2"></i>Ta'lim
+                        <i class="fas fa-graduation-cap me-2"></i>Education
                     </h6>
                 </div>
                 <div class="card-body">
                     <button type="button" class="btn btn-outline-info btn-sm w-100 mb-3" 
                             data-bs-toggle="modal" data-bs-target="#educationModal">
-                        <i class="fas fa-plus me-1"></i>Ta'lim qo'shish
+                        <i class="fas fa-plus me-1"></i>Add Education
                     </button>
                     
                     {% if cv.educations.all %}
@@ -209,22 +209,22 @@
                         {% endfor %}
                     </div>
                     {% else %}
-                    <p class="text-muted text-center mb-0">Ta'lim ma'lumotlari qo'shilmagan</p>
+                    <p class="text-muted text-center mb-0">No education information added</p>
                     {% endif %}
                 </div>
             </div>
 
-            <!-- Опыт работы -->
+            <!-- Work Experience -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-warning text-dark">
                     <h6 class="mb-0">
-                        <i class="fas fa-briefcase me-2"></i>Ish tajribasi
+                        <i class="fas fa-briefcase me-2"></i>Work Experience
                     </h6>
                 </div>
                 <div class="card-body">
                     <button type="button" class="btn btn-outline-warning btn-sm w-100 mb-3" 
                             data-bs-toggle="modal" data-bs-target="#experienceModal">
-                        <i class="fas fa-plus me-1"></i>Tajriba qo'shish
+                        <i class="fas fa-plus me-1"></i>Add Experience
                     </button>
                     
                     {% if cv.experiences.all %}
@@ -233,27 +233,27 @@
                         <div class="list-group-item">
                             <strong>{{ exp.position }}</strong><br>
                             <small>{{ exp.company }}</small><br>
-                            <small class="text-muted">{{ exp.start_date }} - {{ exp.end_date|default:"Hozirgacha" }}</small>
+                            <small class="text-muted">{{ exp.start_date }} - {{ exp.end_date|default:"Present" }}</small>
                         </div>
                         {% endfor %}
                     </div>
                     {% else %}
-                    <p class="text-muted text-center mb-0">Ish tajribasi qo'shilmagan</p>
+                    <p class="text-muted text-center mb-0">No work experience added</p>
                     {% endif %}
                 </div>
             </div>
 
-            <!-- Навыки -->
+            <!-- Skills -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-success text-white">
                     <h6 class="mb-0">
-                        <i class="fas fa-code me-2"></i>Ko'nikmalar
+                        <i class="fas fa-code me-2"></i>Skills
                     </h6>
                 </div>
                 <div class="card-body">
                     <button type="button" class="btn btn-outline-success btn-sm w-100 mb-3" 
                             data-bs-toggle="modal" data-bs-target="#skillModal">
-                        <i class="fas fa-plus me-1"></i>Ko'nikma qo'shish
+                        <i class="fas fa-plus me-1"></i>Add Skill
                     </button>
                     
                     {% if cv.skills.all %}
@@ -263,7 +263,7 @@
                         {% endfor %}
                     </div>
                     {% else %}
-                    <p class="text-muted text-center mb-0">Ko'nikmalar qo'shilmagan</p>
+                    <p class="text-muted text-center mb-0">No skills added</p>
                     {% endif %}
                 </div>
             </div>
@@ -271,14 +271,14 @@
     </div>
 </div>
 
-<!-- Модальные окна для добавления связанных данных -->
+<!-- Modal Windows for Adding Related Data -->
 
-<!-- Модальное окно для образования -->
+<!-- Education Modal -->
 <div class="modal fade" id="educationModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-info text-white">
-                <h5 class="modal-title">Ta'lim ma'lumotlari qo'shish</h5>
+                <h5 class="modal-title">Add Education Information</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form method="post" action="{% url 'cvbuilder:add_education' cv.pk %}">
@@ -287,20 +287,20 @@
                     {{ education_form.as_p }}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
-                    <button type="submit" class="btn btn-info">Qo'shish</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-info">Add</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<!-- Модальное окно для опыта работы -->
+<!-- Work Experience Modal -->
 <div class="modal fade" id="experienceModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-warning text-dark">
-                <h5 class="modal-title">Ish tajribasi qo'shish</h5>
+                <h5 class="modal-title">Add Work Experience</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form method="post" action="{% url 'cvbuilder:add_experience' cv.pk %}">
@@ -309,20 +309,20 @@
                     {{ experience_form.as_p }}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
-                    <button type="submit" class="btn btn-warning">Qo'shish</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning">Add</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<!-- Модальное окно для навыков -->
+<!-- Skills Modal -->
 <div class="modal fade" id="skillModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-success text-white">
-                <h5 class="modal-title">Ko'nikma qo'shish</h5>
+                <h5 class="modal-title">Add Skill</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form method="post" action="{% url 'cvbuilder:add_skill' cv.pk %}">
@@ -331,16 +331,16 @@
                     {{ skill_form.as_p }}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
-                    <button type="submit" class="btn btn-success">Qo'shish</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Add</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<!-- Дополнительные модальные окна для других разделов -->
-<!-- Проекты, языки, сертификаты и т.д. -->
+<!-- Additional modal windows for other sections -->
+<!-- Projects, Languages, Certificates, etc. -->
 
 <style>
 .form-label {
@@ -371,7 +371,7 @@
     padding: 0.4em 0.6em;
 }
 
-/* Стили для форм редактирования резюме */
+/* Styles for resume editing forms */
 .cv-edit-form input,
 .cv-edit-form textarea,
 .cv-edit-form select {
@@ -392,7 +392,7 @@
     color: #6c757d;
 }
 
-/* Анимации для модальных окон */
+/* Animations for modal windows */
 .modal.fade .modal-dialog {
     transform: translate(0, -50px);
     transition: transform 0.3s ease-out;
@@ -402,12 +402,12 @@
     transform: none;
 }
 
-/* Стили для списков */
+/* Styles for lists */
 .list-group-item:hover {
     background-color: #f8f9fa;
 }
 
-/* Адаптивность */
+/* Responsiveness */
 @media (max-width: 768px) {
     .container-fluid {
         padding-left: 15px;
@@ -421,7 +421,7 @@
 </style>
 
 <script>
-// Автоматическое сохранение формы при изменении
+// Auto-save form on changes
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('cvForm');
     const inputs = form.querySelectorAll('input, textarea, select');
@@ -431,13 +431,13 @@ document.addEventListener('DOMContentLoaded', function() {
         input.addEventListener('input', function() {
             clearTimeout(saveTimeout);
             saveTimeout = setTimeout(() => {
-                // Можно добавить автосохранение через AJAX
+                // Can add autosave via AJAX here
                 console.log('Form changed - ready for autosave');
             }, 2000);
         });
     });
     
-    // Подтверждение перед уходом со страницы
+    // Confirmation before leaving the page
     window.addEventListener('beforeunload', function(e) {
         const formData = new FormData(form);
         let hasChanges = false;

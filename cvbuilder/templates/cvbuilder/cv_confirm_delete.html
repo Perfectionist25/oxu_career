@@ -1,22 +1,23 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block content %}
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-6 col-md-8">
-            <!-- Карточка подтверждения удаления -->
+            <!-- Delete Confirmation Card -->
             <div class="card border-0 shadow-lg">
-                <!-- Заголовок с иконкой -->
+                <!-- Header with Icon -->
                 <div class="card-header bg-danger text-white text-center py-4">
                     <div class="mb-3">
                         <i class="fas fa-exclamation-triangle fa-3x"></i>
                     </div>
-                    <h2 class="h3 fw-bold mb-0">Rezyumeni O'chirish</h2>
+                    <h2 class="h3 fw-bold mb-0">Delete Resume</h2>
                 </div>
 
-                <!-- Тело карточки -->
+                <!-- Card Body -->
                 <div class="card-body p-5 text-center">
-                    <!-- Информация о резюме -->
+                    <!-- Resume Information -->
                     <div class="alert alert-light border mb-4">
                         <div class="d-flex align-items-center">
                             {% if cv.photo %}
@@ -29,100 +30,100 @@
                             </div>
                             {% endif %}
                             <div class="text-start">
-                                <h5 class="fw-bold text-dark mb-1">{{ cv.full_name|default:"Ism kiritilmagan" }}</h5>
-                                <p class="text-muted mb-1">{{ cv.profession|default:"Kasb kiritilmagan" }}</p>
+                                <h5 class="fw-bold text-dark mb-1">{{ cv.full_name|default:"Name not specified" }}</h5>
+                                <p class="text-muted mb-1">{{ cv.profession|default:"Profession not specified" }}</p>
                                 <small class="text-muted">
                                     <i class="fas fa-calendar me-1"></i>
-                                    Yaratilgan: {{ cv.created_at|date:"d.m.Y" }}
+                                    Created: {{ cv.created_at|date:"d.m.Y" }}
                                 </small>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Предупреждающее сообщение -->
+                    <!-- Warning Message -->
                     <div class="alert alert-warning border-warning mb-4">
                         <div class="d-flex">
                             <i class="fas fa-exclamation-circle fa-lg text-warning me-3 mt-1"></i>
                             <div class="text-start">
-                                <h6 class="fw-bold text-warning mb-2">Diqqat!</h6>
+                                <h6 class="fw-bold text-warning mb-2">Attention!</h6>
                                 <p class="mb-0">
-                                    Siz <strong>"{{ cv.title }}"</strong> rezyumesini o'chirmoqchisiz. 
-                                    Bu amalni ortga qaytarib bo'lmaydi.
+                                    You are about to delete the resume <strong>"{{ cv.title }}"</strong>. 
+                                    This action cannot be undone.
                                 </p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Детали удаления -->
+                    <!-- Deletion Details -->
                     <div class="bg-light rounded p-3 mb-4">
-                        <h6 class="fw-bold text-dark mb-3">O'chiriladigan ma'lumotlar:</h6>
+                        <h6 class="fw-bold text-dark mb-3">Data to be deleted:</h6>
                         <div class="row text-start small">
                             <div class="col-md-6 mb-2">
                                 <i class="fas fa-briefcase text-danger me-2"></i>
-                                Ish tajribasi: <strong>{{ cv.experiences.count }} ta</strong>
+                                Work experience: <strong>{{ cv.experiences.count }} items</strong>
                             </div>
                             <div class="col-md-6 mb-2">
                                 <i class="fas fa-graduation-cap text-danger me-2"></i>
-                                Ta'lim: <strong>{{ cv.educations.count }} ta</strong>
+                                Education: <strong>{{ cv.educations.count }} items</strong>
                             </div>
                             <div class="col-md-6 mb-2">
                                 <i class="fas fa-code text-danger me-2"></i>
-                                Ko'nikmalar: <strong>{{ cv.skills.count }} ta</strong>
+                                Skills: <strong>{{ cv.skills.count }} items</strong>
                             </div>
                             <div class="col-md-6 mb-2">
                                 <i class="fas fa-project-diagram text-danger me-2"></i>
-                                Loyihalar: <strong>{{ cv.projects.count }} ta</strong>
+                                Projects: <strong>{{ cv.projects.count }} items</strong>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Форма подтверждения -->
+                    <!-- Confirmation Form -->
                     <form method="post" class="mb-4">
                         {% csrf_token %}
                         <div class="d-grid gap-3">
                             <button type="submit" class="btn btn-danger btn-lg py-3">
                                 <i class="fas fa-trash-alt me-2"></i>
-                                HA, Rezyumeni O'chirish
+                                YES, Delete Resume
                             </button>
                             
                             <a href="{% url 'cvbuilder:cv_list' %}" class="btn btn-outline-secondary btn-lg py-3">
                                 <i class="fas fa-arrow-left me-2"></i>
-                                Bekor Qilish va Ortga Qaytish
+                                Cancel and Go Back
                             </a>
                         </div>
                     </form>
 
-                    <!-- Дополнительная информация -->
+                    <!-- Additional Information -->
                     <div class="text-muted small">
                         <p class="mb-0">
                             <i class="fas fa-info-circle me-1"></i>
-                            Agar shubhangiz bo'lsa, rezyumeni arxivlashni tavsiya qilamiz
+                            If you have doubts, we recommend archiving the resume
                         </p>
                     </div>
                 </div>
 
-                <!-- Футер карточки -->
+                <!-- Card Footer -->
                 <div class="card-footer bg-light text-center py-3">
                     <small class="text-muted">
                         <i class="fas fa-shield-alt me-1"></i>
-                        Ma'lumotlaringiz xavfsizligi biz uchun muhim
+                        Your data security is important to us
                     </small>
                 </div>
             </div>
 
-            <!-- Альтернативные действия -->
+            <!-- Alternative Actions -->
             <div class="card border-0 shadow-sm mt-4">
                 <div class="card-body text-center">
-                    <h6 class="fw-bold text-dark mb-3">Muqobil variantlar</h6>
+                    <h6 class="fw-bold text-dark mb-3">Alternative Options</h6>
                     <div class="d-flex justify-content-center gap-3 flex-wrap">
                         <a href="{% url 'cvbuilder:cv_edit' cv.pk %}" class="btn btn-outline-primary btn-sm">
-                            <i class="fas fa-edit me-1"></i>Rezyumeni Tahrirlash
+                            <i class="fas fa-edit me-1"></i>Edit Resume
                         </a>
                         <a href="{% url 'cvbuilder:cv_duplicate' cv.pk %}" class="btn btn-outline-success btn-sm">
-                            <i class="fas fa-copy me-1"></i>Nusxa Olish
+                            <i class="fas fa-copy me-1"></i>Make a Copy
                         </a>
                         <a href="{% url 'cvbuilder:cv_detail' cv.pk %}" class="btn btn-outline-info btn-sm">
-                            <i class="fas fa-eye me-1"></i>Ko'rib Chiqish
+                            <i class="fas fa-eye me-1"></i>View
                         </a>
                     </div>
                 </div>
@@ -185,7 +186,7 @@
     box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
 }
 
-/* Анимации */
+/* Animations */
 .card {
     transition: transform 0.3s ease;
 }
@@ -194,7 +195,7 @@
     transform: translateY(-5px);
 }
 
-/* Адаптивность */
+/* Responsiveness */
 @media (max-width: 768px) {
     .container {
         padding: 1rem;
@@ -212,7 +213,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Подтверждение при отправке формы
+    // Form submission confirmation
     const form = document.querySelector('form');
     const submitBtn = form.querySelector('button[type="submit"]');
     
@@ -222,17 +223,17 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!isSubmitting) {
             e.preventDefault();
             
-            // Показать дополнительное подтверждение
-            if (confirm('Bu amalni ortga qaytarib bo\'lmaydi. Rostan ham davom etmoqchimisiz?')) {
+            // Show additional confirmation
+            if (confirm('This action cannot be undone. Are you sure you want to continue?')) {
                 isSubmitting = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>O\'chirilmoqda...';
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Deleting...';
                 submitBtn.disabled = true;
                 form.submit();
             }
         }
     });
 
-    // Анимация появления
+    // Appearance animation
     const cards = document.querySelectorAll('.card');
     cards.forEach((card, index) => {
         card.style.opacity = '0';
@@ -245,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }, index * 200);
     });
 
-    // Подсветка кнопки удаления при наведении
+    // Delete button highlight on hover
     submitBtn.addEventListener('mouseenter', function() {
         this.style.transform = 'scale(1.05)';
     });

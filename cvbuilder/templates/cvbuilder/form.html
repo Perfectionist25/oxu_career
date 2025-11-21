@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block content %}
 <div class="container py-5">
     <!-- Header Section -->
     <div class="row mb-5">
         <div class="col-lg-8 mx-auto text-center">
-            <h1 class="display-5 fw-bold text-primary mb-3">Yangi rezyume yaratish</h1>
-            <p class="lead text-muted">Professional rezyumeningizni yarating va karyera imkoniyatlarini oching</p>
+            <h1 class="display-5 fw-bold text-primary mb-3">Create New Resume</h1>
+            <p class="lead text-muted">Create your professional resume and unlock career opportunities</p>
             
             <!-- Progress Steps -->
             <div class="row justify-content-center mt-4">
@@ -16,21 +17,21 @@
                             <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 40px; height: 40px;">
                                 <span class="text-white fw-bold">1</span>
                             </div>
-                            <small class="fw-semibold">Ma'lumotlar</small>
+                            <small class="fw-semibold">Information</small>
                         </div>
                         <div class="flex-grow-1 border-top border-2 border-primary mx-2"></div>
                         <div class="text-center">
                             <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 40px; height: 40px;">
                                 <span class="text-muted fw-bold">2</span>
                             </div>
-                            <small class="text-muted">Ko'rib chiqish</small>
+                            <small class="text-muted">Review</small>
                         </div>
                         <div class="flex-grow-1 border-top border-2 border-light mx-2"></div>
                         <div class="text-center">
                             <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 40px; height: 40px;">
                                 <span class="text-muted fw-bold">3</span>
                             </div>
-                            <small class="text-muted">Yuklab olish</small>
+                            <small class="text-muted">Download</small>
                         </div>
                     </div>
                 </div>
@@ -59,7 +60,7 @@
                                 <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
                                     <i class="fas fa-user text-white"></i>
                                 </div>
-                                <h4 class="fw-bold text-dark mb-0">Shaxsiy ma'lumotlar</h4>
+                                <h4 class="fw-bold text-dark mb-0">Personal Information</h4>
                             </div>
                             
                             <div class="row">
@@ -68,15 +69,15 @@
                                     <div class="col-md-6 mb-3">
                                         <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
                                             {% if field.name == 'full_name' %}
-                                                <i class="fas fa-user me-2 text-primary"></i>To'liq ism
+                                                <i class="fas fa-user me-2 text-primary"></i>Full Name
                                             {% elif field.name == 'email' %}
-                                                <i class="fas fa-envelope me-2 text-primary"></i>Elektron pochta
+                                                <i class="fas fa-envelope me-2 text-primary"></i>Email
                                             {% elif field.name == 'phone' %}
-                                                <i class="fas fa-phone me-2 text-primary"></i>Telefon
+                                                <i class="fas fa-phone me-2 text-primary"></i>Phone
                                             {% elif field.name == 'address' %}
-                                                <i class="fas fa-map-marker-alt me-2 text-primary"></i>Manzil
+                                                <i class="fas fa-map-marker-alt me-2 text-primary"></i>Address
                                             {% elif field.name == 'position' %}
-                                                <i class="fas fa-briefcase me-2 text-primary"></i>Lavozim
+                                                <i class="fas fa-briefcase me-2 text-primary"></i>Position
                                             {% else %}
                                                 {{ field.label }}
                                             {% endif %}
@@ -85,7 +86,7 @@
                                                name="{{ field.name }}" 
                                                id="{{ field.id_for_label }}" 
                                                class="form-control {% if field.errors %}is-invalid{% endif %}" 
-                                               placeholder="{% if field.name == 'full_name' %}Ism familiyangiz{% elif field.name == 'email' %}sizning@email.uz{% elif field.name == 'phone' %}+998 XX XXX XX XX{% elif field.name == 'address' %}Yashash manzilingiz{% elif field.name == 'position' %}Ishlavotgan lavozimingiz{% endif %}" 
+                                               placeholder="{% if field.name == 'full_name' %}Your full name{% elif field.name == 'email' %}your@email.com{% elif field.name == 'phone' %}+1 XXX XXX XXXX{% elif field.name == 'address' %}Your address{% elif field.name == 'position' %}Your current position{% endif %}" 
                                                value="{{ field.value|default:'' }}">
                                         {% if field.errors %}
                                         <div class="invalid-feedback d-block">
@@ -104,26 +105,26 @@
                                 <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
                                     <i class="fas fa-file-alt text-white"></i>
                                 </div>
-                                <h4 class="fw-bold text-dark mb-0">Professional ma'lumot</h4>
+                                <h4 class="fw-bold text-dark mb-0">Professional Information</h4>
                             </div>
                             
                             {% for field in form %}
                                 {% if field.name == 'summary' or field.name == 'professional_summary' %}
                                 <div class="mb-3">
                                     <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
-                                        <i class="fas fa-briefcase me-2 text-primary"></i>Professional tavsif
+                                        <i class="fas fa-briefcase me-2 text-primary"></i>Professional Summary
                                     </label>
                                     <textarea name="{{ field.name }}" 
                                               id="{{ field.id_for_label }}" 
                                               class="form-control {% if field.errors %}is-invalid{% endif %}" 
                                               rows="4" 
-                                              placeholder="O'zingiz va kasbiy ko'nikmalaringiz haqida qisqacha ma'lumot...">{{ field.value|default:'' }}</textarea>
+                                              placeholder="Brief information about yourself and your professional skills...">{{ field.value|default:'' }}</textarea>
                                     {% if field.errors %}
                                     <div class="invalid-feedback d-block">
                                         {{ field.errors }}
                                     </div>
                                     {% endif %}
-                                    <div class="form-text">Qisqa va tushunarli tavsif yozing (100-200 so'z)</div>
+                                    <div class="form-text">Write a short and clear description (100-200 words)</div>
                                 </div>
                                 {% endif %}
                             {% endfor %}
@@ -135,7 +136,7 @@
                                 <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
                                     <i class="fas fa-graduation-cap text-white"></i>
                                 </div>
-                                <h4 class="fw-bold text-dark mb-0">Ta'lim</h4>
+                                <h4 class="fw-bold text-dark mb-0">Education</h4>
                             </div>
                             
                             {% for field in form %}
@@ -143,13 +144,13 @@
                                 <div class="mb-3">
                                     <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
                                         {% if field.name == 'education' %}
-                                            <i class="fas fa-university me-2 text-primary"></i>Ta'lim ma'lumotlari
+                                            <i class="fas fa-university me-2 text-primary"></i>Education Details
                                         {% elif field.name == 'degree' %}
-                                            <i class="fas fa-certificate me-2 text-primary"></i>Daraja
+                                            <i class="fas fa-certificate me-2 text-primary"></i>Degree
                                         {% elif field.name == 'institution' %}
-                                            <i class="fas fa-school me-2 text-primary"></i>O'quv muassasasi
+                                            <i class="fas fa-school me-2 text-primary"></i>Institution
                                         {% elif field.name == 'graduation_year' %}
-                                            <i class="fas fa-calendar me-2 text-primary"></i>Bitirgan yili
+                                            <i class="fas fa-calendar me-2 text-primary"></i>Graduation Year
                                         {% endif %}
                                     </label>
                                     {% if field.name == 'education' %}
@@ -157,13 +158,13 @@
                                                   id="{{ field.id_for_label }}" 
                                                   class="form-control {% if field.errors %}is-invalid{% endif %}" 
                                                   rows="3" 
-                                                  placeholder="Ta'lim ma'lumotlaringizni kiriting...">{{ field.value|default:'' }}</textarea>
+                                                  placeholder="Enter your education details...">{{ field.value|default:'' }}</textarea>
                                     {% else %}
                                         <input type="{{ field.field.widget.input_type }}" 
                                                name="{{ field.name }}" 
                                                id="{{ field.id_for_label }}" 
                                                class="form-control {% if field.errors %}is-invalid{% endif %}" 
-                                               placeholder="{% if field.name == 'degree' %}Masalan: Bakalavr{% elif field.name == 'institution' %}O'qigan oliy o'quv muassasangiz{% elif field.name == 'graduation_year' %}YYYY{% endif %}" 
+                                               placeholder="{% if field.name == 'degree' %}e.g., Bachelor's{% elif field.name == 'institution' %}Your educational institution{% elif field.name == 'graduation_year' %}YYYY{% endif %}" 
                                                value="{{ field.value|default:'' }}">
                                     {% endif %}
                                     {% if field.errors %}
@@ -182,7 +183,7 @@
                                 <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
                                     <i class="fas fa-briefcase text-white"></i>
                                 </div>
-                                <h4 class="fw-bold text-dark mb-0">Ish tajribasi</h4>
+                                <h4 class="fw-bold text-dark mb-0">Work Experience</h4>
                             </div>
                             
                             {% for field in form %}
@@ -190,25 +191,25 @@
                                 <div class="mb-3">
                                     <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
                                         {% if field.name == 'experience' %}
-                                            <i class="fas fa-history me-2 text-primary"></i>Ish tajribasi
+                                            <i class="fas fa-history me-2 text-primary"></i>Work Experience
                                         {% elif field.name == 'skills' %}
-                                            <i class="fas fa-tools me-2 text-primary"></i>Ko'nikmalar
+                                            <i class="fas fa-tools me-2 text-primary"></i>Skills
                                         {% elif field.name == 'achievements' %}
-                                            <i class="fas fa-trophy me-2 text-primary"></i>Yutuqlar
+                                            <i class="fas fa-trophy me-2 text-primary"></i>Achievements
                                         {% endif %}
                                     </label>
                                     <textarea name="{{ field.name }}" 
                                               id="{{ field.id_for_label }}" 
                                               class="form-control {% if field.errors %}is-invalid{% endif %}" 
                                               rows="3" 
-                                              placeholder="{% if field.name == 'experience' %}Ish tajribangiz haqida ma'lumot...{% elif field.name == 'skills' %}Texnik va soft ko'nikmalaringizni vergul bilan ajrating...{% elif field.name == 'achievements' %}Kasbiy yutuqlaringiz...{% endif %}">{{ field.value|default:'' }}</textarea>
+                                              placeholder="{% if field.name == 'experience' %}Information about your work experience...{% elif field.name == 'skills' %}Separate your technical and soft skills with commas...{% elif field.name == 'achievements' %}Your professional achievements...{% endif %}">{{ field.value|default:'' }}</textarea>
                                     {% if field.errors %}
                                     <div class="invalid-feedback d-block">
                                         {{ field.errors }}
                                     </div>
                                     {% endif %}
                                     {% if field.name == 'skills' %}
-                                    <div class="form-text">Masalan: Python, Django, JavaScript, Liderlik, Kommunikatsiya</div>
+                                    <div class="form-text">Example: Python, Django, JavaScript, Leadership, Communication</div>
                                     {% endif %}
                                 </div>
                                 {% endif %}
@@ -247,14 +248,14 @@
                         <!-- Form Actions -->
                         <div class="d-flex justify-content-between align-items-center pt-4 border-top">
                             <a href="{% url 'cvbuilder:template_selector' %}" class="btn btn-outline-secondary">
-                                <i class="fas fa-arrow-left me-2"></i>Ortga qaytish
+                                <i class="fas fa-arrow-left me-2"></i>Go Back
                             </a>
                             <div class="d-flex gap-3">
                                 <button type="button" class="btn btn-outline-primary" id="previewBtn">
-                                    <i class="fas fa-eye me-2"></i>Oldindan ko'rish
+                                    <i class="fas fa-eye me-2"></i>Preview
                                 </button>
                                 <button type="submit" class="btn btn-primary px-4">
-                                    <i class="fas fa-save me-2"></i>Saqlash va ko'rish
+                                    <i class="fas fa-save me-2"></i>Save and View
                                 </button>
                             </div>
                         </div>
@@ -270,29 +271,29 @@
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="fw-bold text-dark mb-0">
                         <i class="fas fa-lightbulb me-2 text-primary"></i>
-                        Foydali maslahatlar
+                        Useful Tips
                     </h5>
                 </div>
                 <div class="card-body">
                     <div class="d-flex mb-3">
                         <i class="fas fa-check text-success me-2 mt-1"></i>
-                        <small class="text-muted">Ma'lumotlarni aniq va to'g'ri kiriting</small>
+                        <small class="text-muted">Enter information accurately and correctly</small>
                     </div>
                     <div class="d-flex mb-3">
                         <i class="fas fa-check text-success me-2 mt-1"></i>
-                        <small class="text-muted">Professional tavsifni qisqa va tushunarli yozing</small>
+                        <small class="text-muted">Write professional summary short and clear</small>
                     </div>
                     <div class="d-flex mb-3">
                         <i class="fas fa-check text-success me-2 mt-1"></i>
-                        <small class="text-muted">Ko'nikmalarni vergul bilan ajrating</small>
+                        <small class="text-muted">Separate skills with commas</small>
                     </div>
                     <div class="d-flex mb-3">
                         <i class="fas fa-check text-success me-2 mt-1"></i>
-                        <small class="text-muted">Yutuqlaringizni raqamlar bilan tasdiqlang</small>
+                        <small class="text-muted">Support your achievements with numbers</small>
                     </div>
                     <div class="d-flex">
                         <i class="fas fa-check text-success me-2 mt-1"></i>
-                        <small class="text-muted">Grammatik xatolardan ehtiyot bo'ling</small>
+                        <small class="text-muted">Be careful with grammatical errors</small>
                     </div>
                 </div>
             </div>
@@ -302,14 +303,14 @@
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="fw-bold text-dark mb-0">
                         <i class="fas fa-chart-line me-2 text-primary"></i>
-                        To'ldirish darajasi
+                        Completion Progress
                     </h5>
                 </div>
                 <div class="card-body">
                     <div class="progress mb-3" style="height: 10px;">
                         <div class="progress-bar bg-primary" role="progressbar" style="width: 0%;" id="progressBar"></div>
                     </div>
-                    <small class="text-muted" id="progressText">Formani to'ldirish: 0%</small>
+                    <small class="text-muted" id="progressText">Form completion: 0%</small>
                 </div>
             </div>
         </div>
@@ -373,7 +374,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (progressBar && progressText) {
             progressBar.style.width = progress + '%';
-            progressText.textContent = `Formani to'ldirish: ${progress}%`;
+            progressText.textContent = `Form completion: ${progress}%`;
         }
     }
 
@@ -404,9 +405,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (isValid) {
                 // Add actual preview functionality here
-                alert('Rezyume oldindan ko\'rinishi tayyorlanmoqda...');
+                alert('Resume preview is being prepared...');
             } else {
-                alert('Iltimos, barcha majburiy maydonlarni to\'ldiring');
+                alert('Please fill in all required fields');
             }
         });
     }
@@ -417,7 +418,7 @@ document.addEventListener('DOMContentLoaded', function() {
         form.addEventListener('submit', function() {
             const submitButton = this.querySelector('button[type="submit"]');
             if (submitButton) {
-                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saqlanmoqda...';
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
                 submitButton.disabled = true;
             }
         });
@@ -430,7 +431,7 @@ document.addEventListener('DOMContentLoaded', function() {
             clearTimeout(autoSaveTimer);
             autoSaveTimer = setTimeout(() => {
                 // Add auto-save functionality here
-                console.log('Avtosaqlash...');
+                console.log('Auto-saving...');
             }, 3000);
         });
     });
@@ -440,11 +441,11 @@ document.addEventListener('DOMContentLoaded', function() {
     textareas.forEach(textarea => {
         const counter = document.createElement('div');
         counter.className = 'form-text text-end';
-        counter.textContent = `Belgilar: ${textarea.value.length}`;
+        counter.textContent = `Characters: ${textarea.value.length}`;
         textarea.parentNode.appendChild(counter);
         
         textarea.addEventListener('input', function() {
-            counter.textContent = `Belgilar: ${this.value.length}`;
+            counter.textContent = `Characters: ${this.value.length}`;
         });
     });
 });

@@ -4,27 +4,27 @@
 
 {% block content %}
 <div class="container py-4">
-    <!-- Sarlavha -->
+    <!-- Header -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h1 class="h3 fw-bold text-dark mb-1">Rezyume Statistikalari</h1>
-                    <p class="text-muted mb-0">Rezyumelaringiz bo'yicha batafsil statistika va tahlillar</p>
+                    <h1 class="h3 fw-bold text-dark mb-1">Resume Statistics</h1>
+                    <p class="text-muted mb-0">Detailed statistics and analytics about your resumes</p>
                 </div>
                 <div class="d-flex gap-2">
                     <a href="{% url 'cvbuilder:cv_list' %}" class="btn btn-outline-secondary btn-sm">
-                        <i class="fas fa-arrow-left me-1"></i>Orqaga
+                        <i class="fas fa-arrow-left me-1"></i>Back
                     </a>
                     <a href="{% url 'cvbuilder:cv_create' %}" class="btn btn-primary btn-sm">
-                        <i class="fas fa-plus me-1"></i>Yangi Rezyume
+                        <i class="fas fa-plus me-1"></i>New Resume
                     </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Asosiy Statistika Kartalari -->
+    <!-- Main Statistics Cards -->
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6 mb-3">
             <div class="card border-0 bg-primary bg-opacity-10">
@@ -37,7 +37,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h4 class="fw-bold text-primary mb-0">{{ stats.total_cvs }}</h4>
-                            <span class="text-muted small">Jami Rezyume</span>
+                            <span class="text-muted small">Total Resumes</span>
                         </div>
                     </div>
                 </div>
@@ -55,7 +55,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h4 class="fw-bold text-success mb-0">{{ stats.published_cvs }}</h4>
-                            <span class="text-muted small">Nashr Qilingan</span>
+                            <span class="text-muted small">Published</span>
                         </div>
                     </div>
                 </div>
@@ -73,7 +73,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h4 class="fw-bold text-warning mb-0">{{ stats.draft_cvs }}</h4>
-                            <span class="text-muted small">Qoralama</span>
+                            <span class="text-muted small">Draft</span>
                         </div>
                     </div>
                 </div>
@@ -91,7 +91,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h4 class="fw-bold text-secondary mb-0">{{ stats.archived_cvs|default:0 }}</h4>
-                            <span class="text-muted small">Arxiv</span>
+                            <span class="text-muted small">Archive</span>
                         </div>
                     </div>
                 </div>
@@ -100,25 +100,25 @@
     </div>
 
     <div class="row">
-        <!-- Kontent Statistikalari -->
+        <!-- Content Statistics -->
         <div class="col-lg-8">
-            <!-- Ish Tajribasi va Malakalar -->
+            <!-- Work Experience and Skills -->
             <div class="row mb-4">
                 <div class="col-md-6 mb-3">
                     <div class="card h-100">
                         <div class="card-header bg-light">
                             <h6 class="card-title mb-0">
                                 <i class="fas fa-briefcase text-primary me-2"></i>
-                                Ish Tajribasi
+                                Work Experience
                             </h6>
                         </div>
                         <div class="card-body text-center py-4">
                             <div class="display-4 fw-bold text-primary mb-2">{{ stats.total_experience }}</div>
-                            <p class="text-muted mb-0">Jami ish tajribalari</p>
+                            <p class="text-muted mb-0">Total work experiences</p>
                             <div class="mt-3">
                                 <small class="text-muted">
                                     <i class="fas fa-info-circle me-1"></i>
-                                    Barcha rezyumelardagi ish tajribalari soni
+                                    Number of work experiences across all resumes
                                 </small>
                             </div>
                         </div>
@@ -130,16 +130,16 @@
                         <div class="card-header bg-light">
                             <h6 class="card-title mb-0">
                                 <i class="fas fa-star text-warning me-2"></i>
-                                Ko'nikmalar
+                                Skills
                             </h6>
                         </div>
                         <div class="card-body text-center py-4">
                             <div class="display-4 fw-bold text-warning mb-2">{{ stats.total_skills }}</div>
-                            <p class="text-muted mb-0">Jami ko'nikmalar</p>
+                            <p class="text-muted mb-0">Total skills</p>
                             <div class="mt-3">
                                 <small class="text-muted">
                                     <i class="fas fa-info-circle me-1"></i>
-                                    Barcha rezyumelardagi ko'nikmalar soni
+                                    Number of skills across all resumes
                                 </small>
                             </div>
                         </div>
@@ -147,23 +147,23 @@
                 </div>
             </div>
 
-            <!-- Ta'lim va Tillar -->
+            <!-- Education and Languages -->
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <div class="card h-100">
                         <div class="card-header bg-light">
                             <h6 class="card-title mb-0">
                                 <i class="fas fa-graduation-cap text-success me-2"></i>
-                                Ta'lim
+                                Education
                             </h6>
                         </div>
                         <div class="card-body text-center py-4">
                             <div class="display-4 fw-bold text-success mb-2">{{ stats.total_education }}</div>
-                            <p class="text-muted mb-0">Jami ta'lim yo'nalishlari</p>
+                            <p class="text-muted mb-0">Total education entries</p>
                             <div class="mt-3">
                                 <small class="text-muted">
                                     <i class="fas fa-info-circle me-1"></i>
-                                    Barcha rezyumelardagi ta'lim ma'lumotlari soni
+                                    Number of education entries across all resumes
                                 </small>
                             </div>
                         </div>
@@ -175,16 +175,16 @@
                         <div class="card-header bg-light">
                             <h6 class="card-title mb-0">
                                 <i class="fas fa-language text-info me-2"></i>
-                                Tillar
+                                Languages
                             </h6>
                         </div>
                         <div class="card-body text-center py-4">
                             <div class="display-4 fw-bold text-info mb-2">{{ stats.total_languages }}</div>
-                            <p class="text-muted mb-0">Jami tillar</p>
+                            <p class="text-muted mb-0">Total languages</p>
                             <div class="mt-3">
                                 <small class="text-muted">
                                     <i class="fas fa-info-circle me-1"></i>
-                                    Barcha rezyumelardagi til bilimlari soni
+                                    Number of language skills across all resumes
                                 </small>
                             </div>
                         </div>
@@ -193,29 +193,29 @@
             </div>
         </div>
 
-        <!-- O'ng Panel - Holatlar va Tavsiyalar -->
+        <!-- Right Panel - Status Distribution and Recommendations -->
         <div class="col-lg-4">
-            <!-- Holatlar Taqsimoti -->
+            <!-- Status Distribution -->
             <div class="card mb-4">
                 <div class="card-header bg-light">
                     <h6 class="card-title mb-0">
                         <i class="fas fa-chart-pie me-2"></i>
-                        Holatlar Taqsimoti
+                        Status Distribution
                     </h6>
                 </div>
                 <div class="card-body">
                     {% if stats.total_cvs > 0 %}
                     <div class="mb-3">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="small">Nashr qilingan</span>
-                            <span class="small fw-bold text-success">{{ stats.published_cvs }} ({{ stats.published_cvs|floatformat:0 }}%)</span>
+                            <span class="small">Published</span>
+                            <span class="small fw-bold text-success">{{ stats.published_cvs }} ({{ stats.published_percent|default:0|floatformat:0 }}%)</span>
                         </div>
                         <div class="progress mb-3" style="height: 8px;">
                             <div class="progress-bar bg-success" style="width: {{ stats.published_percent|default:0 }}%"></div>
                         </div>
                         
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="small">Qoralama</span>
+                            <span class="small">Draft</span>
                             <span class="small fw-bold text-warning">{{ stats.draft_cvs }} ({{ stats.draft_percent|default:0|floatformat:0 }}%)</span>
                         </div>
                         <div class="progress mb-3" style="height: 8px;">
@@ -223,7 +223,7 @@
                         </div>
                         
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="small">Arxiv</span>
+                            <span class="small">Archive</span>
                             <span class="small fw-bold text-secondary">{{ stats.archived_cvs|default:0 }} ({{ stats.archived_percent|default:0|floatformat:0 }}%)</span>
                         </div>
                         <div class="progress" style="height: 8px;">
@@ -233,31 +233,31 @@
                     {% else %}
                     <div class="text-center py-3">
                         <i class="fas fa-chart-pie fa-2x text-muted mb-2"></i>
-                        <p class="text-muted small mb-0">Statistika mavjud emas</p>
+                        <p class="text-muted small mb-0">No statistics available</p>
                     </div>
                     {% endif %}
                 </div>
             </div>
 
-            <!-- Tavsiyalar -->
+            <!-- Recommendations -->
             <div class="card">
                 <div class="card-header bg-light">
                     <h6 class="card-title mb-0">
                         <i class="fas fa-lightbulb me-2"></i>
-                        Tavsiyalar
+                        Recommendations
                     </h6>
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
                         <h6 class="small fw-bold text-primary mb-2">
                             <i class="fas fa-check-circle me-1"></i>
-                            Sifatli Rezyume
+                            Quality Resume
                         </h6>
                         <p class="small text-muted mb-0">
                             {% if stats.total_skills >= 5 and stats.total_experience >= 2 %}
-                            ✅ Sizning rezyumelaringiz yaxshi tuzilgan
+                            ✅ Your resumes are well structured
                             {% else %}
-                            ℹ️ Ko'nikma va tajribalarni ko'paytirish tavsiya etiladi
+                            ℹ️ It is recommended to increase skills and experiences
                             {% endif %}
                         </p>
                     </div>
@@ -265,13 +265,13 @@
                     <div class="mb-3">
                         <h6 class="small fw-bold text-warning mb-2">
                             <i class="fas fa-eye me-1"></i>
-                            Nashr Holati
+                            Publication Status
                         </h6>
                         <p class="small text-muted mb-0">
                             {% if stats.published_cvs == 0 %}
-                            ⚠️ Hech qanday nashr qilingan rezyumengiz yo'q
+                            ⚠️ You don't have any published resumes
                             {% else %}
-                            ✅ {{ stats.published_cvs }} ta rezyume nashr qilingan
+                            ✅ {{ stats.published_cvs }} resumes published
                             {% endif %}
                         </p>
                     </div>
@@ -279,13 +279,13 @@
                     <div>
                         <h6 class="small fw-bold text-info mb-2">
                             <i class="fas fa-chart-line me-1"></i>
-                            Rivojlanish
+                            Development
                         </h6>
                         <p class="small text-muted mb-0">
                             {% if stats.total_cvs >= 3 %}
-                            🎉 Ajoyib! Sizda {{ stats.total_cvs }} ta rezyume mavjud
+                            🎉 Excellent! You have {{ stats.total_cvs }} resumes
                             {% else %}
-                            📈 Yangi rezyumelar yaratishni davom eting
+                            📈 Continue creating new resumes
                             {% endif %}
                         </p>
                     </div>
@@ -294,25 +294,25 @@
         </div>
     </div>
 
-    <!-- Harakatlar Paneli -->
+    <!-- Actions Panel -->
     <div class="row mt-4">
         <div class="col-12">
             <div class="card bg-light">
                 <div class="card-body">
                     <div class="row align-items-center">
                         <div class="col-md-8">
-                            <h6 class="fw-bold text-dark mb-1">Keyingi Qadamlar</h6>
+                            <h6 class="fw-bold text-dark mb-1">Next Steps</h6>
                             <p class="text-muted small mb-0">
-                                Rezyumelaringizni yanada takomillashtirish uchun harakatlarni boshlang
+                                Take actions to further improve your resumes
                             </p>
                         </div>
                         <div class="col-md-4 text-end">
                             <div class="d-flex gap-2 justify-content-end">
                                 <a href="{% url 'cvbuilder:cv_list' %}" class="btn btn-outline-primary btn-sm">
-                                    <i class="fas fa-list me-1"></i>Barcha Rezyumelar
+                                    <i class="fas fa-list me-1"></i>All Resumes
                                 </a>
                                 <a href="{% url 'cvbuilder:cv_create' %}" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-plus me-1"></i>Yangi Yaratish
+                                    <i class="fas fa-plus me-1"></i>Create New
                                 </a>
                             </div>
                         </div>

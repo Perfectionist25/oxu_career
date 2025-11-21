@@ -5,25 +5,25 @@
 <div class="container py-4">
     <div class="row mb-4">
         <div class="col-8">
-            <h1 class="h4 fw-bold">{% trans "Jamoat rezyumelari" %}</h1>
-            <p class="text-muted mb-0">{% trans "Bu sahifa faqat ish beruvchilar va adminlar uchun ochiq." %}</p>
+            <h1 class="h4 fw-bold">{% trans "Public Resumes" %}</h1>
+            <p class="text-muted mb-0">{% trans "This page is only open for employers and administrators." %}</p>
         </div>
         <div class="col-4">
             <form method="get" class="d-flex gap-2">
-                <input name="q" value="{{ q }}" class="form-control form-control-sm" placeholder="Qidiruv...">
+                <input name="q" value="{{ q }}" class="form-control form-control-sm" placeholder="Search...">
                 <select name="template" class="form-select form-select-sm">
-                    <option value="">{% trans "Barcha shablonlar" %}</option>
+                    <option value="">{% trans "All templates" %}</option>
                     {% for template in templates %}
                         <option value="{{ template.id }}" {% if template.id|stringformat:"s" == selected_template %}selected{% endif %}>{{ template.name }}</option>
                     {% endfor %}
                 </select>
                 <select name="sort" class="form-select form-select-sm">
-                    <option value="newest" {% if sort == 'newest' %}selected{% endif %}>{% trans "Yangi avval" %}</option>
-                    <option value="oldest" {% if sort == 'oldest' %}selected{% endif %}>{% trans "Eski avval" %}</option>
-                    <option value="name_asc" {% if sort == 'name_asc' %}selected{% endif %}>{% trans "Ism A-Z" %}</option>
-                    <option value="name_desc" {% if sort == 'name_desc' %}selected{% endif %}>{% trans "Ism Z-A" %}</option>
+                    <option value="newest" {% if sort == 'newest' %}selected{% endif %}>{% trans "Newest first" %}</option>
+                    <option value="oldest" {% if sort == 'oldest' %}selected{% endif %}>{% trans "Oldest first" %}</option>
+                    <option value="name_asc" {% if sort == 'name_asc' %}selected{% endif %}>{% trans "Name A-Z" %}</option>
+                    <option value="name_desc" {% if sort == 'name_desc' %}selected{% endif %}>{% trans "Name Z-A" %}</option>
                 </select>
-                <button class="btn btn-primary btn-sm">{% trans "Filtrlash" %}</button>
+                <button class="btn btn-primary btn-sm">{% trans "Filter" %}</button>
             </form>
         </div>
     </div>
@@ -46,7 +46,7 @@
                             <span class="badge bg-light text-dark">{{ cv.template.name }}</span>
                         </div>
                         <div>
-                            <a href="{% url 'cvbuilder:cv_detail' cv.id %}" class="btn btn-outline-primary btn-sm">{% trans "Ko'rish" %}</a>
+                            <a href="{% url 'cvbuilder:cv_detail' cv.id %}" class="btn btn-outline-primary btn-sm">{% trans "View" %}</a>
                             {% if user.is_authenticated and user.is_employer or user.is_admin or user.is_main_admin %}
                                 <a href="{% url 'cvbuilder:cv_export_pdf' cv.id %}" class="btn btn-outline-secondary btn-sm ms-1">PDF</a>
                             {% endif %}
@@ -60,14 +60,14 @@
 
     <div class="mt-4">
         {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline-secondary btn-sm">&larr; {% trans "Oldingi" %}</a>
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline-secondary btn-sm">&larr; {% trans "Previous" %}</a>
         {% endif %}
         {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline-secondary btn-sm">{% trans "Keyingi" %} &rarr;</a>
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline-secondary btn-sm">{% trans "Next" %} &rarr;</a>
         {% endif %}
     </div>
     {% else %}
-        <p class="text-muted">{% trans "Hozircha nashr qilingan rezyumelar yo'q." %}</p>
+        <p class="text-muted">{% trans "No published resumes yet." %}</p>
     {% endif %}
 </div>
 {% endblock %}
