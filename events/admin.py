@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.contrib.admin import display
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
-from modeltranslation.admin import TranslationAdmin
+# ЗАКОММЕНТИРУЙТЕ эту строку - временно отключаем modeltranslation
+# from modeltranslation.admin import TranslationAdmin
 
 from .models import (
     Event,
@@ -35,8 +36,9 @@ class EventSessionInline(admin.TabularInline):
     fields = ("title", "session_type", "start_time", "end_time", "location")
 
 
+# ИЗМЕНИТЕ TranslationAdmin на admin.ModelAdmin
 @admin.register(EventCategory)
-class EventCategoryAdmin(TranslationAdmin):
+class EventCategoryAdmin(admin.ModelAdmin):  # ИЗМЕНИТЕ здесь
     list_display = ("name", "event_count", "color_display")
     list_filter = ("name",)
     search_fields = ("name", "description")
@@ -53,8 +55,9 @@ class EventCategoryAdmin(TranslationAdmin):
         )
 
 
+# ИЗМЕНИТЕ TranslationAdmin на admin.ModelAdmin
 @admin.register(Event)
-class EventAdmin(TranslationAdmin):
+class EventAdmin(admin.ModelAdmin):  # ИЗМЕНИТЕ здесь
     """Admin interface for Event model with comprehensive management"""
 
     list_display = (

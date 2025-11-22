@@ -3,7 +3,8 @@ from django.contrib import admin
 from django.contrib.admin import display
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
-from modeltranslation.admin import TranslationAdmin
+# ЗАКОММЕНТИРУЙТЕ эту строку:
+# from modeltranslation.admin import TranslationAdmin
 
 from .models import (
     AdminProfile,
@@ -83,7 +84,7 @@ class CustomUserAdmin(UserAdmin):
 
 
 @admin.register(EmployerProfile)
-class EmployerProfileAdmin(TranslationAdmin):
+class EmployerProfileAdmin(admin.ModelAdmin):  # ИЗМЕНИТЕ здесь
     """Admin interface for EmployerProfile with company management"""
 
     list_display = (
@@ -108,19 +109,21 @@ class EmployerProfileAdmin(TranslationAdmin):
             _("Contact Information"),
             {"fields": ("company_email", "company_phone", "company_website")},
         ),
-        (_("Social Media"), {"fields": ("company_linkedin", "company_telegram")}),
+        (_("Social Media"), {"fields": ("company_linkedin", "company_telegram")},
+        ),
         (
             _("Company Details"),
             {"fields": ("company_size", "industry", "founded_year", "headquarters")},
         ),
-        (_("Statistics"), {"fields": ("jobs_posted", "total_views")}),
+        (_("Statistics"), {"fields": ("jobs_posted", "total_views")},
+        ),
         (_("Status"), {"fields": ("is_verified",)}),
         (_("Timestamps"), {"fields": ("created_at", "updated_at")}),
     )
 
 
 @admin.register(StudentProfile)
-class StudentProfileAdmin(TranslationAdmin):
+class StudentProfileAdmin(admin.ModelAdmin):  # ИЗМЕНИТЕ здесь
     """Admin interface for StudentProfile with educational information"""
 
     list_display = (
@@ -141,116 +144,13 @@ class StudentProfileAdmin(TranslationAdmin):
             _("Student Information"),
             {"fields": ("user", "student_id", "faculty", "specialty")},
         ),
-        (_("Education"), {"fields": ("education_level", "graduation_year", "gpa")}),
+        (_("Education"), {"fields": ("education_level", "graduation_year", "gpa")},
+        ),
         (
             _("Career Preferences"),
             {"fields": ("desired_position", "desired_salary", "work_type")},
         ),
-        (_("Statistics"), {"fields": ("resumes_created", "jobs_applied")}),
-        (_("Timestamps"), {"fields": ("created_at", "updated_at")}),
-    )
-
-
-@admin.register(AdminProfile)
-class AdminProfileAdmin(admin.ModelAdmin):
-    """Admin interface for AdminProfile with permission management"""
-
-    list_display = (
-        "user",
-        "can_manage_students",
-        "can_manage_employers",
-        "can_manage_jobs",
-        "can_view_statistics",
-    )
-    list_filter = ("can_manage_students", "can_manage_employers", "can_manage_jobs", "can_manage_resumes", "can_view_statistics")
-    search_fields = ("user__username", "user__email")
-    readonly_fields = ("created_at", "updated_at")
-    list_per_page = 20
-
-    fieldsets = (
-        (_("Admin Information"), {"fields": ("user",)}),
-        (
-            _("Permissions"),
-            {
-                "fields": (
-                    "can_manage_students",
-                    "can_manage_employers",
-                    "can_manage_jobs",
-                    "can_manage_resumes",
-                    "can_view_statistics",
-                )
-            },
-        ),
-        (
-            _("Statistics"),
-            {"fields": ("students_managed", "employers_created", "jobs_approved")},
+        (_("Statistics"), {"fields": ("resumes_created", "jobs_applied")},
         ),
         (_("Timestamps"), {"fields": ("created_at", "updated_at")}),
-    )
-
-
-@admin.register(HemisAuth)
-class HemisAuthAdmin(admin.ModelAdmin):
-    """Admin interface for HemisAuth with API token management"""
-
-    list_display = ("user", "hemis_user_id", "last_sync", "created_at", "is_token_valid")
-    list_filter = ("last_sync", "created_at", "token_expires")
-    search_fields = ("user__username", "user__email", "hemis_user_id")
-    readonly_fields = ("created_at", "last_sync", "is_token_valid_display")
-    list_per_page = 20
-
-    fieldsets = (
-        (_("Hemis Authentication"), {"fields": ("user",)}),
-        (_("Tokens"), {"fields": ("access_token", "refresh_token", "token_expires")}),
-        (_("User Data"), {"fields": ("hemis_user_data",)}),
-        (_("Timestamps"), {"fields": ("last_sync", "created_at")}),
-        (_("Status"), {"fields": ("is_token_valid_display",)}),
-    )
-
-    @display(boolean=True, description=_("Token valid"))
-    def is_token_valid(self, obj):
-        return obj.is_token_valid()
-
-    @display(boolean=True, description=_("Token valid"))
-    def is_token_valid_display(self, obj):
-        return obj.is_token_valid()
-
-
-@admin.register(UserActivity)
-class UserActivityAdmin(admin.ModelAdmin):
-    """Admin interface for UserActivity with activity tracking"""
-
-    list_display = ("user", "activity_type", "ip_address", "created_at")
-    list_filter = ("activity_type", "created_at", "user__user_type")
-    search_fields = ("user__username", "description", "ip_address", "user_agent")
-    readonly_fields = ("created_at",)
-    list_per_page = 50
-
-    fieldsets = (
-        (
-            _("Activity Information"),
-            {"fields": ("user", "activity_type", "description")},
-        ),
-        (_("Technical Details"), {"fields": ("ip_address", "user_agent")}),
-        (_("Timestamps"), {"fields": ("created_at",)}),
-    )
-
-
-@admin.register(Notification)
-class NotificationAdmin(admin.ModelAdmin):
-    """Admin interface for Notification with message management"""
-
-    list_display = ("user", "notification_type", "title", "is_read", "created_at")
-    list_filter = ("notification_type", "is_read", "created_at", "user__user_type")
-    search_fields = ("user__username", "title", "message", "user__email")
-    readonly_fields = ("created_at",)
-    list_per_page = 50
-
-    fieldsets = (
-        (
-            _("Notification Information"),
-            {"fields": ("user", "notification_type", "title", "message")},
-        ),
-        (_("Status"), {"fields": ("is_read", "related_url")}),
-        (_("Timestamps"), {"fields": ("created_at",)}),
     )

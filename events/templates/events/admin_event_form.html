@@ -6,24 +6,24 @@
 
 {% block content %}
 <div class="container-fluid py-4">
-    <!-- Заголовок -->
+    <!-- Header -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <h1 class="h3 fw-bold text-primary mb-1">{{ title }}</h1>
-                    <p class="text-muted mb-0">{% trans "Tadbir ma'lumotlarini to'ldiring" %}</p>
+                    <p class="text-muted mb-0">{% trans "Fill in the event information" %}</p>
                 </div>
                 <div>
                     <a href="{% url 'events:admin_event_list' %}" class="btn btn-outline-secondary">
-                        <i class="fas fa-arrow-left me-2"></i>{% trans "Orqaga" %}
+                        <i class="fas fa-arrow-left me-2"></i>{% trans "Back" %}
                     </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Форма -->
+    <!-- Form -->
     <div class="row">
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm">
@@ -31,9 +31,9 @@
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
 
-                        <!-- Основная информация -->
+                        <!-- Basic Information -->
                         <h5 class="fw-bold mb-3">
-                            <i class="fas fa-info-circle text-primary me-2"></i>{% trans "Asosiy ma'lumotlar" %}
+                            <i class="fas fa-info-circle text-primary me-2"></i>{% trans "Basic Information" %}
                         </h5>
 
                         <div class="row mb-3">
@@ -63,9 +63,9 @@
                             </label>
                             {{ form.short_description }}
                             {% if form.short_description.errors %}
-                            <div class="text-danger small">{{ form.short_description.errors.0 }}</div>
+                                <div class="text-danger small">{{ form.short_description.errors.0 }}</div>
                             {% endif %}
-                            <div class="form-text">{% trans "Qisqa tavsif (ixtiyoriy, lekin tavsiya etiladi)" %}</div>
+                            <div class="form-text">{% trans "Short description (optional but recommended)" %}</div>
                         </div>
 
                         <div class="mb-3">
@@ -74,13 +74,13 @@
                             </label>
                             {{ form.description }}
                             {% if form.description.errors %}
-                            <div class="text-danger small">{{ form.description.errors.0 }}</div>
+                                <div class="text-danger small">{{ form.description.errors.0 }}</div>
                             {% endif %}
                         </div>
 
-                        <!-- Дата и время -->
+                        <!-- Date and Time -->
                         <h5 class="fw-bold mb-3 mt-4">
-                            <i class="fas fa-calendar-alt text-primary me-2"></i>{% trans "Sana va vaqt" %}
+                            <i class="fas fa-calendar-alt text-primary me-2"></i>{% trans "Date and Time" %}
                         </h5>
 
                         <div class="row mb-3">
@@ -104,9 +104,9 @@
                             </div>
                         </div>
 
-                        <!-- Место проведения -->
+                        <!-- Location -->
                         <h5 class="fw-bold mb-3 mt-4">
-                            <i class="fas fa-map-marker-alt text-primary me-2"></i>{% trans "Joy va manzil" %}
+                            <i class="fas fa-map-marker-alt text-primary me-2"></i>{% trans "Location and Address" %}
                         </h5>
 
                         <div class="mb-3">
@@ -151,9 +151,9 @@
                             </div>
                         </div>
 
-                        <!-- Регистрация -->
+                        <!-- Registration -->
                         <h5 class="fw-bold mb-3 mt-4">
-                            <i class="fas fa-users text-primary me-2"></i>{% trans "Ro'yxatdan o'tish" %}
+                            <i class="fas fa-users text-primary me-2"></i>{% trans "Registration" %}
                         </h5>
 
                         <div class="row mb-3">
@@ -165,7 +165,7 @@
                                 {% if form.max_participants.errors %}
                                 <div class="text-danger small">{{ form.max_participants.errors.0 }}</div>
                                 {% endif %}
-                                <div class="form-text">{% trans "Cheklanmagan uchun bo'sh qoldiring" %}</div>
+                                <div class="form-text">{% trans "Leave empty for unlimited" %}</div>
                             </div>
                             <div class="col-md-4">
                                 <label for="{{ form.registration_deadline.id_for_label }}" class="form-label fw-bold">
@@ -186,9 +186,9 @@
                             </div>
                         </div>
 
-                        <!-- Изображение -->
+                        <!-- Image -->
                         <h5 class="fw-bold mb-3 mt-4">
-                            <i class="fas fa-image text-primary me-2"></i>{% trans "Rasm" %}
+                            <i class="fas fa-image text-primary me-2"></i>{% trans "Image" %}
                         </h5>
 
                         <div class="row mb-3">
@@ -200,7 +200,7 @@
                                 {% if form.banner_image.errors %}
                                 <div class="text-danger small">{{ form.banner_image.errors.0 }}</div>
                                 {% endif %}
-                                <div class="form-text">{% trans "Banner uchun (1200x600)" %}</div>
+                                <div class="form-text">{% trans "For banner (1200x600)" %}</div>
                             </div>
                             <div class="col-md-6">
                                 <label for="{{ form.thumbnail.id_for_label }}" class="form-label fw-bold">
@@ -210,17 +210,17 @@
                                 {% if form.thumbnail.errors %}
                                 <div class="text-danger small">{{ form.thumbnail.errors.0 }}</div>
                                 {% endif %}
-                                <div class="form-text">{% trans "Kichik rasm uchun (400x300)" %}</div>
+                                <div class="form-text">{% trans "For thumbnail (400x300)" %}</div>
                             </div>
                         </div>
 
-                        <!-- Кнопки -->
+                        <!-- Buttons -->
                         <div class="d-flex justify-content-end mt-4 pt-3 border-top">
                             <a href="{% url 'events:admin_event_list' %}" class="btn btn-outline-secondary me-2">
-                                {% trans "Bekor qilish" %}
+                                {% trans "Cancel" %}
                             </a>
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-2"></i>{% trans "Saqlash" %}
+                                <i class="fas fa-save me-2"></i>{% trans "Save" %}
                             </button>
                         </div>
                     </form>
@@ -228,42 +228,42 @@
             </div>
         </div>
 
-        <!-- Боковая панель -->
+        <!-- Sidebar -->
         <div class="col-lg-4">
-            <!-- Помощь -->
+            <!-- Help -->
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-light">
                     <h6 class="mb-0 fw-bold">
-                        <i class="fas fa-question-circle text-primary me-2"></i>{% trans "Yordam" %}
+                        <i class="fas fa-question-circle text-primary me-2"></i>{% trans "Help" %}
                     </h6>
                 </div>
                 <div class="card-body">
                     <ul class="list-unstyled small mb-0">
                         <li class="mb-2">
-                            <strong>{% trans "Sarlavha:" %}</strong> {% trans "Tadbir nomini aniq va jozibali qilib yozing" %}
+                            <strong>{% trans "Title:" %}</strong> {% trans "Write the event name clearly and attractively" %}
                         </li>
                         <li class="mb-2">
-                            <strong>{% trans "Tavsif:" %}</strong> {% trans "Batafsil ma'lumot bering, shunda qatnashchilar nima kutishlari mumkinligini bilib olishadi" %}
+                            <strong>{% trans "Description:" %}</strong> {% trans "Provide detailed information so participants know what to expect" %}
                         </li>
                         <li class="mb-2">
-                            <strong>{% trans "Sana:" %}</strong> {% trans "Boshlanish va tugash vaqtini aniq ko'rsating" %}
+                            <strong>{% trans "Date:" %}</strong> {% trans "Specify exact start and end times" %}
                         </li>
                         <li class="mb-2">
-                            <strong>{% trans "Joy:" %}</strong> {% trans "Agar onlayn bo'lsa, havolani qo'shing" %}
+                            <strong>{% trans "Location:" %}</strong> {% trans "If online, add the link" %}
                         </li>
                         <li class="mb-0">
-                            <strong>{% trans "Rasm:" %}</strong> {% trans "Jozibali rasm qo'shish qatnashishni oshiradi" %}
+                            <strong>{% trans "Image:" %}</strong> {% trans "Adding an attractive image increases participation" %}
                         </li>
                     </ul>
                 </div>
             </div>
 
-            <!-- Предпросмотр -->
+            <!-- Preview -->
             {% if form.instance.image %}
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-light">
                     <h6 class="mb-0 fw-bold">
-                        <i class="fas fa-eye text-primary me-2"></i>{% trans "Joriy rasm" %}
+                        <i class="fas fa-eye text-primary me-2"></i>{% trans "Current Image" %}
                     </h6>
                 </div>
                 <div class="card-body text-center">
@@ -276,7 +276,7 @@
 </div>
 
 <script>
-// Показать/скрыть поля места проведения
+// Show/hide location fields
 document.getElementById('{{ form.online_event.id_for_label }}').addEventListener('change', function() {
     const locationFields = document.getElementById('location-fields');
     if (this.checked) {

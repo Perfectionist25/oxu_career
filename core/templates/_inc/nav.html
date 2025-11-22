@@ -23,15 +23,35 @@
                     <a href="https://facebook.com/{{ settings.SOCIAL_FACEBOOK }}" target="_blank"><i style="font-size: larger;" class="fab fa-facebook text-white"></i></a>
                     <a href="https://youtube.com/{{ settings.SOCIAL_YOUTUBE }}" target="_blank"><i style="font-size: larger;" class="fab fa-youtube text-white"></i></a>
                 </div>
-                <div class="language-selector">
-                    <form action="{% url 'set_language' %}" method="post" style="display: inline;">
-                        {% csrf_token %}
-                        <input name="next" type="hidden" value="{{ request.get_full_path }}">
-                        <button name="language" value="uz" type="submit" class="{% if LANGUAGE_CODE == 'uz' %}active{% endif %}" style="border: none; background: none; padding: 0;"><img width="36" src="{% static 'img/uzb.png' %}" alt="UZB"></button>
-                        <button name="language" value="ru" type="submit" class="{% if LANGUAGE_CODE == 'ru' %}active{% endif %}" style="border: none; background: none; padding: 0;"><img width="36" src="{% static 'img/ru.png' %}" alt="RU"></button>
-                        <button name="language" value="en" type="submit" class="{% if LANGUAGE_CODE == 'en' %}active{% endif %}" style="border: none; background: none; padding: 0;"><img width="36" src="{% static 'img/uk.png' %}" alt="EN"></button>
-                    </form>
-                </div>
+<div class="language-selector">
+    <form action="{% url 'set_language' %}" method="post" class="d-inline">
+        {% csrf_token %}
+        <input name="next" type="hidden" value="{{ request.get_full_path }}">
+        
+        {% get_current_language as CURRENT_LANG %}
+        
+        <button type="submit" name="language" value="uz" 
+                class="btn btn-sm {% if CURRENT_LANG == 'uz' %}btn-primary{% else %}btn-outline-secondary{% endif %} me-1"
+                title="Oʻzbekcha">
+            <img width="24" src="{% static 'img/uzb.png' %}" alt="UZ" class="me-1">
+            UZ
+        </button>
+        
+        <button type="submit" name="language" value="ru"
+                class="btn btn-sm {% if CURRENT_LANG == 'ru' %}btn-primary{% else %}btn-outline-secondary{% endif %} me-1"
+                title="Русский">
+            <img width="24" src="{% static 'img/ru.png' %}" alt="RU" class="me-1">
+            RU
+        </button>
+        
+        <button type="submit" name="language" value="en"
+                class="btn btn-sm {% if CURRENT_LANG == 'en' %}btn-primary{% else %}btn-outline-secondary{% endif %}"
+                title="English">
+            <img width="24" src="{% static 'img/uk.png' %}" alt="EN" class="me-1">
+            EN
+        </button>
+    </form>
+</div>
             </div>
         </div>
     </div>

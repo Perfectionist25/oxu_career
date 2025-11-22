@@ -2,7 +2,7 @@
 {% load static %}
 {% load i18n %}
 
-{% block title %}{% trans "Arizalar" %}{% endblock %}
+{% block title %}{% trans "Applications" %}{% endblock %}
 
 {% block content %}
 <div class="container-fluid py-4">
@@ -12,22 +12,22 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
                     <h1 class="h3 fw-bold text-primary">
-                        <i class="fas fa-users me-2"></i>{% trans "Arizalar" %}
+                        <i class="fas fa-users me-2"></i>{% trans "Applications" %}
                     </h1>
-                    <p class="text-muted mb-0">{% trans "Sizning kompaniyangizdagi vakansiyalarga kelgan arizalar" %}</p>
+                    <p class="text-muted mb-0">{% trans "Applications received for vacancies in your company" %}</p>
                 </div>
                 <div class="btn-group">
                     <a href="{% url 'jobs:applications' %}" class="btn btn-outline-primary {% if not status_filter %}active{% endif %}">
-                        {% trans "Hammasi" %} ({{ status_counts.total }})
+                        {% trans "All" %} ({{ status_counts.total }})
                     </a>
                     <a href="{% url 'jobs:applications' %}?status=applied" class="btn btn-outline-warning {% if status_filter == 'applied' %}active{% endif %}">
-                        {% trans "Yangi" %} ({{ status_counts.applied }})
+                        {% trans "New" %} ({{ status_counts.applied }})
                     </a>
                     <a href="{% url 'jobs:applications' %}?status=reviewed" class="btn btn-outline-info {% if status_filter == 'reviewed' %}active{% endif %}">
-                        {% trans "Ko'rilgan" %} ({{ status_counts.reviewed }})
+                        {% trans "Reviewed" %} ({{ status_counts.reviewed }})
                     </a>
                     <a href="{% url 'jobs:applications' %}?status=shortlisted" class="btn btn-outline-success {% if status_filter == 'shortlisted' %}active{% endif %}">
-                        {% trans "Saralangan" %} ({{ status_counts.shortlisted }})
+                        {% trans "Shortlisted" %} ({{ status_counts.shortlisted }})
                     </a>
                 </div>
             </div>
@@ -38,7 +38,7 @@
                     <div class="card border-primary">
                         <div class="card-body text-center">
                             <h3 class="text-primary">{{ status_counts.total }}</h3>
-                            <small class="text-muted">{% trans "Jami arizalar" %}</small>
+                            <small class="text-muted">{% trans "Total applications" %}</small>
                         </div>
                     </div>
                 </div>
@@ -46,7 +46,7 @@
                     <div class="card border-warning">
                         <div class="card-body text-center">
                             <h3 class="text-warning">{{ status_counts.applied }}</h3>
-                            <small class="text-muted">{% trans "Yangi arizalar" %}</small>
+                            <small class="text-muted">{% trans "New applications" %}</small>
                         </div>
                     </div>
                 </div>
@@ -54,7 +54,7 @@
                     <div class="card border-info">
                         <div class="card-body text-center">
                             <h3 class="text-info">{{ status_counts.reviewed }}</h3>
-                            <small class="text-muted">{% trans "Ko'rilgan" %}</small>
+                            <small class="text-muted">{% trans "Reviewed" %}</small>
                         </div>
                     </div>
                 </div>
@@ -62,7 +62,7 @@
                     <div class="card border-success">
                         <div class="card-body text-center">
                             <h3 class="text-success">{{ status_counts.shortlisted }}</h3>
-                            <small class="text-muted">{% trans "Saralangan" %}</small>
+                            <small class="text-muted">{% trans "Shortlisted" %}</small>
                         </div>
                     </div>
                 </div>
@@ -70,7 +70,7 @@
                     <div class="card border-danger">
                         <div class="card-body text-center">
                             <h3 class="text-danger">{{ status_counts.rejected }}</h3>
-                            <small class="text-muted">{% trans "Rad etilgan" %}</small>
+                            <small class="text-muted">{% trans "Rejected" %}</small>
                         </div>
                     </div>
                 </div>
@@ -78,7 +78,7 @@
                     <div class="card border-success">
                         <div class="card-body text-center">
                             <h3 class="text-success">{{ status_counts.hired }}</h3>
-                            <small class="text-muted">{% trans "Ishga qabul" %}</small>
+                            <small class="text-muted">{% trans "Hired" %}</small>
                         </div>
                     </div>
                 </div>
@@ -92,13 +92,13 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>{% trans "Kandidad" %}</th>
-                                    <th>{% trans "Vakansiya" %}</th>
-                                    <th>{% trans "Kompaniya" %}</th>
-                                    <th>{% trans "Maosh talabi" %}</th>
-                                    <th>{% trans "Holati" %}</th>
-                                    <th>{% trans "Sana" %}</th>
-                                    <th>{% trans "Harakatlar" %}</th>
+                                    <th>{% trans "Candidate" %}</th>
+                                    <th>{% trans "Vacancy" %}</th>
+                                    <th>{% trans "Company" %}</th>
+                                    <th>{% trans "Salary expectation" %}</th>
+                                    <th>{% trans "Status" %}</th>
+                                    <th>{% trans "Date" %}</th>
+                                    <th>{% trans "Actions" %}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -153,10 +153,10 @@
                                     </td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
-                                            <a href="{% url 'jobs:application_detail' application.id %}" class="btn btn-outline-primary" title="{% trans "Ko'rish" %}">
+                                            <a href="{% url 'jobs:application_detail' application.id %}" class="btn btn-outline-primary" title="{% trans "View" %}">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="{% url 'jobs:update_application_status' application.id %}" class="btn btn-outline-success" title="{% trans "Holatni o'zgartirish" %}">
+                                            <a href="{% url 'jobs:update_application_status' application.id %}" class="btn btn-outline-success" title="{% trans "Change status" %}">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                         </div>
@@ -172,10 +172,10 @@
             <div class="card">
                 <div class="card-body text-center py-5">
                     <i class="fas fa-users fa-3x text-muted mb-3"></i>
-                    <h4 class="text-muted">{% trans "Hozircha arizalar mavjud emas" %}</h4>
-                    <p class="text-muted">{% trans "Sizning vakansiyalaringizga arizalar bu yerda ko'rinadi" %}</p>
+                    <h4 class="text-muted">{% trans "No applications yet" %}</h4>
+                    <p class="text-muted">{% trans "Applications for your vacancies will appear here" %}</p>
                     <a href="{% url 'jobs:job_create' %}" class="btn btn-primary">
-                        <i class="fas fa-plus me-2"></i>{% trans "Yangi vakansiya yaratish" %}
+                        <i class="fas fa-plus me-2"></i>{% trans "Create new vacancy" %}
                     </a>
                 </div>
             </div>

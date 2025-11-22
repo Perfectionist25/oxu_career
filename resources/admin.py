@@ -1,13 +1,15 @@
 from django.contrib import admin
 from django.contrib.admin import display
 from django.utils.translation import gettext_lazy as _
-from modeltranslation.admin import TranslationAdmin
+# ЗАКОММЕНТИРУЙТЕ эту строку - временно отключаем modeltranslation
+# from modeltranslation.admin import TranslationAdmin
 
 from .models import Resource, ResourceCategory
 
 
+# ИЗМЕНИТЕ TranslationAdmin на admin.ModelAdmin
 @admin.register(ResourceCategory)
-class ResourceCategoryAdmin(TranslationAdmin):
+class ResourceCategoryAdmin(admin.ModelAdmin):  # ИЗМЕНИТЕ здесь
     """Admin interface for ResourceCategory with resource count display"""
 
     list_display = ("name", "resource_count")
@@ -24,8 +26,9 @@ class ResourceCategoryAdmin(TranslationAdmin):
         return obj.resources.count()
 
 
+# ИЗМЕНИТЕ TranslationAdmin на admin.ModelAdmin
 @admin.register(Resource)
-class ResourceAdmin(TranslationAdmin):
+class ResourceAdmin(admin.ModelAdmin):  # ИЗМЕНИТЕ здесь
     """Admin interface for Resource model with media content management"""
 
     list_display = (

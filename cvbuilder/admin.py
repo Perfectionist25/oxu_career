@@ -1,5 +1,6 @@
 from django.contrib import admin
-from modeltranslation.admin import TranslationAdmin
+# ЗАКОММЕНТИРУЙТЕ эту строку - временно отключаем modeltranslation
+# from modeltranslation.admin import TranslationAdmin
 
 from .models import CV, CVTemplate, Education, Experience, Skill, Language
 
@@ -73,8 +74,9 @@ class CVTemplateAdmin(admin.ModelAdmin):
     )
 
 
+# ИЗМЕНИТЕ TranslationAdmin на admin.ModelAdmin
 @admin.register(CV)
-class CVAdmin(TranslationAdmin):
+class CVAdmin(admin.ModelAdmin):  # ИЗМЕНИТЕ здесь
     """Admin interface for CV management with comprehensive editing"""
 
     list_display = ("title", "user", "full_name", "status", "template", "created_at")

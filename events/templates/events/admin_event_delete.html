@@ -2,68 +2,68 @@
 {% load static %}
 {% load i18n %}
 
-{% block title %}{% trans "Tadbirni o'chirish" %}{% endblock %}
+{% block title %}{% trans "Delete Event" %}{% endblock %}
 
 {% block content %}
 <div class="container-fluid py-4">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <!-- Предупреждение -->
+            <!-- Warning -->
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-danger text-white">
                     <h5 class="mb-0">
-                        <i class="fas fa-exclamation-triangle me-2"></i>{% trans "Tadbirni o'chirish" %}
+                        <i class="fas fa-exclamation-triangle me-2"></i>{% trans "Delete Event" %}
                     </h5>
                 </div>
                 <div class="card-body">
                     <div class="text-center mb-4">
                         <i class="fas fa-trash-alt fa-4x text-danger mb-3"></i>
-                        <h4 class="text-danger">{% trans "Diqqat!" %}</h4>
+                        <h4 class="text-danger">{% trans "Attention!" %}</h4>
                         <p class="text-muted mb-0">
-                            {% trans "Siz haqiqatan ham ushbu tadbirni o'chirmoqchimisiz?" %}
+                            {% trans "Are you sure you want to delete this event?" %}
                         </p>
                     </div>
 
-                    <!-- Информация о событии -->
+                    <!-- Event Information -->
                     <div class="card bg-light mb-4">
                         <div class="card-body">
                             <h6 class="fw-bold mb-2">{{ event.title }}</h6>
                             <div class="row text-sm">
                                 <div class="col-6">
-                                    <strong>{% trans "Tashkilotchi:" %}</strong><br>
+                                    <strong>{% trans "Organizer:" %}</strong><br>
                                     {{ event.organizer.get_full_name|default:event.organizer.username }}
                                 </div>
                                 <div class="col-6">
-                                    <strong>{% trans "Boshlanish:" %}</strong><br>
+                                    <strong>{% trans "Start:" %}</strong><br>
                                     {{ event.start_date|date:"d.m.Y H:i" }}
                                 </div>
                             </div>
                             {% if event.registration_count %}
                             <div class="mt-2">
                                 <span class="badge bg-warning">
-                                    <i class="fas fa-users me-1"></i>{{ event.registration_count }} {% trans "ro'yxatdan o'tgan" %}
+                                    <i class="fas fa-users me-1"></i>{{ event.registration_count }} {% trans "registered" %}
                                 </span>
                             </div>
                             {% endif %}
                         </div>
                     </div>
 
-                    <!-- Предупреждение о последствиях -->
+                    <!-- Consequences Warning -->
                     <div class="alert alert-warning">
                         <i class="fas fa-exclamation-circle me-2"></i>
-                        <strong>{% trans "Ogohlantirish:" %}</strong>
-                        {% trans "Bu amalni bekor qilib bo'lmaydi. Tadbir va unga tegishli barcha ma'lumotlar (ro'yxatdan o'tishlar, sharhlar, baholar) butunlay o'chib ketadi." %}
+                        <strong>{% trans "Warning:" %}</strong>
+                        {% trans "This action cannot be undone. The event and all related data (registrations, comments, ratings) will be completely deleted." %}
                     </div>
 
-                    <!-- Кнопки -->
+                    <!-- Buttons -->
                     <div class="d-flex justify-content-end">
                         <a href="{% url 'events:admin_event_list' %}" class="btn btn-outline-secondary me-2">
-                            {% trans "Bekor qilish" %}
+                            {% trans "Cancel" %}
                         </a>
                         <form method="post" class="d-inline">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-danger">
-                                <i class="fas fa-trash me-2"></i>{% trans "O'chirish" %}
+                                <i class="fas fa-trash me-2"></i>{% trans "Delete" %}
                             </button>
                         </form>
                     </div>

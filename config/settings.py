@@ -15,9 +15,9 @@ LOGIN_URL = "/accounts/login/"
 PHONENUMBER_DEFAULT_REGION = "UZ"
 
 INSTALLED_APPS = [
-    "modeltranslation",  # MUST be before django.contrib.admin
-    "jazzmin",  # Admin interface
-    # Ваши приложения (важен порядок для переопределения шаблонов)
+    # "modeltranslation",
+    "jazzmin",
+    #  Application
     "accounts.apps.AccountsConfig",  # User authentication
     "core.apps.CoreConfig",  # Main app
     "alumni.apps.AlumniConfig",  # Alumni network
@@ -104,9 +104,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Мультиязычность
 LANGUAGES = [
-    ("en", "English"),
     ("uz", "Oʻzbekcha"),
     ("ru", "Русский"),
+    ("en", "English"),
 ]
 
 LOCALE_PATHS = [BASE_DIR / "locale"]

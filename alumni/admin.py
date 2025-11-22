@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.contrib.admin import display
 from django.utils.html import format_html
-from modeltranslation.admin import TranslationAdmin
+# ЗАКОММЕНТИРУЙТЕ эту строку - временно отключаем modeltranslation
+# from modeltranslation.admin import TranslationAdmin
 
 from .models import (
     Alumni,
@@ -16,8 +17,9 @@ from .models import (
 )
 
 
+# ИЗМЕНИТЕ TranslationAdmin на admin.ModelAdmin
 @admin.register(Alumni)
-class AlumniAdmin(TranslationAdmin):
+class AlumniAdmin(admin.ModelAdmin):  # ИЗМЕНИТЕ здесь
     """Admin interface for alumni profiles with comprehensive management"""
 
     list_display = (

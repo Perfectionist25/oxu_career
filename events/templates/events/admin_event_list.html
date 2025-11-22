@@ -2,35 +2,35 @@
 {% load static %}
 {% load i18n %}
 
-{% block title %}{% trans "Boshqaruv - Tadbirlar" %}{% endblock %}
+{% block title %}{% trans "Admin - Events" %}{% endblock %}
 
 {% block content %}
 <div class="container-fluid py-4">
-    <!-- Заголовок -->
+    <!-- Header -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h1 class="h3 fw-bold text-primary mb-1">{% trans "Tadbirlar boshqaruvi" %}</h1>
-                    <p class="text-muted mb-0">{% trans "Barcha tadbirlarni ko'rish va boshqarish" %}</p>
+                    <h1 class="h3 fw-bold text-primary mb-1">{% trans "Events Management" %}</h1>
+                    <p class="text-muted mb-0">{% trans "View and manage all events" %}</p>
                 </div>
                 <div>
                     <a href="{% url 'events:admin_event_create' %}" class="btn btn-primary">
-                        <i class="fas fa-plus me-2"></i>{% trans "Yangi tadbir" %}
+                        <i class="fas fa-plus me-2"></i>{% trans "New Event" %}
                     </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Статистика -->
+    <!-- Statistics -->
     <div class="row mb-4">
         <div class="col-xl-2 col-md-4 col-6 mb-3">
             <div class="card border-0 bg-primary text-white shadow-sm">
                 <div class="card-body text-center py-3">
                     <i class="fas fa-calendar-alt fa-2x mb-2 opacity-75"></i>
                     <div class="fw-bold h5">{{ stats.total }}</div>
-                    <small>{% trans "Jami" %}</small>
+                    <small>{% trans "Total" %}</small>
                 </div>
             </div>
         </div>
@@ -39,7 +39,7 @@
                 <div class="card-body text-center py-3">
                     <i class="fas fa-check-circle fa-2x mb-2 opacity-75"></i>
                     <div class="fw-bold h5">{{ stats.published }}</div>
-                    <small>{% trans "Nashr etilgan" %}</small>
+                    <small>{% trans "Published" %}</small>
                 </div>
             </div>
         </div>
@@ -48,7 +48,7 @@
                 <div class="card-body text-center py-3">
                     <i class="fas fa-edit fa-2x mb-2 opacity-75"></i>
                     <div class="fw-bold h5">{{ stats.draft }}</div>
-                    <small>{% trans "Qoralama" %}</small>
+                    <small>{% trans "Draft" %}</small>
                 </div>
             </div>
         </div>
@@ -57,7 +57,7 @@
                 <div class="card-body text-center py-3">
                     <i class="fas fa-times-circle fa-2x mb-2 opacity-75"></i>
                     <div class="fw-bold h5">{{ stats.cancelled }}</div>
-                    <small>{% trans "Bekor qilingan" %}</small>
+                    <small>{% trans "Cancelled" %}</small>
                 </div>
             </div>
         </div>
@@ -66,22 +66,22 @@
                 <div class="card-body text-center py-3">
                     <i class="fas fa-check-double fa-2x mb-2 opacity-75"></i>
                     <div class="fw-bold h5">{{ stats.completed }}</div>
-                    <small>{% trans "Tugagan" %}</small>
+                    <small>{% trans "Completed" %}</small>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Фильтры -->
+    <!-- Filters -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body">
             <form method="get" class="row g-3">
                 <div class="col-md-3">
-                    <input type="text" name="q" class="form-control" placeholder="{% trans 'Qidirish...' %}" value="{{ request.GET.q }}">
+                    <input type="text" name="q" class="form-control" placeholder="{% trans 'Search...' %}" value="{{ request.GET.q }}">
                 </div>
                 <div class="col-md-2">
                     <select name="status" class="form-select">
-                        <option value="">{% trans "Barcha holatlar" %}</option>
+                        <option value="">{% trans "All Statuses" %}</option>
                         {% for status_value, status_label in status_choices %}
                         <option value="{{ status_value }}" {% if request.GET.status == status_value %}selected{% endif %}>
                             {{ status_label }}
@@ -91,7 +91,7 @@
                 </div>
                 <div class="col-md-2">
                     <select name="category" class="form-select">
-                        <option value="">{% trans "Barcha kategoriyalar" %}</option>
+                        <option value="">{% trans "All Categories" %}</option>
                         {% for category in categories %}
                         <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>
                             {{ category.name }}
@@ -101,7 +101,7 @@
                 </div>
                 <div class="col-md-2">
                     <select name="organizer" class="form-select">
-                        <option value="">{% trans "Barcha tashkilotchilar" %}</option>
+                        <option value="">{% trans "All Organizers" %}</option>
                         {% for organizer in organizers %}
                         <option value="{{ organizer }}" {% if request.GET.organizer == organizer %}selected{% endif %}>
                             {{ organizer }}
@@ -111,30 +111,30 @@
                 </div>
                 <div class="col-md-3">
                     <button type="submit" class="btn btn-primary me-2">
-                        <i class="fas fa-search me-1"></i>{% trans "Qidirish" %}
+                        <i class="fas fa-search me-1"></i>{% trans "Search" %}
                     </button>
                     <a href="{% url 'events:admin_event_list' %}" class="btn btn-outline-secondary">
-                        <i class="fas fa-times me-1"></i>{% trans "Tozalash" %}
+                        <i class="fas fa-times me-1"></i>{% trans "Clear" %}
                     </a>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Список событий -->
+    <!-- Events List -->
     <div class="card border-0 shadow-sm">
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th class="border-0">{% trans "Tadbir" %}</th>
-                            <th class="border-0">{% trans "Tashkilotchi" %}</th>
-                            <th class="border-0">{% trans "Kategoriya" %}</th>
-                            <th class="border-0">{% trans "Boshlanish" %}</th>
-                            <th class="border-0">{% trans "Holat" %}</th>
-                            <th class="border-0">{% trans "Ro'yxatdan o'tganlar" %}</th>
-                            <th class="border-0 text-center">{% trans "Amallar" %}</th>
+                            <th class="border-0">{% trans "Event" %}</th>
+                            <th class="border-0">{% trans "Organizer" %}</th>
+                            <th class="border-0">{% trans "Category" %}</th>
+                            <th class="border-0">{% trans "Start" %}</th>
+                            <th class="border-0">{% trans "Status" %}</th>
+                            <th class="border-0">{% trans "Registered" %}</th>
+                            <th class="border-0 text-center">{% trans "Actions" %}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -168,13 +168,13 @@
                             </td>
                             <td>
                                 {% if event.status == 'published' %}
-                                <span class="badge bg-success">{% trans "Nashr etilgan" %}</span>
+                                <span class="badge bg-success">{% trans "Published" %}</span>
                                 {% elif event.status == 'draft' %}
-                                <span class="badge bg-warning">{% trans "Qoralama" %}</span>
+                                <span class="badge bg-warning">{% trans "Draft" %}</span>
                                 {% elif event.status == 'cancelled' %}
-                                <span class="badge bg-danger">{% trans "Bekor qilingan" %}</span>
+                                <span class="badge bg-danger">{% trans "Cancelled" %}</span>
                                 {% elif event.status == 'completed' %}
-                                <span class="badge bg-info">{% trans "Tugagan" %}</span>
+                                <span class="badge bg-info">{% trans "Completed" %}</span>
                                 {% else %}
                                 <span class="badge bg-secondary">{{ event.get_status_display }}</span>
                                 {% endif %}
@@ -187,28 +187,28 @@
                             </td>
                             <td class="text-center">
                                 <div class="btn-group" role="group">
-                                    <a href="{% url 'events:event_detail' event.slug %}" class="btn btn-sm btn-outline-primary" title="{% trans 'Ko\'rish' %}">
+                                    <a href="{% url 'events:event_detail' event.slug %}" class="btn btn-sm btn-outline-primary" title="{% trans 'View' %}">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="{% url 'events:admin_event_edit' event.pk %}" class="btn btn-sm btn-outline-warning" title="{% trans 'Tahrirlash' %}">
+                                    <a href="{% url 'events:admin_event_edit' event.pk %}" class="btn btn-sm btn-outline-warning" title="{% trans 'Edit' %}">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     {% if event.status == 'published' %}
                                     <form method="post" action="{% url 'events:unpublish_event' event.pk %}" style="display: inline;">
                                         {% csrf_token %}
-                                        <button type="submit" class="btn btn-sm btn-outline-secondary" title="{% trans 'Nashrdan olib tashlash' %}" onclick="return confirm('Haqiqatan ham bu tadbirni nashrdan olib tashlamoqchimisiz?')">
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary" title="{% trans 'Unpublish' %}" onclick="return confirm('Are you sure you want to unpublish this event?')">
                                             <i class="fas fa-eye-slash"></i>
                                         </button>
                                     </form>
                                     {% elif event.status == 'draft' %}
                                     <form method="post" action="{% url 'events:publish_event' event.pk %}" style="display: inline;">
                                         {% csrf_token %}
-                                        <button type="submit" class="btn btn-sm btn-outline-success" title="{% trans 'Nashr etish' %}" onclick="return confirm('Haqiqatan ham bu tadbirni nashr etmoqchimisiz?')">
+                                        <button type="submit" class="btn btn-sm btn-outline-success" title="{% trans 'Publish' %}" onclick="return confirm('Are you sure you want to publish this event?')">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                     </form>
                                     {% endif %}
-                                    <a href="{% url 'events:admin_event_delete' event.pk %}" class="btn btn-sm btn-outline-danger" title="{% trans 'O\'chirish' %}" onclick="return confirm('Haqiqatan ham bu tadbirni o\'chirmoqchimisiz?')">
+                                    <a href="{% url 'events:admin_event_delete' event.pk %}" class="btn btn-sm btn-outline-danger" title="{% trans 'Delete' %}" onclick="return confirm('Are you sure you want to delete this event?')">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                 </div>
@@ -218,10 +218,10 @@
                         <tr>
                             <td colspan="7" class="text-center py-5">
                                 <i class="fas fa-calendar-alt fa-3x text-muted mb-3"></i>
-                                <h5 class="text-muted">{% trans "Tadbirlar topilmadi" %}</h5>
-                                <p class="text-muted">{% trans "Sizning so'rovingizga mos tadbirlar mavjud emas." %}</p>
+                                <h5 class="text-muted">{% trans "No Events Found" %}</h5>
+                                <p class="text-muted">{% trans "No events match your search criteria." %}</p>
                                 <a href="{% url 'events:admin_event_create' %}" class="btn btn-primary">
-                                    <i class="fas fa-plus me-2"></i>{% trans "Birinchi tadbirni yaratish" %}
+                                    <i class="fas fa-plus me-2"></i>{% trans "Create First Event" %}
                                 </a>
                             </td>
                         </tr>
@@ -231,7 +231,7 @@
             </div>
         </div>
 
-        <!-- Пагинация -->
+        <!-- Pagination -->
         {% if page_obj.has_other_pages %}
         <div class="card-footer bg-white border-0">
             <nav aria-label="Event pagination">
@@ -239,7 +239,7 @@
                     {% if page_obj.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
-                            {% trans "Oldingi" %}
+                            {% trans "Previous" %}
                         </a>
                     </li>
                     {% endif %}
@@ -259,7 +259,7 @@
                     {% if page_obj.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
-                            {% trans "Keyingi" %}
+                            {% trans "Next" %}
                         </a>
                     </li>
                     {% endif %}

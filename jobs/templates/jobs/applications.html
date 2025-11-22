@@ -2,39 +2,39 @@
 {% load static %}
 {% load i18n %}
 
-{% block title %}{% trans "Vakansiyalar bo'yicha arizalar" %} - OXU Career{% endblock %}
+{% block title %}{% trans "Job Applications" %} - OXU Career{% endblock %}
 
 {% block content %}
 <div class="container-fluid py-4">
-    <!-- Заголовок -->
+    <!-- Header -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <h1 class="h3 fw-bold text-primary mb-1">
-                        <i class="fas fa-users me-2"></i>{% trans "Vakansiyalar bo'yicha arizalar" %}
+                        <i class="fas fa-users me-2"></i>{% trans "Job Applications" %}
                     </h1>
                     <p class="text-muted mb-0">
-                        {% trans "Barcha vakansiyalarga kelgan arizalar ro'yxati" %}
+                        {% trans "List of all applications received for vacancies" %}
                     </p>
                 </div>
                 <div>
                     <a href="{% url 'jobs:my_jobs' %}" class="btn btn-outline-primary">
-                        <i class="fas fa-arrow-left me-2"></i>{% trans "Vakansiyalarimga qaytish" %}
+                        <i class="fas fa-arrow-left me-2"></i>{% trans "Back to My Jobs" %}
                     </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Статистика -->
+    <!-- Statistics -->
     <div class="row mb-4">
         <div class="col-xl-2 col-md-4 col-6 mb-3">
             <div class="card border-0 bg-primary text-white shadow-sm">
                 <div class="card-body text-center py-3">
                     <i class="fas fa-paper-plane fa-2x mb-2 opacity-50"></i>
                     <h4 class="fw-bold mb-1">{{ status_counts.total }}</h4>
-                    <small>{% trans "Jami arizalar" %}</small>
+                    <small>{% trans "Total Applications" %}</small>
                 </div>
             </div>
         </div>
@@ -43,7 +43,7 @@
                 <div class="card-body text-center py-3">
                     <i class="fas fa-clock fa-2x mb-2 opacity-50"></i>
                     <h4 class="fw-bold mb-1">{{ status_counts.applied }}</h4>
-                    <small>{% trans "Yuborilgan" %}</small>
+                    <small>{% trans "Applied" %}</small>
                 </div>
             </div>
         </div>
@@ -52,7 +52,7 @@
                 <div class="card-body text-center py-3">
                     <i class="fas fa-search fa-2x mb-2 opacity-50"></i>
                     <h4 class="fw-bold mb-1">{{ status_counts.reviewed }}</h4>
-                    <small>{% trans "Ko'rib chiqilmoqda" %}</small>
+                    <small>{% trans "Under Review" %}</small>
                 </div>
             </div>
         </div>
@@ -61,7 +61,7 @@
                 <div class="card-body text-center py-3">
                     <i class="fas fa-star fa-2x mb-2 opacity-50"></i>
                     <h4 class="fw-bold mb-1">{{ status_counts.shortlisted }}</h4>
-                    <small>{% trans "Saralangan" %}</small>
+                    <small>{% trans "Shortlisted" %}</small>
                 </div>
             </div>
         </div>
@@ -70,7 +70,7 @@
                 <div class="card-body text-center py-3">
                     <i class="fas fa-comments fa-2x mb-2 opacity-50"></i>
                     <h4 class="fw-bold mb-1">{{ status_counts.interview }}</h4>
-                    <small>{% trans "Intervyu" %}</small>
+                    <small>{% trans "Interview" %}</small>
                 </div>
             </div>
         </div>
@@ -79,42 +79,42 @@
                 <div class="card-body text-center py-3">
                     <i class="fas fa-check-circle fa-2x mb-2 opacity-50"></i>
                     <h4 class="fw-bold mb-1">{{ status_counts.hired }}</h4>
-                    <small>{% trans "Qabul qilingan" %}</small>
+                    <small>{% trans "Hired" %}</small>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Фильтры -->
+    <!-- Filters -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
                     <div class="row align-items-center">
                         <div class="col-md-8">
-                            <h6 class="mb-2">{% trans "Arizalarni filtrlash" %}</h6>
+                            <h6 class="mb-2">{% trans "Filter Applications" %}</h6>
                             <div class="btn-group" role="group">
                                 <a href="{% url 'jobs:employer_applications' %}" 
                                    class="btn {% if not status_filter %}btn-primary{% else %}btn-outline-primary{% endif %}">
-                                    {% trans "Barchasi" %}
+                                    {% trans "All" %}
                                 </a>
                                 <a href="{% url 'jobs:employer_applications' %}?status=applied" 
                                    class="btn {% if status_filter == 'applied' %}btn-warning{% else %}btn-outline-warning{% endif %}">
-                                    {% trans "Yuborilgan" %}
+                                    {% trans "Applied" %}
                                 </a>
                                 <a href="{% url 'jobs:employer_applications' %}?status=reviewed" 
                                    class="btn {% if status_filter == 'reviewed' %}btn-info{% else %}btn-outline-info{% endif %}">
-                                    {% trans "Ko'rib chiqilmoqda" %}
+                                    {% trans "Under Review" %}
                                 </a>
                                 <a href="{% url 'jobs:employer_applications' %}?status=interview" 
                                    class="btn {% if status_filter == 'interview' %}btn-orange{% else %}btn-outline-orange{% endif %}">
-                                    {% trans "Intervyu" %}
+                                    {% trans "Interview" %}
                                 </a>
                             </div>
                         </div>
                         <div class="col-md-4 text-end">
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="{% trans 'Kanditat yoki vakansiya bo\'yicha qidirish...' %}" id="searchInput">
+                                <input type="text" class="form-control" placeholder="{% trans 'Search by candidate or vacancy...' %}" id="searchInput">
                                 <button class="btn btn-outline-secondary" type="button">
                                     <i class="fas fa-search"></i>
                                 </button>
@@ -126,7 +126,7 @@
         </div>
     </div>
 
-    <!-- Таблица заявок -->
+    <!-- Applications Table -->
     <div class="row">
         <div class="col-12">
             <div class="card border-0 shadow-sm">
@@ -136,13 +136,13 @@
                             <table class="table table-hover mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>{% trans "Kanditat" %}</th>
-                                        <th>{% trans "Vakansiya" %}</th>
+                                        <th>{% trans "Candidate" %}</th>
+                                        <th>{% trans "Vacancy" %}</th>
                                         <th>{% trans "Status" %}</th>
-                                        <th>{% trans "Kutilayotgan maosh" %}</th>
-                                        <th>{% trans "Ariza sanasi" %}</th>
+                                        <th>{% trans "Expected Salary" %}</th>
+                                        <th>{% trans "Application Date" %}</th>
                                         <th>{% trans "CV" %}</th>
-                                        <th>{% trans "Amallar" %}</th>
+                                        <th>{% trans "Actions" %}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -185,26 +185,26 @@
                                                     {{ application.get_status_display }}
                                                 </button>
                                                 <ul class="dropdown-menu">
-                                                    <li><a class="dropdown-item status-change" href="#" data-status="applied">{% trans "Yuborilgan" %}</a></li>
-                                                    <li><a class="dropdown-item status-change" href="#" data-status="reviewed">{% trans "Ko'rib chiqilmoqda" %}</a></li>
-                                                    <li><a class="dropdown-item status-change" href="#" data-status="shortlisted">{% trans "Saralangan" %}</a></li>
-                                                    <li><a class="dropdown-item status-change" href="#" data-status="interview">{% trans "Intervyu" %}</a></li>
+                                                    <li><a class="dropdown-item status-change" href="#" data-status="applied">{% trans "Applied" %}</a></li>
+                                                    <li><a class="dropdown-item status-change" href="#" data-status="reviewed">{% trans "Under Review" %}</a></li>
+                                                    <li><a class="dropdown-item status-change" href="#" data-status="shortlisted">{% trans "Shortlisted" %}</a></li>
+                                                    <li><a class="dropdown-item status-change" href="#" data-status="interview">{% trans "Interview" %}</a></li>
                                                     <li><hr class="dropdown-divider"></li>
-                                                    <li><a class="dropdown-item status-change text-success" href="#" data-status="hired">{% trans "Qabul qilish" %}</a></li>
-                                                    <li><a class="dropdown-item status-change text-danger" href="#" data-status="rejected">{% trans "Rad etish" %}</a></li>
+                                                    <li><a class="dropdown-item status-change text-success" href="#" data-status="hired">{% trans "Hire" %}</a></li>
+                                                    <li><a class="dropdown-item status-change text-danger" href="#" data-status="rejected">{% trans "Reject" %}</a></li>
                                                 </ul>
                                             </div>
                                             {% if application.is_read %}
-                                                <small class="text-success"><i class="fas fa-check-circle"></i> {% trans "O'qilgan" %}</small>
+                                                <small class="text-success"><i class="fas fa-check-circle"></i> {% trans "Read" %}</small>
                                             {% else %}
-                                                <small class="text-warning"><i class="fas fa-clock"></i> {% trans "Yangi" %}</small>
+                                                <small class="text-warning"><i class="fas fa-clock"></i> {% trans "New" %}</small>
                                             {% endif %}
                                         </td>
                                         <td>
                                             {% if application.expected_salary %}
                                                 <strong>{{ application.expected_salary }} {{ application.job.currency }}</strong>
                                             {% else %}
-                                                <span class="text-muted">{% trans "Ko'rsatilmagan" %}</span>
+                                                <span class="text-muted">{% trans "Not specified" %}</span>
                                             {% endif %}
                                         </td>
                                         <td>
@@ -215,25 +215,25 @@
                                         <td>
                                             {% if application.cv %}
                                                 <a href="{{ application.cv.get_absolute_url }}" class="btn btn-outline-primary btn-sm" target="_blank">
-                                                    <i class="fas fa-file-pdf"></i> {% trans "CV ni ko'rish" %}
+                                                    <i class="fas fa-file-pdf"></i> {% trans "View CV" %}
                                                 </a>
                                             {% else %}
-                                                <span class="text-muted">{% trans "CV yo'q" %}</span>
+                                                <span class="text-muted">{% trans "No CV" %}</span>
                                             {% endif %}
                                         </td>
                                         <td>
                                             <div class="btn-group btn-group-sm">
                                                 <button class="btn btn-outline-primary view-application" 
                                                         data-application-id="{{ application.id }}"
-                                                        title="{% trans 'Ariza tafsilotlari' %}">
+                                                        title="{% trans 'Application Details' %}">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
-                                                <a href="mailto:{{ application.candidate.email }}" class="btn btn-outline-info" title="{% trans 'Email yuborish' %}">
+                                                <a href="mailto:{{ application.candidate.email }}" class="btn btn-outline-info" title="{% trans 'Send Email' %}">
                                                     <i class="fas fa-envelope"></i>
                                                 </a>
                                                 <button class="btn btn-outline-success add-note" 
                                                         data-application-id="{{ application.id }}"
-                                                        title="{% trans 'Izoh qo\'shish' %}">
+                                                        title="{% trans 'Add Note' %}">
                                                     <i class="fas fa-sticky-note"></i>
                                                 </button>
                                             </div>
@@ -246,16 +246,16 @@
                     {% else %}
                         <div class="text-center py-5">
                             <i class="fas fa-users fa-4x text-muted mb-3"></i>
-                            <h5 class="text-muted">{% trans "Hozircha arizalar mavjud emas" %}</h5>
+                            <h5 class="text-muted">{% trans "No applications available yet" %}</h5>
                             <p class="text-muted mb-4">
                                 {% if status_filter %}
-                                    {% trans "Ushbu holatdagi arizalar topilmadi" %}
+                                    {% trans "No applications found with this status" %}
                                 {% else %}
-                                    {% trans "Hozircha hech qanday vakansiyangizga ariza kelmagan" %}
+                                    {% trans "No applications have been received for your vacancies yet" %}
                                 {% endif %}
                             </p>
                             <a href="{% url 'jobs:job_create' %}" class="btn btn-primary">
-                                <i class="fas fa-plus me-2"></i>{% trans "Yangi vakansiya yaratish" %}
+                                <i class="fas fa-plus me-2"></i>{% trans "Create New Vacancy" %}
                             </a>
                         </div>
                     {% endif %}
@@ -265,16 +265,16 @@
     </div>
 </div>
 
-<!-- Модальное окно для просмотра заявки -->
+<!-- Modal for Viewing Application -->
 <div class="modal fade" id="applicationModal" tabindex="-1" aria-labelledby="applicationModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="applicationModalLabel">{% trans "Ariza tafsilotlari" %}</h5>
+                <h5 class="modal-title" id="applicationModalLabel">{% trans "Application Details" %}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="applicationModalBody">
-                <!-- Контент будет загружен через AJAX -->
+                <!-- Content will be loaded via AJAX -->
             </div>
         </div>
     </div>
@@ -295,7 +295,7 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Поиск ариз
+    // Search applications
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
         searchInput.addEventListener('input', function() {
@@ -313,7 +313,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Изменение статуса аризы
+    // Change application status
     const statusButtons = document.querySelectorAll('.status-change');
     statusButtons.forEach(button => {
         button.addEventListener('click', function(e) {
@@ -321,7 +321,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const newStatus = this.getAttribute('data-status');
             const applicationId = this.closest('tr').querySelector('.view-application').getAttribute('data-application-id');
             
-            // Отправка AJAX запроса для изменения статуса
+            // Send AJAX request to change status
             fetch(`/jobs/applications/${applicationId}/update-status/`, {
                 method: 'POST',
                 headers: {
@@ -336,19 +336,19 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    location.reload(); // Перезагрузка страницы для обновления статуса
+                    location.reload(); // Reload page to update status
                 } else {
-                    alert('{% trans "Statusni o\'zgartirishda xatolik yuz berdi" %}');
+                    alert('{% trans "Error changing status" %}');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('{% trans "Statusni o\'zgartirishda xatolik yuz berdi" %}');
+                alert('{% trans "Error changing status" %}');
             });
         });
     });
 
-    // Просмотр деталей аризы
+    // View application details
     const viewButtons = document.querySelectorAll('.view-application');
     const applicationModal = new bootstrap.Modal(document.getElementById('applicationModal'));
     
@@ -356,7 +356,7 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', function() {
             const applicationId = this.getAttribute('data-application-id');
             
-            // Загрузка данных аризы через AJAX
+            // Load application data via AJAX
             fetch(`/jobs/applications/${applicationId}/detail/`)
             .then(response => response.text())
             .then(html => {
@@ -366,21 +366,21 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => {
                 console.error('Error:', error);
                 document.getElementById('applicationModalBody').innerHTML = 
-                    '<div class="alert alert-danger">{% trans "Ma\'lumotlarni yuklashda xatolik yuz berdi" %}</div>';
+                    '<div class="alert alert-danger">{% trans "Error loading information" %}</div>';
                 applicationModal.show();
             });
         });
     });
 
-    // Добавление заметки
+    // Add note
     const noteButtons = document.querySelectorAll('.add-note');
     noteButtons.forEach(button => {
         button.addEventListener('click', function() {
             const applicationId = this.getAttribute('data-application-id');
-            const note = prompt('{% trans "Izoh qo\'shish:" %}');
+            const note = prompt('{% trans "Add note:" %}');
             
             if (note) {
-                // Отправка AJAX запроса для добавления заметки
+                // Send AJAX request to add note
                 fetch(`/jobs/applications/${applicationId}/add-note/`, {
                     method: 'POST',
                     headers: {
@@ -395,14 +395,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert('{% trans "Izoh muvaffaqiyatli qo\'shildi" %}');
+                        alert('{% trans "Note added successfully" %}');
                     } else {
-                        alert('{% trans "Izoh qo\'shishda xatolik yuz berdi" %}');
+                        alert('{% trans "Error adding note" %}');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('{% trans "Izoh qo\'shishda xatolik yuz berdi" %}');
+                    alert('{% trans "Error adding note" %}');
                 });
             }
         });
