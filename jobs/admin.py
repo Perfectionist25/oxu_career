@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.contrib.admin import display
 from django.utils.translation import gettext_lazy as _
-from modeltranslation.admin import TranslationAdmin
+# ЗАКОММЕНТИРУЙТЕ эту строку - временно отключаем modeltranslation
+# from modeltranslation.admin import TranslationAdmin
 
 from .models import Job, Industry, JobApplication, SavedJob, JobAlert
 
@@ -13,8 +14,9 @@ class JobInline(admin.TabularInline):
     readonly_fields = ("created_at",)
 
 
+# ИЗМЕНИТЕ TranslationAdmin на admin.ModelAdmin
 @admin.register(Industry)
-class IndustryAdmin(TranslationAdmin):
+class IndustryAdmin(admin.ModelAdmin):  # ИЗМЕНИТЕ здесь
     list_display = ("name", "job_count")
     list_filter = ("name",)
     search_fields = ("name", "description")
@@ -35,8 +37,9 @@ class JobApplicationInline(admin.TabularInline):
     readonly_fields = ("created_at",)
 
 
+# ИЗМЕНИТЕ TranslationAdmin на admin.ModelAdmin
 @admin.register(Job)
-class JobAdmin(TranslationAdmin):
+class JobAdmin(admin.ModelAdmin):  # ИЗМЕНИТЕ здесь
     """Admin interface for Job model with optimized display and filters"""
 
     list_display = (
@@ -140,11 +143,9 @@ class JobAdmin(TranslationAdmin):
         )
 
 
-
-
-
+# ИЗМЕНИТЕ TranslationAdmin на admin.ModelAdmin
 @admin.register(JobApplication)
-class JobApplicationAdmin(TranslationAdmin):
+class JobApplicationAdmin(admin.ModelAdmin):  # ИЗМЕНИТЕ здесь
     list_display = ("candidate", "job_with_company", "status", "is_read", "created_at")
     list_filter = ("status", "is_read", "created_at")
     search_fields = (
@@ -193,7 +194,6 @@ class JobApplicationAdmin(TranslationAdmin):
             _("%(count)d applications marked as interview") % {"count": updated},
         )
 
-
     @display(description=_("Mark as rejected"))
     def mark_as_rejected(self, request, queryset):
         updated = queryset.update(status="rejected")
@@ -219,7 +219,6 @@ class SavedJobAdmin(admin.ModelAdmin):
     @display(description=_("Job"))
     def job_with_company(self, obj):
         return f"{obj.job.title} - {obj.job.employer.company_name}"
-
 
 
 @admin.register(JobAlert)

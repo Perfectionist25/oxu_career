@@ -226,7 +226,8 @@
                                 </div>
                             </a>
                         </li>
-                        <li class="menu-section">
+                        {% comment %}
+                        <!-- <li class="menu-section">
                             <a class="dropdown-item" href="{% url 'accounts:admin_login' %}">
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-user-shield text-warning me-2"></i>
@@ -236,7 +237,8 @@
                                     </div>
                                 </div>
                             </a>
-                        </li>
+                        </li> -->
+                        {% endcomment %}
                     </ul>
                 </div>
             {% endif %}
@@ -291,7 +293,8 @@
     font-weight: 500;
     padding: 0.5rem 1rem;
     border-radius: 0.375rem;
-    transition: all 0.3s ease;
+    transition: all 0.1ms;
+    text-align: center;
 }
 
 .nav-link:hover {

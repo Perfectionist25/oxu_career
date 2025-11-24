@@ -11,7 +11,7 @@ urlpatterns = [
     path("hemis-login/", views.hemis_login, name="hemis_login"),
     path("hemis-callback/", views.hemis_callback, name="hemis_callback"),
     path("employer-login/", views.employer_login, name="employer_login"),
-    path("admin-login/", views.admin_login, name="admin_login"),
+    # path("admin-login/", views.admin_login, name="admin_login"),
     path("logout/", views.logout_view, name="logout"),
 
     # Временные URL для тестирования
