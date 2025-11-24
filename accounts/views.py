@@ -477,16 +477,22 @@ def profile_view(request, user_id=None):
         user = request.user
         is_own_profile = True
 
-    # Увеличиваем счетчик просмотров если смотрим чужой профиль
+    # Увеличиваем счетчик просмотров если смотрим чужой профиль (только один раз за сессию)
     if user != request.user:
-        user.profile_views = getattr(user, "profile_views", 0) + 1
-        user.save()
+        session_key = f"profile_viewed_{user.id}"
+        if not request.session.get(session_key):
+            user.profile_views = getattr(user, "profile_views", 0) + 1
+            user.save(update_fields=["profile_views"])
+            
+            # Устанавливаем флаг в сессии на 24 часа
+            request.session[session_key] = True
+            request.session.set_expiry(86400)  # 24 часа
 
-        create_user_activity(
-            user=request.user,
-            activity_type="profile_view",
-            description=f"{user.username} profilini ko'rdi",
-        )
+            create_user_activity(
+                user=request.user,
+                activity_type="profile_view",
+                description=f"{user.username} profilini ko'rdi",
+            )
 
     # Получаем соответствующий профиль
     profile: Optional[Union[StudentProfile, EmployerProfile, AdminProfile]] = None

@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
@@ -10,9 +10,21 @@ from django.views.generic import ListView
 from .forms import *
 from .models import *
 
+# Декоратор для проверки, что пользователь админ или суперадмин
+def admin_required(function=None):
+    actual_decorator = user_passes_test(
+        lambda u: u.is_active and (u.is_staff or u.is_superuser),
+        login_url='/accounts/login/',
+        redirect_field_name=None
+    )
+    if function:
+        return actual_decorator(function)
+    return actual_decorator
+
 @login_required
+@admin_required
 def unpublished_events(request):
-    """Список неопубликованных мероприятий для редакции"""
+    """Список неопубликованных мероприятий для редакции - только админы"""
     events = Event.objects.filter(status="draft").select_related("category", "organizer")
 
     # Пагинация
@@ -28,8 +40,9 @@ def unpublished_events(request):
 
 
 @login_required
+@admin_required
 def publish_event(request, pk):
-    """Публикация мероприятия"""
+    """Публикация мероприятия - только админы"""
     event = get_object_or_404(Event, pk=pk)
 
     if request.method == "POST":
@@ -43,8 +56,9 @@ def publish_event(request, pk):
 
 
 @login_required
+@admin_required
 def unpublish_event(request, pk):
-    """Снятие мероприятия с публикации"""
+    """Снятие мероприятия с публикации - только админы"""
     event = get_object_or_404(Event, pk=pk)
 
     if request.method == "POST":
@@ -58,7 +72,7 @@ def unpublish_event(request, pk):
 
 
 def event_list(request):
-    """Список мероприятий"""
+    """Список мероприятий - доступно всем"""
     events = Event.objects.filter(status="published").select_related("category", "organizer")
 
     # Фильтры
@@ -101,7 +115,7 @@ def event_list(request):
 
 
 class EventCalendarView(ListView):
-    """Календарь мероприятий"""
+    """Календарь мероприятий - доступно всем"""
     model = Event
     template_name = "events/calendar.html"
     context_object_name = "events"
@@ -111,7 +125,7 @@ class EventCalendarView(ListView):
 
 
 def event_categories(request):
-    """Категории мероприятий"""
+    """Категории мероприятий - доступно всем"""
     categories = EventCategory.objects.all()
     context = {
         "categories": categories,
@@ -120,7 +134,7 @@ def event_categories(request):
 
 
 def event_detail(request, slug):
-    """Детальная страница мероприятия"""
+    """Детальная страница мероприятия - доступно всем"""
     event = get_object_or_404(
         Event.objects.select_related("category", "organizer").prefetch_related(
             "speakers", "sessions", "photos", "comments__user", "ratings"
@@ -128,9 +142,14 @@ def event_detail(request, slug):
         slug=slug, status="published"
     )
 
-    # Увеличение счетчика просмотров
-    event.views_count += 1
-    event.save(update_fields=["views_count"])
+    # Увеличение счетчика просмотров только один раз за сессию (24 часа)
+    session_key = f"event_viewed_{event.id}"
+    if not request.session.get(session_key):
+        event.views_count += 1
+        event.save(update_fields=["views_count"])
+        request.session[session_key] = True
+        # Установить время жизни сессии на 24 часа
+        request.session.set_expiry(86400)  # 24 часа в секундах
 
     # Проверка регистрации пользователя
     user_registration = None
@@ -155,14 +174,14 @@ def event_detail(request, slug):
         "total_ratings": event.ratings.count(),
         "registered_count": registered_count,
         "registered_registrations": registered_registrations,
-        "is_admin": request.user.is_staff,
+        "is_admin": request.user.is_staff or request.user.is_superuser,
     }
     return render(request, "events/detail.html", context)
 
 
 @login_required
 def register_for_event(request, slug):
-    """Регистрация на мероприятие"""
+    """Регистрация на мероприятие - доступно авторизованным пользователям"""
     event = get_object_or_404(Event, slug=slug, status="published")
 
     if not event.is_registration_open():
@@ -200,7 +219,7 @@ def register_for_event(request, slug):
 
 @login_required
 def cancel_registration(request, slug):
-    """Отмена регистрации на мероприятие"""
+    """Отмена регистрации на мероприятие - доступно авторизованным пользователям"""
     event = get_object_or_404(Event, slug=slug)
     registration = get_object_or_404(EventRegistration, event=event, user=request.user)
 
@@ -219,7 +238,7 @@ def cancel_registration(request, slug):
 
 @login_required
 def my_events(request):
-    """Мои мероприятия"""
+    """Мои мероприятия - доступно авторизованным пользователям"""
     registrations = EventRegistration.objects.filter(
         user=request.user
     ).select_related("event__category", "event__organizer").order_by("-registration_date")
@@ -242,8 +261,9 @@ def my_events(request):
 
 
 @login_required
+@admin_required
 def create_event(request):
-    """Создание мероприятия"""
+    """Создание мероприятия - только админы"""
     if request.method == "POST":
         form = EventForm(request.POST, request.FILES)
         if form.is_valid():
@@ -251,7 +271,7 @@ def create_event(request):
             event.organizer = request.user
             event.save()
             messages.success(request, _("Event created successfully!"))
-            return redirect("events:manage_events")
+            return redirect("events:admin_event_list")  # Перенаправляем в админ-список
     else:
         form = EventForm()
 
@@ -262,9 +282,11 @@ def create_event(request):
 
 
 @login_required
+@admin_required
 def manage_events(request):
-    """Управление моими мероприятиями"""
-    events = Event.objects.filter(organizer=request.user).select_related("category")
+    """Управление мероприятиями - только админы"""
+    # Показываем все мероприятия для админов
+    events = Event.objects.all().select_related("category", "organizer")
 
     # Фильтры
     status_filter = request.GET.get("status")
@@ -284,9 +306,10 @@ def manage_events(request):
 
 
 @login_required
+@admin_required
 def event_registrations(request, slug):
-    """Список регистраций на мероприятие"""
-    event = get_object_or_404(Event, slug=slug, organizer=request.user)
+    """Список регистраций на мероприятие - только админы"""
+    event = get_object_or_404(Event, slug=slug)
     registrations = event.registrations.select_related("user").order_by("-registration_date")
 
     # Фильтры
@@ -308,12 +331,9 @@ def event_registrations(request, slug):
 
 
 @login_required
+@admin_required
 def admin_event_list(request):
-    """Админ: список всех мероприятий"""
-    if not request.user.is_staff:
-        messages.error(request, _("Access denied."))
-        return redirect("events:event_list")
-
+    """Админ: список всех мероприятий - только админы"""
     events = Event.objects.all().select_related("category", "organizer")
 
     # Фильтры
@@ -361,12 +381,9 @@ def admin_event_list(request):
 
 
 @login_required
+@admin_required
 def admin_event_create(request):
-    """Админ: создание мероприятия"""
-    if not request.user.is_staff:
-        messages.error(request, _("Access denied."))
-        return redirect("events:event_list")
-
+    """Админ: создание мероприятия - только админы"""
     if request.method == "POST":
         form = EventForm(request.POST, request.FILES)
         if form.is_valid():
@@ -384,12 +401,9 @@ def admin_event_create(request):
 
 
 @login_required
+@admin_required
 def admin_event_edit(request, pk):
-    """Админ: редактирование мероприятия"""
-    if not request.user.is_staff:
-        messages.error(request, _("Access denied."))
-        return redirect("events:event_list")
-
+    """Админ: редактирование мероприятия - только админы"""
     event = get_object_or_404(Event, pk=pk)
 
     if request.method == "POST":
@@ -410,12 +424,9 @@ def admin_event_edit(request, pk):
 
 
 @login_required
+@admin_required
 def admin_event_delete(request, pk):
-    """Админ: удаление мероприятия"""
-    if not request.user.is_staff:
-        messages.error(request, _("Access denied."))
-        return redirect("events:event_list")
-
+    """Админ: удаление мероприятия - только админы"""
     event = get_object_or_404(Event, pk=pk)
 
     if request.method == "POST":
@@ -431,7 +442,7 @@ def admin_event_delete(request, pk):
 
 @login_required
 def add_event_comment(request, slug):
-    """Добавление комментария к мероприятию"""
+    """Добавление комментария к мероприятию - доступно авторизованным пользователям"""
     event = get_object_or_404(Event, slug=slug, status="published")
 
     if not event.allow_comments:
@@ -452,7 +463,7 @@ def add_event_comment(request, slug):
 
 @login_required
 def submit_event_rating(request, slug):
-    """Отправка оценки мероприятия"""
+    """Отправка оценки мероприятия - доступно авторизованным пользователям"""
     event = get_object_or_404(Event, slug=slug, status="published")
 
     if request.method == "POST":

@@ -14,7 +14,6 @@ from typing import Any, Iterable, cast
 from .forms import *
 from .models import *
 
-
 @login_required
 def employer_applications(request):
     """Ish beruvchilar uchun arizalarni ko'rish"""
@@ -66,7 +65,6 @@ def employer_applications(request):
 
     return render(request, "jobs/applications.html", context)
 
-
 @login_required
 def job_create(request):
     """Yangi vakansiya yaratish"""
@@ -107,7 +105,6 @@ def job_create(request):
         "today": timezone.now().date(),
     }
     return render(request, "jobs/job_form.html", context)
-
 
 @login_required
 def job_edit(request, pk):
@@ -150,7 +147,6 @@ def job_edit(request, pk):
     }
     return render(request, "jobs/job_form.html", context)
 
-
 @login_required
 def job_delete(request, pk):
     """Vakansiyani o'chirish"""
@@ -178,7 +174,6 @@ def job_delete(request, pk):
         "job": job,
     }
     return render(request, "jobs/job_confirm_delete.html", context)
-
 
 @login_required
 def my_jobs(request):
@@ -255,7 +250,6 @@ def my_jobs(request):
 
     return render(request, "jobs/my_jobs.html", context)
 
-
 @login_required
 def saved_jobs(request):
     """Saqlangan vakansiyalar"""
@@ -281,17 +275,32 @@ def saved_jobs(request):
 
     return render(request, "jobs/saved_jobs.html", context)
 
-
 @login_required
 def job_list(request):
     """Vakansiyalar ro'yxati"""
     form = JobSearchForm(request.GET or None)
     
-    if request.user.is_staff:
+    # Права доступа в зависимости от типа пользователя
+    if request.user.is_staff or request.user.is_superuser:
+        # Админы и суперадмины видят все вакансии
         jobs = Job.objects.all()
-    else:
+    elif request.user.is_employer:
+        # Работодатели видят только свои вакансии в любом состоянии
+        try:
+            employer_profile = request.user.employer_profile
+            jobs = Job.objects.filter(employer=employer_profile)
+        except EmployerProfile.DoesNotExist:
+            jobs = Job.objects.none()
+            messages.error(request, _("Iltimos, avval ish beruvchi profilingizni to'ldiring."))
+    elif request.user.is_student or request.user.is_alumni:
+        # Студенты и выпускники видят только опубликованные вакансии
         jobs = Job.objects.filter(is_active=True)
+    else:
+        # Гости и другие типы пользователей не имеют доступа
+        messages.error(request, _("Sizda vakansiyalarni ko'rish huquqi yo'q."))
+        return redirect("accounts:home")
 
+    # Поиск и фильтрация
     if form.is_valid():
         query = form.cleaned_data.get("query")
         employment_type = form.cleaned_data.get("employment_type")
@@ -322,21 +331,29 @@ def job_list(request):
                 | Q(salary_max__gte=salary_min)
             )
 
-    # Saralash
+    # Сортировка
     sort = request.GET.get("sort", "newest")
     if sort == "salary":
         jobs = jobs.order_by("-salary_max", "-salary_min")
+    elif sort == "views":
+        jobs = jobs.order_by("-views_count")
+    elif sort == "applications":
+        jobs = jobs.order_by("-applications_count")
     else:
         jobs = jobs.order_by("-created_at")
 
-    # Paginatsiya
+    # Пагинация
     paginator = Paginator(jobs, 15)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
-    # Statistikalar
+    # Статистика
     total_jobs = jobs.count()
-    featured_jobs = jobs.filter(is_featured=True)[:5]
+    
+    # Для студентов и выпускников показываем рекомендуемые вакансии
+    featured_jobs = []
+    if request.user.is_student or request.user.is_alumni:
+        featured_jobs = jobs.filter(is_featured=True)[:5]
 
     context = {
         "page_obj": page_obj,
@@ -344,22 +361,41 @@ def job_list(request):
         "jobs": jobs,
         "total_jobs": total_jobs,
         "featured_jobs": featured_jobs,
+        "is_admin": request.user.is_staff or request.user.is_superuser,
+        "is_employer": request.user.is_employer,
+        "is_student": request.user.is_student,
+        "is_alumni": request.user.is_alumni,
     }
     return render(request, "jobs/job_list.html", context)
 
-
+@login_required
 def job_detail(request, pk):
     """Vakansiya batafsil sahifasi"""
-    if request.user.is_authenticated and request.user.is_staff:
-        job = get_object_or_404(Job, pk=pk)  # Adminlar barcha vakansiyalarni ko'rishi mumkin
+    # Получаем вакансию с проверкой прав доступа
+    if request.user.is_staff or request.user.is_superuser:
+        # Админы видят все вакансии
+        job = get_object_or_404(Job, pk=pk)
+    elif request.user.is_employer:
+        # Работодатели видят только свои вакансии
+        try:
+            employer_profile = request.user.employer_profile
+            job = get_object_or_404(Job, pk=pk, employer=employer_profile)
+        except EmployerProfile.DoesNotExist:
+            messages.error(request, _("Iltimos, avval ish beruvchi profilingizni to'ldiring."))
+            return redirect("accounts:employer_profile_update")
+    elif request.user.is_student or request.user.is_alumni:
+        # Студенты и выпускники видят только активные вакансии
+        job = get_object_or_404(Job, pk=pk, is_active=True)
     else:
-        job = get_object_or_404(Job, pk=pk, is_active=True)  # Oddiy foydalanuvchilar faqat faol vakansiyalarni
+        # Гости не имеют доступа
+        messages.error(request, _("Sizda bu vakansiyani ko'rish huquqi yo'q."))
+        return redirect("accounts:login")
 
-    # Ko'rishlar sonini oshiramiz
+    # Увеличиваем счетчик просмотров
     job.views_count += 1
     job.save()
 
-    # Foydalanuvchi ariza topshirganligini tekshiramiz
+    # Проверяем, подавал ли пользователь заявку
     has_applied = False
     application = None
     if request.user.is_authenticated:
@@ -369,18 +405,23 @@ def job_detail(request, pk):
         except JobApplication.DoesNotExist:
             pass
 
-    # Vakansiya saqlanganligini tekshiramiz
+    # Проверяем, сохранена ли вакансия
     is_saved = False
     if request.user.is_authenticated:
         is_saved = SavedJob.objects.filter(job=job, user=request.user).exists()
 
-    # Ariza formasi
-    application_form = JobApplicationForm()
+    # Форма заявки (только для студентов и выпускников)
+    application_form = None
+    if request.user.is_student or request.user.is_employer:
+        application_form = JobApplicationForm()
 
-    # O'xshash vakansiyalar
-    similar_jobs = Job.objects.filter(
-        is_active=True, experience_level=job.experience_level
-    ).exclude(pk=job.pk)[:4]
+    # Похожие вакансии (только для опубликованных)
+    similar_jobs = []
+    if job.is_active:
+        similar_jobs = Job.objects.filter(
+            is_active=True, 
+            experience_level=job.experience_level
+        ).exclude(pk=job.pk)[:4]
 
     context = {
         "job": job,
@@ -389,9 +430,13 @@ def job_detail(request, pk):
         "is_saved": is_saved,
         "application_form": application_form,
         "similar_jobs": similar_jobs,
+        "can_edit": (
+            request.user.is_staff or 
+            request.user.is_superuser or 
+            (request.user.is_employer and hasattr(request.user, 'employer_profile') and job.employer == request.user.employer_profile)
+        ),
     }
     return render(request, "jobs/job_detail.html", context)
-
 
 @require_POST
 def increment_job_views(request, pk):
@@ -401,31 +446,35 @@ def increment_job_views(request, pk):
     job.save()
     return JsonResponse({"success": True, "views_count": job.views_count})
 
-
 @login_required
 def apply_for_job(request, pk):
     """Vakansiyaga ariza topshirish"""
+    # Проверяем, может ли пользователь подавать заявки
+    if not (request.user.is_student or request.user.is_alumni):
+        messages.error(request, _("Faqat talabalar va bitiruvchilar ariza topshira oladi."))
+        return redirect("jobs:job_list")
+
     job = get_object_or_404(Job, pk=pk, is_active=True)
 
-    # Oldin ariza topshirilganligini tekshiramiz
+    # Проверяем, не подавал ли уже заявку
     if JobApplication.objects.filter(job=job, candidate=request.user).exists():
         messages.warning(request, _("Siz ushbu vakansiyaga allaqachon ariza topshirgansiz."))
         return redirect("jobs:job_detail", pk=job.pk)
 
-    # Vakansiya muddati tugaganligini tekshiramiz
+    # Проверяем, не истек ли срок вакансии
     if job.is_expired():
         messages.error(request, _("Ushbu vakansiyaning muddati tugagan."))
         return redirect("jobs:job_detail", pk=job.pk)
 
     if request.method == "POST":
-        form = JobApplicationForm(request.POST)
+        form = JobApplicationForm(request.POST, user=request.user)
         if form.is_valid():
             application = form.save(commit=False)
             application.job = job
             application.candidate = request.user
             application.save()
 
-            # Ariza sonini oshiramiz
+            # Увеличиваем счетчик заявок
             job.applications_count += 1
             job.save()
 
@@ -434,14 +483,13 @@ def apply_for_job(request, pk):
             )
             return redirect("jobs:job_detail", pk=job.pk)
     else:
-        form = JobApplicationForm()
+        form = JobApplicationForm(user=request.user)
 
     context = {
         "job": job,
         "form": form,
     }
     return render(request, "jobs/apply_for_job.html", context)
-
 
 @login_required
 def save_job(request, pk):
@@ -458,7 +506,6 @@ def save_job(request, pk):
 
     return redirect("jobs:job_detail", pk=job.pk)
 
-
 @login_required
 def unsave_job(request, pk):
     """Vakansiyani saqlanganlardan o'chirish"""
@@ -469,7 +516,6 @@ def unsave_job(request, pk):
         messages.success(request, _("Vakansiya saqlanganlardan o'chirildi."))
 
     return redirect("jobs:job_detail", pk=job.pk)
-
 
 @login_required
 def my_applications(request):
@@ -494,9 +540,6 @@ def my_applications(request):
         "stats": stats,
     }
     return render(request, "jobs/my_applications.html", context)
-
-
-
 
 # AJAX viewlar
 @login_required
@@ -523,7 +566,6 @@ def update_application_status(request, pk):
 
     return JsonResponse({"success": False})
 
-
 @login_required
 def get_user_cvs(request):
     """Foydalanuvchi rezyumelarini olish (AJAX)"""
@@ -542,7 +584,7 @@ def get_user_cvs(request):
 
     return JsonResponse({"cvs": cv_list})
 
-
+@login_required
 def industries_list(request):
     """Tarmoqlar ro'yxati"""
     industries = Industry.objects.all().order_by("name")
@@ -551,7 +593,6 @@ def industries_list(request):
         "industries": industries,
     }
     return render(request, "jobs/industries_list.html", context)
-
 
 @login_required
 def application_detail(request, pk):
@@ -569,7 +610,6 @@ def application_detail(request, pk):
         "application": application,
     }
     return render(request, "jobs/application_detail.html", context)
-
 
 @login_required
 @require_POST
