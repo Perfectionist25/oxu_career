@@ -5,6 +5,7 @@ from django.urls import include, path
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("explorer/", include("explorer.urls")),
     # Django i18n endpoints (set language)
     path("i18n/", include("django.conf.urls.i18n")),
     path("", include(("core.urls", "core"), namespace="core")),
