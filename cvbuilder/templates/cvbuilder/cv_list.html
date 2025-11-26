@@ -46,7 +46,7 @@
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link" id="draft-tab" data-bs-toggle="tab" data-bs-target="#draft" type="button" role="tab">
                                         <i class="fas fa-edit me-1"></i>Draft 
-                                        <span class="badge bg-warning ms-1">{{ draft_count }}</span>
+                                        <span class="badge bg-warning text-dark ms-1">{{ draft_count }}</span>
                                     </button>
                                 </li>
                                 <li class="nav-item" role="presentation">
@@ -77,7 +77,7 @@
         <div class="col-md-4 mb-2">
             <div class="input-group input-group-sm">
                 <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-muted"></i></span>
-                <input type="text" class="form-control border-start-0" id="searchInput" placeholder="Search resumes...">
+                <input type="text" class="form-control" id="searchInput" placeholder="Search resumes...">
             </div>
         </div>
         <div class="col-md-3 mb-2">
@@ -133,19 +133,19 @@
                                                 </div>
                                             </div>
                                             <div class="flex-grow-1 ms-3">
-                                                <h6 class="mb-0 cv-name">{{ cv.full_name|default:"Name not specified" }}</h6>
+                                                <h6 class="mb-0 cv-name text-dark">{{ cv.full_name|default:"Name not specified" }}</h6>
                                                 <small class="text-muted">{{ cv.title|default:"Title not specified" }}</small>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="small">
-                                            <div><i class="fas fa-envelope text-muted me-1"></i> {{ cv.email|default:"-" }}</div>
-                                            <div><i class="fas fa-phone text-muted me-1"></i> {{ cv.phone|default:"-" }}</div>
+                                            <div class="text-dark"><i class="fas fa-envelope text-muted me-1"></i> {{ cv.email|default:"-" }}</div>
+                                            <div class="text-dark"><i class="fas fa-phone text-muted me-1"></i> {{ cv.phone|default:"-" }}</div>
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="badge bg-light text-dark">{{ cv.template.name }}</span>
+                                        <span class="badge bg-light text-dark border">{{ cv.template.name }}</span>
                                     </td>
                                     <td>
                                         <span class="badge status-{{ cv.status }}">
@@ -159,7 +159,7 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <small class="text-muted cv-date" data-date="{{ cv.created_at|date:'c' }}">
+                                        <small class="text-dark cv-date" data-date="{{ cv.created_at|date:'c' }}">
                                             {{ cv.created_at|date:"d.m.Y" }}
                                         </small>
                                     </td>
@@ -170,24 +170,24 @@
                                             </button>
                                             <ul class="dropdown-menu dropdown-menu-end">
                                                 <li>
-                                                    <a class="dropdown-item" href="{% url 'cvbuilder:cv_detail' cv.id %}">
+                                                    <a class="dropdown-item text-dark" href="{% url 'cvbuilder:cv_detail' cv.id %}">
                                                         <i class="fas fa-eye me-2"></i>View
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a class="dropdown-item" href="{% url 'cvbuilder:cv_edit' cv.id %}">
+                                                    <a class="dropdown-item text-dark" href="{% url 'cvbuilder:cv_edit' cv.id %}">
                                                         <i class="fas fa-edit me-2"></i>Edit
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <button class="dropdown-item status-change-btn" 
+                                                    <button class="dropdown-item text-dark status-change-btn" 
                                                             data-cv-id="{{ cv.id }}" 
                                                             data-current-status="{{ cv.status }}">
                                                         <i class="fas fa-exchange-alt me-2"></i>Change Status
                                                     </button>
                                                 </li>
                                                 <li>
-                                                    <a class="dropdown-item" href="{% url 'cvbuilder:cv_duplicate' cv.id %}">
+                                                    <a class="dropdown-item text-dark" href="{% url 'cvbuilder:cv_duplicate' cv.id %}">
                                                         <i class="fas fa-copy me-2"></i>Duplicate
                                                     </a>
                                                 </li>
@@ -244,22 +244,22 @@
                                                 </div>
                                             </div>
                                             <div class="flex-grow-1 ms-3">
-                                                <h6 class="mb-0 cv-name">{{ cv.full_name|default:"Name not specified" }}</h6>
+                                                <h6 class="mb-0 cv-name text-dark">{{ cv.full_name|default:"Name not specified" }}</h6>
                                                 <small class="text-muted">{{ cv.title|default:"Title not specified" }}</small>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="small">
-                                            <div><i class="fas fa-envelope text-muted me-1"></i> {{ cv.email|default:"-" }}</div>
-                                            <div><i class="fas fa-phone text-muted me-1"></i> {{ cv.phone|default:"-" }}</div>
+                                            <div class="text-dark"><i class="fas fa-envelope text-muted me-1"></i> {{ cv.email|default:"-" }}</div>
+                                            <div class="text-dark"><i class="fas fa-phone text-muted me-1"></i> {{ cv.phone|default:"-" }}</div>
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="badge bg-light text-dark">{{ cv.template.name }}</span>
+                                        <span class="badge bg-light text-dark border">{{ cv.template.name }}</span>
                                     </td>
                                     <td>
-                                        <small class="text-muted cv-date" data-date="{{ cv.created_at|date:'c' }}">
+                                        <small class="text-dark cv-date" data-date="{{ cv.created_at|date:'c' }}">
                                             {{ cv.created_at|date:"d.m.Y" }}
                                         </small>
                                     </td>
@@ -322,22 +322,22 @@
                                                 </div>
                                             </div>
                                             <div class="flex-grow-1 ms-3">
-                                                <h6 class="mb-0 cv-name">{{ cv.full_name|default:"Name not specified" }}</h6>
+                                                <h6 class="mb-0 cv-name text-dark">{{ cv.full_name|default:"Name not specified" }}</h6>
                                                 <small class="text-muted">{{ cv.title|default:"Title not specified" }}</small>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="small">
-                                            <div><i class="fas fa-envelope text-muted me-1"></i> {{ cv.email|default:"-" }}</div>
-                                            <div><i class="fas fa-phone text-muted me-1"></i> {{ cv.phone|default:"-" }}</div>
+                                            <div class="text-dark"><i class="fas fa-envelope text-muted me-1"></i> {{ cv.email|default:"-" }}</div>
+                                            <div class="text-dark"><i class="fas fa-phone text-muted me-1"></i> {{ cv.phone|default:"-" }}</div>
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="badge bg-light text-dark">{{ cv.template.name }}</span>
+                                        <span class="badge bg-light text-dark border">{{ cv.template.name }}</span>
                                     </td>
                                     <td>
-                                        <small class="text-muted cv-date" data-date="{{ cv.created_at|date:'c' }}">
+                                        <small class="text-dark cv-date" data-date="{{ cv.created_at|date:'c' }}">
                                             {{ cv.created_at|date:"d.m.Y" }}
                                         </small>
                                     </td>
@@ -399,22 +399,22 @@
                                                 </div>
                                             </div>
                                             <div class="flex-grow-1 ms-3">
-                                                <h6 class="mb-0 cv-name">{{ cv.full_name|default:"Name not specified" }}</h6>
+                                                <h6 class="mb-0 cv-name text-dark">{{ cv.full_name|default:"Name not specified" }}</h6>
                                                 <small class="text-muted">{{ cv.title|default:"Title not specified" }}</small>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="small">
-                                            <div><i class="fas fa-envelope text-muted me-1"></i> {{ cv.email|default:"-" }}</div>
-                                            <div><i class="fas fa-phone text-muted me-1"></i> {{ cv.phone|default:"-" }}</div>
+                                            <div class="text-dark"><i class="fas fa-envelope text-muted me-1"></i> {{ cv.email|default:"-" }}</div>
+                                            <div class="text-dark"><i class="fas fa-phone text-muted me-1"></i> {{ cv.phone|default:"-" }}</div>
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="badge bg-light text-dark">{{ cv.template.name }}</span>
+                                        <span class="badge bg-light text-dark border">{{ cv.template.name }}</span>
                                     </td>
                                     <td>
-                                        <small class="text-muted cv-date" data-date="{{ cv.created_at|date:'c' }}">
+                                        <small class="text-dark cv-date" data-date="{{ cv.created_at|date:'c' }}">
                                             {{ cv.created_at|date:"d.m.Y" }}
                                         </small>
                                     </td>
@@ -489,7 +489,7 @@
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header">
-                <h6 class="modal-title">Change Resume Status</h6>
+                <h6 class="modal-title text-dark">Change Resume Status</h6>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -497,7 +497,7 @@
                     {% csrf_token %}
                     <input type="hidden" name="cv_id" id="cvId">
                     <div class="mb-3">
-                        <label class="form-label small fw-bold">Select Status</label>
+                        <label class="form-label small fw-bold text-dark">Select Status</label>
                         <select class="form-select form-select-sm" name="status" id="statusSelect">
                             <option value="draft">Draft - Only you can see</option>
                             <option value="published">Published - Visible to employers and admins</option>
@@ -518,23 +518,33 @@
 .nav-pills .nav-link {
     font-size: 0.875rem;
     padding: 0.5rem 1rem;
+    color: #6c757d;
 }
 
 .nav-pills .nav-link.active {
     background-color: #012152;
     border-color: #012152;
+    color: white;
+}
+
+.nav-pills .nav-link:not(.active):hover {
+    color: #012152;
+    background-color: #f8f9fa;
 }
 
 .table th {
     font-size: 0.875rem;
     font-weight: 600;
     border-bottom: 2px solid #dee2e6;
+    color: #374151;
+    background-color: #f8f9fa;
 }
 
 .table td {
     font-size: 0.875rem;
     vertical-align: middle;
     padding: 0.75rem;
+    color: #374151;
 }
 
 .resume-item {
@@ -550,18 +560,21 @@
     background-color: #d1fae5; 
     color: #065f46; 
     border: 1px solid #a7f3d0;
+    font-weight: 500;
 }
 
 .status-draft { 
     background-color: #fef3c7; 
     color: #92400e; 
     border: 1px solid #fcd34d;
+    font-weight: 500;
 }
 
 .status-archived { 
     background-color: #f3f4f6; 
     color: #374151; 
     border: 1px solid #d1d5db;
+    font-weight: 500;
 }
 
 .btn-group-sm > .btn {
@@ -571,11 +584,61 @@
 .card {
     border: 1px solid #e3e6f0;
     border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .input-group-text {
     background-color: #f8f9fa;
     border-color: #d1d7dc;
+}
+
+.badge.bg-light {
+    border: 1px solid #dee2e6;
+}
+
+.badge.bg-warning {
+    color: #000 !important;
+}
+
+.dropdown-menu {
+    border: 1px solid #e3e6f0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.dropdown-item {
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
+.modal-header {
+    border-bottom: 1px solid #e3e6f0;
+}
+
+.modal-footer {
+    border-top: 1px solid #e3e6f0;
+}
+
+.text-dark {
+    color: #374151 !important;
+}
+
+/* Ensure good contrast for all text */
+.cv-name, .small div, .cv-date {
+    color: #374151 !important;
+}
+
+/* Fix for empty states */
+.text-muted {
+    color: #6c757d !important;
+}
+
+/* Fix search input border */
+.input-group .form-control {
+    border-left: 1px solid #d1d7dc;
 }
 </style>
 
@@ -598,7 +661,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         resumes.forEach(item => {
             const cvName = item.querySelector('.cv-name').textContent.toLowerCase();
-            const cvEmail = item.querySelector('.td:nth-child(2)').textContent.toLowerCase();
+            const cvEmail = item.querySelector('td:nth-child(2)').textContent.toLowerCase();
             const cvTemplate = item.getAttribute('data-template');
             const matchesSearch = cvName.includes(searchTerm) || cvEmail.includes(searchTerm);
             const matchesTemplate = !templateValue || cvTemplate === templateValue;
@@ -612,8 +675,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         // Update text
-        document.getElementById('resumeCountText').textContent = 
-            `Found: ${visibleCount} resumes`;
+        const countText = document.getElementById('resumeCountText');
+        if (visibleCount === 0) {
+            countText.textContent = 'No resumes found';
+            countText.className = 'text-danger';
+        } else {
+            countText.textContent = `Found: ${visibleCount} resumes`;
+            countText.className = 'text-success';
+        }
             
         // Sorting
         sortResumes(activeTab, sortValue);
@@ -652,6 +721,7 @@ document.addEventListener('DOMContentLoaded', function() {
         templateFilter.value = '';
         sortSelect.value = 'newest';
         filterResumes();
+        document.getElementById('resumeCountText').className = 'text-muted';
     }
     
     searchInput.addEventListener('input', filterResumes);
@@ -685,7 +755,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Process filters when tab changes
     document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
         tab.addEventListener('shown.bs.tab', function() {
-            filterResumes();
+            setTimeout(filterResumes, 100);
         });
     });
     

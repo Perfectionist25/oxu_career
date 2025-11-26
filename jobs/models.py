@@ -346,8 +346,8 @@ class Job(models.Model):
     )
 
     class Meta:
-        verbose_name = _("Ish o'rini")
-        verbose_name_plural = _("Ish o'rinlari")
+        verbose_name = _("Job")
+        verbose_name_plural = _("Jobs")
         ordering = ["-created_at"]
         indexes = [
             models.Index(fields=['is_active', 'is_featured']),
@@ -369,22 +369,22 @@ class Job(models.Model):
 
     def salary_range(self):
         if self.hide_salary:
-            return _("Maosh kelishilgan holda")
+            return _("Salary is negotiable")
         if self.salary_negotiable:
-            return _("Kelishilgan holda")
+            return _("Negotiable")
         if self.salary_min and self.salary_max:
             return f"{self.salary_min:,.0f} - {self.salary_max:,.0f} {self.get_currency_display()}"
         elif self.salary_min:
-            return _("dan %(salary)s %(currency)s") % {
+            return _("from %(salary)s %(currency)s") % {
                 "salary": f"{self.salary_min:,.0f}",
                 "currency": self.get_currency_display(),
             }
         elif self.salary_max:
-            return _("gacha %(salary)s %(currency)s") % {
+            return _("up to %(salary)s %(currency)s") % {
                 "salary": f"{self.salary_max:,.0f}",
                 "currency": self.get_currency_display(),
             }
-        return _("Ko'rsatilmagan")
+        return _("Not specified")
 
     def days_since_posted(self):
         from django.utils import timezone
@@ -392,13 +392,13 @@ class Job(models.Model):
 
     def work_type_display(self):
         types = []
-        if self.remote_work:
-            types.append(_("Uydan ishlash"))
-        if self.hybrid_work:
-            types.append(_("Gibrid"))
-        if self.office_work:
-            types.append(_("Ofisda"))
-        return ", ".join(types) if types else _("Ko'rsatilmagan")
+        if self.work_type == "remote":
+            types.append(_("Remote work"))
+        elif self.work_type == "hybrid":
+            types.append(_("Hybrid"))
+        elif self.work_type == "office":
+            types.append(_("Office"))
+        return ", ".join(types) if types else _("Not specified")
 
     def location_display(self):
         if self.district:

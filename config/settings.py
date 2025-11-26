@@ -121,9 +121,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Мультиязычность
 LANGUAGES = [
-    ("uz", "Oʻzbekcha"),
-    ("ru", "Русский"),
     ("en", "English"),
+    ("ru", "Русский"),
+    ("uz", "Oʻzbekcha"),
 ]
 
 LOCALE_PATHS = [BASE_DIR / "locale"]
