@@ -16,42 +16,68 @@
             </div>
         </div>
         <div class="col-md-6 text-end">
-             <div class="d-flex justify-content-end align-items-center">
-                <div class="social-icons me-3">
-                    <a href="https://instagram.com/{{ settings.SOCIAL_INSTAGRAM }}" target="_blank"><i style="font-size: larger;" class="fab fa-instagram text-white"></i></a>
-                    <a href="https://t.me/{{ settings.SOCIAL_TELEGRAM }}" target="_blank"><i style="font-size: larger;" class="fab fa-telegram text-white"></i></a>
-                    <a href="https://facebook.com/{{ settings.SOCIAL_FACEBOOK }}" target="_blank"><i style="font-size: larger;" class="fab fa-facebook text-white"></i></a>
-                    <a href="https://youtube.com/{{ settings.SOCIAL_YOUTUBE }}" target="_blank"><i style="font-size: larger;" class="fab fa-youtube text-white"></i></a>
+            <div class="d-flex justify-content-end align-items-center">
+                <!-- Улучшенный языковой селектор как dropdown -->
+                <div class="language-dropdown">
+                    <form action="{% url 'set_language' %}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                        
+                        {% get_current_language as CURRENT_LANG %}
+                        
+                        <div class="dropdown-wrapper">
+                            <!-- Триггер - активный язык -->
+                            <button type="button" class="language-trigger {% if CURRENT_LANG == 'en' %}active{% endif %}" 
+                                    data-lang="{{ CURRENT_LANG }}"
+                                    onclick="toggleLanguageDropdown()">
+                                <img width="20" src="{% static 'img/uk.png' %}" alt="{{ CURRENT_LANG|upper }}" 
+                                     class="language-flag {% if CURRENT_LANG == 'uz' %}d-none{% endif %}"
+                                     data-lang="en">
+                                <img width="20" src="{% static 'img/uzb.png' %}" alt="{{ CURRENT_LANG|upper }}" 
+                                     class="language-flag {% if CURRENT_LANG == 'ru' %}d-none{% endif %}"
+                                     data-lang="uz">
+                                <img width="20" src="{% static 'img/ru.png' %}" alt="{{ CURRENT_LANG|upper }}" 
+                                     class="language-flag {% if CURRENT_LANG == 'en' %}d-none{% endif %}"
+                                     data-lang="ru">
+                                <span class="language-code">{{ CURRENT_LANG|upper }}</span>
+                                <i class="fas fa-chevron-down dropdown-arrow"></i>
+                            </button>
+                            
+                            <!-- Dropdown меню -->
+                            <div class="language-menu">
+                                <button type="submit" name="language" value="en" 
+                                        class="language-option {% if CURRENT_LANG == 'en' %}active{% endif %}"
+                                        data-lang="en">
+                                    <img width="20" src="{% static 'img/uk.png' %}" alt="EN">
+                                    <span>English</span>
+                                    {% if CURRENT_LANG == 'en' %}
+                                    <i class="fas fa-check check-icon"></i>
+                                    {% endif %}
+                                </button>
+                                
+                                <button type="submit" name="language" value="uz" 
+                                        class="language-option {% if CURRENT_LANG == 'uz' %}active{% endif %}"
+                                        data-lang="uz">
+                                    <img width="20" src="{% static 'img/uzb.png' %}" alt="UZ">
+                                    <span>O'zbekcha</span>
+                                    {% if CURRENT_LANG == 'uz' %}
+                                    <i class="fas fa-check check-icon"></i>
+                                    {% endif %}
+                                </button>
+                                
+                                <button type="submit" name="language" value="ru" 
+                                        class="language-option {% if CURRENT_LANG == 'ru' %}active{% endif %}"
+                                        data-lang="ru">
+                                    <img width="20" src="{% static 'img/ru.png' %}" alt="RU">
+                                    <span>Русский</span>
+                                    {% if CURRENT_LANG == 'ru' %}
+                                    <i class="fas fa-check check-icon"></i>
+                                    {% endif %}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-<div class="language-selector">
-    <form action="{% url 'set_language' %}" method="post" class="d-inline">
-        {% csrf_token %}
-        <input name="next" type="hidden" value="{{ request.get_full_path }}">
-        
-        {% get_current_language as CURRENT_LANG %}
-        
-        <button type="submit" name="language" value="uz" 
-                class="btn btn-sm {% if CURRENT_LANG == 'uz' %}btn-primary{% else %}btn-outline-secondary{% endif %} me-1"
-                title="Oʻzbekcha">
-            <img width="24" src="{% static 'img/uzb.png' %}" alt="UZ" class="me-1">
-            UZ
-        </button>
-        
-        <button type="submit" name="language" value="ru"
-                class="btn btn-sm {% if CURRENT_LANG == 'ru' %}btn-primary{% else %}btn-outline-secondary{% endif %} me-1"
-                title="Русский">
-            <img width="24" src="{% static 'img/ru.png' %}" alt="RU" class="me-1">
-            RU
-        </button>
-        
-        <button type="submit" name="language" value="en"
-                class="btn btn-sm {% if CURRENT_LANG == 'en' %}btn-primary{% else %}btn-outline-secondary{% endif %}"
-                title="English">
-            <img width="24" src="{% static 'img/uk.png' %}" alt="EN" class="me-1">
-            EN
-        </button>
-    </form>
-</div>
             </div>
         </div>
     </div>
@@ -82,7 +108,6 @@
                 <li class="nav-item">
                     <a style="color: white !important;" class="nav-link" href="{% url 'events:event_list' %}">{% trans "Events" %}</a>
                 </li>
-
 
                 {% if user.is_authenticated %}
                     {% if user.is_student %}
@@ -226,19 +251,6 @@
                                 </div>
                             </a>
                         </li>
-                        {% comment %}
-                        <!-- <li class="menu-section">
-                            <a class="dropdown-item" href="{% url 'accounts:admin_login' %}">
-                                <div class="d-flex align-items-center">
-                                    <i class="fas fa-user-shield text-warning me-2"></i>
-                                    <div>
-                                        <div class="fw-bold">{% trans "As Admin" %}</div>
-                                        <small class="text-muted">{% trans "System Administration" %}</small>
-                                    </div>
-                                </div>
-                            </a>
-                        </li> -->
-                        {% endcomment %}
                     </ul>
                 </div>
             {% endif %}
@@ -247,16 +259,191 @@
 </div>
 
 <style>
+/* Стили для языкового dropdown */
+.language-dropdown {
+    position: relative;
+    z-index: 1000;
+}
+
+.dropdown-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+/* Триггер - активный язык */
+.language-trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 80px;
+    justify-content: space-between;
+    backdrop-filter: blur(10px);
+}
+
+.language-trigger:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.language-trigger.active {
+    background: rgba(255, 255, 255, 0.9);
+    color: #012152;
+    border-color: rgba(255, 255, 255, 0.8);
+}
+
+.language-flag {
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+.language-code {
+    font-size: 14px;
+    font-weight: 500;
+    flex-grow: 1;
+    text-align: left;
+}
+
+.dropdown-arrow {
+    font-size: 12px;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+}
+
+.dropdown-wrapper.open .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+/* Dropdown меню */
+.language-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 5px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    min-width: 140px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1001;
+    border: 1px solid #e1e5e9;
+    overflow: hidden;
+}
+
+.dropdown-wrapper.open .language-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Опции в меню */
+.language-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    width: 100%;
+    border: none;
+    background: white;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.language-option:last-child {
+    border-bottom: none;
+}
+
+.language-option:hover {
+    background: #f8f9fa;
+    color: #012152;
+}
+
+.language-option.active {
+    background: #012152;
+    color: white;
+}
+
+.language-option span {
+    flex-grow: 1;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.check-icon {
+    font-size: 12px;
+    color: inherit;
+    flex-shrink: 0;
+}
+
+.language-option.active .check-icon {
+    color: #4ade80;
+}
+
+/* Анимация появления флагов */
+@keyframes flagFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.language-flag {
+    animation: flagFadeIn 0.3s ease;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+    .language-trigger {
+        padding: 6px 10px;
+        min-width: 70px;
+        gap: 6px;
+    }
+    
+    .language-code {
+        font-size: 13px;
+    }
+    
+    .language-menu {
+        min-width: 130px;
+        right: 0;
+        left: auto;
+    }
+    
+    .language-option {
+        padding: 8px 10px;
+        gap: 8px;
+    }
+    
+    .language-option span {
+        font-size: 13px;
+    }
+}
+
+/* Остальные существующие стили */
 .header-top {
     background-color: #012152 !important;
     padding: 8px 0;
     color: white;
 }
 
-.menu-section:hover{
-    .text-muted{
-        color: white !important;
-    }
+.menu-section:hover .text-muted{
+    color: white !important;
 }
 
 .header-top a {
@@ -273,7 +460,6 @@
 .header-middle {
     background-color: #012d6e !important;
     padding: 15px 0;
-    background: white;
 }
 
 .header-bottom {
@@ -293,7 +479,7 @@
     font-weight: 500;
     padding: 0.5rem 1rem;
     border-radius: 0.375rem;
-    transition: all 0.1ms;
+    transition: all 0.2s ease;
     text-align: center;
 }
 
@@ -327,50 +513,6 @@
     color: white;
 }
 
-.contact-info a {
-    display: inline-flex;
-    align-items: center;
-}
-
-.contact-info i {
-    margin-right: 5px;
-}
-
-.government-links {
-    text-align: center;
-}
-
-.government-links a {
-    color: white;
-    text-decoration: none;
-    font-size: 13px;
-    display: block;
-}
-
-.government-links a:hover {
-    text-decoration: underline;
-}
-
-.social-icons a {
-    opacity: 0.8;
-    transition: opacity 0.3s ease;
-}
-
-.social-icons a:hover {
-    opacity: 1;
-}
-
-.language-selector img {
-    border-radius: 0.25rem;
-    transition: transform 0.3s ease;
-    border: 2px solid transparent;
-}
-
-.language-selector img:hover {
-    transform: scale(1.05);
-    border-color: rgba(255,255,255,0.3);
-}
-
 /* Hamburger menu styles */
 .navbar-toggler {
     border: none;
@@ -387,13 +529,6 @@
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.5%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='m4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
     width: 1.5em;
     height: 1.5em;
-}
-
-.logo-mobile {
-    font-size: 18px;
-    font-weight: bold;
-    color: #333;
-    line-height: 1.2;
 }
 
 /* Mobile navigation styles */
@@ -423,18 +558,67 @@
         border-radius: 5px;
     }
 
-    .contact-info a {
-        display: block;
-        margin-bottom: 5px;
-    }
-
-    .government-links a {
-        display: block;
-    }
-
     .header-bottom .d-flex.align-items-center {
         justify-content: space-between;
         margin-bottom: 10px;
     }
 }
 </style>
+
+<script>
+// Глобальная функция для переключения dropdown
+function toggleLanguageDropdown() {
+    const dropdownWrapper = document.querySelector('.dropdown-wrapper');
+    dropdownWrapper.classList.toggle('open');
+}
+
+// Закрытие dropdown при клике вне его
+document.addEventListener('DOMContentLoaded', function() {
+    const dropdownWrapper = document.querySelector('.dropdown-wrapper');
+    const languageTrigger = document.querySelector('.language-trigger');
+    
+    // Обновляем отображение активного флага
+    function updateActiveFlag() {
+        const currentLang = '{{ CURRENT_LANG }}';
+        const flags = document.querySelectorAll('.language-flag');
+        const languageCode = document.querySelector('.language-code');
+        
+        flags.forEach(flag => {
+            flag.classList.add('d-none');
+            if (flag.dataset.lang === currentLang) {
+                flag.classList.remove('d-none');
+            }
+        });
+        
+        languageCode.textContent = currentLang.toUpperCase();
+    }
+    
+    // Инициализация
+    updateActiveFlag();
+    
+    // Закрытие dropdown при клике вне его
+    document.addEventListener('click', function(e) {
+        if (!dropdownWrapper.contains(e.target)) {
+            dropdownWrapper.classList.remove('open');
+        }
+    });
+    
+    // Закрытие dropdown при нажатии Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            dropdownWrapper.classList.remove('open');
+        }
+    });
+    
+    // Автоматическое закрытие после выбора языка (форма сама отправится)
+    const languageOptions = document.querySelectorAll('.language-option');
+    languageOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            // Dropdown закроется автоматически при перезагрузке страницы
+            setTimeout(() => {
+                dropdownWrapper.classList.remove('open');
+            }, 100);
+        });
+    });
+});
+</script>
