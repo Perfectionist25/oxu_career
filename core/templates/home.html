@@ -154,7 +154,7 @@
   {% if featured_resources %}
   <section class="mb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <div class="fw-bold text-dark h5">{% trans "Popular Resources" %}</div>
+      <div class="fw-bold text-dark h5">{% trans "Latest Resources" %}</div>
       <a href="{% url 'resources:list' %}" class="btn btn-outline-primary">
         {% trans "All Resources" %} <i class="fas fa-arrow-right ms-2"></i>
       </a>
@@ -265,7 +265,7 @@
           {% endif %}
           <div class="card-body">
             <h6 class="card-title fw-bold">{{ event.title }}</h6>
-            <p class="card-text text-muted small">{{ event.short_description|truncatewords:15 }}</p>
+            <p class="card-text text-muted small">{{ event.short_description|truncatechars:15 }}</p>
             <div class="d-flex justify-content-between align-items-center">
               <small class="text-muted">
                 <i class="fas fa-calendar me-1"></i>{{ event.start_date|date:"d.m.Y" }}

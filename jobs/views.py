@@ -292,7 +292,7 @@ def job_list(request):
         except EmployerProfile.DoesNotExist:
             jobs = Job.objects.none()
             messages.error(request, _("Iltimos, avval ish beruvchi profilingizni to'ldiring."))
-    elif request.user.is_student or request.user.is_alumni:
+    elif request.user.is_student:
         # Студенты и выпускники видят только опубликованные вакансии
         jobs = Job.objects.filter(is_active=True)
     else:
@@ -364,7 +364,6 @@ def job_list(request):
         "is_admin": request.user.is_staff or request.user.is_superuser,
         "is_employer": request.user.is_employer,
         "is_student": request.user.is_student,
-        "is_alumni": request.user.is_alumni,
     }
     return render(request, "jobs/job_list.html", context)
 
