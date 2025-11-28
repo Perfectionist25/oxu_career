@@ -8,37 +8,6 @@ from django.utils.translation import gettext_lazy as _
 from .models import Event, EventRegistration
 
 
-@receiver(post_save, sender=EventRegistration)
-def send_registration_confirmation(sender, instance, created, **kwargs):
-    """Отправка подтверждения регистрации"""
-    if created:
-        subject = _("Registration Confirmation - {event_title}").format(
-            event_title=instance.event.title
-        )
-
-        context = {
-            "event": instance.event,
-            "registration": instance,
-            "user": instance.user,
-        }
-
-        message = render_to_string(
-            "events/emails/registration_confirmation.txt", context
-        )
-        html_message = render_to_string(
-            "events/emails/registration_confirmation.html", context
-        )
-
-        send_mail(
-            subject,
-            message,
-            settings.DEFAULT_FROM_EMAIL,
-            [instance.user.email],
-            html_message=html_message,
-            fail_silently=True,
-        )
-
-
 @receiver(pre_save, sender=EventRegistration)
 def update_registration_count(sender, instance, **kwargs):
     """Обновление счетчика регистраций при изменении статуса"""

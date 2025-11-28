@@ -352,7 +352,7 @@ def job_list(request):
     
     # Для студентов и выпускников показываем рекомендуемые вакансии
     featured_jobs = []
-    if request.user.is_student or request.user.is_alumni:
+    if request.user.is_student or request.user.is_staff:
         featured_jobs = jobs.filter(is_featured=True)[:5]
 
     context = {

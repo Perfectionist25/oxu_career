@@ -17,6 +17,7 @@
 
 {% include '_inc/nav.html' %}
 
+{% comment %}
 <!-- Сообщения -->
 <div class="container mt-3">
     {% if messages %}
@@ -28,6 +29,7 @@
         {% endfor %}
     {% endif %}
 </div>
+{% endcomment %}
 
 <main>
     {% block content %}{% endblock %}

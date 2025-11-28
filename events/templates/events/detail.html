@@ -1,354 +1,744 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load static %}
 
 {% block title %}{{ event.title }}{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-lg-8">
-            <!-- Заголовок и основная информация -->
-            <div class="card mb-4">
-                {% if event.banner_image %}
-                <img src="{{ event.banner_image.url }}" class="card-img-top" alt="{{ event.title }}">
-                {% endif %}
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <h1 class="card-title mb-0">{{ event.title }}</h1>
-                        <div>
-                            {% if event.category %}
-                            <span class="badge fs-6" style="background-color: {{ event.category.color }};">{{ event.category.name }}</span>
-                            {% endif %}
-                            {% if is_admin %}
-                            <div class="btn-group ms-2" role="group">
-                                <a href="{% url 'events:admin_event_edit' event.pk %}" class="btn btn-outline-primary btn-sm">
-                                    <i class="fas fa-edit"></i> {% trans "Edit" %}
-                                </a>
-                                <a href="{% url 'events:admin_event_delete' event.pk %}" class="btn btn-outline-danger btn-sm" onclick="return confirm('{% trans 'Are you sure you want to delete this event?' %}')">
-                                    <i class="fas fa-trash"></i> {% trans "Delete" %}
-                                </a>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <p class="card-text">{{ event.description|linebreaks }}</p>
-
-                    <div class="row mt-4">
-                        <div class="col-md-6">
-                            <h5>{% trans "Event Details" %}</h5>
-                            <div class="mb-2">
-                                <i class="fas fa-calendar text-primary me-2"></i>
-                                <strong>{% trans "Date:" %}</strong> {{ event.start_date|date:"l, F d, Y" }}
-                                {% if event.start_date|date != event.end_date|date %}
-                                - {{ event.end_date|date:"l, F d, Y" }}
-                                {% endif %}
-                            </div>
-                            <div class="mb-2">
-                                <i class="fas fa-clock text-primary me-2"></i>
-                                <strong>{% trans "Time:" %}</strong> {{ event.start_date|date:"H:i" }}
-                                {% if event.end_date %}
-                                - {{ event.end_date|date:"H:i" }}
-                                {% endif %}
-                            </div>
-                            <div class="mb-2">
-                                <i class="fas fa-map-marker-alt text-primary me-2"></i>
-                                <strong>{% trans "Location:" %}</strong> {{ event.location }}
-                                {% if event.venue %}
-                                <br><small class="text-muted">{{ event.venue }}</small>
-                                {% endif %}
-                            </div>
-                            {% if event.online_event %}
-                            <div class="mb-2">
-                                <i class="fas fa-video text-primary me-2"></i>
-                                <strong>{% trans "Online Event" %}</strong>
-                                {% if event.online_link %}
-                                <br><a href="{{ event.online_link }}" target="_blank">{{ event.online_link }}</a>
-                                {% endif %}
-                            </div>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-6">
-                            <h5>{% trans "Registration" %}</h5>
-                            <div class="mb-2">
-                                <i class="fas fa-users text-primary me-2"></i>
-                                <strong>{% trans "Participants:" %}</strong> {{ event.registration_count }}
-                                {% if event.max_participants %}
-                                / {{ event.max_participants }}
-                                {% endif %}
-                            </div>
-                            {% if event.registration_required %}
-                            <div class="mb-2">
-                                <i class="fas fa-clipboard-check text-primary me-2"></i>
-                                <strong>{% trans "Registration:" %}</strong>
-                                {% if event.is_registration_open %}
-                                <span class="text-success">{% trans "Open" %}</span>
-                                {% else %}
-                                <span class="text-danger">{% trans "Closed" %}</span>
-                                {% endif %}
-                            </div>
-                            {% if event.registration_deadline %}
-                            <div class="mb-2">
-                                <i class="fas fa-hourglass-end text-primary me-2"></i>
-                                <strong>{% trans "Deadline:" %}</strong> {{ event.registration_deadline|date:"F d, Y H:i" }}
-                            </div>
-                            {% endif %}
-                            {% endif %}
-                            {% if not event.is_free %}
-                            <div class="mb-2">
-                                <i class="fas fa-dollar-sign text-primary me-2"></i>
-                                <strong>{% trans "Price:" %}</strong> {{ event.price }} {{ event.currency }}
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Регистрация -->
-            {% if event.registration_required and user.is_authenticated %}
-            <div class="card mb-4">
-                <div class="card-body">
-                    {% if user_registration %}
-                    <div class="alert alert-success">
-                        <h6 class="alert-heading">{% trans "You are registered!" %}</h6>
-                        <p class="mb-0">{% trans "Status:" %} <strong>{{ user_registration.get_status_display }}</strong></p>
-                        {% if user_registration.status == 'registered' %}
-                        <hr>
-                        <form method="post" action="{% url 'events:cancel_registration' event.slug %}" class="d-inline">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('{% trans 'Are you sure you want to cancel your registration?' %}')">
-                                {% trans "Cancel Registration" %}
-                            </button>
-                        </form>
-                        {% endif %}
-                    </div>
-                    {% else %}
-                    {% if event.is_registration_open %}
-                    <form method="post" action="{% url 'events:register_for_event' event.slug %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="fas fa-plus me-2"></i>{% trans "Register for Event" %}
-                        </button>
-                    </form>
-                    {% else %}
-                    <div class="alert alert-warning">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        {% trans "Registration for this event is currently closed." %}
-                    </div>
-                    {% endif %}
-                    {% endif %}
-                </div>
+<div class="full-width-container">
+    <div class="content-wrapper">
+        <!-- Header Section -->
+        <div class="event-header">
+            {% if event.banner_image %}
+            <div class="event-banner">
+                <img src="{{ event.banner_image.url }}" alt="{{ event.title }}" class="banner-image">
             </div>
             {% endif %}
-
-            <!-- Спикеры -->
-            {% if event.speakers.all %}
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0">{% trans "Speakers" %}</h5>
+            
+            <div class="event-header-content">
+                <div class="header-main">
+                    <div class="category-badge">
+                        {% if event.category %}
+                        <span class="badge" style="background-color: {{ event.category.color }};">
+                            {{ event.category.name }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    <h1 class="event-title">{{ event.title }}</h1>
+                    <p class="event-description">{{ event.short_description }}</p>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        {% for speaker in event.speakers.all %}
-                        <div class="col-md-6 mb-3">
-                            <div class="d-flex">
-                                {% if speaker.photo %}
-                                <img src="{{ speaker.photo.url }}" alt="{{ speaker.name }}" class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover;">
-                                {% else %}
-                                <div class="bg-secondary rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                                    <i class="fas fa-user text-white"></i>
+                
+                <div class="header-actions">
+                    {% if is_admin %}
+                    <div class="admin-actions">
+                        <a href="{% url 'events:admin_event_edit' event.pk %}" class="btn-secondary">
+                            <i class="fas fa-edit"></i>{% trans "Edit" %}
+                        </a>
+                        <a href="{% url 'events:admin_event_delete' event.pk %}" class="btn-danger" onclick="return confirm('{% trans 'Are you sure you want to delete this event?' %}')">
+                            <i class="fas fa-trash"></i>{% trans "Delete" %}
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="event-main-content">
+            <div class="event-details-grid">
+                <!-- Left Column - Main Content -->
+                <div class="event-content">
+                    <!-- Event Description -->
+                    <div class="content-card">
+                        <h3 class="card-title">{% trans "About Event" %}</h3>
+                        <div class="event-description-text">
+                            {{ event.description|linebreaks }}
+                        </div>
+                    </div>
+
+                    <!-- Event Details -->
+                    <div class="content-card">
+                        <h3 class="card-title">{% trans "Event Details" %}</h3>
+                        <div class="details-grid">
+                            <div class="detail-item">
+                                <div class="detail-icon">
+                                    <i class="fas fa-calendar"></i>
                                 </div>
-                                {% endif %}
-                                <div>
-                                    <h6 class="mb-1">{{ speaker.name }}</h6>
-                                    <p class="mb-1 text-muted">{{ speaker.title }}</p>
-                                    {% if speaker.organization %}
-                                    <small class="text-muted">{{ speaker.organization }}</small>
+                                <div class="detail-content">
+                                    <strong>{% trans "Date" %}</strong>
+                                    <p>{{ event.start_date|date:"l, F d, Y" }}</p>
+                                    {% if event.start_date|date != event.end_date|date %}
+                                    <p class="text-muted">to {{ event.end_date|date:"l, F d, Y" }}</p>
                                     {% endif %}
                                 </div>
                             </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            {% endif %}
 
-            <!-- Сессии -->
-            {% if event.sessions.all %}
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0">{% trans "Schedule" %}</h5>
-                </div>
-                <div class="card-body p-0">
-                    {% for session in event.sessions.all %}
-                    <div class="p-3 border-bottom">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h6 class="mb-1">{{ session.title }}</h6>
-                                <p class="mb-2 text-muted">{{ session.description }}</p>
-                                <small class="text-muted">
-                                    <i class="fas fa-clock me-1"></i>{{ session.start_time|date:"H:i" }} - {{ session.end_time|date:"H:i" }}
-                                    {% if session.location %} | <i class="fas fa-map-marker-alt me-1"></i>{{ session.location }}{% endif %}
-                                </small>
-                            </div>
-                            <span class="badge bg-secondary">{{ session.get_session_type_display }}</span>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-            {% endif %}
-
-
-
-            <!-- Оценки -->
-            {% if event.is_past and user.is_authenticated and user_registration and user_registration.status == 'attended' %}
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0">{% trans "Rate this Event" %}</h5>
-                </div>
-                <div class="card-body">
-                    <form id="ratingForm">
-                        {% csrf_token %}
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">{% trans "Overall Rating" %}</label>
-                                    <select name="rating" class="form-select" required>
-                                        <option value="">{% trans "Select rating" %}</option>
-                                        <option value="5">5 - {% trans "Excellent" %}</option>
-                                        <option value="4">4 - {% trans "Very Good" %}</option>
-                                        <option value="3">3 - {% trans "Good" %}</option>
-                                        <option value="2">2 - {% trans "Fair" %}</option>
-                                        <option value="1">1 - {% trans "Poor" %}</option>
-                                    </select>
+                            <div class="detail-item">
+                                <div class="detail-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="detail-content">
+                                    <strong>{% trans "Time" %}</strong>
+                                    <p>{{ event.start_date|date:"H:i" }}</p>
+                                    {% if event.end_date %}
+                                    <p class="text-muted">to {{ event.end_date|date:"H:i" }}</p>
+                                    {% endif %}
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">{% trans "Comment" %}</label>
-                                    <textarea name="comment" class="form-control" rows="3" placeholder="{% trans 'Share your experience...' %}"></textarea>
+
+                            <div class="detail-item">
+                                <div class="detail-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div class="detail-content">
+                                    <strong>{% trans "Location" %}</strong>
+                                    <p>{{ event.location }}</p>
                                 </div>
                             </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary">{% trans "Submit Rating" %}</button>
-                    </form>
-                </div>
-            </div>
-            {% endif %}
-        </div>
 
-        <div class="col-lg-4">
-            <!-- Информация о мероприятии -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h6 class="mb-0">{% trans "Event Info" %}</h6>
-                </div>
-                <div class="card-body">
-                    <div class="mb-2">
-                        <strong>{% trans "Organizer:" %}</strong><br>
-                        {{ event.organizer.get_full_name }}
+                            {% if event.online_event %}
+                            <div class="detail-item">
+                                <div class="detail-icon">
+                                    <i class="fas fa-video"></i>
+                                </div>
+                                <div class="detail-content">
+                                    <strong>{% trans "Online Event" %}</strong>
+                                    {% if event.online_link %}
+                                    <p><a href="{{ event.online_link }}" target="_blank" class="online-link">{% trans "Join Online" %}</a></p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
                     </div>
-                    {% if event.tags %}
-                    <div class="mb-2">
-                        <strong>{% trans "Tags:" %}</strong><br>
-                        {% for tag in event.tags.split %}
-                        <span class="badge bg-light text-dark me-1">{{ tag }}</span>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
-                    <div class="mb-2">
-                        <strong>{% trans "Views:" %}</strong> {{ event.views_count }}
-                    </div>
-                    {% if avg_rating %}
-                    <div class="mb-2">
-                        <strong>{% trans "Rating:" %}</strong>
-                        <span class="text-warning">
-                            {% for i in "12345"|make_list %}
-                            <i class="fas fa-star{% if forloop.counter > avg_rating %} text-muted{% endif %}"></i>
+
+                    <!-- Speakers -->
+                    {% if event.speakers.all %}
+                    <div class="content-card">
+                        <h3 class="card-title">{% trans "Speakers" %}</h3>
+                        <div class="speakers-grid">
+                            {% for speaker in event.speakers.all %}
+                            <div class="speaker-card">
+                                <div class="speaker-avatar">
+                                    {% if speaker.photo %}
+                                    <img src="{{ speaker.photo.url }}" alt="{{ speaker.name }}">
+                                    {% else %}
+                                    <div class="avatar-placeholder">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="speaker-info">
+                                    <h4 class="speaker-name">{{ speaker.name }}</h4>
+                                    {% if speaker.title %}
+                                    <p class="speaker-title">{{ speaker.title }}</p>
+                                    {% endif %}
+                                    {% if speaker.organization %}
+                                    <p class="speaker-org">{{ speaker.organization }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
                             {% endfor %}
-                        </span>
-                        ({{ avg_rating|floatformat:1 }})
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Schedule -->
+                    {% if event.sessions.all %}
+                    <div class="content-card">
+                        <h3 class="card-title">{% trans "Schedule" %}</h3>
+                        <div class="schedule-list">
+                            {% for session in event.sessions.all %}
+                            <div class="schedule-item">
+                                <div class="session-time">
+                                    <span class="time-start">{{ session.start_time|date:"H:i" }}</span>
+                                    <span class="time-separator">-</span>
+                                    <span class="time-end">{{ session.end_time|date:"H:i" }}</span>
+                                </div>
+                                <div class="session-content">
+                                    <h4 class="session-title">{{ session.title }}</h4>
+                                    {% if session.description %}
+                                    <p class="session-description">{{ session.description }}</p>
+                                    {% endif %}
+                                    {% if session.location %}
+                                    <div class="session-location">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        {{ session.location }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
                     </div>
                     {% endif %}
                 </div>
-            </div>
 
-            <!-- Участники -->
-            {% if event.show_attendee_list and registered_count %}
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h6 class="mb-0">{% trans "Attendees" %} ({{ registered_count }})</h6>
-                </div>
-                <div class="card-body">
-                    {% for registration in registered_registrations %}
-                    <div class="d-flex align-items-center mb-2">
-                        {% if registration.user.profile.avatar %}
-                        <img src="{{ registration.user.profile.avatar.url }}" alt="{{ registration.user.get_full_name }}" class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit: cover;">
-                        {% else %}
-                        <div class="bg-secondary rounded-circle me-2 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
-                            <i class="fas fa-user text-white" style="font-size: 12px;"></i>
+                <!-- Right Column - Sidebar -->
+                <div class="event-sidebar">
+                    <!-- Quick Info -->
+                    <div class="sidebar-card">
+                        <h4 class="sidebar-title">{% trans "Event Info" %}</h4>
+                        <div class="sidebar-stats">
+                            <div class="stat-item">
+                                <i class="fas fa-eye"></i>
+                                <span>{{ event.views_count }} {% trans "views" %}</span>
+                            </div>
                         </div>
+                    </div>
+
+                    <!-- Tags -->
+                    {% if event.tags %}
+                    <div class="sidebar-card">
+                        <h4 class="sidebar-title">{% trans "Tags" %}</h4>
+                        <div class="tags-container">
+                            {% for tag in event.tags.split %}
+                            <span class="tag">{{ tag }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Photos -->
+                    {% if event.photos.all %}
+                    <div class="sidebar-card">
+                        <h4 class="sidebar-title">{% trans "Event Photos" %}</h4>
+                        <div class="photos-grid">
+                            {% for photo in event.photos.all|slice:":4" %}
+                            <div class="photo-item">
+                                <img src="{{ photo.image.url }}" alt="{{ photo.caption }}" loading="lazy">
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% if event.photos.all.count > 4 %}
+                        <a href="#" class="view-more-photos">{% trans "View all photos" %} ({{ event.photos.all.count }})</a>
                         {% endif %}
-                        <small>{{ registration.user.get_full_name }}</small>
                     </div>
-                    {% endfor %}
-                    {% if registered_count > 10 %}
-                    <small class="text-muted">{% trans "and" %} {{ registered_count|add:"-10" }} {% trans "more..." %}</small>
                     {% endif %}
                 </div>
             </div>
-            {% endif %}
-
-            <!-- Фото -->
-            {% if event.photos.all %}
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h6 class="mb-0">{% trans "Event Photos" %}</h6>
-                </div>
-                <div class="card-body">
-                    <div class="row g-2">
-                        {% for photo in event.photos.all|slice:":6" %}
-                        <div class="col-6">
-                            <img src="{{ photo.image.url }}" alt="{{ photo.caption }}" class="img-fluid rounded">
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            {% endif %}
         </div>
     </div>
 </div>
 
+<style>
+/* Full width container */
+.full-width-container {
+    width: 100%;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.content-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Event Header */
+.event-header {
+    background: white;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.event-banner {
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+}
+
+.banner-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.event-header-content {
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+}
+
+.header-main {
+    flex: 1;
+}
+
+.category-badge {
+    margin-bottom: 1rem;
+}
+
+.badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: white;
+}
+
+.event-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #012152;
+    margin: 0 0 1rem 0;
+    line-height: 1.2;
+}
+
+.event-description {
+    font-size: 1.2rem;
+    color: #666;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.header-actions {
+    flex-shrink: 0;
+}
+
+.admin-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+/* Buttons */
+.btn-secondary, .btn-danger {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+}
+
+.btn-danger:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+}
+
+/* Main Content */
+.event-main-content {
+    padding: 0 2rem 2rem;
+}
+
+.event-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 2rem;
+    align-items: start;
+}
+
+/* Content Cards */
+.content-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #012152;
+    margin: 0 0 1.5rem 0;
+}
+
+.event-description-text {
+    line-height: 1.7;
+    color: #555;
+    font-size: 1.05rem;
+}
+
+/* Details Grid */
+.details-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.detail-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.detail-icon {
+    width: 50px;
+    height: 50px;
+    background: #012152;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.detail-content {
+    flex: 1;
+}
+
+.detail-content strong {
+    display: block;
+    color: #333;
+    margin-bottom: 0.25rem;
+    font-size: 1rem;
+}
+
+.detail-content p {
+    margin: 0;
+    color: #666;
+}
+
+.online-link {
+    color: #012152;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.online-link:hover {
+    text-decoration: underline;
+}
+
+/* Speakers */
+.speakers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.speaker-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.speaker-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.speaker-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.speaker-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    background: #012152;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.speaker-info {
+    flex: 1;
+}
+
+.speaker-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 0.25rem 0;
+}
+
+.speaker-title {
+    font-size: 0.95rem;
+    color: #012152;
+    margin: 0 0 0.25rem 0;
+    font-weight: 500;
+}
+
+.speaker-org {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
+}
+
+/* Schedule */
+.schedule-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.schedule-item {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.schedule-item:hover {
+    background: #e9ecef;
+    transform: translateX(5px);
+}
+
+.session-time {
+    flex-shrink: 0;
+    text-align: center;
+    min-width: 100px;
+}
+
+.time-start, .time-end {
+    display: block;
+    font-weight: 600;
+    color: #012152;
+}
+
+.time-separator {
+    color: #666;
+    margin: 0 0.25rem;
+}
+
+.session-content {
+    flex: 1;
+}
+
+.session-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 0.5rem 0;
+}
+
+.session-description {
+    color: #666;
+    line-height: 1.6;
+    margin: 0 0 0.5rem 0;
+}
+
+.session-location {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #888;
+    font-size: 0.9rem;
+}
+
+/* Sidebar */
+.event-sidebar {
+    position: sticky;
+    top: 7rem;
+}
+
+.sidebar-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.sidebar-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #012152;
+    margin: 0 0 1rem 0;
+}
+
+.sidebar-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.stat-item i {
+    color: #012152;
+    width: 20px;
+}
+
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tag {
+    padding: 0.5rem 1rem;
+    background: #e9ecef;
+    color: #495057;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.photos-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.photo-item {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.photo-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.photo-item:hover img {
+    transform: scale(1.05);
+}
+
+.view-more-photos {
+    color: #012152;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.view-more-photos:hover {
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .event-details-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .event-sidebar {
+        position: static;
+    }
+}
+
+@media (max-width: 768px) {
+    .content-wrapper {
+        padding: 0;
+    }
+    
+    .event-main-content {
+        padding: 0 1rem 1rem;
+    }
+    
+    .event-header-content {
+        flex-direction: column;
+        padding: 1.5rem;
+    }
+    
+    .event-title {
+        font-size: 2rem;
+    }
+    
+    .content-card {
+        padding: 1.5rem;
+    }
+    
+    .speakers-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .schedule-item {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .session-time {
+        text-align: left;
+    }
+    
+    .admin-actions {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .event-banner {
+        height: 200px;
+    }
+    
+    .event-title {
+        font-size: 1.5rem;
+    }
+    
+    .content-card {
+        padding: 1rem;
+    }
+    
+    .detail-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .detail-icon {
+        align-self: center;
+    }
+}
+</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Обработка оценок
-    const ratingForm = document.getElementById('ratingForm');
-    if (ratingForm) {
-        ratingForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(ratingForm);
-            fetch('{% url "events:submit_event_rating" event.slug %}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert(data.error || '{% trans "Error submitting rating." %}');
-                }
-            });
-        });
-    }
+    // Add smooth animations for schedule items
+    const scheduleItems = document.querySelectorAll('.schedule-item');
+    scheduleItems.forEach((item, index) => {
+        item.style.animationDelay = `${index * 0.1}s`;
+    });
+    
+    // Add animation for speaker cards
+    const speakerCards = document.querySelectorAll('.speaker-card');
+    speakerCards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.05}s`;
+    });
 });
 </script>
 {% endblock %}

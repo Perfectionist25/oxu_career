@@ -25,7 +25,7 @@ def admin_required(function=None):
 @admin_required
 def unpublished_events(request):
     """Список неопубликованных мероприятий для редакции - только админы"""
-    events = Event.objects.filter(status="draft").select_related("category", "organizer")
+    events = Event.objects.filter(status="draft").select_related("category")
 
     # Пагинация
     paginator = Paginator(events, 10)
@@ -73,7 +73,7 @@ def unpublish_event(request, pk):
 
 def event_list(request):
     """Список мероприятий - доступно всем"""
-    events = Event.objects.filter(status="published").select_related("category", "organizer")
+    events = Event.objects.filter(status="published").select_related("category")
 
     # Фильтры
     category = request.GET.get("category")
@@ -136,8 +136,8 @@ def event_categories(request):
 def event_detail(request, slug):
     """Детальная страница мероприятия - доступно всем"""
     event = get_object_or_404(
-        Event.objects.select_related("category", "organizer").prefetch_related(
-            "speakers", "sessions", "photos", "comments__user", "ratings"
+        Event.objects.select_related("category").prefetch_related(
+            "photos"
         ),
         slug=slug, status="published"
     )
@@ -148,32 +148,10 @@ def event_detail(request, slug):
         event.views_count += 1
         event.save(update_fields=["views_count"])
         request.session[session_key] = True
-        # Установить время жизни сессии на 24 часа
         request.session.set_expiry(86400)  # 24 часа в секундах
-
-    # Проверка регистрации пользователя
-    user_registration = None
-    if request.user.is_authenticated:
-        user_registration = EventRegistration.objects.filter(
-            event=event, user=request.user
-        ).first()
-
-    # Средний рейтинг
-    avg_rating = event.ratings.aggregate(models.Avg("rating"))["rating__avg"] or 0
-
-    # Количество зарегистрированных участников
-    registered_count = event.registrations.filter(status='registered').count()
-
-    # Зарегистрированные участники для списка
-    registered_registrations = event.registrations.filter(status='registered')[:10]
 
     context = {
         "event": event,
-        "user_registration": user_registration,
-        "avg_rating": round(avg_rating, 1),
-        "total_ratings": event.ratings.count(),
-        "registered_count": registered_count,
-        "registered_registrations": registered_registrations,
         "is_admin": request.user.is_staff or request.user.is_superuser,
     }
     return render(request, "events/detail.html", context)
@@ -334,17 +312,14 @@ def event_registrations(request, slug):
 @admin_required
 def admin_event_list(request):
     """Админ: список всех мероприятий - только админы"""
-    events = Event.objects.all().select_related("category", "organizer")
+    events = Event.objects.all().select_related("category")
 
     # Фильтры
     status_filter = request.GET.get("status")
-    organizer_filter = request.GET.get("organizer")
     search = request.GET.get("search")
 
     if status_filter:
         events = events.filter(status=status_filter)
-    if organizer_filter:
-        events = events.filter(organizer__username=organizer_filter)
     if search:
         events = events.filter(
             Q(title__icontains=search) |
@@ -368,7 +343,6 @@ def admin_event_list(request):
         "event_statuses": Event.EVENT_STATUS_CHOICES,
         "status_choices": Event.EVENT_STATUS_CHOICES,
         "categories": EventCategory.objects.all(),
-        "organizers": Event.objects.values_list("organizer__username", flat=True).distinct(),
         "stats": {
             "total": total_events,
             "published": published_events,

@@ -1,5 +1,4 @@
 from django.urls import path
-
 from . import views
 
 app_name = "events"
@@ -29,7 +28,4 @@ urlpatterns = [
     path("<slug:slug>/register/", views.register_for_event, name="register_for_event"),
     path("<slug:slug>/cancel/", views.cancel_registration, name="cancel_registration"),
     path("<slug:slug>/registrations/", views.event_registrations, name="event_registrations"),
-    # AJAX endpoints
-    path("<slug:slug>/comment/", views.add_event_comment, name="add_event_comment"),
-    path("<slug:slug>/rate/", views.submit_event_rating, name="submit_event_rating"),
 ]

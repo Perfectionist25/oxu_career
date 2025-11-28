@@ -91,9 +91,9 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'myproject',
-        'USER': 'djangouser',
-        'PASSWORD': 'S3cureP@ss',
+        'NAME': 'oxu_career',
+        'USER': 'root',
+        'PASSWORD': '2508',
         'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {

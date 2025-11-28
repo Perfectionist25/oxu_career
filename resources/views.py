@@ -170,7 +170,7 @@ def resource_delete(request, pk):
         messages.success(
             request, _(f'Resource "{resource_title}" deleted successfully!')
         )
-        return redirect("resources:resource_list")
+        return redirect("resources:list")
 
     context = {
         "resource": resource,
