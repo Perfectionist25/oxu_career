@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-26 13:29+0500\n"
+"POT-Creation-Date: 2025-11-29 17:24+0500\n"
 "PO-Revision-Date: ГОД-МЕС-ДЕНЬ ЧАС:МИН+ЗОНА\n"
 "Last-Translator: ПОЛНОЕ ИМЯ <EMAIL@ADDRESS>\n"
 "Language-Team: ЯЗЫК <LL@li.org>\n"
@@ -16,9 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
-"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 
 #: accounts/admin.py:41
 msgid "Personal info"
@@ -36,12 +34,12 @@ msgstr "Настройки"
 #: accounts/templates/accounts/admin_employer_management.html:12
 #: accounts/templates/accounts/profile_base.html:117
 #: accounts/templates/accounts/user_management.html:50 alumni/models.py:488
-#: alumni/models.py:552 alumni/models.py:802 core/admin.py:66 core/models.py:19
-#: cvbuilder/models.py:78 employers/admin.py:68 employers/admin.py:99
-#: employers/admin.py:176 employers/admin.py:215 employers/admin.py:341
-#: employers/models.py:489 employers/models.py:626
-#: employers/templates/employers/manage_jobs.html:12 events/models.py:232
-#: events/models.py:390 events/templates/events/admin_event_list.html:135
+#: alumni/models.py:552 alumni/models.py:802 core/admin.py:66
+#: core/models.py:19 cvbuilder/models.py:78
+#: cvbuilder/templates/cvbuilder/cv_list.html:120 employers/admin.py:68
+#: employers/admin.py:99 employers/admin.py:176 employers/admin.py:215
+#: employers/admin.py:341 employers/models.py:489 employers/models.py:626
+#: employers/templates/employers/manage_jobs.html:12 events/models.py:136
 #: events/templates/events/event_registrations.html:25
 #: events/templates/events/event_registrations.html:53
 #: events/templates/events/manage_events.html:22
@@ -74,8 +72,7 @@ msgstr "Информация о компании"
 #: accounts/admin.py:109
 #: accounts/templates/accounts/create_employer_account.html:158
 #: accounts/templates/accounts/employer_profile.html:60 employers/admin.py:66
-#: events/admin.py:225 jobs/admin.py:105
-#: jobs/templates/jobs/job_create.html:851
+#: jobs/admin.py:105 jobs/templates/jobs/job_create.html:851
 #: jobs/templates/jobs/job_form.html:673
 msgid "Contact Information"
 msgstr "Контактная информация"
@@ -90,8 +87,9 @@ msgstr "Детали компании"
 
 #: accounts/admin.py:118 accounts/admin.py:153
 #: accounts/templates/accounts/admin_dashboard.html:147
-#: accounts/templates/accounts/profile_base.html:170 employers/admin.py:177
-#: employers/templates/employers/employer_dashboard.html:10 events/admin.py:135
+#: accounts/templates/accounts/profile_base.html:170
+#: cvbuilder/templates/cvbuilder/cv_list.html:17 employers/admin.py:177
+#: employers/templates/employers/employer_dashboard.html:10 events/admin.py:88
 #: jobs/admin.py:112
 msgid "Statistics"
 msgstr "Статистика"
@@ -99,8 +97,8 @@ msgstr "Статистика"
 #: accounts/admin.py:121 accounts/admin.py:155 employers/admin.py:69
 #: employers/admin.py:100 employers/admin.py:178 employers/admin.py:216
 #: employers/admin.py:273 employers/admin.py:312 employers/admin.py:342
-#: events/admin.py:136 events/admin.py:301 events/admin.py:318
-#: jobs/admin.py:113 jobs/admin.py:169 jobs/admin.py:248 resources/admin.py:51
+#: events/admin.py:91 events/admin.py:128 jobs/admin.py:113 jobs/admin.py:169
+#: jobs/admin.py:248 resources/admin.py:51
 msgid "Timestamps"
 msgstr "Временные метки"
 
@@ -162,7 +160,8 @@ msgstr "Тип пользователя"
 #: accounts/models.py:29
 msgid "Type of user account (guest, student, employer, admin)"
 msgstr ""
-"Тип учетной записи пользователя (гость, студент, работодатель, администратор)"
+"Тип учетной записи пользователя (гость, студент, работодатель, "
+"администратор)"
 
 #: accounts/models.py:44
 msgid "Hemis Data"
@@ -241,20 +240,18 @@ msgstr "Полный адрес"
 #: accounts/templates/accounts/employer_profile.html:31
 #: accounts/templates/accounts/employer_profile.html:147 alumni/models.py:48
 #: alumni/models.py:276 employers/forms.py:86 employers/models.py:46
-#: events/forms.py:246 events/models.py:505
 msgid "Website"
 msgstr "Веб-сайт"
 
-#: accounts/models.py:100 alumni/models.py:277 events/models.py:506
+#: accounts/models.py:100 alumni/models.py:277
 msgid "Personal or professional website"
 msgstr "Личный или профессиональный веб-сайт"
 
 #: accounts/models.py:104 alumni/models.py:271 employers/models.py:94
-#: events/forms.py:247 events/models.py:510
 msgid "LinkedIn"
 msgstr "LinkedIn"
 
-#: accounts/models.py:105 alumni/models.py:272 events/models.py:511
+#: accounts/models.py:105 alumni/models.py:272
 msgid "LinkedIn profile URL"
 msgstr "URL профиля LinkedIn"
 
@@ -349,9 +346,8 @@ msgstr "Временная метка последней активности п
 #: core/models.py:31 cvbuilder/models.py:34 cvbuilder/models.py:115
 #: employers/models.py:121 employers/models.py:215 employers/models.py:383
 #: employers/models.py:506 employers/models.py:562 employers/models.py:643
-#: employers/models.py:729 events/models.py:288 events/models.py:670
-#: events/models.py:784 jobs/models.py:325 jobs/models.py:505
-#: jobs/models.py:635 resources/models.py:79
+#: employers/models.py:729 events/models.py:167 jobs/models.py:325
+#: jobs/models.py:505 jobs/models.py:635 resources/models.py:79
 msgid "Created At"
 msgstr "Создано"
 
@@ -361,9 +357,9 @@ msgstr "Создано"
 #: alumni/models.py:918 alumni/models.py:1004 core/models.py:32
 #: cvbuilder/models.py:120 employers/models.py:126 employers/models.py:220
 #: employers/models.py:388 employers/models.py:511 employers/models.py:567
-#: employers/models.py:648 employers/models.py:734 events/models.py:292
-#: events/models.py:674 events/models.py:788 jobs/models.py:329
-#: jobs/models.py:509 jobs/models.py:639 resources/models.py:83
+#: employers/models.py:648 employers/models.py:734 events/models.py:171
+#: jobs/models.py:329 jobs/models.py:509 jobs/models.py:639
+#: resources/models.py:83
 msgid "Updated At"
 msgstr "Обновлено"
 
@@ -372,8 +368,7 @@ msgstr "Обновлено"
 #: accounts/models.py:701 accounts/templates/accounts/admin_dashboard.html:168
 #: accounts/templates/accounts/admin_management.html:11
 #: accounts/templates/accounts/user_management.html:48 alumni/models.py:188
-#: cvbuilder/models.py:57 employers/models.py:154 events/models.py:376
-#: events/models.py:645 events/models.py:748
+#: cvbuilder/models.py:57 employers/models.py:154
 #: events/templates/events/event_registrations.html:51 jobs/models.py:529
 #: jobs/models.py:568
 msgid "User"
@@ -382,7 +377,7 @@ msgstr "Пользователь"
 #: accounts/models.py:171 accounts/templates/accounts/admin_dashboard.html:119
 #: accounts/templates/accounts/admin_profile.html:266
 #: accounts/templates/accounts/user_detail.html:18
-#: core/templates/_inc/nav.html:116
+#: core/templates/_inc/nav.html:141
 msgid "Users"
 msgstr "Пользователи"
 
@@ -707,7 +702,8 @@ msgstr "Созданные резюме"
 msgid "Number of resumes created"
 msgstr "Количество созданных резюме"
 
-#: accounts/models.py:459 accounts/templates/accounts/student_dashboard.html:52
+#: accounts/models.py:459
+#: accounts/templates/accounts/student_dashboard.html:52
 msgid "Jobs Applied"
 msgstr "Отклики на вакансии"
 
@@ -860,7 +856,7 @@ msgstr "Аутентификации Hemis"
 
 #: accounts/models.py:622 accounts/templates/accounts/admin_login.html:36
 #: accounts/templates/accounts/employer_login.html:38
-#: core/templates/_inc/nav.html:204
+#: core/templates/_inc/nav.html:229
 msgid "Login"
 msgstr "Вход"
 
@@ -903,11 +899,10 @@ msgstr "Тип активности пользователя"
 
 #: accounts/models.py:647 alumni/models.py:43 alumni/models.py:138
 #: alumni/models.py:703 alumni/models.py:855 cvbuilder/models.py:172
-#: employers/forms.py:85 employers/models.py:42 events/forms.py:35
-#: events/forms.py:131 events/forms.py:286 events/models.py:21
-#: events/models.py:83 events/models.py:562 jobs/models.py:19
-#: resources/forms.py:51 resources/models.py:19 resources/models.py:53
-#: resources/templates/resources/resource_form.html:116
+#: employers/forms.py:85 employers/models.py:42 events/forms.py:27
+#: events/forms.py:93 events/models.py:21 events/models.py:76
+#: jobs/models.py:19 resources/forms.py:51 resources/models.py:19
+#: resources/models.py:53 resources/templates/resources/resource_form.html:116
 msgid "Description"
 msgstr "Описание"
 
@@ -952,8 +947,8 @@ msgid "Application Update"
 msgstr "Обновление отклика"
 
 #: accounts/models.py:692 accounts/models.py:719 alumni/models.py:493
-#: alumni/models.py:557 alumni/models.py:1069 core/admin.py:35 core/admin.py:49
-#: core/models.py:16
+#: alumni/models.py:557 alumni/models.py:1069 core/admin.py:35
+#: core/admin.py:49 core/models.py:16
 msgid "Message"
 msgstr "Сообщение"
 
@@ -983,8 +978,8 @@ msgstr "Категория уведомления"
 
 #: accounts/models.py:714 alumni/models.py:851 alumni/models.py:944
 #: cvbuilder/models.py:62 employers/forms.py:363 employers/models.py:694
-#: events/templates/events/list.html:58 resources/forms.py:49
-#: resources/models.py:41 resources/templates/resources/resource_form.html:57
+#: resources/forms.py:49 resources/models.py:41
+#: resources/templates/resources/resource_form.html:57
 msgid "Title"
 msgstr "Заголовок"
 
@@ -1035,7 +1030,7 @@ msgstr "Пользователь зарегистрирован"
 #: accounts/templates/accounts/admin_dashboard.html:6
 #: accounts/templates/accounts/admin_dashboard.html:15
 #: accounts/templates/accounts/admin_profile.html:263
-#: core/templates/_inc/nav.html:113 core/templates/_inc/nav.html:153
+#: core/templates/_inc/nav.html:138 core/templates/_inc/nav.html:178
 msgid "Admin Panel"
 msgstr "Панель администратора"
 
@@ -1066,9 +1061,10 @@ msgstr "Работодатели"
 #: accounts/templates/accounts/admin_dashboard.html:126
 #: accounts/templates/accounts/notifications.html:39
 #: accounts/templates/accounts/student_profile.html:113 alumni/models.py:768
-#: core/templates/_inc/nav.html:90 core/templates/_inc/nav.html:110
+#: core/templates/_inc/nav.html:115 core/templates/_inc/nav.html:135
 #: employers/models.py:400 employers/templates/employers/list.html:153
-#: jobs/admin.py:24 jobs/apps.py:8 jobs/templates/jobs/job_detail.html:15
+#: jobs/admin.py:24 jobs/apps.py:8 jobs/models.py:350
+#: jobs/templates/jobs/job_detail.html:15
 msgid "Jobs"
 msgstr "Вакансии"
 
@@ -1087,12 +1083,12 @@ msgstr "Панель управления"
 
 #: accounts/templates/accounts/admin_dashboard.html:104
 #: accounts/templates/accounts/admin_profile.html:270
-#: core/templates/_inc/nav.html:178
+#: core/templates/_inc/nav.html:203
 msgid "New Admin"
 msgstr "Новый администратор"
 
 #: accounts/templates/accounts/admin_dashboard.html:112
-#: core/templates/_inc/nav.html:186
+#: core/templates/_inc/nav.html:211
 msgid "New Employer"
 msgstr "Новый работодатель"
 
@@ -1108,10 +1104,10 @@ msgstr "Скоро"
 #: accounts/templates/accounts/admin_dashboard.html:140
 #: accounts/templates/accounts/notifications.html:36
 #: accounts/templates/accounts/student_dashboard.html:127 alumni/models.py:924
-#: alumni/models.py:938 core/templates/_inc/nav.html:83
-#: core/templates/home.html:142 events/admin.py:46 events/apps.py:8
-#: events/models.py:297 events/templates/events/list.html:4
-#: events/templates/events/list.html:11
+#: alumni/models.py:938 core/templates/_inc/nav.html:109
+#: core/templates/home.html:142 events/admin.py:21 events/apps.py:8
+#: events/models.py:176 events/templates/events/calendar.html:76
+#: events/templates/events/list.html:5 events/templates/events/list.html:13
 msgid "Events"
 msgstr "События"
 
@@ -1130,6 +1126,7 @@ msgid "Activity"
 msgstr "Активность"
 
 #: accounts/templates/accounts/admin_dashboard.html:170 alumni/models.py:869
+#: events/templates/events/detail.html:81
 msgid "Time"
 msgstr "Время"
 
@@ -1208,8 +1205,11 @@ msgstr "Компания"
 #: accounts/templates/accounts/admin_employer_management.html:13
 #: accounts/templates/accounts/admin_management.html:13
 #: accounts/templates/accounts/user_management.html:53
+#: cvbuilder/templates/cvbuilder/cv_list.html:122
+#: cvbuilder/templates/cvbuilder/cv_list.html:233
+#: cvbuilder/templates/cvbuilder/cv_list.html:311
+#: cvbuilder/templates/cvbuilder/cv_list.html:388
 #: employers/templates/employers/manage_jobs.html:13
-#: events/templates/events/admin_event_list.html:137
 #: events/templates/events/event_registrations.html:55
 #: jobs/templates/jobs/applications.html:145
 #: jobs/templates/jobs/employer_applications.html:101
@@ -1235,16 +1235,17 @@ msgstr "Активно"
 #: accounts/templates/accounts/notifications.html:74
 #: accounts/templates/accounts/user_management.html:111
 #: core/templates/home.html:100 core/templates/home.html:187
-#: core/templates/home.html:280
+#: core/templates/home.html:280 cvbuilder/templates/cvbuilder/cv_list.html:174
 #: cvbuilder/templates/cvbuilder/partials/cv_card.html:28
 #: cvbuilder/templates/cvbuilder/partials/cv_card.html:89
 #: cvbuilder/templates/cvbuilder/public_cv_list.html:49
-#: events/templates/events/admin_event_list.html:190
+#: events/templates/events/admin_event_list.html:166
+#: events/templates/events/list.html:224
 #: events/templates/events/manage_events.html:66
 #: jobs/templates/jobs/company_list.html:122
 #: jobs/templates/jobs/employer_applications.html:156
 #: jobs/templates/jobs/my_jobs.html:290
-#: resources/templates/resources/list.html:117
+#: resources/templates/resources/list.html:149
 #: resources/templates/resources/unpublished_resources.html:96
 #: resources/templates/resources/unpublished_resources.html:136
 #: resources/templates/resources/unpublished_resources.html:200
@@ -1298,13 +1299,13 @@ msgid "Role"
 msgstr "Роль"
 
 #: accounts/templates/accounts/admin_management.html:20
+#: cvbuilder/templates/cvbuilder/cv_list.html:179
 #: cvbuilder/templates/cvbuilder/partials/cv_card.html:33
 #: cvbuilder/templates/cvbuilder/partials/cv_card.html:92
 #: employers/templates/employers/manage_jobs.html:20
-#: events/templates/events/admin_event_list.html:193
-#: events/templates/events/detail.html:25
+#: events/templates/events/admin_event_list.html:169
+#: events/templates/events/detail.html:35
 #: jobs/templates/jobs/job_detail.html:93 jobs/templates/jobs/my_jobs.html:293
-#: resources/templates/resources/list.html:121
 #: resources/templates/resources/resource_detail.html:198
 #: resources/templates/resources/unpublished_resources.html:133
 #: resources/templates/resources/unpublished_resources.html:197
@@ -1314,11 +1315,11 @@ msgstr "Редактировать"
 #: accounts/templates/accounts/admin_profile.html:11
 #: accounts/templates/accounts/create_employer_account.html:27
 #: accounts/templates/accounts/employer_profile_update.html:46
-#: employers/admin.py:59 events/admin.py:89
+#: employers/admin.py:59 events/admin.py:58
 #: events/templates/events/admin_event_form.html:36
-#: jobs/templates/jobs/job_create.html:357 jobs/templates/jobs/job_form.html:63
-#: resources/admin.py:20 resources/admin.py:48
-#: resources/templates/resources/resource_form.html:50
+#: jobs/templates/jobs/job_create.html:357
+#: jobs/templates/jobs/job_form.html:63 resources/admin.py:20
+#: resources/admin.py:48 resources/templates/resources/resource_form.html:50
 msgid "Basic Information"
 msgstr "Основная информация"
 
@@ -1335,7 +1336,6 @@ msgstr "Аватар администратора"
 #: accounts/templates/accounts/profile_base.html:97 alumni/models.py:60
 #: alumni/models.py:260 alumni/models.py:528 core/models.py:14
 #: cvbuilder/models.py:89 cvbuilder/templates/cvbuilder/cv_create.html:112
-#: events/forms.py:245 events/models.py:500
 #: jobs/templates/jobs/applications_detail.html:9
 msgid "Email"
 msgstr "Email"
@@ -1536,7 +1536,7 @@ msgid "New Job"
 msgstr "Новая вакансия"
 
 #: accounts/templates/accounts/employer_dashboard.html:117
-#: core/templates/_inc/nav.html:100 jobs/templates/jobs/my_jobs.html:8
+#: core/templates/_inc/nav.html:125 jobs/templates/jobs/my_jobs.html:8
 #: jobs/templates/jobs/my_jobs.html:23
 msgid "My Jobs"
 msgstr "Мои вакансии"
@@ -1609,7 +1609,7 @@ msgid "Want to login as a student?"
 msgstr "Хотите войти как студент?"
 
 #: accounts/templates/accounts/employer_login.html:53
-#: core/templates/_inc/nav.html:213
+#: core/templates/_inc/nav.html:238
 msgid "Login via Hemis"
 msgstr "Войти через Hemis"
 
@@ -1643,7 +1643,8 @@ msgid "Your last name"
 msgstr "Ваша фамилия"
 
 #: accounts/templates/accounts/employer_profile_update.html:116
-#: accounts/templates/accounts/student_dashboard.html:145 employers/admin.py:85
+#: accounts/templates/accounts/student_dashboard.html:145
+#: employers/admin.py:85
 msgid "Profile Information"
 msgstr "Информация профиля"
 
@@ -1697,7 +1698,8 @@ msgid "Go Back"
 msgstr "Вернуться"
 
 #: accounts/templates/accounts/employer_profile_update.html:266
-#: events/templates/events/admin_event_delete.html:61
+#: cvbuilder/templates/cvbuilder/cv_list.html:510
+#: events/templates/events/admin_event_delete.html:50
 #: events/templates/events/admin_event_form.html:220
 #: events/templates/events/create_event.html:243
 #: jobs/templates/jobs/company_form.html:23
@@ -1709,6 +1711,7 @@ msgid "Cancel"
 msgstr "Отмена"
 
 #: accounts/templates/accounts/employer_profile_update.html:269
+#: cvbuilder/templates/cvbuilder/cv_list.html:511
 #: events/templates/events/admin_event_form.html:223
 #: jobs/templates/jobs/job_detail.html:81
 msgid "Save"
@@ -1752,11 +1755,11 @@ msgstr "Очистить все"
 
 #: accounts/templates/accounts/notifications.html:27
 #: accounts/templates/accounts/user_management.html:22
-#: events/templates/events/list.html:78
+#: cvbuilder/templates/cvbuilder/cv_list.html:37
+#: events/templates/events/list.html:116
 #: jobs/templates/jobs/applications.html:99
 #: jobs/templates/jobs/employer_applications.html:21
 #: jobs/templates/jobs/my_jobs.html:175
-#: resources/templates/resources/list.html:47
 msgid "All"
 msgstr "Все"
 
@@ -1773,10 +1776,11 @@ msgid "Mark as read"
 msgstr "Отметить как прочитанное"
 
 #: accounts/templates/accounts/notifications.html:85
+#: cvbuilder/templates/cvbuilder/cv_list.html:203
 #: cvbuilder/templates/cvbuilder/partials/cv_card.html:52
-#: events/templates/events/admin_event_delete.html:66
-#: events/templates/events/admin_event_list.html:211
-#: events/templates/events/detail.html:28 jobs/templates/jobs/my_jobs.html:309
+#: events/templates/events/admin_event_delete.html:55
+#: events/templates/events/admin_event_list.html:187
+#: events/templates/events/detail.html:38 jobs/templates/jobs/my_jobs.html:309
 #: resources/templates/resources/resource_detail.html:213
 #: resources/templates/resources/resource_form.html:273
 #: resources/templates/resources/unpublished_resources.html:142
@@ -1784,7 +1788,7 @@ msgid "Delete"
 msgstr "Удалить"
 
 #: accounts/templates/accounts/notifications.html:93
-#: events/templates/events/list.html:44
+#: events/templates/events/list.html:99
 msgid "Type"
 msgstr "Тип"
 
@@ -1922,7 +1926,8 @@ msgstr "Пароль успешно изменен"
 
 #: accounts/templates/accounts/password_change_done.html:17
 msgid "Your new password has been saved. Remember to keep it in a safe place."
-msgstr "Ваш новый пароль сохранен. Не забудьте хранить его в безопасном месте."
+msgstr ""
+"Ваш новый пароль сохранен. Не забудьте хранить его в безопасном месте."
 
 #: accounts/templates/accounts/password_change_done.html:20
 msgid "Return to Profile"
@@ -1930,11 +1935,13 @@ msgstr "Вернуться к профилю"
 
 #: accounts/templates/accounts/profile_base.html:5
 #: accounts/templates/accounts/user_detail.html:6
-#: core/templates/_inc/nav.html:161 employers/templates/employers/list.html:197
+#: core/templates/_inc/nav.html:186
+#: employers/templates/employers/list.html:197
 msgid "Profile"
 msgstr "Профиль"
 
 #: accounts/templates/accounts/profile_base.html:35
+#: events/templates/events/detail.html:185
 #: jobs/templates/jobs/job_detail.html:117
 msgid "views"
 msgstr "просмотры"
@@ -1964,7 +1971,7 @@ msgstr "Отправить сообщение"
 msgid "Basic Info"
 msgstr "Основная информация"
 
-#: accounts/templates/accounts/profile_base.html:113 events/models.py:383
+#: accounts/templates/accounts/profile_base.html:113
 #: events/templates/events/event_registrations.html:52
 msgid "Registration Date"
 msgstr "Дата регистрации"
@@ -1974,7 +1981,8 @@ msgid "Contact Info"
 msgstr "Контактная информация"
 
 #: accounts/templates/accounts/profile_base.html:254
-#: core/templates/_inc/nav.html:93
+#: core/templates/_inc/nav.html:118
+#: cvbuilder/templates/cvbuilder/cv_list.html:12
 msgid "My Resumes"
 msgstr "Мои резюме"
 
@@ -1983,7 +1991,7 @@ msgid "Talaba kabineti"
 msgstr "Кабинет студента"
 
 #: accounts/templates/accounts/student_dashboard.html:15
-#: core/templates/_inc/nav.html:141
+#: core/templates/_inc/nav.html:166
 msgid "Personal Cabinet"
 msgstr "Личный кабинет"
 
@@ -1997,6 +2005,7 @@ msgid "Average Grade"
 msgstr "Средний балл"
 
 #: accounts/templates/accounts/student_dashboard.html:103
+#: cvbuilder/templates/cvbuilder/cv_list.html:20
 msgid "New Resume"
 msgstr "Новое резюме"
 
@@ -2006,7 +2015,7 @@ msgid "Job Search"
 msgstr "Поиск работы"
 
 #: accounts/templates/accounts/student_dashboard.html:121
-#: core/templates/_inc/nav.html:80 resources/apps.py:8 resources/models.py:88
+#: core/templates/_inc/nav.html:106 resources/apps.py:8 resources/models.py:88
 msgid "Resources"
 msgstr "Ресурсы"
 
@@ -2055,7 +2064,8 @@ msgid "Applied Jobs"
 msgstr "Отклики на вакансии"
 
 #: accounts/templates/accounts/student_profile.html:110
-#: core/templates/_inc/nav.html:96 core/templates/home.html:18
+#: core/templates/_inc/nav.html:121 core/templates/home.html:18
+#: cvbuilder/templates/cvbuilder/cv_list.html:287
 msgid "Create Resume"
 msgstr "Создать резюме"
 
@@ -2068,10 +2078,11 @@ msgid "Name, surname or username"
 msgstr "Имя, фамилия или имя пользователя"
 
 #: accounts/templates/accounts/student_search.html:11
-#: events/templates/events/admin_event_list.html:114
-#: events/templates/events/list.html:29 events/templates/events/list.html:65
-#: jobs/forms.py:333 jobs/templates/jobs/company_list.html:45
+#: events/templates/events/admin_event_list.html:104
+#: events/templates/events/list.html:81 jobs/forms.py:333
+#: jobs/templates/jobs/company_list.html:45
 #: jobs/templates/jobs/company_list.html:52
+#: resources/templates/resources/list.html:57
 msgid "Search"
 msgstr "Поиск"
 
@@ -2230,8 +2241,7 @@ msgstr "Список и управление всеми пользователя
 msgid "Admins"
 msgstr "Администраторы"
 
-#: accounts/templates/accounts/user_management.html:51 events/models.py:358
-#: events/templates/events/admin_event_list.html:136
+#: accounts/templates/accounts/user_management.html:51
 msgid "Registered"
 msgstr "Зарегистрирован"
 
@@ -2446,10 +2456,10 @@ msgstr "Название навыка"
 msgid "Name of the skill or competency"
 msgstr "Название навыка или компетенции"
 
-#: alumni/models.py:133 alumni/models.py:968 events/forms.py:132
-#: events/models.py:95 events/templates/events/admin_event_list.html:133
-#: events/templates/events/list.html:33 events/templates/events/list.html:59
-#: resources/forms.py:50 resources/models.py:49
+#: alumni/models.py:133 alumni/models.py:968 events/forms.py:94
+#: events/models.py:88 events/templates/events/admin_event_list.html:122
+#: events/templates/events/list.html:89 resources/forms.py:50
+#: resources/models.py:49 resources/templates/resources/list.html:65
 #: resources/templates/resources/resource_detail.html:163
 #: resources/templates/resources/resource_form.html:75
 #: resources/templates/resources/resource_form.html:225
@@ -2465,12 +2475,12 @@ msgid "Detailed description of the skill"
 msgstr "Подробное описание навыка"
 
 #: alumni/models.py:145 alumni/models.py:200 alumni/models.py:951
-#: events/models.py:254
+#: events/models.py:148
 msgid "Slug"
 msgstr "Slug"
 
 #: alumni/models.py:146 alumni/models.py:201 alumni/models.py:952
-#: events/models.py:255
+#: events/models.py:149
 msgid "URL-friendly identifier"
 msgstr "URL-дружественный идентификатор"
 
@@ -2644,12 +2654,11 @@ msgstr "Открыт ли для новых карьерных возможно�
 msgid "Telegram username or handle"
 msgstr "Имя пользователя Telegram"
 
-#: alumni/models.py:365 employers/models.py:99 events/forms.py:248
-#: events/models.py:515
+#: alumni/models.py:365 employers/models.py:99
 msgid "Twitter"
 msgstr "Twitter"
 
-#: alumni/models.py:366 events/models.py:516
+#: alumni/models.py:366
 msgid "Twitter profile URL"
 msgstr "URL профиля Twitter"
 
@@ -2685,7 +2694,7 @@ msgstr "Временная метка последнего обновления 
 msgid "Alumni"
 msgstr "Выпускник"
 
-#: alumni/models.py:464 alumni/models.py:521 events/models.py:415
+#: alumni/models.py:464 alumni/models.py:521
 msgid "Pending"
 msgstr "В ожидании"
 
@@ -2750,13 +2759,13 @@ msgstr "Соединения"
 
 #: alumni/models.py:523 core/models.py:9 employers/models.py:585
 #: events/models.py:66 events/templates/events/admin_event_list.html:69
-#: events/templates/events/admin_event_list.html:177
+#: events/templates/events/admin_event_list.html:159
 msgid "Completed"
 msgstr "Завершено"
 
 #: alumni/models.py:524 employers/models.py:586 events/models.py:65
-#: events/models.py:360 events/templates/events/admin_event_list.html:60
-#: events/templates/events/admin_event_list.html:175
+#: events/templates/events/admin_event_list.html:60
+#: events/templates/events/admin_event_list.html:157
 msgid "Cancelled"
 msgstr "Отменено"
 
@@ -2808,8 +2817,8 @@ msgstr "Предпочтение по коммуникации"
 msgid "Preferred method of communication"
 msgstr "Предпочтительный метод коммуникации"
 
-#: alumni/models.py:576 cvbuilder/models.py:157 events/forms.py:134
-#: events/models.py:107
+#: alumni/models.py:576 cvbuilder/models.py:157 events/forms.py:96
+#: events/models.py:100
 msgid "Start Date"
 msgstr "Дата начала"
 
@@ -2817,8 +2826,8 @@ msgstr "Дата начала"
 msgid "When the mentorship began"
 msgstr "Когда менторство началось"
 
-#: alumni/models.py:582 cvbuilder/models.py:163 events/forms.py:135
-#: events/models.py:111
+#: alumni/models.py:582 cvbuilder/models.py:163 events/forms.py:97
+#: events/models.py:104
 msgid "End Date"
 msgstr "Дата окончания"
 
@@ -2907,10 +2916,10 @@ msgstr "Тип предлагаемой занятости"
 #: alumni/models.py:667 alumni/models.py:874 cvbuilder/models.py:99
 #: cvbuilder/templates/cvbuilder/cv_create.html:152 employers/forms.py:216
 #: employers/forms.py:319 employers/models.py:312 employers/models.py:613
-#: events/admin.py:103 events/admin.py:251 events/forms.py:136
-#: events/forms.py:290 events/models.py:118 events/models.py:586
-#: jobs/forms.py:193 jobs/forms.py:342 jobs/forms.py:581 jobs/models.py:116
-#: jobs/models.py:587 jobs/templates/jobs/applications_detail.html:21
+#: events/admin.py:72 events/forms.py:98 events/models.py:111
+#: events/templates/events/detail.html:94 jobs/forms.py:193 jobs/forms.py:342
+#: jobs/forms.py:581 jobs/models.py:116 jobs/models.py:587
+#: jobs/templates/jobs/applications_detail.html:21
 #: jobs/templates/jobs/job_create.html:1277
 #: jobs/templates/jobs/job_form.html:141
 msgid "Location"
@@ -2949,8 +2958,8 @@ msgid "Maximum salary offered"
 msgstr "Максимальная предлагаемая зарплата"
 
 #: alumni/models.py:697 employers/forms.py:220 employers/models.py:341
-#: events/forms.py:150 events/models.py:223 jobs/forms.py:202 jobs/forms.py:400
-#: jobs/models.py:183 jobs/templates/jobs/job_form.html:309
+#: jobs/forms.py:202 jobs/forms.py:400 jobs/models.py:183
+#: jobs/templates/jobs/job_form.html:309
 msgid "Currency"
 msgstr "Валюта"
 
@@ -3041,7 +3050,7 @@ msgstr "Последнее обновление вакансии"
 
 #: alumni/models.py:767 alumni/models.py:789 employers/models.py:399
 #: employers/models.py:452 employers/models.py:546 jobs/admin.py:172
-#: jobs/admin.py:219 jobs/models.py:431 jobs/models.py:536
+#: jobs/admin.py:219 jobs/models.py:349 jobs/models.py:431 jobs/models.py:536
 #: jobs/templates/jobs/applications_detail.html:17
 #: jobs/templates/jobs/my_jobs.html:370
 msgid "Job"
@@ -3117,11 +3126,11 @@ msgstr "Последнее обновление отклика"
 msgid "Job Applications"
 msgstr "Отклики на вакансии"
 
-#: alumni/models.py:841 events/models.py:53 events/models.py:544
+#: alumni/models.py:841 events/models.py:53
 msgid "Networking"
 msgstr "Нетворкинг"
 
-#: alumni/models.py:842 events/models.py:51 events/models.py:540
+#: alumni/models.py:842 events/models.py:51
 msgid "Workshop"
 msgstr "Воркшоп"
 
@@ -3149,7 +3158,7 @@ msgstr "Название или имя события"
 msgid "Detailed event description"
 msgstr "Подробное описание события"
 
-#: alumni/models.py:861 events/forms.py:133 events/models.py:101
+#: alumni/models.py:861 events/forms.py:95 events/models.py:94
 msgid "Event Type"
 msgstr "Тип события"
 
@@ -3157,7 +3166,11 @@ msgstr "Тип события"
 msgid "Type or category of the event"
 msgstr "Тип или категория события"
 
-#: alumni/models.py:865 events/templates/events/list.html:57
+#: alumni/models.py:865 cvbuilder/templates/cvbuilder/cv_list.html:121
+#: cvbuilder/templates/cvbuilder/cv_list.html:232
+#: cvbuilder/templates/cvbuilder/cv_list.html:310
+#: cvbuilder/templates/cvbuilder/cv_list.html:387
+#: events/templates/events/detail.html:68
 #: jobs/templates/jobs/employer_applications.html:100
 #: jobs/templates/jobs/job_list.html:88
 msgid "Date"
@@ -3175,8 +3188,7 @@ msgstr "Время, когда событие начинается"
 msgid "Physical location of the event"
 msgstr "Физическое местоположение события"
 
-#: alumni/models.py:880 events/admin.py:106 events/models.py:148
-#: events/templates/events/admin_event_list.html:132
+#: alumni/models.py:880
 msgid "Organizer"
 msgstr "Организатор"
 
@@ -3184,11 +3196,11 @@ msgstr "Организатор"
 msgid "Alumni organizing the event"
 msgstr "Выпускник, организующий событие"
 
-#: alumni/models.py:887 events/forms.py:143 events/models.py:178
+#: alumni/models.py:887
 msgid "Registration Required"
 msgstr "Требуется регистрация"
 
-#: alumni/models.py:888 events/models.py:179
+#: alumni/models.py:888
 msgid "Whether registration is required to attend"
 msgstr "Требуется ли регистрация для участия"
 
@@ -3196,7 +3208,7 @@ msgstr "Требуется ли регистрация для участия"
 msgid "Max Participants"
 msgstr "Максимум участников"
 
-#: alumni/models.py:894 events/models.py:198
+#: alumni/models.py:894
 msgid "Maximum number of participants allowed"
 msgstr "Максимальное количество разрешенных участников"
 
@@ -3220,10 +3232,8 @@ msgstr "Когда событие было создано"
 msgid "Last update to the event"
 msgstr "Последнее обновление события"
 
-#: alumni/models.py:923 events/models.py:296 events/models.py:369
-#: events/models.py:467 events/models.py:552 events/models.py:639
-#: events/models.py:693 events/models.py:742
-#: events/templates/events/admin_event_list.html:131
+#: alumni/models.py:923 events/models.py:175 events/models.py:221
+#: events/templates/events/admin_event_list.html:121
 msgid "Event"
 msgstr "Событие"
 
@@ -3267,7 +3277,7 @@ msgstr "Выпускник, написавший новостную статью
 msgid "News category or topic"
 msgstr "Категория или тема новостей"
 
-#: alumni/models.py:975 events/models.py:698
+#: alumni/models.py:975 events/models.py:226
 #: events/templates/events/admin_event_form.html:191 resources/forms.py:52
 #: resources/models.py:60
 msgid "Image"
@@ -3277,7 +3287,8 @@ msgstr "Изображение"
 msgid "Featured image for the news article"
 msgstr "Главное изображение для новостной статьи"
 
-#: alumni/models.py:981 events/forms.py:151 events/models.py:260
+#: alumni/models.py:981 events/forms.py:101 events/models.py:154
+#: events/templates/events/detail.html:193
 msgid "Tags"
 msgstr "Теги"
 
@@ -3289,10 +3300,13 @@ msgstr "Теги для статьи, разделенные запятыми"
 #: cvbuilder/templates/cvbuilder/cv_create.html:238
 #: cvbuilder/templates/cvbuilder/cv_create.html:307
 #: cvbuilder/templates/cvbuilder/cv_create.html:391
+#: cvbuilder/templates/cvbuilder/cv_list.html:42
+#: cvbuilder/templates/cvbuilder/cv_list.html:153
+#: cvbuilder/templates/cvbuilder/cv_list.html:469
 #: cvbuilder/templates/cvbuilder/partials/cv_card.html:7
 #: employers/models.py:723 events/models.py:64
 #: events/templates/events/admin_event_list.html:42
-#: events/templates/events/admin_event_list.html:171 resources/models.py:72
+#: events/templates/events/admin_event_list.html:153 resources/models.py:72
 msgid "Published"
 msgstr "Опубликовано"
 
@@ -3370,7 +3384,7 @@ msgstr "Родительское сообщение для ответов"
 msgid "When the message was sent"
 msgstr "Когда сообщение было отправлено"
 
-#: alumni/models.py:1070 core/templates/_inc/nav.html:166
+#: alumni/models.py:1070 core/templates/_inc/nav.html:191
 msgid "Messages"
 msgstr "Сообщения"
 
@@ -3462,40 +3476,40 @@ msgstr "Контактное сообщение"
 msgid "Contact Messages"
 msgstr "Контактные сообщения"
 
-#: core/templates/_inc/nav.html:74
+#: core/templates/_inc/nav.html:100
 msgid "Home"
 msgstr "Главная"
 
-#: core/templates/_inc/nav.html:77
+#: core/templates/_inc/nav.html:103
 msgid "University"
 msgstr "Университет"
 
-#: core/templates/_inc/nav.html:103
+#: core/templates/_inc/nav.html:128
 msgid "Add Job"
 msgstr "Добавить вакансию"
 
-#: core/templates/_inc/nav.html:106 core/templates/_inc/nav.html:119
+#: core/templates/_inc/nav.html:131 core/templates/_inc/nav.html:144
 #: cvbuilder/templates/cvbuilder/public_cv_list.html:8
 msgid "Public Resumes"
 msgstr "Публичные резюме"
 
-#: core/templates/_inc/nav.html:147
+#: core/templates/_inc/nav.html:172
 msgid "Company Cabinet"
 msgstr "Кабинет компании"
 
-#: core/templates/_inc/nav.html:194
+#: core/templates/_inc/nav.html:219
 msgid "Logout"
 msgstr "Выйти"
 
-#: core/templates/_inc/nav.html:212
+#: core/templates/_inc/nav.html:237
 msgid "As Student"
 msgstr "Как студент"
 
-#: core/templates/_inc/nav.html:223
+#: core/templates/_inc/nav.html:248
 msgid "As Employer"
 msgstr "Как работодатель"
 
-#: core/templates/_inc/nav.html:224
+#: core/templates/_inc/nav.html:249
 msgid "Company Account"
 msgstr "Аккаунт компании"
 
@@ -3520,7 +3534,7 @@ msgid "Students/Alumni"
 msgstr "Студенты/Выпускники"
 
 #: core/templates/home.html:34 core/templates/home.html:127
-#: resources/templates/resources/list.html:8
+#: resources/templates/resources/list.html:10
 msgid "Career Resources"
 msgstr "Карьерные ресурсы"
 
@@ -3601,8 +3615,10 @@ msgid "Participate"
 msgstr "Участвовать"
 
 #: core/templates/home.html:157
-msgid "Popular Resources"
-msgstr "Популярные ресурсы"
+#, fuzzy
+#| msgid "Create Resource"
+msgid "Latest Resources"
+msgstr "Создать ресурс"
 
 #: core/templates/home.html:159
 #: resources/templates/resources/resource_detail.html:9
@@ -3673,7 +3689,7 @@ msgstr "Название шаблона"
 msgid "Display name for the CV template"
 msgstr "Отображаемое имя для шаблона CV"
 
-#: cvbuilder/models.py:19 events/forms.py:142 events/models.py:171
+#: cvbuilder/models.py:19 events/forms.py:100 events/models.py:127
 msgid "Thumbnail"
 msgstr "Миниатюра"
 
@@ -3707,9 +3723,12 @@ msgstr "Шаблоны CV"
 
 #: cvbuilder/models.py:50 cvbuilder/templates/cvbuilder/cv_create.html:221
 #: cvbuilder/templates/cvbuilder/cv_create.html:296
+#: cvbuilder/templates/cvbuilder/cv_list.html:48
+#: cvbuilder/templates/cvbuilder/cv_list.html:155
+#: cvbuilder/templates/cvbuilder/cv_list.html:473
 #: cvbuilder/templates/cvbuilder/partials/cv_card.html:9 events/models.py:63
 #: events/templates/events/admin_event_list.html:51
-#: events/templates/events/admin_event_list.html:173
+#: events/templates/events/admin_event_list.html:155
 #: jobs/templates/jobs/my_jobs.html:181 jobs/templates/jobs/my_jobs.html:266
 msgid "Draft"
 msgstr "Черновик"
@@ -3723,6 +3742,10 @@ msgid "Title or name of the resume"
 msgstr "Название или имя резюме"
 
 #: cvbuilder/models.py:71 cvbuilder/templates/cvbuilder/cv_create.html:66
+#: cvbuilder/templates/cvbuilder/cv_list.html:119
+#: cvbuilder/templates/cvbuilder/cv_list.html:231
+#: cvbuilder/templates/cvbuilder/cv_list.html:309
+#: cvbuilder/templates/cvbuilder/cv_list.html:386
 msgid "Template"
 msgstr "Шаблон"
 
@@ -4043,8 +4066,8 @@ msgstr ""
 
 #: cvbuilder/templates/cvbuilder/cv_create.html:309
 msgid ""
-"Your resume is visible to employers and administrators. Use this when you're "
-"actively job hunting."
+"Your resume is visible to employers and administrators. Use this when you're"
+" actively job hunting."
 msgstr ""
 "Ваше резюме видно работодателям и администраторам. Используйте это, когда "
 "активно ищете работу."
@@ -4131,17 +4154,198 @@ msgstr "Выбрать этот шаблон"
 msgid "Please select a template"
 msgstr "Пожалуйста, выберите шаблон"
 
+#: cvbuilder/templates/cvbuilder/cv_list.html:13
+msgid "Manage all your created resumes"
+msgstr "Управляйте всеми созданными вами резюме"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:54
+#: cvbuilder/templates/cvbuilder/cv_list.html:157
+#: cvbuilder/templates/cvbuilder/cv_list.html:477
+#, fuzzy
+#| msgid "Archived"
+msgid "Archive"
+msgstr "В архиве"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:63
+#, fuzzy, python-format
+#| msgid "Total: %(count)s companies"
+msgid "Total: %(total)s resumes"
+msgstr "Всего: %(count)s компаний"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:65
+#, fuzzy
+#| msgid "No resumes available yet"
+msgid "No resumes available"
+msgstr "Резюме пока нет"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:80
+#, fuzzy
+#| msgid "Search resources..."
+msgid "Search resumes..."
+msgstr "Поиск ресурсов..."
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:85
+#: cvbuilder/templates/cvbuilder/public_cv_list.html:15
+msgid "All templates"
+msgstr "Все шаблоны"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:93
+#: cvbuilder/templates/cvbuilder/public_cv_list.html:21
+msgid "Newest first"
+msgstr "Сначала новые"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:94
+#: cvbuilder/templates/cvbuilder/public_cv_list.html:22
+msgid "Oldest first"
+msgstr "Сначала старые"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:95
+#: cvbuilder/templates/cvbuilder/public_cv_list.html:23
+msgid "Name A-Z"
+msgstr "Имя А-Я"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:96
+#: cvbuilder/templates/cvbuilder/public_cv_list.html:24
+msgid "Name Z-A"
+msgstr "Имя Я-А"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:101
+#: events/templates/events/admin_event_list.html:107
+#: jobs/templates/jobs/company_list.html:55
+msgid "Clear"
+msgstr "Очистить"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:117
+#: cvbuilder/templates/cvbuilder/cv_list.html:229
+#: cvbuilder/templates/cvbuilder/cv_list.html:307
+#: cvbuilder/templates/cvbuilder/cv_list.html:384
+#, fuzzy
+#| msgid "Date and Time"
+msgid "Name and Title"
+msgstr "Дата и время"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:118
+#: cvbuilder/templates/cvbuilder/cv_list.html:230
+#: cvbuilder/templates/cvbuilder/cv_list.html:308
+#: cvbuilder/templates/cvbuilder/cv_list.html:385
+#, fuzzy
+#| msgid "Contract"
+msgid "Contact"
+msgstr "Контракт"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:136
+#: cvbuilder/templates/cvbuilder/cv_list.html:247
+#: cvbuilder/templates/cvbuilder/cv_list.html:325
+#: cvbuilder/templates/cvbuilder/cv_list.html:402
+#, fuzzy
+#| msgid "Not specified"
+msgid "Name not specified"
+msgstr "Не указано"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:137
+#: cvbuilder/templates/cvbuilder/cv_list.html:248
+#: cvbuilder/templates/cvbuilder/cv_list.html:326
+#: cvbuilder/templates/cvbuilder/cv_list.html:403
+#, fuzzy
+#| msgid "Not specified"
+msgid "Title not specified"
+msgstr "Не указано"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:186
 #: cvbuilder/templates/cvbuilder/partials/cv_card.html:40
 msgid "Change Status"
 msgstr "Изменить статус"
 
+#: cvbuilder/templates/cvbuilder/cv_list.html:191
 #: cvbuilder/templates/cvbuilder/partials/cv_card.html:45
 msgid "Duplicate"
 msgstr "Дублировать"
 
+#: cvbuilder/templates/cvbuilder/cv_list.html:197
+msgid "Download PDF"
+msgstr "Скачать PDF"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:202
+#: cvbuilder/templates/cvbuilder/cv_list.html:433
 #: cvbuilder/templates/cvbuilder/partials/cv_card.html:51
 msgid "Are you sure you want to delete this resume?"
 msgstr "Вы уверены, что хотите удалить это резюме?"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:284
+#, fuzzy
+#| msgid "No published resumes yet."
+msgid "No published resumes"
+msgstr "Опубликованных резюме пока нет."
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:285
+#: cvbuilder/templates/cvbuilder/cv_list.html:365
+#: cvbuilder/templates/cvbuilder/cv_list.html:444
+msgid "You don\\"
+msgstr "Ты не\\"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:364
+#, fuzzy
+#| msgid "Created Resumes"
+msgid "No draft resumes"
+msgstr "Созданные резюме"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:443
+#, fuzzy
+#| msgid "No published resumes yet."
+msgid "No archived resumes"
+msgstr "Опубликованных резюме пока нет."
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:465
+#, fuzzy
+#| msgid "Total Resources"
+msgid "Total Resumes"
+msgstr "Всего ресурсов"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:492
+#, fuzzy
+#| msgid "Resume Status"
+msgid "Change Resume Status"
+msgstr "Статус резюме"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:500
+#, fuzzy
+#| msgid "System Status"
+msgid "Select Status"
+msgstr "Статус системы"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:502
+msgid "Draft - Only you can see"
+msgstr "Черновик – видите только вы"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:503
+#, fuzzy
+#| msgid "Visible to employers and admins"
+msgid "Published - Visible to employers and admins"
+msgstr "Видно работодателям и администраторам"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:504
+#, fuzzy
+#| msgid "Hidden from everyone"
+msgid "Archive - Hidden from everyone"
+msgstr "Скрыто от всех"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:882
+#, fuzzy
+#| msgid "No resources found"
+msgid "No resumes found"
+msgstr "Ресурсы не найдены"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:885
+#, fuzzy
+#| msgid "Founded"
+msgid "Found"
+msgstr "Основана"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:885
+#, fuzzy
+#| msgid "Resumes"
+msgid "resumes"
+msgstr "Резюме"
 
 #: cvbuilder/templates/cvbuilder/partials/cv_card.html:75
 msgid "Created"
@@ -4173,57 +4377,38 @@ msgstr "Просмотреть шаблоны"
 msgid "This page is only open for employers and administrators."
 msgstr "Эта страница открыта только для работодателей и администраторов."
 
-#: cvbuilder/templates/cvbuilder/public_cv_list.html:15
-msgid "All templates"
-msgstr "Все шаблоны"
-
-#: cvbuilder/templates/cvbuilder/public_cv_list.html:21
-msgid "Newest first"
-msgstr "Сначала новые"
-
-#: cvbuilder/templates/cvbuilder/public_cv_list.html:22
-msgid "Oldest first"
-msgstr "Сначала старые"
-
-#: cvbuilder/templates/cvbuilder/public_cv_list.html:23
-msgid "Name A-Z"
-msgstr "Имя А-Я"
-
-#: cvbuilder/templates/cvbuilder/public_cv_list.html:24
-msgid "Name Z-A"
-msgstr "Имя Я-А"
-
 #: cvbuilder/templates/cvbuilder/public_cv_list.html:26
 #: events/templates/events/event_registrations.html:37
+#: events/templates/events/list.html:64
 #: events/templates/events/manage_events.html:34
 #: events/templates/events/my_events.html:29
-#: resources/templates/resources/list.html:37
+#: resources/templates/resources/list.html:40
 msgid "Filter"
 msgstr "Фильтр"
 
 #: cvbuilder/templates/cvbuilder/public_cv_list.html:63
-#: events/templates/events/admin_event_list.html:242
+#: events/templates/events/admin_event_list.html:218
 #: events/templates/events/event_registrations.html:114
-#: events/templates/events/list.html:173
+#: events/templates/events/list.html:243
 #: events/templates/events/manage_events.html:106
 #: events/templates/events/my_events.html:91
 #: jobs/templates/jobs/job_create.html:719
 #: jobs/templates/jobs/job_create.html:922
 #: jobs/templates/jobs/job_create.html:1044
 #: jobs/templates/jobs/my_jobs.html:328 jobs/templates/jobs/my_jobs.html:469
-#: resources/templates/resources/list.html:135
+#: resources/templates/resources/list.html:167
 #: resources/templates/resources/unpublished_resources.html:226
 msgid "Previous"
 msgstr "Предыдущий"
 
 #: cvbuilder/templates/cvbuilder/public_cv_list.html:66
-#: events/templates/events/admin_event_list.html:262
+#: events/templates/events/admin_event_list.html:238
 #: events/templates/events/event_registrations.html:130
-#: events/templates/events/list.html:189
+#: events/templates/events/list.html:259
 #: events/templates/events/manage_events.html:122
 #: events/templates/events/my_events.html:107
 #: jobs/templates/jobs/my_jobs.html:346 jobs/templates/jobs/my_jobs.html:487
-#: resources/templates/resources/list.html:151
+#: resources/templates/resources/list.html:183
 #: resources/templates/resources/unpublished_resources.html:242
 msgid "Next"
 msgstr "Следующий"
@@ -4445,7 +4630,7 @@ msgstr "Обязанности по работе..."
 msgid "Benefits and perks..."
 msgstr "Преимущества и бонусы..."
 
-#: employers/forms.py:182 events/forms.py:100 jobs/forms.py:570
+#: employers/forms.py:182 events/forms.py:80 jobs/forms.py:570
 msgid "Tashkent, Uzbekistan"
 msgstr "Ташкент, Узбекистан"
 
@@ -4556,7 +4741,7 @@ msgid "What could be improved?"
 msgstr "Что можно улучшить?"
 
 #: employers/forms.py:362 employers/models.py:637 employers/models.py:689
-#: employers/templates/employers/list.html:69 events/models.py:754
+#: employers/templates/employers/list.html:69
 msgid "Rating"
 msgstr "Рейтинг"
 
@@ -4872,17 +5057,18 @@ msgstr "Когда эта вакансия истекает"
 msgid "Salary negotiable"
 msgstr "Зарплата договорная"
 
-#: employers/models.py:425
+#: employers/models.py:425 jobs/models.py:378
 #, python-format
 msgid "from %(salary)s %(currency)s"
 msgstr "от %(salary)s %(currency)s"
 
-#: employers/models.py:430
+#: employers/models.py:430 jobs/models.py:383
 #, python-format
 msgid "up to %(salary)s %(currency)s"
 msgstr "до %(salary)s %(currency)s"
 
-#: employers/models.py:434 jobs/templates/jobs/applications.html:207
+#: employers/models.py:434 jobs/models.py:387 jobs/models.py:401
+#: jobs/templates/jobs/applications.html:207
 #: jobs/templates/jobs/job_list.html:287
 msgid "Not specified"
 msgstr "Не указано"
@@ -4972,7 +5158,7 @@ msgstr "Заметки о кандидатах"
 msgid "Scheduled"
 msgstr "Запланировано"
 
-#: employers/models.py:587 events/models.py:362
+#: employers/models.py:587
 msgid "No Show"
 msgstr "Не явился"
 
@@ -5359,402 +5545,151 @@ msgstr "У вас нет разрешения на публикацию вака
 msgid "Job posted successfully!"
 msgstr "Вакансия успешно опубликована!"
 
-#: events/admin.py:50 events/forms.py:36 events/models.py:27
+#: events/admin.py:25 events/forms.py:28 events/models.py:27
 msgid "Color"
 msgstr "Цвет"
 
-#: events/admin.py:101
+#: events/admin.py:70
 msgid "Date & Time"
 msgstr "Дата & Время"
 
-#: events/admin.py:107
+#: events/admin.py:75
 msgid "Media"
 msgstr "Медиа"
 
-#: events/admin.py:109 events/templates/events/admin_event_form.html:156
-#: events/templates/events/detail.html:72
-msgid "Registration"
-msgstr "Регистрация"
-
-#: events/admin.py:120
+#: events/admin.py:76
 msgid "Pricing"
 msgstr "Ценообразование"
 
-#: events/admin.py:122
+#: events/admin.py:78
 msgid "Settings"
 msgstr "Настройки"
 
-#: events/admin.py:141
+#: events/admin.py:96
 msgid "Publish selected events"
 msgstr "Опубликовать выбранные события"
 
-#: events/admin.py:144
+#: events/admin.py:99
 #, python-format
 msgid "%(count)d events published"
 msgstr "%(count)d событий опубликовано"
 
-#: events/admin.py:146
+#: events/admin.py:101
 msgid "Unpublish selected events"
 msgstr "Снять с публикации выбранные события"
 
-#: events/admin.py:150
+#: events/admin.py:105
 #, python-format
 msgid "%(count)d events unpublished"
 msgstr "%(count)d событий снято с публикации"
 
-#: events/admin.py:153
+#: events/admin.py:108
 msgid "Mark as featured"
 msgstr "Отметить как рекомендуемое"
 
-#: events/admin.py:157
+#: events/admin.py:112
 #, python-format
 msgid "%(count)d events marked as featured"
 msgstr "%(count)d событий отмечены как рекомендуемые"
 
-#: events/admin.py:177
-msgid "Registration Information"
-msgstr "Информация о регистрации"
-
-#: events/admin.py:181 jobs/templates/jobs/applications_detail.html:37
-msgid "Additional Information"
-msgstr "Дополнительная информация"
-
-#: events/admin.py:184
-msgid "Payment"
-msgstr "Оплата"
-
-#: events/admin.py:185 events/templates/events/event_registrations.html:54
-#: events/templates/events/event_registrations.html:93
-msgid "Check-in"
-msgstr "Регистрация"
-
-#: events/admin.py:190
-msgid "Mark as attended"
-msgstr "Отметить как посетил"
-
-#: events/admin.py:195
-#, python-format
-msgid "%(count)d registrations marked as attended"
-msgstr "%(count)d регистраций отмечены как посетил"
-
-#: events/admin.py:198
-msgid "Mark as no show"
-msgstr "Отметить как не явился"
-
-#: events/admin.py:202
-#, python-format
-msgid "%(count)d registrations marked as no show"
-msgstr "%(count)d регистраций отмечены как не явился"
-
-#: events/admin.py:205
-msgid "Confirm payment"
-msgstr "Подтвердить оплату"
-
-#: events/admin.py:209
-#, python-format
-msgid "%(count)d payments confirmed"
-msgstr "%(count)d оплат подтверждено"
-
-#: events/admin.py:221
-msgid "Speaker Information"
-msgstr "Информация о спикере"
-
-#: events/admin.py:228 events/admin.py:254 events/admin.py:300
-msgid "Display"
-msgstr "Отображение"
-
-#: events/admin.py:247
-msgid "Session Information"
-msgstr "Информация о сессии"
-
-#: events/admin.py:250
-msgid "Timing"
-msgstr "Время"
-
-#: events/admin.py:252 events/models.py:595
-#: events/templates/events/detail.html:149
-msgid "Speakers"
-msgstr "Спикеры"
-
-#: events/admin.py:253
-msgid "Materials"
-msgstr "Материалы"
-
-#: events/admin.py:266 events/forms.py:323 events/forms.py:393
-#: events/models.py:659 events/models.py:759
-#: events/templates/events/detail.html:231
-msgid "Comment"
-msgstr "Комментарий"
-
-#: events/admin.py:274
-msgid "Approve selected comments"
-msgstr "Одобрить выбранные комментарии"
-
-#: events/admin.py:278
-#, python-format
-msgid "%(count)d comments approved"
-msgstr "%(count)d комментариев одобрено"
-
-#: events/admin.py:281
-msgid "Disapprove selected comments"
-msgstr "Отклонить выбранные комментарии"
-
-#: events/admin.py:285
-#, python-format
-msgid "%(count)d comments disapproved"
-msgstr "%(count)d комментариев отклонено"
-
-#: events/admin.py:297
+#: events/admin.py:124
 msgid "Photo Information"
 msgstr "Информация о фотографии"
 
-#: events/admin.py:313
-msgid "Rating Information"
-msgstr "Информация о рейтинге"
+#: events/admin.py:127
+msgid "Display"
+msgstr "Отображение"
 
-#: events/admin.py:315
-msgid "Detailed Ratings"
-msgstr "Подробные рейтинги"
-
-#: events/forms.py:25
+#: events/forms.py:17
 msgid "Category name"
 msgstr "Название категории"
 
-#: events/forms.py:34 events/models.py:16 resources/models.py:14
+#: events/forms.py:26 events/models.py:16 resources/models.py:14
 msgid "Category Name"
 msgstr "Название категории"
 
-#: events/forms.py:37 events/models.py:33 jobs/models.py:25
+#: events/forms.py:29 events/models.py:33 jobs/models.py:25
 msgid "Icon"
 msgstr "Иконка"
 
-#: events/forms.py:73
+#: events/forms.py:53
 msgid "Event title"
 msgstr "Название события"
 
-#: events/forms.py:79
+#: events/forms.py:59
 msgid "Brief description (max 300 characters)"
 msgstr "Краткое описание (максимум 300 символов)"
 
-#: events/forms.py:86
+#: events/forms.py:66
 msgid "Detailed event description..."
 msgstr "Подробное описание события..."
 
-#: events/forms.py:124
+#: events/forms.py:86
 msgid "technology, workshop, networking"
 msgstr "технологии, воркшоп, нетворкинг"
 
-#: events/forms.py:129 events/models.py:79
+#: events/forms.py:91 events/models.py:72
 msgid "Event Title"
 msgstr "Название события"
 
-#: events/forms.py:130 events/models.py:88 jobs/forms.py:190 jobs/models.py:101
+#: events/forms.py:92 events/models.py:81 jobs/forms.py:190 jobs/models.py:101
 #: jobs/templates/jobs/job_form.html:222
 msgid "Short Description"
 msgstr "Краткое описание"
 
-#: events/forms.py:137 events/forms.py:392 events/models.py:124
-msgid "Venue"
-msgstr "Место проведения"
-
-#: events/forms.py:138 events/models.py:129
-#: events/templates/events/detail.html:64
-msgid "Online Event"
-msgstr "Онлайн событие"
-
-#: events/forms.py:139 events/models.py:134
-msgid "Online Meeting Link"
-msgstr "Ссылка на онлайн встречу"
-
-#: events/forms.py:140 events/models.py:139
-msgid "Full Address"
-msgstr "Полный адрес"
-
-#: events/forms.py:141 events/models.py:164
+#: events/forms.py:99 events/models.py:120
 msgid "Banner Image"
 msgstr "Баннер"
 
-#: events/forms.py:144 events/models.py:185
-msgid "Registration Type"
-msgstr "Тип регистрации"
-
-#: events/forms.py:145 events/models.py:191
-msgid "Registration Deadline"
-msgstr "Крайний срок регистрации"
-
-#: events/forms.py:146 events/models.py:197
-msgid "Maximum Participants"
-msgstr "Максимум участников"
-
-#: events/forms.py:147
-msgid "Enable Waitlist"
-msgstr "Включить лист ожидания"
-
-#: events/forms.py:148 events/models.py:209
-msgid "Free Event"
-msgstr "Бесплатное событие"
-
-#: events/forms.py:149 events/models.py:216
-msgid "Price"
-msgstr "Цена"
-
-#: events/forms.py:165
+#: events/forms.py:115
 msgid "End date must be after start date."
 msgstr "Дата окончания должна быть после даты начала."
 
-#: events/forms.py:169
+#: events/forms.py:119
 msgid "Registration deadline cannot be after event start date."
 msgstr "Крайний срок регистрации не может быть после даты начала события."
 
-#: events/forms.py:186
-msgid "Any dietary restrictions?"
-msgstr "Есть ли диетические ограничения?"
-
-#: events/forms.py:193
-msgid "Any special requirements?"
-msgstr "Есть ли особые требования?"
-
-#: events/forms.py:200
-msgid "Additional comments..."
-msgstr "Дополнительные комментарии..."
-
-#: events/forms.py:205 events/models.py:397
-msgid "Dietary Restrictions"
-msgstr "Диетические ограничения"
-
-#: events/forms.py:206 events/models.py:402
-msgid "Special Requirements"
-msgstr "Особые требования"
-
-#: events/forms.py:207 events/models.py:407
-msgid "Comments"
-msgstr "Комментарии"
-
-#: events/forms.py:240 events/models.py:472
-msgid "Speaker Name"
-msgstr "Имя спикера"
-
-#: events/forms.py:241 events/models.py:477
-msgid "Speaker Title"
-msgstr "Должность спикера"
-
-#: events/forms.py:242 events/forms.py:391 events/models.py:483
-msgid "Organization"
-msgstr "Организация"
-
-#: events/forms.py:243 events/models.py:488
-msgid "Biography"
-msgstr "Биография"
-
-#: events/forms.py:244 events/models.py:495
-msgid "Photo"
-msgstr "Фотография"
-
-#: events/forms.py:249 events/forms.py:293 events/models.py:522
-#: events/models.py:613 events/models.py:722
-msgid "Display Order"
-msgstr "Порядок отображения"
-
-#: events/forms.py:285 events/models.py:557
-msgid "Session Title"
-msgstr "Название сессии"
-
-#: events/forms.py:287 events/models.py:568
-msgid "Session Type"
-msgstr "Тип сессии"
-
-#: events/forms.py:288 events/models.py:574
-msgid "Start Time"
-msgstr "Время начала"
-
-#: events/forms.py:289 events/models.py:578
-msgid "End Time"
-msgstr "Время окончания"
-
-#: events/forms.py:291 events/models.py:602
-msgid "Presentation URL"
-msgstr "URL презентации"
-
-#: events/forms.py:292 events/models.py:607
-msgid "Materials URL"
-msgstr "URL материалов"
-
-#: events/forms.py:302
-msgid "End time must be after start time."
-msgstr "Время окончания должно быть после времени начала."
-
-#: events/forms.py:318
-msgid "Share your thoughts about this event..."
-msgstr "Поделитесь вашими мыслями об этом событии..."
-
-#: events/forms.py:384 events/templates/events/detail.html:232
-msgid "Share your experience..."
-msgstr "Поделитесь вашим опытом..."
-
-#: events/forms.py:389 events/templates/events/detail.html:218
-msgid "Overall Rating"
-msgstr "Общий рейтинг"
-
-#: events/forms.py:390
-msgid "Content Quality"
-msgstr "Качество содержания"
-
-#: events/forms.py:403 events/templates/events/list.html:30
+#: events/forms.py:130 events/templates/events/list.html:38
 msgid "Search events..."
 msgstr "Поиск событий..."
 
-#: events/forms.py:409 events/templates/events/admin_event_list.html:94
-#: events/templates/events/list.html:35
+#: events/forms.py:136 events/templates/events/admin_event_list.html:94
+#: events/templates/events/list.html:44
 msgid "All Categories"
 msgstr "Все категории"
 
-#: events/forms.py:413 events/templates/events/list.html:46
+#: events/forms.py:140 events/templates/events/list.html:54
 msgid "All Types"
 msgstr "Все типы"
 
-#: events/forms.py:419
+#: events/forms.py:146
 msgid "Any Time"
 msgstr "Любое время"
 
-#: events/forms.py:420 jobs/templates/jobs/job_list.html:91
+#: events/forms.py:147 events/templates/events/calendar.html:54
+#: jobs/templates/jobs/job_list.html:91
 msgid "Today"
 msgstr "Сегодня"
 
-#: events/forms.py:421
+#: events/forms.py:148
 msgid "This Week"
 msgstr "На этой неделе"
 
-#: events/forms.py:422
+#: events/forms.py:149 events/templates/events/calendar.html:94
 msgid "This Month"
 msgstr "В этом месяце"
 
-#: events/forms.py:423
+#: events/forms.py:150 events/templates/events/calendar.html:90
 msgid "Upcoming"
 msgstr "Предстоящие"
 
-#: events/forms.py:424
+#: events/forms.py:151
 msgid "Past Events"
 msgstr "Прошедшие события"
 
-#: events/forms.py:432
+#: events/forms.py:159
 msgid "Location..."
 msgstr "Местоположение..."
-
-#: events/forms.py:454
-msgid "All Registered Participants"
-msgstr "Все зарегистрированные участники"
-
-#: events/forms.py:455
-msgid "Confirmed Participants Only"
-msgstr "Только подтвержденные участники"
-
-#: events/forms.py:456
-msgid "Waiting List Only"
-msgstr "Только лист ожидания"
-
-#: events/forms.py:457
-msgid "Attended Participants"
-msgstr "Участники, которые посетили"
 
 #: events/models.py:17
 msgid "Name of the event category"
@@ -5776,7 +5711,8 @@ msgstr "Идентификатор иконки для отображения в
 msgid "Event Category"
 msgstr "Категория события"
 
-#: events/models.py:39 events/templates/events/categories.html:4
+#: events/models.py:39 events/templates/events/calendar.html:66
+#: events/templates/events/categories.html:4
 #: events/templates/events/categories.html:10
 msgid "Event Categories"
 msgstr "Категории событий"
@@ -5797,510 +5733,117 @@ msgstr "Социальное событие"
 msgid "Training"
 msgstr "Тренинг"
 
-#: events/models.py:70
-msgid "Open Registration"
-msgstr "Открытая регистрация"
-
-#: events/models.py:71
-msgid "Approval Required"
-msgstr "Требуется одобрение"
-
-#: events/models.py:72
-msgid "Invitation Only"
-msgstr "Только по приглашению"
-
 #: events/models.py:73
-msgid "Paid Registration"
-msgstr "Платная регистрация"
-
-#: events/models.py:80
 msgid "Title of the event"
 msgstr "Название события"
 
-#: events/models.py:84
+#: events/models.py:77
 msgid "Detailed description of the event"
 msgstr "Подробное описание события"
 
-#: events/models.py:89
+#: events/models.py:82
 msgid "Brief summary of the event"
 msgstr "Краткое описание события"
 
-#: events/models.py:96
+#: events/models.py:89
 msgid "Event category for organization"
 msgstr "Категория события для организации"
 
-#: events/models.py:102
+#: events/models.py:95
 msgid "Type of event"
 msgstr "Тип события"
 
-#: events/models.py:108
+#: events/models.py:101
 msgid "Event start date and time"
 msgstr "Дата и время начала события"
 
-#: events/models.py:112
+#: events/models.py:105
 msgid "Event end date and time"
 msgstr "Дата и время окончания события"
 
-#: events/models.py:119
+#: events/models.py:112
 msgid "General location of the event"
 msgstr "Общее местоположение события"
 
-#: events/models.py:125
-msgid "Specific venue name"
-msgstr "Конкретное название места проведения"
-
-#: events/models.py:130
-msgid "Whether this is an online event"
-msgstr "Является ли это онлайн событием"
-
-#: events/models.py:135
-msgid "Link for online participation"
-msgstr "Ссылка для онлайн участия"
-
-#: events/models.py:140
-msgid "Complete address of the venue"
-msgstr "Полный адрес места проведения"
-
-#: events/models.py:149
-msgid "Primary organizer of the event"
-msgstr "Основной организатор события"
-
-#: events/models.py:155
-msgid "Co-organizers"
-msgstr "Соорганизаторы"
-
-#: events/models.py:156
-msgid "Additional organizers of the event"
-msgstr "Дополнительные организаторы события"
-
-#: events/models.py:165
+#: events/models.py:121
 msgid "Main banner image for the event"
 msgstr "Основное баннерное изображение для события"
 
-#: events/models.py:172
+#: events/models.py:128
 msgid "Small thumbnail image"
 msgstr "Маленькое изображение миниатюры"
 
-#: events/models.py:186
-msgid "Type of registration process"
-msgstr "Тип процесса регистрации"
-
-#: events/models.py:192
-msgid "Deadline for registration"
-msgstr "Крайний срок регистрации"
-
-#: events/models.py:202
-msgid "Waitlist Enabled"
-msgstr "Лист ожидания включен"
-
-#: events/models.py:203
-msgid "Whether waitlist is available when full"
-msgstr "Доступен ли лист ожидания, когда событие заполнено"
-
-#: events/models.py:210
-msgid "Whether the event is free"
-msgstr "Является ли событие бесплатным"
-
-#: events/models.py:217
-msgid "Event price if not free"
-msgstr "Цена события, если не бесплатно"
-
-#: events/models.py:224
-msgid "Currency for the price"
-msgstr "Валюта для цены"
-
-#: events/models.py:233
+#: events/models.py:137
 msgid "Current status of the event"
 msgstr "Текущий статус события"
 
-#: events/models.py:237
+#: events/models.py:141
 msgid "Featured Event"
 msgstr "Рекомендуемое событие"
 
-#: events/models.py:238
+#: events/models.py:142
 msgid "Whether to feature this event prominently"
 msgstr "Выделять ли это событие prominently"
 
-#: events/models.py:242
-msgid "Show Attendee List"
-msgstr "Показывать список участников"
-
-#: events/models.py:243
-msgid "Whether to show list of registered attendees"
-msgstr "Показывать ли список зарегистрированных участников"
-
-#: events/models.py:247
-msgid "Allow Comments"
-msgstr "Разрешить комментарии"
-
-#: events/models.py:248
-msgid "Whether to allow comments on the event"
-msgstr "Разрешать ли комментарии к событию"
-
-#: events/models.py:261
+#: events/models.py:155
 msgid "Comma-separated tags for the event"
 msgstr "Теги для события, разделенные запятыми"
 
-#: events/models.py:265
-msgid "Registration Link"
-msgstr "Ссылка на регистрацию"
-
-#: events/models.py:266
-msgid "External registration link"
-msgstr "Внешняя ссылка на регистрацию"
-
-#: events/models.py:270
-msgid "Materials Link"
-msgstr "Ссылка на материалы"
-
-#: events/models.py:271
-msgid "Link to event materials"
-msgstr "Ссылка на материалы события"
-
-#: events/models.py:277 jobs/models.py:308
+#: events/models.py:161 jobs/models.py:308
 msgid "Views Count"
 msgstr "Количество просмотров"
 
-#: events/models.py:278
+#: events/models.py:162
 msgid "Number of times the event was viewed"
 msgstr "Количество просмотров события"
 
-#: events/models.py:282
-msgid "Registration Count"
-msgstr "Количество регистраций"
-
-#: events/models.py:283
-msgid "Number of registered participants"
-msgstr "Количество зарегистрированных участников"
-
-#: events/models.py:359
-msgid "Waiting List"
-msgstr "Лист ожидания"
-
-#: events/models.py:361
-msgid "Attended"
-msgstr "Посетил"
-
-#: events/models.py:370
-msgid "The event being registered for"
-msgstr "Событие, на которое регистрируются"
-
-#: events/models.py:377
-msgid "User registering for the event"
-msgstr "Пользователь, регистрирующийся на событие"
-
-#: events/models.py:384
-msgid "When the registration was made"
-msgstr "Когда была сделана регистрация"
-
-#: events/models.py:391
-msgid "Current registration status"
-msgstr "Текущий статус регистрации"
-
-#: events/models.py:398
-msgid "Any dietary restrictions for catering"
-msgstr "Любые диетические ограничения для кейтеринга"
-
-#: events/models.py:403
-msgid "Any special requirements or accommodations"
-msgstr "Любые особые требования или условия"
-
-#: events/models.py:408
-msgid "Additional comments from the registrant"
-msgstr "Дополнительные комментарии от регистранта"
-
-#: events/models.py:416
-msgid "Paid"
-msgstr "Оплачено"
-
-#: events/models.py:417
-msgid "Refunded"
-msgstr "Возвращено"
-
-#: events/models.py:420
-msgid "Payment Status"
-msgstr "Статус оплаты"
-
-#: events/models.py:421
-msgid "Status of payment for the event"
-msgstr "Статус оплаты за событие"
-
-#: events/models.py:428
-msgid "Payment Amount"
-msgstr "Сумма оплаты"
-
-#: events/models.py:429
-msgid "Amount paid for the event"
-msgstr "Сумма, оплаченная за событие"
-
-#: events/models.py:437
-msgid "QR Code"
-msgstr "QR код"
-
-#: events/models.py:438
-msgid "QR code for event check-in"
-msgstr "QR код для регистрации на событие"
-
-#: events/models.py:443
-msgid "Check-in Time"
-msgstr "Время регистрации"
-
-#: events/models.py:444
-msgid "Time when the user checked in"
-msgstr "Время, когда пользователь зарегистрировался"
-
-#: events/models.py:448
-msgid "Event Registration"
-msgstr "Регистрация на событие"
-
-#: events/models.py:449 events/templates/events/event_registrations.html:4
-msgid "Event Registrations"
-msgstr "Регистрации на события"
-
-#: events/models.py:468
-msgid "The event this speaker is associated with"
-msgstr "Событие, с которым связан этот спикер"
-
-#: events/models.py:473
-msgid "Full name of the speaker"
-msgstr "Полное имя спикера"
-
-#: events/models.py:478
-msgid "Professional title or position"
-msgstr "Профессиональная должность или позиция"
-
-#: events/models.py:484
-msgid "Organization or company affiliation"
-msgstr "Организация или компания"
-
-#: events/models.py:489
-msgid "Brief biography of the speaker"
-msgstr "Краткая биография спикера"
-
-#: events/models.py:496
-msgid "Profile photo of the speaker"
-msgstr "Фотография профиля спикера"
-
-#: events/models.py:501
-msgid "Contact email for the speaker"
-msgstr "Контактный email для спикера"
-
-#: events/models.py:523
-msgid "Order in which to display this speaker"
-msgstr "Порядок отображения этого спикера"
-
-#: events/models.py:527
-msgid "Event Speaker"
-msgstr "Спикер события"
-
-#: events/models.py:528
-msgid "Event Speakers"
-msgstr "Спикеры событий"
-
-#: events/models.py:539
-msgid "Keynote"
-msgstr "Ключевое выступление"
-
-#: events/models.py:541
-msgid "Panel Discussion"
-msgstr "Панельная дискуссия"
-
-#: events/models.py:542
-msgid "Presentation"
-msgstr "Презентация"
-
-#: events/models.py:543
-msgid "Q&A Session"
-msgstr "Сессия вопросов и ответов"
-
-#: events/models.py:545
-msgid "Break"
-msgstr "Перерыв"
-
-#: events/models.py:553
-msgid "The event this session belongs to"
-msgstr "Событие, к которому принадлежит эта сессия"
-
-#: events/models.py:558
-msgid "Title of the session"
-msgstr "Название сессии"
-
-#: events/models.py:563
-msgid "Detailed description of the session"
-msgstr "Подробное описание сессии"
-
-#: events/models.py:569
-msgid "Type of session"
-msgstr "Тип сессии"
-
-#: events/models.py:575
-msgid "When the session starts"
-msgstr "Когда сессия начинается"
-
-#: events/models.py:579
-msgid "When the session ends"
-msgstr "Когда сессия заканчивается"
-
-#: events/models.py:587
-msgid "Specific location within the venue"
-msgstr "Конкретное местоположение в месте проведения"
-
-#: events/models.py:596
-msgid "Speakers for this session"
-msgstr "Спикеры для этой сессии"
-
-#: events/models.py:603
-msgid "Link to presentation slides or materials"
-msgstr "Ссылка на слайды презентации или материалы"
-
-#: events/models.py:608
-msgid "Link to additional session materials"
-msgstr "Ссылка на дополнительные материалы сессии"
-
-#: events/models.py:614
-msgid "Order in which to display this session"
-msgstr "Порядок отображения этой сессии"
-
-#: events/models.py:618
-msgid "Event Session"
-msgstr "Сессия события"
-
-#: events/models.py:619
-msgid "Event Sessions"
-msgstr "Сессии событий"
-
-#: events/models.py:640
-msgid "The event being commented on"
-msgstr "Событие, которое комментируют"
-
-#: events/models.py:646
-msgid "User who made the comment"
-msgstr "Пользователь, оставивший комментарий"
-
-#: events/models.py:654
-msgid "Parent Comment"
-msgstr "Родительский комментарий"
-
-#: events/models.py:655
-msgid "Parent comment for nested replies"
-msgstr "Родительский комментарий для вложенных ответов"
-
-#: events/models.py:660
-msgid "The comment text"
-msgstr "Текст комментария"
-
-#: events/models.py:664
-msgid "Approved"
-msgstr "Одобрено"
-
-#: events/models.py:665
-msgid "Whether this comment is approved for display"
-msgstr "Одобрен ли этот комментарий для отображения"
-
-#: events/models.py:678
-msgid "Event Comment"
-msgstr "Комментарий к событию"
-
-#: events/models.py:679
-msgid "Event Comments"
-msgstr "Комментарии к событиям"
-
-#: events/models.py:694
+#: events/models.py:222
 msgid "The event this photo belongs to"
 msgstr "Событие, к которому принадлежит эта фотография"
 
-#: events/models.py:699
+#: events/models.py:227
 msgid "The photo file"
 msgstr "Файл фотографии"
 
-#: events/models.py:704
+#: events/models.py:232
 msgid "Caption"
 msgstr "Подпись"
 
-#: events/models.py:705
+#: events/models.py:233
 msgid "Optional caption for the photo"
 msgstr "Необязательная подпись для фотографии"
 
-#: events/models.py:710
+#: events/models.py:238
 msgid "Uploaded By"
 msgstr "Загружено"
 
-#: events/models.py:711
+#: events/models.py:239
 msgid "User who uploaded this photo"
 msgstr "Пользователь, загрузивший эту фотографию"
 
-#: events/models.py:715
+#: events/models.py:243
 msgid "Uploaded At"
 msgstr "Загружено"
 
-#: events/models.py:716
+#: events/models.py:244
 msgid "When the photo was uploaded"
 msgstr "Когда фотография была загружена"
 
-#: events/models.py:723
+#: events/models.py:250
+msgid "Display Order"
+msgstr "Порядок отображения"
+
+#: events/models.py:251
 msgid "Order in which to display this photo"
 msgstr "Порядок отображения этой фотографии"
 
-#: events/models.py:727
+#: events/models.py:255
 msgid "Event Photo"
 msgstr "Фотография события"
 
-#: events/models.py:728 events/templates/events/detail.html:309
+#: events/models.py:256 events/templates/events/detail.html:205
 msgid "Event Photos"
 msgstr "Фотографии событий"
-
-#: events/models.py:743
-msgid "The event being rated"
-msgstr "Событие, которое оценивают"
-
-#: events/models.py:749
-msgid "User who provided the rating"
-msgstr "Пользователь, предоставивший оценку"
-
-#: events/models.py:755
-msgid "Overall rating (1-5)"
-msgstr "Общий рейтинг (1-5)"
-
-#: events/models.py:760
-msgid "Optional comment with the rating"
-msgstr "Необязательный комментарий с оценкой"
-
-#: events/models.py:766
-msgid "Content Rating"
-msgstr "Рейтинг содержания"
-
-#: events/models.py:767
-msgid "Rating for event content quality"
-msgstr "Рейтинг качества содержания события"
-
-#: events/models.py:771
-msgid "Organization Rating"
-msgstr "Рейтинг организации"
-
-#: events/models.py:772
-msgid "Rating for event organization"
-msgstr "Рейтинг организации события"
-
-#: events/models.py:778
-msgid "Venue Rating"
-msgstr "Рейтинг места проведения"
-
-#: events/models.py:779
-msgid "Rating for venue quality (optional)"
-msgstr "Рейтинг качества места проведения (опционально)"
-
-#: events/models.py:792
-msgid "Event Rating"
-msgstr "Рейтинг события"
-
-#: events/models.py:793
-msgid "Event Ratings"
-msgstr "Рейтинги событий"
-
-#: events/signals.py:15
-#, python-brace-format
-msgid "Registration Confirmation - {event_title}"
-msgstr "Подтверждение регистрации - {event_title}"
 
 #: events/templates/events/admin_event_delete.html:5
 #: events/templates/events/admin_event_delete.html:15
@@ -6308,31 +5851,22 @@ msgid "Delete Event"
 msgstr "Удалить событие"
 
 #: events/templates/events/admin_event_delete.html:23
-#: events/templates/events/detail.html:27
+#: events/templates/events/detail.html:37
 msgid "Are you sure you want to delete this event?"
 msgstr "Вы уверены, что хотите удалить это событие?"
 
 #: events/templates/events/admin_event_delete.html:33
-#: events/templates/events/detail.html:251
-msgid "Organizer:"
-msgstr "Организатор:"
-
-#: events/templates/events/admin_event_delete.html:37
 msgid "Start:"
 msgstr "Начало:"
 
-#: events/templates/events/admin_event_delete.html:44
-msgid "registered"
-msgstr "зарегистрировано"
-
-#: events/templates/events/admin_event_delete.html:54
+#: events/templates/events/admin_event_delete.html:43
 msgid "Warning:"
 msgstr "Предупреждение:"
 
-#: events/templates/events/admin_event_delete.html:55
+#: events/templates/events/admin_event_delete.html:44
 msgid ""
-"This action cannot be undone. The event and all related data (registrations, "
-"comments, ratings) will be completely deleted."
+"This action cannot be undone. The event and all related data (registrations,"
+" comments, ratings) will be completely deleted."
 msgstr ""
 "Это действие нельзя отменить. Событие и все связанные данные (регистрации, "
 "комментарии, рейтинги) будут полностью удалены."
@@ -6352,6 +5886,10 @@ msgstr "Дата и время"
 #: events/templates/events/admin_event_form.html:109
 msgid "Location and Address"
 msgstr "Местоположение и адрес"
+
+#: events/templates/events/admin_event_form.html:156
+msgid "Registration"
+msgstr "Регистрация"
 
 #: events/templates/events/admin_event_form.html:168
 msgid "Leave empty for unlimited"
@@ -6383,10 +5921,10 @@ msgstr "Описание:"
 
 #: events/templates/events/admin_event_form.html:246
 msgid "Provide detailed information so participants know what to expect"
-msgstr "Предоставьте подробную информацию, чтобы участники знали, чего ожидать"
+msgstr ""
+"Предоставьте подробную информацию, чтобы участники знали, чего ожидать"
 
 #: events/templates/events/admin_event_form.html:249
-#: events/templates/events/detail.html:42
 msgid "Date:"
 msgstr "Дата:"
 
@@ -6395,7 +5933,6 @@ msgid "Specify exact start and end times"
 msgstr "Укажите точное время начала и окончания"
 
 #: events/templates/events/admin_event_form.html:252
-#: events/templates/events/detail.html:56
 #: jobs/templates/jobs/job_confirm_delete.html:26
 msgid "Location:"
 msgstr "Местоположение:"
@@ -6447,26 +5984,16 @@ msgstr "Поиск..."
 msgid "All Statuses"
 msgstr "Все статусы"
 
-#: events/templates/events/admin_event_list.html:104
-msgid "All Organizers"
-msgstr "Все организаторы"
-
-#: events/templates/events/admin_event_list.html:117
-#: events/templates/events/list.html:66
-#: jobs/templates/jobs/company_list.html:55
-msgid "Clear"
-msgstr "Очистить"
-
-#: events/templates/events/admin_event_list.html:134
+#: events/templates/events/admin_event_list.html:123
 msgid "Start"
 msgstr "Начало"
 
-#: events/templates/events/admin_event_list.html:199
+#: events/templates/events/admin_event_list.html:175
 #: events/templates/events/manage_events.html:82
 msgid "Unpublish"
 msgstr "Снять с публикации"
 
-#: events/templates/events/admin_event_list.html:206
+#: events/templates/events/admin_event_list.html:182
 #: events/templates/events/manage_events.html:75
 #: resources/templates/resources/resource_detail.html:208
 #: resources/templates/resources/unpublished_resources.html:130
@@ -6474,30 +6001,76 @@ msgstr "Снять с публикации"
 msgid "Publish"
 msgstr "Опубликовать"
 
-#: events/templates/events/admin_event_list.html:221
+#: events/templates/events/admin_event_list.html:197
 msgid "No Events Found"
 msgstr "События не найдены"
 
-#: events/templates/events/admin_event_list.html:222
+#: events/templates/events/admin_event_list.html:198
 msgid "No events match your search criteria."
 msgstr "Ни одно событие не соответствует вашим критериям поиска."
 
-#: events/templates/events/admin_event_list.html:224
+#: events/templates/events/admin_event_list.html:200
 msgid "Create First Event"
 msgstr "Создать первое событие"
 
 #: events/templates/events/calendar.html:4
-#: events/templates/events/calendar.html:10
+#: events/templates/events/calendar.html:14
+#: events/templates/events/calendar.html:788
 msgid "Event Calendar"
 msgstr "Календарь событий"
+
+#: events/templates/events/calendar.html:16
+msgid "Browse and discover upcoming events"
+msgstr "Просматривайте и узнавайте о предстоящих событиях"
+
+#: events/templates/events/calendar.html:21
+#, fuzzy
+#| msgid "Back to Resources List"
+msgid "Back to List"
+msgstr "Назад к списку ресурсов"
+
+#: events/templates/events/calendar.html:26
+#, fuzzy
+#| msgid "All Events"
+msgid "Add Event"
+msgstr "Все события"
+
+#: events/templates/events/calendar.html:46
+#, fuzzy
+#| msgid "Monthly"
+msgid "Month"
+msgstr "Ежемесячно"
+
+#: events/templates/events/calendar.html:50
+#, fuzzy
+#| msgid "Job List"
+msgid "List"
+msgstr "Список вакансий"
+
+#: events/templates/events/calendar.html:86
+#, fuzzy
+#| msgid "Social Event"
+msgid "Total Events"
+msgstr "Социальное событие"
+
+#: events/templates/events/calendar.html:737
+#, fuzzy
+#| msgid "You are registered!"
+msgid "You are viewing today"
+msgstr "Вы зарегистрированы!"
+
+#: events/templates/events/calendar.html:740
+#, fuzzy
+#| msgid "Go to Saved"
+msgid "Go to today"
+msgstr "Перейти к сохраненным"
 
 #: events/templates/events/categories.html:35
 msgid "No categories found."
 msgstr "Категории не найдены."
 
 #: events/templates/events/create_event.html:4
-#: events/templates/events/create_event.html:244
-#: events/templates/events/list.html:18 events/views.py:398
+#: events/templates/events/create_event.html:244 events/views.py:372
 msgid "Create Event"
 msgstr "Создать событие"
 
@@ -6506,132 +6079,45 @@ msgstr "Создать событие"
 msgid "Create New Event"
 msgstr "Создать новое событие"
 
-#: events/templates/events/detail.html:39
+#: events/templates/events/detail.html:53
+#, fuzzy
+#| msgid "About Me"
+msgid "About Event"
+msgstr "Обо мне"
+
+#: events/templates/events/detail.html:61
 msgid "Event Details"
 msgstr "Детали события"
 
-#: events/templates/events/detail.html:49
-msgid "Time:"
-msgstr "Время:"
+#: events/templates/events/detail.html:105
+msgid "Online Event"
+msgstr "Онлайн событие"
 
-#: events/templates/events/detail.html:75
-msgid "Participants:"
-msgstr "Участники:"
+#: events/templates/events/detail.html:107
+msgid "Join Online"
+msgstr "Присоединяйтесь онлайн"
 
-#: events/templates/events/detail.html:83
-msgid "Registration:"
-msgstr "Регистрация:"
+#: events/templates/events/detail.html:118
+msgid "Speakers"
+msgstr "Спикеры"
 
-#: events/templates/events/detail.html:85
-msgid "Open"
-msgstr "Открыта"
-
-#: events/templates/events/detail.html:87
-msgid "Closed"
-msgstr "Закрыта"
-
-#: events/templates/events/detail.html:93 jobs/templates/jobs/job_list.html:283
-msgid "Deadline:"
-msgstr "Крайний срок:"
-
-#: events/templates/events/detail.html:100
-msgid "Price:"
-msgstr "Цена:"
-
-#: events/templates/events/detail.html:114
-msgid "You are registered!"
-msgstr "Вы зарегистрированы!"
-
-#: events/templates/events/detail.html:115
-msgid "Status:"
-msgstr "Статус:"
-
-#: events/templates/events/detail.html:120
-#: events/templates/events/my_events.html:66
-msgid "Are you sure you want to cancel your registration?"
-msgstr "Вы уверены, что хотите отменить вашу регистрацию?"
-
-#: events/templates/events/detail.html:121
-#: events/templates/events/my_events.html:67
-msgid "Cancel Registration"
-msgstr "Отменить регистрацию"
-
-#: events/templates/events/detail.html:131
-msgid "Register for Event"
-msgstr "Зарегистрироваться на событие"
-
-#: events/templates/events/detail.html:137
-msgid "Registration for this event is currently closed."
-msgstr "Регистрация на это событие в настоящее время закрыта."
-
-#: events/templates/events/detail.html:182
+#: events/templates/events/detail.html:149
 msgid "Schedule"
 msgstr "Расписание"
 
-#: events/templates/events/detail.html:210
-msgid "Rate this Event"
-msgstr "Оценить это событие"
-
-#: events/templates/events/detail.html:220
-msgid "Select rating"
-msgstr "Выберите оценку"
-
-#: events/templates/events/detail.html:221
-msgid "Excellent"
-msgstr "Отлично"
-
-#: events/templates/events/detail.html:222
-msgid "Very Good"
-msgstr "Очень хорошо"
-
-#: events/templates/events/detail.html:223
-msgid "Good"
-msgstr "Хорошо"
-
-#: events/templates/events/detail.html:224
-msgid "Fair"
-msgstr "Удовлетворительно"
-
-#: events/templates/events/detail.html:225
-msgid "Poor"
-msgstr "Плохо"
-
-#: events/templates/events/detail.html:236
-msgid "Submit Rating"
-msgstr "Отправить оценку"
-
-#: events/templates/events/detail.html:247
+#: events/templates/events/detail.html:181
 msgid "Event Info"
 msgstr "Информация о событии"
 
-#: events/templates/events/detail.html:256
-msgid "Tags:"
-msgstr "Теги:"
+#: events/templates/events/detail.html:214
+#, fuzzy
+#| msgid "View all resources"
+msgid "View all photos"
+msgstr "Просмотреть все ресурсы"
 
-#: events/templates/events/detail.html:263
-msgid "Views:"
-msgstr "Просмотры:"
-
-#: events/templates/events/detail.html:267
-msgid "Rating:"
-msgstr "Рейтинг:"
-
-#: events/templates/events/detail.html:283
-msgid "Attendees"
-msgstr "Участники"
-
-#: events/templates/events/detail.html:299
-#: jobs/templates/jobs/job_create.html:1028
-msgid "and"
-msgstr "и"
-
-#: events/templates/events/detail.html:299
-msgid "more..."
-msgstr "еще..."
-
-#: events/templates/events/detail.html:347
-msgid "Error submitting rating."
-msgstr "Ошибка при отправке оценки."
+#: events/templates/events/event_registrations.html:4
+msgid "Event Registrations"
+msgstr "Регистрации на события"
 
 #: events/templates/events/event_registrations.html:12
 msgid "Registrations for"
@@ -6644,6 +6130,11 @@ msgstr "всего регистраций"
 #: events/templates/events/event_registrations.html:16
 msgid "Back to Events"
 msgstr "Назад к событиям"
+
+#: events/templates/events/event_registrations.html:54
+#: events/templates/events/event_registrations.html:93
+msgid "Check-in"
+msgstr "Регистрация"
 
 #: events/templates/events/event_registrations.html:86
 msgid "Not checked in"
@@ -6670,46 +6161,74 @@ msgid "Error checking in participant."
 msgstr "Ошибка при регистрации участника."
 
 #: events/templates/events/list.html:14
-msgid "Calendar View"
+msgid ""
+"Discover upcoming events, conferences, and meetups for professional growth"
+msgstr ""
+"Узнайте о предстоящих мероприятиях, конференциях и встречах для "
+"профессионального роста."
+
+#: events/templates/events/list.html:18
+#, fuzzy
+#| msgid "Calendar View"
+msgid "Calendar"
 msgstr "Вид календаря"
 
-#: events/templates/events/list.html:55
-msgid "Sort by"
-msgstr "Сортировать по"
+#: events/templates/events/list.html:22
+#: jobs/templates/jobs/company_form.html:22
+msgid "Create"
+msgstr "Создать"
 
-#: events/templates/events/list.html:75
-#: resources/templates/resources/unpublished_resources.html:39
-msgid "Categories"
+#: events/templates/events/list.html:69
+#: resources/templates/resources/list.html:45
+msgid "Reset"
+msgstr "Сбросить"
+
+#: events/templates/events/list.html:77
+#: resources/templates/resources/list.html:53
+#, fuzzy
+#| msgid "Active Profile"
+msgid "Active filters:"
+msgstr "Активный профиль"
+
+#: events/templates/events/list.html:113
+#, fuzzy
+#| msgid "Categories"
+msgid "Quick Categories"
 msgstr "Категории"
 
-#: events/templates/events/list.html:135
-msgid "participants"
-msgstr "участники"
+#: events/templates/events/list.html:129
+#, fuzzy
+#| msgid "Featured Event"
+msgid "Found Events"
+msgstr "Рекомендуемое событие"
 
-#: events/templates/events/list.html:140
-#: events/templates/events/my_events.html:61
-msgid "View Details"
-msgstr "Просмотреть детали"
+#: events/templates/events/list.html:132
+#, fuzzy
+#| msgid "No events found"
+msgid "events found"
+msgstr "События не найдены"
 
-#: events/templates/events/list.html:145
-msgid "Registration open"
-msgstr "Регистрация открыта"
-
-#: events/templates/events/list.html:147
-msgid "Registration closed"
-msgstr "Регистрация закрыта"
-
-#: events/templates/events/list.html:159
+#: events/templates/events/list.html:134 events/templates/events/list.html:271
 msgid "No events found"
 msgstr "События не найдены"
 
-#: events/templates/events/list.html:160
+#: events/templates/events/list.html:272
 msgid "Try adjusting your search criteria or check back later for new events."
-msgstr "Попробуйте изменить критерии поиска или проверьте позже новые события."
+msgstr ""
+"Попробуйте изменить критерии поиска или проверьте позже новые события."
 
-#: events/templates/events/list.html:161
-msgid "Clear Filters"
-msgstr "Очистить фильтры"
+#: events/templates/events/list.html:274
+#, fuzzy
+#| msgid "View Events"
+msgid "View all events"
+msgstr "Просмотреть события"
+
+#: events/templates/events/list.html:966
+#: resources/templates/resources/list.html:857
+#, fuzzy
+#| msgid "Filter"
+msgid "Filtering..."
+msgstr "Фильтр"
 
 #: events/templates/events/manage_events.html:4
 msgid "Manage Events"
@@ -6740,6 +6259,18 @@ msgstr "Создайте ваше первое событие"
 msgid "My Events"
 msgstr "Мои события"
 
+#: events/templates/events/my_events.html:61
+msgid "View Details"
+msgstr "Просмотреть детали"
+
+#: events/templates/events/my_events.html:66
+msgid "Are you sure you want to cancel your registration?"
+msgstr "Вы уверены, что хотите отменить вашу регистрацию?"
+
+#: events/templates/events/my_events.html:67
+msgid "Cancel Registration"
+msgstr "Отменить регистрацию"
+
 #: events/templates/events/my_events.html:78
 msgid "You haven't registered for any events yet."
 msgstr "Вы еще не зарегистрировались ни на одно событие."
@@ -6748,47 +6279,47 @@ msgstr "Вы еще не зарегистрировались ни на одно
 msgid "Browse events"
 msgstr "Просмотреть события"
 
-#: events/views.py:188
+#: events/views.py:166
 msgid "Registration is closed for this event."
 msgstr "Регистрация на это событие закрыта."
 
-#: events/views.py:199
+#: events/views.py:177
 msgid "You have been added to the waiting list."
 msgstr "Вы были добавлены в лист ожидания."
 
-#: events/views.py:201
+#: events/views.py:179
 msgid "You are already on the waiting list."
 msgstr "Вы уже в листе ожидания."
 
-#: events/views.py:203
+#: events/views.py:181
 msgid "Event is full."
 msgstr "Событие заполнено."
 
-#: events/views.py:213
+#: events/views.py:191
 msgid "Successfully registered for the event!"
 msgstr "Успешно зарегистрировались на событие!"
 
-#: events/views.py:215
+#: events/views.py:193
 msgid "You are already registered for this event."
 msgstr "Вы уже зарегистрированы на это событие."
 
-#: events/views.py:234
+#: events/views.py:212
 msgid "Registration cancelled successfully."
 msgstr "Регистрация успешно отменена."
 
-#: events/views.py:273 events/views.py:391
+#: events/views.py:251 events/views.py:365
 msgid "Event created successfully!"
 msgstr "Событие успешно создано!"
 
-#: events/views.py:413
+#: events/views.py:387
 msgid "Event updated successfully!"
 msgstr "Событие успешно обновлено!"
 
-#: events/views.py:421
+#: events/views.py:395
 msgid "Edit Event"
 msgstr "Редактировать событие"
 
-#: events/views.py:434
+#: events/views.py:408
 msgid "Event deleted successfully!"
 msgstr "Событие успешно удалено!"
 
@@ -6878,11 +6409,11 @@ msgstr "%(count)d оповещений деактивировано"
 
 #: jobs/forms.py:14
 msgid "I accept the terms and conditions"
-msgstr ""
+msgstr "Я принимаю условия"
 
 #: jobs/forms.py:15
 msgid "You must accept the terms and conditions."
-msgstr ""
+msgstr "Вы должны принять условия."
 
 #: jobs/forms.py:59
 #, fuzzy
@@ -6934,6 +6465,9 @@ msgid ""
 "• 3+ years of experience\n"
 "• Strong communication skills..."
 msgstr ""
+"• Степень бакалавра в соответствующей области.\n"
+"• Опыт работы более 3 лет\n"
+"• Сильные коммуникативные навыки..."
 
 #: jobs/forms.py:130
 msgid ""
@@ -6941,6 +6475,9 @@ msgid ""
 "• Collaborate with team members\n"
 "• Participate in code reviews..."
 msgstr ""
+"• Разрабатывать и поддерживать приложения.\n"
+"• Сотрудничать с членами команды\n"
+"• Участвовать в проверках кода..."
 
 #: jobs/forms.py:135
 msgid ""
@@ -6949,6 +6486,10 @@ msgid ""
 "• Professional development\n"
 "• Team events..."
 msgstr ""
+"• Медицинская страховка\n"
+"• Гибкий график работы\n"
+"• Профессиональное развитие\n"
+"• Командные мероприятия..."
 
 #: jobs/forms.py:140
 #, fuzzy
@@ -6967,7 +6508,7 @@ msgstr "Python, Django, JavaScript, React, ..."
 
 #: jobs/forms.py:150
 msgid "Docker, AWS, GraphQL, TypeScript"
-msgstr ""
+msgstr "Докер, AWS, GraphQL, TypeScript"
 
 #: jobs/forms.py:156
 #, fuzzy
@@ -6977,15 +6518,15 @@ msgstr "email@company.com"
 
 #: jobs/forms.py:164
 msgid "John Doe"
-msgstr ""
+msgstr "Джон Доу"
 
 #: jobs/forms.py:168
 msgid "https://company.com/careers/apply"
-msgstr ""
+msgstr "https://company.com/careers/apply"
 
 #: jobs/forms.py:174
 msgid "9:00-18:00, Monday-Friday"
-msgstr ""
+msgstr "9:00-18:00, понедельник-пятница"
 
 #: jobs/forms.py:178
 #, fuzzy
@@ -7151,7 +6692,7 @@ msgstr "Максимальная зарплата должна быть боль
 
 #: jobs/forms.py:287
 msgid "If salary is hidden, it should be marked as negotiable."
-msgstr ""
+msgstr "Если зарплата скрыта, ее следует пометить как договорную."
 
 #: jobs/forms.py:295
 #, fuzzy
@@ -7161,11 +6702,11 @@ msgstr "Пожалуйста, выберите хотя бы один ресур
 
 #: jobs/forms.py:303
 msgid "Short description should be at least 10 characters long."
-msgstr ""
+msgstr "Краткое описание должно быть длиной не менее 10 символов."
 
 #: jobs/forms.py:340
 msgid "City, region, or district..."
-msgstr ""
+msgstr "Город, область или район..."
 
 #: jobs/forms.py:378
 #, fuzzy
@@ -7187,11 +6728,11 @@ msgstr "Рекомендуемая вакансия"
 
 #: jobs/forms.py:412
 msgid "Urgent Hiring Only"
-msgstr ""
+msgstr "Только срочный прием"
 
 #: jobs/forms.py:418
 msgid "Jobs with Salary Info"
-msgstr ""
+msgstr "Вакансии с информацией о зарплате"
 
 #: jobs/forms.py:433
 #, fuzzy
@@ -7201,11 +6742,11 @@ msgstr "Максимальная зарплата должна быть боль
 
 #: jobs/forms.py:444
 msgid "I agree to the terms and conditions"
-msgstr ""
+msgstr "Я согласен с условиями"
 
 #: jobs/forms.py:445
 msgid "You must agree to the terms and conditions to apply."
-msgstr ""
+msgstr "Вы должны согласиться с условиями применения."
 
 #: jobs/forms.py:460
 #, fuzzy
@@ -7246,14 +6787,16 @@ msgstr "Период уведомления"
 #: jobs/forms.py:490
 msgid "Customize your cover letter for this specific job application."
 msgstr ""
+"Настройте свое сопроводительное письмо для этого конкретного заявления о "
+"приеме на работу."
 
 #: jobs/forms.py:491
 msgid "Leave empty if you want to discuss during interview."
-msgstr ""
+msgstr "Оставьте пустым, если хотите обсудить во время собеседования."
 
 #: jobs/forms.py:492
 msgid "How many days notice you need to give your current employer."
-msgstr ""
+msgstr "За сколько дней вы должны уведомить своего нынешнего работодателя."
 
 #: jobs/forms.py:512
 #, fuzzy
@@ -7263,7 +6806,7 @@ msgstr "Ожидаемый диапазон зарплаты"
 
 #: jobs/forms.py:518
 msgid "Notice period should be between 0 and 90 days."
-msgstr ""
+msgstr "Срок уведомления должен составлять от 0 до 90 дней."
 
 #: jobs/forms.py:528
 #, fuzzy
@@ -7291,7 +6834,7 @@ msgstr "Детали кандидата"
 
 #: jobs/forms.py:562
 msgid "e.g., Python Developer Jobs in Tashkent"
-msgstr ""
+msgstr "например, Работа разработчика Python в Ташкенте"
 
 #: jobs/forms.py:566
 #, fuzzy
@@ -7379,12 +6922,12 @@ msgstr "USD"
 msgid "EUR"
 msgstr "EUR"
 
-#: jobs/models.py:85 jobs/templates/jobs/job_detail.html:47
+#: jobs/models.py:85 jobs/models.py:398 jobs/templates/jobs/job_detail.html:47
 #: jobs/templates/jobs/job_list.html:196 jobs/templates/jobs/my_jobs.html:243
 msgid "Hybrid"
 msgstr "Гибридный"
 
-#: jobs/models.py:86
+#: jobs/models.py:86 jobs/models.py:400
 msgid "Office"
 msgstr "Офис"
 
@@ -7570,48 +7113,19 @@ msgstr "Создано"
 msgid "User who created this job"
 msgstr "Пользователь, создавший эту вакансию"
 
-#: jobs/models.py:349
-msgid "Ish o'rini"
-msgstr "Вакансия"
+#: jobs/models.py:372 jobs/templates/jobs/job_form.html:401
+msgid "Salary is negotiable"
+msgstr "Зарплата обсуждается"
 
-#: jobs/models.py:350
-msgid "Ish o'rinlari"
-msgstr "Вакансии"
-
-#: jobs/models.py:372
-msgid "Maosh kelishilgan holda"
-msgstr "Зарплата договорная"
-
-#: jobs/models.py:374
-msgid "Kelishilgan holda"
+#: jobs/models.py:374 jobs/templates/jobs/job_detail.html:57
+#: jobs/templates/jobs/job_list.html:237
+msgid "Negotiable"
 msgstr "Договорная"
 
-#: jobs/models.py:378
-#, python-format
-msgid "dan %(salary)s %(currency)s"
-msgstr "от %(salary)s %(currency)s"
-
-#: jobs/models.py:383
-#, python-format
-msgid "gacha %(salary)s %(currency)s"
-msgstr "до %(salary)s %(currency)s"
-
-#: jobs/models.py:387 jobs/models.py:401
-#: jobs/templates/jobs/employer_applications.html:136
-msgid "Ko'rsatilmagan"
-msgstr "Не указано"
-
-#: jobs/models.py:396
-msgid "Uydan ishlash"
+#: jobs/models.py:396 jobs/templates/jobs/job_detail.html:42
+#: jobs/templates/jobs/job_list.html:70
+msgid "Remote work"
 msgstr "Удаленная работа"
-
-#: jobs/models.py:398
-msgid "Gibrid"
-msgstr "Гибридный"
-
-#: jobs/models.py:400
-msgid "Ofisda"
-msgstr "В офисе"
 
 #: jobs/models.py:419 jobs/templates/jobs/applications.html:55
 #: jobs/templates/jobs/applications.html:107
@@ -7876,6 +7390,10 @@ msgstr "Ошибка при добавлении заметки"
 msgid "Candidate Information"
 msgstr "Информация о кандидате"
 
+#: jobs/templates/jobs/applications_detail.html:37
+msgid "Additional Information"
+msgstr "Дополнительная информация"
+
 #: jobs/templates/jobs/applications_detail.html:43
 #: jobs/templates/jobs/my_jobs.html:426
 msgid "Not Specified"
@@ -7900,10 +7418,6 @@ msgstr "Создать компанию"
 #: jobs/templates/jobs/company_form.html:14
 msgid "Create New Company"
 msgstr "Создать новую компанию"
-
-#: jobs/templates/jobs/company_form.html:22
-msgid "Create"
-msgstr "Создать"
 
 #: jobs/templates/jobs/company_list.html:22
 msgid "About Companies"
@@ -7960,6 +7474,10 @@ msgstr "Новые отклики"
 #: jobs/templates/jobs/employer_applications.html:98
 msgid "Salary expectation"
 msgstr "Ожидания по зарплате"
+
+#: jobs/templates/jobs/employer_applications.html:136
+msgid "Ko'rsatilmagan"
+msgstr "Не указано"
 
 #: jobs/templates/jobs/employer_applications.html:159
 msgid "Change status"
@@ -8026,26 +7544,26 @@ msgstr "Опубликуйте новую вакансию и привлекай
 msgid "Please correct the following errors"
 msgstr "Исправьте следующие ошибки:"
 
-#: jobs/templates/jobs/job_create.html:345 jobs/templates/jobs/job_list.html:78
-#: jobs/templates/jobs/job_list.html:126
+#: jobs/templates/jobs/job_create.html:345
+#: jobs/templates/jobs/job_list.html:78 jobs/templates/jobs/job_list.html:126
 msgid "Salary"
 msgstr "Зарплата"
 
 #: jobs/templates/jobs/job_create.html:349
 msgid "Finish"
-msgstr ""
+msgstr "Заканчивать"
 
 #: jobs/templates/jobs/job_create.html:496
 msgid "Work from anywhere"
-msgstr ""
+msgstr "Работайте откуда угодно"
 
 #: jobs/templates/jobs/job_create.html:500
 msgid "Office + Remote"
-msgstr ""
+msgstr "Офис + Удаленный"
 
 #: jobs/templates/jobs/job_create.html:504
 msgid "Work from office"
-msgstr ""
+msgstr "Работа из офиса"
 
 #: jobs/templates/jobs/job_create.html:546
 #: jobs/templates/jobs/job_create.html:722
@@ -8074,7 +7592,7 @@ msgstr "Ожидания по зарплате"
 
 #: jobs/templates/jobs/job_create.html:925
 msgid "Final Step"
-msgstr ""
+msgstr "Последний шаг"
 
 #: jobs/templates/jobs/job_create.html:934
 #, fuzzy
@@ -8091,6 +7609,7 @@ msgstr "Предпросмотр"
 #: jobs/templates/jobs/job_create.html:944
 msgid "Fill in the form to see a preview of your job posting"
 msgstr ""
+"Заполните форму, чтобы увидеть предварительный просмотр вашей вакансии"
 
 #: jobs/templates/jobs/job_create.html:951
 msgid "Additional Settings"
@@ -8098,7 +7617,7 @@ msgstr "Дополнительные настройки"
 
 #: jobs/templates/jobs/job_create.html:979
 msgid "Highlight on homepage and search results"
-msgstr ""
+msgstr "Выделить на главной странице и в результатах поиска"
 
 #: jobs/templates/jobs/job_create.html:986
 #, fuzzy
@@ -8126,7 +7645,7 @@ msgstr "Премиум размещение вакансии"
 
 #: jobs/templates/jobs/job_create.html:1026
 msgid "I agree to the"
-msgstr ""
+msgstr "Я согласен на"
 
 #: jobs/templates/jobs/job_create.html:1027
 #, fuzzy
@@ -8134,9 +7653,13 @@ msgstr ""
 msgid "Terms of Service"
 msgstr "Лет опыта"
 
+#: jobs/templates/jobs/job_create.html:1028
+msgid "and"
+msgstr "и"
+
 #: jobs/templates/jobs/job_create.html:1029
 msgid "Privacy Policy"
-msgstr ""
+msgstr "политика конфиденциальности"
 
 #: jobs/templates/jobs/job_create.html:1149
 #, fuzzy
@@ -8157,7 +7680,7 @@ msgstr "Пожалуйста, заполните все обязательные
 
 #: jobs/templates/jobs/job_create.html:1314
 msgid "Please accept the terms and conditions"
-msgstr ""
+msgstr "Пожалуйста, примите условия использования"
 
 #: jobs/templates/jobs/job_create.html:1341
 #, fuzzy
@@ -8170,14 +7693,6 @@ msgstr "Пожалуйста, заполните все обязательные
 #| msgid "Please correct the following errors:"
 msgid "Please check the form for errors"
 msgstr "Исправьте следующие ошибки:"
-
-#: jobs/templates/jobs/job_detail.html:42 jobs/templates/jobs/job_list.html:70
-msgid "Remote work"
-msgstr "Удаленная работа"
-
-#: jobs/templates/jobs/job_detail.html:57 jobs/templates/jobs/job_list.html:237
-msgid "Negotiable"
-msgstr "Договорная"
 
 #: jobs/templates/jobs/job_detail.html:67
 msgid "Application submitted"
@@ -8370,10 +7885,6 @@ msgstr "например, 80000"
 msgid "Hide salary from candidates"
 msgstr "Скрыть зарплату от кандидатов"
 
-#: jobs/templates/jobs/job_form.html:401
-msgid "Salary is negotiable"
-msgstr "Зарплата обсуждается"
-
 #: jobs/templates/jobs/job_form.html:414
 msgid "Bonus system available"
 msgstr "Доступна бонусная система"
@@ -8562,6 +8073,10 @@ msgstr "обсуждается"
 msgid "Experience not specified"
 msgstr "Опыт не указан"
 
+#: jobs/templates/jobs/job_list.html:283
+msgid "Deadline:"
+msgstr "Крайний срок:"
+
 #: jobs/templates/jobs/job_list.html:349
 msgid "Try changing your search criteria or wait for new jobs to be posted"
 msgstr "Попробуйте изменить критерии поиска или дождитесь новых вакансий"
@@ -8748,7 +8263,7 @@ msgstr "Мои сохраненные"
 msgid "Faqat ish beruvchilar bu sahifani ko'rishi mumkin."
 msgstr "Только работодатели могут просматривать эту страницу."
 
-#: jobs/views.py:28 jobs/views.py:294 jobs/views.py:384
+#: jobs/views.py:28 jobs/views.py:294 jobs/views.py:383
 msgid "Iltimos, avval ish beruvchi profilingizni to'ldiring."
 msgstr "Пожалуйста, сначала заполните свой профиль работодателя."
 
@@ -8798,39 +8313,39 @@ msgstr "У вас нет прав для просмотра этой стран�
 msgid "Sizda vakansiyalarni ko'rish huquqi yo'q."
 msgstr "У вас нет прав для удаления этой вакансии."
 
-#: jobs/views.py:391
+#: jobs/views.py:390
 #, fuzzy
 #| msgid "Sizda bu vakansiyani o'chirish huquqi yo'q."
 msgid "Sizda bu vakansiyani ko'rish huquqi yo'q."
 msgstr "У вас нет прав для удаления этой вакансии."
 
-#: jobs/views.py:454
+#: jobs/views.py:453
 #, fuzzy
 #| msgid "Faqat ish beruvchilar vakansiya yarata oladi."
 msgid "Faqat talabalar va bitiruvchilar ariza topshira oladi."
 msgstr "Только работодатели могут создавать вакансии."
 
-#: jobs/views.py:461
+#: jobs/views.py:460
 msgid "Siz ushbu vakansiyaga allaqachon ariza topshirgansiz."
 msgstr "Вы уже откликнулись на эту вакансию."
 
-#: jobs/views.py:466
+#: jobs/views.py:465
 msgid "Ushbu vakansiyaning muddati tugagan."
 msgstr "Срок действия этой вакансии истек."
 
-#: jobs/views.py:482
+#: jobs/views.py:481
 msgid "Arizangiz muvaffaqiyatli yuborildi!"
 msgstr "Ваш отклик успешно отправлен!"
 
-#: jobs/views.py:503
+#: jobs/views.py:502
 msgid "Vakansiya muvaffaqiyatli saqlandi!"
 msgstr "Вакансия успешно сохранена!"
 
-#: jobs/views.py:505
+#: jobs/views.py:504
 msgid "Vakansiya allaqachon saqlangan."
 msgstr "Вакансия уже сохранена."
 
-#: jobs/views.py:516
+#: jobs/views.py:515
 msgid "Vakansiya saqlanganlardan o'chirildi."
 msgstr "Вакансия удалена из сохраненных."
 
@@ -8950,66 +8465,65 @@ msgstr "Является ли этот ресурс общедоступным"
 msgid "Resource"
 msgstr "Ресурс"
 
-#: resources/templates/resources/list.html:9
+#: resources/templates/resources/list.html:11
 msgid ""
 "Useful materials, templates and guides for your professional development"
 msgstr ""
 "Полезные материалы, шаблоны и руководства для вашего профессионального "
 "развития"
 
-#: resources/templates/resources/list.html:21
+#: resources/templates/resources/list.html:23
 msgid "Search resources..."
 msgstr "Поиск ресурсов..."
 
-#: resources/templates/resources/list.html:27
+#: resources/templates/resources/list.html:30
 msgid "All categories"
 msgstr "Все категории"
 
-#: resources/templates/resources/list.html:61
+#: resources/templates/resources/list.html:80
 msgid "Found resources"
 msgstr "Найдено ресурсов"
 
-#: resources/templates/resources/list.html:64
+#: resources/templates/resources/list.html:83
 msgid "materials found"
 msgstr "материалов найдено"
 
-#: resources/templates/resources/list.html:66
+#: resources/templates/resources/list.html:85
 msgid "No materials found"
 msgstr "Материалы не найдены"
 
-#: resources/templates/resources/list.html:101
-msgid "Watch YouTube video"
-msgstr "Смотреть видео на YouTube"
+#: resources/templates/resources/list.html:141
+msgid "File"
+msgstr "Файл"
 
-#: resources/templates/resources/list.html:110
-#: resources/templates/resources/resource_detail.html:32
-#: resources/templates/resources/resource_detail.html:286
-#: resources/templates/resources/unpublished_resources.html:173
-msgid "Added"
-msgstr "Добавлено"
-
-#: resources/templates/resources/list.html:163
+#: resources/templates/resources/list.html:195
 msgid "No resources found"
 msgstr "Ресурсы не найдены"
 
-#: resources/templates/resources/list.html:164
+#: resources/templates/resources/list.html:196
 msgid "Try changing search conditions or select another category"
 msgstr "Попробуйте изменить условия поиска или выберите другую категорию"
 
-#: resources/templates/resources/list.html:166
+#: resources/templates/resources/list.html:198
 msgid "View all resources"
 msgstr "Просмотреть все ресурсы"
 
-#: resources/templates/resources/list.html:176
+#: resources/templates/resources/list.html:208
 #: resources/templates/resources/unpublished_resources.html:88
 #: resources/templates/resources/unpublished_resources.html:258
 msgid "Add new resource"
 msgstr "Добавить новый ресурс"
 
-#: resources/templates/resources/list.html:179
+#: resources/templates/resources/list.html:211
 #: resources/templates/resources/resource_detail.html:307
 msgid "Unpublished resources"
 msgstr "Неопубликованные ресурсы"
+
+#: resources/templates/resources/resource_detail.html:32
+#: resources/templates/resources/resource_detail.html:286
+#: resources/templates/resources/unpublished_resources.html:173
+msgid "Added"
+msgstr "Добавлено"
 
 #: resources/templates/resources/resource_detail.html:46
 #: resources/templates/resources/resource_detail.html:225
@@ -9206,6 +8720,10 @@ msgstr "Всего неопубликованных"
 msgid "Added today"
 msgstr "Добавлено сегодня"
 
+#: resources/templates/resources/unpublished_resources.html:39
+msgid "Categories"
+msgstr "Категории"
+
 #: resources/templates/resources/unpublished_resources.html:47
 msgid "resources selected"
 msgstr "ресурсов выбрано"
@@ -9333,6 +8851,596 @@ msgstr "Ресурсы не выбраны."
 #: resources/views.py:349
 msgid "Invalid action."
 msgstr "Недействительное действие."
+
+#~ msgid "Popular Resources"
+#~ msgstr "Популярные ресурсы"
+
+#~ msgid "Registration Information"
+#~ msgstr "Информация о регистрации"
+
+#~ msgid "Payment"
+#~ msgstr "Оплата"
+
+#~ msgid "Mark as attended"
+#~ msgstr "Отметить как посетил"
+
+#, python-format
+#~ msgid "%(count)d registrations marked as attended"
+#~ msgstr "%(count)d регистраций отмечены как посетил"
+
+#~ msgid "Mark as no show"
+#~ msgstr "Отметить как не явился"
+
+#, python-format
+#~ msgid "%(count)d registrations marked as no show"
+#~ msgstr "%(count)d регистраций отмечены как не явился"
+
+#~ msgid "Confirm payment"
+#~ msgstr "Подтвердить оплату"
+
+#, python-format
+#~ msgid "%(count)d payments confirmed"
+#~ msgstr "%(count)d оплат подтверждено"
+
+#~ msgid "Speaker Information"
+#~ msgstr "Информация о спикере"
+
+#~ msgid "Session Information"
+#~ msgstr "Информация о сессии"
+
+#~ msgid "Timing"
+#~ msgstr "Время"
+
+#~ msgid "Materials"
+#~ msgstr "Материалы"
+
+#~ msgid "Comment"
+#~ msgstr "Комментарий"
+
+#~ msgid "Approve selected comments"
+#~ msgstr "Одобрить выбранные комментарии"
+
+#, python-format
+#~ msgid "%(count)d comments approved"
+#~ msgstr "%(count)d комментариев одобрено"
+
+#~ msgid "Disapprove selected comments"
+#~ msgstr "Отклонить выбранные комментарии"
+
+#, python-format
+#~ msgid "%(count)d comments disapproved"
+#~ msgstr "%(count)d комментариев отклонено"
+
+#~ msgid "Rating Information"
+#~ msgstr "Информация о рейтинге"
+
+#~ msgid "Detailed Ratings"
+#~ msgstr "Подробные рейтинги"
+
+#~ msgid "Venue"
+#~ msgstr "Место проведения"
+
+#~ msgid "Online Meeting Link"
+#~ msgstr "Ссылка на онлайн встречу"
+
+#~ msgid "Full Address"
+#~ msgstr "Полный адрес"
+
+#~ msgid "Registration Type"
+#~ msgstr "Тип регистрации"
+
+#~ msgid "Registration Deadline"
+#~ msgstr "Крайний срок регистрации"
+
+#~ msgid "Maximum Participants"
+#~ msgstr "Максимум участников"
+
+#~ msgid "Enable Waitlist"
+#~ msgstr "Включить лист ожидания"
+
+#~ msgid "Free Event"
+#~ msgstr "Бесплатное событие"
+
+#~ msgid "Price"
+#~ msgstr "Цена"
+
+#~ msgid "Any dietary restrictions?"
+#~ msgstr "Есть ли диетические ограничения?"
+
+#~ msgid "Any special requirements?"
+#~ msgstr "Есть ли особые требования?"
+
+#~ msgid "Additional comments..."
+#~ msgstr "Дополнительные комментарии..."
+
+#~ msgid "Dietary Restrictions"
+#~ msgstr "Диетические ограничения"
+
+#~ msgid "Special Requirements"
+#~ msgstr "Особые требования"
+
+#~ msgid "Comments"
+#~ msgstr "Комментарии"
+
+#~ msgid "Speaker Name"
+#~ msgstr "Имя спикера"
+
+#~ msgid "Speaker Title"
+#~ msgstr "Должность спикера"
+
+#~ msgid "Organization"
+#~ msgstr "Организация"
+
+#~ msgid "Biography"
+#~ msgstr "Биография"
+
+#~ msgid "Photo"
+#~ msgstr "Фотография"
+
+#~ msgid "Session Title"
+#~ msgstr "Название сессии"
+
+#~ msgid "Session Type"
+#~ msgstr "Тип сессии"
+
+#~ msgid "Start Time"
+#~ msgstr "Время начала"
+
+#~ msgid "End Time"
+#~ msgstr "Время окончания"
+
+#~ msgid "Presentation URL"
+#~ msgstr "URL презентации"
+
+#~ msgid "Materials URL"
+#~ msgstr "URL материалов"
+
+#~ msgid "End time must be after start time."
+#~ msgstr "Время окончания должно быть после времени начала."
+
+#~ msgid "Share your thoughts about this event..."
+#~ msgstr "Поделитесь вашими мыслями об этом событии..."
+
+#~ msgid "Share your experience..."
+#~ msgstr "Поделитесь вашим опытом..."
+
+#~ msgid "Overall Rating"
+#~ msgstr "Общий рейтинг"
+
+#~ msgid "Content Quality"
+#~ msgstr "Качество содержания"
+
+#~ msgid "All Registered Participants"
+#~ msgstr "Все зарегистрированные участники"
+
+#~ msgid "Confirmed Participants Only"
+#~ msgstr "Только подтвержденные участники"
+
+#~ msgid "Waiting List Only"
+#~ msgstr "Только лист ожидания"
+
+#~ msgid "Attended Participants"
+#~ msgstr "Участники, которые посетили"
+
+#~ msgid "Open Registration"
+#~ msgstr "Открытая регистрация"
+
+#~ msgid "Approval Required"
+#~ msgstr "Требуется одобрение"
+
+#~ msgid "Invitation Only"
+#~ msgstr "Только по приглашению"
+
+#~ msgid "Paid Registration"
+#~ msgstr "Платная регистрация"
+
+#~ msgid "Specific venue name"
+#~ msgstr "Конкретное название места проведения"
+
+#~ msgid "Whether this is an online event"
+#~ msgstr "Является ли это онлайн событием"
+
+#~ msgid "Link for online participation"
+#~ msgstr "Ссылка для онлайн участия"
+
+#~ msgid "Complete address of the venue"
+#~ msgstr "Полный адрес места проведения"
+
+#~ msgid "Primary organizer of the event"
+#~ msgstr "Основной организатор события"
+
+#~ msgid "Co-organizers"
+#~ msgstr "Соорганизаторы"
+
+#~ msgid "Additional organizers of the event"
+#~ msgstr "Дополнительные организаторы события"
+
+#~ msgid "Type of registration process"
+#~ msgstr "Тип процесса регистрации"
+
+#~ msgid "Deadline for registration"
+#~ msgstr "Крайний срок регистрации"
+
+#~ msgid "Waitlist Enabled"
+#~ msgstr "Лист ожидания включен"
+
+#~ msgid "Whether waitlist is available when full"
+#~ msgstr "Доступен ли лист ожидания, когда событие заполнено"
+
+#~ msgid "Whether the event is free"
+#~ msgstr "Является ли событие бесплатным"
+
+#~ msgid "Event price if not free"
+#~ msgstr "Цена события, если не бесплатно"
+
+#~ msgid "Currency for the price"
+#~ msgstr "Валюта для цены"
+
+#~ msgid "Show Attendee List"
+#~ msgstr "Показывать список участников"
+
+#~ msgid "Whether to show list of registered attendees"
+#~ msgstr "Показывать ли список зарегистрированных участников"
+
+#~ msgid "Allow Comments"
+#~ msgstr "Разрешить комментарии"
+
+#~ msgid "Whether to allow comments on the event"
+#~ msgstr "Разрешать ли комментарии к событию"
+
+#~ msgid "Registration Link"
+#~ msgstr "Ссылка на регистрацию"
+
+#~ msgid "External registration link"
+#~ msgstr "Внешняя ссылка на регистрацию"
+
+#~ msgid "Materials Link"
+#~ msgstr "Ссылка на материалы"
+
+#~ msgid "Link to event materials"
+#~ msgstr "Ссылка на материалы события"
+
+#~ msgid "Registration Count"
+#~ msgstr "Количество регистраций"
+
+#~ msgid "Number of registered participants"
+#~ msgstr "Количество зарегистрированных участников"
+
+#~ msgid "Waiting List"
+#~ msgstr "Лист ожидания"
+
+#~ msgid "Attended"
+#~ msgstr "Посетил"
+
+#~ msgid "The event being registered for"
+#~ msgstr "Событие, на которое регистрируются"
+
+#~ msgid "User registering for the event"
+#~ msgstr "Пользователь, регистрирующийся на событие"
+
+#~ msgid "When the registration was made"
+#~ msgstr "Когда была сделана регистрация"
+
+#~ msgid "Current registration status"
+#~ msgstr "Текущий статус регистрации"
+
+#~ msgid "Any dietary restrictions for catering"
+#~ msgstr "Любые диетические ограничения для кейтеринга"
+
+#~ msgid "Any special requirements or accommodations"
+#~ msgstr "Любые особые требования или условия"
+
+#~ msgid "Additional comments from the registrant"
+#~ msgstr "Дополнительные комментарии от регистранта"
+
+#~ msgid "Paid"
+#~ msgstr "Оплачено"
+
+#~ msgid "Refunded"
+#~ msgstr "Возвращено"
+
+#~ msgid "Payment Status"
+#~ msgstr "Статус оплаты"
+
+#~ msgid "Status of payment for the event"
+#~ msgstr "Статус оплаты за событие"
+
+#~ msgid "Payment Amount"
+#~ msgstr "Сумма оплаты"
+
+#~ msgid "Amount paid for the event"
+#~ msgstr "Сумма, оплаченная за событие"
+
+#~ msgid "QR Code"
+#~ msgstr "QR код"
+
+#~ msgid "QR code for event check-in"
+#~ msgstr "QR код для регистрации на событие"
+
+#~ msgid "Check-in Time"
+#~ msgstr "Время регистрации"
+
+#~ msgid "Time when the user checked in"
+#~ msgstr "Время, когда пользователь зарегистрировался"
+
+#~ msgid "Event Registration"
+#~ msgstr "Регистрация на событие"
+
+#~ msgid "The event this speaker is associated with"
+#~ msgstr "Событие, с которым связан этот спикер"
+
+#~ msgid "Full name of the speaker"
+#~ msgstr "Полное имя спикера"
+
+#~ msgid "Professional title or position"
+#~ msgstr "Профессиональная должность или позиция"
+
+#~ msgid "Organization or company affiliation"
+#~ msgstr "Организация или компания"
+
+#~ msgid "Brief biography of the speaker"
+#~ msgstr "Краткая биография спикера"
+
+#~ msgid "Profile photo of the speaker"
+#~ msgstr "Фотография профиля спикера"
+
+#~ msgid "Contact email for the speaker"
+#~ msgstr "Контактный email для спикера"
+
+#~ msgid "Order in which to display this speaker"
+#~ msgstr "Порядок отображения этого спикера"
+
+#~ msgid "Event Speaker"
+#~ msgstr "Спикер события"
+
+#~ msgid "Event Speakers"
+#~ msgstr "Спикеры событий"
+
+#~ msgid "Keynote"
+#~ msgstr "Ключевое выступление"
+
+#~ msgid "Panel Discussion"
+#~ msgstr "Панельная дискуссия"
+
+#~ msgid "Presentation"
+#~ msgstr "Презентация"
+
+#~ msgid "Q&A Session"
+#~ msgstr "Сессия вопросов и ответов"
+
+#~ msgid "Break"
+#~ msgstr "Перерыв"
+
+#~ msgid "The event this session belongs to"
+#~ msgstr "Событие, к которому принадлежит эта сессия"
+
+#~ msgid "Title of the session"
+#~ msgstr "Название сессии"
+
+#~ msgid "Detailed description of the session"
+#~ msgstr "Подробное описание сессии"
+
+#~ msgid "Type of session"
+#~ msgstr "Тип сессии"
+
+#~ msgid "When the session starts"
+#~ msgstr "Когда сессия начинается"
+
+#~ msgid "When the session ends"
+#~ msgstr "Когда сессия заканчивается"
+
+#~ msgid "Specific location within the venue"
+#~ msgstr "Конкретное местоположение в месте проведения"
+
+#~ msgid "Speakers for this session"
+#~ msgstr "Спикеры для этой сессии"
+
+#~ msgid "Link to presentation slides or materials"
+#~ msgstr "Ссылка на слайды презентации или материалы"
+
+#~ msgid "Link to additional session materials"
+#~ msgstr "Ссылка на дополнительные материалы сессии"
+
+#~ msgid "Order in which to display this session"
+#~ msgstr "Порядок отображения этой сессии"
+
+#~ msgid "Event Session"
+#~ msgstr "Сессия события"
+
+#~ msgid "Event Sessions"
+#~ msgstr "Сессии событий"
+
+#~ msgid "The event being commented on"
+#~ msgstr "Событие, которое комментируют"
+
+#~ msgid "User who made the comment"
+#~ msgstr "Пользователь, оставивший комментарий"
+
+#~ msgid "Parent Comment"
+#~ msgstr "Родительский комментарий"
+
+#~ msgid "Parent comment for nested replies"
+#~ msgstr "Родительский комментарий для вложенных ответов"
+
+#~ msgid "The comment text"
+#~ msgstr "Текст комментария"
+
+#~ msgid "Approved"
+#~ msgstr "Одобрено"
+
+#~ msgid "Whether this comment is approved for display"
+#~ msgstr "Одобрен ли этот комментарий для отображения"
+
+#~ msgid "Event Comment"
+#~ msgstr "Комментарий к событию"
+
+#~ msgid "Event Comments"
+#~ msgstr "Комментарии к событиям"
+
+#~ msgid "The event being rated"
+#~ msgstr "Событие, которое оценивают"
+
+#~ msgid "User who provided the rating"
+#~ msgstr "Пользователь, предоставивший оценку"
+
+#~ msgid "Overall rating (1-5)"
+#~ msgstr "Общий рейтинг (1-5)"
+
+#~ msgid "Optional comment with the rating"
+#~ msgstr "Необязательный комментарий с оценкой"
+
+#~ msgid "Content Rating"
+#~ msgstr "Рейтинг содержания"
+
+#~ msgid "Rating for event content quality"
+#~ msgstr "Рейтинг качества содержания события"
+
+#~ msgid "Organization Rating"
+#~ msgstr "Рейтинг организации"
+
+#~ msgid "Rating for event organization"
+#~ msgstr "Рейтинг организации события"
+
+#~ msgid "Venue Rating"
+#~ msgstr "Рейтинг места проведения"
+
+#~ msgid "Rating for venue quality (optional)"
+#~ msgstr "Рейтинг качества места проведения (опционально)"
+
+#~ msgid "Event Rating"
+#~ msgstr "Рейтинг события"
+
+#~ msgid "Event Ratings"
+#~ msgstr "Рейтинги событий"
+
+#, python-brace-format
+#~ msgid "Registration Confirmation - {event_title}"
+#~ msgstr "Подтверждение регистрации - {event_title}"
+
+#~ msgid "Organizer:"
+#~ msgstr "Организатор:"
+
+#~ msgid "registered"
+#~ msgstr "зарегистрировано"
+
+#~ msgid "All Organizers"
+#~ msgstr "Все организаторы"
+
+#~ msgid "Time:"
+#~ msgstr "Время:"
+
+#~ msgid "Participants:"
+#~ msgstr "Участники:"
+
+#~ msgid "Registration:"
+#~ msgstr "Регистрация:"
+
+#~ msgid "Open"
+#~ msgstr "Открыта"
+
+#~ msgid "Closed"
+#~ msgstr "Закрыта"
+
+#~ msgid "Price:"
+#~ msgstr "Цена:"
+
+#~ msgid "Status:"
+#~ msgstr "Статус:"
+
+#~ msgid "Register for Event"
+#~ msgstr "Зарегистрироваться на событие"
+
+#~ msgid "Registration for this event is currently closed."
+#~ msgstr "Регистрация на это событие в настоящее время закрыта."
+
+#~ msgid "Rate this Event"
+#~ msgstr "Оценить это событие"
+
+#~ msgid "Select rating"
+#~ msgstr "Выберите оценку"
+
+#~ msgid "Excellent"
+#~ msgstr "Отлично"
+
+#~ msgid "Very Good"
+#~ msgstr "Очень хорошо"
+
+#~ msgid "Good"
+#~ msgstr "Хорошо"
+
+#~ msgid "Fair"
+#~ msgstr "Удовлетворительно"
+
+#~ msgid "Poor"
+#~ msgstr "Плохо"
+
+#~ msgid "Submit Rating"
+#~ msgstr "Отправить оценку"
+
+#~ msgid "Tags:"
+#~ msgstr "Теги:"
+
+#~ msgid "Views:"
+#~ msgstr "Просмотры:"
+
+#~ msgid "Rating:"
+#~ msgstr "Рейтинг:"
+
+#~ msgid "Attendees"
+#~ msgstr "Участники"
+
+#~ msgid "more..."
+#~ msgstr "еще..."
+
+#~ msgid "Error submitting rating."
+#~ msgstr "Ошибка при отправке оценки."
+
+#~ msgid "Sort by"
+#~ msgstr "Сортировать по"
+
+#~ msgid "participants"
+#~ msgstr "участники"
+
+#~ msgid "Registration open"
+#~ msgstr "Регистрация открыта"
+
+#~ msgid "Registration closed"
+#~ msgstr "Регистрация закрыта"
+
+#~ msgid "Clear Filters"
+#~ msgstr "Очистить фильтры"
+
+#~ msgid "Ish o'rini"
+#~ msgstr "Вакансия"
+
+#~ msgid "Ish o'rinlari"
+#~ msgstr "Вакансии"
+
+#~ msgid "Maosh kelishilgan holda"
+#~ msgstr "Зарплата договорная"
+
+#~ msgid "Kelishilgan holda"
+#~ msgstr "Договорная"
+
+#, python-format
+#~ msgid "dan %(salary)s %(currency)s"
+#~ msgstr "от %(salary)s %(currency)s"
+
+#, python-format
+#~ msgid "gacha %(salary)s %(currency)s"
+#~ msgstr "до %(salary)s %(currency)s"
+
+#~ msgid "Uydan ishlash"
+#~ msgstr "Удаленная работа"
+
+#~ msgid "Gibrid"
+#~ msgstr "Гибридный"
+
+#~ msgid "Ofisda"
+#~ msgstr "В офисе"
+
+#~ msgid "Watch YouTube video"
+#~ msgstr "Смотреть видео на YouTube"
 
 #~ msgid "Admin Information"
 #~ msgstr "Информация администратора"
@@ -9462,8 +9570,7 @@ msgstr "Недействительное действие."
 #~ msgstr "Например: Python, Django, JavaScript"
 
 #~ msgid ""
-#~ "List of skills separated by commas. For example: Python, Django, "
-#~ "JavaScript"
+#~ "List of skills separated by commas. For example: Python, Django, JavaScript"
 #~ msgstr "Список навыков через запятые. Например: Python, Django, JavaScript"
 
 #~ msgid "Working Conditions and Benefits"
@@ -9523,8 +9630,7 @@ msgstr "Недействительное действие."
 #~ msgid "Vacancy Preview"
 #~ msgstr "Предпросмотр вакансии"
 
-#~ msgid ""
-#~ "After filling in the information, the vacancy preview will appear here"
+#~ msgid "After filling in the information, the vacancy preview will appear here"
 #~ msgstr "После заполнения информации здесь появится предпросмотр вакансии"
 
 #~ msgid "Help and Tips"
@@ -9552,22 +9658,18 @@ msgstr "Недействительное действие."
 #~ msgstr "Поделиться ресурсом"
 
 #, fuzzy
-#~| msgid "Profile"
 #~ msgid "Profil"
 #~ msgstr "Профиль"
 
 #, fuzzy
-#~| msgid "Statistics"
 #~ msgid "Statistika"
 #~ msgstr "Статистика"
 
 #, fuzzy
-#~| msgid "Statistics"
 #~ msgid "Static Files"
 #~ msgstr "Статистика"
 
 #, fuzzy
-#~| msgid "Textbooks"
 #~ msgid "Text"
 #~ msgstr "Учебники"
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-26 13:42+0500\n"
+"POT-Creation-Date: 2025-11-29 17:24+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,12 +34,12 @@ msgstr "Sozlamalar"
 #: accounts/templates/accounts/admin_employer_management.html:12
 #: accounts/templates/accounts/profile_base.html:117
 #: accounts/templates/accounts/user_management.html:50 alumni/models.py:488
-#: alumni/models.py:552 alumni/models.py:802 core/admin.py:66 core/models.py:19
-#: cvbuilder/models.py:78 employers/admin.py:68 employers/admin.py:99
-#: employers/admin.py:176 employers/admin.py:215 employers/admin.py:341
-#: employers/models.py:489 employers/models.py:626
-#: employers/templates/employers/manage_jobs.html:12 events/models.py:232
-#: events/models.py:390 events/templates/events/admin_event_list.html:135
+#: alumni/models.py:552 alumni/models.py:802 core/admin.py:66
+#: core/models.py:19 cvbuilder/models.py:78
+#: cvbuilder/templates/cvbuilder/cv_list.html:120 employers/admin.py:68
+#: employers/admin.py:99 employers/admin.py:176 employers/admin.py:215
+#: employers/admin.py:341 employers/models.py:489 employers/models.py:626
+#: employers/templates/employers/manage_jobs.html:12 events/models.py:136
 #: events/templates/events/event_registrations.html:25
 #: events/templates/events/event_registrations.html:53
 #: events/templates/events/manage_events.html:22
@@ -72,8 +72,7 @@ msgstr "Kompaniya ma'lumoti"
 #: accounts/admin.py:109
 #: accounts/templates/accounts/create_employer_account.html:158
 #: accounts/templates/accounts/employer_profile.html:60 employers/admin.py:66
-#: events/admin.py:225 jobs/admin.py:105
-#: jobs/templates/jobs/job_create.html:851
+#: jobs/admin.py:105 jobs/templates/jobs/job_create.html:851
 #: jobs/templates/jobs/job_form.html:673
 msgid "Contact Information"
 msgstr "Aloqa ma'lumoti"
@@ -88,8 +87,9 @@ msgstr "Kompaniya tafsilotlari"
 
 #: accounts/admin.py:118 accounts/admin.py:153
 #: accounts/templates/accounts/admin_dashboard.html:147
-#: accounts/templates/accounts/profile_base.html:170 employers/admin.py:177
-#: employers/templates/employers/employer_dashboard.html:10 events/admin.py:135
+#: accounts/templates/accounts/profile_base.html:170
+#: cvbuilder/templates/cvbuilder/cv_list.html:17 employers/admin.py:177
+#: employers/templates/employers/employer_dashboard.html:10 events/admin.py:88
 #: jobs/admin.py:112
 msgid "Statistics"
 msgstr "Statistika"
@@ -97,8 +97,8 @@ msgstr "Statistika"
 #: accounts/admin.py:121 accounts/admin.py:155 employers/admin.py:69
 #: employers/admin.py:100 employers/admin.py:178 employers/admin.py:216
 #: employers/admin.py:273 employers/admin.py:312 employers/admin.py:342
-#: events/admin.py:136 events/admin.py:301 events/admin.py:318
-#: jobs/admin.py:113 jobs/admin.py:169 jobs/admin.py:248 resources/admin.py:51
+#: events/admin.py:91 events/admin.py:128 jobs/admin.py:113 jobs/admin.py:169
+#: jobs/admin.py:248 resources/admin.py:51
 msgid "Timestamps"
 msgstr "Vaqt belgilari"
 
@@ -238,20 +238,18 @@ msgstr "To'liq manzil"
 #: accounts/templates/accounts/employer_profile.html:31
 #: accounts/templates/accounts/employer_profile.html:147 alumni/models.py:48
 #: alumni/models.py:276 employers/forms.py:86 employers/models.py:46
-#: events/forms.py:246 events/models.py:505
 msgid "Website"
 msgstr "Veb-sayt"
 
-#: accounts/models.py:100 alumni/models.py:277 events/models.py:506
+#: accounts/models.py:100 alumni/models.py:277
 msgid "Personal or professional website"
 msgstr "Shaxsiy yoki professional veb-sayt"
 
 #: accounts/models.py:104 alumni/models.py:271 employers/models.py:94
-#: events/forms.py:247 events/models.py:510
 msgid "LinkedIn"
 msgstr "LinkedIn"
 
-#: accounts/models.py:105 alumni/models.py:272 events/models.py:511
+#: accounts/models.py:105 alumni/models.py:272
 msgid "LinkedIn profile URL"
 msgstr "LinkedIn profil URL manzili"
 
@@ -346,9 +344,8 @@ msgstr "Foydalanuvchining so'nggi faolligi vaqti"
 #: core/models.py:31 cvbuilder/models.py:34 cvbuilder/models.py:115
 #: employers/models.py:121 employers/models.py:215 employers/models.py:383
 #: employers/models.py:506 employers/models.py:562 employers/models.py:643
-#: employers/models.py:729 events/models.py:288 events/models.py:670
-#: events/models.py:784 jobs/models.py:325 jobs/models.py:505
-#: jobs/models.py:635 resources/models.py:79
+#: employers/models.py:729 events/models.py:167 jobs/models.py:325
+#: jobs/models.py:505 jobs/models.py:635 resources/models.py:79
 msgid "Created At"
 msgstr "Yaratilgan vaqti"
 
@@ -358,9 +355,9 @@ msgstr "Yaratilgan vaqti"
 #: alumni/models.py:918 alumni/models.py:1004 core/models.py:32
 #: cvbuilder/models.py:120 employers/models.py:126 employers/models.py:220
 #: employers/models.py:388 employers/models.py:511 employers/models.py:567
-#: employers/models.py:648 employers/models.py:734 events/models.py:292
-#: events/models.py:674 events/models.py:788 jobs/models.py:329
-#: jobs/models.py:509 jobs/models.py:639 resources/models.py:83
+#: employers/models.py:648 employers/models.py:734 events/models.py:171
+#: jobs/models.py:329 jobs/models.py:509 jobs/models.py:639
+#: resources/models.py:83
 msgid "Updated At"
 msgstr "Yangilangan vaqti"
 
@@ -369,8 +366,7 @@ msgstr "Yangilangan vaqti"
 #: accounts/models.py:701 accounts/templates/accounts/admin_dashboard.html:168
 #: accounts/templates/accounts/admin_management.html:11
 #: accounts/templates/accounts/user_management.html:48 alumni/models.py:188
-#: cvbuilder/models.py:57 employers/models.py:154 events/models.py:376
-#: events/models.py:645 events/models.py:748
+#: cvbuilder/models.py:57 employers/models.py:154
 #: events/templates/events/event_registrations.html:51 jobs/models.py:529
 #: jobs/models.py:568
 msgid "User"
@@ -379,7 +375,7 @@ msgstr "Foydalanuvchi"
 #: accounts/models.py:171 accounts/templates/accounts/admin_dashboard.html:119
 #: accounts/templates/accounts/admin_profile.html:266
 #: accounts/templates/accounts/user_detail.html:18
-#: core/templates/_inc/nav.html:116
+#: core/templates/_inc/nav.html:141
 msgid "Users"
 msgstr "Foydalanuvchilar"
 
@@ -704,7 +700,8 @@ msgstr "Yaratilgan rezyumelar"
 msgid "Number of resumes created"
 msgstr "Yaratilgan rezyumelar soni"
 
-#: accounts/models.py:459 accounts/templates/accounts/student_dashboard.html:52
+#: accounts/models.py:459
+#: accounts/templates/accounts/student_dashboard.html:52
 msgid "Jobs Applied"
 msgstr "Ariza berilgan ishlar"
 
@@ -857,7 +854,7 @@ msgstr "Hemis autentifikatsiyalari"
 
 #: accounts/models.py:622 accounts/templates/accounts/admin_login.html:36
 #: accounts/templates/accounts/employer_login.html:38
-#: core/templates/_inc/nav.html:204
+#: core/templates/_inc/nav.html:229
 msgid "Login"
 msgstr "Kirish"
 
@@ -900,11 +897,10 @@ msgstr "Foydalanuvchi faolligi turi"
 
 #: accounts/models.py:647 alumni/models.py:43 alumni/models.py:138
 #: alumni/models.py:703 alumni/models.py:855 cvbuilder/models.py:172
-#: employers/forms.py:85 employers/models.py:42 events/forms.py:35
-#: events/forms.py:131 events/forms.py:286 events/models.py:21
-#: events/models.py:83 events/models.py:562 jobs/models.py:19
-#: resources/forms.py:51 resources/models.py:19 resources/models.py:53
-#: resources/templates/resources/resource_form.html:116
+#: employers/forms.py:85 employers/models.py:42 events/forms.py:27
+#: events/forms.py:93 events/models.py:21 events/models.py:76
+#: jobs/models.py:19 resources/forms.py:51 resources/models.py:19
+#: resources/models.py:53 resources/templates/resources/resource_form.html:116
 msgid "Description"
 msgstr "Tavsif"
 
@@ -949,8 +945,8 @@ msgid "Application Update"
 msgstr "Ariza yangilanishi"
 
 #: accounts/models.py:692 accounts/models.py:719 alumni/models.py:493
-#: alumni/models.py:557 alumni/models.py:1069 core/admin.py:35 core/admin.py:49
-#: core/models.py:16
+#: alumni/models.py:557 alumni/models.py:1069 core/admin.py:35
+#: core/admin.py:49 core/models.py:16
 msgid "Message"
 msgstr "Xabar"
 
@@ -980,8 +976,8 @@ msgstr "Bildirishnoma toifasi"
 
 #: accounts/models.py:714 alumni/models.py:851 alumni/models.py:944
 #: cvbuilder/models.py:62 employers/forms.py:363 employers/models.py:694
-#: events/templates/events/list.html:58 resources/forms.py:49
-#: resources/models.py:41 resources/templates/resources/resource_form.html:57
+#: resources/forms.py:49 resources/models.py:41
+#: resources/templates/resources/resource_form.html:57
 msgid "Title"
 msgstr "Sarlavha"
 
@@ -1032,7 +1028,7 @@ msgstr "Foydalanuvchi ro'yxatdan o'tdi"
 #: accounts/templates/accounts/admin_dashboard.html:6
 #: accounts/templates/accounts/admin_dashboard.html:15
 #: accounts/templates/accounts/admin_profile.html:263
-#: core/templates/_inc/nav.html:113 core/templates/_inc/nav.html:153
+#: core/templates/_inc/nav.html:138 core/templates/_inc/nav.html:178
 msgid "Admin Panel"
 msgstr "Admin paneli"
 
@@ -1063,9 +1059,10 @@ msgstr "Ish beruvchilar"
 #: accounts/templates/accounts/admin_dashboard.html:126
 #: accounts/templates/accounts/notifications.html:39
 #: accounts/templates/accounts/student_profile.html:113 alumni/models.py:768
-#: core/templates/_inc/nav.html:90 core/templates/_inc/nav.html:110
+#: core/templates/_inc/nav.html:115 core/templates/_inc/nav.html:135
 #: employers/models.py:400 employers/templates/employers/list.html:153
-#: jobs/admin.py:24 jobs/apps.py:8 jobs/templates/jobs/job_detail.html:15
+#: jobs/admin.py:24 jobs/apps.py:8 jobs/models.py:350
+#: jobs/templates/jobs/job_detail.html:15
 msgid "Jobs"
 msgstr "Ishlar"
 
@@ -1084,12 +1081,12 @@ msgstr "Boshqaruv paneli"
 
 #: accounts/templates/accounts/admin_dashboard.html:104
 #: accounts/templates/accounts/admin_profile.html:270
-#: core/templates/_inc/nav.html:178
+#: core/templates/_inc/nav.html:203
 msgid "New Admin"
 msgstr "Yangi admin"
 
 #: accounts/templates/accounts/admin_dashboard.html:112
-#: core/templates/_inc/nav.html:186
+#: core/templates/_inc/nav.html:211
 msgid "New Employer"
 msgstr "Yangi ish beruvchi"
 
@@ -1105,10 +1102,10 @@ msgstr "Tez orada"
 #: accounts/templates/accounts/admin_dashboard.html:140
 #: accounts/templates/accounts/notifications.html:36
 #: accounts/templates/accounts/student_dashboard.html:127 alumni/models.py:924
-#: alumni/models.py:938 core/templates/_inc/nav.html:83
-#: core/templates/home.html:142 events/admin.py:46 events/apps.py:8
-#: events/models.py:297 events/templates/events/list.html:4
-#: events/templates/events/list.html:11
+#: alumni/models.py:938 core/templates/_inc/nav.html:109
+#: core/templates/home.html:142 events/admin.py:21 events/apps.py:8
+#: events/models.py:176 events/templates/events/calendar.html:76
+#: events/templates/events/list.html:5 events/templates/events/list.html:13
 msgid "Events"
 msgstr "Tadbirlar"
 
@@ -1127,6 +1124,7 @@ msgid "Activity"
 msgstr "Faollik"
 
 #: accounts/templates/accounts/admin_dashboard.html:170 alumni/models.py:869
+#: events/templates/events/detail.html:81
 msgid "Time"
 msgstr "Vaqt"
 
@@ -1205,8 +1203,11 @@ msgstr "Kompaniya"
 #: accounts/templates/accounts/admin_employer_management.html:13
 #: accounts/templates/accounts/admin_management.html:13
 #: accounts/templates/accounts/user_management.html:53
+#: cvbuilder/templates/cvbuilder/cv_list.html:122
+#: cvbuilder/templates/cvbuilder/cv_list.html:233
+#: cvbuilder/templates/cvbuilder/cv_list.html:311
+#: cvbuilder/templates/cvbuilder/cv_list.html:388
 #: employers/templates/employers/manage_jobs.html:13
-#: events/templates/events/admin_event_list.html:137
 #: events/templates/events/event_registrations.html:55
 #: jobs/templates/jobs/applications.html:145
 #: jobs/templates/jobs/employer_applications.html:101
@@ -1232,16 +1233,17 @@ msgstr "Faol"
 #: accounts/templates/accounts/notifications.html:74
 #: accounts/templates/accounts/user_management.html:111
 #: core/templates/home.html:100 core/templates/home.html:187
-#: core/templates/home.html:280
+#: core/templates/home.html:280 cvbuilder/templates/cvbuilder/cv_list.html:174
 #: cvbuilder/templates/cvbuilder/partials/cv_card.html:28
 #: cvbuilder/templates/cvbuilder/partials/cv_card.html:89
 #: cvbuilder/templates/cvbuilder/public_cv_list.html:49
-#: events/templates/events/admin_event_list.html:190
+#: events/templates/events/admin_event_list.html:166
+#: events/templates/events/list.html:224
 #: events/templates/events/manage_events.html:66
 #: jobs/templates/jobs/company_list.html:122
 #: jobs/templates/jobs/employer_applications.html:156
 #: jobs/templates/jobs/my_jobs.html:290
-#: resources/templates/resources/list.html:117
+#: resources/templates/resources/list.html:149
 #: resources/templates/resources/unpublished_resources.html:96
 #: resources/templates/resources/unpublished_resources.html:136
 #: resources/templates/resources/unpublished_resources.html:200
@@ -1295,13 +1297,13 @@ msgid "Role"
 msgstr "Rol"
 
 #: accounts/templates/accounts/admin_management.html:20
+#: cvbuilder/templates/cvbuilder/cv_list.html:179
 #: cvbuilder/templates/cvbuilder/partials/cv_card.html:33
 #: cvbuilder/templates/cvbuilder/partials/cv_card.html:92
 #: employers/templates/employers/manage_jobs.html:20
-#: events/templates/events/admin_event_list.html:193
-#: events/templates/events/detail.html:25
+#: events/templates/events/admin_event_list.html:169
+#: events/templates/events/detail.html:35
 #: jobs/templates/jobs/job_detail.html:93 jobs/templates/jobs/my_jobs.html:293
-#: resources/templates/resources/list.html:121
 #: resources/templates/resources/resource_detail.html:198
 #: resources/templates/resources/unpublished_resources.html:133
 #: resources/templates/resources/unpublished_resources.html:197
@@ -1311,11 +1313,11 @@ msgstr "Tahrirlash"
 #: accounts/templates/accounts/admin_profile.html:11
 #: accounts/templates/accounts/create_employer_account.html:27
 #: accounts/templates/accounts/employer_profile_update.html:46
-#: employers/admin.py:59 events/admin.py:89
+#: employers/admin.py:59 events/admin.py:58
 #: events/templates/events/admin_event_form.html:36
-#: jobs/templates/jobs/job_create.html:357 jobs/templates/jobs/job_form.html:63
-#: resources/admin.py:20 resources/admin.py:48
-#: resources/templates/resources/resource_form.html:50
+#: jobs/templates/jobs/job_create.html:357
+#: jobs/templates/jobs/job_form.html:63 resources/admin.py:20
+#: resources/admin.py:48 resources/templates/resources/resource_form.html:50
 msgid "Basic Information"
 msgstr "Asosiy ma'lumot"
 
@@ -1332,7 +1334,6 @@ msgstr "Admin avatari"
 #: accounts/templates/accounts/profile_base.html:97 alumni/models.py:60
 #: alumni/models.py:260 alumni/models.py:528 core/models.py:14
 #: cvbuilder/models.py:89 cvbuilder/templates/cvbuilder/cv_create.html:112
-#: events/forms.py:245 events/models.py:500
 #: jobs/templates/jobs/applications_detail.html:9
 msgid "Email"
 msgstr "Email"
@@ -1449,8 +1450,8 @@ msgid ""
 "Grant only necessary permissions to the new administrator. All permissions "
 "are only for the main admin."
 msgstr ""
-"Yangi administratorga faqat zarur ruxsatlarni bering. Barcha ruxsatlar faqat "
-"bosh admin uchun."
+"Yangi administratorga faqat zarur ruxsatlarni bering. Barcha ruxsatlar faqat"
+" bosh admin uchun."
 
 #: accounts/templates/accounts/create_admin_account.html:162
 #: accounts/templates/accounts/create_employer_account.html:230
@@ -1533,7 +1534,7 @@ msgid "New Job"
 msgstr "Yangi ish"
 
 #: accounts/templates/accounts/employer_dashboard.html:117
-#: core/templates/_inc/nav.html:100 jobs/templates/jobs/my_jobs.html:8
+#: core/templates/_inc/nav.html:125 jobs/templates/jobs/my_jobs.html:8
 #: jobs/templates/jobs/my_jobs.html:23
 msgid "My Jobs"
 msgstr "Mening ishlarim"
@@ -1606,7 +1607,7 @@ msgid "Want to login as a student?"
 msgstr "Talaba sifatida kirishni xohlaysizmi?"
 
 #: accounts/templates/accounts/employer_login.html:53
-#: core/templates/_inc/nav.html:213
+#: core/templates/_inc/nav.html:238
 msgid "Login via Hemis"
 msgstr "Hemis orqali kirish"
 
@@ -1640,7 +1641,8 @@ msgid "Your last name"
 msgstr "Familiyangiz"
 
 #: accounts/templates/accounts/employer_profile_update.html:116
-#: accounts/templates/accounts/student_dashboard.html:145 employers/admin.py:85
+#: accounts/templates/accounts/student_dashboard.html:145
+#: employers/admin.py:85
 msgid "Profile Information"
 msgstr "Profil ma'lumoti"
 
@@ -1694,7 +1696,8 @@ msgid "Go Back"
 msgstr "Orqaga qaytish"
 
 #: accounts/templates/accounts/employer_profile_update.html:266
-#: events/templates/events/admin_event_delete.html:61
+#: cvbuilder/templates/cvbuilder/cv_list.html:510
+#: events/templates/events/admin_event_delete.html:50
 #: events/templates/events/admin_event_form.html:220
 #: events/templates/events/create_event.html:243
 #: jobs/templates/jobs/company_form.html:23
@@ -1706,6 +1709,7 @@ msgid "Cancel"
 msgstr "Bekor qilish"
 
 #: accounts/templates/accounts/employer_profile_update.html:269
+#: cvbuilder/templates/cvbuilder/cv_list.html:511
 #: events/templates/events/admin_event_form.html:223
 #: jobs/templates/jobs/job_detail.html:81
 msgid "Save"
@@ -1749,11 +1753,11 @@ msgstr "Barchasini tozalash"
 
 #: accounts/templates/accounts/notifications.html:27
 #: accounts/templates/accounts/user_management.html:22
-#: events/templates/events/list.html:78
+#: cvbuilder/templates/cvbuilder/cv_list.html:37
+#: events/templates/events/list.html:116
 #: jobs/templates/jobs/applications.html:99
 #: jobs/templates/jobs/employer_applications.html:21
 #: jobs/templates/jobs/my_jobs.html:175
-#: resources/templates/resources/list.html:47
 msgid "All"
 msgstr "Barchasi"
 
@@ -1770,10 +1774,11 @@ msgid "Mark as read"
 msgstr "O'qilgan deb belgilash"
 
 #: accounts/templates/accounts/notifications.html:85
+#: cvbuilder/templates/cvbuilder/cv_list.html:203
 #: cvbuilder/templates/cvbuilder/partials/cv_card.html:52
-#: events/templates/events/admin_event_delete.html:66
-#: events/templates/events/admin_event_list.html:211
-#: events/templates/events/detail.html:28 jobs/templates/jobs/my_jobs.html:309
+#: events/templates/events/admin_event_delete.html:55
+#: events/templates/events/admin_event_list.html:187
+#: events/templates/events/detail.html:38 jobs/templates/jobs/my_jobs.html:309
 #: resources/templates/resources/resource_detail.html:213
 #: resources/templates/resources/resource_form.html:273
 #: resources/templates/resources/unpublished_resources.html:142
@@ -1781,7 +1786,7 @@ msgid "Delete"
 msgstr "O'chirish"
 
 #: accounts/templates/accounts/notifications.html:93
-#: events/templates/events/list.html:44
+#: events/templates/events/list.html:99
 msgid "Type"
 msgstr "Turi"
 
@@ -1928,11 +1933,13 @@ msgstr "Profilga qaytish"
 
 #: accounts/templates/accounts/profile_base.html:5
 #: accounts/templates/accounts/user_detail.html:6
-#: core/templates/_inc/nav.html:161 employers/templates/employers/list.html:197
+#: core/templates/_inc/nav.html:186
+#: employers/templates/employers/list.html:197
 msgid "Profile"
 msgstr "Profil"
 
 #: accounts/templates/accounts/profile_base.html:35
+#: events/templates/events/detail.html:185
 #: jobs/templates/jobs/job_detail.html:117
 msgid "views"
 msgstr "ko'rishlar"
@@ -1962,7 +1969,7 @@ msgstr "Xabar yuborish"
 msgid "Basic Info"
 msgstr "Asosiy ma'lumot"
 
-#: accounts/templates/accounts/profile_base.html:113 events/models.py:383
+#: accounts/templates/accounts/profile_base.html:113
 #: events/templates/events/event_registrations.html:52
 msgid "Registration Date"
 msgstr "Ro'yxatdan o'tish sanasi"
@@ -1972,7 +1979,8 @@ msgid "Contact Info"
 msgstr "Aloqa ma'lumoti"
 
 #: accounts/templates/accounts/profile_base.html:254
-#: core/templates/_inc/nav.html:93
+#: core/templates/_inc/nav.html:118
+#: cvbuilder/templates/cvbuilder/cv_list.html:12
 msgid "My Resumes"
 msgstr "Mening rezyumelarim"
 
@@ -1981,7 +1989,7 @@ msgid "Talaba kabineti"
 msgstr "Talaba kabineti"
 
 #: accounts/templates/accounts/student_dashboard.html:15
-#: core/templates/_inc/nav.html:141
+#: core/templates/_inc/nav.html:166
 msgid "Personal Cabinet"
 msgstr "Shaxsiy kabinet"
 
@@ -1995,6 +2003,7 @@ msgid "Average Grade"
 msgstr "O'rtacha baho"
 
 #: accounts/templates/accounts/student_dashboard.html:103
+#: cvbuilder/templates/cvbuilder/cv_list.html:20
 msgid "New Resume"
 msgstr "Yangi rezyume"
 
@@ -2004,7 +2013,7 @@ msgid "Job Search"
 msgstr "Ish qidirish"
 
 #: accounts/templates/accounts/student_dashboard.html:121
-#: core/templates/_inc/nav.html:80 resources/apps.py:8 resources/models.py:88
+#: core/templates/_inc/nav.html:106 resources/apps.py:8 resources/models.py:88
 msgid "Resources"
 msgstr "Resurslar"
 
@@ -2053,7 +2062,8 @@ msgid "Applied Jobs"
 msgstr "Ariza berilgan ishlar"
 
 #: accounts/templates/accounts/student_profile.html:110
-#: core/templates/_inc/nav.html:96 core/templates/home.html:18
+#: core/templates/_inc/nav.html:121 core/templates/home.html:18
+#: cvbuilder/templates/cvbuilder/cv_list.html:287
 msgid "Create Resume"
 msgstr "Rezyume yaratish"
 
@@ -2066,10 +2076,11 @@ msgid "Name, surname or username"
 msgstr "Ism, familiya yoki foydalanuvchi nomi"
 
 #: accounts/templates/accounts/student_search.html:11
-#: events/templates/events/admin_event_list.html:114
-#: events/templates/events/list.html:29 events/templates/events/list.html:65
-#: jobs/forms.py:333 jobs/templates/jobs/company_list.html:45
+#: events/templates/events/admin_event_list.html:104
+#: events/templates/events/list.html:81 jobs/forms.py:333
+#: jobs/templates/jobs/company_list.html:45
 #: jobs/templates/jobs/company_list.html:52
+#: resources/templates/resources/list.html:57
 msgid "Search"
 msgstr "Qidirish"
 
@@ -2228,8 +2239,7 @@ msgstr "Barcha foydalanuvchilarning ro'yxati va boshqaruvi"
 msgid "Admins"
 msgstr "Adminlar"
 
-#: accounts/templates/accounts/user_management.html:51 events/models.py:358
-#: events/templates/events/admin_event_list.html:136
+#: accounts/templates/accounts/user_management.html:51
 msgid "Registered"
 msgstr "Ro'yxatdan o'tgan"
 
@@ -2287,7 +2297,8 @@ msgstr "Siz tizimdan chiqdingiz"
 
 #: accounts/views.py:223 accounts/views.py:321
 msgid "Sizning profilingiz yaratildi. Iltimos, ma'lumotlaringizni to'ldiring."
-msgstr "Sizning profilingiz yaratildi. Iltimos, ma'lumotlaringizni to'ldiring."
+msgstr ""
+"Sizning profilingiz yaratildi. Iltimos, ma'lumotlaringizni to'ldiring."
 
 #: accounts/views.py:295
 msgid "Ish beruvchi akkaunti muvaffaqiyatli yaratildi!"
@@ -2444,10 +2455,10 @@ msgstr "Ko'nikma nomi"
 msgid "Name of the skill or competency"
 msgstr "Ko'nikma yoki kompetensiya nomi"
 
-#: alumni/models.py:133 alumni/models.py:968 events/forms.py:132
-#: events/models.py:95 events/templates/events/admin_event_list.html:133
-#: events/templates/events/list.html:33 events/templates/events/list.html:59
-#: resources/forms.py:50 resources/models.py:49
+#: alumni/models.py:133 alumni/models.py:968 events/forms.py:94
+#: events/models.py:88 events/templates/events/admin_event_list.html:122
+#: events/templates/events/list.html:89 resources/forms.py:50
+#: resources/models.py:49 resources/templates/resources/list.html:65
 #: resources/templates/resources/resource_detail.html:163
 #: resources/templates/resources/resource_form.html:75
 #: resources/templates/resources/resource_form.html:225
@@ -2463,12 +2474,12 @@ msgid "Detailed description of the skill"
 msgstr "Ko'nikmaning batafsil tavsifi"
 
 #: alumni/models.py:145 alumni/models.py:200 alumni/models.py:951
-#: events/models.py:254
+#: events/models.py:148
 msgid "Slug"
 msgstr "Slug"
 
 #: alumni/models.py:146 alumni/models.py:201 alumni/models.py:952
-#: events/models.py:255
+#: events/models.py:149
 msgid "URL-friendly identifier"
 msgstr "URL-uchun mos identifikator"
 
@@ -2642,12 +2653,11 @@ msgstr "Yangi karyera imkoniyatlariga ochiq yoki yo'q"
 msgid "Telegram username or handle"
 msgstr "Telegram foydalanuvchi nomi yoki handle"
 
-#: alumni/models.py:365 employers/models.py:99 events/forms.py:248
-#: events/models.py:515
+#: alumni/models.py:365 employers/models.py:99
 msgid "Twitter"
 msgstr "Twitter"
 
-#: alumni/models.py:366 events/models.py:516
+#: alumni/models.py:366
 msgid "Twitter profile URL"
 msgstr "Twitter profil URL manzili"
 
@@ -2683,7 +2693,7 @@ msgstr "Profilning so'nggi yangilangan vaqti"
 msgid "Alumni"
 msgstr "Bitiruvchilar"
 
-#: alumni/models.py:464 alumni/models.py:521 events/models.py:415
+#: alumni/models.py:464 alumni/models.py:521
 msgid "Pending"
 msgstr "Kutilmoqda"
 
@@ -2748,13 +2758,13 @@ msgstr "Aloqalar"
 
 #: alumni/models.py:523 core/models.py:9 employers/models.py:585
 #: events/models.py:66 events/templates/events/admin_event_list.html:69
-#: events/templates/events/admin_event_list.html:177
+#: events/templates/events/admin_event_list.html:159
 msgid "Completed"
 msgstr "Yakunlangan"
 
 #: alumni/models.py:524 employers/models.py:586 events/models.py:65
-#: events/models.py:360 events/templates/events/admin_event_list.html:60
-#: events/templates/events/admin_event_list.html:175
+#: events/templates/events/admin_event_list.html:60
+#: events/templates/events/admin_event_list.html:157
 msgid "Cancelled"
 msgstr "Bekor qilingan"
 
@@ -2806,8 +2816,8 @@ msgstr "Aloqa imtiyozi"
 msgid "Preferred method of communication"
 msgstr "Afzal ko'rilgan aloqa usuli"
 
-#: alumni/models.py:576 cvbuilder/models.py:157 events/forms.py:134
-#: events/models.py:107
+#: alumni/models.py:576 cvbuilder/models.py:157 events/forms.py:96
+#: events/models.py:100
 msgid "Start Date"
 msgstr "Boshlanish sanasi"
 
@@ -2815,8 +2825,8 @@ msgstr "Boshlanish sanasi"
 msgid "When the mentorship began"
 msgstr "Mentorlik qachon boshlangan"
 
-#: alumni/models.py:582 cvbuilder/models.py:163 events/forms.py:135
-#: events/models.py:111
+#: alumni/models.py:582 cvbuilder/models.py:163 events/forms.py:97
+#: events/models.py:104
 msgid "End Date"
 msgstr "Tugash sanasi"
 
@@ -2905,10 +2915,10 @@ msgstr "Taklif qilingan ish turi"
 #: alumni/models.py:667 alumni/models.py:874 cvbuilder/models.py:99
 #: cvbuilder/templates/cvbuilder/cv_create.html:152 employers/forms.py:216
 #: employers/forms.py:319 employers/models.py:312 employers/models.py:613
-#: events/admin.py:103 events/admin.py:251 events/forms.py:136
-#: events/forms.py:290 events/models.py:118 events/models.py:586
-#: jobs/forms.py:193 jobs/forms.py:342 jobs/forms.py:581 jobs/models.py:116
-#: jobs/models.py:587 jobs/templates/jobs/applications_detail.html:21
+#: events/admin.py:72 events/forms.py:98 events/models.py:111
+#: events/templates/events/detail.html:94 jobs/forms.py:193 jobs/forms.py:342
+#: jobs/forms.py:581 jobs/models.py:116 jobs/models.py:587
+#: jobs/templates/jobs/applications_detail.html:21
 #: jobs/templates/jobs/job_create.html:1277
 #: jobs/templates/jobs/job_form.html:141
 msgid "Location"
@@ -2947,8 +2957,8 @@ msgid "Maximum salary offered"
 msgstr "Taklif qilingan maksimal maosh"
 
 #: alumni/models.py:697 employers/forms.py:220 employers/models.py:341
-#: events/forms.py:150 events/models.py:223 jobs/forms.py:202 jobs/forms.py:400
-#: jobs/models.py:183 jobs/templates/jobs/job_form.html:309
+#: jobs/forms.py:202 jobs/forms.py:400 jobs/models.py:183
+#: jobs/templates/jobs/job_form.html:309
 msgid "Currency"
 msgstr "Valyuta"
 
@@ -3039,7 +3049,7 @@ msgstr "Ish e'lonining so'nggi yangilanishi"
 
 #: alumni/models.py:767 alumni/models.py:789 employers/models.py:399
 #: employers/models.py:452 employers/models.py:546 jobs/admin.py:172
-#: jobs/admin.py:219 jobs/models.py:431 jobs/models.py:536
+#: jobs/admin.py:219 jobs/models.py:349 jobs/models.py:431 jobs/models.py:536
 #: jobs/templates/jobs/applications_detail.html:17
 #: jobs/templates/jobs/my_jobs.html:370
 msgid "Job"
@@ -3115,11 +3125,11 @@ msgstr "Arizaning so'nggi yangilanishi"
 msgid "Job Applications"
 msgstr "Ish arizalari"
 
-#: alumni/models.py:841 events/models.py:53 events/models.py:544
+#: alumni/models.py:841 events/models.py:53
 msgid "Networking"
 msgstr "Tarmoq"
 
-#: alumni/models.py:842 events/models.py:51 events/models.py:540
+#: alumni/models.py:842 events/models.py:51
 msgid "Workshop"
 msgstr "Workshop"
 
@@ -3147,7 +3157,7 @@ msgstr "Tadbir sarlavhasi yoki nomi"
 msgid "Detailed event description"
 msgstr "Tadbirning batafsil tavsifi"
 
-#: alumni/models.py:861 events/forms.py:133 events/models.py:101
+#: alumni/models.py:861 events/forms.py:95 events/models.py:94
 msgid "Event Type"
 msgstr "Tadbir turi"
 
@@ -3155,7 +3165,11 @@ msgstr "Tadbir turi"
 msgid "Type or category of the event"
 msgstr "Tadbir turi yoki toifasi"
 
-#: alumni/models.py:865 events/templates/events/list.html:57
+#: alumni/models.py:865 cvbuilder/templates/cvbuilder/cv_list.html:121
+#: cvbuilder/templates/cvbuilder/cv_list.html:232
+#: cvbuilder/templates/cvbuilder/cv_list.html:310
+#: cvbuilder/templates/cvbuilder/cv_list.html:387
+#: events/templates/events/detail.html:68
 #: jobs/templates/jobs/employer_applications.html:100
 #: jobs/templates/jobs/job_list.html:88
 msgid "Date"
@@ -3173,8 +3187,7 @@ msgstr "Tadbir boshlanadigan vaqt"
 msgid "Physical location of the event"
 msgstr "Tadbirning jismoniy joylashuvi"
 
-#: alumni/models.py:880 events/admin.py:106 events/models.py:148
-#: events/templates/events/admin_event_list.html:132
+#: alumni/models.py:880
 msgid "Organizer"
 msgstr "Tashkilotchi"
 
@@ -3182,11 +3195,11 @@ msgstr "Tashkilotchi"
 msgid "Alumni organizing the event"
 msgstr "Tadbirni tashkil qilayotgan bitiruvchi"
 
-#: alumni/models.py:887 events/forms.py:143 events/models.py:178
+#: alumni/models.py:887
 msgid "Registration Required"
 msgstr "Ro'yxatdan o'tish talab qilinadi"
 
-#: alumni/models.py:888 events/models.py:179
+#: alumni/models.py:888
 msgid "Whether registration is required to attend"
 msgstr "Ishtirok etish uchun ro'yxatdan o'tish talab qilinadimi"
 
@@ -3194,7 +3207,7 @@ msgstr "Ishtirok etish uchun ro'yxatdan o'tish talab qilinadimi"
 msgid "Max Participants"
 msgstr "Maksimal ishtirokchilar"
 
-#: alumni/models.py:894 events/models.py:198
+#: alumni/models.py:894
 msgid "Maximum number of participants allowed"
 msgstr "Ruxsat etilgan maksimal ishtirokchilar soni"
 
@@ -3218,10 +3231,8 @@ msgstr "Tadbir qachon yaratilgan"
 msgid "Last update to the event"
 msgstr "Tadbirning so'nggi yangilanishi"
 
-#: alumni/models.py:923 events/models.py:296 events/models.py:369
-#: events/models.py:467 events/models.py:552 events/models.py:639
-#: events/models.py:693 events/models.py:742
-#: events/templates/events/admin_event_list.html:131
+#: alumni/models.py:923 events/models.py:175 events/models.py:221
+#: events/templates/events/admin_event_list.html:121
 msgid "Event"
 msgstr "Tadbir"
 
@@ -3265,7 +3276,7 @@ msgstr "Yangilik maqolasini yozgan bitiruvchi"
 msgid "News category or topic"
 msgstr "Yangilik toifasi yoki mavzusi"
 
-#: alumni/models.py:975 events/models.py:698
+#: alumni/models.py:975 events/models.py:226
 #: events/templates/events/admin_event_form.html:191 resources/forms.py:52
 #: resources/models.py:60
 msgid "Image"
@@ -3275,7 +3286,8 @@ msgstr "Rasm"
 msgid "Featured image for the news article"
 msgstr "Yangilik maqolasi uchun asosiy rasm"
 
-#: alumni/models.py:981 events/forms.py:151 events/models.py:260
+#: alumni/models.py:981 events/forms.py:101 events/models.py:154
+#: events/templates/events/detail.html:193
 msgid "Tags"
 msgstr "Teglar"
 
@@ -3287,10 +3299,13 @@ msgstr "Maqola uchun vergul bilan ajratilgan teglar"
 #: cvbuilder/templates/cvbuilder/cv_create.html:238
 #: cvbuilder/templates/cvbuilder/cv_create.html:307
 #: cvbuilder/templates/cvbuilder/cv_create.html:391
+#: cvbuilder/templates/cvbuilder/cv_list.html:42
+#: cvbuilder/templates/cvbuilder/cv_list.html:153
+#: cvbuilder/templates/cvbuilder/cv_list.html:469
 #: cvbuilder/templates/cvbuilder/partials/cv_card.html:7
 #: employers/models.py:723 events/models.py:64
 #: events/templates/events/admin_event_list.html:42
-#: events/templates/events/admin_event_list.html:171 resources/models.py:72
+#: events/templates/events/admin_event_list.html:153 resources/models.py:72
 msgid "Published"
 msgstr "Nashr etilgan"
 
@@ -3368,7 +3383,7 @@ msgstr "Javoblar uchun asosiy xabar"
 msgid "When the message was sent"
 msgstr "Xabar qachon yuborilgan"
 
-#: alumni/models.py:1070 core/templates/_inc/nav.html:166
+#: alumni/models.py:1070 core/templates/_inc/nav.html:191
 msgid "Messages"
 msgstr "Xabarlar"
 
@@ -3460,40 +3475,40 @@ msgstr "Aloqa xabari"
 msgid "Contact Messages"
 msgstr "Aloqa xabarlari"
 
-#: core/templates/_inc/nav.html:74
+#: core/templates/_inc/nav.html:100
 msgid "Home"
 msgstr "Bosh sahifa"
 
-#: core/templates/_inc/nav.html:77
+#: core/templates/_inc/nav.html:103
 msgid "University"
 msgstr "Universitet"
 
-#: core/templates/_inc/nav.html:103
+#: core/templates/_inc/nav.html:128
 msgid "Add Job"
 msgstr "Ish qo'shish"
 
-#: core/templates/_inc/nav.html:106 core/templates/_inc/nav.html:119
+#: core/templates/_inc/nav.html:131 core/templates/_inc/nav.html:144
 #: cvbuilder/templates/cvbuilder/public_cv_list.html:8
 msgid "Public Resumes"
 msgstr "Ochiq rezyumelar"
 
-#: core/templates/_inc/nav.html:147
+#: core/templates/_inc/nav.html:172
 msgid "Company Cabinet"
 msgstr "Kompaniya kabineti"
 
-#: core/templates/_inc/nav.html:194
+#: core/templates/_inc/nav.html:219
 msgid "Logout"
 msgstr "Chiqish"
 
-#: core/templates/_inc/nav.html:212
+#: core/templates/_inc/nav.html:237
 msgid "As Student"
 msgstr "Talaba sifatida"
 
-#: core/templates/_inc/nav.html:223
+#: core/templates/_inc/nav.html:248
 msgid "As Employer"
 msgstr "Ish beruvchi sifatida"
 
-#: core/templates/_inc/nav.html:224
+#: core/templates/_inc/nav.html:249
 msgid "Company Account"
 msgstr "Kompaniya hisobi"
 
@@ -3518,7 +3533,7 @@ msgid "Students/Alumni"
 msgstr "Talabalar/Bitiruvchilar"
 
 #: core/templates/home.html:34 core/templates/home.html:127
-#: resources/templates/resources/list.html:8
+#: resources/templates/resources/list.html:10
 msgid "Career Resources"
 msgstr "Karyera resurslari"
 
@@ -3532,7 +3547,8 @@ msgstr "Shaxsiy yondashuv"
 
 #: core/templates/home.html:52
 msgid "Individual counseling and guidance for every student and graduate"
-msgstr "Har bir talaba va bitiruvchi uchun individual maslahat va yo'naltirish"
+msgstr ""
+"Har bir talaba va bitiruvchi uchun individual maslahat va yo'naltirish"
 
 #: core/templates/home.html:61
 msgid "Extensive Partner Network"
@@ -3595,8 +3611,10 @@ msgid "Participate"
 msgstr "Ishtirok etish"
 
 #: core/templates/home.html:157
-msgid "Popular Resources"
-msgstr "Ommabop resurslar"
+#, fuzzy
+#| msgid "Create Resource"
+msgid "Latest Resources"
+msgstr "Resurs yaratish"
 
 #: core/templates/home.html:159
 #: resources/templates/resources/resource_detail.html:9
@@ -3667,7 +3685,7 @@ msgstr "Shablon nomi"
 msgid "Display name for the CV template"
 msgstr "CV shablonining ko'rsatiladigan nomi"
 
-#: cvbuilder/models.py:19 events/forms.py:142 events/models.py:171
+#: cvbuilder/models.py:19 events/forms.py:100 events/models.py:127
 msgid "Thumbnail"
 msgstr "Kichik rasm"
 
@@ -3701,9 +3719,12 @@ msgstr "CV shablonlar"
 
 #: cvbuilder/models.py:50 cvbuilder/templates/cvbuilder/cv_create.html:221
 #: cvbuilder/templates/cvbuilder/cv_create.html:296
+#: cvbuilder/templates/cvbuilder/cv_list.html:48
+#: cvbuilder/templates/cvbuilder/cv_list.html:155
+#: cvbuilder/templates/cvbuilder/cv_list.html:473
 #: cvbuilder/templates/cvbuilder/partials/cv_card.html:9 events/models.py:63
 #: events/templates/events/admin_event_list.html:51
-#: events/templates/events/admin_event_list.html:173
+#: events/templates/events/admin_event_list.html:155
 #: jobs/templates/jobs/my_jobs.html:181 jobs/templates/jobs/my_jobs.html:266
 msgid "Draft"
 msgstr "Qoralama"
@@ -3717,6 +3738,10 @@ msgid "Title or name of the resume"
 msgstr "Rezyume sarlavhasi yoki nomi"
 
 #: cvbuilder/models.py:71 cvbuilder/templates/cvbuilder/cv_create.html:66
+#: cvbuilder/templates/cvbuilder/cv_list.html:119
+#: cvbuilder/templates/cvbuilder/cv_list.html:231
+#: cvbuilder/templates/cvbuilder/cv_list.html:309
+#: cvbuilder/templates/cvbuilder/cv_list.html:386
 msgid "Template"
 msgstr "Shablon"
 
@@ -4037,8 +4062,8 @@ msgstr ""
 
 #: cvbuilder/templates/cvbuilder/cv_create.html:309
 msgid ""
-"Your resume is visible to employers and administrators. Use this when you're "
-"actively job hunting."
+"Your resume is visible to employers and administrators. Use this when you're"
+" actively job hunting."
 msgstr ""
 "Rezyumengiz ish beruvchilar va administratorlarga ko'rinadi. Faol ish "
 "qidiryotgan paytingizda foydalaning."
@@ -4125,17 +4150,198 @@ msgstr "Ushbu shablonni tanlash"
 msgid "Please select a template"
 msgstr "Iltimos, shablon tanlang"
 
+#: cvbuilder/templates/cvbuilder/cv_list.html:13
+msgid "Manage all your created resumes"
+msgstr "Barcha yaratilgan rezyumelarni boshqaring"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:54
+#: cvbuilder/templates/cvbuilder/cv_list.html:157
+#: cvbuilder/templates/cvbuilder/cv_list.html:477
+#, fuzzy
+#| msgid "Archived"
+msgid "Archive"
+msgstr "Arxivlangan"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:63
+#, fuzzy, python-format
+#| msgid "Total: %(count)s companies"
+msgid "Total: %(total)s resumes"
+msgstr "Jami: %(count)s ta kompaniya"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:65
+#, fuzzy
+#| msgid "No resumes available yet"
+msgid "No resumes available"
+msgstr "Hali rezyumelar mavjud emas"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:80
+#, fuzzy
+#| msgid "Search resources..."
+msgid "Search resumes..."
+msgstr "Resurslarni qidirish..."
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:85
+#: cvbuilder/templates/cvbuilder/public_cv_list.html:15
+msgid "All templates"
+msgstr "Barcha shablonlar"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:93
+#: cvbuilder/templates/cvbuilder/public_cv_list.html:21
+msgid "Newest first"
+msgstr "Yangi avval"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:94
+#: cvbuilder/templates/cvbuilder/public_cv_list.html:22
+msgid "Oldest first"
+msgstr "Eski avval"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:95
+#: cvbuilder/templates/cvbuilder/public_cv_list.html:23
+msgid "Name A-Z"
+msgstr "Ism A-Z"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:96
+#: cvbuilder/templates/cvbuilder/public_cv_list.html:24
+msgid "Name Z-A"
+msgstr "Ism Z-A"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:101
+#: events/templates/events/admin_event_list.html:107
+#: jobs/templates/jobs/company_list.html:55
+msgid "Clear"
+msgstr "Tozalash"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:117
+#: cvbuilder/templates/cvbuilder/cv_list.html:229
+#: cvbuilder/templates/cvbuilder/cv_list.html:307
+#: cvbuilder/templates/cvbuilder/cv_list.html:384
+#, fuzzy
+#| msgid "Date and Time"
+msgid "Name and Title"
+msgstr "Sana va Vaqt"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:118
+#: cvbuilder/templates/cvbuilder/cv_list.html:230
+#: cvbuilder/templates/cvbuilder/cv_list.html:308
+#: cvbuilder/templates/cvbuilder/cv_list.html:385
+#, fuzzy
+#| msgid "Contract"
+msgid "Contact"
+msgstr "Shartnoma"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:136
+#: cvbuilder/templates/cvbuilder/cv_list.html:247
+#: cvbuilder/templates/cvbuilder/cv_list.html:325
+#: cvbuilder/templates/cvbuilder/cv_list.html:402
+#, fuzzy
+#| msgid "Not specified"
+msgid "Name not specified"
+msgstr "Ko'rsatilmagan"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:137
+#: cvbuilder/templates/cvbuilder/cv_list.html:248
+#: cvbuilder/templates/cvbuilder/cv_list.html:326
+#: cvbuilder/templates/cvbuilder/cv_list.html:403
+#, fuzzy
+#| msgid "Not specified"
+msgid "Title not specified"
+msgstr "Ko'rsatilmagan"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:186
 #: cvbuilder/templates/cvbuilder/partials/cv_card.html:40
 msgid "Change Status"
 msgstr "Holatni o'zgartirish"
 
+#: cvbuilder/templates/cvbuilder/cv_list.html:191
 #: cvbuilder/templates/cvbuilder/partials/cv_card.html:45
 msgid "Duplicate"
 msgstr "Nusxalash"
 
+#: cvbuilder/templates/cvbuilder/cv_list.html:197
+msgid "Download PDF"
+msgstr "PDF-ni yuklab oling"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:202
+#: cvbuilder/templates/cvbuilder/cv_list.html:433
 #: cvbuilder/templates/cvbuilder/partials/cv_card.html:51
 msgid "Are you sure you want to delete this resume?"
 msgstr "Ushbu rezyumeni o'chirishni istaysizmi?"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:284
+#, fuzzy
+#| msgid "No published resumes yet."
+msgid "No published resumes"
+msgstr "Hali nashr etilgan rezyumelar yo'q."
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:285
+#: cvbuilder/templates/cvbuilder/cv_list.html:365
+#: cvbuilder/templates/cvbuilder/cv_list.html:444
+msgid "You don\\"
+msgstr "Siz dedingiz"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:364
+#, fuzzy
+#| msgid "Created Resumes"
+msgid "No draft resumes"
+msgstr "Yaratilgan rezyumelar"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:443
+#, fuzzy
+#| msgid "No published resumes yet."
+msgid "No archived resumes"
+msgstr "Hali nashr etilgan rezyumelar yo'q."
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:465
+#, fuzzy
+#| msgid "Total Resources"
+msgid "Total Resumes"
+msgstr "Jami resurslar"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:492
+#, fuzzy
+#| msgid "Resume Status"
+msgid "Change Resume Status"
+msgstr "Rezyume holati"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:500
+#, fuzzy
+#| msgid "System Status"
+msgid "Select Status"
+msgstr "Tizim holati"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:502
+msgid "Draft - Only you can see"
+msgstr "Qoralama - faqat siz ko'rishingiz mumkin"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:503
+#, fuzzy
+#| msgid "Visible to employers and admins"
+msgid "Published - Visible to employers and admins"
+msgstr "Ish beruvchilar va adminlarga ko'rinadi"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:504
+#, fuzzy
+#| msgid "Hidden from everyone"
+msgid "Archive - Hidden from everyone"
+msgstr "Hammadan yashiringan"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:882
+#, fuzzy
+#| msgid "No resources found"
+msgid "No resumes found"
+msgstr "Resurslar topilmadi"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:885
+#, fuzzy
+#| msgid "Founded"
+msgid "Found"
+msgstr "Asos solingan"
+
+#: cvbuilder/templates/cvbuilder/cv_list.html:885
+#, fuzzy
+#| msgid "Resumes"
+msgid "resumes"
+msgstr "Rezyumelar"
 
 #: cvbuilder/templates/cvbuilder/partials/cv_card.html:75
 msgid "Created"
@@ -4167,57 +4373,38 @@ msgstr "Shablonlarni ko'rish"
 msgid "This page is only open for employers and administrators."
 msgstr "Ushbu sahifa faqat ish beruvchilar va administratorlar uchun ochiq."
 
-#: cvbuilder/templates/cvbuilder/public_cv_list.html:15
-msgid "All templates"
-msgstr "Barcha shablonlar"
-
-#: cvbuilder/templates/cvbuilder/public_cv_list.html:21
-msgid "Newest first"
-msgstr "Yangi avval"
-
-#: cvbuilder/templates/cvbuilder/public_cv_list.html:22
-msgid "Oldest first"
-msgstr "Eski avval"
-
-#: cvbuilder/templates/cvbuilder/public_cv_list.html:23
-msgid "Name A-Z"
-msgstr "Ism A-Z"
-
-#: cvbuilder/templates/cvbuilder/public_cv_list.html:24
-msgid "Name Z-A"
-msgstr "Ism Z-A"
-
 #: cvbuilder/templates/cvbuilder/public_cv_list.html:26
 #: events/templates/events/event_registrations.html:37
+#: events/templates/events/list.html:64
 #: events/templates/events/manage_events.html:34
 #: events/templates/events/my_events.html:29
-#: resources/templates/resources/list.html:37
+#: resources/templates/resources/list.html:40
 msgid "Filter"
 msgstr "Filtrlash"
 
 #: cvbuilder/templates/cvbuilder/public_cv_list.html:63
-#: events/templates/events/admin_event_list.html:242
+#: events/templates/events/admin_event_list.html:218
 #: events/templates/events/event_registrations.html:114
-#: events/templates/events/list.html:173
+#: events/templates/events/list.html:243
 #: events/templates/events/manage_events.html:106
 #: events/templates/events/my_events.html:91
 #: jobs/templates/jobs/job_create.html:719
 #: jobs/templates/jobs/job_create.html:922
 #: jobs/templates/jobs/job_create.html:1044
 #: jobs/templates/jobs/my_jobs.html:328 jobs/templates/jobs/my_jobs.html:469
-#: resources/templates/resources/list.html:135
+#: resources/templates/resources/list.html:167
 #: resources/templates/resources/unpublished_resources.html:226
 msgid "Previous"
 msgstr "Oldingi"
 
 #: cvbuilder/templates/cvbuilder/public_cv_list.html:66
-#: events/templates/events/admin_event_list.html:262
+#: events/templates/events/admin_event_list.html:238
 #: events/templates/events/event_registrations.html:130
-#: events/templates/events/list.html:189
+#: events/templates/events/list.html:259
 #: events/templates/events/manage_events.html:122
 #: events/templates/events/my_events.html:107
 #: jobs/templates/jobs/my_jobs.html:346 jobs/templates/jobs/my_jobs.html:487
-#: resources/templates/resources/list.html:151
+#: resources/templates/resources/list.html:183
 #: resources/templates/resources/unpublished_resources.html:242
 msgid "Next"
 msgstr "Keyingi"
@@ -4232,7 +4419,8 @@ msgstr "CV shablonini oldindan ko'rish"
 
 #: cvbuilder/templates/cvbuilder/template_preview.html:8
 msgid "Preview of the selected CV template will appear here."
-msgstr "Tanlangan CV shablonining oldindan ko'rinishi shu yerda paydo bo'ladi."
+msgstr ""
+"Tanlangan CV shablonining oldindan ko'rinishi shu yerda paydo bo'ladi."
 
 #: cvbuilder/templates/cvbuilder/template_preview.html:10
 msgid "[CV template content]"
@@ -4439,7 +4627,7 @@ msgstr "Ish mas'uliyatlari..."
 msgid "Benefits and perks..."
 msgstr "Imtiyozlar va qulayliklar..."
 
-#: employers/forms.py:182 events/forms.py:100 jobs/forms.py:570
+#: employers/forms.py:182 events/forms.py:80 jobs/forms.py:570
 msgid "Tashkent, Uzbekistan"
 msgstr "Toshkent, O'zbekiston"
 
@@ -4550,7 +4738,7 @@ msgid "What could be improved?"
 msgstr "Nimani yaxshilash mumkin?"
 
 #: employers/forms.py:362 employers/models.py:637 employers/models.py:689
-#: employers/templates/employers/list.html:69 events/models.py:754
+#: employers/templates/employers/list.html:69
 msgid "Rating"
 msgstr "Reyting"
 
@@ -4866,17 +5054,18 @@ msgstr "Ushbu ish e'lonlari qachon muddati tugaydi"
 msgid "Salary negotiable"
 msgstr "Maosh kelishiladi"
 
-#: employers/models.py:425
+#: employers/models.py:425 jobs/models.py:378
 #, python-format
 msgid "from %(salary)s %(currency)s"
 msgstr "%(salary)s %(currency)s dan"
 
-#: employers/models.py:430
+#: employers/models.py:430 jobs/models.py:383
 #, python-format
 msgid "up to %(salary)s %(currency)s"
 msgstr "%(salary)s %(currency)s gacha"
 
-#: employers/models.py:434 jobs/templates/jobs/applications.html:207
+#: employers/models.py:434 jobs/models.py:387 jobs/models.py:401
+#: jobs/templates/jobs/applications.html:207
 #: jobs/templates/jobs/job_list.html:287
 msgid "Not specified"
 msgstr "Ko'rsatilmagan"
@@ -4966,7 +5155,7 @@ msgstr "Nomzod eslatmalari"
 msgid "Scheduled"
 msgstr "Rejalashtirilgan"
 
-#: employers/models.py:587 events/models.py:362
+#: employers/models.py:587
 msgid "No Show"
 msgstr "Kelmadi"
 
@@ -5344,7 +5533,8 @@ msgstr "Ish beruvchi profili muvaffaqiyatli yaratildi!"
 #: employers/views.py:339
 msgid "You need to complete your employer profile to access this page."
 msgstr ""
-"Ushbu sahifaga kirish uchun ish beruvchi profilingizni to'ldirishingiz kerak."
+"Ushbu sahifaga kirish uchun ish beruvchi profilingizni to'ldirishingiz "
+"kerak."
 
 #: employers/views.py:353
 msgid "You do not have permission to post jobs."
@@ -5354,404 +5544,153 @@ msgstr "Sizda ish joylash huquqi yo'q."
 msgid "Job posted successfully!"
 msgstr "Ish muvaffaqiyatli joylandi!"
 
-#: events/admin.py:50 events/forms.py:36 events/models.py:27
+#: events/admin.py:25 events/forms.py:28 events/models.py:27
 msgid "Color"
 msgstr "Rang"
 
-#: events/admin.py:101
+#: events/admin.py:70
 msgid "Date & Time"
 msgstr "Sana & Vaqt"
 
-#: events/admin.py:107
+#: events/admin.py:75
 msgid "Media"
 msgstr "Media"
 
-#: events/admin.py:109 events/templates/events/admin_event_form.html:156
-#: events/templates/events/detail.html:72
-msgid "Registration"
-msgstr "Ro'yxatdan o'tish"
-
-#: events/admin.py:120
+#: events/admin.py:76
 msgid "Pricing"
 msgstr "Narx"
 
-#: events/admin.py:122
+#: events/admin.py:78
 msgid "Settings"
 msgstr "Sozlamalar"
 
-#: events/admin.py:141
+#: events/admin.py:96
 msgid "Publish selected events"
 msgstr "Tanlangan tadbirlarni nashr etish"
 
-#: events/admin.py:144
+#: events/admin.py:99
 #, python-format
 msgid "%(count)d events published"
 msgstr "%(count)d ta tadbir nashr etildi"
 
-#: events/admin.py:146
+#: events/admin.py:101
 msgid "Unpublish selected events"
 msgstr "Tanlangan tadbirlarni nashrdan olib tashlash"
 
-#: events/admin.py:150
+#: events/admin.py:105
 #, python-format
 msgid "%(count)d events unpublished"
 msgstr "%(count)d ta tadbir nashrdan olib tashlandi"
 
-#: events/admin.py:153
+#: events/admin.py:108
 msgid "Mark as featured"
 msgstr "Taqdim etilgan deb belgilash"
 
-#: events/admin.py:157
+#: events/admin.py:112
 #, python-format
 msgid "%(count)d events marked as featured"
 msgstr "%(count)d ta tadbir taqdim etilgan deb belgilandi"
 
-#: events/admin.py:177
-msgid "Registration Information"
-msgstr "Ro'yxatdan o'tish ma'lumoti"
-
-#: events/admin.py:181 jobs/templates/jobs/applications_detail.html:37
-msgid "Additional Information"
-msgstr "Qo'shimcha ma'lumot"
-
-#: events/admin.py:184
-msgid "Payment"
-msgstr "To'lov"
-
-#: events/admin.py:185 events/templates/events/event_registrations.html:54
-#: events/templates/events/event_registrations.html:93
-msgid "Check-in"
-msgstr "Kirish"
-
-#: events/admin.py:190
-msgid "Mark as attended"
-msgstr "Qatnashgan deb belgilash"
-
-#: events/admin.py:195
-#, python-format
-msgid "%(count)d registrations marked as attended"
-msgstr "%(count)d ta ro'yxatdan o'tish qatnashgan deb belgilandi"
-
-#: events/admin.py:198
-msgid "Mark as no show"
-msgstr "Kelmadi deb belgilash"
-
-#: events/admin.py:202
-#, python-format
-msgid "%(count)d registrations marked as no show"
-msgstr "%(count)d ta ro'yxatdan o'tish kelmadi deb belgilandi"
-
-#: events/admin.py:205
-msgid "Confirm payment"
-msgstr "To'lovni tasdiqlash"
-
-#: events/admin.py:209
-#, python-format
-msgid "%(count)d payments confirmed"
-msgstr "%(count)d ta to'lov tasdiqlandi"
-
-#: events/admin.py:221
-msgid "Speaker Information"
-msgstr "Ma'ruzachi ma'lumoti"
-
-#: events/admin.py:228 events/admin.py:254 events/admin.py:300
-msgid "Display"
-msgstr "Ko'rsatish"
-
-#: events/admin.py:247
-msgid "Session Information"
-msgstr "Sessiya ma'lumoti"
-
-#: events/admin.py:250
-msgid "Timing"
-msgstr "Vaqt"
-
-#: events/admin.py:252 events/models.py:595
-#: events/templates/events/detail.html:149
-msgid "Speakers"
-msgstr "Ma'ruzachilar"
-
-#: events/admin.py:253
-msgid "Materials"
-msgstr "Materiallar"
-
-#: events/admin.py:266 events/forms.py:323 events/forms.py:393
-#: events/models.py:659 events/models.py:759
-#: events/templates/events/detail.html:231
-msgid "Comment"
-msgstr "Izoh"
-
-#: events/admin.py:274
-msgid "Approve selected comments"
-msgstr "Tanlangan izohlarni tasdiqlash"
-
-#: events/admin.py:278
-#, python-format
-msgid "%(count)d comments approved"
-msgstr "%(count)d ta izoh tasdiqlandi"
-
-#: events/admin.py:281
-msgid "Disapprove selected comments"
-msgstr "Tanlangan izohlarni rad etish"
-
-#: events/admin.py:285
-#, python-format
-msgid "%(count)d comments disapproved"
-msgstr "%(count)d ta izoh rad etildi"
-
-#: events/admin.py:297
+#: events/admin.py:124
 msgid "Photo Information"
 msgstr "Foto ma'lumoti"
 
-#: events/admin.py:313
-msgid "Rating Information"
-msgstr "Reyting ma'lumoti"
+#: events/admin.py:127
+msgid "Display"
+msgstr "Ko'rsatish"
 
-#: events/admin.py:315
-msgid "Detailed Ratings"
-msgstr "Batafsil reytinglar"
-
-#: events/forms.py:25
+#: events/forms.py:17
 msgid "Category name"
 msgstr "Kategoriya nomi"
 
-#: events/forms.py:34 events/models.py:16 resources/models.py:14
+#: events/forms.py:26 events/models.py:16 resources/models.py:14
 msgid "Category Name"
 msgstr "Kategoriya nomi"
 
-#: events/forms.py:37 events/models.py:33 jobs/models.py:25
+#: events/forms.py:29 events/models.py:33 jobs/models.py:25
 msgid "Icon"
 msgstr "Belgisi"
 
-#: events/forms.py:73
+#: events/forms.py:53
 msgid "Event title"
 msgstr "Tadbir sarlavhasi"
 
-#: events/forms.py:79
+#: events/forms.py:59
 msgid "Brief description (max 300 characters)"
 msgstr "Qisqacha tavsif (maksimum 300 belgi)"
 
-#: events/forms.py:86
+#: events/forms.py:66
 msgid "Detailed event description..."
 msgstr "Batafsil tadbir tavsifi..."
 
-#: events/forms.py:124
+#: events/forms.py:86
 msgid "technology, workshop, networking"
 msgstr "texnologiya, workshop, tarmoq"
 
-#: events/forms.py:129 events/models.py:79
+#: events/forms.py:91 events/models.py:72
 msgid "Event Title"
 msgstr "Tadbir sarlavhasi"
 
-#: events/forms.py:130 events/models.py:88 jobs/forms.py:190 jobs/models.py:101
+#: events/forms.py:92 events/models.py:81 jobs/forms.py:190 jobs/models.py:101
 #: jobs/templates/jobs/job_form.html:222
 msgid "Short Description"
 msgstr "Qisqacha tavsif"
 
-#: events/forms.py:137 events/forms.py:392 events/models.py:124
-msgid "Venue"
-msgstr "Joy"
-
-#: events/forms.py:138 events/models.py:129
-#: events/templates/events/detail.html:64
-msgid "Online Event"
-msgstr "Onlayn tadbir"
-
-#: events/forms.py:139 events/models.py:134
-msgid "Online Meeting Link"
-msgstr "Onlayn uchrashuv havolasi"
-
-#: events/forms.py:140 events/models.py:139
-msgid "Full Address"
-msgstr "To'liq manzil"
-
-#: events/forms.py:141 events/models.py:164
+#: events/forms.py:99 events/models.py:120
 msgid "Banner Image"
 msgstr "Banner rasmi"
 
-#: events/forms.py:144 events/models.py:185
-msgid "Registration Type"
-msgstr "Ro'yxatdan o'tish turi"
-
-#: events/forms.py:145 events/models.py:191
-msgid "Registration Deadline"
-msgstr "Ro'yxatdan o'tish muddati"
-
-#: events/forms.py:146 events/models.py:197
-msgid "Maximum Participants"
-msgstr "Maksimal ishtirokchilar"
-
-#: events/forms.py:147
-msgid "Enable Waitlist"
-msgstr "Kutish ro'yxatini yoqish"
-
-#: events/forms.py:148 events/models.py:209
-msgid "Free Event"
-msgstr "Bepul tadbir"
-
-#: events/forms.py:149 events/models.py:216
-msgid "Price"
-msgstr "Narx"
-
-#: events/forms.py:165
+#: events/forms.py:115
 msgid "End date must be after start date."
 msgstr "Tugash sanasi boshlanish sanasidan keyin bo'lishi kerak."
 
-#: events/forms.py:169
+#: events/forms.py:119
 msgid "Registration deadline cannot be after event start date."
 msgstr ""
 "Ro'yxatdan o'tish muddati tadbir boshlanish sanasidan keyin bo'lishi mumkin "
 "emas."
 
-#: events/forms.py:186
-msgid "Any dietary restrictions?"
-msgstr "Oziq-ovqat cheklovlari bormi?"
-
-#: events/forms.py:193
-msgid "Any special requirements?"
-msgstr "Maxsus talablar bormi?"
-
-#: events/forms.py:200
-msgid "Additional comments..."
-msgstr "Qo'shimcha izohlar..."
-
-#: events/forms.py:205 events/models.py:397
-msgid "Dietary Restrictions"
-msgstr "Oziq-ovqat cheklovlari"
-
-#: events/forms.py:206 events/models.py:402
-msgid "Special Requirements"
-msgstr "Maxsus talablar"
-
-#: events/forms.py:207 events/models.py:407
-msgid "Comments"
-msgstr "Izohlar"
-
-#: events/forms.py:240 events/models.py:472
-msgid "Speaker Name"
-msgstr "Ma'ruzachi ismi"
-
-#: events/forms.py:241 events/models.py:477
-msgid "Speaker Title"
-msgstr "Ma'ruzachi unvoni"
-
-#: events/forms.py:242 events/forms.py:391 events/models.py:483
-msgid "Organization"
-msgstr "Tashkilot"
-
-#: events/forms.py:243 events/models.py:488
-msgid "Biography"
-msgstr "Tarjimai hol"
-
-#: events/forms.py:244 events/models.py:495
-msgid "Photo"
-msgstr "Foto"
-
-#: events/forms.py:249 events/forms.py:293 events/models.py:522
-#: events/models.py:613 events/models.py:722
-msgid "Display Order"
-msgstr "Ko'rsatish tartibi"
-
-#: events/forms.py:285 events/models.py:557
-msgid "Session Title"
-msgstr "Sessiya sarlavhasi"
-
-#: events/forms.py:287 events/models.py:568
-msgid "Session Type"
-msgstr "Sessiya turi"
-
-#: events/forms.py:288 events/models.py:574
-msgid "Start Time"
-msgstr "Boshlanish vaqti"
-
-#: events/forms.py:289 events/models.py:578
-msgid "End Time"
-msgstr "Tugash vaqti"
-
-#: events/forms.py:291 events/models.py:602
-msgid "Presentation URL"
-msgstr "Taqdimot URL manzili"
-
-#: events/forms.py:292 events/models.py:607
-msgid "Materials URL"
-msgstr "Materiallar URL manzili"
-
-#: events/forms.py:302
-msgid "End time must be after start time."
-msgstr "Tugash vaqti boshlanish vaqtidan keyin bo'lishi kerak."
-
-#: events/forms.py:318
-msgid "Share your thoughts about this event..."
-msgstr "Ushbu tadbir haqida fikrlaringizni baham ko'ring..."
-
-#: events/forms.py:384 events/templates/events/detail.html:232
-msgid "Share your experience..."
-msgstr "Tajribangizni baham ko'ring..."
-
-#: events/forms.py:389 events/templates/events/detail.html:218
-msgid "Overall Rating"
-msgstr "Umumiy reyting"
-
-#: events/forms.py:390
-msgid "Content Quality"
-msgstr "Mazmun sifati"
-
-#: events/forms.py:403 events/templates/events/list.html:30
+#: events/forms.py:130 events/templates/events/list.html:38
 msgid "Search events..."
 msgstr "Tadbirlarni qidirish..."
 
-#: events/forms.py:409 events/templates/events/admin_event_list.html:94
-#: events/templates/events/list.html:35
+#: events/forms.py:136 events/templates/events/admin_event_list.html:94
+#: events/templates/events/list.html:44
 msgid "All Categories"
 msgstr "Barcha kategoriyalar"
 
-#: events/forms.py:413 events/templates/events/list.html:46
+#: events/forms.py:140 events/templates/events/list.html:54
 msgid "All Types"
 msgstr "Barcha turlar"
 
-#: events/forms.py:419
+#: events/forms.py:146
 msgid "Any Time"
 msgstr "Har qanday vaqt"
 
-#: events/forms.py:420 jobs/templates/jobs/job_list.html:91
+#: events/forms.py:147 events/templates/events/calendar.html:54
+#: jobs/templates/jobs/job_list.html:91
 msgid "Today"
 msgstr "Bugun"
 
-#: events/forms.py:421
+#: events/forms.py:148
 msgid "This Week"
 msgstr "Bu hafta"
 
-#: events/forms.py:422
+#: events/forms.py:149 events/templates/events/calendar.html:94
 msgid "This Month"
 msgstr "Bu oy"
 
-#: events/forms.py:423
+#: events/forms.py:150 events/templates/events/calendar.html:90
 msgid "Upcoming"
 msgstr "Kutilayotgan"
 
-#: events/forms.py:424
+#: events/forms.py:151
 msgid "Past Events"
 msgstr "O'tgan tadbirlar"
 
-#: events/forms.py:432
+#: events/forms.py:159
 msgid "Location..."
 msgstr "Joylashuv..."
-
-#: events/forms.py:454
-msgid "All Registered Participants"
-msgstr "Barcha ro'yxatdan o'tgan ishtirokchilar"
-
-#: events/forms.py:455
-msgid "Confirmed Participants Only"
-msgstr "Faqat tasdiqlangan ishtirokchilar"
-
-#: events/forms.py:456
-msgid "Waiting List Only"
-msgstr "Faqat kutish ro'yxati"
-
-#: events/forms.py:457
-msgid "Attended Participants"
-msgstr "Qatnashgan ishtirokchilar"
 
 #: events/models.py:17
 msgid "Name of the event category"
@@ -5773,7 +5712,8 @@ msgstr "UI ko'rsatish uchun belgisi identifikatori"
 msgid "Event Category"
 msgstr "Tadbir kategoriyasi"
 
-#: events/models.py:39 events/templates/events/categories.html:4
+#: events/models.py:39 events/templates/events/calendar.html:66
+#: events/templates/events/categories.html:4
 #: events/templates/events/categories.html:10
 msgid "Event Categories"
 msgstr "Tadbir kategoriyalari"
@@ -5794,510 +5734,117 @@ msgstr "Ijtimoiy tadbir"
 msgid "Training"
 msgstr "Trening"
 
-#: events/models.py:70
-msgid "Open Registration"
-msgstr "Ochiq ro'yxatdan o'tish"
-
-#: events/models.py:71
-msgid "Approval Required"
-msgstr "Tasdiq talab qilinadi"
-
-#: events/models.py:72
-msgid "Invitation Only"
-msgstr "Faqat taklif asosida"
-
 #: events/models.py:73
-msgid "Paid Registration"
-msgstr "Pullik ro'yxatdan o'tish"
-
-#: events/models.py:80
 msgid "Title of the event"
 msgstr "Tadbir sarlavhasi"
 
-#: events/models.py:84
+#: events/models.py:77
 msgid "Detailed description of the event"
 msgstr "Tadbirning batafsil tavsifi"
 
-#: events/models.py:89
+#: events/models.py:82
 msgid "Brief summary of the event"
 msgstr "Tadbirning qisqacha xulosasi"
 
-#: events/models.py:96
+#: events/models.py:89
 msgid "Event category for organization"
 msgstr "Tashkilot uchun tadbir kategoriyasi"
 
-#: events/models.py:102
+#: events/models.py:95
 msgid "Type of event"
 msgstr "Tadbir turi"
 
-#: events/models.py:108
+#: events/models.py:101
 msgid "Event start date and time"
 msgstr "Tadbir boshlanish sanasi va vaqti"
 
-#: events/models.py:112
+#: events/models.py:105
 msgid "Event end date and time"
 msgstr "Tadbir tugash sanasi va vaqti"
 
-#: events/models.py:119
+#: events/models.py:112
 msgid "General location of the event"
 msgstr "Tadbirning umumiy joylashuvi"
 
-#: events/models.py:125
-msgid "Specific venue name"
-msgstr "Muayyan joy nomi"
-
-#: events/models.py:130
-msgid "Whether this is an online event"
-msgstr "Bu onlayn tadbirmi"
-
-#: events/models.py:135
-msgid "Link for online participation"
-msgstr "Onlayn ishtirok etish uchun havola"
-
-#: events/models.py:140
-msgid "Complete address of the venue"
-msgstr "Joyning to'liq manzili"
-
-#: events/models.py:149
-msgid "Primary organizer of the event"
-msgstr "Tadbirning asosiy tashkilotchisi"
-
-#: events/models.py:155
-msgid "Co-organizers"
-msgstr "Hamkor tashkilotchilar"
-
-#: events/models.py:156
-msgid "Additional organizers of the event"
-msgstr "Tadbirning qo'shimcha tashkilotchilari"
-
-#: events/models.py:165
+#: events/models.py:121
 msgid "Main banner image for the event"
 msgstr "Tadbir uchun asosiy banner rasmi"
 
-#: events/models.py:172
+#: events/models.py:128
 msgid "Small thumbnail image"
 msgstr "Kichik kichik rasm"
 
-#: events/models.py:186
-msgid "Type of registration process"
-msgstr "Ro'yxatdan o'tish jarayoni turi"
-
-#: events/models.py:192
-msgid "Deadline for registration"
-msgstr "Ro'yxatdan o'tish muddati"
-
-#: events/models.py:202
-msgid "Waitlist Enabled"
-msgstr "Kutish ro'yxati yoqilgan"
-
-#: events/models.py:203
-msgid "Whether waitlist is available when full"
-msgstr "To'liq bo'lganda kutish ro'yxati mavjudmi"
-
-#: events/models.py:210
-msgid "Whether the event is free"
-msgstr "Tadbir bepulmi"
-
-#: events/models.py:217
-msgid "Event price if not free"
-msgstr "Bepul bo'lmasa tadbir narxi"
-
-#: events/models.py:224
-msgid "Currency for the price"
-msgstr "Narx uchun valyuta"
-
-#: events/models.py:233
+#: events/models.py:137
 msgid "Current status of the event"
 msgstr "Tadbirning joriy holati"
 
-#: events/models.py:237
+#: events/models.py:141
 msgid "Featured Event"
 msgstr "Taqdim etilgan tadbir"
 
-#: events/models.py:238
+#: events/models.py:142
 msgid "Whether to feature this event prominently"
 msgstr "Ushbu tadbirni ko'zga ko'ringan qilish yoki yo'q"
 
-#: events/models.py:242
-msgid "Show Attendee List"
-msgstr "Ishtirokchilar ro'yxatini ko'rsatish"
-
-#: events/models.py:243
-msgid "Whether to show list of registered attendees"
-msgstr "Ro'yxatdan o'tgan ishtirokchilar ro'yxatini ko'rsatish yoki yo'q"
-
-#: events/models.py:247
-msgid "Allow Comments"
-msgstr "Izohlarga ruxsat berish"
-
-#: events/models.py:248
-msgid "Whether to allow comments on the event"
-msgstr "Tadbirda izohlarga ruxsat berish yoki yo'q"
-
-#: events/models.py:261
+#: events/models.py:155
 msgid "Comma-separated tags for the event"
 msgstr "Tadbir uchun vergul bilan ajratilgan teglar"
 
-#: events/models.py:265
-msgid "Registration Link"
-msgstr "Ro'yxatdan o'tish havolasi"
-
-#: events/models.py:266
-msgid "External registration link"
-msgstr "Tashqi ro'yxatdan o'tish havolasi"
-
-#: events/models.py:270
-msgid "Materials Link"
-msgstr "Materiallar havolasi"
-
-#: events/models.py:271
-msgid "Link to event materials"
-msgstr "Tadbir materiallariga havola"
-
-#: events/models.py:277 jobs/models.py:308
+#: events/models.py:161 jobs/models.py:308
 msgid "Views Count"
 msgstr "Ko'rishlar soni"
 
-#: events/models.py:278
+#: events/models.py:162
 msgid "Number of times the event was viewed"
 msgstr "Tadbir necha marta ko'rilgani"
 
-#: events/models.py:282
-msgid "Registration Count"
-msgstr "Ro'yxatdan o'tishlar soni"
-
-#: events/models.py:283
-msgid "Number of registered participants"
-msgstr "Ro'yxatdan o'tgan ishtirokchilar soni"
-
-#: events/models.py:359
-msgid "Waiting List"
-msgstr "Kutish ro'yxati"
-
-#: events/models.py:361
-msgid "Attended"
-msgstr "Qatnashgan"
-
-#: events/models.py:370
-msgid "The event being registered for"
-msgstr "Ro'yxatdan o'tilayotgan tadbir"
-
-#: events/models.py:377
-msgid "User registering for the event"
-msgstr "Tadbirga ro'yxatdan o'tayotgan foydalanuvchi"
-
-#: events/models.py:384
-msgid "When the registration was made"
-msgstr "Ro'yxatdan o'tish qachon amalga oshirilgan"
-
-#: events/models.py:391
-msgid "Current registration status"
-msgstr "Joriy ro'yxatdan o'tish holati"
-
-#: events/models.py:398
-msgid "Any dietary restrictions for catering"
-msgstr "Ovqatlanish uchun oziq-ovqat cheklovlari bormi"
-
-#: events/models.py:403
-msgid "Any special requirements or accommodations"
-msgstr "Maxsus talablar yoki moslashtirishlar bormi"
-
-#: events/models.py:408
-msgid "Additional comments from the registrant"
-msgstr "Ro'yxatdan o'tuvchidan qo'shimcha izohlar"
-
-#: events/models.py:416
-msgid "Paid"
-msgstr "To'langan"
-
-#: events/models.py:417
-msgid "Refunded"
-msgstr "Qaytarilgan"
-
-#: events/models.py:420
-msgid "Payment Status"
-msgstr "To'lov holati"
-
-#: events/models.py:421
-msgid "Status of payment for the event"
-msgstr "Tadbir uchun to'lov holati"
-
-#: events/models.py:428
-msgid "Payment Amount"
-msgstr "To'lov miqdori"
-
-#: events/models.py:429
-msgid "Amount paid for the event"
-msgstr "Tadbir uchun to'langan miqdor"
-
-#: events/models.py:437
-msgid "QR Code"
-msgstr "QR kod"
-
-#: events/models.py:438
-msgid "QR code for event check-in"
-msgstr "Tadbir kirishi uchun QR kod"
-
-#: events/models.py:443
-msgid "Check-in Time"
-msgstr "Kirish vaqti"
-
-#: events/models.py:444
-msgid "Time when the user checked in"
-msgstr "Foydalanuvchi kirgan vaqt"
-
-#: events/models.py:448
-msgid "Event Registration"
-msgstr "Tadbir ro'yxatdan o'tishi"
-
-#: events/models.py:449 events/templates/events/event_registrations.html:4
-msgid "Event Registrations"
-msgstr "Tadbir ro'yxatdan o'tishlari"
-
-#: events/models.py:468
-msgid "The event this speaker is associated with"
-msgstr "Ushbu ma'ruzachi bilan bog'langan tadbir"
-
-#: events/models.py:473
-msgid "Full name of the speaker"
-msgstr "Ma'ruzachining to'liq ismi"
-
-#: events/models.py:478
-msgid "Professional title or position"
-msgstr "Kasbiy unvon yoki lavozim"
-
-#: events/models.py:484
-msgid "Organization or company affiliation"
-msgstr "Tashkilot yoki kompaniya aloqasi"
-
-#: events/models.py:489
-msgid "Brief biography of the speaker"
-msgstr "Ma'ruzachining qisqacha tarjimai holi"
-
-#: events/models.py:496
-msgid "Profile photo of the speaker"
-msgstr "Ma'ruzachining profil fotosurati"
-
-#: events/models.py:501
-msgid "Contact email for the speaker"
-msgstr "Ma'ruzachi uchun aloqa emaili"
-
-#: events/models.py:523
-msgid "Order in which to display this speaker"
-msgstr "Ushbu ma'ruzachini ko'rsatish tartibi"
-
-#: events/models.py:527
-msgid "Event Speaker"
-msgstr "Tadbir ma'ruzachisi"
-
-#: events/models.py:528
-msgid "Event Speakers"
-msgstr "Tadbir ma'ruzachilari"
-
-#: events/models.py:539
-msgid "Keynote"
-msgstr "Asosiy ma'ruza"
-
-#: events/models.py:541
-msgid "Panel Discussion"
-msgstr "Panel muhokamasi"
-
-#: events/models.py:542
-msgid "Presentation"
-msgstr "Taqdimot"
-
-#: events/models.py:543
-msgid "Q&A Session"
-msgstr "Savol-javob sessiyasi"
-
-#: events/models.py:545
-msgid "Break"
-msgstr "Tanaffus"
-
-#: events/models.py:553
-msgid "The event this session belongs to"
-msgstr "Ushbu sessiya tegishli bo'lgan tadbir"
-
-#: events/models.py:558
-msgid "Title of the session"
-msgstr "Sessiya sarlavhasi"
-
-#: events/models.py:563
-msgid "Detailed description of the session"
-msgstr "Sessiyaning batafsil tavsifi"
-
-#: events/models.py:569
-msgid "Type of session"
-msgstr "Sessiya turi"
-
-#: events/models.py:575
-msgid "When the session starts"
-msgstr "Sessiya qachon boshlanadi"
-
-#: events/models.py:579
-msgid "When the session ends"
-msgstr "Sessiya qachon tugaydi"
-
-#: events/models.py:587
-msgid "Specific location within the venue"
-msgstr "Joy ichidagi muayyan joylashuv"
-
-#: events/models.py:596
-msgid "Speakers for this session"
-msgstr "Ushbu sessiya uchun ma'ruzachilar"
-
-#: events/models.py:603
-msgid "Link to presentation slides or materials"
-msgstr "Taqdimot slaydlari yoki materiallariga havola"
-
-#: events/models.py:608
-msgid "Link to additional session materials"
-msgstr "Qo'shimcha sessiya materiallariga havola"
-
-#: events/models.py:614
-msgid "Order in which to display this session"
-msgstr "Ushbu sessiyani ko'rsatish tartibi"
-
-#: events/models.py:618
-msgid "Event Session"
-msgstr "Tadbir sessiyasi"
-
-#: events/models.py:619
-msgid "Event Sessions"
-msgstr "Tadbir sessiyalari"
-
-#: events/models.py:640
-msgid "The event being commented on"
-msgstr "Izoh berilayotgan tadbir"
-
-#: events/models.py:646
-msgid "User who made the comment"
-msgstr "Izoh qoldirgan foydalanuvchi"
-
-#: events/models.py:654
-msgid "Parent Comment"
-msgstr "Asosiy izoh"
-
-#: events/models.py:655
-msgid "Parent comment for nested replies"
-msgstr "Ichki javoblar uchun asosiy izoh"
-
-#: events/models.py:660
-msgid "The comment text"
-msgstr "Izoh matni"
-
-#: events/models.py:664
-msgid "Approved"
-msgstr "Tasdiqlangan"
-
-#: events/models.py:665
-msgid "Whether this comment is approved for display"
-msgstr "Ushbu izoh ko'rsatish uchun tasdiqlanganmi"
-
-#: events/models.py:678
-msgid "Event Comment"
-msgstr "Tadbir izohi"
-
-#: events/models.py:679
-msgid "Event Comments"
-msgstr "Tadbir izohlari"
-
-#: events/models.py:694
+#: events/models.py:222
 msgid "The event this photo belongs to"
 msgstr "Ushbu foto tegishli bo'lgan tadbir"
 
-#: events/models.py:699
+#: events/models.py:227
 msgid "The photo file"
 msgstr "Foto fayli"
 
-#: events/models.py:704
+#: events/models.py:232
 msgid "Caption"
 msgstr "Sarlavha"
 
-#: events/models.py:705
+#: events/models.py:233
 msgid "Optional caption for the photo"
 msgstr "Foto uchun ixtiyoriy sarlavha"
 
-#: events/models.py:710
+#: events/models.py:238
 msgid "Uploaded By"
 msgstr "Yuklagan"
 
-#: events/models.py:711
+#: events/models.py:239
 msgid "User who uploaded this photo"
 msgstr "Ushbu fotoni yuklagan foydalanuvchi"
 
-#: events/models.py:715
+#: events/models.py:243
 msgid "Uploaded At"
 msgstr "Yuklangan vaqt"
 
-#: events/models.py:716
+#: events/models.py:244
 msgid "When the photo was uploaded"
 msgstr "Foto qachon yuklangan"
 
-#: events/models.py:723
+#: events/models.py:250
+msgid "Display Order"
+msgstr "Ko'rsatish tartibi"
+
+#: events/models.py:251
 msgid "Order in which to display this photo"
 msgstr "Ushbu fotoni ko'rsatish tartibi"
 
-#: events/models.py:727
+#: events/models.py:255
 msgid "Event Photo"
 msgstr "Tadbir fotosi"
 
-#: events/models.py:728 events/templates/events/detail.html:309
+#: events/models.py:256 events/templates/events/detail.html:205
 msgid "Event Photos"
 msgstr "Tadbir fotolari"
-
-#: events/models.py:743
-msgid "The event being rated"
-msgstr "Baholayotgan tadbir"
-
-#: events/models.py:749
-msgid "User who provided the rating"
-msgstr "Reyting bergan foydalanuvchi"
-
-#: events/models.py:755
-msgid "Overall rating (1-5)"
-msgstr "Umumiy reyting (1-5)"
-
-#: events/models.py:760
-msgid "Optional comment with the rating"
-msgstr "Reyting bilan ixtiyoriy izoh"
-
-#: events/models.py:766
-msgid "Content Rating"
-msgstr "Mazmun reytingi"
-
-#: events/models.py:767
-msgid "Rating for event content quality"
-msgstr "Tadbir mazmuni sifati uchun reyting"
-
-#: events/models.py:771
-msgid "Organization Rating"
-msgstr "Tashkilot reytingi"
-
-#: events/models.py:772
-msgid "Rating for event organization"
-msgstr "Tadbir tashkiloti uchun reyting"
-
-#: events/models.py:778
-msgid "Venue Rating"
-msgstr "Joy reytingi"
-
-#: events/models.py:779
-msgid "Rating for venue quality (optional)"
-msgstr "Joy sifati uchun reyting (ixtiyoriy)"
-
-#: events/models.py:792
-msgid "Event Rating"
-msgstr "Tadbir reytingi"
-
-#: events/models.py:793
-msgid "Event Ratings"
-msgstr "Tadbir reytinglari"
-
-#: events/signals.py:15
-#, python-brace-format
-msgid "Registration Confirmation - {event_title}"
-msgstr "Ro'yxatdan o'tish tasdiqlashi - {event_title}"
 
 #: events/templates/events/admin_event_delete.html:5
 #: events/templates/events/admin_event_delete.html:15
@@ -6305,31 +5852,22 @@ msgid "Delete Event"
 msgstr "Tadbirlarni o'chirish"
 
 #: events/templates/events/admin_event_delete.html:23
-#: events/templates/events/detail.html:27
+#: events/templates/events/detail.html:37
 msgid "Are you sure you want to delete this event?"
 msgstr "Ushbu tadbirni o'chirishni istaysizmi?"
 
 #: events/templates/events/admin_event_delete.html:33
-#: events/templates/events/detail.html:251
-msgid "Organizer:"
-msgstr "Tashkilotchi:"
-
-#: events/templates/events/admin_event_delete.html:37
 msgid "Start:"
 msgstr "Boshlanish:"
 
-#: events/templates/events/admin_event_delete.html:44
-msgid "registered"
-msgstr "ro'yxatdan o'tgan"
-
-#: events/templates/events/admin_event_delete.html:54
+#: events/templates/events/admin_event_delete.html:43
 msgid "Warning:"
 msgstr "Ogohlantirish:"
 
-#: events/templates/events/admin_event_delete.html:55
+#: events/templates/events/admin_event_delete.html:44
 msgid ""
-"This action cannot be undone. The event and all related data (registrations, "
-"comments, ratings) will be completely deleted."
+"This action cannot be undone. The event and all related data (registrations,"
+" comments, ratings) will be completely deleted."
 msgstr ""
 "Bu harakatni bekor qilib bo'lmaydi. Tadbir va barcha bog'liq ma'lumotlar "
 "(ro'yxatdan o'tishlar, izohlar, reytinglar) butunlay o'chiriladi."
@@ -6349,6 +5887,10 @@ msgstr "Sana va Vaqt"
 #: events/templates/events/admin_event_form.html:109
 msgid "Location and Address"
 msgstr "Joylashuv va Manzil"
+
+#: events/templates/events/admin_event_form.html:156
+msgid "Registration"
+msgstr "Ro'yxatdan o'tish"
 
 #: events/templates/events/admin_event_form.html:168
 msgid "Leave empty for unlimited"
@@ -6384,7 +5926,6 @@ msgstr ""
 "Batafsil ma'lumot bering, shunda ishtirokchilar nima kutayotganini bilishadi"
 
 #: events/templates/events/admin_event_form.html:249
-#: events/templates/events/detail.html:42
 msgid "Date:"
 msgstr "Sana:"
 
@@ -6393,7 +5934,6 @@ msgid "Specify exact start and end times"
 msgstr "Aniq boshlanish va tugash vaqtlarini ko'rsating"
 
 #: events/templates/events/admin_event_form.html:252
-#: events/templates/events/detail.html:56
 #: jobs/templates/jobs/job_confirm_delete.html:26
 msgid "Location:"
 msgstr "Joylashuv:"
@@ -6445,26 +5985,16 @@ msgstr "Qidirish..."
 msgid "All Statuses"
 msgstr "Barcha holatlar"
 
-#: events/templates/events/admin_event_list.html:104
-msgid "All Organizers"
-msgstr "Barcha tashkilotchilar"
-
-#: events/templates/events/admin_event_list.html:117
-#: events/templates/events/list.html:66
-#: jobs/templates/jobs/company_list.html:55
-msgid "Clear"
-msgstr "Tozalash"
-
-#: events/templates/events/admin_event_list.html:134
+#: events/templates/events/admin_event_list.html:123
 msgid "Start"
 msgstr "Boshlanish"
 
-#: events/templates/events/admin_event_list.html:199
+#: events/templates/events/admin_event_list.html:175
 #: events/templates/events/manage_events.html:82
 msgid "Unpublish"
 msgstr "Nashrdan olib tashlash"
 
-#: events/templates/events/admin_event_list.html:206
+#: events/templates/events/admin_event_list.html:182
 #: events/templates/events/manage_events.html:75
 #: resources/templates/resources/resource_detail.html:208
 #: resources/templates/resources/unpublished_resources.html:130
@@ -6472,30 +6002,76 @@ msgstr "Nashrdan olib tashlash"
 msgid "Publish"
 msgstr "Nashr etish"
 
-#: events/templates/events/admin_event_list.html:221
+#: events/templates/events/admin_event_list.html:197
 msgid "No Events Found"
 msgstr "Tadbirlar topilmadi"
 
-#: events/templates/events/admin_event_list.html:222
+#: events/templates/events/admin_event_list.html:198
 msgid "No events match your search criteria."
 msgstr "Hech qanday tadbir sizning qidiruv mezonlaringizga mos kelmadi."
 
-#: events/templates/events/admin_event_list.html:224
+#: events/templates/events/admin_event_list.html:200
 msgid "Create First Event"
 msgstr "Birinchi tadbirni yaratish"
 
 #: events/templates/events/calendar.html:4
-#: events/templates/events/calendar.html:10
+#: events/templates/events/calendar.html:14
+#: events/templates/events/calendar.html:788
 msgid "Event Calendar"
 msgstr "Tadbir kalendari"
+
+#: events/templates/events/calendar.html:16
+msgid "Browse and discover upcoming events"
+msgstr "Bo'lajak voqealarni ko'rib chiqish va kashf qilish"
+
+#: events/templates/events/calendar.html:21
+#, fuzzy
+#| msgid "Back to Resources List"
+msgid "Back to List"
+msgstr "Resurslar ro'yxatiga qaytish"
+
+#: events/templates/events/calendar.html:26
+#, fuzzy
+#| msgid "All Events"
+msgid "Add Event"
+msgstr "Barcha tadbirlar"
+
+#: events/templates/events/calendar.html:46
+#, fuzzy
+#| msgid "Monthly"
+msgid "Month"
+msgstr "Oylik"
+
+#: events/templates/events/calendar.html:50
+#, fuzzy
+#| msgid "Job List"
+msgid "List"
+msgstr "Ishlar ro'yxati"
+
+#: events/templates/events/calendar.html:86
+#, fuzzy
+#| msgid "Social Event"
+msgid "Total Events"
+msgstr "Ijtimoiy tadbir"
+
+#: events/templates/events/calendar.html:737
+#, fuzzy
+#| msgid "You are registered!"
+msgid "You are viewing today"
+msgstr "Siz ro'yxatdan o'tgansiz!"
+
+#: events/templates/events/calendar.html:740
+#, fuzzy
+#| msgid "Go to Saved"
+msgid "Go to today"
+msgstr "Saqlanganlarga o'tish"
 
 #: events/templates/events/categories.html:35
 msgid "No categories found."
 msgstr "Kategoriyalar topilmadi."
 
 #: events/templates/events/create_event.html:4
-#: events/templates/events/create_event.html:244
-#: events/templates/events/list.html:18 events/views.py:398
+#: events/templates/events/create_event.html:244 events/views.py:372
 msgid "Create Event"
 msgstr "Tadbir yaratish"
 
@@ -6504,132 +6080,45 @@ msgstr "Tadbir yaratish"
 msgid "Create New Event"
 msgstr "Yangi tadbir yaratish"
 
-#: events/templates/events/detail.html:39
+#: events/templates/events/detail.html:53
+#, fuzzy
+#| msgid "About Me"
+msgid "About Event"
+msgstr "Men haqimda"
+
+#: events/templates/events/detail.html:61
 msgid "Event Details"
 msgstr "Tadbir tafsilotlari"
 
-#: events/templates/events/detail.html:49
-msgid "Time:"
-msgstr "Vaqt:"
+#: events/templates/events/detail.html:105
+msgid "Online Event"
+msgstr "Onlayn tadbir"
 
-#: events/templates/events/detail.html:75
-msgid "Participants:"
-msgstr "Ishtirokchilar:"
+#: events/templates/events/detail.html:107
+msgid "Join Online"
+msgstr "Onlaynga qo'shiling"
 
-#: events/templates/events/detail.html:83
-msgid "Registration:"
-msgstr "Ro'yxatdan o'tish:"
+#: events/templates/events/detail.html:118
+msgid "Speakers"
+msgstr "Ma'ruzachilar"
 
-#: events/templates/events/detail.html:85
-msgid "Open"
-msgstr "Ochiq"
-
-#: events/templates/events/detail.html:87
-msgid "Closed"
-msgstr "Yopiq"
-
-#: events/templates/events/detail.html:93 jobs/templates/jobs/job_list.html:283
-msgid "Deadline:"
-msgstr "Muddati:"
-
-#: events/templates/events/detail.html:100
-msgid "Price:"
-msgstr "Narx:"
-
-#: events/templates/events/detail.html:114
-msgid "You are registered!"
-msgstr "Siz ro'yxatdan o'tgansiz!"
-
-#: events/templates/events/detail.html:115
-msgid "Status:"
-msgstr "Holat:"
-
-#: events/templates/events/detail.html:120
-#: events/templates/events/my_events.html:66
-msgid "Are you sure you want to cancel your registration?"
-msgstr "Ro'yxatdan o'tishni bekor qilishni istaysizmi?"
-
-#: events/templates/events/detail.html:121
-#: events/templates/events/my_events.html:67
-msgid "Cancel Registration"
-msgstr "Ro'yxatdan o'tishni bekor qilish"
-
-#: events/templates/events/detail.html:131
-msgid "Register for Event"
-msgstr "Tadbirga ro'yxatdan o'tish"
-
-#: events/templates/events/detail.html:137
-msgid "Registration for this event is currently closed."
-msgstr "Ushbu tadbir uchun ro'yxatdan o'tish hozirda yopiq."
-
-#: events/templates/events/detail.html:182
+#: events/templates/events/detail.html:149
 msgid "Schedule"
 msgstr "Jadval"
 
-#: events/templates/events/detail.html:210
-msgid "Rate this Event"
-msgstr "Ushbu tadbirni baholang"
-
-#: events/templates/events/detail.html:220
-msgid "Select rating"
-msgstr "Reytingni tanlang"
-
-#: events/templates/events/detail.html:221
-msgid "Excellent"
-msgstr "A'lo"
-
-#: events/templates/events/detail.html:222
-msgid "Very Good"
-msgstr "Juda yaxshi"
-
-#: events/templates/events/detail.html:223
-msgid "Good"
-msgstr "Yaxshi"
-
-#: events/templates/events/detail.html:224
-msgid "Fair"
-msgstr "O'rtacha"
-
-#: events/templates/events/detail.html:225
-msgid "Poor"
-msgstr "Yomon"
-
-#: events/templates/events/detail.html:236
-msgid "Submit Rating"
-msgstr "Reytingni yuborish"
-
-#: events/templates/events/detail.html:247
+#: events/templates/events/detail.html:181
 msgid "Event Info"
 msgstr "Tadbir ma'lumoti"
 
-#: events/templates/events/detail.html:256
-msgid "Tags:"
-msgstr "Teglar:"
+#: events/templates/events/detail.html:214
+#, fuzzy
+#| msgid "View all resources"
+msgid "View all photos"
+msgstr "Barcha resurslarni ko'rish"
 
-#: events/templates/events/detail.html:263
-msgid "Views:"
-msgstr "Ko'rishlar:"
-
-#: events/templates/events/detail.html:267
-msgid "Rating:"
-msgstr "Reyting:"
-
-#: events/templates/events/detail.html:283
-msgid "Attendees"
-msgstr "Ishtirokchilar"
-
-#: events/templates/events/detail.html:299
-#: jobs/templates/jobs/job_create.html:1028
-msgid "and"
-msgstr "va"
-
-#: events/templates/events/detail.html:299
-msgid "more..."
-msgstr "boshqalar..."
-
-#: events/templates/events/detail.html:347
-msgid "Error submitting rating."
-msgstr "Reyting yuborishda xatolik."
+#: events/templates/events/event_registrations.html:4
+msgid "Event Registrations"
+msgstr "Tadbir ro'yxatdan o'tishlari"
 
 #: events/templates/events/event_registrations.html:12
 msgid "Registrations for"
@@ -6642,6 +6131,11 @@ msgstr "jami ro'yxatdan o'tishlar"
 #: events/templates/events/event_registrations.html:16
 msgid "Back to Events"
 msgstr "Tadbirlarga qaytish"
+
+#: events/templates/events/event_registrations.html:54
+#: events/templates/events/event_registrations.html:93
+msgid "Check-in"
+msgstr "Kirish"
 
 #: events/templates/events/event_registrations.html:86
 msgid "Not checked in"
@@ -6669,48 +6163,75 @@ msgid "Error checking in participant."
 msgstr "Ishtirokchini tekshirishda xatolik."
 
 #: events/templates/events/list.html:14
-msgid "Calendar View"
+msgid ""
+"Discover upcoming events, conferences, and meetups for professional growth"
+msgstr ""
+"Kasbiy o'sish uchun bo'lajak voqealar, konferentsiyalar va uchrashuvlarni "
+"kashf eting"
+
+#: events/templates/events/list.html:18
+#, fuzzy
+#| msgid "Calendar View"
+msgid "Calendar"
 msgstr "Kalendar ko'rinishi"
 
-#: events/templates/events/list.html:55
-msgid "Sort by"
-msgstr "Saralash"
+#: events/templates/events/list.html:22
+#: jobs/templates/jobs/company_form.html:22
+msgid "Create"
+msgstr "Yaratish"
 
-#: events/templates/events/list.html:75
-#: resources/templates/resources/unpublished_resources.html:39
-msgid "Categories"
+#: events/templates/events/list.html:69
+#: resources/templates/resources/list.html:45
+msgid "Reset"
+msgstr "Filtrni tozalash"
+
+#: events/templates/events/list.html:77
+#: resources/templates/resources/list.html:53
+#, fuzzy
+#| msgid "Active Profile"
+msgid "Active filters:"
+msgstr "Faol profil"
+
+#: events/templates/events/list.html:113
+#, fuzzy
+#| msgid "Categories"
+msgid "Quick Categories"
 msgstr "Kategoriyalar"
 
-#: events/templates/events/list.html:135
-msgid "participants"
-msgstr "ishtirokchilar"
+#: events/templates/events/list.html:129
+#, fuzzy
+#| msgid "Featured Event"
+msgid "Found Events"
+msgstr "Taqdim etilgan tadbir"
 
-#: events/templates/events/list.html:140
-#: events/templates/events/my_events.html:61
-msgid "View Details"
-msgstr "Tafsilotlarni ko'rish"
+#: events/templates/events/list.html:132
+#, fuzzy
+#| msgid "No events found"
+msgid "events found"
+msgstr "Tadbirlar topilmadi"
 
-#: events/templates/events/list.html:145
-msgid "Registration open"
-msgstr "Ro'yxatdan o'tish ochiq"
-
-#: events/templates/events/list.html:147
-msgid "Registration closed"
-msgstr "Ro'yxatdan o'tish yopiq"
-
-#: events/templates/events/list.html:159
+#: events/templates/events/list.html:134 events/templates/events/list.html:271
 msgid "No events found"
 msgstr "Tadbirlar topilmadi"
 
-#: events/templates/events/list.html:160
+#: events/templates/events/list.html:272
 msgid "Try adjusting your search criteria or check back later for new events."
 msgstr ""
 "Qidiruv mezonlaringizni sozlashga harakat qiling yoki yangi tadbirlar uchun "
 "keyinroq qaytib keling."
 
-#: events/templates/events/list.html:161
-msgid "Clear Filters"
-msgstr "Filtrlarni tozalash"
+#: events/templates/events/list.html:274
+#, fuzzy
+#| msgid "View Events"
+msgid "View all events"
+msgstr "Tadbirni ko'rish"
+
+#: events/templates/events/list.html:966
+#: resources/templates/resources/list.html:857
+#, fuzzy
+#| msgid "Filter"
+msgid "Filtering..."
+msgstr "Filtrlash"
 
 #: events/templates/events/manage_events.html:4
 msgid "Manage Events"
@@ -6741,6 +6262,18 @@ msgstr "Birinchi tadbiringizni yarating"
 msgid "My Events"
 msgstr "Mening tadbirlarim"
 
+#: events/templates/events/my_events.html:61
+msgid "View Details"
+msgstr "Tafsilotlarni ko'rish"
+
+#: events/templates/events/my_events.html:66
+msgid "Are you sure you want to cancel your registration?"
+msgstr "Ro'yxatdan o'tishni bekor qilishni istaysizmi?"
+
+#: events/templates/events/my_events.html:67
+msgid "Cancel Registration"
+msgstr "Ro'yxatdan o'tishni bekor qilish"
+
 #: events/templates/events/my_events.html:78
 msgid "You haven't registered for any events yet."
 msgstr "Siz hali hech qanday tadbirga ro'yxatdan o'tmagansiz."
@@ -6749,47 +6282,47 @@ msgstr "Siz hali hech qanday tadbirga ro'yxatdan o'tmagansiz."
 msgid "Browse events"
 msgstr "Tadbirlarni ko'rib chiqish"
 
-#: events/views.py:188
+#: events/views.py:166
 msgid "Registration is closed for this event."
 msgstr "Ushbu tadbir uchun ro'yxatdan o'tish yopiq."
 
-#: events/views.py:199
+#: events/views.py:177
 msgid "You have been added to the waiting list."
 msgstr "Siz kutish ro'yxatiga qo'shildingiz."
 
-#: events/views.py:201
+#: events/views.py:179
 msgid "You are already on the waiting list."
 msgstr "Siz allaqachon kutish ro'yxatidasiz."
 
-#: events/views.py:203
+#: events/views.py:181
 msgid "Event is full."
 msgstr "Tadbir to'la."
 
-#: events/views.py:213
+#: events/views.py:191
 msgid "Successfully registered for the event!"
 msgstr "Tadbirga muvaffaqiyatli ro'yxatdan o'tdingiz!"
 
-#: events/views.py:215
+#: events/views.py:193
 msgid "You are already registered for this event."
 msgstr "Siz allaqachon ushbu tadbirga ro'yxatdan o'tgansiz."
 
-#: events/views.py:234
+#: events/views.py:212
 msgid "Registration cancelled successfully."
 msgstr "Ro'yxatdan o'tish muvaffaqiyatli bekor qilindi."
 
-#: events/views.py:273 events/views.py:391
+#: events/views.py:251 events/views.py:365
 msgid "Event created successfully!"
 msgstr "Tadbir muvaffaqiyatli yaratildi!"
 
-#: events/views.py:413
+#: events/views.py:387
 msgid "Event updated successfully!"
 msgstr "Tadbir muvaffaqiyatli yangilandi!"
 
-#: events/views.py:421
+#: events/views.py:395
 msgid "Edit Event"
 msgstr "Tadbirlarni tahrirlash"
 
-#: events/views.py:434
+#: events/views.py:408
 msgid "Event deleted successfully!"
 msgstr "Tadbir muvaffaqiyatli o'chirildi!"
 
@@ -6879,11 +6412,11 @@ msgstr "%(count)d ta ogohlantirish faolsizlantirildi"
 
 #: jobs/forms.py:14
 msgid "I accept the terms and conditions"
-msgstr ""
+msgstr "Men shartlarni qabul qilaman"
 
 #: jobs/forms.py:15
 msgid "You must accept the terms and conditions."
-msgstr ""
+msgstr "Siz shartlarni qabul qilishingiz kerak."
 
 #: jobs/forms.py:59
 #, fuzzy
@@ -6935,6 +6468,9 @@ msgid ""
 "• 3+ years of experience\n"
 "• Strong communication skills..."
 msgstr ""
+"• tegishli sohada bakalavr darajasi\n"
+"• 3+ yillik tajriba\n"
+"• Kuchli aloqa ko'nikmalari ..."
 
 #: jobs/forms.py:130
 msgid ""
@@ -6942,6 +6478,9 @@ msgid ""
 "• Collaborate with team members\n"
 "• Participate in code reviews..."
 msgstr ""
+"• Ilovalarni ishlab chiqish va saqlash\n"
+"• Jamoa a'zolari bilan hamkorlik qilish\n"
+"• Kodeksda qatnashing ..."
 
 #: jobs/forms.py:135
 msgid ""
@@ -6950,6 +6489,10 @@ msgid ""
 "• Professional development\n"
 "• Team events..."
 msgstr ""
+"• sog'liqni saqlash sug'urtasi\n"
+"• moslashuvchan ish vaqti\n"
+"• Kasbiy rivojlanish\n"
+"• Jamoa tadbirlari ..."
 
 #: jobs/forms.py:140
 #, fuzzy
@@ -6968,7 +6511,7 @@ msgstr "Python, Django, JavaScript, React, ..."
 
 #: jobs/forms.py:150
 msgid "Docker, AWS, GraphQL, TypeScript"
-msgstr ""
+msgstr "Docker, Aws, Grafql, slavher"
 
 #: jobs/forms.py:156
 #, fuzzy
@@ -6978,15 +6521,15 @@ msgstr "email@company.com"
 
 #: jobs/forms.py:164
 msgid "John Doe"
-msgstr ""
+msgstr "Johil"
 
 #: jobs/forms.py:168
 msgid "https://company.com/careers/apply"
-msgstr ""
+msgstr "https://company.com/carers/apply"
 
 #: jobs/forms.py:174
 msgid "9:00-18:00, Monday-Friday"
-msgstr ""
+msgstr "9: 00-18: 00, dushanba-juma kuni"
 
 #: jobs/forms.py:178
 #, fuzzy
@@ -7153,6 +6696,7 @@ msgstr "Maksimal maosh minimal maoshdan katta bo'lishi kerak"
 #: jobs/forms.py:287
 msgid "If salary is hidden, it should be marked as negotiable."
 msgstr ""
+"Agar ish haqi yashirilgan bo'lsa, u muzokara sifatida belgilanishi kerak."
 
 #: jobs/forms.py:295
 #, fuzzy
@@ -7162,11 +6706,11 @@ msgstr "Iltimos, kamida bitta resursni tanlang"
 
 #: jobs/forms.py:303
 msgid "Short description should be at least 10 characters long."
-msgstr ""
+msgstr "Qisqacha tavsif kamida 10 ta belgidan iborat bo'lishi kerak."
 
 #: jobs/forms.py:340
 msgid "City, region, or district..."
-msgstr ""
+msgstr "Shahar, mintaqa yoki tuman ..."
 
 #: jobs/forms.py:378
 #, fuzzy
@@ -7188,11 +6732,11 @@ msgstr "Taqdim etilgan ish"
 
 #: jobs/forms.py:412
 msgid "Urgent Hiring Only"
-msgstr ""
+msgstr "Faqat shoshilinch yollash"
 
 #: jobs/forms.py:418
 msgid "Jobs with Salary Info"
-msgstr ""
+msgstr "Ish haqi haqida ma'lumot bilan ish joylari"
 
 #: jobs/forms.py:433
 #, fuzzy
@@ -7202,11 +6746,11 @@ msgstr "Maksimal maosh minimal maoshdan katta bo'lishi kerak"
 
 #: jobs/forms.py:444
 msgid "I agree to the terms and conditions"
-msgstr ""
+msgstr "Men shartlarga rozilik bildiraman"
 
 #: jobs/forms.py:445
 msgid "You must agree to the terms and conditions to apply."
-msgstr ""
+msgstr "Siz qo'llash shartlariga rozi bo'lishingiz kerak."
 
 #: jobs/forms.py:460
 #, fuzzy
@@ -7246,15 +6790,15 @@ msgstr "Xabar berish muddati"
 
 #: jobs/forms.py:490
 msgid "Customize your cover letter for this specific job application."
-msgstr ""
+msgstr "Ushbu aniq ish uchun ilova uchun muqovali xatingizni sozlang."
 
 #: jobs/forms.py:491
 msgid "Leave empty if you want to discuss during interview."
-msgstr ""
+msgstr "Suhbat davomida muhokama qilmoqchi bo'lsangiz, bo'sh qoldiring."
 
 #: jobs/forms.py:492
 msgid "How many days notice you need to give your current employer."
-msgstr ""
+msgstr "Hozirgi ish beruvchingizga necha kunlik xabar berishingiz kerak."
 
 #: jobs/forms.py:512
 #, fuzzy
@@ -7264,7 +6808,7 @@ msgstr "Kutilayotgan maosh diapazoni"
 
 #: jobs/forms.py:518
 msgid "Notice period should be between 0 and 90 days."
-msgstr ""
+msgstr "Eslatma muddati 0 dan 90 kungacha bo'lishi kerak."
 
 #: jobs/forms.py:528
 #, fuzzy
@@ -7292,7 +6836,7 @@ msgstr "Nomzod tafsilotlari"
 
 #: jobs/forms.py:562
 msgid "e.g., Python Developer Jobs in Tashkent"
-msgstr ""
+msgstr "E.G., Toshkentdagi piton ishlab chiqaruvchi ish joylari"
 
 #: jobs/forms.py:566
 #, fuzzy
@@ -7380,12 +6924,12 @@ msgstr "USD"
 msgid "EUR"
 msgstr "EUR"
 
-#: jobs/models.py:85 jobs/templates/jobs/job_detail.html:47
+#: jobs/models.py:85 jobs/models.py:398 jobs/templates/jobs/job_detail.html:47
 #: jobs/templates/jobs/job_list.html:196 jobs/templates/jobs/my_jobs.html:243
 msgid "Hybrid"
 msgstr "Gibrid"
 
-#: jobs/models.py:86
+#: jobs/models.py:86 jobs/models.py:400
 msgid "Office"
 msgstr "Ofis"
 
@@ -7571,48 +7115,19 @@ msgstr "Yaratgan"
 msgid "User who created this job"
 msgstr "Ushbu ishni yaratgan foydalanuvchi"
 
-#: jobs/models.py:349
-msgid "Ish o'rini"
-msgstr "Ish o'rini"
+#: jobs/models.py:372 jobs/templates/jobs/job_form.html:401
+msgid "Salary is negotiable"
+msgstr "Maosh kelishiladi"
 
-#: jobs/models.py:350
-msgid "Ish o'rinlari"
-msgstr "Ish o'rinlari"
+#: jobs/models.py:374 jobs/templates/jobs/job_detail.html:57
+#: jobs/templates/jobs/job_list.html:237
+msgid "Negotiable"
+msgstr "Kelishilgan"
 
-#: jobs/models.py:372
-msgid "Maosh kelishilgan holda"
-msgstr "Maosh kelishilgan holda"
-
-#: jobs/models.py:374
-msgid "Kelishilgan holda"
-msgstr "Kelishilgan holda"
-
-#: jobs/models.py:378
-#, python-format
-msgid "dan %(salary)s %(currency)s"
-msgstr "dan %(salary)s %(currency)s"
-
-#: jobs/models.py:383
-#, python-format
-msgid "gacha %(salary)s %(currency)s"
-msgstr "gacha %(salary)s %(currency)s"
-
-#: jobs/models.py:387 jobs/models.py:401
-#: jobs/templates/jobs/employer_applications.html:136
-msgid "Ko'rsatilmagan"
-msgstr "Ko'rsatilmagan"
-
-#: jobs/models.py:396
-msgid "Uydan ishlash"
-msgstr "Uydan ishlash"
-
-#: jobs/models.py:398
-msgid "Gibrid"
-msgstr "Gibrid"
-
-#: jobs/models.py:400
-msgid "Ofisda"
-msgstr "Ofisda"
+#: jobs/models.py:396 jobs/templates/jobs/job_detail.html:42
+#: jobs/templates/jobs/job_list.html:70
+msgid "Remote work"
+msgstr "Masofaviy ish"
 
 #: jobs/models.py:419 jobs/templates/jobs/applications.html:55
 #: jobs/templates/jobs/applications.html:107
@@ -7878,6 +7393,10 @@ msgstr "Izoh qo'shishda xatolik"
 msgid "Candidate Information"
 msgstr "Nomzod ma'lumoti"
 
+#: jobs/templates/jobs/applications_detail.html:37
+msgid "Additional Information"
+msgstr "Qo'shimcha ma'lumot"
+
 #: jobs/templates/jobs/applications_detail.html:43
 #: jobs/templates/jobs/my_jobs.html:426
 msgid "Not Specified"
@@ -7902,10 +7421,6 @@ msgstr "Kompaniya yaratish"
 #: jobs/templates/jobs/company_form.html:14
 msgid "Create New Company"
 msgstr "Yangi kompaniya yaratish"
-
-#: jobs/templates/jobs/company_form.html:22
-msgid "Create"
-msgstr "Yaratish"
 
 #: jobs/templates/jobs/company_list.html:22
 msgid "About Companies"
@@ -7962,6 +7477,10 @@ msgstr "Yangi arizalar"
 #: jobs/templates/jobs/employer_applications.html:98
 msgid "Salary expectation"
 msgstr "Maosh istagi"
+
+#: jobs/templates/jobs/employer_applications.html:136
+msgid "Ko'rsatilmagan"
+msgstr "Ko'rsatilmagan"
 
 #: jobs/templates/jobs/employer_applications.html:159
 msgid "Change status"
@@ -8028,26 +7547,26 @@ msgstr "Yangi vakansiya joylashtiring va malakali nomzodlarni jalb qiling"
 msgid "Please correct the following errors"
 msgstr "Quyidagi xatolarni to'g'rilang:"
 
-#: jobs/templates/jobs/job_create.html:345 jobs/templates/jobs/job_list.html:78
-#: jobs/templates/jobs/job_list.html:126
+#: jobs/templates/jobs/job_create.html:345
+#: jobs/templates/jobs/job_list.html:78 jobs/templates/jobs/job_list.html:126
 msgid "Salary"
 msgstr "Maosh"
 
 #: jobs/templates/jobs/job_create.html:349
 msgid "Finish"
-msgstr ""
+msgstr "Tugatmoq"
 
 #: jobs/templates/jobs/job_create.html:496
 msgid "Work from anywhere"
-msgstr ""
+msgstr "Har qanday joyda ishlash"
 
 #: jobs/templates/jobs/job_create.html:500
 msgid "Office + Remote"
-msgstr ""
+msgstr "Ofis + masofadan boshqarish"
 
 #: jobs/templates/jobs/job_create.html:504
 msgid "Work from office"
-msgstr ""
+msgstr "Ofisdan ishlash"
 
 #: jobs/templates/jobs/job_create.html:546
 #: jobs/templates/jobs/job_create.html:722
@@ -8076,7 +7595,7 @@ msgstr "Maosh kutilishi"
 
 #: jobs/templates/jobs/job_create.html:925
 msgid "Final Step"
-msgstr ""
+msgstr "Yakuniy qadam"
 
 #: jobs/templates/jobs/job_create.html:934
 #, fuzzy
@@ -8093,6 +7612,8 @@ msgstr "Oldindan ko'rish"
 #: jobs/templates/jobs/job_create.html:944
 msgid "Fill in the form to see a preview of your job posting"
 msgstr ""
+"O'zingizning ish joyingizni oldindan ko'rib chiqishni ko'rish uchun shaklni "
+"to'ldiring"
 
 #: jobs/templates/jobs/job_create.html:951
 msgid "Additional Settings"
@@ -8100,7 +7621,7 @@ msgstr "Qo'shimcha sozlamalar"
 
 #: jobs/templates/jobs/job_create.html:979
 msgid "Highlight on homepage and search results"
-msgstr ""
+msgstr "Bosh sahifa va qidiruv natijalariga diqqat qarating"
 
 #: jobs/templates/jobs/job_create.html:986
 #, fuzzy
@@ -8128,7 +7649,7 @@ msgstr "Premium ish ro'yxati"
 
 #: jobs/templates/jobs/job_create.html:1026
 msgid "I agree to the"
-msgstr ""
+msgstr "Men roziman"
 
 #: jobs/templates/jobs/job_create.html:1027
 #, fuzzy
@@ -8136,9 +7657,13 @@ msgstr ""
 msgid "Terms of Service"
 msgstr "Tajriba yillari"
 
+#: jobs/templates/jobs/job_create.html:1028
+msgid "and"
+msgstr "va"
+
 #: jobs/templates/jobs/job_create.html:1029
 msgid "Privacy Policy"
-msgstr ""
+msgstr "Maxfiylik siyosati"
 
 #: jobs/templates/jobs/job_create.html:1149
 #, fuzzy
@@ -8159,7 +7684,7 @@ msgstr "Iltimos, barcha majburiy maydonlarni to'ldiring"
 
 #: jobs/templates/jobs/job_create.html:1314
 msgid "Please accept the terms and conditions"
-msgstr ""
+msgstr "Iltimos, shartlar va shartlarni qabul qiling"
 
 #: jobs/templates/jobs/job_create.html:1341
 #, fuzzy
@@ -8172,14 +7697,6 @@ msgstr "Iltimos, barcha majburiy maydonlarni to'ldiring"
 #| msgid "Please correct the following errors:"
 msgid "Please check the form for errors"
 msgstr "Quyidagi xatolarni to'g'rilang:"
-
-#: jobs/templates/jobs/job_detail.html:42 jobs/templates/jobs/job_list.html:70
-msgid "Remote work"
-msgstr "Masofaviy ish"
-
-#: jobs/templates/jobs/job_detail.html:57 jobs/templates/jobs/job_list.html:237
-msgid "Negotiable"
-msgstr "Kelishilgan"
 
 #: jobs/templates/jobs/job_detail.html:67
 msgid "Application submitted"
@@ -8372,10 +7889,6 @@ msgstr "masalan, 80000"
 msgid "Hide salary from candidates"
 msgstr "Maoshni nomzodlardan yashirish"
 
-#: jobs/templates/jobs/job_form.html:401
-msgid "Salary is negotiable"
-msgstr "Maosh kelishiladi"
-
 #: jobs/templates/jobs/job_form.html:414
 msgid "Bonus system available"
 msgstr "Bonus tizimi mavjud"
@@ -8473,7 +7986,8 @@ msgstr "Rol va majburiyatlar aniq bo'lishi kerak"
 
 #: jobs/templates/jobs/job_form.html:816
 msgid "List required and preferred skills clearly"
-msgstr "Talab qilinadigan va afzal ko'riladigan ko'nikmalarni aniq ro'yxatlang"
+msgstr ""
+"Talab qilinadigan va afzal ko'riladigan ko'nikmalarni aniq ro'yxatlang"
 
 #: jobs/templates/jobs/job_form.html:817
 msgid "Include information about your company culture"
@@ -8567,6 +8081,10 @@ msgstr "kelishiladi"
 #: jobs/templates/jobs/job_list.html:255
 msgid "Experience not specified"
 msgstr "Tajriba ko'rsatilmagan"
+
+#: jobs/templates/jobs/job_list.html:283
+msgid "Deadline:"
+msgstr "Muddati:"
 
 #: jobs/templates/jobs/job_list.html:349
 msgid "Try changing your search criteria or wait for new jobs to be posted"
@@ -8756,7 +8274,7 @@ msgstr "Mening saqlanganlarim"
 msgid "Faqat ish beruvchilar bu sahifani ko'rishi mumkin."
 msgstr "Faqat ish beruvchilar bu sahifani ko'rishi mumkin."
 
-#: jobs/views.py:28 jobs/views.py:294 jobs/views.py:384
+#: jobs/views.py:28 jobs/views.py:294 jobs/views.py:383
 msgid "Iltimos, avval ish beruvchi profilingizni to'ldiring."
 msgstr "Iltimos, avval ish beruvchi profilingizni to'ldiring."
 
@@ -8806,39 +8324,39 @@ msgstr "Sizda bu sahifani ko'rish huquqi yo'q"
 msgid "Sizda vakansiyalarni ko'rish huquqi yo'q."
 msgstr "Sizda bu vakansiyani o'chirish huquqi yo'q."
 
-#: jobs/views.py:391
+#: jobs/views.py:390
 #, fuzzy
 #| msgid "Sizda bu vakansiyani o'chirish huquqi yo'q."
 msgid "Sizda bu vakansiyani ko'rish huquqi yo'q."
 msgstr "Sizda bu vakansiyani o'chirish huquqi yo'q."
 
-#: jobs/views.py:454
+#: jobs/views.py:453
 #, fuzzy
 #| msgid "Faqat ish beruvchilar vakansiya yarata oladi."
 msgid "Faqat talabalar va bitiruvchilar ariza topshira oladi."
 msgstr "Faqat ish beruvchilar vakansiya yarata oladi."
 
-#: jobs/views.py:461
+#: jobs/views.py:460
 msgid "Siz ushbu vakansiyaga allaqachon ariza topshirgansiz."
 msgstr "Siz ushbu vakansiyaga allaqachon ariza topshirgansiz."
 
-#: jobs/views.py:466
+#: jobs/views.py:465
 msgid "Ushbu vakansiyaning muddati tugagan."
 msgstr "Ushbu vakansiyaning muddati tugagan."
 
-#: jobs/views.py:482
+#: jobs/views.py:481
 msgid "Arizangiz muvaffaqiyatli yuborildi!"
 msgstr "Arizangiz muvaffaqiyatli yuborildi!"
 
-#: jobs/views.py:503
+#: jobs/views.py:502
 msgid "Vakansiya muvaffaqiyatli saqlandi!"
 msgstr "Vakansiya muvaffaqiyatli saqlandi!"
 
-#: jobs/views.py:505
+#: jobs/views.py:504
 msgid "Vakansiya allaqachon saqlangan."
 msgstr "Vakansiya allaqachon saqlangan."
 
-#: jobs/views.py:516
+#: jobs/views.py:515
 msgid "Vakansiya saqlanganlardan o'chirildi."
 msgstr "Vakansiya saqlanganlardan o'chirildi."
 
@@ -8958,65 +8476,65 @@ msgstr "Ushbu resurs omma ko'rinishida yoki yo'qligi"
 msgid "Resource"
 msgstr "Resurs"
 
-#: resources/templates/resources/list.html:9
+#: resources/templates/resources/list.html:11
 msgid ""
 "Useful materials, templates and guides for your professional development"
 msgstr ""
-"Kasbiy rivojlanishingiz uchun foydali materiallar, shablonlar va qo'llanmalar"
+"Kasbiy rivojlanishingiz uchun foydali materiallar, shablonlar va "
+"qo'llanmalar"
 
-#: resources/templates/resources/list.html:21
+#: resources/templates/resources/list.html:23
 msgid "Search resources..."
 msgstr "Resurslarni qidirish..."
 
-#: resources/templates/resources/list.html:27
+#: resources/templates/resources/list.html:30
 msgid "All categories"
 msgstr "Barcha toifalar"
 
-#: resources/templates/resources/list.html:61
+#: resources/templates/resources/list.html:80
 msgid "Found resources"
 msgstr "Topilgan resurslar"
 
-#: resources/templates/resources/list.html:64
+#: resources/templates/resources/list.html:83
 msgid "materials found"
 msgstr "material topildi"
 
-#: resources/templates/resources/list.html:66
+#: resources/templates/resources/list.html:85
 msgid "No materials found"
 msgstr "Materiallar topilmadi"
 
-#: resources/templates/resources/list.html:101
-msgid "Watch YouTube video"
-msgstr "YouTube videosini tomosha qilish"
+#: resources/templates/resources/list.html:141
+msgid "File"
+msgstr "Fayli"
 
-#: resources/templates/resources/list.html:110
-#: resources/templates/resources/resource_detail.html:32
-#: resources/templates/resources/resource_detail.html:286
-#: resources/templates/resources/unpublished_resources.html:173
-msgid "Added"
-msgstr "Qo'shilgan"
-
-#: resources/templates/resources/list.html:163
+#: resources/templates/resources/list.html:195
 msgid "No resources found"
 msgstr "Resurslar topilmadi"
 
-#: resources/templates/resources/list.html:164
+#: resources/templates/resources/list.html:196
 msgid "Try changing search conditions or select another category"
 msgstr "Qidiruv shartlarini o'zgartirib ko'ring yoki boshqa toifani tanlang"
 
-#: resources/templates/resources/list.html:166
+#: resources/templates/resources/list.html:198
 msgid "View all resources"
 msgstr "Barcha resurslarni ko'rish"
 
-#: resources/templates/resources/list.html:176
+#: resources/templates/resources/list.html:208
 #: resources/templates/resources/unpublished_resources.html:88
 #: resources/templates/resources/unpublished_resources.html:258
 msgid "Add new resource"
 msgstr "Yangi resurs qo'shish"
 
-#: resources/templates/resources/list.html:179
+#: resources/templates/resources/list.html:211
 #: resources/templates/resources/resource_detail.html:307
 msgid "Unpublished resources"
 msgstr "Nashr qilinmagan resurslar"
+
+#: resources/templates/resources/resource_detail.html:32
+#: resources/templates/resources/resource_detail.html:286
+#: resources/templates/resources/unpublished_resources.html:173
+msgid "Added"
+msgstr "Qo'shilgan"
 
 #: resources/templates/resources/resource_detail.html:46
 #: resources/templates/resources/resource_detail.html:225
@@ -9213,6 +8731,10 @@ msgstr "Jami nashr qilinmagan"
 msgid "Added today"
 msgstr "Bugun qo'shilgan"
 
+#: resources/templates/resources/unpublished_resources.html:39
+msgid "Categories"
+msgstr "Kategoriyalar"
+
 #: resources/templates/resources/unpublished_resources.html:47
 msgid "resources selected"
 msgstr "resurs tanlandi"
@@ -9271,8 +8793,8 @@ msgid ""
 "There are currently no unpublished resources. All materials have already "
 "been published."
 msgstr ""
-"Hozirda nashr qilinmagan resurslar yo'q. Barcha materiallar allaqachon nashr "
-"qilingan."
+"Hozirda nashr qilinmagan resurslar yo'q. Barcha materiallar allaqachon nashr"
+" qilingan."
 
 #: resources/templates/resources/unpublished_resources.html:261
 msgid "View published resources"
@@ -9340,6 +8862,596 @@ msgstr "Hech qanday resurs tanlanmagan."
 #: resources/views.py:349
 msgid "Invalid action."
 msgstr "Noto'g'ri harakat."
+
+#~ msgid "Popular Resources"
+#~ msgstr "Ommabop resurslar"
+
+#~ msgid "Registration Information"
+#~ msgstr "Ro'yxatdan o'tish ma'lumoti"
+
+#~ msgid "Payment"
+#~ msgstr "To'lov"
+
+#~ msgid "Mark as attended"
+#~ msgstr "Qatnashgan deb belgilash"
+
+#, python-format
+#~ msgid "%(count)d registrations marked as attended"
+#~ msgstr "%(count)d ta ro'yxatdan o'tish qatnashgan deb belgilandi"
+
+#~ msgid "Mark as no show"
+#~ msgstr "Kelmadi deb belgilash"
+
+#, python-format
+#~ msgid "%(count)d registrations marked as no show"
+#~ msgstr "%(count)d ta ro'yxatdan o'tish kelmadi deb belgilandi"
+
+#~ msgid "Confirm payment"
+#~ msgstr "To'lovni tasdiqlash"
+
+#, python-format
+#~ msgid "%(count)d payments confirmed"
+#~ msgstr "%(count)d ta to'lov tasdiqlandi"
+
+#~ msgid "Speaker Information"
+#~ msgstr "Ma'ruzachi ma'lumoti"
+
+#~ msgid "Session Information"
+#~ msgstr "Sessiya ma'lumoti"
+
+#~ msgid "Timing"
+#~ msgstr "Vaqt"
+
+#~ msgid "Materials"
+#~ msgstr "Materiallar"
+
+#~ msgid "Comment"
+#~ msgstr "Izoh"
+
+#~ msgid "Approve selected comments"
+#~ msgstr "Tanlangan izohlarni tasdiqlash"
+
+#, python-format
+#~ msgid "%(count)d comments approved"
+#~ msgstr "%(count)d ta izoh tasdiqlandi"
+
+#~ msgid "Disapprove selected comments"
+#~ msgstr "Tanlangan izohlarni rad etish"
+
+#, python-format
+#~ msgid "%(count)d comments disapproved"
+#~ msgstr "%(count)d ta izoh rad etildi"
+
+#~ msgid "Rating Information"
+#~ msgstr "Reyting ma'lumoti"
+
+#~ msgid "Detailed Ratings"
+#~ msgstr "Batafsil reytinglar"
+
+#~ msgid "Venue"
+#~ msgstr "Joy"
+
+#~ msgid "Online Meeting Link"
+#~ msgstr "Onlayn uchrashuv havolasi"
+
+#~ msgid "Full Address"
+#~ msgstr "To'liq manzil"
+
+#~ msgid "Registration Type"
+#~ msgstr "Ro'yxatdan o'tish turi"
+
+#~ msgid "Registration Deadline"
+#~ msgstr "Ro'yxatdan o'tish muddati"
+
+#~ msgid "Maximum Participants"
+#~ msgstr "Maksimal ishtirokchilar"
+
+#~ msgid "Enable Waitlist"
+#~ msgstr "Kutish ro'yxatini yoqish"
+
+#~ msgid "Free Event"
+#~ msgstr "Bepul tadbir"
+
+#~ msgid "Price"
+#~ msgstr "Narx"
+
+#~ msgid "Any dietary restrictions?"
+#~ msgstr "Oziq-ovqat cheklovlari bormi?"
+
+#~ msgid "Any special requirements?"
+#~ msgstr "Maxsus talablar bormi?"
+
+#~ msgid "Additional comments..."
+#~ msgstr "Qo'shimcha izohlar..."
+
+#~ msgid "Dietary Restrictions"
+#~ msgstr "Oziq-ovqat cheklovlari"
+
+#~ msgid "Special Requirements"
+#~ msgstr "Maxsus talablar"
+
+#~ msgid "Comments"
+#~ msgstr "Izohlar"
+
+#~ msgid "Speaker Name"
+#~ msgstr "Ma'ruzachi ismi"
+
+#~ msgid "Speaker Title"
+#~ msgstr "Ma'ruzachi unvoni"
+
+#~ msgid "Organization"
+#~ msgstr "Tashkilot"
+
+#~ msgid "Biography"
+#~ msgstr "Tarjimai hol"
+
+#~ msgid "Photo"
+#~ msgstr "Foto"
+
+#~ msgid "Session Title"
+#~ msgstr "Sessiya sarlavhasi"
+
+#~ msgid "Session Type"
+#~ msgstr "Sessiya turi"
+
+#~ msgid "Start Time"
+#~ msgstr "Boshlanish vaqti"
+
+#~ msgid "End Time"
+#~ msgstr "Tugash vaqti"
+
+#~ msgid "Presentation URL"
+#~ msgstr "Taqdimot URL manzili"
+
+#~ msgid "Materials URL"
+#~ msgstr "Materiallar URL manzili"
+
+#~ msgid "End time must be after start time."
+#~ msgstr "Tugash vaqti boshlanish vaqtidan keyin bo'lishi kerak."
+
+#~ msgid "Share your thoughts about this event..."
+#~ msgstr "Ushbu tadbir haqida fikrlaringizni baham ko'ring..."
+
+#~ msgid "Share your experience..."
+#~ msgstr "Tajribangizni baham ko'ring..."
+
+#~ msgid "Overall Rating"
+#~ msgstr "Umumiy reyting"
+
+#~ msgid "Content Quality"
+#~ msgstr "Mazmun sifati"
+
+#~ msgid "All Registered Participants"
+#~ msgstr "Barcha ro'yxatdan o'tgan ishtirokchilar"
+
+#~ msgid "Confirmed Participants Only"
+#~ msgstr "Faqat tasdiqlangan ishtirokchilar"
+
+#~ msgid "Waiting List Only"
+#~ msgstr "Faqat kutish ro'yxati"
+
+#~ msgid "Attended Participants"
+#~ msgstr "Qatnashgan ishtirokchilar"
+
+#~ msgid "Open Registration"
+#~ msgstr "Ochiq ro'yxatdan o'tish"
+
+#~ msgid "Approval Required"
+#~ msgstr "Tasdiq talab qilinadi"
+
+#~ msgid "Invitation Only"
+#~ msgstr "Faqat taklif asosida"
+
+#~ msgid "Paid Registration"
+#~ msgstr "Pullik ro'yxatdan o'tish"
+
+#~ msgid "Specific venue name"
+#~ msgstr "Muayyan joy nomi"
+
+#~ msgid "Whether this is an online event"
+#~ msgstr "Bu onlayn tadbirmi"
+
+#~ msgid "Link for online participation"
+#~ msgstr "Onlayn ishtirok etish uchun havola"
+
+#~ msgid "Complete address of the venue"
+#~ msgstr "Joyning to'liq manzili"
+
+#~ msgid "Primary organizer of the event"
+#~ msgstr "Tadbirning asosiy tashkilotchisi"
+
+#~ msgid "Co-organizers"
+#~ msgstr "Hamkor tashkilotchilar"
+
+#~ msgid "Additional organizers of the event"
+#~ msgstr "Tadbirning qo'shimcha tashkilotchilari"
+
+#~ msgid "Type of registration process"
+#~ msgstr "Ro'yxatdan o'tish jarayoni turi"
+
+#~ msgid "Deadline for registration"
+#~ msgstr "Ro'yxatdan o'tish muddati"
+
+#~ msgid "Waitlist Enabled"
+#~ msgstr "Kutish ro'yxati yoqilgan"
+
+#~ msgid "Whether waitlist is available when full"
+#~ msgstr "To'liq bo'lganda kutish ro'yxati mavjudmi"
+
+#~ msgid "Whether the event is free"
+#~ msgstr "Tadbir bepulmi"
+
+#~ msgid "Event price if not free"
+#~ msgstr "Bepul bo'lmasa tadbir narxi"
+
+#~ msgid "Currency for the price"
+#~ msgstr "Narx uchun valyuta"
+
+#~ msgid "Show Attendee List"
+#~ msgstr "Ishtirokchilar ro'yxatini ko'rsatish"
+
+#~ msgid "Whether to show list of registered attendees"
+#~ msgstr "Ro'yxatdan o'tgan ishtirokchilar ro'yxatini ko'rsatish yoki yo'q"
+
+#~ msgid "Allow Comments"
+#~ msgstr "Izohlarga ruxsat berish"
+
+#~ msgid "Whether to allow comments on the event"
+#~ msgstr "Tadbirda izohlarga ruxsat berish yoki yo'q"
+
+#~ msgid "Registration Link"
+#~ msgstr "Ro'yxatdan o'tish havolasi"
+
+#~ msgid "External registration link"
+#~ msgstr "Tashqi ro'yxatdan o'tish havolasi"
+
+#~ msgid "Materials Link"
+#~ msgstr "Materiallar havolasi"
+
+#~ msgid "Link to event materials"
+#~ msgstr "Tadbir materiallariga havola"
+
+#~ msgid "Registration Count"
+#~ msgstr "Ro'yxatdan o'tishlar soni"
+
+#~ msgid "Number of registered participants"
+#~ msgstr "Ro'yxatdan o'tgan ishtirokchilar soni"
+
+#~ msgid "Waiting List"
+#~ msgstr "Kutish ro'yxati"
+
+#~ msgid "Attended"
+#~ msgstr "Qatnashgan"
+
+#~ msgid "The event being registered for"
+#~ msgstr "Ro'yxatdan o'tilayotgan tadbir"
+
+#~ msgid "User registering for the event"
+#~ msgstr "Tadbirga ro'yxatdan o'tayotgan foydalanuvchi"
+
+#~ msgid "When the registration was made"
+#~ msgstr "Ro'yxatdan o'tish qachon amalga oshirilgan"
+
+#~ msgid "Current registration status"
+#~ msgstr "Joriy ro'yxatdan o'tish holati"
+
+#~ msgid "Any dietary restrictions for catering"
+#~ msgstr "Ovqatlanish uchun oziq-ovqat cheklovlari bormi"
+
+#~ msgid "Any special requirements or accommodations"
+#~ msgstr "Maxsus talablar yoki moslashtirishlar bormi"
+
+#~ msgid "Additional comments from the registrant"
+#~ msgstr "Ro'yxatdan o'tuvchidan qo'shimcha izohlar"
+
+#~ msgid "Paid"
+#~ msgstr "To'langan"
+
+#~ msgid "Refunded"
+#~ msgstr "Qaytarilgan"
+
+#~ msgid "Payment Status"
+#~ msgstr "To'lov holati"
+
+#~ msgid "Status of payment for the event"
+#~ msgstr "Tadbir uchun to'lov holati"
+
+#~ msgid "Payment Amount"
+#~ msgstr "To'lov miqdori"
+
+#~ msgid "Amount paid for the event"
+#~ msgstr "Tadbir uchun to'langan miqdor"
+
+#~ msgid "QR Code"
+#~ msgstr "QR kod"
+
+#~ msgid "QR code for event check-in"
+#~ msgstr "Tadbir kirishi uchun QR kod"
+
+#~ msgid "Check-in Time"
+#~ msgstr "Kirish vaqti"
+
+#~ msgid "Time when the user checked in"
+#~ msgstr "Foydalanuvchi kirgan vaqt"
+
+#~ msgid "Event Registration"
+#~ msgstr "Tadbir ro'yxatdan o'tishi"
+
+#~ msgid "The event this speaker is associated with"
+#~ msgstr "Ushbu ma'ruzachi bilan bog'langan tadbir"
+
+#~ msgid "Full name of the speaker"
+#~ msgstr "Ma'ruzachining to'liq ismi"
+
+#~ msgid "Professional title or position"
+#~ msgstr "Kasbiy unvon yoki lavozim"
+
+#~ msgid "Organization or company affiliation"
+#~ msgstr "Tashkilot yoki kompaniya aloqasi"
+
+#~ msgid "Brief biography of the speaker"
+#~ msgstr "Ma'ruzachining qisqacha tarjimai holi"
+
+#~ msgid "Profile photo of the speaker"
+#~ msgstr "Ma'ruzachining profil fotosurati"
+
+#~ msgid "Contact email for the speaker"
+#~ msgstr "Ma'ruzachi uchun aloqa emaili"
+
+#~ msgid "Order in which to display this speaker"
+#~ msgstr "Ushbu ma'ruzachini ko'rsatish tartibi"
+
+#~ msgid "Event Speaker"
+#~ msgstr "Tadbir ma'ruzachisi"
+
+#~ msgid "Event Speakers"
+#~ msgstr "Tadbir ma'ruzachilari"
+
+#~ msgid "Keynote"
+#~ msgstr "Asosiy ma'ruza"
+
+#~ msgid "Panel Discussion"
+#~ msgstr "Panel muhokamasi"
+
+#~ msgid "Presentation"
+#~ msgstr "Taqdimot"
+
+#~ msgid "Q&A Session"
+#~ msgstr "Savol-javob sessiyasi"
+
+#~ msgid "Break"
+#~ msgstr "Tanaffus"
+
+#~ msgid "The event this session belongs to"
+#~ msgstr "Ushbu sessiya tegishli bo'lgan tadbir"
+
+#~ msgid "Title of the session"
+#~ msgstr "Sessiya sarlavhasi"
+
+#~ msgid "Detailed description of the session"
+#~ msgstr "Sessiyaning batafsil tavsifi"
+
+#~ msgid "Type of session"
+#~ msgstr "Sessiya turi"
+
+#~ msgid "When the session starts"
+#~ msgstr "Sessiya qachon boshlanadi"
+
+#~ msgid "When the session ends"
+#~ msgstr "Sessiya qachon tugaydi"
+
+#~ msgid "Specific location within the venue"
+#~ msgstr "Joy ichidagi muayyan joylashuv"
+
+#~ msgid "Speakers for this session"
+#~ msgstr "Ushbu sessiya uchun ma'ruzachilar"
+
+#~ msgid "Link to presentation slides or materials"
+#~ msgstr "Taqdimot slaydlari yoki materiallariga havola"
+
+#~ msgid "Link to additional session materials"
+#~ msgstr "Qo'shimcha sessiya materiallariga havola"
+
+#~ msgid "Order in which to display this session"
+#~ msgstr "Ushbu sessiyani ko'rsatish tartibi"
+
+#~ msgid "Event Session"
+#~ msgstr "Tadbir sessiyasi"
+
+#~ msgid "Event Sessions"
+#~ msgstr "Tadbir sessiyalari"
+
+#~ msgid "The event being commented on"
+#~ msgstr "Izoh berilayotgan tadbir"
+
+#~ msgid "User who made the comment"
+#~ msgstr "Izoh qoldirgan foydalanuvchi"
+
+#~ msgid "Parent Comment"
+#~ msgstr "Asosiy izoh"
+
+#~ msgid "Parent comment for nested replies"
+#~ msgstr "Ichki javoblar uchun asosiy izoh"
+
+#~ msgid "The comment text"
+#~ msgstr "Izoh matni"
+
+#~ msgid "Approved"
+#~ msgstr "Tasdiqlangan"
+
+#~ msgid "Whether this comment is approved for display"
+#~ msgstr "Ushbu izoh ko'rsatish uchun tasdiqlanganmi"
+
+#~ msgid "Event Comment"
+#~ msgstr "Tadbir izohi"
+
+#~ msgid "Event Comments"
+#~ msgstr "Tadbir izohlari"
+
+#~ msgid "The event being rated"
+#~ msgstr "Baholayotgan tadbir"
+
+#~ msgid "User who provided the rating"
+#~ msgstr "Reyting bergan foydalanuvchi"
+
+#~ msgid "Overall rating (1-5)"
+#~ msgstr "Umumiy reyting (1-5)"
+
+#~ msgid "Optional comment with the rating"
+#~ msgstr "Reyting bilan ixtiyoriy izoh"
+
+#~ msgid "Content Rating"
+#~ msgstr "Mazmun reytingi"
+
+#~ msgid "Rating for event content quality"
+#~ msgstr "Tadbir mazmuni sifati uchun reyting"
+
+#~ msgid "Organization Rating"
+#~ msgstr "Tashkilot reytingi"
+
+#~ msgid "Rating for event organization"
+#~ msgstr "Tadbir tashkiloti uchun reyting"
+
+#~ msgid "Venue Rating"
+#~ msgstr "Joy reytingi"
+
+#~ msgid "Rating for venue quality (optional)"
+#~ msgstr "Joy sifati uchun reyting (ixtiyoriy)"
+
+#~ msgid "Event Rating"
+#~ msgstr "Tadbir reytingi"
+
+#~ msgid "Event Ratings"
+#~ msgstr "Tadbir reytinglari"
+
+#, python-brace-format
+#~ msgid "Registration Confirmation - {event_title}"
+#~ msgstr "Ro'yxatdan o'tish tasdiqlashi - {event_title}"
+
+#~ msgid "Organizer:"
+#~ msgstr "Tashkilotchi:"
+
+#~ msgid "registered"
+#~ msgstr "ro'yxatdan o'tgan"
+
+#~ msgid "All Organizers"
+#~ msgstr "Barcha tashkilotchilar"
+
+#~ msgid "Time:"
+#~ msgstr "Vaqt:"
+
+#~ msgid "Participants:"
+#~ msgstr "Ishtirokchilar:"
+
+#~ msgid "Registration:"
+#~ msgstr "Ro'yxatdan o'tish:"
+
+#~ msgid "Open"
+#~ msgstr "Ochiq"
+
+#~ msgid "Closed"
+#~ msgstr "Yopiq"
+
+#~ msgid "Price:"
+#~ msgstr "Narx:"
+
+#~ msgid "Status:"
+#~ msgstr "Holat:"
+
+#~ msgid "Register for Event"
+#~ msgstr "Tadbirga ro'yxatdan o'tish"
+
+#~ msgid "Registration for this event is currently closed."
+#~ msgstr "Ushbu tadbir uchun ro'yxatdan o'tish hozirda yopiq."
+
+#~ msgid "Rate this Event"
+#~ msgstr "Ushbu tadbirni baholang"
+
+#~ msgid "Select rating"
+#~ msgstr "Reytingni tanlang"
+
+#~ msgid "Excellent"
+#~ msgstr "A'lo"
+
+#~ msgid "Very Good"
+#~ msgstr "Juda yaxshi"
+
+#~ msgid "Good"
+#~ msgstr "Yaxshi"
+
+#~ msgid "Fair"
+#~ msgstr "O'rtacha"
+
+#~ msgid "Poor"
+#~ msgstr "Yomon"
+
+#~ msgid "Submit Rating"
+#~ msgstr "Reytingni yuborish"
+
+#~ msgid "Tags:"
+#~ msgstr "Teglar:"
+
+#~ msgid "Views:"
+#~ msgstr "Ko'rishlar:"
+
+#~ msgid "Rating:"
+#~ msgstr "Reyting:"
+
+#~ msgid "Attendees"
+#~ msgstr "Ishtirokchilar"
+
+#~ msgid "more..."
+#~ msgstr "boshqalar..."
+
+#~ msgid "Error submitting rating."
+#~ msgstr "Reyting yuborishda xatolik."
+
+#~ msgid "Sort by"
+#~ msgstr "Saralash"
+
+#~ msgid "participants"
+#~ msgstr "ishtirokchilar"
+
+#~ msgid "Registration open"
+#~ msgstr "Ro'yxatdan o'tish ochiq"
+
+#~ msgid "Registration closed"
+#~ msgstr "Ro'yxatdan o'tish yopiq"
+
+#~ msgid "Clear Filters"
+#~ msgstr "Filtrlarni tozalash"
+
+#~ msgid "Ish o'rini"
+#~ msgstr "Ish o'rini"
+
+#~ msgid "Ish o'rinlari"
+#~ msgstr "Ish o'rinlari"
+
+#~ msgid "Maosh kelishilgan holda"
+#~ msgstr "Maosh kelishilgan holda"
+
+#~ msgid "Kelishilgan holda"
+#~ msgstr "Kelishilgan holda"
+
+#, python-format
+#~ msgid "dan %(salary)s %(currency)s"
+#~ msgstr "dan %(salary)s %(currency)s"
+
+#, python-format
+#~ msgid "gacha %(salary)s %(currency)s"
+#~ msgstr "gacha %(salary)s %(currency)s"
+
+#~ msgid "Uydan ishlash"
+#~ msgstr "Uydan ishlash"
+
+#~ msgid "Gibrid"
+#~ msgstr "Gibrid"
+
+#~ msgid "Ofisda"
+#~ msgstr "Ofisda"
+
+#~ msgid "Watch YouTube video"
+#~ msgstr "YouTube videosini tomosha qilish"
 
 #~ msgid "Admin Information"
 #~ msgstr "Admin ma'lumoti"
@@ -9469,8 +9581,7 @@ msgstr "Noto'g'ri harakat."
 #~ msgstr "Masalan: Python, Django, JavaScript"
 
 #~ msgid ""
-#~ "List of skills separated by commas. For example: Python, Django, "
-#~ "JavaScript"
+#~ "List of skills separated by commas. For example: Python, Django, JavaScript"
 #~ msgstr ""
 #~ "Vergul bilan ajratilgan ko'nikmalar ro'yxati. Masalan: Python, Django, "
 #~ "JavaScript"
@@ -9532,8 +9643,7 @@ msgstr "Noto'g'ri harakat."
 #~ msgid "Vacancy Preview"
 #~ msgstr "Vakansiya ko'rib chiqish"
 
-#~ msgid ""
-#~ "After filling in the information, the vacancy preview will appear here"
+#~ msgid "After filling in the information, the vacancy preview will appear here"
 #~ msgstr ""
 #~ "Ma'lumotlarni to'ldirgandan so'ng, vakansiyani ko'rib chiqish shu yerda "
 #~ "paydo bo'ladi"
@@ -9563,22 +9673,18 @@ msgstr "Noto'g'ri harakat."
 #~ msgstr "Resursni ulashish"
 
 #, fuzzy
-#~| msgid "Profile"
 #~ msgid "Profil"
 #~ msgstr "Profil"
 
 #, fuzzy
-#~| msgid "Statistics"
 #~ msgid "Statistika"
 #~ msgstr "Statistika"
 
 #, fuzzy
-#~| msgid "Statistics"
 #~ msgid "Static Files"
 #~ msgstr "Statistika"
 
 #, fuzzy
-#~| msgid "Textbooks"
 #~ msgid "Text"
 #~ msgstr "Darsliklar"
 

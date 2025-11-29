@@ -121,7 +121,7 @@ class EventCalendarView(ListView):
     context_object_name = "events"
 
     def get_queryset(self):
-        return Event.objects.filter(status="published").select_related("category", "organizer")
+        return Event.objects.filter(status="published").select_related("category")
 
 
 def event_categories(request):

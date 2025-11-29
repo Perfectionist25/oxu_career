@@ -29,22 +29,11 @@
                         <div class="card-body">
                             <h6 class="fw-bold mb-2">{{ event.title }}</h6>
                             <div class="row text-sm">
-                                <div class="col-6">
-                                    <strong>{% trans "Organizer:" %}</strong><br>
-                                    {{ event.organizer.get_full_name|default:event.organizer.username }}
-                                </div>
-                                <div class="col-6">
+                                <div class="col">
                                     <strong>{% trans "Start:" %}</strong><br>
                                     {{ event.start_date|date:"d.m.Y H:i" }}
                                 </div>
                             </div>
-                            {% if event.registration_count %}
-                            <div class="mt-2">
-                                <span class="badge bg-warning">
-                                    <i class="fas fa-users me-1"></i>{{ event.registration_count }} {% trans "registered" %}
-                                </span>
-                            </div>
-                            {% endif %}
                         </div>
                     </div>
 

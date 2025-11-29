@@ -4,15 +4,94 @@
 {% block title %}{% trans "Event Calendar" %}{% endblock %}
 
 {% block content %}
-<div class="container mt-4 mb-4">
-    <div class="row">
-        <div class="col-12">
-            <h1 class="mb-4">{% trans "Event Calendar" %}</h1>
+<div class="calendar-container">
+    <div class="calendar-wrapper">
+        <!-- Header -->
+        <div class="calendar-header">
+            <div class="header-content">
+                <h1 class="calendar-title">
+                    <i class="fas fa-calendar-alt"></i>
+                    {% trans "Event Calendar" %}
+                </h1>
+                <p class="calendar-subtitle">{% trans "Browse and discover upcoming events" %}</p>
+            </div>
+            <div class="header-actions">
+                <a href="{% url 'events:event_list' %}" class="btn-outline">
+                    <i class="fas fa-arrow-left"></i>
+                    {% trans "Back to List" %}
+                </a>
+                {% if user.is_staff %}
+                <a href="{% url 'events:create_event' %}" class="btn-primary">
+                    <i class="fas fa-plus"></i>
+                    {% trans "Add Event" %}
+                </a>
+                {% endif %}
+            </div>
+        </div>
 
-            <div class="card">
-                <div class="card-body">
-                    <div id="calendar"></div>
+        <!-- Calendar Navigation -->
+        <div class="calendar-navigation">
+            <div class="nav-controls">
+                <button class="nav-btn" id="prev-month">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <h3 class="current-month" id="current-month"></h3>
+                <button class="nav-btn" id="next-month">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <div class="view-controls">
+                <button class="view-btn active" data-view="dayGridMonth" id="month-view">
+                    <i class="fas fa-calendar"></i>
+                    {% trans "Month" %}
+                </button>
+                <button class="view-btn" data-view="listMonth" id="list-view">
+                    <i class="fas fa-list"></i>
+                    {% trans "List" %}
+                </button>
+                <button class="view-btn today-btn" id="today-btn">
+                    <i class="fas fa-calendar-day"></i>
+                    {% trans "Today" %}
+                </button>
+            </div>
+        </div>
+
+        <!-- Calendar -->
+        <div class="calendar-card">
+            <div id="calendar"></div>
+        </div>
+
+        <!-- Legend -->
+        <div class="calendar-legend">
+            <h4>{% trans "Event Categories" %}</h4>
+            <div class="legend-items">
+                {% for category in categories %}
+                <div class="legend-item">
+                    <span class="legend-color" style="background-color: {{ category.color|default:'#007cba' }}"></span>
+                    <span class="legend-label">{{ category.name }}</span>
                 </div>
+                {% empty %}
+                <div class="legend-item">
+                    <span class="legend-color" style="background-color: #007cba"></span>
+                    <span class="legend-label">{% trans "Events" %}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="calendar-stats">
+            <div class="stat-item">
+                <div class="stat-number">{{ events|length }}</div>
+                <div class="stat-label">{% trans "Total Events" %}</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">{{ upcoming_events }}</div>
+                <div class="stat-label">{% trans "Upcoming" %}</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">{{ current_month_events }}</div>
+                <div class="stat-label">{% trans "This Month" %}</div>
             </div>
         </div>
     </div>
@@ -20,31 +99,698 @@
 
 <!-- FullCalendar CSS -->
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+<style>
+/* Main Container */
+.calendar-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+    padding: 1.5rem;
+}
+
+.calendar-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Header */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    gap: 1.5rem;
+}
+
+.header-content {
+    flex: 1;
+}
+
+.calendar-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #012152;
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.calendar-title i {
+    color: #007cba;
+}
+
+.calendar-subtitle {
+    color: #666;
+    margin: 0;
+    font-size: 1rem;
+}
+
+.header-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+/* Buttons */
+.btn-primary, .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: #012152;
+    color: white;
+}
+
+.btn-outline {
+    background: transparent;
+    color: #012152;
+    border: 1px solid #012152;
+}
+
+.btn-primary:hover {
+    background: #012d6e;
+    transform: translateY(-1px);
+}
+
+.btn-outline:hover {
+    background: #012152;
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* Navigation */
+.calendar-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    background: white;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.nav-btn {
+    background: #f8f9fa;
+    border: 1px solid #e1e5e9;
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #012152;
+}
+
+.nav-btn:hover {
+    background: #012152;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.nav-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.nav-btn:disabled:hover {
+    background: #f8f9fa;
+    color: #012152;
+}
+
+.current-month {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #012152;
+    min-width: 200px;
+    text-align: center;
+}
+
+.view-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.view-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #f8f9fa;
+    border: 1px solid #e1e5e9;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #666;
+}
+
+.view-btn.active {
+    background: #012152;
+    color: white;
+    border-color: #012152;
+}
+
+.view-btn:hover:not(.active) {
+    background: #e9ecef;
+    transform: translateY(-1px);
+}
+
+.view-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.view-btn:disabled:hover {
+    background: #f8f9fa;
+    transform: none;
+}
+
+.today-btn {
+    background: #007cba;
+    color: white;
+    border-color: #007cba;
+}
+
+.today-btn:hover {
+    background: #005a87;
+    transform: translateY(-1px);
+}
+
+.today-btn:disabled {
+    background: #6c757d;
+    border-color: #6c757d;
+    cursor: not-allowed;
+}
+
+.today-btn:disabled:hover {
+    background: #6c757d;
+    transform: none;
+}
+
+/* Calendar Card */
+.calendar-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+
+/* Custom FullCalendar Styles */
+#calendar {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.fc {
+    font-size: 0.9rem;
+}
+
+.fc-header-toolbar {
+    display: none !important;
+}
+
+.fc-daygrid-day-frame {
+    min-height: 80px !important;
+    padding: 0.25rem;
+}
+
+.fc-daygrid-day-number {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #333;
+    padding: 0.25rem !important;
+}
+
+.fc-day-today {
+    background-color: #e8f4fd !important;
+}
+
+.fc-day-today .fc-daygrid-day-number {
+    color: #007cba;
+    font-weight: bold;
+}
+
+.fc-event {
+    border: none !important;
+    border-radius: 6px !important;
+    padding: 0.1rem 0.3rem !important;
+    margin: 0.1rem 0 !important;
+    font-size: 0.75rem !important;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.fc-event:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.fc-event-title {
+    font-weight: 500 !important;
+}
+
+.fc-daygrid-event-dot {
+    display: none !important;
+}
+
+.fc-list-event {
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.fc-list-event:hover {
+    background-color: #f8f9fa;
+}
+
+.fc-list-event-dot {
+    border: none !important;
+}
+
+/* Legend */
+.calendar-legend {
+    background: white;
+    padding: 1.25rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 1.5rem;
+}
+
+.calendar-legend h4 {
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    color: #012152;
+    font-weight: 600;
+}
+
+.legend-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.legend-label {
+    font-size: 0.85rem;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Stats */
+.calendar-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.stat-item {
+    background: white;
+    padding: 1.25rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-2px);
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #012152;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Loading State */
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .calendar-container {
+        padding: 1rem;
+    }
+
+    .calendar-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .calendar-navigation {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+
+    .nav-controls {
+        justify-content: center;
+    }
+
+    .view-controls {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .current-month {
+        min-width: auto;
+        font-size: 1.1rem;
+    }
+
+    .fc-daygrid-day-frame {
+        min-height: 60px !important;
+    }
+
+    .fc-daygrid-day-number {
+        font-size: 0.75rem;
+    }
+
+    .fc-event {
+        font-size: 0.7rem !important;
+        padding: 0.05rem 0.2rem !important;
+    }
+
+    .legend-items {
+        gap: 0.75rem;
+    }
+
+    .calendar-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .calendar-title {
+        font-size: 1.5rem;
+    }
+
+    .header-actions {
+        flex-direction: column;
+    }
+
+    .header-actions .btn-primary,
+    .header-actions .btn-outline {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .calendar-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .fc-daygrid-day-frame {
+        min-height: 50px !important;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .fc-event {
+        border: 1px solid #000 !important;
+    }
+    
+    .fc-day-today {
+        border: 2px solid #007cba !important;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .fc-event,
+    .stat-item,
+    .btn-primary,
+    .btn-outline,
+    .nav-btn,
+    .view-btn {
+        transition: none;
+        transform: none;
+    }
+}
+</style>
+
 <!-- FullCalendar JS -->
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales-all.min.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
+    var currentMonthEl = document.getElementById('current-month');
+    var prevMonthBtn = document.getElementById('prev-month');
+    var nextMonthBtn = document.getElementById('next-month');
+    var todayBtn = document.getElementById('today-btn');
+    var monthViewBtn = document.getElementById('month-view');
+    var listViewBtn = document.getElementById('list-view');
+    
     var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         locale: '{{ LANGUAGE_CODE }}',
+        firstDay: 1, // Start week on Monday
+        height: 'auto',
+        fixedWeekCount: false,
+        showNonCurrentDates: true,
+        navLinks: false,
+        
+        // Events data
         events: [
             {% for event in events %}
             {
                 title: '{{ event.title|escapejs }}',
                 start: '{{ event.start_date|date:"Y-m-d" }}',
+                {% if event.end_date %}
+                end: '{{ event.end_date|date:"Y-m-d" }}',
+                {% endif %}
                 url: '{% url "events:event_detail" event.slug %}',
                 backgroundColor: '{{ event.category.color|default:"#007cba" }}',
+                borderColor: '{{ event.category.color|default:"#007cba" }}',
+                textColor: '#ffffff',
+                extendedProps: {
+                    category: '{{ event.category.name|default:"Event"|escapejs }}'
+                }
             },
             {% endfor %}
         ],
+        
+        // Event interactions
         eventClick: function(info) {
             info.jsEvent.preventDefault();
-            window.open(info.event.url);
+            window.location.href = info.event.url;
+        },
+        
+        // Date navigation
+        datesSet: function(info) {
+            updateCurrentMonth(info.view.currentStart);
+            updateButtonStates();
+        },
+        
+        // Better event display
+        eventDisplay: 'block',
+        eventTimeFormat: {
+            hour: '2-digit',
+            minute: '2-digit',
+            meridiem: false
+        },
+        
+        // Loading state management
+        loading: function(isLoading) {
+            if (isLoading) {
+                calendarEl.classList.add('loading');
+            } else {
+                calendarEl.classList.remove('loading');
+            }
         }
     });
+
+    // Render calendar
     calendar.render();
+    updateCurrentMonth();
+    updateButtonStates();
+
+    // Navigation controls with proper state management
+    function setButtonsLoadingState(loading) {
+        [prevMonthBtn, nextMonthBtn, todayBtn, monthViewBtn, listViewBtn].forEach(btn => {
+            btn.disabled = loading;
+        });
+    }
+
+    prevMonthBtn.addEventListener('click', function() {
+        if (this.disabled) return;
+        setButtonsLoadingState(true);
+        calendar.prev();
+        setTimeout(() => setButtonsLoadingState(false), 100);
+    });
+
+    nextMonthBtn.addEventListener('click', function() {
+        if (this.disabled) return;
+        setButtonsLoadingState(true);
+        calendar.next();
+        setTimeout(() => setButtonsLoadingState(false), 100);
+    });
+
+    todayBtn.addEventListener('click', function() {
+        if (this.disabled) return;
+        setButtonsLoadingState(true);
+        calendar.today();
+        setTimeout(() => setButtonsLoadingState(false), 100);
+    });
+
+    // View controls
+    function switchView(view) {
+        setButtonsLoadingState(true);
+        calendar.changeView(view);
+        
+        // Update active button state
+        [monthViewBtn, listViewBtn].forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        if (view === 'dayGridMonth') {
+            monthViewBtn.classList.add('active');
+        } else if (view === 'listMonth') {
+            listViewBtn.classList.add('active');
+        }
+        
+        setTimeout(() => setButtonsLoadingState(false), 100);
+    }
+
+    monthViewBtn.addEventListener('click', function() {
+        if (this.disabled) return;
+        switchView('dayGridMonth');
+    });
+
+    listViewBtn.addEventListener('click', function() {
+        if (this.disabled) return;
+        switchView('listMonth');
+    });
+
+    // Update current month display
+    function updateCurrentMonth(date) {
+        const currentDate = date || calendar.getDate();
+        const formatter = new Intl.DateTimeFormat('{{ LANGUAGE_CODE }}', {
+            year: 'numeric',
+            month: 'long'
+        });
+        currentMonthEl.textContent = formatter.format(currentDate);
+    }
+
+    // Update button states based on current view
+    function updateButtonStates() {
+        const today = new Date();
+        const currentDate = calendar.getDate();
+        
+        // Check if we're already on today
+        const isToday = today.toDateString() === currentDate.toDateString();
+        todayBtn.disabled = isToday;
+        
+        // Update today button appearance
+        if (isToday) {
+            todayBtn.style.opacity = '0.6';
+            todayBtn.title = '{% trans "You are viewing today" %}';
+        } else {
+            todayBtn.style.opacity = '1';
+            todayBtn.title = '{% trans "Go to today" %}';
+        }
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        
+        switch(e.key) {
+            case 'ArrowLeft':
+                e.preventDefault();
+                if (!prevMonthBtn.disabled) {
+                    prevMonthBtn.click();
+                }
+                break;
+            case 'ArrowRight':
+                e.preventDefault();
+                if (!nextMonthBtn.disabled) {
+                    nextMonthBtn.click();
+                }
+                break;
+            case 't':
+            case 'T':
+                e.preventDefault();
+                if (!todayBtn.disabled) {
+                    todayBtn.click();
+                }
+                break;
+            case 'm':
+            case 'M':
+                e.preventDefault();
+                if (!monthViewBtn.disabled) {
+                    monthViewBtn.click();
+                }
+                break;
+            case 'l':
+            case 'L':
+                e.preventDefault();
+                if (!listViewBtn.disabled) {
+                    listViewBtn.click();
+                }
+                break;
+        }
+    });
+
+    // Focus management for accessibility
+    calendarEl.setAttribute('tabindex', '0');
+    calendarEl.setAttribute('role', 'application');
+    calendarEl.setAttribute('aria-label', '{% trans "Event Calendar" %}');
+
+    // Initialize tooltips for buttons
+    [prevMonthBtn, nextMonthBtn, todayBtn, monthViewBtn, listViewBtn].forEach(btn => {
+        btn.setAttribute('title', btn.textContent.trim());
+    });
 });
 </script>
 {% endblock %}
