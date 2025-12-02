@@ -1,94 +1,254 @@
 {% load static %}
+{% load i18n %}
 
 <!-- Footer -->
-<footer class="text-white" style="background-color: #012152; padding: 1% 5%;">
-    <div class="row">
-      <!-- Useful Links -->
-      <div class="col">
-        <h5 class="text-light fw-bold mb-4">Useful Links</h5>
-        <ul class="list-unstyled">
-          <li class="mb-2">
-            <a href="https://t.me/AliKhaitov" class="text-light text-decoration-none d-flex align-items-center">
-              <i class="fas fa-external-link-alt me-2 small"></i>
-              Developer
-            </a>
-          </li>
-          ...
-        </ul>
-      </div>
+<footer class="text-white" style="background-color: #012152;">
+    <div class="container-fluid px-3 px-md-5 py-4 py-md-5">
+        <div class="row g-4">
+            <!-- Useful Links -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <h5 class="text-light fw-bold mb-4">{% trans "Useful Links" %}</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-3">
+                        <a href="https://t.me/AliKhaitov" class="text-light text-decoration-none d-flex align-items-center hover-effect">
+                            <i class="fas fa-external-link-alt me-3 fa-fw"></i>
+                            <span>{% trans "Developer" %}</span>
+                        </a>
+                    </li>
+                    <li class="mb-3">
+                        <a href="/about/" class="text-light text-decoration-none d-flex align-items-center hover-effect">
+                            <i class="fas fa-info-circle me-3 fa-fw"></i>
+                            <span>{% trans "About University" %}</span>
+                        </a>
+                    </li>
+                    <li class="mb-3">
+                        <a href="/news/" class="text-light text-decoration-none d-flex align-items-center hover-effect">
+                            <i class="fas fa-newspaper me-3 fa-fw"></i>
+                            <span>{% trans "News" %}</span>
+                        </a>
+                    </li>
+                    <li class="mb-3">
+                        <a href="/faq/" class="text-light text-decoration-none d-flex align-items-center hover-effect">
+                            <i class="fas fa-question-circle me-3 fa-fw"></i>
+                            <span>{% trans "FAQ" %}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
 
-      <!-- Address -->
-      <div class="col">
-        <h5 class="text-light fw-bold mb-4">Address</h5>
-        <div class="d-flex align-items-start mb-3">
-          <i class="fas fa-map-marker-alt text-light me-3 mt-1"></i>
-          <a href="https://maps.app.goo.gl/Vak1fFmHn8bcTJqk8" style="text-decoration: none;">
-            <p class="text-light mb-0">
-              Bukhara city, MFY "Yangibod",<br>
-              G'ijduvon street, 74-house
-            </p>
-          </a>
-        </div>
-        <!-- Xarita -->
-        <div class="rounded shadow overflow-hidden mb-3">
-          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d911.3392403764602!2d64.42590351321431!3d39.798748210538605!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3f50093729ce2b27%3A0x4cfc4ffe225f3750!2sOsiyo%20Xalqaro%20Universiteti!5e0!3m2!1sru!2s!4v1763974013257!5m2!1sru!2s" 
-          style="border:0; width: 50vh; height: 30vh;" 
-          allowfullscreen="" 
-          loading="lazy" 
-          referrerpolicy="no-referrer-when-downgrade">
-          </iframe>
-        </div>
-      </div>
+            <!-- Address -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <h5 class="text-light fw-bold mb-4">{% trans "Address" %}</h5>
+                <div class="d-flex align-items-start mb-4">
+                    <i class="fas fa-map-marker-alt text-light me-3 mt-1 fa-fw"></i>
+                    <a href="https://maps.app.goo.gl/Vak1fFmHn8bcTJqk8" class="text-decoration-none">
+                        <p class="text-light mb-0">
+                            {% trans "Bukhara city, MFY 'Yangibod'," %}<br>
+                            {% trans "G'ijduvon street, 74-house" %}
+                        </p>
+                    </a>
+                </div>
+                
+                <!-- Map -->
+                <div class="mb-4">
+                    <div class="ratio ratio-16x9">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d911.3392403764602!2d64.42590351321431!3d39.798748210538605!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3f50093729ce2b27%3A0x4cfc4ffe225f3750!2sOsiyo%20Xalqaro%20Universiteti!5e0!3m2!1sru!2s!4v1763974013257!5m2!1sru!2s" 
+                            style="border: 0;" 
+                            allowfullscreen 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade"
+                            class="rounded shadow-sm">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
 
-      <!-- Contact -->
-      <div class="col">
-        <h5 class="text-light fw-bold mb-4">Contact</h5>
-        <div class="d-flex align-items-center mb-3">
-          <i class="fas fa-phone text-light me-3"></i>
-          <div>
-            <a href="tel:+998553050009" class="text-light text-decoration-none">
-              +998 55 305 00 09
-            </a>
-          </div>
-        </div>
-        <div class="d-flex align-items-center mb-4">
-          <i class="fas fa-envelope text-light me-3"></i>
-          <div>
-            <a href="mailto:info@oxu.uz" class="text-light text-decoration-none">
-              info@oxu.uz
-            </a>
-          </div>
+            <!-- Contact -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <h5 class="text-light fw-bold mb-4">{% trans "Contact" %}</h5>
+                
+                <!-- Phone -->
+                <div class="d-flex align-items-center mb-4">
+                    <i class="fas fa-phone text-light me-3 fa-fw"></i>
+                    <div>
+                        <a href="tel:+998553050009" class="text-light text-decoration-none hover-effect">
+                            +998 55 305 00 09
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Email -->
+                <div class="d-flex align-items-center mb-4">
+                    <i class="fas fa-envelope text-light me-3 fa-fw"></i>
+                    <div>
+                        <a href="mailto:info@oxu.uz" class="text-light text-decoration-none hover-effect">
+                            info@oxu.uz
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Social Networks -->
+                <h6 class="text-light fw-bold mb-3">{% trans "Social Networks" %}</h6>
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                    <a href="https://t.me/Oxu_uz" class="btn btn-outline-light btn-sm p-2 rounded-circle social-btn" aria-label="Telegram">
+                        <i class="fab fa-telegram"></i>
+                    </a>
+                    <a href="https://www.instagram.com/oxu_uz/" class="btn btn-outline-light btn-sm p-2 rounded-circle social-btn" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://www.facebook.com/people/Osiyo-Xalqaro-Universiteti/100088012691808/?sk=about" class="btn btn-outline-light btn-sm p-2 rounded-circle social-btn" aria-label="Facebook">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="https://www.youtube.com/@Osiyo.Xalqaro.Universiteti." class="btn btn-outline-light btn-sm p-2 rounded-circle social-btn" aria-label="YouTube">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                </div>
+                
+                <!-- Working Hours -->
+                <div class="mt-4 pt-3 border-top border-light">
+                    <p class="text-light-50 small mb-1">{% trans "Working hours:" %}</p>
+                    <p class="text-light small mb-0">{% trans "Mon-Fri: 9:00 AM - 6:00 PM" %}</p>
+                    <p class="text-light small mb-0">{% trans "Sat: 9:00 AM - 2:00 PM" %}</p>
+                </div>
+            </div>
         </div>
         
-        <!-- Social Networks -->
-        <h6 class="text-light fw-bold mb-3">Social Networks</h6>
-        <div class="d-flex gap-2">
-          <a href="https://t.me/Oxu_uz" class="btn btn-outline-light btn-sm p-2">
-            <i class="fab fa-telegram"></i>
-          </a>
-          <a href="https://www.instagram.com/oxu_uz/" class="btn btn-outline-light btn-sm p-2">
-            <i class="fab fa-instagram"></i>
-          </a>
-          <a href="https://www.facebook.com/people/Osiyo-Xalqaro-Universiteti/100088012691808/?sk=about" class="btn btn-outline-light btn-sm p-2">
-            <i class="fab fa-facebook"></i>
-          </a>
-          <a href="https://www.youtube.com/@Osiyo.Xalqaro.Universiteti." class="btn btn-outline-light btn-sm p-2">
-            <i class="fab fa-youtube"></i>
-          </a>
+        <!-- Logo and Copyright -->
+        <div class="row pt-4 mt-4 border-top border-light">
+            <div class="col-12 col-md-6 d-flex flex-column flex-sm-row align-items-center align-items-sm-start mb-3 mb-md-0">
+                <a class="navbar-brand d-flex align-items-center text-decoration-none mb-3 mb-sm-0 me-sm-4" href="/">
+                    <img style="width: 60px; height: 60px; object-fit: contain;" src="{% static 'img/logo1.png' %}" alt="OXU Logo" class="me-3">
+                    <div class="d-flex flex-column">
+                        <span class="fw-bold text-white fs-5">OXU</span>
+                        <small class="text-light-50">{% trans "Career" %}</small>
+                    </div>
+                </a>
+            </div>
+            <div class="col-12 col-md-6 d-flex align-items-center justify-content-center justify-content-md-end">
+                <small class="text-light text-center text-md-end">
+                    © {% now 'Y' %} {% trans "All rights reserved. Asia International University" %}
+                </small>
+            </div>
         </div>
-      </div>
-    </div>
-    
-    <!-- Logo va nusxa huquqi -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center pt-4 border-top border-light">
-      <a class="navbar-brand d-flex align-items-center text-decoration-none mb-3 mb-md-0" href="/">
-        <img style="width: 60px;" src="{% static 'img/logo1.png' %}" alt="OXU Logo" class="me-3">
-        <span class="fw-bold text-white">
-          OXU <br> <small>Career</small>
-        </span>
-      </a>
-      <small class="text-light text-center text-md-end">
-        © {% now 'Y' %} All rights reserved. Asia International University
-      </small>
     </div>
 </footer>
+
+<style>
+    /* Стили для адаптивности и улучшенного дизайна */
+    footer {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .hover-effect {
+        transition: all 0.3s ease;
+        padding: 4px 8px;
+        border-radius: 4px;
+    }
+    
+    .hover-effect:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        transform: translateX(5px);
+        color: #fff !important;
+    }
+    
+    .social-btn {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        border-width: 2px;
+    }
+    
+    .social-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .text-light-50 {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .border-light {
+        border-color: rgba(255, 255, 255, 0.2) !important;
+    }
+    
+    .fa-fw {
+        width: 20px;
+        text-align: center;
+    }
+    
+    /* Адаптивные стили для мобильных устройств */
+    @media (max-width: 768px) {
+        footer .container-fluid {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+        
+        footer .col {
+            margin-bottom: 2rem;
+        }
+        
+        footer .col:last-child {
+            margin-bottom: 0;
+        }
+        
+        .social-btn {
+            width: 50px;
+            height: 50px;
+        }
+        
+        .ratio-16x9 {
+            --bs-aspect-ratio: 75%;
+        }
+        
+        .navbar-brand {
+            justify-content: center;
+            width: 100%;
+            text-align: center;
+            flex-direction: column;
+        }
+        
+        .navbar-brand img {
+            margin-right: 0;
+            margin-bottom: 10px;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        footer {
+            padding-left: 10px !important;
+            padding-right: 10px !important;
+        }
+        
+        h5 {
+            font-size: 1.1rem;
+        }
+        
+        .hover-effect {
+            padding: 6px 10px;
+        }
+    }
+    
+    /* Для очень маленьких экранов */
+    @media (max-width: 360px) {
+        .social-btn {
+            width: 45px;
+            height: 45px;
+            padding: 0.5rem;
+        }
+        
+        .d-flex.flex-wrap {
+            justify-content: center;
+        }
+    }
+    
+    /* Для темной темы (если нужно) */
+    @media (prefers-color-scheme: dark) {
+        footer {
+            background-color: #001a3d !important;
+        }
+    }
+</style>
