@@ -3,214 +3,796 @@
 {% load static %}
 {% load i18n %}
 
-{% block title %}{{ user.get_full_name|default:user.username }} - {% trans "Profile" %}{% endblock %}
+{% block title %}{{ user.get_full_name|default:user.username }} - {% trans "User Profile" %}{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    --info-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --dark-text: #2d3748;
+    --light-text: #6b7280;
+    --card-bg: #ffffff;
+    --light-bg: #f8fafc;
+    --border-color: #e5e7eb;
+}
+
+/* Убираем все светлые фоны с белым текстом */
+body {
+    color: var(--dark-text);
+    background-color: #f9fafb;
+}
+
+/* Исправляем все элементы с белым текстом на темном фоне */
+.profile-avatar {
+    width: 140px;
+    height: 140px;
+    border: 4px solid #fff;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    background-color: #fff;
+}
+
+.profile-avatar:hover {
+    transform: scale(1.05);
+}
+
+.card-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    background-color: var(--card-bg);
+}
+
+.card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* БЕЙДЖИ - теперь с темным текстом на светлом фоне */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid;
+}
+
+/* Бейджи пользователей */
+.badge-student {
+    background-color: rgba(16, 185, 129, 0.1) !important;
+    border-color: #10b981 !important;
+    color: #065f46 !important;
+}
+
+.badge-employer {
+    background-color: rgba(59, 130, 246, 0.1) !important;
+    border-color: #3b82f6 !important;
+    color: #1e40af !important;
+}
+
+.badge-admin {
+    background-color: rgba(245, 158, 11, 0.1) !important;
+    border-color: #f59e0b !important;
+    color: #92400e !important;
+}
+
+.badge-main-admin {
+    background-color: rgba(239, 68, 68, 0.1) !important;
+    border-color: #ef4444 !important;
+    color: #991b1b !important;
+}
+
+/* Статусные бейджи */
+.badge-active {
+    background-color: rgba(16, 185, 129, 0.1) !important;
+    border-color: #10b981 !important;
+    color: #065f46 !important;
+}
+
+.badge-inactive {
+    background-color: rgba(107, 114, 128, 0.1) !important;
+    border-color: #6b7280 !important;
+    color: #374151 !important;
+}
+
+.badge-verified {
+    background-color: rgba(6, 182, 212, 0.1) !important;
+    border-color: #06b6d4 !important;
+    color: #155e75 !important;
+}
+
+.badge-employer-active {
+    background-color: rgba(139, 92, 246, 0.1) !important;
+    border-color: #8b5cf6 !important;
+    color: #5b21b6 !important;
+}
+
+/* Бейдж в хедере карточки */
+.badge-light {
+    background-color: var(--light-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--dark-text) !important;
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 25px;
+}
+
+.timeline-item:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #3b82f6;
+}
+
+.timeline-item:after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 24px;
+    bottom: -25px;
+    width: 2px;
+    background: var(--border-color);
+}
+
+.timeline-item:last-child:after {
+    display: none;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: 15px;
+    padding: 20px;
+    height: 100%;
+    color: var(--dark-text);
+}
+
+.icon-wrapper {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    color: white !important; /* Иконки всегда белые на градиенте */
+}
+
+.icon-wrapper.bg-primary-gradient {
+    background: var(--primary-gradient);
+}
+
+.icon-wrapper.bg-success-gradient {
+    background: var(--success-gradient);
+}
+
+.icon-wrapper.bg-info-gradient {
+    background: var(--info-gradient);
+}
+
+/* Цвета текста */
+.text-primary {
+    color: #3b82f6 !important;
+}
+
+.text-success {
+    color: #10b981 !important;
+}
+
+.text-danger {
+    color: #ef4444 !important;
+}
+
+.text-warning {
+    color: #f59e0b !important;
+}
+
+.text-info {
+    color: #06b6d4 !important;
+}
+
+.text-dark {
+    color: var(--dark-text) !important;
+}
+
+.text-muted {
+    color: var(--light-text) !important;
+}
+
+/* Заголовки карточек */
+.card-header {
+    background-color: var(--card-bg) !important;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.card-header h5, 
+.card-header h6 {
+    color: var(--dark-text) !important;
+    margin: 0;
+}
+
+/* Хлебные крошки */
+.breadcrumb-item a {
+    color: var(--light-text) !important;
+    text-decoration: none;
+}
+
+.breadcrumb-item.active {
+    color: var(--dark-text) !important;
+}
+
+/* Прогресс-бар */
+.progress {
+    background-color: #e5e7eb;
+}
+
+.progress-bar {
+    background-color: #10b981;
+}
+
+/* Кнопки */
+.btn-outline-primary {
+    color: #3b82f6;
+    border-color: #3b82f6;
+}
+
+.btn-outline-success {
+    color: #10b981;
+    border-color: #10b981;
+}
+
+.btn-outline-warning {
+    color: #f59e0b;
+    border-color: #f59e0b;
+}
+
+/* Элементы списка */
+.list-group-item {
+    background-color: transparent !important;
+    border-color: var(--border-color);
+    color: var(--dark-text);
+}
+
+.list-group-item small {
+    color: var(--light-text);
+}
+
+/* Фоновые классы */
+.bg-light {
+    background-color: var(--light-bg) !important;
+    color: var(--dark-text) !important;
+}
+
+.bg-white {
+    background-color: var(--card-bg) !important;
+}
+
+/* Блоки с информацией */
+.info-block {
+    background-color: var(--light-bg);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+/* Иконки в .bg-light */
+.bg-light .fas,
+.bg-light i {
+    color: inherit !important; /* Наследует цвет родителя */
+}
+
+/* Аватары без фото */
+.avatar-placeholder {
+    background: var(--primary-gradient);
+    color: white !important; /* Белые иконки на градиенте */
+}
+
+/* Границы */
+.border {
+    border-color: var(--border-color) !important;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .card-body {
+        padding: 1.25rem;
+    }
+    
+    .stat-card {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 576px) {
+    .d-flex.flex-md-row {
+        flex-direction: column !important;
+    }
+    
+    .gap-3 {
+        gap: 1rem !important;
+    }
+    
+    .status-badge {
+        font-size: 0.8rem;
+        padding: 4px 10px;
+    }
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <!-- Заголовок и навигация -->
+<div class="container-fluid py-4">
+    <!-- Header Section -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{% url 'accounts:admin_dashboard' %}">{% trans "Admin" %}</a></li>
-                            <li class="breadcrumb-item"><a href="{% url 'accounts:user_management' %}">{% trans "Users" %}</a></li>
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+                <div class="mb-3 mb-md-0">
+                    <nav aria-label="breadcrumb" class="mb-3">
+                        <ol class="breadcrumb bg-transparent p-0">
+                            <li class="breadcrumb-item"><a href="{% url 'accounts:admin_dashboard' %}" class="text-decoration-none">{% trans "Dashboard" %}</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'accounts:user_management' %}" class="text-decoration-none">{% trans "User Management" %}</a></li>
                             <li class="breadcrumb-item active">{{ user.get_full_name|default:user.username }}</li>
                         </ol>
                     </nav>
-                    <h1 class="h3 fw-bold text-primary mb-1">{{ user.get_full_name|default:user.username }}</h1>
-                    <p class="text-muted mb-0">{{ user.email }}</p>
+                    
+                    <div class="d-flex align-items-center gap-3">
+                        {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" alt="{{ user.username }}" 
+                             class="rounded-circle profile-avatar">
+                        {% else %}
+                        <div class="rounded-circle profile-avatar d-flex align-items-center justify-content-center avatar-placeholder">
+                            <i class="fas fa-user fa-3x"></i>
+                        </div>
+                        {% endif %}
+                        
+                        <div>
+                            <h1 class="h2 fw-bold mb-1">{{ user.get_full_name|default:user.username }}</h1>
+                            <p class="text-muted mb-2">
+                                <i class="fas fa-envelope me-2 text-primary"></i>{{ user.email }}
+                            </p>
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <span class="status-badge 
+                                    {% if user.is_student %}badge-student
+                                    {% elif user.is_employer %}badge-employer
+                                    {% elif user.is_admin %}badge-admin
+                                    {% elif user.is_main_admin %}badge-main-admin
+                                    {% else %}badge-inactive{% endif %}">
+                                    <i class="fas 
+                                        {% if user.is_student %}fa-graduation-cap
+                                        {% elif user.is_employer %}fa-building
+                                        {% elif user.is_admin %}fa-user-shield
+                                        {% elif user.is_main_admin %}fa-crown
+                                        {% else %}fa-user{% endif %} me-1"></i>
+                                    {{ user.get_user_type_display }}
+                                </span>
+                                
+                                {% if user.is_active %}
+                                <span class="status-badge badge-active">
+                                    <i class="fas fa-check-circle me-1"></i>{% trans "Active" %}
+                                </span>
+                                {% else %}
+                                <span class="status-badge badge-inactive">
+                                    <i class="fas fa-times-circle me-1"></i>{% trans "Inactive" %}
+                                </span>
+                                {% endif %}
+                                
+                                {% if user.is_verified %}
+                                <span class="status-badge badge-verified">
+                                    <i class="fas fa-badge-check me-1"></i>{% trans "Verified" %}
+                                </span>
+                                {% endif %}
+                                
+                                {% if user.is_employer and user.is_active_employer %}
+                                <span class="status-badge badge-employer-active">
+                                    <i class="fas fa-briefcase me-1"></i>{% trans "Active Employer" %}
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="text-end">
-                    <span class="badge 
-                        {% if user.is_student %}bg-success
-                        {% elif user.is_employer %}bg-info
-                        {% elif user.is_admin %}bg-warning
-                        {% elif user.is_main_admin %}bg-danger
-                        {% else %}bg-secondary{% endif %} fs-6">
-                        {{ user.get_user_type_display }}
-                    </span>
+                
+                <div class="d-flex flex-wrap gap-2 mt-3 mt-md-0">
+                    {% if not user.is_main_admin %}
+                    <form method="post" action="{% url 'accounts:toggle_user_status' user.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn {% if user.is_active %}btn-outline-warning{% else %}btn-outline-success{% endif %} btn-sm">
+                            <i class="fas {% if user.is_active %}fa-user-slash{% else %}fa-user-check{% endif %} me-1"></i>
+                            {% if user.is_active %}{% trans "Deactivate" %}{% else %}{% trans "Activate" %}{% endif %}
+                        </button>
+                    </form>
+                    {% endif %}
+                    
+                    <a href="mailto:{{ user.email }}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-envelope me-1"></i>{% trans "Send Email" %}
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row">
-        <!-- Основная информация -->
-        <div class="col-lg-4 mb-4">
-            <!-- Карточка пользователя -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-body text-center">
-                    {% if user.avatar %}
-                    <img src="{{ user.avatar.url }}" alt="{{ user.username }}" 
-                         class="rounded-circle mb-3" width="120" height="120" style="object-fit: cover;">
-                    {% else %}
-                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" 
-                         style="width: 120px; height: 120px;">
-                        <i class="fas fa-user text-white fa-3x"></i>
-                    </div>
-                    {% endif %}
-                    
-                    <h5 class="fw-bold">{{ user.get_full_name|default:user.username }}</h5>
-                    <p class="text-muted mb-3">{{ user.email }}</p>
-                    
-                    <div class="d-flex justify-content-center gap-2 mb-3">
-                        {% if user.is_active %}
-                        <span class="badge bg-success">{% trans "Faol" %}</span>
-                        {% else %}
-                        <span class="badge bg-danger">{% trans "Nofaol" %}</span>
-                        {% endif %}
-                        
-                        {% if user.is_verified %}
-                        <span class="badge bg-info">{% trans "Tasdiqlangan" %}</span>
-                        {% endif %}
-                        
-                        {% if user.is_employer and user.is_active_employer %}
-                        <span class="badge bg-primary">{% trans "Faol ish beruvchi" %}</span>
-                        {% endif %}
-                    </div>
+    <!-- Stats Cards -->
+    {% if user.is_employer or user.is_student %}
+    <div class="row mb-4">
+        {% if user.is_employer and profile %}
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stat-card card-hover">
+                <div class="icon-wrapper bg-primary-gradient">
+                    <i class="fas fa-briefcase fa-lg"></i>
+                </div>
+                <h3 class="fw-bold mb-1">{{ profile.jobs_posted|default:"0" }}</h3>
+                <p class="text-muted mb-0">{% trans "Jobs Posted" %}</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stat-card card-hover">
+                <div class="icon-wrapper bg-info-gradient">
+                    <i class="fas fa-users fa-lg"></i>
+                </div>
+                <h3 class="fw-bold mb-1">{{ profile.get_company_size_display|default:"N/A" }}</h3>
+                <p class="text-muted mb-0">{% trans "Company Size" %}</p>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if user.is_student and profile %}
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stat-card card-hover">
+                <div class="icon-wrapper bg-success-gradient">
+                    <i class="fas fa-star fa-lg"></i>
+                </div>
+                <h3 class="fw-bold mb-1">{{ profile.gpa|default:"N/A" }}</h3>
+                <p class="text-muted mb-0">{% trans "GPA Score" %}</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stat-card card-hover">
+                <div class="icon-wrapper bg-info-gradient">
+                    <i class="fas fa-graduation-cap fa-lg"></i>
+                </div>
+                <h3 class="fw-bold mb-1">{{ profile.graduation_year|default:"N/A" }}</h3>
+                <p class="text-muted mb-0">{% trans "Graduation Year" %}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
 
-                    {% if not user.is_main_admin %}
-                    <form method="post" action="{% url 'accounts:toggle_user_status' user.id %}" class="d-inline">
-                        {% csrf_token %}
-                        <button type="submit" class="btn {% if user.is_active %}btn-warning{% else %}btn-success{% endif %} btn-sm">
-                            <i class="fas {% if user.is_active %}fa-times{% else %}fa-check{% endif %} me-1"></i>
-                            {% if user.is_active %}{% trans "Deactivate" %}{% else %}{% trans "Activate" %}{% endif %}
-                        </button>
-                    </form>
-                    {% endif %}
+    <div class="row">
+        <!-- Left Column - Basic Information -->
+        <div class="col-lg-4 mb-4">
+            <!-- Contact Information -->
+            <div class="card card-hover shadow-sm mb-4">
+                <div class="card-header border-0 pb-0">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-address-card text-primary me-2"></i>{% trans "Contact Information" %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        {% if user.phone_number %}
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-light rounded-circle p-2 me-3">
+                                    <i class="fas fa-phone text-primary"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">{% trans "Phone" %}</small>
+                                    <strong>{{ user.phone_number }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if user.country %}
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-light rounded-circle p-2 me-3">
+                                    <i class="fas fa-map-marker-alt text-primary"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">{% trans "Location" %}</small>
+                                    <strong>{{ user.country.name }}{% if user.city %}, {{ user.city }}{% endif %}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if profile and user.is_employer and profile.company_phone %}
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-light rounded-circle p-2 me-3">
+                                    <i class="fas fa-building text-primary"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">{% trans "Company Phone" %}</small>
+                                    <strong>{{ profile.company_phone }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-light rounded-circle p-2 me-3">
+                                    <i class="fas fa-calendar-alt text-primary"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">{% trans "Member Since" %}</small>
+                                    <strong>{{ user.date_joined|date:"F d, Y" }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% if user.last_login %}
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-light rounded-circle p-2 me-3">
+                                    <i class="fas fa-clock text-primary"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">{% trans "Last Login" %}</small>
+                                    <strong>{{ user.last_login|timesince }} {% trans "ago" %}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
 
-            <!-- Контактная информация -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white">
-                    <h6 class="fw-bold mb-0">{% trans "Kontakt ma'lumotlari" %}</h6>
+            <!-- Account Status -->
+            <div class="card card-hover shadow-sm">
+                <div class="card-header border-0 pb-0">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-user-shield text-primary me-2"></i>{% trans "Account Status" %}
+                    </h5>
                 </div>
                 <div class="card-body">
-                    {% if user.phone_number %}
-                    <div class="d-flex align-items-center mb-2">
-                        <i class="fas fa-phone text-muted me-2"></i>
-                        <span>{{ user.phone_number }}</span>
-                    </div>
-                    {% endif %}
-                    
-                    {% if user.country %}
-                    <div class="d-flex align-items-center mb-2">
-                        <i class="fas fa-map-marker-alt text-muted me-2"></i>
-                        <span>{{ user.country.name }}{% if user.city %}, {{ user.city }}{% endif %}</span>
-                    </div>
-                    {% endif %}
-                    
-                    {% if profile %}
-                        {% if user.is_employer and profile.company_phone %}
-                        <div class="d-flex align-items-center mb-2">
-                            <i class="fas fa-building text-muted me-2"></i>
-                            <span>{{ profile.company_phone }}</span>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="text-center p-3 border rounded-2">
+                                <div class="mb-2">
+                                    <i class="fas {% if user.is_active %}fa-check-circle text-success{% else %}fa-times-circle text-danger{% endif %} fa-2x"></i>
+                                </div>
+                                <small class="text-muted d-block">{% trans "Status" %}</small>
+                                <strong>{% if user.is_active %}{% trans "Active" %}{% else %}{% trans "Inactive" %}{% endif %}</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-center p-3 border rounded-2">
+                                <div class="mb-2">
+                                    <i class="fas {% if user.is_verified %}fa-badge-check text-info{% else %}fa-clock text-warning{% endif %} fa-2x"></i>
+                                </div>
+                                <small class="text-muted d-block">{% trans "Verification" %}</small>
+                                <strong>{% if user.is_verified %}{% trans "Verified" %}{% else %}{% trans "Pending" %}{% endif %}</strong>
+                            </div>
+                        </div>
+                        {% if user.is_employer %}
+                        <div class="col-6">
+                            <div class="text-center p-3 border rounded-2">
+                                <div class="mb-2">
+                                    <i class="fas {% if user.is_active_employer %}fa-check text-success{% else %}fa-times text-danger{% endif %} fa-2x"></i>
+                                </div>
+                                <small class="text-muted d-block">{% trans "Employer Status" %}</small>
+                                <strong>{% if user.is_active_employer %}{% trans "Active" %}{% else %}{% trans "Inactive" %}{% endif %}</strong>
+                            </div>
                         </div>
                         {% endif %}
-                    {% endif %}
-
-                    <div class="d-flex align-items-center mb-2">
-                        <i class="fas fa-calendar text-muted me-2"></i>
-                        <span>{% trans "Ro'yxatdan o'tgan" %}: {{ user.date_joined|date:"d.m.Y" }}</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Детальная информация -->
+        <!-- Right Column - Detailed Information -->
         <div class="col-lg-8">
-            <!-- Информация профиля -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-white">
-                    <h6 class="fw-bold mb-0">{% trans "Profil ma'lumotlari" %}</h6>
+            <!-- Profile Details -->
+            <div class="card card-hover shadow-sm mb-4">
+                <div class="card-header border-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold mb-0">
+                            <i class="fas fa-id-card text-primary me-2"></i>{% trans "Profile Details" %}
+                        </h5>
+                        <span class="badge badge-light">
+                            <i class="fas fa-user-tag me-1"></i>{{ user.get_user_type_display }}
+                        </span>
+                    </div>
                 </div>
                 <div class="card-body">
                     {% if user.is_student and profile %}
                     <div class="row">
-                        <div class="col-md-6">
-                            <p><strong>{% trans "Fakultet" %}:</strong> {{ profile.faculty|default:"-" }}</p>
-                            <p><strong>{% trans "Mutaxassislik" %}:</strong> {{ profile.specialty|default:"-" }}</p>
-                            <p><strong>{% trans "Ta'lim darajasi" %}:</strong> {{ profile.get_education_level_display|default:"-" }}</p>
+                        <div class="col-md-6 mb-3">
+                            <div class="mb-3">
+                                <small class="text-muted d-block">{% trans "Faculty" %}</small>
+                                <strong class="fs-5">{{ profile.faculty|default:"Not specified" }}</strong>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted d-block">{% trans "Specialization" %}</small>
+                                <strong class="fs-5">{{ profile.specialty|default:"Not specified" }}</strong>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted d-block">{% trans "Education Level" %}</small>
+                                <strong class="fs-5">{{ profile.get_education_level_display|default:"Not specified" }}</strong>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <p><strong>{% trans "O'rtacha baho" %}:</strong> {{ profile.gpa|default:"-" }}</p>
-                            <p><strong>{% trans "Bitirish yili" %}:</strong> {{ profile.graduation_year|default:"-" }}</p>
-                            <p><strong>{% trans "Istagan lavozim" %}:</strong> {{ profile.desired_position|default:"-" }}</p>
+                        <div class="col-md-6 mb-3">
+                            <div class="mb-3">
+                                <small class="text-muted d-block">{% trans "Current GPA" %}</small>
+                                <div class="d-flex align-items-center">
+                                    <strong class="fs-5 me-2">{{ profile.gpa|default:"N/A" }}</strong>
+                                    {% if profile.gpa %}
+                                    <div class="progress flex-grow-1" style="height: 8px;">
+                                        <div class="progress-bar bg-success" style="width: {{ profile.gpa|floatformat:0 }}%"></div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted d-block">{% trans "Graduation Year" %}</small>
+                                <strong class="fs-5">{{ profile.graduation_year|default:"Not specified" }}</strong>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted d-block">{% trans "Desired Position" %}</small>
+                                <strong class="fs-5">{{ profile.desired_position|default:"Not specified" }}</strong>
+                            </div>
                         </div>
                     </div>
+                    
                     {% elif user.is_employer and profile %}
                     <div class="row">
-                        <div class="col-md-6">
-                            <p><strong>{% trans "Kompaniya" %}:</strong> {{ profile.company_name }}</p>
-                            <p><strong>{% trans "Soha" %}:</strong> {{ profile.industry|default:"-" }}</p>
-                            <p><strong>{% trans "Kompaniya hajmi" %}:</strong> {{ profile.get_company_size_display|default:"-" }}</p>
+                        <div class="col-md-6 mb-3">
+                            <div class="mb-3">
+                                <small class="text-muted d-block">{% trans "Company Name" %}</small>
+                                <strong class="fs-5">{{ profile.company_name }}</strong>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted d-block">{% trans "Industry" %}</small>
+                                <strong class="fs-5">{{ profile.industry|default:"Not specified" }}</strong>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted d-block">{% trans "Founded Year" %}</small>
+                                <strong class="fs-5">{{ profile.founded_year|default:"Not specified" }}</strong>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <p><strong>{% trans "Tashkil etilgan yil" %}:</strong> {{ profile.founded_year|default:"-" }}</p>
-                            <p><strong>{% trans "Bosh qarorgoh" %}:</strong> {{ profile.headquarters|default:"-" }}</p>
-                            <p><strong>{% trans "E'lon qilingan ishlar" %}:</strong> {{ profile.jobs_posted }}</p>
+                        <div class="col-md-6 mb-3">
+                            <div class="mb-3">
+                                <small class="text-muted d-block">{% trans "Company Size" %}</small>
+                                <strong class="fs-5">{{ profile.get_company_size_display|default:"Not specified" }}</strong>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted d-block">{% trans "Headquarters" %}</small>
+                                <strong class="fs-5">{{ profile.headquarters|default:"Not specified" }}</strong>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted d-block">{% trans "Jobs Posted" %}</small>
+                                <strong class="fs-5">{{ profile.jobs_posted }}</strong>
+                            </div>
                         </div>
                     </div>
+                    
                     {% if profile.company_description %}
-                    <div class="mt-3">
-                        <strong>{% trans "Kompaniya haqida" %}:</strong>
-                        <p class="mb-0">{{ profile.company_description }}</p>
+                    <div class="mt-4 pt-3 border-top">
+                        <small class="text-muted d-block mb-2">{% trans "Company Description" %}</small>
+                        <div class="p-3 bg-light rounded-2">
+                            <p class="mb-0">{{ profile.company_description|linebreaks }}</p>
+                        </div>
                     </div>
                     {% endif %}
+                    
                     {% elif user.is_admin and profile %}
                     <div class="row">
-                        <div class="col-md-6">
-                            <p><strong>{% trans "Talabalarni boshqarish" %}:</strong> 
-                                {% if profile.can_manage_students %}<i class="fas fa-check text-success"></i>{% else %}<i class="fas fa-times text-danger"></i>{% endif %}
-                            </p>
-                            <p><strong>{% trans "Ish beruvchilarni boshqarish" %}:</strong> 
-                                {% if profile.can_manage_employers %}<i class="fas fa-check text-success"></i>{% else %}<i class="fas fa-times text-danger"></i>{% endif %}
-                            </p>
+                        <div class="col-md-6 mb-3">
+                            <div class="mb-3">
+                                <small class="text-muted d-block">{% trans "Manage Students" %}</small>
+                                <div class="d-flex align-items-center">
+                                    {% if profile.can_manage_students %}
+                                    <i class="fas fa-check-circle text-success fa-lg me-2"></i>
+                                    <strong class="fs-5 text-success">{% trans "Allowed" %}</strong>
+                                    {% else %}
+                                    <i class="fas fa-times-circle text-danger fa-lg me-2"></i>
+                                    <strong class="fs-5 text-danger">{% trans "Restricted" %}</strong>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted d-block">{% trans "Manage Employers" %}</small>
+                                <div class="d-flex align-items-center">
+                                    {% if profile.can_manage_employers %}
+                                    <i class="fas fa-check-circle text-success fa-lg me-2"></i>
+                                    <strong class="fs-5 text-success">{% trans "Allowed" %}</strong>
+                                    {% else %}
+                                    <i class="fas fa-times-circle text-danger fa-lg me-2"></i>
+                                    <strong class="fs-5 text-danger">{% trans "Restricted" %}</strong>
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <p><strong>{% trans "Vakansiyalarni boshqarish" %}:</strong> 
-                                {% if profile.can_manage_jobs %}<i class="fas fa-check text-success"></i>{% else %}<i class="fas fa-times text-danger"></i>{% endif %}
-                            </p>
-                            <p><strong>{% trans "Statistikalarni ko'rish" %}:</strong> 
-                                {% if profile.can_view_statistics %}<i class="fas fa-check text-success"></i>{% else %}<i class="fas fa-times text-danger"></i>{% endif %}
-                            </p>
+                        <div class="col-md-6 mb-3">
+                            <div class="mb-3">
+                                <small class="text-muted d-block">{% trans "Manage Jobs" %}</small>
+                                <div class="d-flex align-items-center">
+                                    {% if profile.can_manage_jobs %}
+                                    <i class="fas fa-check-circle text-success fa-lg me-2"></i>
+                                    <strong class="fs-5 text-success">{% trans "Allowed" %}</strong>
+                                    {% else %}
+                                    <i class="fas fa-times-circle text-danger fa-lg me-2"></i>
+                                    <strong class="fs-5 text-danger">{% trans "Restricted" %}</strong>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted d-block">{% trans "View Statistics" %}</small>
+                                <div class="d-flex align-items-center">
+                                    {% if profile.can_view_statistics %}
+                                    <i class="fas fa-check-circle text-success fa-lg me-2"></i>
+                                    <strong class="fs-5 text-success">{% trans "Allowed" %}</strong>
+                                    {% else %}
+                                    <i class="fas fa-times-circle text-danger fa-lg me-2"></i>
+                                    <strong class="fs-5 text-danger">{% trans "Restricted" %}</strong>
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    
                     {% else %}
-                    <p class="text-muted mb-0">{% trans "Qo'shimcha profil ma'lumotlari mavjud emas" %}</p>
+                    <div class="text-center py-4">
+                        <i class="fas fa-info-circle fa-3x text-muted mb-3"></i>
+                        <p class="text-muted mb-0">{% trans "No additional profile information available" %}</p>
+                    </div>
                     {% endif %}
                 </div>
             </div>
 
-            <!-- История активности -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h6 class="fw-bold mb-0">{% trans "Faollik tarixi" %}</h6>
-                    <small class="text-muted">{% trans "So'nggi 20 ta harakat" %}</small>
+            <!-- Activity Timeline -->
+            <div class="card card-hover shadow-sm">
+                <div class="card-header border-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold mb-0">
+                            <i class="fas fa-history text-primary me-2"></i>{% trans "Activity Timeline" %}
+                        </h5>
+                        <small class="text-muted">{% trans "Last 20 activities" %}</small>
+                    </div>
                 </div>
                 <div class="card-body">
                     {% if activities %}
-                    <div class="timeline">
+                    <div class="timeline-container">
                         {% for activity in activities %}
-                        <div class="timeline-item mb-3">
+                        <div class="timeline-item">
                             <div class="d-flex">
-                                <div class="flex-shrink-0">
-                                    <div class="timeline-icon bg-{{ activity.activity_type|default:'primary' }} text-white rounded-circle d-flex align-items-center justify-content-center"
-                                         style="width: 30px; height: 30px;">
-                                        <i class="fas fa-{{ activity.activity_type|default:'circle' }} fa-sm"></i>
+                                <div class="flex-shrink-0 me-3">
+                                    <div class="bg-light rounded-circle p-2">
+                                        <i class="fas fa-{{ activity.activity_type|default:'circle' }} fa-fw text-primary"></i>
                                     </div>
                                 </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <div class="d-flex justify-content-between">
-                                        <strong>{{ activity.get_activity_type_display }}</strong>
-                                        <small class="text-muted">{{ activity.created_at|timesince }} {% trans "oldin" %}</small>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-start mb-1">
+                                        <strong class="fs-6">{{ activity.get_activity_type_display }}</strong>
+                                        <small class="text-muted">{{ activity.created_at|date:"M d, H:i" }}</small>
                                     </div>
-                                    <p class="mb-1 small">{{ activity.description }}</p>
+                                    <p class="mb-2">{{ activity.description }}</p>
                                     {% if activity.ip_address %}
-                                    <small class="text-muted">IP: {{ activity.ip_address }}</small>
+                                    <small class="text-muted">
+                                        <i class="fas fa-network-wired me-1"></i>
+                                        {{ activity.ip_address }}
+                                        • {{ activity.created_at|timesince }} {% trans "ago" %}
+                                    </small>
                                     {% endif %}
                                 </div>
                             </div>
@@ -218,7 +800,10 @@
                         {% endfor %}
                     </div>
                     {% else %}
-                    <p class="text-muted text-center py-3">{% trans "Hozircha faollik mavjud emas" %}</p>
+                    <div class="text-center py-5">
+                        <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                        <p class="text-muted mb-0">{% trans "No activity history available" %}</p>
+                    </div>
                     {% endif %}
                 </div>
             </div>
@@ -226,24 +811,20 @@
     </div>
 </div>
 
-<style>
-.timeline-icon {
-    font-size: 12px;
-}
-
-.card {
-    border-radius: 12px;
-}
-
-.breadcrumb {
-    background: transparent;
-    padding: 0;
-}
-
-.timeline-item {
-    border-left: 2px solid #e9ecef;
-    padding-left: 15px;
-    margin-left: 15px;
-}
-</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add animation to timeline items
+    const timelineItems = document.querySelectorAll('.timeline-item');
+    timelineItems.forEach((item, index) => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateX(-20px)';
+        
+        setTimeout(() => {
+            item.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            item.style.opacity = '1';
+            item.style.transform = 'translateX(0)';
+        }, index * 100);
+    });
+});
+</script>
 {% endblock %}
