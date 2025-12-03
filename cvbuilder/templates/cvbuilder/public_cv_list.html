@@ -4,227 +4,379 @@
 
 {% block extra_css %}
 <style>
+/* ===== VARIABLES ===== */
 :root {
     --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
     --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
     --hover-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-    --dark-text: #2d3748;
+    --dark-text: #1f2937;
     --light-text: #6b7280;
     --card-bg: #ffffff;
+    --border-radius: 16px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* ===== BASE STYLES ===== */
 body {
-    background-color: #f9fafb;
+    background-color: #f8fafc;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-.search-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 16px;
-    padding: 2rem;
-    margin-bottom: 2rem;
+/* ===== SEARCH HEADER ===== */
+.search-header {
+    background: var(--primary-gradient);
+    border-radius: var(--border-radius);
+    padding: 2.5rem;
+    margin-bottom: 2.5rem;
     color: white;
     box-shadow: var(--card-shadow);
-}
-
-.cv-card {
-    background: var(--card-bg);
-    border: none;
-    border-radius: 16px;
-    box-shadow: var(--card-shadow);
-    transition: all 0.3s ease;
-    height: 100%;
+    position: relative;
     overflow: hidden;
 }
 
+.search-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(30%, -30%);
+}
+
+.search-header .title {
+    font-weight: 700;
+    letter-spacing: -0.025em;
+}
+
+.search-header .subtitle {
+    opacity: 0.9;
+    font-size: 0.95rem;
+}
+
+/* ===== FILTERS CARD ===== */
+.filters-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: calc(var(--border-radius) - 4px);
+    padding: 1.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== CV CARD ===== */
+.cv-card {
+    background: var(--card-bg);
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    transition: var(--transition);
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
 .cv-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-8px);
     box-shadow: var(--hover-shadow);
 }
 
+.cv-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--primary-gradient);
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.cv-card:hover::before {
+    opacity: 1;
+}
+
+/* ===== CARD HEADER ===== */
 .cv-card-header {
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-    padding: 1.25rem;
-    border-bottom: 1px solid #e5e7eb;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    padding: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    position: relative;
 }
 
 .cv-avatar {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
     background: var(--primary-gradient);
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-weight: bold;
-    font-size: 1.5rem;
+    font-weight: 700;
+    font-size: 1.75rem;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    flex-shrink: 0;
 }
 
 .cv-badge {
     background: rgba(59, 130, 246, 0.1);
-    color: #1e40af;
+    color: #1d4ed8;
     border: 1px solid rgba(59, 130, 246, 0.2);
-    padding: 4px 12px;
+    padding: 0.375rem 1rem;
     border-radius: 20px;
     font-size: 0.85rem;
-    font-weight: 500;
+    font-weight: 600;
+    letter-spacing: 0.01em;
 }
 
+/* ===== SKILLS TAGS ===== */
 .cv-skills {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin: 1rem 0;
+    gap: 0.5rem;
+    margin: 1.25rem 0;
 }
 
 .skill-tag {
     background: rgba(16, 185, 129, 0.1);
     color: #065f46;
-    padding: 4px 10px;
+    padding: 0.375rem 0.875rem;
     border-radius: 12px;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
+    font-weight: 500;
     border: 1px solid rgba(16, 185, 129, 0.2);
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
 }
 
-.cv-footer {
+.skill-tag:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(16, 185, 129, 0.15);
+}
+
+.skill-tag.more {
+    background: rgba(107, 114, 128, 0.1);
+    color: #4b5563;
+    border-color: rgba(107, 114, 128, 0.2);
+}
+
+/* Skill level indicators */
+.skill-level-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-left: 0.25rem;
+}
+
+.skill-level-beginner { background-color: #f59e0b; }
+.skill-level-intermediate { background-color: #10b981; }
+.skill-level-advanced { background-color: #3b82f6; }
+.skill-level-expert { background-color: #8b5cf6; }
+
+/* ===== CARD FOOTER ===== */
+.cv-card-footer {
     border-top: 1px solid #e5e7eb;
-    padding: 1rem 1.25rem;
+    padding: 1.25rem 1.5rem;
     background: #f8fafc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.filter-group {
-    background: white;
-    padding: 1rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+/* ===== CONTACT INFO ===== */
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 0;
 }
 
+.contact-item:not(:last-child) {
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.contact-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4f46e5;
+    flex-shrink: 0;
+}
+
+/* ===== PAGINATION ===== */
 .pagination-container {
     background: white;
-    padding: 1rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    margin-top: 2.5rem;
 }
 
+.page-link {
+    border: none;
+    color: #6b7280;
+    font-weight: 500;
+    border-radius: 10px;
+    margin: 0 0.25rem;
+    transition: var(--transition);
+}
+
+.page-link:hover {
+    background: #f3f4f6;
+    color: #4b5563;
+}
+
+.page-item.active .page-link {
+    background: var(--primary-gradient);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* ===== EMPTY STATE ===== */
 .empty-state {
     background: white;
-    border-radius: 16px;
+    border-radius: var(--border-radius);
     padding: 4rem 2rem;
     text-align: center;
     box-shadow: var(--card-shadow);
+    margin-top: 2rem;
 }
 
 .empty-state-icon {
-    font-size: 4rem;
-    color: #d1d5db;
-    margin-bottom: 1.5rem;
-}
-
-.btn-primary-gradient {
+    width: 80px;
+    height: 80px;
     background: var(--primary-gradient);
-    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 2rem;
     color: white;
-    transition: all 0.3s ease;
+    font-size: 2rem;
 }
 
-.btn-primary-gradient:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-}
-
+/* ===== FORM ELEMENTS ===== */
 .form-control, .form-select {
-    border-radius: 10px;
-    border: 1px solid #e5e7eb;
-    padding: 0.625rem 1rem;
-    transition: all 0.2s ease;
+    border-radius: 12px;
+    border: 2px solid #e5e7eb;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: var(--transition);
 }
 
 .form-control:focus, .form-select:focus {
     border-color: #667eea;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: translateY(-1px);
 }
 
-/* Responsive adjustments */
+.input-group-text {
+    border-radius: 12px 0 0 12px;
+    border: 2px solid #e5e7eb;
+    background: white;
+}
+
+/* ===== BUTTONS ===== */
+.btn-gradient {
+    background: var(--primary-gradient);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    transition: var(--transition);
+}
+
+.btn-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    color: white;
+}
+
+.btn-outline-primary {
+    border-width: 2px;
+    font-weight: 500;
+    border-radius: 10px;
+    padding: 0.5rem 1rem;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
 @media (max-width: 768px) {
-    .search-card {
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
+    .search-header {
+        padding: 1.75rem;
+        margin-bottom: 1.75rem;
     }
     
-    .cv-card {
-        margin-bottom: 1.5rem;
+    .cv-avatar {
+        width: 56px;
+        height: 56px;
+        font-size: 1.5rem;
     }
     
-    .filter-group {
-        margin-top: 1rem;
-    }
-    
-    .d-md-flex {
+    .cv-card-footer {
         flex-direction: column;
+        gap: 1rem;
+        text-align: center;
     }
     
-    .d-md-flex > * {
-        margin-bottom: 1rem;
+    .btn-group {
+        width: 100%;
+    }
+    
+    .btn-group .btn {
+        flex: 1;
     }
 }
 
 @media (max-width: 576px) {
-    .cv-avatar {
-        width: 50px;
-        height: 50px;
-        font-size: 1.25rem;
+    :root {
+        --border-radius: 12px;
     }
     
-    .search-card h1 {
-        font-size: 1.5rem;
+    .search-header {
+        padding: 1.5rem;
     }
     
-    .btn-group {
+    .filters-card {
+        padding: 1.25rem;
+    }
+    
+    .contact-item {
         flex-direction: column;
+        text-align: center;
         gap: 0.5rem;
     }
     
-    .btn-group .btn {
-        width: 100%;
-    }
-}
-
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-    :root {
-        --dark-text: #e2e8f0;
-        --light-text: #a0aec0;
-        --card-bg: #2d3748;
-    }
-    
-    body {
-        background-color: #1a202c;
-    }
-    
-    .cv-card, .filter-group, .pagination-container, .empty-state {
-        background: var(--card-bg);
-        color: var(--dark-text);
-    }
-    
-    .cv-card-header, .cv-footer {
-        background: #4a5568;
-        border-color: #4a5568;
-    }
-    
-    .form-control, .form-select {
-        background-color: #4a5568;
-        border-color: #4a5568;
-        color: var(--dark-text);
-    }
-    
-    .cv-badge {
-        background: rgba(59, 130, 246, 0.2);
-        color: #93c5fd;
-    }
-    
-    .skill-tag {
-        background: rgba(16, 185, 129, 0.2);
-        color: #6ee7b7;
+    .contact-icon {
+        width: 36px;
+        height: 36px;
     }
 }
 </style>
@@ -233,40 +385,54 @@ body {
 {% block content %}
 <div class="container-fluid py-4">
     <!-- Search Header -->
-    <div class="search-card">
+    <div class="search-header">
         <div class="row align-items-center">
             <div class="col-lg-8 mb-4 mb-lg-0">
-                <h1 class="h3 fw-bold mb-2">{% trans "Public Resumes" %}</h1>
-                <p class="mb-0 opacity-90">
-                    <i class="fas fa-shield-alt me-1"></i>
-                    {% trans "This page is only accessible to verified employers and administrators." %}
+                <h1 class="h2 title mb-3">{% trans "Public Resumes" %}</h1>
+                <p class="subtitle mb-0">
+                    <i class="fas fa-shield-alt me-2"></i>
+                    {% trans "Exclusive access for verified employers and administrators" %}
                 </p>
             </div>
             <div class="col-lg-4">
-                <div class="filter-group">
-                    <form method="get" class="row g-2">
+                <div class="filters-card animate-fade-in-up">
+                    <form method="get" class="row g-3">
                         <div class="col-12">
                             <div class="input-group">
-                                <span class="input-group-text bg-white border-end-0">
-                                    <i class="fas fa-search text-primary"></i>
+                                <span class="input-group-text">
+                                    <i class="fas fa-search"></i>
                                 </span>
-                                <input name="q" value="{{ q }}" 
-                                       class="form-control border-start-0" 
-                                       placeholder="{% trans 'Search by name, title...' %}">
+                                <input type="text" 
+                                       name="q" 
+                                       value="{{ q }}" 
+                                       class="form-control" 
+                                       placeholder="{% trans 'Search candidates...' %}"
+                                       aria-label="Search">
                             </div>
                         </div>
-                        <div class="col-12 col-sm">
+                        
+                        <div class="col-12">
                             <select name="template" class="form-select">
                                 <option value="">{% trans "All Templates" %}</option>
                                 {% for template in templates %}
-                                    <option value="{{ template.id }}" 
-                                            {% if template.id|stringformat:"s" == selected_template %}selected{% endif %}>
-                                        {{ template.name }}
-                                    </option>
+                                <option value="{{ template.id }}" 
+                                        {% if template.id|stringformat:"s" == selected_template %}selected{% endif %}>
+                                    {{ template.name }}
+                                </option>
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="col-12 col-sm">
+                        
+                        <div class="col-12">
+                            <input type="text" 
+                                   name="location" 
+                                   value="{{ location }}" 
+                                   class="form-control" 
+                                   placeholder="{% trans 'Location...' %}"
+                                   aria-label="Location">
+                        </div>
+                        
+                        <div class="col-12">
                             <select name="sort" class="form-select">
                                 <option value="newest" {% if sort == 'newest' %}selected{% endif %}>
                                     {% trans "Newest First" %}
@@ -275,16 +441,17 @@ body {
                                     {% trans "Oldest First" %}
                                 </option>
                                 <option value="name_asc" {% if sort == 'name_asc' %}selected{% endif %}>
-                                    {% trans "Name A-Z" %}
+                                    {% trans "Name (A → Z)" %}
                                 </option>
                                 <option value="name_desc" {% if sort == 'name_desc' %}selected{% endif %}>
-                                    {% trans "Name Z-A" %}
+                                    {% trans "Name (Z → A)" %}
                                 </option>
                             </select>
                         </div>
+                        
                         <div class="col-12">
-                            <button type="submit" class="btn btn-primary-gradient w-100">
-                                <i class="fas fa-filter me-1"></i>
+                            <button type="submit" class="btn-gradient w-100">
+                                <i class="fas fa-filter me-2"></i>
                                 {% trans "Apply Filters" %}
                             </button>
                         </div>
@@ -299,7 +466,8 @@ body {
     <div class="row g-4">
         {% for cv in cvs %}
         <div class="col-xl-4 col-lg-6 col-md-6">
-            <div class="cv-card">
+            <div class="cv-card animate-fade-in-up" style="animation-delay: {{ forloop.counter0|divisibleby:2|yesno:'0.1s,0.2s' }}">
+                <!-- Header -->
                 <div class="cv-card-header">
                     <div class="d-flex align-items-center gap-3">
                         <div class="cv-avatar">
@@ -307,34 +475,52 @@ body {
                         </div>
                         <div class="flex-grow-1">
                             <h5 class="fw-bold mb-1 text-dark">{{ cv.full_name }}</h5>
-                            <p class="text-muted small mb-0">{{ cv.title|default:"No title specified" }}</p>
+                            <p class="text-muted small mb-0">
+                                {{ cv.title|default:"No title specified" }}
+                            </p>
                         </div>
+                        {% if cv.template %}
                         <span class="cv-badge">
                             {{ cv.template.name }}
                         </span>
+                        {% endif %}
                     </div>
                 </div>
                 
+                <!-- Body -->
                 <div class="card-body p-4">
                     <!-- Contact Info -->
-                    <div class="mb-3">
-                        <div class="d-flex align-items-center mb-2">
-                            <div class="bg-light rounded-circle p-2 me-3">
-                                <i class="fas fa-envelope text-primary"></i>
+                    <div class="mb-4">
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
                             </div>
-                            <div>
+                            <div class="flex-grow-1">
                                 <small class="text-muted d-block">{% trans "Email" %}</small>
                                 <strong>{{ cv.email }}</strong>
                             </div>
                         </div>
+                        
                         {% if cv.phone %}
-                        <div class="d-flex align-items-center">
-                            <div class="bg-light rounded-circle p-2 me-3">
-                                <i class="fas fa-phone text-primary"></i>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-phone"></i>
                             </div>
-                            <div>
+                            <div class="flex-grow-1">
                                 <small class="text-muted d-block">{% trans "Phone" %}</small>
                                 <strong>{{ cv.phone }}</strong>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if cv.location %}
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <small class="text-muted d-block">{% trans "Location" %}</small>
+                                <strong>{{ cv.location }}</strong>
                             </div>
                         </div>
                         {% endif %}
@@ -342,48 +528,72 @@ body {
                     
                     <!-- Summary -->
                     {% if cv.summary %}
-                    <div class="mb-3">
-                        <small class="text-muted d-block mb-1">{% trans "Professional Summary" %}</small>
-                        <p class="mb-0 text-dark" style="font-size: 0.9rem;">
-                            {{ cv.summary|truncatechars:120 }}
+                    <div class="mb-4">
+                        <h6 class="small text-uppercase text-muted mb-2">
+                            <i class="fas fa-user-circle me-1"></i>
+                            {% trans "Professional Summary" %}
+                        </h6>
+                        <p class="mb-0 text-dark" style="font-size: 0.9rem; line-height: 1.6;">
+                            {{ cv.summary|truncatechars:150 }}
                         </p>
                     </div>
                     {% endif %}
                     
-                    <!-- Skills Preview -->
-                    {% if cv.skills %}
-                    <div class="cv-skills">
-                        {% for skill in cv.skills|slice:":3" %}
-                        <span class="skill-tag">{{ skill }}</span>
-                        {% endfor %}
-                        {% if cv.skills|length > 3 %}
-                        <span class="skill-tag">+{{ cv.skills|length|add:"-3" }}</span>
-                        {% endif %}
-                    </div>
-                    {% endif %}
-                </div>
-                
-                <!-- Card Footer with Actions -->
-                <div class="cv-footer">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <small class="text-muted">
-                                <i class="fas fa-calendar me-1"></i>
-                                {{ cv.updated_at|date:"M d, Y" }}
-                            </small>
-                        </div>
-                        <div class="btn-group" role="group">
-                            <a href="{% url 'cvbuilder:cv_detail' cv.id %}" 
-                               class="btn btn-outline-primary btn-sm">
-                                <i class="fas fa-eye me-1"></i>{% trans "View" %}
-                            </a>
-                            {% if user.is_authenticated and user.is_employer or user.is_admin or user.is_main_admin %}
-                            <a href="{% url 'cvbuilder:cv_export_pdf' cv.id %}" 
-                               class="btn btn-outline-success btn-sm ms-1">
-                                <i class="fas fa-download me-1"></i>PDF
-                            </a>
+                    <!-- Skills -->
+                    {% with skills=cv.skills.all %}
+                    {% if skills %}
+                    <div>
+                        <h6 class="small text-uppercase text-muted mb-2">
+                            <i class="fas fa-code me-1"></i>
+                            {% trans "Top Skills" %}
+                        </h6>
+                        <div class="cv-skills">
+                            {% for skill in skills|slice:":3" %}
+                            <span class="skill-tag" 
+                                  data-bs-toggle="tooltip" 
+                                  title="{{ skill.name }} - {{ skill.get_level_display|capfirst }}">
+                                {{ skill.name }}
+                                <span class="skill-level-indicator skill-level-{{ skill.level }}"></span>
+                            </span>
+                            {% endfor %}
+                            
+                            {% if skills|length > 3 %}
+                            <span class="skill-tag more" 
+                                  data-bs-toggle="tooltip" 
+                                  title="{% trans 'Total skills' %}: {{ skills|length }}">
+                                +{{ skills|length|add:"-3" }}
+                            </span>
                             {% endif %}
                         </div>
+                    </div>
+                    {% endif %}
+                    {% endwith %}
+                </div>
+                
+                <!-- Footer -->
+                <div class="cv-card-footer">
+                    <div class="text-muted">
+                        <small>
+                            <i class="fas fa-calendar-alt me-1"></i>
+                            {{ cv.updated_at|date:"M d, Y" }}
+                        </small>
+                    </div>
+                    
+                    <div class="btn-group" role="group">
+                        <a href="{% url 'cvbuilder:cv_detail' cv.id %}" 
+                           class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-eye me-1"></i>
+                            {% trans "View" %}
+                        </a>
+                        
+                        {% if user_type in "employer,admin,main_admin" %}
+                        <a href="{% url 'cvbuilder:cv_export_pdf' cv.id %}" 
+                           class="btn btn-outline-success btn-sm ms-2"
+                           target="_blank">
+                            <i class="fas fa-file-pdf me-1"></i>
+                            PDF
+                        </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -393,35 +603,36 @@ body {
 
     <!-- Pagination -->
     {% if page_obj.has_other_pages %}
-    <div class="pagination-container mt-4">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <small class="text-muted">
-                    {% blocktrans with page=page_obj.number total_pages=page_obj.paginator.num_pages %}
-                    Page {{ page }} of {{ total_pages }}
+    <div class="pagination-container">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+            <!-- Results Info -->
+            <div class="text-center text-md-start">
+                <p class="mb-0 text-muted">
+                    <i class="fas fa-file-alt me-2"></i>
+                    {% blocktrans with start=page_obj.start_index end=page_obj.end_index total=page_obj.paginator.count %}
+                    Showing {{ start }}–{{ end }} of {{ total }} resumes
                     {% endblocktrans %}
-                </small>
+                </p>
             </div>
             
+            <!-- Page Navigation -->
             <nav aria-label="Page navigation">
-                <ul class="pagination pagination-sm mb-0">
+                <ul class="pagination mb-0">
                     {% if page_obj.has_previous %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}{% if selected_template %}&template={{ selected_template }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">
-                            <i class="fas fa-chevron-left me-1"></i>
+                        <a class="page-link" 
+                           href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}{% if selected_template %}&template={{ selected_template }}{% endif %}{% if location %}&location={{ location }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">
+                            <i class="fas fa-chevron-left me-2"></i>
                             {% trans "Previous" %}
                         </a>
                     </li>
                     {% endif %}
                     
                     {% for num in page_obj.paginator.page_range %}
-                        {% if page_obj.number == num %}
-                        <li class="page-item active">
-                            <span class="page-link">{{ num }}</span>
-                        </li>
-                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ num }}{% if q %}&q={{ q }}{% endif %}{% if selected_template %}&template={{ selected_template }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">
+                        {% if num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+                        <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                            <a class="page-link" 
+                               href="?page={{ num }}{% if q %}&q={{ q }}{% endif %}{% if selected_template %}&template={{ selected_template }}{% endif %}{% if location %}&location={{ location }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">
                                 {{ num }}
                             </a>
                         </li>
@@ -430,21 +641,21 @@ body {
                     
                     {% if page_obj.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}{% if selected_template %}&template={{ selected_template }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">
+                        <a class="page-link" 
+                           href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}{% if selected_template %}&template={{ selected_template }}{% endif %}{% if location %}&location={{ location }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">
                             {% trans "Next" %}
-                            <i class="fas fa-chevron-right ms-1"></i>
+                            <i class="fas fa-chevron-right ms-2"></i>
                         </a>
                     </li>
                     {% endif %}
                 </ul>
             </nav>
             
-            <div>
+            <!-- Page Info -->
+            <div class="text-center text-md-end">
                 <small class="text-muted">
-                    {% blocktrans count count=page_obj.paginator.count %}
-                    {{ count }} resume
-                    {% plural %}
-                    {{ count }} resumes
+                    {% blocktrans with page=page_obj.number total_pages=page_obj.paginator.num_pages %}
+                    Page {{ page }} of {{ total_pages }}
                     {% endblocktrans %}
                 </small>
             </div>
@@ -454,50 +665,85 @@ body {
     
     {% else %}
     <!-- Empty State -->
-    <div class="empty-state">
+    <div class="empty-state animate-fade-in-up">
         <div class="empty-state-icon">
-            <i class="fas fa-file-alt"></i>
+            <i class="fas fa-file-search"></i>
         </div>
-        <h3 class="h5 fw-bold mb-2">{% trans "No resumes found" %}</h3>
+        <h3 class="h4 fw-bold mb-3">{% trans "No resumes found" %}</h3>
         <p class="text-muted mb-4">
-            {% trans "There are no published resumes matching your criteria." %}
+            {% trans "We couldn't find any published resumes matching your search criteria." %}
         </p>
-        {% if q or selected_template %}
-        <a href="{% url 'cvbuilder:public_cvs' %}" class="btn btn-outline-primary">
-            <i class="fas fa-times me-1"></i>
-            {% trans "Clear Filters" %}
-        </a>
-        {% endif %}
+        <div class="d-flex justify-content-center gap-3">
+            {% if q or selected_template or location %}
+            <a href="{% url 'cvbuilder:public_cvs' %}" class="btn btn-outline-primary">
+                <i class="fas fa-times me-2"></i>
+                {% trans "Clear Filters" %}
+            </a>
+            {% endif %}
+            <a href="{% url 'cvbuilder:cv_list' %}" class="btn-gradient">
+                <i class="fas fa-plus me-2"></i>
+                {% trans "Create New CV" %}
+            </a>
+        </div>
     </div>
     {% endif %}
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Add animation to cards on load
-    const cards = document.querySelectorAll('.cv-card');
-    cards.forEach((card, index) => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        
-        setTimeout(() => {
-            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
-        }, index * 100);
+    // Initialize tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl, {
+            trigger: 'hover'
+        });
     });
     
-    // Real-time search suggestions (optional enhancement)
-    const searchInput = document.querySelector('input[name="q"]');
-    if (searchInput) {
-        let debounceTimer;
-        searchInput.addEventListener('input', function() {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => {
-                // You could add AJAX search suggestions here
-                console.log('Searching for:', this.value);
-            }, 300);
+    // Add hover effects to cards
+    const cvCards = document.querySelectorAll('.cv-card');
+    cvCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.zIndex = '10';
         });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.zIndex = '';
+        });
+    });
+    
+    // Auto-submit form on sort change (optional)
+    const sortSelect = document.querySelector('select[name="sort"]');
+    if (sortSelect) {
+        sortSelect.addEventListener('change', function() {
+            this.form.submit();
+        });
+    }
+    
+    // Add loading animation to filter button
+    const filterButton = document.querySelector('button[type="submit"]');
+    if (filterButton) {
+        filterButton.addEventListener('click', function() {
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> {% trans "Applying..." %}';
+            this.disabled = true;
+            
+            // Restore button after 2 seconds (in case of error)
+            setTimeout(() => {
+                this.innerHTML = originalText;
+                this.disabled = false;
+            }, 2000);
+        });
+    }
+    
+    // Highlight active filters
+    const activeFilters = [];
+    if ("{{ q }}") activeFilters.push('search');
+    if ("{{ selected_template }}") activeFilters.push('template');
+    if ("{{ location }}") activeFilters.push('location');
+    
+    if (activeFilters.length > 0) {
+        console.log(`Active filters: ${activeFilters.join(', ')}`);
+        // You could add visual indicators here
     }
 });
 </script>

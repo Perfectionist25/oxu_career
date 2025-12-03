@@ -142,7 +142,7 @@ LANGUAGE_CODE = "en"
 
 TIME_ZONE = "Asia/Tashkent"
 
-USE_I18N = True
+USE_I18N = False # False only in development mode
 
 USE_L10N = True
 

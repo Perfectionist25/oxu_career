@@ -17,41 +17,70 @@
     --card-bg: #ffffff;
     --light-bg: #f8fafc;
     --border-color: #e5e7eb;
+    --border-radius: 16px;
 }
 
-/* Убираем все светлые фоны с белым текстом */
+/* ===== BASE STYLES ===== */
 body {
     color: var(--dark-text);
     background-color: #f9fafb;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* Исправляем все элементы с белым текстом на темном фоне */
+/* ===== PROFILE AVATAR - ИСПРАВЛЕН РАЗМЕР ===== */
+.profile-avatar-container {
+    position: relative;
+    width: 160px;
+    height: 160px;
+}
+
 .profile-avatar {
-    width: 140px;
-    height: 140px;
-    border: 4px solid #fff;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 4px solid white;
+    border-radius: 50%;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    background-color: #fff;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: white;
 }
 
 .profile-avatar:hover {
     transform: scale(1.05);
 }
 
+.avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--primary-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    border: 4px solid white;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-placeholder i {
+    font-size: 3.5rem;
+}
+
+/* ===== CARDS ===== */
 .card-hover {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 1px solid var(--border-color);
     overflow: hidden;
     background-color: var(--card-bg);
+    border-radius: var(--border-radius);
 }
 
 .card-hover:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12) !important;
 }
 
-/* БЕЙДЖИ - теперь с темным текстом на светлом фоне */
+/* ===== BADGES ===== */
 .status-badge {
     padding: 6px 12px;
     border-radius: 20px;
@@ -60,9 +89,10 @@ body {
     display: inline-flex;
     align-items: center;
     border: 1px solid;
+    white-space: nowrap;
 }
 
-/* Бейджи пользователей */
+/* User type badges */
 .badge-student {
     background-color: rgba(16, 185, 129, 0.1) !important;
     border-color: #10b981 !important;
@@ -87,7 +117,7 @@ body {
     color: #991b1b !important;
 }
 
-/* Статусные бейджи */
+/* Status badges */
 .badge-active {
     background-color: rgba(16, 185, 129, 0.1) !important;
     border-color: #10b981 !important;
@@ -112,36 +142,33 @@ body {
     color: #5b21b6 !important;
 }
 
-/* Бейдж в хедере карточки */
-.badge-light {
-    background-color: var(--light-bg) !important;
-    border-color: var(--border-color) !important;
-    color: var(--dark-text) !important;
-}
-
+/* ===== TIMELINE ===== */
 .timeline-item {
     position: relative;
-    padding-left: 30px;
-    margin-bottom: 25px;
+    padding-left: 2.5rem;
+    margin-bottom: 1.5rem;
 }
 
 .timeline-item:before {
     content: '';
     position: absolute;
     left: 0;
-    top: 8px;
-    width: 12px;
-    height: 12px;
+    top: 0.5rem;
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
     background: #3b82f6;
+    border: 3px solid white;
+    box-shadow: 0 0 0 2px #3b82f6;
+    z-index: 1;
 }
 
 .timeline-item:after {
     content: '';
     position: absolute;
-    left: 5px;
-    top: 24px;
-    bottom: -25px;
+    left: 6px;
+    top: 2rem;
+    bottom: -1.5rem;
     width: 2px;
     background: var(--border-color);
 }
@@ -150,12 +177,19 @@ body {
     display: none;
 }
 
+/* ===== STATS CARDS ===== */
 .stat-card {
     background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
     border-radius: 15px;
-    padding: 20px;
+    padding: 1.5rem;
     height: 100%;
     color: var(--dark-text);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
 }
 
 .icon-wrapper {
@@ -165,8 +199,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 15px;
-    color: white !important; /* Иконки всегда белые на градиенте */
+    margin-bottom: 1rem;
+    color: white !important;
 }
 
 .icon-wrapper.bg-primary-gradient {
@@ -181,156 +215,370 @@ body {
     background: var(--info-gradient);
 }
 
-/* Цвета текста */
-.text-primary {
-    color: #3b82f6 !important;
-}
+/* ===== TYPOGRAPHY ===== */
+.text-primary { color: #3b82f6 !important; }
+.text-success { color: #10b981 !important; }
+.text-danger { color: #ef4444 !important; }
+.text-warning { color: #f59e0b !important; }
+.text-info { color: #06b6d4 !important; }
+.text-dark { color: var(--dark-text) !important; }
+.text-muted { color: var(--light-text) !important; }
 
-.text-success {
-    color: #10b981 !important;
-}
-
-.text-danger {
-    color: #ef4444 !important;
-}
-
-.text-warning {
-    color: #f59e0b !important;
-}
-
-.text-info {
-    color: #06b6d4 !important;
-}
-
-.text-dark {
-    color: var(--dark-text) !important;
-}
-
-.text-muted {
-    color: var(--light-text) !important;
-}
-
-/* Заголовки карточек */
+/* ===== CARD HEADERS ===== */
 .card-header {
     background-color: var(--card-bg) !important;
     border-bottom: 1px solid var(--border-color);
+    padding: 1.25rem 1.5rem;
 }
 
 .card-header h5, 
 .card-header h6 {
     color: var(--dark-text) !important;
     margin: 0;
+    font-weight: 600;
 }
 
-/* Хлебные крошки */
+/* ===== BREADCRUMB ===== */
+.breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 1rem;
+}
+
 .breadcrumb-item a {
     color: var(--light-text) !important;
     text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.breadcrumb-item a:hover {
+    color: #3b82f6 !important;
 }
 
 .breadcrumb-item.active {
     color: var(--dark-text) !important;
 }
 
-/* Прогресс-бар */
+/* ===== PROGRESS BAR ===== */
 .progress {
     background-color: #e5e7eb;
+    height: 8px;
+    border-radius: 4px;
 }
 
 .progress-bar {
     background-color: #10b981;
+    border-radius: 4px;
 }
 
-/* Кнопки */
+/* ===== BUTTONS ===== */
 .btn-outline-primary {
     color: #3b82f6;
     border-color: #3b82f6;
+    border-width: 2px;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-primary:hover {
+    background-color: #3b82f6;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
 }
 
 .btn-outline-success {
     color: #10b981;
     border-color: #10b981;
+    border-width: 2px;
+    font-weight: 500;
+    border-radius: 8px;
 }
 
 .btn-outline-warning {
     color: #f59e0b;
     border-color: #f59e0b;
+    border-width: 2px;
+    font-weight: 500;
+    border-radius: 8px;
 }
 
-/* Элементы списка */
+/* ===== LIST GROUP ===== */
 .list-group-item {
     background-color: transparent !important;
     border-color: var(--border-color);
     color: var(--dark-text);
+    padding: 1rem 0;
 }
 
 .list-group-item small {
     color: var(--light-text);
 }
 
-/* Фоновые классы */
-.bg-light {
-    background-color: var(--light-bg) !important;
-    color: var(--dark-text) !important;
+/* ===== CONTACT ITEMS ===== */
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0;
 }
 
-.bg-white {
-    background-color: var(--card-bg) !important;
+.contact-item:not(:last-child) {
+    border-bottom: 1px solid var(--border-color);
 }
 
-/* Блоки с информацией */
-.info-block {
-    background-color: var(--light-bg);
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 15px;
+.contact-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--light-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4f46e5;
+    flex-shrink: 0;
 }
 
-/* Иконки в .bg-light */
-.bg-light .fas,
-.bg-light i {
-    color: inherit !important; /* Наследует цвет родителя */
-}
+/* ===== RESPONSIVE DESIGN ===== */
 
-/* Аватары без фото */
-.avatar-placeholder {
-    background: var(--primary-gradient);
-    color: white !important; /* Белые иконки на градиенте */
-}
-
-/* Границы */
-.border {
-    border-color: var(--border-color) !important;
-}
-
-/* Адаптивность */
-@media (max-width: 768px) {
-    .profile-avatar {
-        width: 120px;
-        height: 120px;
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+    .profile-avatar-container {
+        width: 180px;
+        height: 180px;
     }
     
+    .avatar-placeholder i {
+        font-size: 4rem;
+    }
+}
+
+/* Medium devices (tablets, 768px to 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+    .profile-avatar-container {
+        width: 140px;
+        height: 140px;
+    }
+    
+    .avatar-placeholder i {
+        font-size: 3rem;
+    }
+    
+    .stat-card {
+        padding: 1.25rem;
+    }
+    
+    .card-header {
+        padding: 1rem 1.25rem;
+    }
+}
+
+/* Small devices (landscape phones, 576px to 767px) */
+@media (max-width: 767px) {
+    .profile-avatar-container {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 1.5rem;
+    }
+    
+    .avatar-placeholder i {
+        font-size: 2.5rem;
+    }
+    
+    /* Header adjustments */
+    .header-content {
+        text-align: center;
+    }
+    
+    .header-content .d-flex {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .header-content .status-badges {
+        justify-content: center;
+        margin-top: 1rem;
+    }
+    
+    /* Stats cards grid */
+    .stats-grid .col-sm-6 {
+        margin-bottom: 1rem;
+    }
+    
+    /* Card body padding */
     .card-body {
         padding: 1.25rem;
     }
     
-    .stat-card {
-        padding: 15px;
+    /* Timeline adjustments */
+    .timeline-item {
+        padding-left: 2rem;
+    }
+    
+    .timeline-item:before {
+        width: 12px;
+        height: 12px;
+    }
+    
+    /* Contact items */
+    .contact-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.75rem;
+        padding: 1.25rem 0;
+    }
+    
+    .contact-icon {
+        width: 50px;
+        height: 50px;
+    }
+    
+    /* Form buttons */
+    .form-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
     }
 }
 
-@media (max-width: 576px) {
-    .d-flex.flex-md-row {
-        flex-direction: column !important;
+/* Extra small devices (portrait phones, less than 576px) */
+@media (max-width: 575px) {
+    .profile-avatar-container {
+        width: 100px;
+        height: 100px;
     }
     
-    .gap-3 {
-        gap: 1rem !important;
+    .avatar-placeholder i {
+        font-size: 2rem;
+    }
+    
+    /* Typography */
+    h1 {
+        font-size: 1.5rem;
+    }
+    
+    h2 {
+        font-size: 1.25rem;
+    }
+    
+    .stat-card h3 {
+        font-size: 1.25rem;
+    }
+    
+    /* Status badges */
+    .status-badge {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+    }
+    
+    /* Layout columns */
+    .col-6 {
+        padding-left: 0.25rem;
+        padding-right: 0.25rem;
+    }
+    
+    /* Activity timeline */
+    .timeline-item {
+        padding-left: 1.5rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    /* Profile details grid */
+    .profile-details .col-md-6 {
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Text alignment */
+    .text-center-sm {
+        text-align: center !important;
+    }
+}
+
+/* Very small devices (phones, less than 400px) */
+@media (max-width: 399px) {
+    .profile-avatar-container {
+        width: 90px;
+        height: 90px;
+    }
+    
+    .status-badges {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
     }
     
     .status-badge {
-        font-size: 0.8rem;
-        padding: 4px 10px;
+        width: fit-content;
+    }
+    
+    /* Hide breadcrumb on very small screens */
+    .breadcrumb {
+        font-size: 0.875rem;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 0.25rem;
+    }
+    
+    /* Adjust padding */
+    .container-fluid {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+    
+    .py-4 {
+        padding-top: 1.5rem !important;
+        padding-bottom: 1.5rem !important;
+    }
+}
+
+/* Print styles */
+@media print {
+    .card-hover:hover {
+        transform: none;
+        box-shadow: none !important;
+    }
+    
+    .btn-group, 
+    .form-actions,
+    .breadcrumb {
+        display: none !important;
+    }
+    
+    .profile-avatar-container {
+        width: 100px !important;
+        height: 100px !important;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --dark-text: #e2e8f0;
+        --light-text: #a0aec0;
+        --card-bg: #2d3748;
+        --light-bg: #4a5568;
+        --border-color: #4a5568;
+    }
+    
+    body {
+        background-color: #1a202c;
+    }
+    
+    .stat-card {
+        background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+    }
+    
+    .contact-icon {
+        background: #4a5568;
+        color: #a0aec0;
+    }
+    
+    .progress {
+        background-color: #4a5568;
     }
 }
 </style>
@@ -341,87 +589,113 @@ body {
     <!-- Header Section -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
-                <div class="mb-3 mb-md-0">
-                    <nav aria-label="breadcrumb" class="mb-3">
-                        <ol class="breadcrumb bg-transparent p-0">
-                            <li class="breadcrumb-item"><a href="{% url 'accounts:admin_dashboard' %}" class="text-decoration-none">{% trans "Dashboard" %}</a></li>
-                            <li class="breadcrumb-item"><a href="{% url 'accounts:user_management' %}" class="text-decoration-none">{% trans "User Management" %}</a></li>
-                            <li class="breadcrumb-item active">{{ user.get_full_name|default:user.username }}</li>
-                        </ol>
-                    </nav>
-                    
-                    <div class="d-flex align-items-center gap-3">
-                        {% if user.avatar %}
-                        <img src="{{ user.avatar.url }}" alt="{{ user.username }}" 
-                             class="rounded-circle profile-avatar">
-                        {% else %}
-                        <div class="rounded-circle profile-avatar d-flex align-items-center justify-content-center avatar-placeholder">
-                            <i class="fas fa-user fa-3x"></i>
-                        </div>
-                        {% endif %}
-                        
-                        <div>
-                            <h1 class="h2 fw-bold mb-1">{{ user.get_full_name|default:user.username }}</h1>
-                            <p class="text-muted mb-2">
-                                <i class="fas fa-envelope me-2 text-primary"></i>{{ user.email }}
-                            </p>
-                            <div class="d-flex align-items-center gap-2 flex-wrap">
-                                <span class="status-badge 
-                                    {% if user.is_student %}badge-student
-                                    {% elif user.is_employer %}badge-employer
-                                    {% elif user.is_admin %}badge-admin
-                                    {% elif user.is_main_admin %}badge-main-admin
-                                    {% else %}badge-inactive{% endif %}">
-                                    <i class="fas 
-                                        {% if user.is_student %}fa-graduation-cap
-                                        {% elif user.is_employer %}fa-building
-                                        {% elif user.is_admin %}fa-user-shield
-                                        {% elif user.is_main_admin %}fa-crown
-                                        {% else %}fa-user{% endif %} me-1"></i>
-                                    {{ user.get_user_type_display }}
-                                </span>
-                                
-                                {% if user.is_active %}
-                                <span class="status-badge badge-active">
-                                    <i class="fas fa-check-circle me-1"></i>{% trans "Active" %}
-                                </span>
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'accounts:admin_dashboard' %}" class="text-decoration-none">
+                            <i class="fas fa-home me-1"></i>{% trans "Dashboard" %}
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'accounts:user_management' %}" class="text-decoration-none">
+                            {% trans "User Management" %}
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active">{{ user.get_full_name|default:user.username|truncatechars:20 }}</li>
+                </ol>
+            </nav>
+
+            <!-- Profile Header -->
+            <div class="card card-hover shadow-sm mb-4">
+                <div class="card-body p-3 p-md-4">
+                    <div class="row align-items-center">
+                        <!-- Avatar Column -->
+                        <div class="col-md-auto mb-3 mb-md-0">
+                            <div class="profile-avatar-container">
+                                {% if user.avatar %}
+                                <img src="{{ user.avatar.url }}" 
+                                    style="width: 50vh;"
+                                    alt="{{ user.username }}" 
+                                    class="profile-avatar"
+                                    onerror="this.onerror=null; this.src='{% static 'img/default-avatar.png' %}';">
                                 {% else %}
-                                <span class="status-badge badge-inactive">
-                                    <i class="fas fa-times-circle me-1"></i>{% trans "Inactive" %}
-                                </span>
-                                {% endif %}
-                                
-                                {% if user.is_verified %}
-                                <span class="status-badge badge-verified">
-                                    <i class="fas fa-badge-check me-1"></i>{% trans "Verified" %}
-                                </span>
-                                {% endif %}
-                                
-                                {% if user.is_employer and user.is_active_employer %}
-                                <span class="status-badge badge-employer-active">
-                                    <i class="fas fa-briefcase me-1"></i>{% trans "Active Employer" %}
-                                </span>
+                                <div class="avatar-placeholder">
+                                    <i class="fas fa-user"></i>
+                                </div>
                                 {% endif %}
                             </div>
                         </div>
+
+                        <!-- User Info Column -->
+                        <div class="col-md">
+                            <div class="header-content">
+                                <h1 class="h2 fw-bold mb-2">{{ user.get_full_name|default:user.username }}</h1>
+                                
+                                <p class="text-muted mb-3">
+                                    <i class="fas fa-envelope me-2 text-primary"></i>
+                                    {{ user.email|truncatechars:30 }}
+                                </p>
+
+                                <!-- Status Badges -->
+                                <div class="status-badges d-flex flex-wrap gap-2 mb-3">
+                                    <span class="status-badge 
+                                        {% if user.is_student %}badge-student
+                                        {% elif user.is_employer %}badge-employer
+                                        {% elif user.is_admin %}badge-admin
+                                        {% elif user.is_main_admin %}badge-main-admin
+                                        {% else %}badge-inactive{% endif %}">
+                                        <i class="fas 
+                                            {% if user.is_student %}fa-graduation-cap
+                                            {% elif user.is_employer %}fa-building
+                                            {% elif user.is_admin %}fa-user-shield
+                                            {% elif user.is_main_admin %}fa-crown
+                                            {% else %}fa-user{% endif %} me-1"></i>
+                                        {{ user.get_user_type_display }}
+                                    </span>
+                                    
+                                    {% if user.is_active %}
+                                    <span class="status-badge badge-active">
+                                        <i class="fas fa-check-circle me-1"></i>{% trans "Active" %}
+                                    </span>
+                                    {% else %}
+                                    <span class="status-badge badge-inactive">
+                                        <i class="fas fa-times-circle me-1"></i>{% trans "Inactive" %}
+                                    </span>
+                                    {% endif %}
+                                    
+                                    {% if user.is_verified %}
+                                    <span class="status-badge badge-verified">
+                                        <i class="fas fa-badge-check me-1"></i>{% trans "Verified" %}
+                                    </span>
+                                    {% endif %}
+                                    
+                                    {% if user.is_employer and user.is_active_employer %}
+                                    <span class="status-badge badge-employer-active">
+                                        <i class="fas fa-briefcase me-1"></i>{% trans "Active Employer" %}
+                                    </span>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="form-actions d-flex flex-wrap gap-2">
+                                    {% if not user.is_main_admin %}
+                                    <form method="post" action="{% url 'accounts:toggle_user_status' user.id %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn {% if user.is_active %}btn-outline-warning{% else %}btn-outline-success{% endif %}">
+                                            <i class="fas {% if user.is_active %}fa-user-slash{% else %}fa-user-check{% endif %} me-1"></i>
+                                            {% if user.is_active %}{% trans "Deactivate" %}{% else %}{% trans "Activate" %}{% endif %}
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                    
+                                    <a href="mailto:{{ user.email }}" class="btn btn-outline-primary">
+                                        <i class="fas fa-envelope me-1"></i>{% trans "Send Email" %}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                
-                <div class="d-flex flex-wrap gap-2 mt-3 mt-md-0">
-                    {% if not user.is_main_admin %}
-                    <form method="post" action="{% url 'accounts:toggle_user_status' user.id %}" class="d-inline">
-                        {% csrf_token %}
-                        <button type="submit" class="btn {% if user.is_active %}btn-outline-warning{% else %}btn-outline-success{% endif %} btn-sm">
-                            <i class="fas {% if user.is_active %}fa-user-slash{% else %}fa-user-check{% endif %} me-1"></i>
-                            {% if user.is_active %}{% trans "Deactivate" %}{% else %}{% trans "Activate" %}{% endif %}
-                        </button>
-                    </form>
-                    {% endif %}
-                    
-                    <a href="mailto:{{ user.email }}" class="btn btn-outline-primary btn-sm">
-                        <i class="fas fa-envelope me-1"></i>{% trans "Send Email" %}
-                    </a>
                 </div>
             </div>
         </div>
@@ -429,7 +703,7 @@ body {
 
     <!-- Stats Cards -->
     {% if user.is_employer or user.is_student %}
-    <div class="row mb-4">
+    <div class="row mb-4 stats-grid">
         {% if user.is_employer and profile %}
         <div class="col-md-3 col-sm-6 mb-3">
             <div class="stat-card card-hover">
@@ -474,12 +748,13 @@ body {
     </div>
     {% endif %}
 
+    <!-- Main Content -->
     <div class="row">
         <!-- Left Column - Basic Information -->
         <div class="col-lg-4 mb-4">
             <!-- Contact Information -->
             <div class="card card-hover shadow-sm mb-4">
-                <div class="card-header border-0 pb-0">
+                <div class="card-header">
                     <h5 class="fw-bold mb-0">
                         <i class="fas fa-address-card text-primary me-2"></i>{% trans "Contact Information" %}
                     </h5>
@@ -487,69 +762,59 @@ body {
                 <div class="card-body">
                     <div class="list-group list-group-flush">
                         {% if user.phone_number %}
-                        <div class="list-group-item border-0 px-0 py-2">
-                            <div class="d-flex align-items-center">
-                                <div class="bg-light rounded-circle p-2 me-3">
-                                    <i class="fas fa-phone text-primary"></i>
-                                </div>
-                                <div>
-                                    <small class="text-muted d-block">{% trans "Phone" %}</small>
-                                    <strong>{{ user.phone_number }}</strong>
-                                </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div>
+                                <small class="text-muted d-block">{% trans "Phone" %}</small>
+                                <strong>{{ user.phone_number }}</strong>
                             </div>
                         </div>
                         {% endif %}
                         
                         {% if user.country %}
-                        <div class="list-group-item border-0 px-0 py-2">
-                            <div class="d-flex align-items-center">
-                                <div class="bg-light rounded-circle p-2 me-3">
-                                    <i class="fas fa-map-marker-alt text-primary"></i>
-                                </div>
-                                <div>
-                                    <small class="text-muted d-block">{% trans "Location" %}</small>
-                                    <strong>{{ user.country.name }}{% if user.city %}, {{ user.city }}{% endif %}</strong>
-                                </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <small class="text-muted d-block">{% trans "Location" %}</small>
+                                <strong>{{ user.country.name }}{% if user.city %}, {{ user.city }}{% endif %}</strong>
                             </div>
                         </div>
                         {% endif %}
                         
                         {% if profile and user.is_employer and profile.company_phone %}
-                        <div class="list-group-item border-0 px-0 py-2">
-                            <div class="d-flex align-items-center">
-                                <div class="bg-light rounded-circle p-2 me-3">
-                                    <i class="fas fa-building text-primary"></i>
-                                </div>
-                                <div>
-                                    <small class="text-muted d-block">{% trans "Company Phone" %}</small>
-                                    <strong>{{ profile.company_phone }}</strong>
-                                </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <div>
+                                <small class="text-muted d-block">{% trans "Company Phone" %}</small>
+                                <strong>{{ profile.company_phone }}</strong>
                             </div>
                         </div>
                         {% endif %}
                         
-                        <div class="list-group-item border-0 px-0 py-2">
-                            <div class="d-flex align-items-center">
-                                <div class="bg-light rounded-circle p-2 me-3">
-                                    <i class="fas fa-calendar-alt text-primary"></i>
-                                </div>
-                                <div>
-                                    <small class="text-muted d-block">{% trans "Member Since" %}</small>
-                                    <strong>{{ user.date_joined|date:"F d, Y" }}</strong>
-                                </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div>
+                                <small class="text-muted d-block">{% trans "Member Since" %}</small>
+                                <strong>{{ user.date_joined|date:"F d, Y" }}</strong>
                             </div>
                         </div>
                         
                         {% if user.last_login %}
-                        <div class="list-group-item border-0 px-0 py-2">
-                            <div class="d-flex align-items-center">
-                                <div class="bg-light rounded-circle p-2 me-3">
-                                    <i class="fas fa-clock text-primary"></i>
-                                </div>
-                                <div>
-                                    <small class="text-muted d-block">{% trans "Last Login" %}</small>
-                                    <strong>{{ user.last_login|timesince }} {% trans "ago" %}</strong>
-                                </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <small class="text-muted d-block">{% trans "Last Login" %}</small>
+                                <strong>{{ user.last_login|timesince }} {% trans "ago" %}</strong>
                             </div>
                         </div>
                         {% endif %}
@@ -559,14 +824,14 @@ body {
 
             <!-- Account Status -->
             <div class="card card-hover shadow-sm">
-                <div class="card-header border-0 pb-0">
+                <div class="card-header">
                     <h5 class="fw-bold mb-0">
                         <i class="fas fa-user-shield text-primary me-2"></i>{% trans "Account Status" %}
                     </h5>
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
-                        <div class="col-6">
+                        <div class="col-6 col-sm-6">
                             <div class="text-center p-3 border rounded-2">
                                 <div class="mb-2">
                                     <i class="fas {% if user.is_active %}fa-check-circle text-success{% else %}fa-times-circle text-danger{% endif %} fa-2x"></i>
@@ -575,7 +840,7 @@ body {
                                 <strong>{% if user.is_active %}{% trans "Active" %}{% else %}{% trans "Inactive" %}{% endif %}</strong>
                             </div>
                         </div>
-                        <div class="col-6">
+                        <div class="col-6 col-sm-6">
                             <div class="text-center p-3 border rounded-2">
                                 <div class="mb-2">
                                     <i class="fas {% if user.is_verified %}fa-badge-check text-info{% else %}fa-clock text-warning{% endif %} fa-2x"></i>
@@ -585,7 +850,7 @@ body {
                             </div>
                         </div>
                         {% if user.is_employer %}
-                        <div class="col-6">
+                        <div class="col-12 col-sm-6 mx-auto">
                             <div class="text-center p-3 border rounded-2">
                                 <div class="mb-2">
                                     <i class="fas {% if user.is_active_employer %}fa-check text-success{% else %}fa-times text-danger{% endif %} fa-2x"></i>
@@ -604,17 +869,17 @@ body {
         <div class="col-lg-8">
             <!-- Profile Details -->
             <div class="card card-hover shadow-sm mb-4">
-                <div class="card-header border-0">
-                    <div class="d-flex justify-content-between align-items-center">
+                <div class="card-header">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
                         <h5 class="fw-bold mb-0">
                             <i class="fas fa-id-card text-primary me-2"></i>{% trans "Profile Details" %}
                         </h5>
-                        <span class="badge badge-light">
+                        <span class="badge bg-light text-dark border">
                             <i class="fas fa-user-tag me-1"></i>{{ user.get_user_type_display }}
                         </span>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body profile-details">
                     {% if user.is_student and profile %}
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -637,8 +902,8 @@ body {
                                 <div class="d-flex align-items-center">
                                     <strong class="fs-5 me-2">{{ profile.gpa|default:"N/A" }}</strong>
                                     {% if profile.gpa %}
-                                    <div class="progress flex-grow-1" style="height: 8px;">
-                                        <div class="progress-bar bg-success" style="width: {{ profile.gpa|floatformat:0 }}%"></div>
+                                    <div class="progress flex-grow-1">
+                                        <div class="progress-bar" style="width: {{ profile.gpa|floatformat:0 }}%"></div>
                                     </div>
                                     {% endif %}
                                 </div>
@@ -762,8 +1027,8 @@ body {
 
             <!-- Activity Timeline -->
             <div class="card card-hover shadow-sm">
-                <div class="card-header border-0">
-                    <div class="d-flex justify-content-between align-items-center">
+                <div class="card-header">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
                         <h5 class="fw-bold mb-0">
                             <i class="fas fa-history text-primary me-2"></i>{% trans "Activity Timeline" %}
                         </h5>
@@ -775,15 +1040,15 @@ body {
                     <div class="timeline-container">
                         {% for activity in activities %}
                         <div class="timeline-item">
-                            <div class="d-flex">
-                                <div class="flex-shrink-0 me-3">
-                                    <div class="bg-light rounded-circle p-2">
+                            <div class="d-flex flex-column flex-sm-row">
+                                <div class="flex-shrink-0 me-3 mb-2 mb-sm-0">
+                                    <div class="bg-light rounded-circle p-2 d-inline-block">
                                         <i class="fas fa-{{ activity.activity_type|default:'circle' }} fa-fw text-primary"></i>
                                     </div>
                                 </div>
                                 <div class="flex-grow-1">
-                                    <div class="d-flex justify-content-between align-items-start mb-1">
-                                        <strong class="fs-6">{{ activity.get_activity_type_display }}</strong>
+                                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-1">
+                                        <strong class="fs-6 mb-1 mb-sm-0">{{ activity.get_activity_type_display }}</strong>
                                         <small class="text-muted">{{ activity.created_at|date:"M d, H:i" }}</small>
                                     </div>
                                     <p class="mb-2">{{ activity.description }}</p>
@@ -825,6 +1090,37 @@ document.addEventListener('DOMContentLoaded', function() {
             item.style.transform = 'translateX(0)';
         }, index * 100);
     });
+
+    // Add image error handling
+    const profileImage = document.querySelector('.profile-avatar');
+    if (profileImage) {
+        profileImage.addEventListener('error', function() {
+            this.src = '{% static 'img/default-avatar.png' %}';
+            this.classList.add('default-avatar');
+        });
+    }
+
+    // Add responsive behavior to badges on small screens
+    function adjustBadgesForScreen() {
+        const badges = document.querySelectorAll('.status-badge');
+        const screenWidth = window.innerWidth;
+        
+        if (screenWidth < 400) {
+            badges.forEach(badge => {
+                badge.style.margin = '2px';
+                badge.style.fontSize = '0.7rem';
+            });
+        } else {
+            badges.forEach(badge => {
+                badge.style.margin = '';
+                badge.style.fontSize = '';
+            });
+        }
+    }
+
+    // Run on load and resize
+    adjustBadgesForScreen();
+    window.addEventListener('resize', adjustBadgesForScreen);
 });
 </script>
 {% endblock %}

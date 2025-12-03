@@ -6,7 +6,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView
+from django.db.models import Q
 from typing import Any, cast
+from django.core.paginator import Paginator
 
 from .forms import CVForm, EducationForm, ExperienceForm, SkillForm, LanguageForm
 from .models import CV, CVTemplate, Education, Experience, Skill, Language
@@ -412,11 +414,22 @@ def public_cv_list(request):
     """Список публичных (published) резюме для работодателей и админов"""
     user = request.user
     user_type = getattr(user, "user_type", None)
+    
+    # Проверка прав доступа
     if user_type not in ["employer", "admin", "main_admin"]:
         messages.error(request, _("Sizda ushbu sahifaga kirish huquqi yo'q."))
         return redirect("cvbuilder:cv_list")
 
-    cvs = CV.objects.filter(status="published").select_related("template", "user")
+    # Оптимизированный запрос с prefetch_related для всех связанных данных
+    cvs = CV.objects.filter(status="published").select_related(
+        "template", 
+        "user"
+    ).prefetch_related(
+        "skills",        # Навыки через related_name
+        "experiences",   # Опыт работы
+        "educations",    # Образование
+        "languages"      # Языки
+    ).order_by("-created_at")  # Сортировка по умолчанию
 
     # Фильтры
     q = request.GET.get("q", "").strip()
@@ -424,44 +437,54 @@ def public_cv_list(request):
     location = request.GET.get("location", "").strip()
     sort = request.GET.get("sort", "newest")
 
+    # Поиск по тексту
     if q:
-        from django.db.models import Q
-
         cvs = cvs.filter(
-            Q(full_name__icontains=q) | Q(title__icontains=q) | Q(summary__icontains=q)
+            Q(full_name__icontains=q) | 
+            Q(title__icontains=q) | 
+            Q(summary__icontains=q)
         )
 
+    # Фильтр по шаблону
     if template_id:
-        cvs = cvs.filter(template_id=template_id)
+        try:
+            template_id = int(template_id)
+            cvs = cvs.filter(template_id=template_id)
+        except (ValueError, TypeError):
+            pass
 
+    # Фильтр по местоположению
     if location:
         cvs = cvs.filter(location__icontains=location)
 
     # Сортировка
-    if sort == "newest":
-        cvs = cvs.order_by("-created_at")
-    elif sort == "oldest":
-        cvs = cvs.order_by("created_at")
-    elif sort == "name_asc":
-        cvs = cvs.order_by("full_name")
-    elif sort == "name_desc":
-        cvs = cvs.order_by("-full_name")
+    sort_mapping = {
+        "newest": "-created_at",
+        "oldest": "created_at",
+        "name_asc": "full_name",
+        "name_desc": "-full_name",
+    }
+    
+    sort_field = sort_mapping.get(sort, "-created_at")
+    cvs = cvs.order_by(sort_field)
 
     # Пагинация
-    from django.core.paginator import Paginator
-
     paginator = Paginator(cvs, 20)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
+    # Получаем активные шаблоны
+    templates = CVTemplate.objects.filter(is_active=True).only('id', 'name')
+
     context = {
         "page_obj": page_obj,
         "cvs": page_obj.object_list,
-        "templates": CVTemplate.objects.filter(is_active=True),
+        "templates": templates,
         "q": q,
         "location": location,
         "selected_template": template_id,
         "sort": sort,
+        "user_type": user_type,
     }
 
     return render(request, "cvbuilder/public_cv_list.html", context)
