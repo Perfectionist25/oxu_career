@@ -6,242 +6,171 @@
 {% block content %}
 <div class="container mt-4">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
+        <div class="col-lg-10">
             <h1 class="mb-4">{% trans "Create New Event" %}</h1>
+
+            <!-- Общие ошибки формы -->
+            {% if form.errors %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <h5 class="alert-heading">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    {% trans "Please correct the following errors" %}
+                </h5>
+                <ul class="mb-0">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endif %}
 
             <div class="card">
                 <div class="card-body">
-                    <form method="post" enctype="multipart/form-data">
+                    <form method="post" enctype="multipart/form-data" novalidate>
                         {% csrf_token %}
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form.title.label_tag }}
+                        <!-- Основная информация -->
+                        <div class="mb-4">
+                            <h5 class="card-title mb-3">{% trans "Basic Information" %}</h5>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.title.id_for_label }}" class="form-label">
+                                        {{ form.title.label }} <span class="text-danger">*</span>
+                                    </label>
                                     {{ form.title }}
-                                    {% if form.title.errors %}
-                                        <div class="text-danger">{{ form.title.errors }}</div>
-                                    {% endif %}
+                                    <div class="form-text">{% trans "Maximum 200 characters" %}</div>
+                                    <div class="text-danger small mt-1" id="{{ form.title.id_for_label }}_error"></div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form.category.label_tag }}
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.category.id_for_label }}" class="form-label">
+                                        {{ form.category.label }} <span class="text-danger">*</span>
+                                    </label>
                                     {{ form.category }}
-                                    {% if form.category.errors %}
-                                        <div class="text-danger">{{ form.category.errors }}</div>
-                                    {% endif %}
+                                    <div class="text-danger small mt-1" id="{{ form.category.id_for_label }}_error"></div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="mb-3">
-                            {{ form.short_description.label_tag }}
-                            {{ form.short_description }}
-                            {% if form.short_description.errors %}
-                                <div class="text-danger">{{ form.short_description.errors }}</div>
-                            {% endif %}
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form.description.label_tag }}
-                            {{ form.description }}
-                            {% if form.description.errors %}
-                                <div class="text-danger">{{ form.description.errors }}</div>
-                            {% endif %}
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form.event_type.label_tag }}
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.event_type.id_for_label }}" class="form-label">
+                                        {{ form.event_type.label }} <span class="text-danger">*</span>
+                                    </label>
                                     {{ form.event_type }}
-                                    {% if form.event_type.errors %}
-                                        <div class="text-danger">{{ form.event_type.errors }}</div>
-                                    {% endif %}
+                                    <div class="text-danger small mt-1" id="{{ form.event_type.id_for_label }}_error"></div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form.location.label_tag }}
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.location.id_for_label }}" class="form-label">
+                                        {{ form.location.label }} <span class="text-danger">*</span>
+                                    </label>
                                     {{ form.location }}
-                                    {% if form.location.errors %}
-                                        <div class="text-danger">{{ form.location.errors }}</div>
-                                    {% endif %}
+                                    <div class="form-text">{% trans "Maximum 200 characters" %}</div>
+                                    <div class="text-danger small mt-1" id="{{ form.location.id_for_label }}_error"></div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form.start_date.label_tag }}
+                        <!-- Описание -->
+                        <div class="mb-4">
+                            <h5 class="card-title mb-3">{% trans "Description" %}</h5>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.short_description.id_for_label }}" class="form-label">
+                                    {{ form.short_description.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.short_description }}
+                                <div class="form-text">
+                                    <span id="short_desc_counter" class="text-muted">0/300</span> {% trans "characters" %}
+                                </div>
+                                <div class="text-danger small mt-1" id="{{ form.short_description.id_for_label }}_error"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="{{ form.description.id_for_label }}" class="form-label">
+                                    {{ form.description.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.description }}
+                                <div class="form-text">
+                                    <span id="desc_counter" class="text-muted">0/5000</span> {% trans "characters" %}
+                                </div>
+                                <div class="text-danger small mt-1" id="{{ form.description.id_for_label }}_error"></div>
+                            </div>
+                        </div>
+
+                        <!-- Даты и время -->
+                        <div class="mb-4">
+                            <h5 class="card-title mb-3">{% trans "Dates & Time" %}</h5>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.start_date.id_for_label }}" class="form-label">
+                                        {{ form.start_date.label }} <span class="text-danger">*</span>
+                                    </label>
                                     {{ form.start_date }}
-                                    {% if form.start_date.errors %}
-                                        <div class="text-danger">{{ form.start_date.errors }}</div>
-                                    {% endif %}
+                                    <div class="text-danger small mt-1" id="{{ form.start_date.id_for_label }}_error"></div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form.end_date.label_tag }}
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.end_date.id_for_label }}" class="form-label">
+                                        {{ form.end_date.label }}
+                                    </label>
                                     {{ form.end_date }}
-                                    {% if form.end_date.errors %}
-                                        <div class="text-danger">{{ form.end_date.errors }}</div>
-                                    {% endif %}
+                                    <div class="text-danger small mt-1" id="{{ form.end_date.id_for_label }}_error"></div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form.venue.label_tag }}
-                                    {{ form.venue }}
-                                    {% if form.venue.errors %}
-                                        <div class="text-danger">{{ form.venue.errors }}</div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <div class="form-check">
-                                        {{ form.online_event }}
-                                        {{ form.online_event.label_tag }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mb-3" id="online_link_field" style="display: none;">
-                            {{ form.online_link.label_tag }}
-                            {{ form.online_link }}
-                            {% if form.online_link.errors %}
-                                <div class="text-danger">{{ form.online_link.errors }}</div>
-                            {% endif %}
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form.address.label_tag }}
-                            {{ form.address }}
-                            {% if form.address.errors %}
-                                <div class="text-danger">{{ form.address.errors }}</div>
-                            {% endif %}
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <div class="form-check">
-                                        {{ form.registration_required }}
-                                        {{ form.registration_required.label_tag }}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form.registration_type.label_tag }}
-                                    {{ form.registration_type }}
-                                    {% if form.registration_type.errors %}
-                                        <div class="text-danger">{{ form.registration_type.errors }}</div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form.registration_deadline.label_tag }}
-                                    {{ form.registration_deadline }}
-                                    {% if form.registration_deadline.errors %}
-                                        <div class="text-danger">{{ form.registration_deadline.errors }}</div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form.max_participants.label_tag }}
-                                    {{ form.max_participants }}
-                                    {% if form.max_participants.errors %}
-                                        <div class="text-danger">{{ form.max_participants.errors }}</div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <div class="form-check">
-                                        {{ form.waitlist_enabled }}
-                                        {{ form.waitlist_enabled.label_tag }}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <div class="form-check">
-                                        {{ form.is_free }}
-                                        {{ form.is_free.label_tag }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row" id="price_fields" style="display: none;">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form.price.label_tag }}
-                                    {{ form.price }}
-                                    {% if form.price.errors %}
-                                        <div class="text-danger">{{ form.price.errors }}</div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form.currency.label_tag }}
-                                    {{ form.currency }}
-                                    {% if form.currency.errors %}
-                                        <div class="text-danger">{{ form.currency.errors }}</div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form.tags.label_tag }}
-                            {{ form.tags }}
-                            {% if form.tags.errors %}
-                                <div class="text-danger">{{ form.tags.errors }}</div>
-                            {% endif %}
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form.banner_image.label_tag }}
+                        <!-- Изображения -->
+                        <div class="mb-4">
+                            <h5 class="card-title mb-3">{% trans "Images" %}</h5>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.banner_image.id_for_label }}" class="form-label">
+                                        {{ form.banner_image.label }}
+                                    </label>
                                     {{ form.banner_image }}
-                                    {% if form.banner_image.errors %}
-                                        <div class="text-danger">{{ form.banner_image.errors }}</div>
-                                    {% endif %}
+                                    <div class="form-text">{% trans "Recommended size: 1200x400px" %}</div>
+                                    <div class="text-danger small mt-1" id="{{ form.banner_image.id_for_label }}_error"></div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form.thumbnail.label_tag }}
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.thumbnail.id_for_label }}" class="form-label">
+                                        {{ form.thumbnail.label }}
+                                    </label>
                                     {{ form.thumbnail }}
-                                    {% if form.thumbnail.errors %}
-                                        <div class="text-danger">{{ form.thumbnail.errors }}</div>
-                                    {% endif %}
+                                    <div class="form-text">{% trans "Recommended size: 400x300px" %}</div>
+                                    <div class="text-danger small mt-1" id="{{ form.thumbnail.id_for_label }}_error"></div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="d-flex justify-content-between">
-                            <a href="{% url 'events:manage_events' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
-                            <button type="submit" class="btn btn-primary">{% trans "Create Event" %}</button>
+                        <!-- Теги -->
+                        <div class="mb-4">
+                            <h5 class="card-title mb-3">{% trans "Tags" %}</h5>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.tags.id_for_label }}" class="form-label">
+                                    {{ form.tags.label }}
+                                </label>
+                                {{ form.tags }}
+                                <div class="form-text">{% trans "Separate tags with commas (e.g., technology, workshop, networking)" %}</div>
+                                <div class="text-danger small mt-1" id="{{ form.tags.id_for_label }}_error"></div>
+                            </div>
+                        </div>
+
+                        <!-- Кнопки -->
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                            <a href="{% url 'events:manage_events' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>{% trans "Cancel" %}
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-calendar-plus me-2"></i>{% trans "Create Event" %}
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -250,35 +179,326 @@
     </div>
 </div>
 
+<style>
+/* Улучшенные стили для формы */
+.card {
+    border: none;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+.card-title {
+    color: #2c3e50;
+    font-weight: 600;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+
+.form-control.is-invalid, .form-select.is-invalid {
+    border-color: #dc3545;
+}
+
+.form-text {
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    border: none;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+}
+
+/* Стили для ошибок */
+.text-danger.small {
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+/* Счетчики символов */
+#short_desc_counter, #desc_counter {
+    font-weight: 500;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+</style>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const onlineEventCheckbox = document.querySelector('#id_online_event');
-    const onlineLinkField = document.getElementById('online_link_field');
-    const isFreeCheckbox = document.querySelector('#id_is_free');
-    const priceFields = document.getElementById('price_fields');
-
-    function toggleOnlineLink() {
-        if (onlineEventCheckbox.checked) {
-            onlineLinkField.style.display = 'block';
-        } else {
-            onlineLinkField.style.display = 'none';
+    // Счетчики символов
+    const shortDescField = document.getElementById('{{ form.short_description.id_for_label }}');
+    const descField = document.getElementById('{{ form.description.id_for_label }}');
+    const shortDescCounter = document.getElementById('short_desc_counter');
+    const descCounter = document.getElementById('desc_counter');
+    
+    function updateCounter(field, counter, max) {
+        if (field && counter) {
+            const length = field.value.length;
+            counter.textContent = `${length}/${max}`;
+            
+            // Изменяем цвет в зависимости от количества символов
+            if (length > max) {
+                counter.className = 'text-danger';
+                counter.innerHTML = `${length}/${max} <i class="fas fa-exclamation-circle"></i>`;
+            } else if (length > max * 0.9) {
+                counter.className = 'text-warning';
+            } else {
+                counter.className = 'text-success';
+            }
         }
     }
-
-    function togglePriceFields() {
-        if (isFreeCheckbox.checked) {
-            priceFields.style.display = 'none';
+    
+    if (shortDescField && shortDescCounter) {
+        shortDescField.addEventListener('input', function() {
+            updateCounter(this, shortDescCounter, 300);
+        });
+        // Инициализация при загрузке
+        updateCounter(shortDescField, shortDescCounter, 300);
+    }
+    
+    if (descField && descCounter) {
+        descField.addEventListener('input', function() {
+            updateCounter(this, descCounter, 5000);
+        });
+        updateCounter(descField, descCounter, 5000);
+    }
+    
+    // Валидация в реальном времени
+    const fieldsToValidate = ['title', 'location', 'tags'];
+    
+    fieldsToValidate.forEach(fieldName => {
+        const field = document.getElementById(`id_${fieldName}`);
+        const errorElement = document.getElementById(`id_${fieldName}_error`);
+        
+        if (field && errorElement) {
+            field.addEventListener('blur', function() {
+                validateField(this, errorElement);
+            });
+            
+            field.addEventListener('input', function() {
+                // Очищаем ошибку при вводе
+                errorElement.textContent = '';
+                this.classList.remove('is-invalid');
+            });
+        }
+    });
+    
+    function validateField(field, errorElement) {
+        const value = field.value.trim();
+        const fieldName = field.name;
+        
+        // Проверка обязательных полей
+        if (field.required && !value) {
+            errorElement.textContent = '{% trans "This field is required" %}';
+            field.classList.add('is-invalid');
+            return false;
+        }
+        
+        // Проверка максимальной длины
+        let maxLength = 0;
+        switch(fieldName) {
+            case 'title':
+                maxLength = 200;
+                break;
+            case 'short_description':
+                maxLength = 300;
+                break;
+            case 'description':
+                maxLength = 5000;
+                break;
+            case 'location':
+                maxLength = 200;
+                break;
+            case 'tags':
+                maxLength = 500;
+                break;
+        }
+        
+        if (maxLength > 0 && value.length > maxLength) {
+            errorElement.textContent = `{% trans "Maximum length is" %} ${maxLength} {% trans "characters" %}`;
+            field.classList.add('is-invalid');
+            return false;
+        }
+        
+        field.classList.remove('is-invalid');
+        errorElement.textContent = '';
+        return true;
+    }
+    
+    // Валидация дат
+    const startDateField = document.getElementById('{{ form.start_date.id_for_label }}');
+    const endDateField = document.getElementById('{{ form.end_date.id_for_label }}');
+    
+    if (startDateField && endDateField) {
+        startDateField.addEventListener('change', validateDates);
+        endDateField.addEventListener('change', validateDates);
+    }
+    
+    function validateDates() {
+        const startDate = startDateField.value ? new Date(startDateField.value) : null;
+        const endDate = endDateField.value ? new Date(endDateField.value) : null;
+        const startError = document.getElementById('{{ form.start_date.id_for_label }}_error');
+        const endError = document.getElementById('{{ form.end_date.id_for_label }}_error');
+        
+        if (startDate && endDate) {
+            if (startDate >= endDate) {
+                endError.textContent = '{% trans "End date must be after start date" %}';
+                endDateField.classList.add('is-invalid');
+            } else {
+                endError.textContent = '';
+                endDateField.classList.remove('is-invalid');
+            }
+        }
+        
+        if (startDate && startDate < new Date()) {
+            startError.textContent = '{% trans "Start date cannot be in the past" %}';
+            startDateField.classList.add('is-invalid');
         } else {
-            priceFields.style.display = 'flex';
+            startError.textContent = '';
+            startDateField.classList.remove('is-invalid');
         }
     }
-
-    onlineEventCheckbox.addEventListener('change', toggleOnlineLink);
-    isFreeCheckbox.addEventListener('change', togglePriceFields);
-
-    // Initial state
-    toggleOnlineLink();
-    togglePriceFields();
+    
+    // Предотвращение отправки формы с ошибками
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(event) {
+        let isValid = true;
+        
+        // Проверяем все обязательные поля
+        const requiredFields = form.querySelectorAll('[required]');
+        requiredFields.forEach(field => {
+            const errorElement = document.getElementById(`${field.id}_error`);
+            if (!validateField(field, errorElement)) {
+                isValid = false;
+            }
+        });
+        
+        // Проверяем даты
+        if (startDateField && endDateField) {
+            validateDates();
+        }
+        
+        // Проверяем счетчики символов
+        if (shortDescField && shortDescField.value.length > 300) {
+            isValid = false;
+            const errorElement = document.getElementById('{{ form.short_description.id_for_label }}_error');
+            errorElement.textContent = '{% trans "Maximum 300 characters allowed" %}';
+            shortDescField.classList.add('is-invalid');
+        }
+        
+        if (descField && descField.value.length > 5000) {
+            isValid = false;
+            const errorElement = document.getElementById('{{ form.description.id_for_label }}_error');
+            errorElement.textContent = '{% trans "Maximum 5000 characters allowed" %}';
+            descField.classList.add('is-invalid');
+        }
+        
+        if (!isValid) {
+            event.preventDefault();
+            
+            // Прокрутка к первой ошибке
+            const firstError = form.querySelector('.is-invalid');
+            if (firstError) {
+                firstError.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+                firstError.focus();
+            }
+            
+            // Показываем сообщение
+            if (!document.querySelector('.alert.alert-danger')) {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-danger alert-dismissible fade show mt-3';
+                alertDiv.innerHTML = `
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>{% trans "Error!" %}</strong> {% trans "Please fix the errors before submitting." %}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                form.prepend(alertDiv);
+            }
+        }
+    });
+    
+    // Автоматическое форматирование даты при фокусе
+    const dateFields = [startDateField, endDateField].filter(Boolean);
+    dateFields.forEach(field => {
+        field.addEventListener('focus', function() {
+            if (!this.value) {
+                const now = new Date();
+                const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+                    .toISOString()
+                    .slice(0, 16);
+                this.value = localDateTime;
+            }
+        });
+    });
 });
 </script>
 {% endblock %}

@@ -11,7 +11,10 @@
         <div class="event-header">
             {% if event.banner_image %}
             <div class="event-banner">
-                <img src="{{ event.banner_image.url }}" alt="{{ event.title }}" class="banner-image">
+                <img src="{{ event.banner_image.url }}" alt="{{ event.title }}" class="banner-image" onclick="openModal('{{ event.banner_image.url }}', '{{ event.title|escapejs }}')">
+                <div class="zoom-overlay" onclick="openModal('{{ event.banner_image.url }}', '{{ event.title|escapejs }}')">
+                    <i class="fas fa-expand"></i>
+                </div>
             </div>
             {% endif %}
             
@@ -121,7 +124,10 @@
                             <div class="speaker-card">
                                 <div class="speaker-avatar">
                                     {% if speaker.photo %}
-                                    <img src="{{ speaker.photo.url }}" alt="{{ speaker.name }}">
+                                    <img src="{{ speaker.photo.url }}" alt="{{ speaker.name }}" onclick="openModal('{{ speaker.photo.url }}', '{{ speaker.name|escapejs }}')">
+                                    <div class="zoom-overlay" onclick="openModal('{{ speaker.photo.url }}', '{{ speaker.name|escapejs }}')">
+                                        <i class="fas fa-expand"></i>
+                                    </div>
                                     {% else %}
                                     <div class="avatar-placeholder">
                                         <i class="fas fa-user"></i>
@@ -204,14 +210,20 @@
                     <div class="sidebar-card">
                         <h4 class="sidebar-title">{% trans "Event Photos" %}</h4>
                         <div class="photos-grid">
-                            {% for photo in event.photos.all|slice:":4" %}
+                            {% for photo in event.photos.all %}
                             <div class="photo-item">
-                                <img src="{{ photo.image.url }}" alt="{{ photo.caption }}" loading="lazy">
+                                <img src="{{ photo.image.url }}" alt="{{ photo.caption|default:'' }}" 
+                                     onclick="openModal('{{ photo.image.url }}', '{{ photo.caption|default:""|escapejs }}')">
+                                <div class="zoom-overlay" onclick="openModal('{{ photo.image.url }}', '{{ photo.caption|default:""|escapejs }}')">
+                                    <i class="fas fa-expand"></i>
+                                </div>
                             </div>
                             {% endfor %}
                         </div>
                         {% if event.photos.all.count > 4 %}
-                        <a href="#" class="view-more-photos">{% trans "View all photos" %} ({{ event.photos.all.count }})</a>
+                        <div class="view-more-link" onclick="showAllPhotos()">
+                            {% trans "View all photos" %} ({{ event.photos.all.count }})
+                        </div>
                         {% endif %}
                     </div>
                     {% endif %}
@@ -221,8 +233,249 @@
     </div>
 </div>
 
+<!-- Модальное окно для изображений -->
+<div id="imageModal" class="image-modal">
+    <span class="modal-close" onclick="closeModal()">&times;</span>
+    <div class="modal-content-wrapper">
+        <div class="modal-loader" id="modalLoader">
+            <div class="spinner"></div>
+        </div>
+        <img class="modal-image" id="modalImage" onclick="event.stopPropagation()">
+    </div>
+    <div class="modal-caption" id="modalCaption"></div>
+</div>
+
 <style>
-/* Full width container */
+/* Модальное окно для изображений */
+.image-modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.95);
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.image-modal.active {
+    display: flex;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 10001;
+    background: none;
+    border: none;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s;
+}
+
+.modal-close:hover {
+    transform: scale(1.1);
+}
+
+.modal-content-wrapper {
+    position: relative;
+    width: 90%;
+    height: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.modal-image.loaded {
+    display: block;
+    opacity: 1;
+}
+
+.modal-caption {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+}
+
+.modal-loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+}
+
+.modal-loader.active {
+    display: block;
+}
+
+.spinner {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 4px solid white;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Zoom overlay для изображений */
+.zoom-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.zoom-overlay i {
+    color: white;
+    font-size: 24px;
+    background: rgba(0, 0, 0, 0.6);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.event-banner {
+    position: relative;
+    overflow: hidden;
+}
+
+.event-banner:hover .zoom-overlay,
+.photo-item:hover .zoom-overlay,
+.speaker-avatar:hover .zoom-overlay {
+    opacity: 1;
+}
+
+.event-banner .zoom-overlay {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+/* Фото галерея */
+.photos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.photo-item {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.photo-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.photo-item:hover img {
+    transform: scale(1.05);
+}
+
+.view-more-link {
+    color: #012152;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.view-more-link:hover {
+    text-decoration: underline;
+}
+
+/* Для аватаров спикеров */
+.speaker-avatar {
+    position: relative;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.speaker-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.speaker-avatar:hover img {
+    transform: scale(1.1);
+}
+
+/* Для баннера */
+.banner-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.banner-image:hover {
+    transform: scale(1.01);
+}
+
+/* Ваши оригинальные стили остаются без изменений */
 .full-width-container {
     width: 100%;
     min-height: 100vh;
@@ -234,7 +487,6 @@
     margin: 0 auto;
 }
 
-/* Event Header */
 .event-header {
     background: white;
     border-radius: 0 0 20px 20px;
@@ -247,12 +499,6 @@
     width: 100%;
     height: 300px;
     overflow: hidden;
-}
-
-.banner-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
 }
 
 .event-header-content {
@@ -303,7 +549,6 @@
     gap: 0.75rem;
 }
 
-/* Buttons */
 .btn-secondary, .btn-danger {
     padding: 0.75rem 1.5rem;
     border: none;
@@ -338,7 +583,6 @@
     transform: translateY(-2px);
 }
 
-/* Main Content */
 .event-main-content {
     padding: 0 2rem 2rem;
 }
@@ -350,7 +594,6 @@
     align-items: start;
 }
 
-/* Content Cards */
 .content-card {
     background: white;
     border-radius: 16px;
@@ -372,7 +615,6 @@
     font-size: 1.05rem;
 }
 
-/* Details Grid */
 .details-grid {
     display: flex;
     flex-direction: column;
@@ -424,7 +666,6 @@
     text-decoration: underline;
 }
 
-/* Speakers */
 .speakers-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -444,20 +685,6 @@
 .speaker-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-.speaker-avatar {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    overflow: hidden;
-    flex-shrink: 0;
-}
-
-.speaker-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
 }
 
 .avatar-placeholder {
@@ -495,7 +722,6 @@
     margin: 0;
 }
 
-/* Schedule */
 .schedule-list {
     display: flex;
     flex-direction: column;
@@ -558,7 +784,6 @@
     font-size: 0.9rem;
 }
 
-/* Sidebar */
 .event-sidebar {
     position: sticky;
     top: 7rem;
@@ -614,41 +839,6 @@
     font-weight: 500;
 }
 
-.photos-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
-
-.photo-item {
-    aspect-ratio: 1;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.photo-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-}
-
-.photo-item:hover img {
-    transform: scale(1.05);
-}
-
-.view-more-photos {
-    color: #012152;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-.view-more-photos:hover {
-    text-decoration: underline;
-}
-
 /* Responsive */
 @media (max-width: 1024px) {
     .event-details-grid {
@@ -658,6 +848,10 @@
     
     .event-sidebar {
         position: static;
+    }
+    
+    .photos-grid {
+        grid-template-columns: repeat(3, 1fr);
     }
 }
 
@@ -700,6 +894,10 @@
         width: 100%;
         justify-content: center;
     }
+    
+    .photos-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (max-width: 480px) {
@@ -723,18 +921,113 @@
     .detail-icon {
         align-self: center;
     }
+    
+    .photos-grid {
+        grid-template-columns: 1fr;
+    }
 }
 </style>
 
 <script>
+// Глобальные переменные
+let currentImages = [];
+let currentIndex = 0;
+
+// Открытие модального окна
+function openModal(imageSrc, caption) {
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImage');
+    const modalCaption = document.getElementById('modalCaption');
+    const loader = document.getElementById('modalLoader');
+    
+    // Показать лоадер
+    loader.classList.add('active');
+    modalImg.classList.remove('loaded');
+    
+    // Установить заголовок
+    modalCaption.textContent = caption || '';
+    
+    // Загрузить изображение
+    const img = new Image();
+    img.onload = function() {
+        modalImg.src = this.src;
+        modalImg.onload = function() {
+            loader.classList.remove('active');
+            modalImg.classList.add('loaded');
+        };
+    };
+    
+    img.onerror = function() {
+        // Если изображение не загрузилось
+        modalImg.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect width="400" height="300" fill="%23f0f0f0"/><text x="200" y="150" text-anchor="middle" font-family="Arial" font-size="16" fill="%23999">Image not found</text></svg>';
+        loader.classList.remove('active');
+        modalImg.classList.add('loaded');
+    };
+    
+    img.src = imageSrc;
+    
+    // Показать модальное окно
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    
+    // Добавить обработчик клавиши Escape
+    document.addEventListener('keydown', handleEscapeKey);
+}
+
+// Закрытие модального окна
+function closeModal() {
+    const modal = document.getElementById('imageModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+    
+    // Удалить обработчик клавиши Escape
+    document.removeEventListener('keydown', handleEscapeKey);
+}
+
+// Обработка клавиши Escape
+function handleEscapeKey(event) {
+    if (event.key === 'Escape') {
+        closeModal();
+    }
+}
+
+// Показать все фото в модальном окне (опционально)
+function showAllPhotos() {
+    // Собираем все URL изображений из галереи
+    const photoElements = document.querySelectorAll('.photos-grid img');
+    const images = Array.from(photoElements).map(img => ({
+        src: img.src,
+        alt: img.alt
+    }));
+    
+    if (images.length > 0) {
+        currentImages = images;
+        currentIndex = 0;
+        openModal(images[0].src, images[0].alt);
+    }
+}
+
+// Закрытие при клике на фон
+document.getElementById('imageModal').addEventListener('click', function(event) {
+    if (event.target === this || event.target.classList.contains('modal-close')) {
+        closeModal();
+    }
+});
+
+// Предотвращение закрытия при клике на изображение
+document.getElementById('modalImage').addEventListener('click', function(event) {
+    event.stopPropagation();
+});
+
+// Добавляем анимации для элементов
 document.addEventListener('DOMContentLoaded', function() {
-    // Add smooth animations for schedule items
+    // Анимация для карточек расписания
     const scheduleItems = document.querySelectorAll('.schedule-item');
     scheduleItems.forEach((item, index) => {
         item.style.animationDelay = `${index * 0.1}s`;
     });
     
-    // Add animation for speaker cards
+    // Анимация для карточек спикеров
     const speakerCards = document.querySelectorAll('.speaker-card');
     speakerCards.forEach((card, index) => {
         card.style.animationDelay = `${index * 0.05}s`;

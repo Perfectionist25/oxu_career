@@ -12,215 +12,207 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <h1 class="h3 fw-bold text-primary mb-1">{{ title }}</h1>
-                    <p class="text-muted mb-0">{% trans "Fill in the event information" %}</p>
+                    <p class="text-muted mb-0">{% trans "Edit event information" %}</p>
                 </div>
                 <div>
                     <a href="{% url 'events:admin_event_list' %}" class="btn btn-outline-secondary">
-                        <i class="fas fa-arrow-left me-2"></i>{% trans "Back" %}
+                        <i class="fas fa-arrow-left me-2"></i>{% trans "Back to List" %}
                     </a>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Общие ошибки формы -->
+    {% if form.errors %}
+    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+        <h5 class="alert-heading">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            {% trans "Please correct the following errors" %}
+        </h5>
+        <ul class="mb-0">
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+
     <!-- Form -->
     <div class="row">
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
-                    <form method="post" enctype="multipart/form-data">
+                    <form method="post" enctype="multipart/form-data" novalidate>
                         {% csrf_token %}
 
                         <!-- Basic Information -->
-                        <h5 class="fw-bold mb-3">
-                            <i class="fas fa-info-circle text-primary me-2"></i>{% trans "Basic Information" %}
-                        </h5>
+                        <div class="mb-4">
+                            <h5 class="fw-bold mb-3 text-primary">
+                                <i class="fas fa-info-circle me-2"></i>{% trans "Basic Information" %}
+                            </h5>
 
-                        <div class="row mb-3">
-                            <div class="col-md-8">
-                                <label for="{{ form.title.id_for_label }}" class="form-label fw-bold">
-                                    {{ form.title.label }} <span class="text-danger">*</span>
-                                </label>
-                                {{ form.title }}
-                                {% if form.title.errors %}
-                                <div class="text-danger small">{{ form.title.errors.0 }}</div>
-                                {% endif %}
+                            <div class="row mb-3">
+                                <div class="col-md-8">
+                                    <label for="{{ form.title.id_for_label }}" class="form-label fw-bold">
+                                        {{ form.title.label }} <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.title }}
+                                    <div class="form-text">{% trans "Maximum 200 characters" %}</div>
+                                    <div class="text-danger small mt-1" id="{{ form.title.id_for_label }}_error"></div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="{{ form.category.id_for_label }}" class="form-label fw-bold">
+                                        {{ form.category.label }} <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.category }}
+                                    <div class="text-danger small mt-1" id="{{ form.category.id_for_label }}_error"></div>
+                                </div>
                             </div>
-                            <div class="col-md-4">
-                                <label for="{{ form.category.id_for_label }}" class="form-label fw-bold">
-                                    {{ form.category.label }} <span class="text-danger">*</span>
-                                </label>
-                                {{ form.category }}
-                                {% if form.category.errors %}
-                                <div class="text-danger small">{{ form.category.errors.0 }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
 
-                        <div class="mb-3">
-                            <label for="{{ form.short_description.id_for_label }}" class="form-label fw-bold">
-                                {{ form.short_description.label }}
-                            </label>
-                            {{ form.short_description }}
-                            {% if form.short_description.errors %}
-                                <div class="text-danger small">{{ form.short_description.errors.0 }}</div>
-                            {% endif %}
-                            <div class="form-text">{% trans "Short description (optional but recommended)" %}</div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="{{ form.description.id_for_label }}" class="form-label fw-bold">
-                                {{ form.description.label }} <span class="text-danger">*</span>
-                            </label>
-                            {{ form.description }}
-                            {% if form.description.errors %}
-                                <div class="text-danger small">{{ form.description.errors.0 }}</div>
-                            {% endif %}
-                        </div>
-
-                        <!-- Date and Time -->
-                        <h5 class="fw-bold mb-3 mt-4">
-                            <i class="fas fa-calendar-alt text-primary me-2"></i>{% trans "Date and Time" %}
-                        </h5>
-
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="{{ form.start_date.id_for_label }}" class="form-label fw-bold">
-                                    {{ form.start_date.label }} <span class="text-danger">*</span>
-                                </label>
-                                {{ form.start_date }}
-                                {% if form.start_date.errors %}
-                                <div class="text-danger small">{{ form.start_date.errors.0 }}</div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-6">
-                                <label for="{{ form.end_date.id_for_label }}" class="form-label fw-bold">
-                                    {{ form.end_date.label }}
-                                </label>
-                                {{ form.end_date }}
-                                {% if form.end_date.errors %}
-                                <div class="text-danger small">{{ form.end_date.errors.0 }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <!-- Location -->
-                        <h5 class="fw-bold mb-3 mt-4">
-                            <i class="fas fa-map-marker-alt text-primary me-2"></i>{% trans "Location and Address" %}
-                        </h5>
-
-                        <div class="mb-3">
-                            <div class="form-check mb-3">
-                                {{ form.online_event }}
-                                <label for="{{ form.online_event.id_for_label }}" class="form-check-label fw-bold">
-                                    {{ form.online_event.label }}
-                                </label>
-                            </div>
-                        </div>
-
-                        <div id="location-fields" {% if form.online_event.value %}style="display: none;"{% endif %}>
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label for="{{ form.venue.id_for_label }}" class="form-label fw-bold">
-                                        {{ form.venue.label }}
+                                    <label for="{{ form.event_type.id_for_label }}" class="form-label fw-bold">
+                                        {{ form.event_type.label }} <span class="text-danger">*</span>
                                     </label>
-                                    {{ form.venue }}
-                                    {% if form.venue.errors %}
-                                    <div class="text-danger small">{{ form.venue.errors.0 }}</div>
-                                    {% endif %}
+                                    {{ form.event_type }}
+                                    <div class="text-danger small mt-1" id="{{ form.event_type.id_for_label }}_error"></div>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="{{ form.location.id_for_label }}" class="form-label fw-bold">
-                                        {{ form.location.label }}
+                                        {{ form.location.label }} <span class="text-danger">*</span>
                                     </label>
                                     {{ form.location }}
-                                    {% if form.location.errors %}
-                                    <div class="text-danger small">{{ form.location.errors.0 }}</div>
-                                    {% endif %}
+                                    <div class="form-text">{% trans "Maximum 200 characters" %}</div>
+                                    <div class="text-danger small mt-1" id="{{ form.location.id_for_label }}_error"></div>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-4">
+                            <h5 class="fw-bold mb-3 text-primary">
+                                <i class="fas fa-align-left me-2"></i>{% trans "Description" %}
+                            </h5>
+
+                            <div class="mb-3">
+                                <label for="{{ form.short_description.id_for_label }}" class="form-label fw-bold">
+                                    {{ form.short_description.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.short_description }}
+                                <div class="form-text">
+                                    <span id="short_desc_counter" class="text-muted">0/300</span> {% trans "characters" %}
+                                </div>
+                                <div class="text-danger small mt-1" id="{{ form.short_description.id_for_label }}_error"></div>
                             </div>
 
                             <div class="mb-3">
-                                <label for="{{ form.address.id_for_label }}" class="form-label fw-bold">
-                                    {{ form.address.label }}
+                                <label for="{{ form.description.id_for_label }}" class="form-label fw-bold">
+                                    {{ form.description.label }} <span class="text-danger">*</span>
                                 </label>
-                                {{ form.address }}
-                                {% if form.address.errors %}
-                                <div class="text-danger small">{{ form.address.errors.0 }}</div>
-                                {% endif %}
+                                {{ form.description }}
+                                <div class="form-text">
+                                    <span id="desc_counter" class="text-muted">0/5000</span> {% trans "characters" %}
+                                </div>
+                                <div class="text-danger small mt-1" id="{{ form.description.id_for_label }}_error"></div>
                             </div>
                         </div>
 
-                        <!-- Registration -->
-                        <h5 class="fw-bold mb-3 mt-4">
-                            <i class="fas fa-users text-primary me-2"></i>{% trans "Registration" %}
-                        </h5>
+                        <!-- Date and Time -->
+                        <div class="mb-4">
+                            <h5 class="fw-bold mb-3 text-primary">
+                                <i class="fas fa-calendar-alt me-2"></i>{% trans "Date and Time" %}
+                            </h5>
 
-                        <div class="row mb-3">
-                            <div class="col-md-4">
-                                <label for="{{ form.max_participants.id_for_label }}" class="form-label fw-bold">
-                                    {{ form.max_participants.label }}
-                                </label>
-                                {{ form.max_participants }}
-                                {% if form.max_participants.errors %}
-                                <div class="text-danger small">{{ form.max_participants.errors.0 }}</div>
-                                {% endif %}
-                                <div class="form-text">{% trans "Leave empty for unlimited" %}</div>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="{{ form.registration_deadline.id_for_label }}" class="form-label fw-bold">
-                                    {{ form.registration_deadline.label }}
-                                </label>
-                                {{ form.registration_deadline }}
-                                {% if form.registration_deadline.errors %}
-                                <div class="text-danger small">{{ form.registration_deadline.errors.0 }}</div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-4">
-                                <label for="{{ form.is_free.id_for_label }}" class="form-label fw-bold">
-                                    {{ form.is_free.label }}
-                                </label>
-                                <div class="mt-2">
-                                    {{ form.is_free }}
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="{{ form.start_date.id_for_label }}" class="form-label fw-bold">
+                                        {{ form.start_date.label }} <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.start_date }}
+                                    <div class="text-danger small mt-1" id="{{ form.start_date.id_for_label }}_error"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="{{ form.end_date.id_for_label }}" class="form-label fw-bold">
+                                        {{ form.end_date.label }}
+                                    </label>
+                                    {{ form.end_date }}
+                                    <div class="text-danger small mt-1" id="{{ form.end_date.id_for_label }}_error"></div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Image -->
-                        <h5 class="fw-bold mb-3 mt-4">
-                            <i class="fas fa-image text-primary me-2"></i>{% trans "Image" %}
-                        </h5>
+                        <!-- Images -->
+                        <div class="mb-4">
+                            <h5 class="fw-bold mb-3 text-primary">
+                                <i class="fas fa-image me-2"></i>{% trans "Images" %}
+                            </h5>
 
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="{{ form.banner_image.id_for_label }}" class="form-label fw-bold">
-                                    {{ form.banner_image.label }}
-                                </label>
-                                {{ form.banner_image }}
-                                {% if form.banner_image.errors %}
-                                <div class="text-danger small">{{ form.banner_image.errors.0 }}</div>
-                                {% endif %}
-                                <div class="form-text">{% trans "For banner (1200x600)" %}</div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="{{ form.banner_image.id_for_label }}" class="form-label fw-bold">
+                                        {{ form.banner_image.label }}
+                                    </label>
+                                    {{ form.banner_image }}
+                                    <div class="form-text">{% trans "Recommended size: 1200x400px" %}</div>
+                                    {% if event.banner_image %}
+                                    <div class="mt-2">
+                                        <small>{% trans "Current:" %}</small>
+                                        <a href="{{ event.banner_image.url }}" target="_blank" class="text-decoration-none">
+                                            {{ event.banner_image.name|slice:"0:30" }}...
+                                        </a>
+                                    </div>
+                                    {% endif %}
+                                    <div class="text-danger small mt-1" id="{{ form.banner_image.id_for_label }}_error"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="{{ form.thumbnail.id_for_label }}" class="form-label fw-bold">
+                                        {{ form.thumbnail.label }}
+                                    </label>
+                                    {{ form.thumbnail }}
+                                    <div class="form-text">{% trans "Recommended size: 400x300px" %}</div>
+                                    {% if event.thumbnail %}
+                                    <div class="mt-2">
+                                        <small>{% trans "Current:" %}</small>
+                                        <a href="{{ event.thumbnail.url }}" target="_blank" class="text-decoration-none">
+                                            {{ event.thumbnail.name|slice:"0:30" }}...
+                                        </a>
+                                    </div>
+                                    {% endif %}
+                                    <div class="text-danger small mt-1" id="{{ form.thumbnail.id_for_label }}_error"></div>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <label for="{{ form.thumbnail.id_for_label }}" class="form-label fw-bold">
-                                    {{ form.thumbnail.label }}
+                        </div>
+
+                        <!-- Tags -->
+                        <div class="mb-4">
+                            <h5 class="fw-bold mb-3 text-primary">
+                                <i class="fas fa-tags me-2"></i>{% trans "Tags" %}
+                            </h5>
+
+                            <div class="mb-3">
+                                <label for="{{ form.tags.id_for_label }}" class="form-label fw-bold">
+                                    {{ form.tags.label }}
                                 </label>
-                                {{ form.thumbnail }}
-                                {% if form.thumbnail.errors %}
-                                <div class="text-danger small">{{ form.thumbnail.errors.0 }}</div>
-                                {% endif %}
-                                <div class="form-text">{% trans "For thumbnail (400x300)" %}</div>
+                                {{ form.tags }}
+                                <div class="form-text">{% trans "Separate tags with commas (e.g., technology, workshop, networking)" %}</div>
+                                <div class="text-danger small mt-1" id="{{ form.tags.id_for_label }}_error"></div>
                             </div>
                         </div>
 
                         <!-- Buttons -->
                         <div class="d-flex justify-content-end mt-4 pt-3 border-top">
                             <a href="{% url 'events:admin_event_list' %}" class="btn btn-outline-secondary me-2">
-                                {% trans "Cancel" %}
+                                <i class="fas fa-times me-2"></i>{% trans "Cancel" %}
                             </a>
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-2"></i>{% trans "Save" %}
+                                <i class="fas fa-save me-2"></i>{% trans "Save Changes" %}
                             </button>
                         </div>
                     </form>
@@ -230,60 +222,501 @@
 
         <!-- Sidebar -->
         <div class="col-lg-4">
-            <!-- Help -->
+            <!-- Event Preview -->
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-light">
-                    <h6 class="mb-0 fw-bold">
-                        <i class="fas fa-question-circle text-primary me-2"></i>{% trans "Help" %}
+                    <h6 class="mb-0 fw-bold text-primary">
+                        <i class="fas fa-eye me-2"></i>{% trans "Event Preview" %}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>{% trans "Current Status:" %}</strong>
+                        <span class="badge {% if event.is_published %}bg-success{% else %}bg-warning{% endif %}">
+                            {% if event.is_published %}{% trans "Published" %}{% else %}{% trans "Draft" %}{% endif %}
+                        </span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>{% trans "Created:" %}</strong>
+                        <span>{{ event.created_at|date:"d.m.Y H:i" }}</span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>{% trans "Views:" %}</strong>
+                        <span>{{ event.views_count }}</span>
+                    </div>
+                    {% if event.banner_image %}
+                    <div class="mt-3">
+                        <strong>{% trans "Current Banner:" %}</strong>
+                        <img src="{{ event.banner_image.url }}" alt="Event banner" class="img-fluid rounded mt-2" style="max-height: 150px;">
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Tips -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0 fw-bold text-primary">
+                        <i class="fas fa-lightbulb me-2"></i>{% trans "Tips" %}
                     </h6>
                 </div>
                 <div class="card-body">
                     <ul class="list-unstyled small mb-0">
                         <li class="mb-2">
-                            <strong>{% trans "Title:" %}</strong> {% trans "Write the event name clearly and attractively" %}
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <strong>{% trans "Title:" %}</strong> {% trans "Clear and descriptive title attracts more participants" %}
                         </li>
                         <li class="mb-2">
-                            <strong>{% trans "Description:" %}</strong> {% trans "Provide detailed information so participants know what to expect" %}
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <strong>{% trans "Description:" %}</strong> {% trans "Add all important details: agenda, speakers, requirements" %}
                         </li>
                         <li class="mb-2">
-                            <strong>{% trans "Date:" %}</strong> {% trans "Specify exact start and end times" %}
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <strong>{% trans "Dates:" %}</strong> {% trans "Double-check dates and times" %}
                         </li>
                         <li class="mb-2">
-                            <strong>{% trans "Location:" %}</strong> {% trans "If online, add the link" %}
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <strong>{% trans "Location:" %}</strong> {% trans "Provide exact address or online meeting details" %}
                         </li>
                         <li class="mb-0">
-                            <strong>{% trans "Image:" %}</strong> {% trans "Adding an attractive image increases participation" %}
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <strong>{% trans "Images:" %}</strong> {% trans "High-quality images improve conversion by up to 40%" %}
                         </li>
                     </ul>
                 </div>
             </div>
-
-            <!-- Preview -->
-            {% if form.instance.image %}
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-light">
-                    <h6 class="mb-0 fw-bold">
-                        <i class="fas fa-eye text-primary me-2"></i>{% trans "Current Image" %}
-                    </h6>
-                </div>
-                <div class="card-body text-center">
-                    <img src="{{ form.instance.image.url }}" alt="Event image" class="img-fluid rounded">
-                </div>
-            </div>
-            {% endif %}
         </div>
     </div>
 </div>
 
-<script>
-// Show/hide location fields
-document.getElementById('{{ form.online_event.id_for_label }}').addEventListener('change', function() {
-    const locationFields = document.getElementById('location-fields');
-    if (this.checked) {
-        locationFields.style.display = 'none';
-    } else {
-        locationFields.style.display = 'block';
+<style>
+/* Улучшенные стили для формы редактирования */
+.container-fluid {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.card-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px 12px 0 0 !important;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.form-control, .form-select {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+    background-color: #fff;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    outline: none;
+}
+
+.form-control.is-invalid, .form-select.is-invalid {
+    border-color: #dc3545;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+}
+
+.form-text {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+}
+
+.text-danger.small {
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+/* Стили для счетчиков символов */
+#short_desc_counter, #desc_counter {
+    font-weight: 600;
+}
+
+/* Стили для кнопок */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s;
+    font-size: 0.95rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-outline-secondary {
+    border: 1px solid #dee2e6;
+    color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #f8f9fa;
+    border-color: #adb5bd;
+}
+
+/* Стили для заголовков разделов */
+h5.fw-bold {
+    color: #2c3e50;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #f0f2f5;
+    position: relative;
+}
+
+h5.fw-bold::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+/* Стили для сайдбара */
+.badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    font-weight: 500;
+}
+
+.bg-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+}
+
+.bg-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%) !important;
+}
+
+.list-unstyled li {
+    padding-left: 0;
+    line-height: 1.6;
+}
+
+.list-unstyled i {
+    width: 20px;
+    text-align: center;
+}
+
+/* Стили для превью изображений */
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #dee2e6;
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.card, .alert {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Адаптивность */
+@media (max-width: 992px) {
+    .card-body {
+        padding: 1.5rem;
     }
+    
+    .btn {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .container-fluid {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .row.mb-3 {
+        margin-bottom: 1rem !important;
+    }
+    
+    .d-flex.justify-content-end {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Счетчики символов
+    const shortDescField = document.getElementById('{{ form.short_description.id_for_label }}');
+    const descField = document.getElementById('{{ form.description.id_for_label }}');
+    const shortDescCounter = document.getElementById('short_desc_counter');
+    const descCounter = document.getElementById('desc_counter');
+    
+    function updateCounter(field, counter, max) {
+        if (field && counter) {
+            const length = field.value.length;
+            counter.textContent = `${length}/${max}`;
+            
+            // Изменяем цвет в зависимости от количества символов
+            if (length > max) {
+                counter.className = 'text-danger';
+                counter.innerHTML = `${length}/${max} <i class="fas fa-exclamation-circle ms-1"></i>`;
+            } else if (length > max * 0.9) {
+                counter.className = 'text-warning';
+            } else if (length > max * 0.7) {
+                counter.className = 'text-info';
+            } else {
+                counter.className = 'text-success';
+            }
+        }
+    }
+    
+    if (shortDescField && shortDescCounter) {
+        shortDescField.addEventListener('input', function() {
+            updateCounter(this, shortDescCounter, 300);
+        });
+        // Инициализация текущего значения
+        updateCounter(shortDescField, shortDescCounter, 300);
+    }
+    
+    if (descField && descCounter) {
+        descField.addEventListener('input', function() {
+            updateCounter(this, descCounter, 5000);
+        });
+        updateCounter(descField, descCounter, 5000);
+    }
+    
+    // Валидация в реальном времени
+    const fieldsToValidate = ['title', 'location', 'tags', 'short_description', 'description'];
+    
+    fieldsToValidate.forEach(fieldName => {
+        const field = document.getElementById(`id_${fieldName}`);
+        const errorElement = document.getElementById(`id_${fieldName}_error`);
+        
+        if (field && errorElement) {
+            field.addEventListener('blur', function() {
+                validateField(this, errorElement);
+            });
+            
+            field.addEventListener('input', function() {
+                // Очищаем ошибку при вводе
+                errorElement.textContent = '';
+                this.classList.remove('is-invalid');
+            });
+        }
+    });
+    
+    function validateField(field, errorElement) {
+        const value = field.value.trim();
+        const fieldName = field.name;
+        
+        // Проверка обязательных полей
+        if (field.required && !value) {
+            errorElement.textContent = '{% trans "This field is required" %}';
+            field.classList.add('is-invalid');
+            return false;
+        }
+        
+        // Проверка максимальной длины
+        let maxLength = 0;
+        switch(fieldName) {
+            case 'title':
+                maxLength = 200;
+                break;
+            case 'short_description':
+                maxLength = 300;
+                break;
+            case 'description':
+                maxLength = 5000;
+                break;
+            case 'location':
+                maxLength = 200;
+                break;
+            case 'tags':
+                maxLength = 500;
+                break;
+        }
+        
+        if (maxLength > 0 && value.length > maxLength) {
+            errorElement.textContent = `{% trans "Maximum length is" %} ${maxLength} {% trans "characters" %}`;
+            field.classList.add('is-invalid');
+            return false;
+        }
+        
+        field.classList.remove('is-invalid');
+        errorElement.textContent = '';
+        return true;
+    }
+    
+    // Валидация дат
+    const startDateField = document.getElementById('{{ form.start_date.id_for_label }}');
+    const endDateField = document.getElementById('{{ form.end_date.id_for_label }}');
+    
+    if (startDateField && endDateField) {
+        startDateField.addEventListener('change', validateDates);
+        endDateField.addEventListener('change', validateDates);
+        
+        // Форматирование дат для input[type="datetime-local"]
+        function formatDateForInput(date) {
+            if (!date) return '';
+            const d = new Date(date);
+            return d.toISOString().slice(0, 16);
+        }
+        
+        // Установка правильного формата при загрузке
+        if (startDateField.value) {
+            startDateField.value = formatDateForInput(startDateField.value);
+        }
+        if (endDateField.value) {
+            endDateField.value = formatDateForInput(endDateField.value);
+        }
+    }
+    
+    function validateDates() {
+        const startDate = startDateField.value ? new Date(startDateField.value) : null;
+        const endDate = endDateField.value ? new Date(endDateField.value) : null;
+        const startError = document.getElementById('{{ form.start_date.id_for_label }}_error');
+        const endError = document.getElementById('{{ form.end_date.id_for_label }}_error');
+        
+        if (startDate && endDate) {
+            if (startDate >= endDate) {
+                endError.textContent = '{% trans "End date must be after start date" %}';
+                endDateField.classList.add('is-invalid');
+            } else {
+                endError.textContent = '';
+                endDateField.classList.remove('is-invalid');
+            }
+        }
+        
+        if (startDate && startDate < new Date()) {
+            startError.textContent = '{% trans "Start date cannot be in the past" %}';
+            startDateField.classList.add('is-invalid');
+        } else {
+            startError.textContent = '';
+            startDateField.classList.remove('is-invalid');
+        }
+    }
+    
+    // Предотвращение отправки формы с ошибками
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(event) {
+        let isValid = true;
+        
+        // Проверяем все обязательные поля
+        const requiredFields = form.querySelectorAll('[required]');
+        requiredFields.forEach(field => {
+            const errorElement = document.getElementById(`${field.id}_error`);
+            if (!validateField(field, errorElement)) {
+                isValid = false;
+            }
+        });
+        
+        // Проверяем даты
+        if (startDateField && endDateField) {
+            validateDates();
+            if (startDateField.classList.contains('is-invalid') || 
+                endDateField.classList.contains('is-invalid')) {
+                isValid = false;
+            }
+        }
+        
+        // Проверяем счетчики символов
+        if (shortDescField && shortDescField.value.length > 300) {
+            isValid = false;
+            const errorElement = document.getElementById('{{ form.short_description.id_for_label }}_error');
+            errorElement.textContent = '{% trans "Maximum 300 characters allowed" %}';
+            shortDescField.classList.add('is-invalid');
+        }
+        
+        if (descField && descField.value.length > 5000) {
+            isValid = false;
+            const errorElement = document.getElementById('{{ form.description.id_for_label }}_error');
+            errorElement.textContent = '{% trans "Maximum 5000 characters allowed" %}';
+            descField.classList.add('is-invalid');
+        }
+        
+        if (!isValid) {
+            event.preventDefault();
+            
+            // Прокрутка к первой ошибке
+            const firstError = form.querySelector('.is-invalid');
+            if (firstError) {
+                firstError.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+                firstError.focus();
+            }
+            
+            // Показываем сообщение
+            if (!document.querySelector('.alert.alert-danger')) {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-danger alert-dismissible fade show mt-3';
+                alertDiv.innerHTML = `
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>{% trans "Error!" %}</strong> {% trans "Please fix the errors before saving." %}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                form.prepend(alertDiv);
+            }
+        }
+    });
+    
+    // Автоматическое форматирование даты при фокусе
+    const dateFields = [startDateField, endDateField].filter(Boolean);
+    dateFields.forEach(field => {
+        field.addEventListener('focus', function() {
+            if (!this.value) {
+                const now = new Date();
+                const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+                    .toISOString()
+                    .slice(0, 16);
+                this.value = localDateTime;
+            }
+        });
+    });
 });
 </script>
 {% endblock %}
