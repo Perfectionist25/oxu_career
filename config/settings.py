@@ -15,7 +15,7 @@ LOGIN_URL = "/accounts/login/"
 PHONENUMBER_DEFAULT_REGION = "UZ"
 
 INSTALLED_APPS = [
-    # "modeltranslation",
+    "modeltranslation",
     "jazzmin",
 
     #  Application
@@ -142,7 +142,7 @@ LANGUAGE_CODE = "en"
 
 TIME_ZONE = "Asia/Tashkent"
 
-USE_I18N = False # False only in development mode
+USE_I18N = True # False only in development mode
 
 USE_L10N = True
 

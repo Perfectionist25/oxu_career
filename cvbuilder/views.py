@@ -20,7 +20,6 @@ def template_selector(request):
     templates = CVTemplate.objects.filter(is_active=True)
     return render(request, "cvbuilder/template_selector.html", {"templates": templates})
 
-
 class CVListView(ListView):
     """Список резюме пользователя"""
 
@@ -56,30 +55,34 @@ class CVListView(ListView):
 
 @login_required
 def cv_create(request):
-    """Создание нового резюме"""
-    if request.method == "POST":
-        form = CVForm(request.POST)
-        if form.is_valid():
-            cv = form.save(commit=False)
-            cv.user = request.user
-            cv.save()
-            messages.success(request, _("Rezyume muvaffaqiyatli yaratildi!"))
-            return redirect("cvbuilder:cv_edit", pk=cv.pk)
+    if request.user.is_student:
+        """Создание нового резюме"""
+        if request.method == "POST":
+            form = CVForm(request.POST)
+            if form.is_valid():
+                cv = form.save(commit=False)
+                cv.user = request.user
+                cv.save()
+                messages.success(request, _("Resume successfully created!"))
+                return redirect("cvbuilder:cv_edit", pk=cv.pk)
+            else:
+                messages.error(request, _("Fill out your resume!"))
         else:
-            messages.error(request, _("Rezyumeni to`lidiring!"))
+            form = CVForm()
+
+        templates = CVTemplate.objects.filter(is_active=True)
+
+        return render(
+            request,
+            "cvbuilder/cv_create.html",
+            {
+                "form": form,
+                "templates": templates,
+            },
+        )
     else:
-        form = CVForm()
-
-    templates = CVTemplate.objects.filter(is_active=True)
-
-    return render(
-        request,
-        "cvbuilder/cv_create.html",
-        {
-            "form": form,
-            "templates": templates,
-        },
-    )
+        messages.error(request, _("Only students can create CVs."))
+        return redirect("cvbuilder:cv_list")
 
 
 @login_required

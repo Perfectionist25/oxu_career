@@ -1,8 +1,6 @@
 from modeltranslation.translator import translator, TranslationOptions
-from .models import (
-    EventCategory,
-    Event
-)
+from .models import *
+
 
 
 class EventCategoryTranslationOptions(TranslationOptions):
