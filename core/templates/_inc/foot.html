@@ -3,7 +3,7 @@
 
 <!-- Кнопка для открытия/закрытия футера -->
 <div id="footer-toggle-btn" class="footer-toggle-btn d-flex justify-content-center align-items-center">
-    <i class="fas fa-chevron-up"></i>
+    <i class="fas fa-chevron-up" style="transform: rotate(-35deg);"></i>
 </div>
 
 <!-- Footer -->
@@ -133,33 +133,35 @@
 </footer>
 
 <style>
-    /* Кнопка переключения футера */
+    /* Кнопка переключения футера - КОМПАКТНАЯ версия */
     .footer-toggle-btn {
         position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 60px;
-        height: 60px;
+        bottom: 15px;
+        right: 15px;
+        width: 50px;
+        height: 50px;
         background-color: #012152;
         color: white;
         border-radius: 50%;
         cursor: pointer;
         z-index: 1001;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
         transition: all 0.3s ease;
         user-select: none;
         -webkit-tap-highlight-color: transparent;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
     
     .footer-toggle-btn:hover {
         background-color: #013a7a;
-        transform: translateX(-50%) scale(1.05);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     }
     
     .footer-toggle-btn i {
-        font-size: 24px;
+        font-size: 20px;
         transition: transform 0.3s ease;
     }
     
@@ -175,6 +177,11 @@
         overflow-y: auto;
         display: block;
         visibility: hidden;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+        box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
+        -webkit-overflow-scrolling: touch; /* Для плавной прокрутки на iOS */
+        overscroll-behavior: contain; /* Предотвращает закрытие при прокрутке */
     }
     
     #main-footer.active {
@@ -182,18 +189,33 @@
         visibility: visible;
     }
     
+    /* Хэндл для перетаскивания (только визуальный) */
+    #main-footer::before {
+        content: '';
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 4px;
+        background-color: rgba(255, 255, 255, 0.5);
+        border-radius: 2px;
+        z-index: 1;
+    }
+    
     /* Прокрутка внутри футера */
     #main-footer::-webkit-scrollbar {
-        width: 8px;
+        width: 6px;
     }
     
     #main-footer::-webkit-scrollbar-track {
         background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
     }
     
     #main-footer::-webkit-scrollbar-thumb {
         background: rgba(255, 255, 255, 0.3);
-        border-radius: 4px;
+        border-radius: 3px;
     }
     
     /* Оверлей для затемнения фона */
@@ -208,11 +230,27 @@
         opacity: 0;
         visibility: hidden;
         transition: opacity 0.3s ease;
+        touch-action: none; /* Предотвращает прокрутку под оверлеем */
     }
     
     .footer-overlay.active {
         opacity: 1;
         visibility: visible;
+    }
+    
+    /* Область для свайпа вниз */
+    .swipe-handle {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 40px;
+        z-index: 2;
+        cursor: grab;
+    }
+    
+    .swipe-handle:active {
+        cursor: grabbing;
     }
     
     /* Остальные стили */
@@ -229,18 +267,18 @@
     }
     
     .social-btn {
-        width: 42px;
-        height: 42px;
+        width: 40px;
+        height: 40px;
         display: flex;
         align-items: center;
         justify-content: center;
         transition: all 0.3s ease;
-        border-width: 2px;
+        border-width: 1.5px;
     }
     
     .social-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
     
     .text-light-50 {
@@ -252,20 +290,32 @@
     }
     
     .fa-fw {
-        width: 20px;
+        width: 18px;
         text-align: center;
+    }
+    
+    /* Контейнер футера для лучшей адаптивности */
+    #main-footer .container-fluid {
+        padding-top: 25px; /* Добавляем отступ для хэндла */
     }
     
     /* Адаптивные стили для мобильных устройств */
     @media (max-width: 768px) {
         .footer-toggle-btn {
-            width: 55px;
-            height: 55px;
-            bottom: 15px;
+            width: 45px;
+            height: 45px;
+            bottom: 12px;
+            right: 12px;
         }
         
         .footer-toggle-btn i {
-            font-size: 20px;
+            font-size: 18px;
+        }
+        
+        #main-footer {
+            max-height: 80vh;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
         }
         
         #main-footer .container-fluid {
@@ -274,7 +324,7 @@
         }
         
         #main-footer .col {
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
         
         #main-footer .col:last-child {
@@ -282,61 +332,78 @@
         }
         
         .social-btn {
-            width: 45px;
-            height: 45px;
+            width: 38px;
+            height: 38px;
         }
         
         .ratio-16x9 {
-            --bs-aspect-ratio: 75%;
+            --bs-aspect-ratio: 70%;
         }
         
-        .navbar-brand {
-            justify-content: center;
-            width: 100%;
-            text-align: center;
-            flex-direction: column;
+        h5 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
         }
         
         .navbar-brand img {
-            margin-right: 0;
-            margin-bottom: 10px;
+            width: 50px;
+            height: 50px;
         }
     }
     
     @media (max-width: 576px) {
         .footer-toggle-btn {
-            width: 50px;
-            height: 50px;
+            width: 42px;
+            height: 42px;
             bottom: 10px;
+            right: 10px;
         }
         
         #main-footer {
-            max-height: 80vh;
+            max-height: 75vh;
         }
         
-        h5 {
-            font-size: 1.1rem;
+        #main-footer .container-fluid {
+            padding: 20px 15px;
         }
         
-        .hover-effect {
-            padding: 6px 10px;
+        .social-btn {
+            width: 36px;
+            height: 36px;
+        }
+        
+        /* Оптимизация для очень маленьких экранов */
+        .col-12 {
+            padding-left: 8px;
+            padding-right: 8px;
         }
     }
     
     @media (max-width: 360px) {
         .footer-toggle-btn {
-            width: 45px;
-            height: 45px;
+            width: 40px;
+            height: 40px;
+            bottom: 8px;
+            right: 8px;
+        }
+        
+        .footer-toggle-btn i {
+            font-size: 16px;
         }
         
         .social-btn {
-            width: 40px;
-            height: 40px;
-            padding: 0.5rem;
+            width: 34px;
+            height: 34px;
+            padding: 0.4rem;
         }
         
-        .d-flex.flex-wrap {
-            justify-content: center;
+        #main-footer .container-fluid {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+        
+        h5 {
+            font-size: 0.95rem;
         }
     }
     
@@ -354,11 +421,6 @@
             background-color: #002d5c;
         }
     }
-    
-    /* Предотвращение мерцания при анимации */
-    .no-pointer-events {
-        pointer-events: none;
-    }
 </style>
 
 <script>
@@ -368,16 +430,27 @@
         const icon = toggleBtn.querySelector('i');
         let isFooterOpen = false;
         let isAnimating = false;
+        let isScrolling = false;
+        let scrollTimeout;
+        let touchStartY = 0;
+        let isSwiping = false;
+        let swipeStartY = 0;
+        let footerStartBottom = 0;
         
         // Создаем оверлей для затемнения фона
         const overlay = document.createElement('div');
         overlay.className = 'footer-overlay';
         document.body.appendChild(overlay);
         
+        // Создаем область для свайпа
+        const swipeHandle = document.createElement('div');
+        swipeHandle.className = 'swipe-handle';
+        footer.insertBefore(swipeHandle, footer.firstChild);
+        
         // Начальное состояние - футер скрыт
         footer.style.bottom = '-100vh';
         footer.style.visibility = 'hidden';
-        icon.style.transform = 'rotate(0deg)';
+        // Иконка уже повернута на -35deg в HTML
         
         // Функция открытия футера
         function openFooter() {
@@ -395,8 +468,8 @@
             footer.classList.add('active');
             footer.style.bottom = '0';
             
-            // Поворачиваем иконку
-            icon.style.transform = 'rotate(180deg)';
+            // Поворачиваем иконку на 35 градусов (145deg от начального)
+            icon.style.transform = 'rotate(145deg)';
             
             // Разрешаем анимацию снова
             setTimeout(() => {
@@ -418,8 +491,8 @@
             // Скрываем футер с анимацией
             footer.style.bottom = '-100vh';
             
-            // Поворачиваем иконку обратно
-            icon.style.transform = 'rotate(0deg)';
+            // Поворачиваем иконку обратно на -35 градусов
+            icon.style.transform = 'rotate(-35deg)';
             
             // После анимации скрываем видимость
             setTimeout(() => {
@@ -438,7 +511,7 @@
             }
         }
         
-        // Обработчик клика на кнопку - исправленная версия
+        // Обработчик клика на кнопку
         toggleBtn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -454,16 +527,76 @@
             }
         });
         
+        // Обработчики для свайпа вниз на handle
+        swipeHandle.addEventListener('touchstart', function(e) {
+            e.stopPropagation();
+            isSwiping = true;
+            swipeStartY = e.touches[0].clientY;
+            footerStartBottom = parseFloat(footer.style.bottom) || 0;
+        }, { passive: true });
+        
+        swipeHandle.addEventListener('touchmove', function(e) {
+            if (!isSwiping) return;
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const currentY = e.touches[0].clientY;
+            const deltaY = currentY - swipeStartY;
+            
+            // Свайп вниз для закрытия
+            if (deltaY > 0) {
+                const newBottom = Math.min(0, footerStartBottom - deltaY / 2);
+                footer.style.bottom = newBottom + 'px';
+                
+                // Затемняем оверлей пропорционально
+                const opacity = 1 - (deltaY / 200);
+                overlay.style.opacity = Math.max(0, opacity);
+            }
+        }, { passive: false });
+        
+        swipeHandle.addEventListener('touchend', function(e) {
+            if (!isSwiping) return;
+            e.stopPropagation();
+            
+            const endY = e.changedTouches[0].clientY;
+            const deltaY = endY - swipeStartY;
+            
+            if (deltaY > 100) { // Минимальный свайп 100px для закрытия
+                closeFooter();
+            } else {
+                // Возвращаем на место
+                footer.style.bottom = '0';
+                overlay.style.opacity = '1';
+            }
+            
+            isSwiping = false;
+            overlay.style.opacity = ''; // Сбрасываем кастомную прозрачность
+        }, { passive: true });
+        
+        // Предотвращаем закрытие при прокрутке внутри футера
+        footer.addEventListener('touchstart', function(e) {
+            // Если касание не в области свайпа, разрешаем прокрутку
+            if (!swipeHandle.contains(e.target)) {
+                isScrolling = true;
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    isScrolling = false;
+                }, 100);
+            }
+        }, { passive: true });
+        
+        footer.addEventListener('touchmove', function(e) {
+            // Если это прокрутка внутри футера, не обрабатываем как свайп для закрытия
+            if (isScrolling) {
+                e.stopPropagation();
+            }
+        }, { passive: false });
+        
         // Закрытие футера при нажатии Escape
         document.addEventListener('keydown', function(event) {
             if (isFooterOpen && event.key === 'Escape') {
                 closeFooter();
             }
-        });
-        
-        // Предотвращение закрытия при клике внутри футера
-        footer.addEventListener('click', function(event) {
-            event.stopPropagation();
         });
         
         // Обработчик для сенсорных устройств
@@ -475,5 +608,23 @@
             e.preventDefault();
             toggleFooter();
         }, { passive: false });
+        
+        // Закрытие при клике на ссылку внутри футера (опционально)
+        footer.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function() {
+                setTimeout(() => {
+                    if (isFooterOpen) {
+                        closeFooter();
+                    }
+                }, 300);
+            });
+        });
+        
+        // Предотвращаем закрытие при клике внутри футера (кроме области свайпа)
+        footer.addEventListener('click', function(event) {
+            if (!swipeHandle.contains(event.target)) {
+                event.stopPropagation();
+            }
+        });
     });
 </script>
