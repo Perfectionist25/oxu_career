@@ -15,7 +15,7 @@
                     <p class="text-muted mb-0">{% trans "View and manage all events" %}</p>
                 </div>
                 <div>
-                    <a href="{% url 'events:admin_event_create' %}" class="btn btn-primary">
+                    <a href="{% url 'events:create_event' %}" class="btn btn-primary">
                         <i class="fas fa-plus me-2"></i>{% trans "New Event" %}
                     </a>
                 </div>
@@ -29,7 +29,7 @@
             <div class="card border-0 bg-primary text-white shadow-sm">
                 <div class="card-body text-center py-3">
                     <i class="fas fa-calendar-alt fa-2x mb-2 opacity-75"></i>
-                    <div class="fw-bold h5">{{ stats.total }}</div>
+                    <div class="fw-bold h5">{{ stats.total | default:'0' }}</div>
                     <small>{% trans "Total" %}</small>
                 </div>
             </div>
@@ -38,7 +38,7 @@
             <div class="card border-0 bg-success text-white shadow-sm">
                 <div class="card-body text-center py-3">
                     <i class="fas fa-check-circle fa-2x mb-2 opacity-75"></i>
-                    <div class="fw-bold h5">{{ stats.published }}</div>
+                    <div class="fw-bold h5">{{ stats.published | default:'0' }}</div>
                     <small>{% trans "Published" %}</small>
                 </div>
             </div>
@@ -47,7 +47,7 @@
             <div class="card border-0 bg-warning text-white shadow-sm">
                 <div class="card-body text-center py-3">
                     <i class="fas fa-edit fa-2x mb-2 opacity-75"></i>
-                    <div class="fw-bold h5">{{ stats.draft }}</div>
+                    <div class="fw-bold h5">{{ stats.draft | default:'0' }}</div>
                     <small>{% trans "Draft" %}</small>
                 </div>
             </div>
@@ -56,7 +56,7 @@
             <div class="card border-0 bg-danger text-white shadow-sm">
                 <div class="card-body text-center py-3">
                     <i class="fas fa-times-circle fa-2x mb-2 opacity-75"></i>
-                    <div class="fw-bold h5">{{ stats.cancelled }}</div>
+                    <div class="fw-bold h5">{{ stats.cancelled | default:'0' }}</div>
                     <small>{% trans "Cancelled" %}</small>
                 </div>
             </div>
@@ -65,7 +65,7 @@
             <div class="card border-0 bg-info text-white shadow-sm">
                 <div class="card-body text-center py-3">
                     <i class="fas fa-check-double fa-2x mb-2 opacity-75"></i>
-                    <div class="fw-bold h5">{{ stats.completed }}</div>
+                    <div class="fw-bold h5">{{ stats.completed | default:'0' }}</div>
                     <small>{% trans "Completed" %}</small>
                 </div>
             </div>
@@ -196,7 +196,7 @@
                                 <i class="fas fa-calendar-alt fa-3x text-muted mb-3"></i>
                                 <h5 class="text-muted">{% trans "No Events Found" %}</h5>
                                 <p class="text-muted">{% trans "No events match your search criteria." %}</p>
-                                <a href="{% url 'events:admin_event_create' %}" class="btn btn-primary">
+                                <a href="{% url 'events:create_event' %}" class="btn btn-primary">
                                     <i class="fas fa-plus me-2"></i>{% trans "Create First Event" %}
                                 </a>
                             </td>

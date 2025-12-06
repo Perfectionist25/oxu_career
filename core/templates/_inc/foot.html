@@ -1,8 +1,13 @@
 {% load static %}
 {% load i18n %}
 
+<!-- Кнопка для открытия/закрытия футера -->
+<div id="footer-toggle-btn" class="footer-toggle-btn d-flex justify-content-center align-items-center">
+    <i class="fas fa-chevron-up"></i>
+</div>
+
 <!-- Footer -->
-<footer class="text-white" style="background-color: #012152;">
+<footer id="main-footer" class="text-white" style="background-color: #012152;">
     <div class="container-fluid px-3 px-md-5 py-4 py-md-5">
         <div class="row g-4">
             <!-- Useful Links -->
@@ -128,11 +133,89 @@
 </footer>
 
 <style>
-    /* Стили для адаптивности и улучшенного дизайна */
-    footer {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* Кнопка переключения футера */
+    .footer-toggle-btn {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 60px;
+        background-color: #012152;
+        color: white;
+        border-radius: 50%;
+        cursor: pointer;
+        z-index: 1001;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
     }
     
+    .footer-toggle-btn:hover {
+        background-color: #013a7a;
+        transform: translateX(-50%) scale(1.05);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    }
+    
+    .footer-toggle-btn i {
+        font-size: 24px;
+        transition: transform 0.3s ease;
+    }
+    
+    /* Футер с анимацией */
+    #main-footer {
+        position: fixed;
+        bottom: -100vh;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        transition: bottom 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        max-height: 85vh;
+        overflow-y: auto;
+        display: block;
+        visibility: hidden;
+    }
+    
+    #main-footer.active {
+        bottom: 0;
+        visibility: visible;
+    }
+    
+    /* Прокрутка внутри футера */
+    #main-footer::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    #main-footer::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    #main-footer::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 4px;
+    }
+    
+    /* Оверлей для затемнения фона */
+    .footer-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease;
+    }
+    
+    .footer-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    /* Остальные стили */
     .hover-effect {
         transition: all 0.3s ease;
         padding: 4px 8px;
@@ -175,22 +258,32 @@
     
     /* Адаптивные стили для мобильных устройств */
     @media (max-width: 768px) {
-        footer .container-fluid {
+        .footer-toggle-btn {
+            width: 55px;
+            height: 55px;
+            bottom: 15px;
+        }
+        
+        .footer-toggle-btn i {
+            font-size: 20px;
+        }
+        
+        #main-footer .container-fluid {
             padding-left: 15px;
             padding-right: 15px;
         }
         
-        footer .col {
+        #main-footer .col {
             margin-bottom: 2rem;
         }
         
-        footer .col:last-child {
+        #main-footer .col:last-child {
             margin-bottom: 0;
         }
         
         .social-btn {
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
         }
         
         .ratio-16x9 {
@@ -211,9 +304,14 @@
     }
     
     @media (max-width: 576px) {
-        footer {
-            padding-left: 10px !important;
-            padding-right: 10px !important;
+        .footer-toggle-btn {
+            width: 50px;
+            height: 50px;
+            bottom: 10px;
+        }
+        
+        #main-footer {
+            max-height: 80vh;
         }
         
         h5 {
@@ -225,11 +323,15 @@
         }
     }
     
-    /* Для очень маленьких экранов */
     @media (max-width: 360px) {
-        .social-btn {
+        .footer-toggle-btn {
             width: 45px;
             height: 45px;
+        }
+        
+        .social-btn {
+            width: 40px;
+            height: 40px;
             padding: 0.5rem;
         }
         
@@ -238,10 +340,140 @@
         }
     }
     
-    /* Для темной темы (если нужно) */
+    /* Для темной темы */
     @media (prefers-color-scheme: dark) {
-        footer {
+        #main-footer {
             background-color: #001a3d !important;
         }
+        
+        .footer-toggle-btn {
+            background-color: #001a3d;
+        }
+        
+        .footer-toggle-btn:hover {
+            background-color: #002d5c;
+        }
+    }
+    
+    /* Предотвращение мерцания при анимации */
+    .no-pointer-events {
+        pointer-events: none;
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const footer = document.getElementById('main-footer');
+        const toggleBtn = document.getElementById('footer-toggle-btn');
+        const icon = toggleBtn.querySelector('i');
+        let isFooterOpen = false;
+        let isAnimating = false;
+        
+        // Создаем оверлей для затемнения фона
+        const overlay = document.createElement('div');
+        overlay.className = 'footer-overlay';
+        document.body.appendChild(overlay);
+        
+        // Начальное состояние - футер скрыт
+        footer.style.bottom = '-100vh';
+        footer.style.visibility = 'hidden';
+        icon.style.transform = 'rotate(0deg)';
+        
+        // Функция открытия футера
+        function openFooter() {
+            if (isAnimating) return;
+            
+            isAnimating = true;
+            isFooterOpen = true;
+            
+            // Показываем оверлей
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Показываем футер с анимацией
+            footer.style.visibility = 'visible';
+            footer.classList.add('active');
+            footer.style.bottom = '0';
+            
+            // Поворачиваем иконку
+            icon.style.transform = 'rotate(180deg)';
+            
+            // Разрешаем анимацию снова
+            setTimeout(() => {
+                isAnimating = false;
+            }, 400);
+        }
+        
+        // Функция закрытия футера
+        function closeFooter() {
+            if (isAnimating) return;
+            
+            isAnimating = true;
+            isFooterOpen = false;
+            
+            // Скрываем оверлей
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+            
+            // Скрываем футер с анимацией
+            footer.style.bottom = '-100vh';
+            
+            // Поворачиваем иконку обратно
+            icon.style.transform = 'rotate(0deg)';
+            
+            // После анимации скрываем видимость
+            setTimeout(() => {
+                footer.classList.remove('active');
+                footer.style.visibility = 'hidden';
+                isAnimating = false;
+            }, 400);
+        }
+        
+        // Функция переключения футера
+        function toggleFooter() {
+            if (isFooterOpen) {
+                closeFooter();
+            } else {
+                openFooter();
+            }
+        }
+        
+        // Обработчик клика на кнопку - исправленная версия
+        toggleBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleFooter();
+        });
+        
+        // Обработчик клика на оверлей для закрытия
+        overlay.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (isFooterOpen) {
+                closeFooter();
+            }
+        });
+        
+        // Закрытие футера при нажатии Escape
+        document.addEventListener('keydown', function(event) {
+            if (isFooterOpen && event.key === 'Escape') {
+                closeFooter();
+            }
+        });
+        
+        // Предотвращение закрытия при клике внутри футера
+        footer.addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+        
+        // Обработчик для сенсорных устройств
+        toggleBtn.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+        }, { passive: false });
+        
+        toggleBtn.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            toggleFooter();
+        }, { passive: false });
+    });
+</script>

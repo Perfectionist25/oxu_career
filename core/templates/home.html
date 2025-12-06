@@ -15,9 +15,11 @@
           <a href="{% url 'jobs:list' %}" class="btn btn-primary btn-lg px-4 py-3">
             <i class="fas fa-briefcase me-2"></i>{% trans "Find Jobs" %}
           </a>
+          {% if user.is_student %}
           <a href="{% url 'cvbuilder:cv_create' %}" class="btn btn-outline-primary btn-lg px-4 py-3">
             <i class="fas fa-file-alt me-2"></i>{% trans "Create Resume" %}
           </a>
+          {% endif %}
         </div>
         {% endif %}
         

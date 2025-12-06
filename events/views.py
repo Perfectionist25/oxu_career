@@ -12,6 +12,24 @@ from django.views.generic import ListView
 from .forms import *
 from .models import *
 
+
+@login_required
+def manage_events(request):
+    """Страница управления событиями для администраторов"""
+    if not request.user.is_staff:
+        messages.error(request, _("Access denied."))
+        return redirect("events:event_list")
+    
+    # Получаем события, созданные текущим пользователем
+    events = Event.objects.filter(organizer=request.user).order_by('-created_at')
+    
+    context = {
+        'events': events,
+        'title': _("Manage Events"),
+    }
+    return render(request, "events/manage_events.html", context)
+
+
 # Декоратор для проверки, что пользователь админ или суперадмин
 def admin_required(function=None):
     actual_decorator = user_passes_test(
@@ -93,27 +111,30 @@ def event_detail(request, slug):
     return render(request, "events/detail.html", context)
 
 
+# Only Admins can create events
 @login_required
 def create_event(request):
-    """Создание мероприятия - только авторизованные пользователи"""
-    if request.method == "POST":
-        form = EventForm(request.POST, request.FILES)
-        if form.is_valid():
-            event = form.save(commit=False)
-            event.organizer = request.user
-            event.status = "published"  # Автоматически публикуем
-            event.save()
-            messages.success(request, _("Event created successfully!"))
-            return redirect("events:event_detail", slug=event.slug)
+    if request.user.is_staff:
+        if request.method == "POST":
+            form = EventForm(request.POST, request.FILES)
+            if form.is_valid():
+                event = form.save(commit=False)
+                event.organizer = request.user
+                event.status = "published"  # Автоматически публикуем
+                event.save()
+                messages.success(request, _("Event created successfully!"))
+                return redirect("events:event_detail", slug=event.slug)
+        else:
+            form = EventForm()
+        
+        context = {
+            "form": form,
+            "title": _("Create Event"),
+        }
+        return render(request, "events/create_event.html", context)
     else:
-        form = EventForm()
-    
-    context = {
-        "form": form,
-        "title": _("Create Event"),
-    }
-    return render(request, "events/create_event.html", context)
-
+        messages.error(request, _("You don't have permission to create events."))
+        return redirect("events:event_list")
 
 @login_required
 def edit_event(request, slug):

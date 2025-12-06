@@ -15,6 +15,7 @@ urlpatterns = [
     path('create/', views.create_event, name='create_event'),
     path('edit/<slug:slug>/', views.edit_event, name='edit_event'),
     path('delete/<slug:slug>/', views.delete_event, name='delete_event'),
+    path('manage_events/', views.manage_events, name='manage_events'),
     path('my-events/', views.my_events, name='my_events'),
     
     # Админ URL
