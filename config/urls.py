@@ -1,0 +1,38 @@
+from django.conf import settings
+from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import include, path
+from core import views as core_views
+from django.apps import apps
+
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("explorer/", include("explorer.urls")),
+    path("i18n/", include("django.conf.urls.i18n")),
+    path("", include(("core.urls", "core"), namespace="core")),
+    path("jobs/", include(("jobs.urls", "jobs"), namespace="jobs")),
+    path("alumni/", include(("alumni.urls", "alumni"), namespace="alumni")),
+    path("resources/", include(("resources.urls", "resources"), namespace="resources")),
+    path("events/", include(("events.urls", "events"), namespace="events")),
+    path("employers/", include(("employers.urls", "employers"), namespace="employers")),
+    path("cvbuilder/", include(("cvbuilder.urls", "cvbuilder"), namespace="cvbuilder")),
+    path("accounts/", include(("accounts.urls", "accounts"), namespace="accounts")),
+    path("admin/stats/", core_views.admin_stats, name="admin_stats"),
+    path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+    path('api/accounts/', include(('accounts.api.urls','accounts_api'), namespace='accounts_api')),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns += [
+    path('ckeditor5/', include('django_ckeditor_5.urls')),
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_URL)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+if apps.is_installed('oauth2_provider'):
+    path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+
+# Custom error handlers (optional)
+# handler404 = 'core.views.handler404'
+# handler500 = 'core.views.handler500'

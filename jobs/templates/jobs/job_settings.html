@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{{ job.title }} - {% trans "Settings" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row">
+    <div class="col-lg-8 offset-lg-2">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <div>
+            <h4 class="mb-1">{{ job.title }}</h4>
+            <small class="text-light">{{ job.company.name }}</small>
+          </div>
+          <div class="btn-group" role="group">
+            <a href="{% url 'jobs:job_detail' job.pk %}" class="btn btn-outline-light btn-sm">
+              <i class="fas fa-eye me-1"></i>{% trans "View" %}
+            </a>
+            <a href="{% url 'jobs:job_edit' job.pk %}" class="btn btn-outline-light btn-sm">
+              <i class="fas fa-edit me-1"></i>{% trans "Edit" %}
+            </a>
+          </div>
+        </div>
+        
+        <div class="card-body">
+          <form method="post" action="{% url 'jobs:update_job_settings' job.pk %}" class="needs-validation">
+            {% csrf_token %}
+
+            <!-- Job Status -->
+            <div class="mb-4">
+              <h5 class="border-bottom pb-2">{% trans "Job Status" %}</h5>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="is_active" name="is_active" 
+                  {% if job.is_active %}checked{% endif %}>
+                <label class="form-check-label" for="is_active">
+                  {% trans "Job is active and visible to applicants" %}
+                </label>
+              </div>
+              {% if not job.is_active %}
+                <div class="alert alert-warning mt-2" role="alert">
+                  <i class="fas fa-exclamation-triangle me-2"></i>
+                  {% trans "This job is currently hidden from applicants." %}
+                </div>
+              {% endif %}
+            </div>
+
+            <!-- Visibility Settings -->
+            <div class="mb-4">
+              <h5 class="border-bottom pb-2">{% trans "Visibility" %}</h5>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="show_company" name="show_company"
+                  {% if job.show_company %}checked{% endif %}>
+                <label class="form-check-label" for="show_company">
+                  {% trans "Show company name in job listing" %}
+                </label>
+              </div>
+              <div class="form-check form-switch mt-2">
+                <input class="form-check-input" type="checkbox" id="show_salary" name="show_salary"
+                  {% if job.show_salary %}checked{% endif %}>
+                <label class="form-check-label" for="show_salary">
+                  {% trans "Show salary range" %}
+                </label>
+              </div>
+            </div>
+
+            <!-- Application Settings -->
+            <div class="mb-4">
+              <h5 class="border-bottom pb-2">{% trans "Application Settings" %}</h5>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="accept_applications" name="accept_applications"
+                  {% if job.accept_applications %}checked{% endif %}>
+                <label class="form-check-label" for="accept_applications">
+                  {% trans "Accept new applications" %}
+                </label>
+              </div>
+              <div class="form-check form-switch mt-2">
+                <input class="form-check-input" type="checkbox" id="featured" name="featured"
+                  {% if job.featured %}checked{% endif %}>
+                <label class="form-check-label" for="featured">
+                  {% trans "Feature this job (appears at top of listings)" %}
+                </label>
+              </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="mb-4">
+              <h5 class="border-bottom pb-2">{% trans "Statistics" %}</h5>
+              <div class="row text-center">
+                <div class="col-md-4">
+                  <div class="p-3 border-end">
+                    <h6 class="text-muted">{% trans "Views" %}</h6>
+                    <h3 class="text-primary">{{ job.view_count }}</h3>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="p-3 border-end">
+                    <h6 class="text-muted">{% trans "Applications" %}</h6>
+                    <h3 class="text-success">{{ applications_count }}</h3>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="p-3">
+                    <h6 class="text-muted">{% trans "Posted" %}</h6>
+                    <small class="text-muted d-block">{{ job.created_at|date:"SHORT_DATE_FORMAT" }}</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="mb-4">
+              <h5 class="border-bottom pb-2 text-danger">{% trans "Danger Zone" %}</h5>
+              <div class="alert alert-danger" role="alert">
+                <strong>{% trans "Delete this job permanently?" %}</strong>
+                <p class="mb-2">{% trans "This action cannot be undone. All associated applications will be deleted." %}</p>
+                <a href="{% url 'jobs:job_delete' job.pk %}" class="btn btn-danger btn-sm" 
+                  onclick="return confirm('{% trans "Are you sure?" %}')">
+                  <i class="fas fa-trash me-1"></i>{% trans "Delete Job" %}
+                </a>
+              </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-2"></i>{% trans "Save Settings" %}
+              </button>
+              <a href="{% url 'jobs:my_jobs' %}" class="btn btn-outline-secondary">
+                {% trans "Cancel" %}
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('input[type="checkbox"]').forEach(function(checkbox) {
+  checkbox.addEventListener('change', function() {
+    console.log(this.name + ': ' + this.checked);
+  });
+});
+</script>
+{% endblock %}

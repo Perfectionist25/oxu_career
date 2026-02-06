@@ -1,0 +1,1139 @@
+{% load static %}
+{% load i18n %}
+
+<!-- Кнопка для открытия/закрытия футера -->
+<div id="footer-toggle-btn" class="footer-toggle-btn">
+    <i class="fas fa-chevron-up"></i>
+</div>
+
+<!-- Footer -->
+<footer id="main-footer" class="text-white">
+    <div class="footer-handle"></div>
+    <div class="footer-content">
+        <div class="container py-4 py-md-5">
+            <div class="row g-4">
+                <!-- Useful Links -->
+                <div class="col-12 col-md-6 col-lg-4">
+                    <h5 class="footer-title mb-4">{% trans "Useful Links" %}</h5>
+                    <ul class="footer-links">
+                        <li class="mb-3">
+                            <a href="https://t.me/Perfy25" class="footer-link">
+                                <i class="fas fa-external-link-alt me-3"></i>
+                                <span>{% trans "Developer" %}</span>
+                            </a>
+                        </li>
+                        <li class="mb-3">
+                            <a href="https://oxu.uz/university" class="footer-link">
+                                <i class="fas fa-university me-3"></i>
+                                <span>{% trans "About University" %}</span>
+                            </a>
+                        </li>
+                        <li class="mb-3">
+                            <a href="https://oxu.uz/yangiliklar" class="footer-link">
+                                <i class="fas fa-newspaper me-3"></i>
+                                <span>{% trans "News" %}</span>
+                            </a>
+                        </li>
+                        <li class="mb-3">
+                            <a href="/faq/" class="footer-link">
+                                <i class="fas fa-question-circle me-3"></i>
+                                <span>{% trans "FAQ" %}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Address -->
+                <div class="col-12 col-md-6 col-lg-4">
+                    <h5 class="footer-title mb-4">{% trans "Address" %}</h5>
+                    <div class="footer-address mb-4">
+                        <div class="d-flex align-items-start mb-3">
+                            <i class="fas fa-map-marker-alt me-3 mt-1"></i>
+                            <div>
+                                <a href="https://maps.app.goo.gl/Vak1fFmHn8bcTJqk8" class="footer-link">
+                                    <p class="mb-0">
+                                        {% trans "Bukhara city, MFY 'Yangibod'," %}<br>
+                                        {% trans "G'ijduvon street, 74-house" %}
+                                    </p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Map -->
+                    <div class="footer-map mb-4">
+                        <div class="ratio ratio-16x9">
+                            <iframe 
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d911.3392403764602!2d64.42590351321431!3d39.798748210538605!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3f50093729ce2b27%3A0x4cfc4ffe225f3750!2sOsiyo%20Xalqaro%20Universiteti!5e0!3m2!1sru!2s!4v1763974013257!5m2!1sru!2s" 
+                                style="border: 0;" 
+                                allowfullscreen 
+                                loading="lazy" 
+                                referrerpolicy="no-referrer-when-downgrade"
+                                class="rounded shadow-sm">
+                            </iframe>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact -->
+                <div class="col-12 col-md-6 col-lg-4">
+                    <h5 class="footer-title mb-4">{% trans "Contact" %}</h5>
+                    
+                    <!-- Phone -->
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-phone me-3"></i>
+                        <div>
+                            <a href="tel:+998553050009" class="footer-link">
+                                +998 55 305 00 09
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Email -->
+                    <div class="d-flex align-items-center mb-4">
+                        <i class="fas fa-envelope me-3"></i>
+                        <div>
+                            <a href="mailto:info@oxu.uz" class="footer-link">
+                                info@oxu.uz
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Social Networks -->
+                    <h6 class="footer-subtitle mb-3">{% trans "Social Networks" %}</h6>
+                    <div class="footer-social mb-4">
+                        <a href="https://t.me/Oxu_uz" class="footer-social-btn" aria-label="Telegram">
+                            <i class="fab fa-telegram"></i>
+                        </a>
+                        <a href="https://www.instagram.com/oxu_uz/" class="footer-social-btn" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://www.facebook.com/people/Osiyo-Xalqaro-Universiteti/100088012691808/?sk=about" class="footer-social-btn" aria-label="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.youtube.com/@Osiyo.Xalqaro.Universiteti." class="footer-social-btn" aria-label="YouTube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Logo and Copyright -->
+            <div class="footer-bottom pt-4 mt-4">
+                <div class="row align-items-center">
+                    <div class="col-12 col-md-6 mb-3 mb-md-0">
+                        <a class="footer-logo d-flex align-items-center" href="/">
+                            <div class="logo-container-wrapper">
+                                <div class="logo-container d-flex align-items-center">
+                                    <img src="{% static 'img/logo1.png' %}" alt="OXU Logo" class="logo-image me-3">
+                                    <div class="logo-text-wrapper">
+                                        {% get_current_language as CURRENT_LANG %}
+                                        {% if CURRENT_LANG == 'uz' %}
+                                            <div class="logo-main">Osiyo <br class="logo-line-break"> Xalqaro <br class="logo-line-break"> Universiteti</div>
+                                            <div class="logo-divider"></div>
+                                            <div class="logo-sub">Karyera markazi</div>
+                                        {% elif CURRENT_LANG == 'ru' %}
+                                            <div class="logo-main">Азиатский <br class="logo-line-break"> Международный <br class="logo-line-break"> Университет</div>
+                                            <div class="logo-divider"></div>
+                                            <div class="logo-sub">Карьерный центр</div>
+                                        {% else %}
+                                            <div class="logo-main">Asian <br class="logo-line-break"> International <br class="logo-line-break"> University</div>
+                                            <div class="logo-divider"></div>
+                                            <div class="logo-sub">Career center</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-12 col-md-6 text-center text-md-end">
+                        <small class="footer-copyright">
+                            © {% now 'Y' %} {% trans "All rights reserved. Asia International University" %}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Оверлей для затемнения фона -->
+<div class="footer-overlay" id="footerOverlay"></div>
+
+<style>
+/* ===================== */
+/* ОБЩИЕ СТИЛИ ФУТЕРА */
+/* ===================== */
+:root {
+    --footer-primary: #001b45;
+    --footer-secondary: #012d6e;
+    --footer-accent: #4ade80;
+    --footer-text: #ffffff;
+    --footer-text-secondary: rgba(255, 255, 255, 0.7);
+    --footer-border: rgba(255, 255, 255, 0.15);
+    --footer-shadow: 0 -5px 25px rgba(0, 0, 0, 0.2);
+    --transition-speed: 0.4s;
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* ===================== */
+/* КНОПКА ПЕРЕКЛЮЧЕНИЯ ФУТЕРА */
+/* ===================== */
+.footer-toggle-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--footer-primary) 0%, #002255 100%);
+    color: var(--footer-text);
+    border-radius: 10px;
+    cursor: pointer;
+    z-index: 999;
+    box-shadow: var(--shadow-lg);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    backdrop-filter: blur(10px);
+}
+
+.footer-toggle-btn:hover {
+    background: linear-gradient(135deg, var(--footer-secondary) 0%, #003580 100%);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    border-color: var(--footer-accent);
+}
+
+.footer-toggle-btn i {
+    font-size: 22px;
+    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    transform: rotate(-35deg);
+}
+
+.footer-toggle-btn.active i {
+    transform: rotate(180deg);
+}
+
+.footer-toggle-btn:hover i {
+    transform: rotate(-20deg);
+}
+
+.footer-toggle-btn.active:hover i {
+    transform: rotate(200deg);
+}
+
+/* ===================== */
+/* ОСНОВНОЙ ФУТЕР */
+/* ===================== */
+#main-footer {
+    position: fixed;
+    bottom: -100vh;
+    left: 0;
+    right: 0;
+    height: 85vh;
+    max-height: 85vh;
+    background: linear-gradient(135deg, var(--footer-primary) 0%, #002255 100%);
+    z-index: 998;
+    box-shadow: var(--footer-shadow);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    overflow: hidden;
+    visibility: hidden;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(10px);
+}
+
+#main-footer.active {
+    bottom: 0;
+    visibility: visible;
+}
+
+#main-footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+}
+
+/* Хэндл для свайпа */
+.footer-handle {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    margin: 12px auto;
+    cursor: grab;
+    flex-shrink: 0;
+}
+
+.footer-handle:active {
+    cursor: grabbing;
+}
+
+/* Контент футера */
+.footer-content {
+    flex: 1;
+    margin-top: 5vh;
+    overflow-y: auto;
+    padding: 0 15px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.footer-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.footer-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.footer-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.footer-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* ===================== */
+/* ЗАГОЛОВКИ */
+/* ===================== */
+.footer-title {
+    color: var(--footer-text);
+    font-weight: 700;
+    font-size: 1.2rem;
+    position: relative;
+    padding-bottom: 12px;
+    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.footer-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 45px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--footer-accent), rgba(255, 255, 255, 0.8));
+    border-radius: 2px;
+}
+
+.footer-subtitle {
+    color: var(--footer-text);
+    font-weight: 600;
+    font-size: 1rem;
+    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+}
+
+/* ===================== */
+/* ССЫЛКИ */
+/* ===================== */
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-link {
+    display: flex;
+    align-items: center;
+    color: var(--footer-text-secondary);
+    text-decoration: none;
+    padding: 10px 14px;
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-left: 4px solid transparent;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.05);
+    margin-bottom: 8px;
+    backdrop-filter: blur(5px);
+}
+
+.footer-link:hover {
+    color: var(--footer-text);
+    background: rgba(255, 255, 255, 0.1);
+    border-left-color: var(--footer-accent);
+    transform: translateX(8px);
+    text-decoration: none;
+    box-shadow: var(--shadow-sm);
+}
+
+.footer-link i {
+    width: 20px;
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--footer-accent);
+}
+
+/* Адрес */
+.footer-address .footer-link {
+    padding: 8px 12px;
+    background: transparent;
+    border-left: none;
+}
+
+.footer-address .footer-link:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateX(0);
+}
+
+.footer-address .footer-link p {
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ===================== */
+/* КАРТА */
+/* ===================== */
+.footer-map {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--footer-border);
+    backdrop-filter: blur(5px);
+    box-shadow: var(--shadow-sm);
+}
+
+.footer-map iframe {
+    border: none;
+}
+
+/* ===================== */
+/* СОЦИАЛЬНЫЕ КНОПКИ */
+/* ===================== */
+.footer-social {
+    display: flex;
+    gap: 12px;
+}
+
+.footer-social-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--footer-text);
+    border: 1px solid var(--footer-border);
+    border-radius: 50%;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 1.2rem;
+    backdrop-filter: blur(10px);
+}
+
+.footer-social-btn:hover {
+    background: var(--footer-accent);
+    color: var(--footer-primary);
+    transform: translateY(-3px) scale(1.1);
+    box-shadow: 0 5px 20px rgba(74, 222, 128, 0.4);
+    border-color: transparent;
+}
+
+/* ===================== */
+/* ЛОГОТИП В ФУТЕРЕ */
+/* ===================== */
+.footer-logo {
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--footer-border);
+    max-width: 100%;
+    width: fit-content;
+}
+
+.footer-logo:hover {
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Контейнер логотипа */
+.logo-container-wrapper {
+    width: 100%;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    max-width: 100%;
+    flex-wrap: nowrap;
+}
+
+.logo-image {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2)) brightness(0) invert(1);
+    flex-shrink: 0;
+    object-fit: contain;
+}
+
+.footer-logo:hover .logo-image {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.logo-text-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+    position: relative;
+}
+
+.logo-main {
+    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-weight: 800;
+    line-height: 1.1;
+    color: white;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    letter-spacing: 0.5px;
+    font-size: 1.2rem;
+}
+
+.logo-line-break {
+    display: block;
+}
+
+.logo-divider {
+    height: 2px;
+    width: 40px;
+    background: linear-gradient(90deg, var(--footer-accent), rgba(255, 255, 255, 0.8));
+    margin: 6px 0;
+    border-radius: 1px;
+    opacity: 0.8;
+}
+
+.logo-sub {
+    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-weight: 600;
+    color: var(--footer-accent) !important;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    opacity: 0.95;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    font-size: 0.9rem;
+}
+
+/* ===================== */
+/* НИЖНЯЯ ЧАСТЬ ФУТЕРА */
+/* ===================== */
+.footer-bottom {
+    border-top: 1px solid var(--footer-border);
+}
+
+.footer-copyright {
+    color: var(--footer-text-secondary);
+    font-size: 0.9rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ===================== */
+/* ОВЕРЛЕЙ */
+/* ===================== */
+.footer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 997;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(3px);
+}
+
+.footer-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ===================== */
+/* АДАПТИВНОСТЬ */
+/* ===================== */
+@media (max-width: 768px) {
+    #main-footer {
+        height: 80vh;
+        max-height: 80vh;
+        border-top-left-radius: 16px;
+        border-top-right-radius: 16px;
+    }
+    
+    .footer-toggle-btn {
+        width: 45px;
+        height: 45px;
+        bottom: 15px;
+        right: 15px;
+    }
+    
+    .footer-toggle-btn i {
+        font-size: 20px;
+    }
+    
+    .footer-social-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+    
+    .footer-content {
+        padding: 0 10px;
+    }
+    
+    .footer-title {
+        font-size: 1.1rem;
+    }
+    
+    .logo-main {
+        font-size: 1.1rem;
+    }
+    
+    .logo-sub {
+        font-size: 0.85rem;
+    }
+    
+    .logo-image {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+@media (max-width: 576px) {
+    #main-footer {
+        height: 75vh;
+        max-height: 75vh;
+    }
+    
+    .footer-toggle-btn {
+        width: 42px;
+        height: 42px;
+        bottom: 12px;
+        right: 12px;
+    }
+    
+    .footer-social {
+        gap: 10px;
+    }
+    
+    .footer-social-btn {
+        width: 38px;
+        height: 38px;
+        font-size: 1rem;
+    }
+    
+    .footer-link {
+        padding: 8px 12px;
+        font-size: 0.95rem;
+    }
+    
+    .logo-main {
+        font-size: 1rem;
+    }
+    
+    .logo-sub {
+        font-size: 0.8rem;
+        display: block;
+    }
+    
+    .logo-divider {
+        display: block;
+    }
+    
+    .logo-image {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .footer-copyright {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 425px) {
+    #main-footer {
+        height: 70vh;
+        max-height: 70vh;
+    }
+    
+    .footer-toggle-btn {
+        width: 40px;
+        height: 40px;
+        bottom: 10px;
+        right: 10px;
+    }
+    
+    .footer-social-btn {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .logo-main {
+        font-size: 0.9rem;
+    }
+    
+    .logo-sub {
+        font-size: 0.75rem;
+    }
+    
+    .logo-image {
+        width: 45px;
+        height: 45px;
+        margin-right: 10px !important;
+    }
+    
+    .footer-logo {
+        padding: 8px 12px;
+    }
+}
+
+@media (max-width: 375px) {
+    .logo-main {
+        font-size: 0.85rem;
+    }
+    
+    .logo-sub {
+        font-size: 0.7rem;
+    }
+    
+    .logo-divider {
+        height: 1.5px;
+        width: 30px;
+        margin: 4px 0;
+    }
+    
+    .footer-link {
+        padding: 6px 10px;
+    }
+    
+    .footer-title {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 320px) {
+    .logo-main br.logo-line-break {
+        display: none;
+    }
+    
+    .logo-main {
+        white-space: normal;
+        line-height: 1.2;
+        max-height: 2.4em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+    
+    .logo-sub {
+        display: none;
+    }
+    
+    .logo-divider {
+        display: none;
+    }
+    
+    .logo-image {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+/* Плавные переходы */
+.logo-main,
+.logo-sub,
+.logo-image,
+.logo-container,
+.footer-link,
+.footer-social-btn,
+.footer-toggle-btn {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Анимация появления футера */
+@keyframes slideUpFooter {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+#main-footer.active {
+    animation: slideUpFooter 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Для темной темы */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --footer-primary: #001a3d;
+        --footer-secondary: #002d5c;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const footer = document.getElementById('main-footer');
+    const toggleBtn = document.getElementById('footer-toggle-btn');
+    const overlay = document.getElementById('footerOverlay');
+    const icon = toggleBtn.querySelector('i');
+    const footerHandle = footer.querySelector('.footer-handle');
+    
+    let isFooterOpen = false;
+    let isAnimating = false;
+    let touchStartY = 0;
+    let footerStartY = 0;
+    let isDragging = false;
+    
+    // Сохраненное состояние
+    const savedState = localStorage.getItem('footerActive');
+    if (savedState === 'true') {
+        setTimeout(openFooter, 100);
+    }
+    
+    // Функция открытия футера
+    function openFooter() {
+        if (isAnimating || isFooterOpen) return;
+        
+        isAnimating = true;
+        isFooterOpen = true;
+        
+        // Показываем элементы
+        footer.classList.add('active');
+        overlay.classList.add('active');
+        toggleBtn.classList.add('active');
+        
+        // Блокируем скролл страницы
+        document.body.style.overflow = 'hidden';
+        
+        // Сохраняем состояние
+        localStorage.setItem('footerActive', 'true');
+        
+        // Сбрасываем флаг анимации
+        setTimeout(() => {
+            isAnimating = false;
+        }, 400);
+    }
+    
+    // Функция закрытия футера
+    function closeFooter() {
+        if (isAnimating || !isFooterOpen) return;
+        
+        isAnimating = true;
+        isFooterOpen = false;
+        
+        // Скрываем элементы
+        footer.classList.remove('active');
+        overlay.classList.remove('active');
+        toggleBtn.classList.remove('active');
+        
+        // Разблокируем скролл страницы
+        document.body.style.overflow = '';
+        
+        // Сохраняем состояние
+        localStorage.setItem('footerActive', 'false');
+        
+        // Сбрасываем флаг анимации
+        setTimeout(() => {
+            isAnimating = false;
+        }, 400);
+    }
+    
+    // Функция переключения футера
+    function toggleFooter() {
+        if (isFooterOpen) {
+            closeFooter();
+        } else {
+            openFooter();
+        }
+    }
+    
+    // Обработчики событий
+    toggleBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleFooter();
+    });
+    
+    overlay.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (isFooterOpen) {
+            closeFooter();
+        }
+    });
+    
+    // Закрытие по клавише Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && isFooterOpen) {
+            closeFooter();
+        }
+    });
+    
+    // Свайп для закрытия
+    footerHandle.addEventListener('touchstart', function(e) {
+        if (!isFooterOpen || isAnimating) return;
+        
+        isDragging = true;
+        touchStartY = e.touches[0].clientY;
+        footerStartY = footer.getBoundingClientRect().top;
+        e.preventDefault();
+    });
+    
+    footerHandle.addEventListener('touchmove', function(e) {
+        if (!isDragging) return;
+        
+        const currentY = e.touches[0].clientY;
+        const deltaY = currentY - touchStartY;
+        
+        // Если свайпаем вниз
+        if (deltaY > 0) {
+            const newTop = Math.min(footerStartY + deltaY, window.innerHeight);
+            footer.style.transform = `translateY(${deltaY}px)`;
+            
+            // Затемняем оверлей пропорционально
+            const progress = 1 - (deltaY / 300);
+            overlay.style.opacity = Math.max(0, Math.min(1, progress));
+        }
+        
+        e.preventDefault();
+    });
+    
+    footerHandle.addEventListener('touchend', function(e) {
+        if (!isDragging) return;
+        
+        isDragging = false;
+        const endY = e.changedTouches[0].clientY;
+        const deltaY = endY - touchStartY;
+        
+        // Если свайп был достаточно большим - закрываем
+        if (deltaY > 100) {
+            closeFooter();
+        } else {
+            // Иначе возвращаем на место
+            footer.style.transform = 'translateY(0)';
+            footer.style.transition = 'transform 0.3s ease';
+            
+            // Возвращаем прозрачность оверлея
+            overlay.style.opacity = '1';
+            overlay.style.transition = 'opacity 0.3s ease';
+            
+            // Убираем transition после анимации
+            setTimeout(() => {
+                footer.style.transition = '';
+                overlay.style.transition = '';
+            }, 300);
+        }
+        
+        e.preventDefault();
+    });
+    
+    // Закрытие при клике на ссылку (опционально)
+    const footerLinks = footer.querySelectorAll('.footer-link');
+    footerLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            // Если это ссылка на внешний ресурс или якорь, закрываем футер
+            if (this.href.includes('://') || this.getAttribute('href').startsWith('#')) {
+                setTimeout(() => {
+                    if (isFooterOpen) {
+                        closeFooter();
+                    }
+                }, 300);
+            }
+        });
+    });
+    
+    // Анимация наклона при наведении
+    toggleBtn.addEventListener('mouseenter', function() {
+        if (!isFooterOpen) {
+            icon.style.transform = 'rotate(-20deg) scale(1.1)';
+        } else {
+            icon.style.transform = 'rotate(200deg) scale(1.1)';
+        }
+    });
+    
+    toggleBtn.addEventListener('mouseleave', function() {
+        if (!isFooterOpen) {
+            icon.style.transform = 'rotate(-35deg) scale(1)';
+        } else {
+            icon.style.transform = 'rotate(180deg) scale(1)';
+        }
+    });
+    
+    // Эффект нажатия для мобильных
+    toggleBtn.addEventListener('touchstart', function(e) {
+        this.style.transform = 'scale(0.95)';
+    }, { passive: true });
+    
+    toggleBtn.addEventListener('touchend', function(e) {
+        this.style.transform = '';
+    }, { passive: true });
+    
+    // Функция для динамической адаптации логотипа в футере
+    function adaptFooterLogoForScreen() {
+        const screenWidth = window.innerWidth;
+        const logoMain = footer.querySelector('.logo-main');
+        const logoSub = footer.querySelector('.logo-sub');
+        const logoDivider = footer.querySelector('.logo-divider');
+        const logoImage = footer.querySelector('.logo-image');
+        
+        if (!logoMain) return;
+        
+        if (screenWidth <= 320) {
+            if (logoSub) logoSub.style.display = 'none';
+            if (logoDivider) logoDivider.style.display = 'none';
+            if (logoImage) {
+                logoImage.style.width = '40px';
+                logoImage.style.height = '40px';
+            }
+        } else if (screenWidth <= 375) {
+            if (logoSub) logoSub.style.display = 'block';
+            if (logoDivider) logoDivider.style.display = 'block';
+            if (logoImage) {
+                logoImage.style.width = '45px';
+                logoImage.style.height = '45px';
+            }
+        } else if (screenWidth <= 425) {
+            if (logoSub) logoSub.style.display = 'block';
+            if (logoDivider) logoDivider.style.display = 'block';
+            if (logoImage) {
+                logoImage.style.width = '50px';
+                logoImage.style.height = '50px';
+            }
+        }
+        
+        // На мобильных делаем текст многострочным
+        if (screenWidth <= 576) {
+            if (screenWidth <= 320) {
+                logoMain.style.whiteSpace = 'normal';
+                logoMain.style.lineHeight = '1.2';
+                logoMain.style.maxHeight = '2.4em';
+                logoMain.style.overflow = 'hidden';
+                logoMain.style.textOverflow = 'ellipsis';
+                logoMain.style.display = '-webkit-box';
+                logoMain.style.webkitLineClamp = '2';
+                logoMain.style.webkitBoxOrient = 'vertical';
+            }
+        } else {
+            // На десктопах возвращаем однострочное отображение
+            logoMain.style.whiteSpace = 'normal';
+            logoMain.style.lineHeight = '1.1';
+            logoMain.style.maxHeight = 'none';
+            logoMain.style.overflow = 'visible';
+            logoMain.style.textOverflow = 'clip';
+            logoMain.style.display = 'block';
+            logoMain.style.webkitLineClamp = 'none';
+        }
+    }
+    
+    // Вызываем при загрузке и изменении размера
+    adaptFooterLogoForScreen();
+    window.addEventListener('resize', adaptFooterLogoForScreen);
+    window.addEventListener('orientationchange', adaptFooterLogoForScreen);
+});
+</script>
+
+<style>
+/* Symmetry + small screen fixes for footer */
+@media (max-width: 767px) {
+    .footer-social {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .footer-bottom .row {
+        text-align: center;
+        justify-content: center;
+        row-gap: 12px;
+    }
+
+    .footer-logo {
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+
+    .footer-logo .logo-container {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 425px) {
+    .footer-content {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .footer-link {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .footer-address .footer-link {
+        justify-content: flex-start;
+        text-align: left;
+    }
+}
+
+@media (max-width: 576px) {
+    .footer-toggle-btn {
+        bottom: calc(28px + env(safe-area-inset-bottom));
+        right: 12px;
+    }
+}
+
+/* Logo stability on small screens */
+#main-footer .logo-container {
+    flex-wrap: nowrap;
+    gap: 8px;
+}
+
+#main-footer .logo-image {
+    width: clamp(36px, 12vw, 55px);
+    height: auto;
+    max-height: 55px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+#main-footer .logo-text-wrapper {
+    min-width: 0;
+    max-width: 100%;
+}
+
+#main-footer .logo-main {
+    word-break: break-word;
+    hyphens: auto;
+}
+
+@media (max-width: 480px) {
+    #main-footer .logo-main {
+        font-size: 0.85rem;
+        line-height: 1.15;
+    }
+
+    #main-footer .logo-sub {
+        font-size: 0.7rem;
+    }
+}
+</style>

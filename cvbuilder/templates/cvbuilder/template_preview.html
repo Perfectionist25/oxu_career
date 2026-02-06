@@ -1,0 +1,267 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "CV Template Preview" %} - OXU Career{% endblock %}
+{% block body_class %}cv-preview-mode{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4 cv-preview-page">
+
+  <!-- Top bar -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3 no-print">
+    <div>
+      <h1 class="h4 fw-bold mb-1">
+        <i class="fas fa-file-lines text-primary me-2"></i>{% trans "CV Template Preview" %}
+      </h1>
+      <div class="text-muted small">
+        {% if template %}
+          <i class="fas fa-palette me-1"></i>
+          {% trans "Template" %}: <b>{{ template.name }}</b>
+        {% endif %}
+        <span class="mx-2">•</span>
+        {% trans "Print-friendly preview. Use Print to save as PDF." %}
+      </div>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2">
+      <button class="btn btn-sm btn-outline-secondary" type="button" onclick="window.history.back()">
+        <i class="fas fa-arrow-left me-1"></i>{% trans "Back" %}
+      </button>
+
+      <button class="btn btn-sm btn-outline-primary" type="button" onclick="window.print()">
+        <i class="fas fa-print me-1"></i>{% trans "Print / Save PDF" %}
+      </button>
+
+      <a class="btn btn-sm btn-primary" href="#cvPaper">
+        <i class="fas fa-eye me-1"></i>{% trans "Go to preview" %}
+      </a>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <!-- LEFT: Paper -->
+    <div class="col-12 col-xl-9">
+      <div class="paper-wrap" id="cvPaper">
+
+        {% if cv %}
+          <div class="paper">
+            <div class="paper-inner">
+              {# Рендерим реальный HTML-шаблон #}
+              {% include template_path %}
+            </div>
+          </div>
+        {% else %}
+          <div class="empty-state">
+            <div class="empty-icon">
+              <i class="fas fa-file-circle-xmark"></i>
+            </div>
+            <h5 class="fw-bold mb-2">{% trans "No CV found for preview" %}</h5>
+            <div class="text-muted mb-3">
+              {% trans "Create or publish at least one CV to preview templates with real data." %}
+            </div>
+            <a href="{% url 'cvbuilder:cv_create' %}" class="btn btn-primary btn-sm">
+              <i class="fas fa-plus me-1"></i>{% trans "Create CV" %}
+            </a>
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
+
+    <!-- RIGHT: Tips / settings -->
+    <div class="col-12 col-xl-3 no-print">
+      <div class="side-card">
+        <div class="side-title">
+          <i class="fas fa-sliders text-primary me-2"></i>{% trans "Export tips" %}
+        </div>
+
+        <div class="side-text">
+          <div class="tip">
+            <div class="tip-title">
+              <i class="fas fa-print me-2"></i>{% trans "Best print settings" %}
+            </div>
+            <ul class="mb-0">
+              <li>{% trans "Paper: A4" %}</li>
+              <li>{% trans "Margins: Default or None" %}</li>
+              <li>{% trans "Scale: 100% (avoid 120%)" %}</li>
+              <li>{% trans "Disable browser headers/footers" %}</li>
+            </ul>
+          </div>
+
+          <div class="tip mt-3">
+            <div class="tip-title">
+              <i class="fas fa-file-pdf me-2"></i>{% trans "PDF export" %}
+            </div>
+            <div class="text-muted small">
+              {% trans "Click Print / Save PDF, then choose Save to PDF." %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="side-card mt-3">
+        <div class="side-title">
+          <i class="fas fa-circle-info text-primary me-2"></i>{% trans "Notes" %}
+        </div>
+        <div class="text-muted small">
+          {% trans "This page is designed to look like real paper on screen and print cleanly." %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* ---------- Screen styles (minimal + clean) ---------- */
+.cv-preview-page { --paper-w: 210mm; }
+
+.paper-wrap{
+  width:100%;
+  overflow:auto;
+  padding: 10px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(13,110,253,.06), rgba(0,0,0,0));
+  border: 1px solid rgba(0,0,0,.06);
+}
+
+.paper{
+  width: var(--paper-w);
+  margin: 0 auto;
+  background:#fff;
+  border-radius: 16px;
+  box-shadow: 0 18px 40px rgba(0,0,0,.12);
+  border: 1px solid rgba(0,0,0,.08);
+}
+
+.paper-inner{
+  padding: 18mm 16mm;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.side-card{
+  border: 1px solid rgba(0,0,0,.08);
+  border-radius: 16px;
+  background:#fff;
+  box-shadow: 0 14px 30px rgba(0,0,0,.08);
+  padding: 14px;
+}
+.side-title{
+  font-weight: 900;
+  margin-bottom: 10px;
+  display:flex;
+  align-items:center;
+}
+.tip-title{ font-weight: 900; font-size: 13px; }
+.side-text ul{ padding-left: 18px; }
+
+.empty-state{
+  width: 100%;
+  min-height: 420px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  background:#fff;
+  border-radius: 16px;
+  border: 1px dashed rgba(0,0,0,.18);
+  padding: 28px;
+}
+.empty-icon{
+  width: 54px;
+  height: 54px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius: 16px;
+  background: rgba(13,110,253,.08);
+  border: 1px solid rgba(13,110,253,.16);
+  color: #0d6efd;
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+
+.no-print {}
+
+/* ---------- Print styles ---------- */
+@media print {
+  .no-print, header, nav, footer { display: none !important; }
+  .paper-wrap{ border: none !important; background: none !important; padding: 0 !important; }
+  .paper{ box-shadow: none !important; border: none !important; border-radius: 0 !important; width: 210mm !important; }
+  .paper-inner{ padding: 14mm 14mm !important; }
+  @page { size: A4; margin: 10mm; }
+}
+</style>
+<style>
+/* =========================
+   PREVIEW MODE (screen)
+   Hide site chrome on preview pages
+========================= */
+body.cv-preview-mode .site-shell > *:not(main){
+  display: none !important;
+}
+
+body.cv-preview-mode main{
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* На preview страницах убираем серый фон */
+body.cv-preview-mode{
+  background: #f5f6f7 !important;
+}
+
+/* =========================
+   PRINT MODE (paper only)
+========================= */
+@media print {
+
+  /* скрыть весь сайт кроме main */
+  .site-shell > *:not(main){
+    display: none !important;
+  }
+
+  /* скрыть любые всплывающие сообщения */
+  .global-messages-container{ display:none !important; }
+
+  /* убрать фон и отступы */
+  html, body{
+    background: #fff !important;
+  }
+
+  main{
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* paper styles */
+  .paper-wrap{
+    border: none !important;
+    background: none !important;
+    padding: 0 !important;
+  }
+
+  .paper{
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    width: 210mm !important;
+  }
+
+  .paper-inner{
+    padding: 14mm 14mm !important;
+  }
+
+  /* убираем кнопки/панели справа если есть */
+  .side-card, .btn, .d-print-none{
+    display:none !important;
+  }
+
+  @page{
+    size: A4;
+    margin: 10mm;
+  }
+}
+</style>
+{% endblock %}

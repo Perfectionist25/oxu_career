@@ -1,0 +1,85 @@
+<!-- templates/accounts/too_many_requests.html -->
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Too Many Requests" %}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-ban me-2"></i>
+                        {% trans "Access Temporarily Blocked" %}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <h5 class="alert-heading">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            {% trans "Too Many Login Attempts" %}
+                        </h5>
+                        <p class="mb-0">
+                            {% blocktrans with block_time=block_time %}
+                            Your access has been temporarily blocked for {{ block_time }} due to too many failed login attempts.
+                            {% endblocktrans %}
+                        </p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6>{% trans "Block Details:" %}</h6>
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <strong>{% trans "IP Address:" %}</strong> {{ ip_address }}
+                            </li>
+                            {% if username %}
+                            <li class="list-group-item">
+                                <strong>{% trans "Username:" %}</strong> {{ username }}
+                            </li>
+                            {% endif %}
+                            <li class="list-group-item">
+                                <strong>{% trans "Blocked Until:" %}</strong> 
+                                {{ current_time|date:"H:i" }} ({% trans "approximately" %} {{ block_time }})
+                            </li>
+                            <li class="list-group-item">
+                                <strong>{% trans "Reason:" %}</strong> 
+                                {% if reason == "ip_blocked" %}
+                                {% trans "Too many failed attempts from this IP address" %}
+                                {% elif reason == "user_blocked" %}
+                                {% trans "Too many failed attempts for this username" %}
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <h6>{% trans "What to do next?" %}</h6>
+                        <ul class="mb-0">
+                            <li>{% trans "Wait for the block to expire" %}</li>
+                            <li>{% trans "Contact support if you believe this is an error" %}</li>
+                            <li>{% trans "Ensure you're using the correct credentials" %}</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <a href="{% url 'home' %}" class="btn btn-primary">
+                            <i class="fas fa-home me-2"></i>{% trans "Return to Home" %}
+                        </a>
+                        <a href="{% url 'accounts:contact_us' %}" class="btn btn-outline-secondary ms-2">
+                            <i class="fas fa-headset me-2"></i>{% trans "Contact Support" %}
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer text-muted text-center">
+                    <small>
+                        <i class="fas fa-info-circle me-1"></i>
+                        {% trans "This is an automated security measure to protect against brute force attacks." %}
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

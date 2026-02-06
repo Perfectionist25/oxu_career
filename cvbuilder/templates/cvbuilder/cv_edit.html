@@ -1,0 +1,478 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Edit Resume - {{ cv.title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Main Information -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-edit me-2"></i>
+                        Edit Resume: {{ cv.title }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Messages -->
+                    {% if messages %}
+                    <div class="mb-4">
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Main Resume Form -->
+                    <form method="post" enctype="multipart/form-data" id="cvForm">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.title.id_for_label }}" class="form-label">
+                                        <i class="fas fa-heading me-1"></i>Resume Title *
+                                    </label>
+                                    {{ form.title }}
+                                    {% if form.title.errors %}
+                                    <div class="text-danger small">{{ form.title.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.template.id_for_label }}" class="form-label">
+                                        <i class="fas fa-palette me-1"></i>Template
+                                    </label>
+                                    {{ form.template }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.full_name.id_for_label }}" class="form-label">
+                                        <i class="fas fa-user me-1"></i>Full Name *
+                                    </label>
+                                    {{ form.full_name }}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.desired_position.id_for_label }}" class="form-label">
+                                        <i class="fas fa-briefcase me-1"></i>Desired Position *
+                                    </label>
+                                    {{ form.desired_position }}
+                                    {% if form.desired_position.errors %}
+                                    <div class="text-danger small">{{ form.desired_position.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.email.id_for_label }}" class="form-label">
+                                        <i class="fas fa-envelope me-1"></i>Email *
+                                    </label>
+                                    {{ form.email }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.phone.id_for_label }}" class="form-label">
+                                        <i class="fas fa-phone me-1"></i>Phone
+                                    </label>
+                                    {{ form.phone }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.region.id_for_label }}" class="form-label">
+                                    <i class="fas fa-map-marked-alt me-1"></i>Region *
+                                </label>
+                                {{ form.region }}
+                                {% if form.region.errors %}
+                                <div class="text-danger small">{{ form.region.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.city.id_for_label }}" class="form-label">
+                                    <i class="fas fa-city me-1"></i>City
+                                </label>
+                                {{ form.city }}
+                                {% if form.city.errors %}
+                                <div class="text-danger small">{{ form.city.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Дополнительно можно добавить поле address: -->
+                        <div class="mb-3">
+                            <label for="{{ form.address.id_for_label }}" class="form-label">
+                                <i class="fas fa-home me-1"></i>Full Address
+                            </label>
+                            {{ form.address }}
+                            <small class="form-text text-muted">Optional - full street address</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.summary.id_for_label }}" class="form-label">
+                                <i class="fas fa-file-alt me-1"></i>Summary
+                            </label>
+                            {{ form.summary }}
+                            <div class="form-text">Brief information about yourself and your career</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.photo.id_for_label }}" class="form-label">
+                                <i class="fas fa-camera me-1"></i>Profile Photo
+                            </label>
+                            {{ form.photo }}
+                            {% if cv.photo %}
+                            <div class="mt-2">
+                                <img src="{{ cv.photo.url }}" alt="Current photo" class="img-thumbnail" style="max-height: 100px;">
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Social Networks -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.linkedin.id_for_label }}" class="form-label">
+                                        <i class="fab fa-linkedin me-1"></i>LinkedIn
+                                    </label>
+                                    {{ form.linkedin }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.github.id_for_label }}" class="form-label">
+                                        <i class="fab fa-github me-1"></i>GitHub
+                                    </label>
+                                    {{ form.github }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.portfolio.id_for_label }}" class="form-label">
+                                        <i class="fas fa-globe me-1"></i>Portfolio
+                                    </label>
+                                    {{ form.portfolio }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.status.id_for_label }}" class="form-label">
+                                        <i class="fas fa-eye me-1"></i>Status
+                                    </label>
+                                    {{ form.status }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save me-1"></i>Save
+                            </button>
+                            <a href="{% url 'cvbuilder:cv_detail' cv.pk %}" class="btn btn-outline-primary">
+                                <i class="fas fa-eye me-1"></i>View
+                            </a>
+                            <a href="{% url 'cvbuilder:cv_list' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-1"></i>Back
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar with Additional Sections -->
+        <div class="col-lg-4">
+            <!-- Education -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-graduation-cap me-2"></i>Education
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-outline-info btn-sm w-100 mb-3" 
+                            data-bs-toggle="modal" data-bs-target="#educationModal">
+                        <i class="fas fa-plus me-1"></i>Add Education
+                    </button>
+                    
+                    {% if cv.educations.all %}
+                    <div class="list-group list-group-flush">
+                        {% for edu in cv.educations.all %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ edu.degree }}</strong><br>
+                                <small>{{ edu.institution }}</small>
+                            </div>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{% url 'cvbuilder:edit_education' education.id %}" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'cvbuilder:delete_education' education.id %}" class="btn btn-outline-danger btn-sm">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center mb-0">No education information added</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Work Experience -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <h6 class="mb-0">
+                        <i class="fas fa-briefcase me-2"></i>Work Experience
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-outline-warning btn-sm w-100 mb-3" 
+                            data-bs-toggle="modal" data-bs-target="#experienceModal">
+                        <i class="fas fa-plus me-1"></i>Add Experience
+                    </button>
+                    
+                    {% if cv.experiences.all %}
+                    <div class="list-group list-group-flush">
+                        {% for exp in cv.experiences.all %}
+                        <div class="list-group-item">
+                            <strong>{{ exp.position }}</strong><br>
+                            <small>{{ exp.company }}</small><br>
+                            <small class="text-muted">{{ exp.start_date }} - {{ exp.end_date|default:"Present" }}</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center mb-0">No work experience added</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Skills -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-code me-2"></i>Skills
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-outline-success btn-sm w-100 mb-3" 
+                            data-bs-toggle="modal" data-bs-target="#skillModal">
+                        <i class="fas fa-plus me-1"></i>Add Skill
+                    </button>
+                    
+                    {% if cv.skills.all %}
+                    <div class="d-flex flex-wrap gap-1">
+                        {% for skill in cv.skills.all %}
+                        <span class="badge bg-success">{{ skill.name }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center mb-0">No skills added</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Windows for Adding Related Data -->
+
+<!-- Education Modal -->
+<div class="modal fade" id="educationModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">Add Education Information</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{% url 'cvbuilder:add_education' cv.pk %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    {{ education_form.as_p }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-info">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Work Experience Modal -->
+<div class="modal fade" id="experienceModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title">Add Work Experience</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{% url 'cvbuilder:add_experience' cv.pk %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    {{ experience_form.as_p }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Skills Modal -->
+<div class="modal fade" id="skillModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Add Skill</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{% url 'cvbuilder:add_skill' cv.pk %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    {{ skill_form.as_p }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Additional modal windows for other sections -->
+<!-- Projects, Languages, Certificates, etc. -->
+
+<style>
+.form-label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+}
+
+.card-header {
+    border-radius: 10px 10px 0 0 !important;
+}
+
+.btn {
+    border-radius: 6px;
+}
+
+.list-group-item {
+    border: none;
+    padding: 0.75rem 0;
+}
+
+.badge {
+    font-size: 0.8em;
+    padding: 0.4em 0.6em;
+}
+
+/* Styles for resume editing forms */
+.cv-edit-form input,
+.cv-edit-form textarea,
+.cv-edit-form select {
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    padding: 0.5rem 0.75rem;
+}
+
+.cv-edit-form input:focus,
+.cv-edit-form textarea:focus,
+.cv-edit-form select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.form-text {
+    font-size: 0.875em;
+    color: #6c757d;
+}
+
+/* Animations for modal windows */
+.modal.fade .modal-dialog {
+    transform: translate(0, -50px);
+    transition: transform 0.3s ease-out;
+}
+
+.modal.show .modal-dialog {
+    transform: none;
+}
+
+/* Styles for lists */
+.list-group-item:hover {
+    background-color: #f8f9fa;
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+}
+</style>
+
+<script>
+// Character counter for summary
+const summaryField = document.getElementById('{{ form.summary.id_for_label }}');
+if (summaryField) {
+    function updateCounter() {
+        const count = summaryField.value.length;
+        const counter = document.getElementById('summaryCounter');
+        counter.textContent = `${count}/2000 characters`;
+        
+        counter.className = 'form-text text-end';
+        
+        if (count > 1800) {
+            counter.classList.add('text-warning');
+        } else {
+            counter.classList.remove('text-warning');
+        }
+        
+        if (count > 2000) {
+            counter.classList.add('text-danger');
+        } else {
+            counter.classList.remove('text-danger');
+        }
+    }
+    
+    summaryField.addEventListener('input', updateCounter);
+    updateCounter(); // Initial count
+}
+</script>
+{% endblock %}

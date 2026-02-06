@@ -1,0 +1,140 @@
+<!-- accounts/templates/accounts/admin_login.html -->
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "Admin Login" %} | OXU University{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-lock me-2"></i>
+                        {% trans "Admin Portal" %}
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <form method="post" action="{% url 'accounts:admin_login' %}">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="username" class="form-label">
+                                <i class="fas fa-user me-1"></i>
+                                {% trans "Username" %}
+                            </label>
+                            <input type="text" class="form-control" id="username" name="username" 
+                                   required autofocus placeholder="{% trans 'Enter your username' %}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-key me-1"></i>
+                                {% trans "Password" %}
+                            </label>
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   required placeholder="{% trans 'Enter your password' %}">
+                            <div class="form-text">
+                                <a href="#" class="text-decoration-none">
+                                    <small>{% trans "Forgot password?" %}</small>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                            <label class="form-check-label" for="remember">
+                                {% trans "Remember me" %}
+                            </label>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>
+                                {% trans "Sign In" %}
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="text-center">
+                        <p class="mb-2 text-muted">
+                            <small>
+                                <i class="fas fa-shield-alt me-1"></i>
+                                {% trans "Restricted access. Authorized personnel only." %}
+                            </small>
+                        </p>
+                        <a href="{% url 'accounts:employer_login' %}" class="text-decoration-none">
+                            <small>{% trans "Employer login" %}</small>
+                        </a>
+                        &nbsp;|&nbsp;
+                        <a href="{% url 'core:home' %}" class="text-decoration-none">
+                            <small>{% trans "Back to home" %}</small>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer text-center bg-light">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        {% trans "OXU University Admin Panel v1.0" %}
+                    </small>
+                </div>
+            </div>
+            
+            <!-- Security notice -->
+            <div class="mt-4 p-3 border rounded bg-light">
+                <h6 class="mb-2">
+                    <i class="fas fa-exclamation-triangle text-warning me-1"></i>
+                    {% trans "Security Notice" %}
+                </h6>
+                <ul class="small mb-0">
+                    <li>{% trans "Ensure you are accessing the official OXU University portal" %}</li>
+                    <li>{% trans "Never share your credentials with anyone" %}</li>
+                    <li>{% trans "Always logout after completing your session" %}</li>
+                    <li>{% trans "Contact IT support if you notice any suspicious activity" %}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Focus on username field
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('username').focus();
+        
+        // Show/hide password
+        const passwordInput = document.getElementById('password');
+        const showPasswordBtn = document.createElement('button');
+        showPasswordBtn.type = 'button';
+        showPasswordBtn.className = 'btn btn-sm btn-outline-secondary position-absolute end-0 top-50 translate-middle-y me-2';
+        showPasswordBtn.innerHTML = '<i class="fas fa-eye"></i>';
+        showPasswordBtn.style.zIndex = '10';
+        
+        // Add button to password field container
+        const passwordContainer = passwordInput.parentNode;
+        passwordContainer.style.position = 'relative';
+        passwordContainer.appendChild(showPasswordBtn);
+        
+        showPasswordBtn.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,1036 @@
+{% load static %}
+{% load i18n %}
+
+<!-- Верхняя часть хэдэра (полностью скрывается на мобильных) -->
+<div class="header-top d-none d-md-block">
+    <div class="container-fluid px-4">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="contact-info d-flex align-items-center justify-content-center justify-content-md-start">
+                    <a href="tel:+998901234567" class="me-4 text-light"><i class="fas fa-phone me-1"></i> +998 90 123-45-67</a>
+                    <a href="mailto:info@oxucareer.uz" class="text-light"><i class="fas fa-envelope me-1"></i> info@oxucareer.uz</a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="social-links d-flex align-items-center justify-content-center justify-content-md-end">
+                    <a style="font-size: 3vh;" href="" class="me-4 text-light"><i class="fab fa-telegram"></i></a>
+                    <a style="font-size: 3vh;" href="" class="me-4 text-light"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Средняя часть хэдэра -->
+<div class="header-middle">
+    <div class="container-fluid px-4">
+        <div class="header-middle-container">
+            <!-- Левая часть - кнопка меню (ВСЕГДА видна) -->
+            <div class="header-left">
+                <button class="sidebar-toggle-btn" id="sidebarToggleBtn">
+                    <span class="toggle-icon">
+                        <i class="fas fa-bars"></i>
+                    </span>
+                </button>
+            </div>
+            
+            <!-- Центральная часть - логотип -->
+            <div class="header">
+                <div class="logo-container-wrapper">
+                    <a href="/" class="d-flex align-items text-decoration-none logo-container">
+                        <img src="{% static 'img/logo1.png' %}" alt="Logo" class="me-3 logo-image">
+                        <div class="logo-text-wrapper">
+                            {% get_current_language as CURRENT_LANG %}
+                            {% if CURRENT_LANG == 'uz' %}
+                                <div class="logo-main">Osiyo Xalqaro Universiteti</div>
+                                <div class="logo-sub">Karyera markazi</div>
+                            {% elif CURRENT_LANG == 'ru' %}
+                                <div class="logo-main">Азиатский Международный Университет</div>
+                                <div class="logo-sub">Карьерный центр</div>
+                            {% else %}
+                                <div class="logo-main">Asia International University</div>
+                                <div class="logo-sub">Career center</div>
+                            {% endif %}
+                        </div>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Правая часть - элементы управления -->
+            <div class="header-right">
+                <div class="d-flex align-items-center justify-content-end">
+                    <!-- Языковой селектор (скрывается на мобильных) -->
+                    <div class="language-selector me-3 desktop-language d-none d-md-block">
+                        <form action="{% url 'set_language' %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                            
+                            {% get_current_language as CURRENT_LANG %}
+                            
+                            <div class="dropdown">
+                                <button class="btn btn-language dropdown-toggle d-flex align-items-center" type="button" 
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    {% if CURRENT_LANG == 'en' %}
+                                    <img width="20" src="{% static 'img/uk.png' %}" alt="EN" class="me-2">
+                                    <span>EN</span>
+                                    {% elif CURRENT_LANG == 'uz' %}
+                                    <img width="20" src="{% static 'img/uzb.png' %}" alt="UZ" class="me-2">
+                                    <span>UZ</span>
+                                    {% elif CURRENT_LANG == 'ru' %}
+                                    <img width="20" src="{% static 'img/ru.png' %}" alt="RU" class="me-2">
+                                    <span>RU</span>
+                                    {% endif %}
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end language-dropdown">
+                                    <li>
+                                        <button type="submit" name="language" value="en" 
+                                                class="dropdown-item d-flex align-items-center {% if CURRENT_LANG == 'en' %}active{% endif %}">
+                                            <img width="20" src="{% static 'img/uk.png' %}" alt="EN" class="me-2">
+                                            <span class="flex-grow-1">English</span>
+                                            {% if CURRENT_LANG == 'en' %}<i class="fas fa-check ms-2"></i>{% endif %}
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button type="submit" name="language" value="uz" 
+                                                class="dropdown-item d-flex align-items-center {% if CURRENT_LANG == 'uz' %}active{% endif %}">
+                                            <img width="20" src="{% static 'img/uzb.png' %}" alt="UZ" class="me-2">
+                                            <span class="flex-grow-1">O'zbekcha</span>
+                                            {% if CURRENT_LANG == 'uz' %}<i class="fas fa-check ms-2"></i>{% endif %}
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button type="submit" name="language" value="ru" 
+                                                class="dropdown-item d-flex align-items-center {% if CURRENT_LANG == 'ru' %}active{% endif %}">
+                                            <img width="20" src="{% static 'img/ru.png' %}" alt="RU" class="me-2">
+                                            <span class="flex-grow-1">Русский</span>
+                                            {% if CURRENT_LANG == 'ru' %}<i class="fas fa-check ms-2"></i>{% endif %}
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Кнопки входа/профиля (скрываются на мобильных) -->
+                    <div class="auth-section d-none d-md-block">
+                        {% if user.is_authenticated %}
+                            <!-- Уведомления -->
+                            <div class="dropdown me-3 d-inline-block">
+                                <button class="btn btn-notification position-relative" type="button" 
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-bell"></i>
+                                    {% if unread_notifications_count > 0 %}
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                        {{ unread_notifications_count }}
+                                        <span class="visually-hidden">unread notifications</span>
+                                    </span>
+                                    {% endif %}
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end p-0" aria-labelledby="notificationsDropdown" style="width: 350px;">
+                                    <li>
+                                        <div class="p-3 border-bottom">
+                                            <h6 class="mb-0 fw-bold">{% trans "Notifications" %}</h6>
+                                            <small class="text-muted">
+                                                {% if unread_notifications_count > 0 %}
+                                                    {{ unread_notifications_count }} {% trans "unread" %}
+                                                {% else %}
+                                                    {% trans "No new notifications" %}
+                                                {% endif %}
+                                            </small>
+                                        </div>
+                                    </li>
+                                    
+                                    <li>
+                                        <div class="notification-list" style="max-height: 300px; overflow-y: auto;">
+                                            {% for notification in recent_notifications %}
+                                            <a href="{% if notification.link %}{{ notification.link }}{% else %}#{% endif %}" 
+                                               class="dropdown-item p-3 border-bottom notification-item {% if not notification.is_read %}bg-light{% endif %}"
+                                               data-notification-id="{{ notification.id }}">
+                                                <div class="d-flex align-items-start">
+                                                    <div class="me-3">
+                                                        {% if notification.notification_type == 'success' %}
+                                                        <i class="fas fa-check-circle text-success"></i>
+                                                        {% elif notification.notification_type == 'error' %}
+                                                        <i class="fas fa-exclamation-circle text-danger"></i>
+                                                        {% elif notification.notification_type == 'warning' %}
+                                                        <i class="fas fa-exclamation-triangle text-warning"></i>
+                                                        {% elif notification.notification_type == 'job_application' %}
+                                                        <i class="fas fa-briefcase text-primary"></i>
+                                                        {% elif notification.notification_type == 'job_status' %}
+                                                        <i class="fas fa-file-alt text-info"></i>
+                                                        {% else %}
+                                                        <i class="fas fa-info-circle text-secondary"></i>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <h6 class="mb-1 fw-bold">{{ notification.title }}</h6>
+                                                        <p class="mb-1 small text-muted">{{ notification.message|truncatechars:100 }}</p>
+                                                        <small class="text-muted">{{ notification.created_at|timesince }} {% trans "ago" %}</small>
+                                                    </div>
+                                                    {% if not notification.is_read %}
+                                                    <div class="ms-2">
+                                                        <span class="badge bg-primary rounded-pill">{% trans "New" %}</span>
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                            </a>
+                                            {% empty %}
+                                            <div class="p-3 text-center">
+                                                <i class="fas fa-bell-slash fa-2x text-muted mb-2"></i>
+                                                <p class="mb-0 text-muted">{% trans "No notifications yet" %}</p>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </li>
+                                    
+                                    <li>
+                                        <div class="p-2 border-top">
+                                            <a href="{% url 'accounts:notifications' %}" class="btn btn-sm btn-outline-primary w-100">
+                                                <i class="fas fa-list me-1"></i> {% trans "View All" %}
+                                            </a>
+                                            {% if unread_notifications_count > 0 %}
+                                            <button class="btn btn-sm btn-outline-success w-100 mt-2" id="markAllAsReadBtn">
+                                                <i class="fas fa-check-double me-1"></i> {% trans "Mark All as Read" %}
+                                            </button>
+                                            {% endif %}
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Профиль пользователя -->
+                            <div class="dropdown d-inline-block">
+                                <button class="btn btn-user dropdown-toggle d-flex align-items-center" type="button" 
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-user me-2"></i>
+                                    <span class="user-text">{{ user.get_full_name|default:user.username|truncatechars:12 }}</span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    {% if user.is_student %}
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center" href="{% url 'accounts:student_dashboard' %}">
+                                            <i class="fas fa-tachometer-alt me-2"></i>
+                                            <span>{% trans "Personal Cabinet" %}</span>
+                                        </a>
+                                    </li>
+                                    {% elif user.is_employer %}
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center" href="{% url 'accounts:employer_dashboard' %}">
+                                            <i class="fas fa-building me-2"></i>
+                                            <span>{% trans "Company Cabinet" %}</span>
+                                        </a>
+                                    </li>
+                                    {% elif user.is_admin or user.is_main_admin %}
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center" href="{% url 'accounts:admin_dashboard' %}">
+                                            <i class="fas fa-cogs me-2"></i>
+                                            <span>{% trans "Admin Panel" %}</span>
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                    
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center" href="{% url 'accounts:profile_view' %}">
+                                            <i class="fas fa-user-edit me-2"></i>
+                                            <span>{% trans "Profile" %}</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center" href="{% url 'accounts:notifications' %}">
+                                            <i class="fas fa-bell me-2"></i>
+                                            <span class="flex-grow-1">{% trans "Notifications" %}</span>
+                                            {% if unread_notifications_count > 0 %}
+                                            <span class="badge bg-danger">{{ unread_notifications_count }}</span>
+                                            {% endif %}
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center text-danger" href="{% url 'accounts:logout' %}">
+                                            <i class="fas fa-sign-out-alt me-2"></i>
+                                            <span>{% trans "Logout" %}</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        {% else %}
+                            <div class="dropdown d-inline-block">
+                                <button class="btn btn-login dropdown-toggle d-flex align-items-center" type="button" 
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-sign-in-alt me-2"></i>
+                                    <span class="login-text">{% trans "Login" %}</span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end p-3">
+                                    <li>
+                                        <a class="dropdown-item" href="https://digital.oxu.uz/oauth2/authorize.asp?response_type=code&client_id=ТВОЙ_CLIENT_ID&redirect_uri=https://oxu_career.onrender.com/oauth/callback/&scope=read profile">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-graduation-cap text-success me-2"></i>
+                                                <div>
+                                                    <div class="fw-bold">{% trans "As Student" %}</div>
+                                                    <small class="text-muted">{% trans "Login via OAuth" %}</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'accounts:employer_login' %}">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-building text-primary me-2"></i>
+                                                <div>
+                                                    <div class="fw-bold">{% trans "As Employer" %}</div>
+                                                    <small class="text-muted">{% trans "Company Account" %}</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Боковое меню (скрыто по умолчанию) -->
+<nav class="sidebar-nav" id="sidebarNav">
+    <div class="sidebar-header">
+        <div class="d-flex align-items-center justify-content-between w-100">
+            <h5 class="sidebar-title mb-0">{% trans "Menu" %}</h5>
+            <button class="sidebar-close-btn" id="sidebarCloseBtn">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    
+    <div class="sidebar-content">
+        <ul class="sidebar-menu">
+            <!-- Основные пункты меню -->
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center" href="/">
+                    <i class="fas fa-home me-3"></i>
+                    <span>{% trans "Home" %}</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center" href="https://oxu.uz/university">
+                    <i class="fas fa-university me-3"></i>
+                    <span>{% trans "University" %}</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center" href="{% url 'resources:list' %}">
+                    <i class="fas fa-book me-3"></i>
+                    <span>{% trans "Resources" %}</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center" href="{% url 'events:event_list' %}">
+                    <i class="fas fa-calendar-alt me-3"></i>
+                    <span>{% trans "Events" %}</span>
+                </a>
+            </li>
+
+            <!-- Авторизованные пользователи -->
+            {% if user.is_authenticated %}
+                <!-- Уведомления в боковом меню -->
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="{% url 'accounts:notifications' %}">
+                        <i class="fas fa-bell me-3"></i>
+                        <span>{% trans "Notifications" %}</span>
+                        {% if unread_notifications_count > 0 %}
+                        <span>{{ unread_notifications_count }}</span>
+                        {% endif %}
+                    </a>
+                </li>
+                
+                {% if user.is_student %}
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="{% url 'jobs:list' %}">
+                        <i class="fas fa-briefcase me-3"></i>
+                        <span>{% trans "Jobs" %}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="{% url 'cvbuilder:cv_list' %}">
+                        <i class="fas fa-file-alt me-3"></i>
+                        <span>{% trans "My Resumes" %}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="{% url 'cvbuilder:cv_create' %}">
+                        <i class="fas fa-plus-circle me-3"></i>
+                        <span>{% trans "Create Resume" %}</span>
+                    </a>
+                </li>
+                {% elif user.is_employer %}
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="{% url 'jobs:my_jobs' %}">
+                        <i class="fas fa-suitcase me-3"></i>
+                        <span>{% trans "My Jobs" %}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="{% url 'jobs:job_create' %}">
+                        <i class="fas fa-plus me-3"></i>
+                        <span>{% trans "Add Job" %}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="{% url 'cvbuilder:public_cv_list' %}">
+                        <i class="fas fa-users me-3"></i>
+                        <span>{% trans "Public Resumes" %}</span>
+                    </a>
+                </li>
+                {% elif user.is_admin or user.is_main_admin %}
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="{% url 'jobs:list' %}">
+                        <i class="fas fa-briefcase me-3"></i>
+                        <span>{% trans "Jobs" %}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="{% url 'accounts:admin_dashboard' %}">
+                        <i class="fas fa-cogs me-3"></i>
+                        <span>{% trans "Admin Panel" %}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="{% url 'accounts:user_management' %}">
+                        <i class="fas fa-users-cog me-3"></i>
+                        <span>{% trans "Users" %}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="{% url 'cvbuilder:public_cv_list' %}">
+                        <i class="fas fa-id-card me-3"></i>
+                        <span>{% trans "Public Resumes" %}</span>
+                    </a>
+                </li>
+                {% endif %}
+                
+                <!-- Профиль пользователя в сайдбаре -->
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="{% url 'accounts:profile_view' %}">
+                        <i class="fas fa-user-edit me-3"></i>
+                        <span>{% trans "Profile" %}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center text-danger" href="{% url 'accounts:logout' %}">
+                        <i class="fas fa-sign-out-alt me-3"></i>
+                        <span>{% trans "Logout" %}</span>
+                    </a>
+                </li>
+                
+            {% else %}
+                <!-- Кнопки входа в сайдбаре -->
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="https://digital.oxu.uz/oauth2/authorize.asp?response_type=code&client_id=ТВОЙ_CLIENT_ID&redirect_uri=https://oxu_career.onrender.com/oauth/callback/&scope=read profile">
+                        <i class="fas fa-graduation-cap me-3"></i>
+                        <span>{% trans "Login as Student" %}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="{% url 'accounts:employer_login' %}">
+                        <i class="fas fa-building me-3"></i>
+                        <span>{% trans "Login as Employer" %}</span>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+    
+    <!-- Футер сайдбара (все внизу) -->
+    <div class="sidebar-footer">
+        <!-- Языковой селектор (внизу) -->
+        <div class="sidebar-language mb-3 p-3">
+            <h6 class="mb-2">{% trans "Language" %}</h6>
+            <form action="{% url 'set_language' %}" method="post" class="d-inline-flex gap-2">
+                {% csrf_token %}
+                <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                {% get_current_language as CURRENT_LANG %}
+                
+                <button type="submit" name="language" value="en" 
+                        class="btn btn-sm btn-outline-dark {% if CURRENT_LANG == 'en' %}active{% endif %}">
+                    EN
+                </button>
+                <button type="submit" name="language" value="uz" 
+                        class="btn btn-sm btn-outline-dark {% if CURRENT_LANG == 'uz' %}active{% endif %}">
+                    UZ
+                </button>
+                <button type="submit" name="language" value="ru" 
+                        class="btn btn-sm btn-outline-dark {% if CURRENT_LANG == 'ru' %}active{% endif %}">
+                    RU
+                </button>
+            </form>
+        </div>
+        
+        <!-- Контакты и соцсети в самом низу -->
+        <div class="contact-info p-3 border-top">
+            <h6 class="mb-2">{% trans "Contacts" %}</h6>
+            <p class="mb-2 d-flex align-items-center">
+                <i class="fas fa-phone me-3"></i>
+                <span>+998 90 123-45-67</span>
+            </p>
+            <p class="mb-3 d-flex align-items-center">
+                <i class="fas fa-envelope me-3"></i>
+                <span>info@oxucareer.uz</span>
+            </p>
+            <div class="d-flex justify-content-center gap-3">
+                <a style="font-size: 3vh;" href=""><i class="fab fa-telegram"></i></a>
+                <a style="font-size: 3vh;" href=""><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Затемнение фона при открытом меню -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<style>
+/* ===================== */
+/* БАЗОВЫЕ НАСТРОЙКИ */
+/* ===================== */
+:root {
+    --primary-color: #001b45;
+    --secondary-color: #012d6e;
+    --accent-color: #4ade80;
+    --dark-text: #333333;
+    --light-text: #666666;
+    --sidebar-width: 320px;
+    --transition-speed: 0.4s;
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* ===================== */
+/* ХЕДЕР НА ВСЕХ ЭКРАНАХ */
+/* ===================== */
+.header-middle-container {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+}
+
+.header-left {
+    grid-column: 1;
+    justify-self: start;
+    display: flex;
+    align-items: center;
+}
+
+.header-center {
+    grid-column: 2;
+    justify-self: center;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+}
+
+.header-right {
+    grid-column: 3;
+    justify-self: end;
+    display: flex;
+    align-items: center;
+}
+
+/* Кнопка меню ВСЕГДА видна */
+.sidebar-toggle-btn {
+    width: 46px;
+    height: 46px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 0;
+}
+
+.sidebar-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: var(--accent-color);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 4px 16px rgba(74, 222, 128, 0.3);
+}
+
+/* Логотип */
+.logo-container {
+    display: flex;
+    align-items: center;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    text-decoration: none;
+}
+
+.logo-image {
+    width: 70px;
+    height: 70px;
+    margin-right: 15px;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.logo-container:hover .logo-image {
+    transform: scale(1.05);
+}
+
+.logo-text-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.logo-main {
+    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-weight: 800;
+    line-height: 1.1;
+    color: white;
+    font-size: 1.3rem;
+    white-space: nowrap;
+}
+
+.logo-sub {
+    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-weight: 600;
+    color: var(--accent-color) !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.85rem;
+    margin-top: 2px;
+}
+
+/* Кнопки управления (десктоп) */
+.btn-language, .btn-notification, .btn-user, .btn-login {
+    height: 46px;
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+}
+
+.btn-language {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 10px 16px;
+    min-width: 85px;
+}
+
+.btn-notification {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 10px;
+    width: 52px;
+}
+
+.btn-user {
+    background: linear-gradient(135deg, var(--accent-color) 0%, #3bd171 100%);
+    border: none;
+    color: white;
+    padding: 10px 18px;
+    min-width: 125px;
+    font-weight: 600;
+}
+
+.btn-login {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: white;
+    padding: 10px 18px;
+    min-width: 105px;
+    font-weight: 600;
+}
+
+/* ===================== */
+/* МОБИЛЬНАЯ АДАПТАЦИЯ (до 767px) */
+/* ===================== */
+@media (max-width: 767px) {
+    .header-top {
+        display: none !important;
+    }
+    
+    .header-middle-container {
+        grid-template-columns: 46px 1fr auto;
+        gap: 15px;
+    }
+    
+    /* Скрываем элементы управления на мобильных */
+    .header-right .language-selector,
+    .header-right .auth-section {
+        display: none !important;
+    }
+    
+    /* Уменьшаем кнопку меню на мобильных */
+    .sidebar-toggle-btn {
+        width: 40px;
+        height: 40px;
+    }
+    
+    /* Уменьшаем логотип на мобильных */
+    .logo-image {
+        width: 45px;
+        height: 45px;
+        margin-right: 10px;
+    }
+    
+    .logo-main {
+        font-size: 0.9rem;
+        white-space: normal;
+        line-height: 1.1;
+    }
+    
+    .logo-sub {
+        font-size: 0.7rem;
+    }
+    
+    /* Уменьшаем кнопки управления */
+    .btn-language, .btn-notification, .btn-user, .btn-login {
+        height: 40px;
+    }
+    
+    .btn-language {
+        min-width: 70px;
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+    
+    .btn-notification {
+        width: 45px;
+    }
+    
+    .btn-user, .btn-login {
+        min-width: 100px;
+        padding: 8px 14px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Очень маленькие экраны */
+@media (max-width: 374px) {
+    .header-middle-container {
+        grid-template-columns: 40px 1fr auto;
+        gap: 10px;
+    }
+    
+    .sidebar-toggle-btn {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .logo-image {
+        width: 40px;
+        height: 40px;
+        margin-right: 8px;
+    }
+    
+    .logo-main {
+        font-size: 0.8rem;
+    }
+    
+    .logo-sub {
+        font-size: 0.65rem;
+    }
+}
+
+/* ===================== */
+/* ОБЩИЕ СТИЛИ ДЛЯ ХЕДЕРА */
+/* ===================== */
+.header-top {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #002255 100%);
+    padding: 10px 0;
+    color: white;
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.header-middle {
+    background: linear-gradient(135deg, var(--secondary-color) 0%, #003580 100%);
+    padding: 14px 0;
+    position: relative;
+}
+
+/* ===================== */
+/* САЙДБАР */
+/* ===================== */
+.sidebar-nav {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: var(--sidebar-width);
+    height: 100vh;
+    background: white;
+    transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(0, 0, 0, 0.05);
+    z-index: 1100 !important;
+}
+
+.sidebar-nav.active {
+    left: 0;
+}
+
+/* Шапка сайдбара БЕЗ ЛОГОТИПА */
+.sidebar-header {
+    background: var(--primary-color);
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.sidebar-title {
+    color: white !important;
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.3rem;
+}
+
+.sidebar-close-btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.sidebar-close-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: rotate(90deg) scale(1.1);
+}
+
+/* Контент сайдбара */
+.sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 20px;
+}
+
+/* Ссылки в сайдбаре - БЕЛЫЙ ТЕКСТ на темном фоне */
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 14px 20px;
+    color: var(--dark-text) !important; /* Белый цвет текста */
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
+    margin: 2px 10px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.nav-link:hover {
+    background: rgba(0, 27, 69, 0.08);
+    color: var(--primary-color) !important; /* Белый цвет текста при наведении */
+    border-left-color: var(--primary-color);
+    transform: translateX(5px);
+}
+
+.nav-link i {
+    color: var(--primary-color) !important; /* Белые иконки */
+    font-size: 1.1rem;
+    min-width: 24px;
+    text-align: center;
+}
+
+/* Футер сайдбара (все внизу) */
+.sidebar-footer {
+    margin-top: auto;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(0, 27, 69, 0.03);
+}
+
+/* Языковой селектор в футере */
+.sidebar-language {
+    background: white;
+}
+
+.sidebar-language h6 {
+    color: var(--dark-text);
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.sidebar-language .btn-outline-dark {
+    border-color: rgba(0, 0, 0, 0.2);
+    color: var(--dark-text);
+}
+
+.sidebar-language .btn-outline-dark.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.sidebar-language .btn-outline-dark:hover {
+    background-color: rgba(0, 27, 69, 0.1);
+    border-color: var(--primary-color);
+}
+
+/* Контакты в футере */
+.contact-info {
+    color: var(--dark-text);
+}
+
+.contact-info h6 {
+    color: var(--dark-text);
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.contact-info i {
+    color: var(--primary-color) !important;
+}
+
+.social-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3vh;
+    height: 3vh;
+    border-radius: 50%;
+    background: rgba(0, 27, 69, 0.1);
+    color: var(--primary-color) !important;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.social-icon:hover {
+    background: var(--primary-color);
+    color: white !important;
+    transform: translateY(-3px);
+}
+
+/* Затемнение фона */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.5s ease;
+    z-index: 1099 !important;
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Адаптация для разных размеров */
+@media (min-width: 768px) and (max-width: 991px) {
+    .logo-image {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .logo-main {
+        font-size: 1.1rem;
+    }
+    
+    .logo-sub {
+        font-size: 0.75rem;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+    .logo-image {
+        width: 65px;
+        height: 65px;
+    }
+    
+    .logo-main {
+        font-size: 1.2rem;
+    }
+    
+    .logo-sub {
+        font-size: 0.8rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
+    const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
+    const sidebarNav = document.getElementById('sidebarNav');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    
+    let isSidebarOpen = false;
+    
+    function openSidebar() {
+        if (isSidebarOpen) return;
+        
+        isSidebarOpen = true;
+        sidebarNav.classList.add('active');
+        sidebarOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeSidebar() {
+        if (!isSidebarOpen) return;
+        
+        isSidebarOpen = false;
+        sidebarNav.classList.remove('active');
+        sidebarOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    function toggleSidebar() {
+        if (isSidebarOpen) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    }
+    
+    // Обработчики событий
+    if (sidebarToggleBtn) sidebarToggleBtn.addEventListener('click', toggleSidebar);
+    if (sidebarCloseBtn) sidebarCloseBtn.addEventListener('click', closeSidebar);
+    if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
+    
+    // Закрытие по клавише Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && isSidebarOpen) {
+            closeSidebar();
+        }
+    });
+    
+    // Закрытие меню при клике на ссылку
+    const navLinks = document.querySelectorAll('.sidebar-nav .nav-link');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            closeSidebar();
+        });
+    });
+    
+    // Проверяем отображение кнопки
+    console.log('Кнопка меню:', sidebarToggleBtn);
+    console.log('Кнопка видима?', sidebarToggleBtn ? 'Да' : 'Нет');
+});
+</script>

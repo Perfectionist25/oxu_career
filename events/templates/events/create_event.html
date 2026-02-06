@@ -1,0 +1,1225 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Create Event" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'django_ckeditor_5/dist/styles.css' %}">
+<style>
+/* Улучшенные стили для формы */
+.card {
+    border: none;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+.card-title {
+    color: #2c3e50;
+    font-weight: 600;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.card-title::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.form-label {
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.form-control, .form-select {
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+    width: 100%;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+
+.form-control.is-invalid, .form-select.is-invalid {
+    border-color: #dc3545;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.form-select.is-invalid {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e"), url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center, center right 2.25rem;
+    background-size: 16px 12px, calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.form-text {
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    color: #6c757d;
+}
+
+.required-field::after {
+    content: " *";
+    color: #dc3545;
+}
+
+/* CKEditor 5 стили */
+.django-ckeditor-5 {
+    min-height: 200px;
+    border-radius: 8px;
+}
+
+.ck-editor__main {
+    min-height: 150px;
+}
+
+.ck.ck-editor__main > .ck-editor__editable {
+    min-height: 150px;
+    border: 1px solid #ced4da !important;
+    border-radius: 0 0 8px 8px !important;
+}
+
+.ck.ck-toolbar {
+    border: 1px solid #ced4da !important;
+    border-radius: 8px 8px 0 0 !important;
+    border-bottom: none !important;
+    background: #f8f9fa !important;
+}
+
+/* Кнопки */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s;
+    border: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    color: white;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+    color: white;
+}
+
+/* Стили для ошибок */
+.text-danger.small {
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+/* Счетчики символов */
+.character-counter {
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    font-weight: 500;
+}
+
+.character-counter.success {
+    color: #28a745;
+}
+
+.character-counter.warning {
+    color: #ffc107;
+}
+
+.character-counter.danger {
+    color: #dc3545;
+}
+
+/* Информационные подсказки */
+.field-info {
+    background: #f8f9fa;
+    border-left: 4px solid #667eea;
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.field-info i {
+    color: #667eea;
+    margin-right: 0.5rem;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .row > [class*="col-"] {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Загрузка изображений */
+.image-preview-container {
+    margin-top: 1rem;
+    display: none;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 2px dashed #adb5bd;
+    text-align: center;
+}
+
+.image-preview {
+    display: block;
+    max-width: 100%;
+    max-height: 200px;
+    width: auto;
+    height: auto;
+    border-radius: 8px;
+    margin: 0 auto;
+    border: 2px solid #667eea;
+    background: white;
+    padding: 5px;
+    object-fit: contain;
+}
+
+/* Индикатор загрузки */
+.image-loading {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Статус событий */
+.status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.status-draft {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+}
+
+.status-published {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.status-cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Индикатор сжатия */
+.compression-info {
+    background: #e7f4ff;
+    border: 1px solid #b3d7ff;
+    border-radius: 6px;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    display: none;
+}
+
+.compression-info.show {
+    display: block;
+    animation: fadeIn 0.3s ease-out;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+{{ form.media }} <!-- Это загрузит CKEditor 5 JS и CSS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Форма создания события загружена');
+    
+    // Проверка загрузки CKEditor
+    if (typeof CKEDITOR !== 'undefined') {
+        console.log('CKEditor 5 загружен');
+    } else {
+        console.warn('CKEditor 5 не загружен');
+    }
+    
+    // ============ ОБРАБОТКА ФОРМЫ ============
+    const form = document.querySelector('form');
+    
+    // ============ ПРЕДПРОСМОТР И СЖАТИЕ ИЗОБРАЖЕНИЙ ============
+    function setupImagePreview(inputId, previewId, imageType) {
+        const input = document.getElementById(inputId);
+        const previewContainer = document.getElementById(previewId + '-container');
+        
+        if (input && previewContainer) {
+            input.addEventListener('change', async function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    // Проверка типа файла
+                    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+                    if (!validTypes.includes(file.type)) {
+                        alert('{% trans "Please select a valid image file (JPEG, PNG, GIF, WebP)" %}');
+                        this.value = '';
+                        previewContainer.style.display = 'none';
+                        return;
+                    }
+                    
+                    // Показываем индикатор загрузки
+                    previewContainer.innerHTML = `
+                        <div class="d-flex flex-column align-items-center justify-content-center py-3">
+                            <div class="image-loading mb-2"></div>
+                            <small class="text-muted">{% trans "Processing image..." %}</small>
+                        </div>
+                    `;
+                    previewContainer.style.display = 'block';
+                    
+                    try {
+                        // Создаем объект File для хранения обработанного изображения
+                        const processedFile = await processImage(file, imageType);
+                        
+                        // Создаем Data URL для предпросмотра
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const newImg = new Image();
+                            newImg.src = e.target.result;
+                            newImg.className = 'image-preview';
+                            newImg.alt = 'Image preview';
+                            
+                            newImg.onload = function() {
+                                // Создаем информацию о файле
+                                const originalSize = file.size;
+                                const processedSize = processedFile.size;
+                                const compressionRatio = Math.round((1 - processedSize / originalSize) * 100);
+                                
+                                const fileInfo = document.createElement('div');
+                                fileInfo.className = 'file-info mt-2 text-center';
+                                fileInfo.innerHTML = `
+                                    <small class="text-muted">
+                                        <i class="fas fa-file-image me-1"></i>
+                                        ${file.name}<br>
+                                        <i class="fas fa-expand-alt me-1"></i>
+                                        ${this.naturalWidth}×${this.naturalHeight}px<br>
+                                        <i class="fas fa-weight-hanging me-1"></i>
+                                        Original: ${(originalSize / 1024).toFixed(1)} KB → 
+                                        Compressed: ${(processedSize / 1024).toFixed(1)} KB
+                                        ${compressionRatio > 0 ? `(${compressionRatio}% smaller)` : ''}
+                                    </small>
+                                `;
+                                
+                                // Добавляем индикатор сжатия если изображение было сжато
+                                if (compressionRatio > 0) {
+                                    const compressionInfo = document.createElement('div');
+                                    compressionInfo.className = 'compression-info show';
+                                    compressionInfo.innerHTML = `
+                                        <i class="fas fa-compress-arrows-alt text-primary me-1"></i>
+                                        <strong>{% trans "Image optimized:" %}</strong> ${compressionRatio}% size reduction
+                                    `;
+                                    previewContainer.appendChild(compressionInfo);
+                                }
+                                
+                                previewContainer.innerHTML = '';
+                                previewContainer.appendChild(newImg);
+                                previewContainer.appendChild(fileInfo);
+                                previewContainer.style.display = 'block';
+                                
+                                // Заменяем оригинальный файл сжатым в input
+                                const dataTransfer = new DataTransfer();
+                                dataTransfer.items.add(processedFile);
+                                input.files = dataTransfer.files;
+                                
+                                // Проверяем рекомендованные размеры
+                                checkImageDimensions(this, previewId);
+                            };
+                        };
+                        reader.readAsDataURL(processedFile);
+                        
+                    } catch (error) {
+                        console.error('Error processing image:', error);
+                        alert('{% trans "Error processing image. Please try another file." %}');
+                        this.value = '';
+                        previewContainer.style.display = 'none';
+                    }
+                } else {
+                    previewContainer.style.display = 'none';
+                }
+            });
+        }
+    }
+    
+    // Функция обработки и сжатия изображения
+    async function processImage(file, imageType) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                img.src = e.target.result;
+                
+                img.onload = function() {
+                    // Определяем целевые размеры в зависимости от типа изображения
+                    let targetWidth, targetHeight, quality;
+                    
+                    if (imageType === 'banner') {
+                        targetWidth = 1200;
+                        targetHeight = 400;
+                        quality = 0.85; // Качество для баннера
+                    } else {
+                        targetWidth = 400;
+                        targetHeight = 300;
+                        quality = 0.9; // Качество для миниатюры
+                    }
+                    
+                    // Рассчитываем новые размеры с сохранением пропорций
+                    let width = img.width;
+                    let height = img.height;
+                    const maxDimension = Math.max(targetWidth, targetHeight);
+                    
+                    // Если изображение слишком большое, уменьшаем его
+                    if (width > maxDimension || height > maxDimension) {
+                        const ratio = Math.min(maxDimension / width, maxDimension / height);
+                        width = Math.floor(width * ratio);
+                        height = Math.floor(height * ratio);
+                    }
+                    
+                    // Создаем canvas для изменения размера
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Настройки сглаживания
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
+                    
+                    // Очищаем canvas и рисуем изображение
+                    ctx.clearRect(0, 0, width, height);
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // Конвертируем canvas в blob с сжатием
+                    canvas.toBlob(function(blob) {
+                        if (!blob) {
+                            reject(new Error('Canvas to Blob conversion failed'));
+                            return;
+                        }
+                        
+                        // Создаем новый File объект
+                        const compressedFile = new File([blob], file.name, {
+                            type: 'image/jpeg',
+                            lastModified: Date.now()
+                        });
+                        
+                        resolve(compressedFile);
+                    }, 'image/jpeg', quality);
+                };
+                
+                img.onerror = function() {
+                    reject(new Error('Failed to load image'));
+                };
+            };
+            
+            reader.onerror = function() {
+                reject(new Error('Failed to read file'));
+            };
+            
+            reader.readAsDataURL(file);
+        });
+    }
+    
+    // Проверка размеров изображения
+    function checkImageDimensions(img, type) {
+        let recommendedWidth, recommendedHeight, imageType;
+        
+        if (type === 'banner-preview') {
+            recommendedWidth = 1200;
+            recommendedHeight = 400;
+            imageType = 'banner';
+        } else if (type === 'thumbnail-preview') {
+            recommendedWidth = 400;
+            recommendedHeight = 300;
+            imageType = 'thumbnail';
+        } else {
+            return;
+        }
+        
+        const widthDiff = Math.abs(img.naturalWidth - recommendedWidth);
+        const heightDiff = Math.abs(img.naturalHeight - recommendedHeight);
+        const widthTolerance = recommendedWidth * 0.15; // 15% допустимое отклонение
+        const heightTolerance = recommendedHeight * 0.15;
+        
+        if (widthDiff > widthTolerance || heightDiff > heightTolerance) {
+            const container = document.getElementById(type + '-container');
+            const existingAlert = container.querySelector('.alert');
+            if (existingAlert) {
+                existingAlert.remove();
+            }
+            
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'alert alert-warning mt-2 small';
+            infoDiv.innerHTML = `
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>{% trans "Recommended size:" %}</strong> ${recommendedWidth}×${recommendedHeight}px<br>
+                <strong>{% trans "Your size:" %}</strong> ${img.naturalWidth}×${img.naturalHeight}px
+            `;
+            
+            container.appendChild(infoDiv);
+        }
+    }
+    
+    // Настройка предпросмотра для баннера и миниатюры
+    setupImagePreview('id_banner_image', 'banner-preview', 'banner');
+    setupImagePreview('id_thumbnail', 'thumbnail-preview', 'thumbnail');
+    
+    // ============ СЧЕТЧИКИ СИМВОЛОВ ============
+    function setupCharacterCounter(textareaId, counterId, maxLength) {
+        const textarea = document.getElementById(textareaId);
+        const counter = document.getElementById(counterId);
+        
+        if (textarea && counter) {
+            function updateCounter() {
+                let text = '';
+                
+                // Для CKEditor получаем текст без HTML
+                if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances[textareaId]) {
+                    text = CKEDITOR.instances[textareaId].getData();
+                    text = text.replace(/<[^>]*>/g, '').trim();
+                } else {
+                    text = textarea.value;
+                }
+                
+                const length = text.length;
+                counter.textContent = `${length}/${maxLength}`;
+                
+                // Изменяем цвет
+                counter.className = 'character-counter';
+                if (length > maxLength) {
+                    counter.classList.add('danger');
+                } else if (length > maxLength * 0.8) {
+                    counter.classList.add('warning');
+                } else {
+                    counter.classList.add('success');
+                }
+            }
+            
+            // Для обычных textarea
+            textarea.addEventListener('input', updateCounter);
+            
+            // Для CKEditor
+            if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances[textareaId]) {
+                CKEDITOR.instances[textareaId].on('change', function() {
+                    setTimeout(updateCounter, 100);
+                });
+            }
+            
+            // Инициализация
+            updateCounter();
+        }
+    }
+    
+    // Настройка счетчиков
+    setupCharacterCounter('id_short_description', 'short-desc-counter', 300);
+    setupCharacterCounter('id_description', 'desc-counter', 5000);
+    
+    // ============ ВАЛИДАЦИЯ ДАТ ============
+    const startDateInput = document.getElementById('id_start_date');
+    const endDateInput = document.getElementById('id_end_date');
+    
+    function validateDates() {
+        let isValid = true;
+        
+        if (startDateInput && startDateInput.value) {
+            const startDate = new Date(startDateInput.value);
+            const now = new Date();
+            now.setHours(0, 0, 0, 0);
+            
+            if (startDate < now) {
+                showFieldError('id_start_date', '{% trans "Start date cannot be in the past" %}');
+                isValid = false;
+            } else {
+                clearFieldError('id_start_date');
+            }
+        }
+        
+        if (startDateInput && startDateInput.value && endDateInput && endDateInput.value) {
+            const startDate = new Date(startDateInput.value);
+            const endDate = new Date(endDateInput.value);
+            
+            if (startDate >= endDate) {
+                showFieldError('id_end_date', '{% trans "End date must be after start date" %}');
+                isValid = false;
+            } else {
+                clearFieldError('id_end_date');
+            }
+        }
+        
+        return isValid;
+    }
+    
+    if (startDateInput) {
+        startDateInput.addEventListener('change', validateDates);
+    }
+    
+    if (endDateInput) {
+        endDateInput.addEventListener('change', validateDates);
+    }
+    
+    // ============ ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ============
+    function showFieldError(fieldId, message) {
+        const field = document.getElementById(fieldId);
+        const errorDiv = document.getElementById(fieldId + '_error');
+        
+        if (field) {
+            field.classList.add('is-invalid');
+        }
+        
+        if (errorDiv) {
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+    }
+    
+    function clearFieldError(fieldId) {
+        const field = document.getElementById(fieldId);
+        const errorDiv = document.getElementById(fieldId + '_error');
+        
+        if (field) {
+            field.classList.remove('is-invalid');
+        }
+        
+        if (errorDiv) {
+            errorDiv.textContent = '';
+            errorDiv.style.display = 'none';
+        }
+    }
+    
+    // ============ ФОРМАТИРОВАНИЕ ТЕГОВ ============
+    const tagsInput = document.getElementById('id_tags');
+    if (tagsInput) {
+        tagsInput.addEventListener('blur', function() {
+            let tags = this.value.split(',')
+                .map(tag => tag.trim())
+                .filter(tag => tag.length > 0)
+                .join(', ');
+            this.value = tags;
+        });
+        
+        // Подсказка при фокусе
+        tagsInput.addEventListener('focus', function() {
+            if (!this.value) {
+                this.placeholder = '{% trans "e.g., technology, workshop, networking" %}';
+            }
+        });
+    }
+    
+    // ============ ПРОВЕРКА ПЕРЕД ОТПРАВКОЙ ============
+    if (form) {
+        form.addEventListener('submit', async function(e) {
+            console.log('Проверка формы перед отправкой...');
+            
+            let isValid = true;
+            const errorMessages = [];
+            
+            // Проверка обязательных полей
+            const requiredFields = [
+                'id_title',
+                'id_short_description',
+                'id_description',
+                'id_category',
+                'id_event_type',
+                'id_start_date',
+                'id_location'
+            ];
+            
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    let value = '';
+                    
+                    // Для CKEditor получаем очищенный текст
+                    if (fieldId === 'id_short_description' || fieldId === 'id_description') {
+                        if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances[fieldId]) {
+                            value = CKEDITOR.instances[fieldId].getData();
+                            value = value.replace(/<[^>]*>/g, '').trim();
+                        } else {
+                            value = field.value.trim();
+                        }
+                    } else {
+                        value = field.value.trim();
+                    }
+                    
+                    if (!value || value === '') {
+                        const fieldName = field.getAttribute('name') || fieldId;
+                        showFieldError(fieldId, '{% trans "This field is required" %}');
+                        isValid = false;
+                        errorMessages.push(`- ${fieldName}: {% trans "is required" %}`);
+                    } else {
+                        clearFieldError(fieldId);
+                    }
+                }
+            });
+            
+            // Проверка дат
+            if (!validateDates()) {
+                isValid = false;
+                errorMessages.push('- {% trans "Date validation failed" %}');
+            }
+            
+            // Проверка длины текста
+            const shortDescText = getPlainText('id_short_description');
+            if (shortDescText && shortDescText.length > 300) {
+                showFieldError('id_short_description', '{% trans "Maximum 300 characters allowed" %}');
+                isValid = false;
+                errorMessages.push('- {% trans "Short description is too long" %}');
+            }
+            
+            const descText = getPlainText('id_description');
+            if (descText && descText.length > 5000) {
+                showFieldError('id_description', '{% trans "Maximum 5000 characters allowed" %}');
+                isValid = false;
+                errorMessages.push('- {% trans "Description is too long" %}');
+            }
+            
+            // Если есть ошибки - показываем сообщение
+            if (!isValid) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Создаем или обновляем сообщение об ошибках
+                let errorAlert = document.querySelector('.form-errors-alert');
+                if (!errorAlert) {
+                    errorAlert = document.createElement('div');
+                    errorAlert.className = 'alert alert-danger alert-dismissible fade show form-errors-alert';
+                    errorAlert.innerHTML = `
+                        <h5 class="alert-heading">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            {% trans "Please fix the following errors" %}
+                        </h5>
+                        <ul class="mb-0" id="error-list"></ul>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    `;
+                    form.prepend(errorAlert);
+                }
+                
+                const errorList = document.getElementById('error-list');
+                if (errorList) {
+                    errorList.innerHTML = errorMessages.map(msg => `<li>${msg}</li>`).join('');
+                }
+                
+                // Прокрутка к первой ошибке
+                const firstError = form.querySelector('.is-invalid');
+                if (firstError) {
+                    firstError.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                    setTimeout(() => firstError.focus(), 300);
+                }
+                
+                console.log('Форма не прошла валидацию:', errorMessages);
+                return;
+            }
+            
+            console.log('Форма прошла валидацию, отправляю...');
+            
+            // Показываем индикатор загрузки
+            const submitBtn = form.querySelector('button[type="submit"]');
+            let originalText = '';
+            if (submitBtn) {
+                originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = `
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    {% trans "Creating..." %}
+                `;
+                submitBtn.disabled = true;
+            }
+            
+            try {
+                // Дополнительное сжатие изображений перед отправкой
+                const bannerInput = document.getElementById('id_banner_image');
+                const thumbnailInput = document.getElementById('id_thumbnail');
+                
+                // Создаем FormData для отправки
+                const formData = new FormData(form);
+                
+                // Отправляем форму
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                // Если все успешно, форма отправится
+                console.log('Форма успешно отправлена');
+                
+            } catch (error) {
+                console.error('Ошибка отправки формы:', error);
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Восстановление кнопки
+                if (submitBtn) {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                    
+                    // Показываем сообщение об ошибке
+                    const errorAlert = document.createElement('div');
+                    errorAlert.className = 'alert alert-danger alert-dismissible fade show';
+                    errorAlert.innerHTML = `
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        {% trans "Error submitting form. Please try again." %}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    `;
+                    form.prepend(errorAlert);
+                }
+            }
+        });
+    }
+    
+    // Вспомогательная функция для получения текста без HTML
+    function getPlainText(fieldId) {
+        const field = document.getElementById(fieldId);
+        if (!field) return '';
+        
+        let text = field.value;
+        if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances[fieldId]) {
+            text = CKEDITOR.instances[fieldId].getData();
+        }
+        
+        return text.replace(/<[^>]*>/g, '').trim();
+    }
+    
+    // ============ ПОДСКАЗКИ ПРИ ФОКУСЕ ============
+    function setupFieldTips() {
+        const tips = {
+            'id_title': '{% trans "Enter a clear and descriptive title for your event" %}',
+            'id_location': '{% trans "Physical address or online platform" %}',
+            'id_tags': '{% trans "Use relevant keywords to help people find your event" %}'
+        };
+        
+        Object.keys(tips).forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                let tipElement = document.getElementById(fieldId + '_tip');
+                if (!tipElement) {
+                    tipElement = document.createElement('div');
+                    tipElement.id = fieldId + '_tip';
+                    tipElement.className = 'field-info fade-in';
+                    tipElement.style.display = 'none';
+                    field.parentNode.appendChild(tipElement);
+                }
+                
+                field.addEventListener('focus', function() {
+                    tipElement.innerHTML = `<i class="fas fa-lightbulb"></i> ${tips[fieldId]}`;
+                    tipElement.style.display = 'block';
+                });
+                
+                field.addEventListener('blur', function() {
+                    tipElement.style.display = 'none';
+                });
+            }
+        });
+    }
+    
+    setupFieldTips();
+    
+    // ============ АВТОСОХРАНЕНИЕ ============
+    let autoSaveTimer;
+    const AUTO_SAVE_KEY = 'event_form_draft';
+    
+    function setupAutoSave() {
+        const fieldsToSave = [
+            'id_title', 'id_short_description', 'id_description',
+            'id_location', 'id_tags'
+        ];
+        
+        function saveDraft() {
+            const draft = {};
+            fieldsToSave.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    let value = field.value;
+                    
+                    // Для CKEditor получаем данные
+                    if (fieldId === 'id_short_description' || fieldId === 'id_description') {
+                        if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances[fieldId]) {
+                            value = CKEDITOR.instances[fieldId].getData();
+                        }
+                    }
+                    
+                    draft[fieldId] = value;
+                }
+            });
+            
+            localStorage.setItem(AUTO_SAVE_KEY, JSON.stringify(draft));
+            console.log('Черновик сохранен');
+        }
+        
+        // Сохраняем каждые 30 секунд
+        fieldsToSave.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.addEventListener('input', function() {
+                    clearTimeout(autoSaveTimer);
+                    autoSaveTimer = setTimeout(saveDraft, 30000);
+                });
+            }
+        });
+        
+        // Восстановление черновика
+        const savedDraft = localStorage.getItem(AUTO_SAVE_KEY);
+        if (savedDraft) {
+            try {
+                const draft = JSON.parse(savedDraft);
+                const restore = confirm('{% trans "Found a saved draft. Restore it?" %}');
+                
+                if (restore) {
+                    Object.keys(draft).forEach(fieldId => {
+                        const field = document.getElementById(fieldId);
+                        if (field) {
+                            field.value = draft[fieldId];
+                            
+                            // Для CKEditor устанавливаем данные
+                            if (fieldId === 'id_short_description' || fieldId === 'id_description') {
+                                if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances[fieldId]) {
+                                    CKEDITOR.instances[fieldId].setData(draft[fieldId]);
+                                }
+                            }
+                        }
+                    });
+                    
+                    // Обновляем счетчики
+                    const shortDescCounter = document.getElementById('short-desc-counter');
+                    const descCounter = document.getElementById('desc-counter');
+                    
+                    if (shortDescCounter) {
+                        const shortDescText = getPlainText('id_short_description');
+                        shortDescCounter.textContent = `${shortDescText.length}/300`;
+                    }
+                    
+                    if (descCounter) {
+                        const descText = getPlainText('id_description');
+                        descCounter.textContent = `${descText.length}/5000`;
+                    }
+                }
+            } catch (e) {
+                console.error('Ошибка восстановления черновика:', e);
+            }
+        }
+        
+        // Очистка черновика при успешной отправке
+        if (form) {
+            form.addEventListener('submit', function() {
+                localStorage.removeItem(AUTO_SAVE_KEY);
+            });
+        }
+    }
+    
+    setupAutoSave();
+    
+    // ============ ИНИЦИАЛИЗАЦИЯ ============
+    console.log('Форма создания события инициализирована');
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <h1 class="mb-4">
+                <i class="fas fa-calendar-plus me-2"></i>
+                {% trans "Create New Event" %}
+            </h1>
+
+            <!-- Общие ошибки формы -->
+            {% if form.errors %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <h5 class="alert-heading">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    {% trans "Please correct the following errors" %}
+                </h5>
+                <ul class="mb-0">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endif %}
+
+            <div class="card fade-in">
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Основная информация -->
+                        <div class="mb-4">
+                            <h5 class="card-title mb-3">{% trans "Basic Information" %}</h5>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.title.id_for_label }}" class="form-label required-field">
+                                        {{ form.title.label }}
+                                    </label>
+                                    {{ form.title }}
+                                    <div class="form-text">{% trans "Maximum 200 characters" %}</div>
+                                    <div class="text-danger small mt-1" id="{{ form.title.id_for_label }}_error"></div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.category.id_for_label }}" class="form-label required-field">
+                                        {{ form.category.label }}
+                                    </label>
+                                    {{ form.category }}
+                                    <div class="text-danger small mt-1" id="{{ form.category.id_for_label }}_error"></div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.event_type.id_for_label }}" class="form-label required-field">
+                                        {{ form.event_type.label }}
+                                    </label>
+                                    {{ form.event_type }}
+                                    <div class="text-danger small mt-1" id="{{ form.event_type.id_for_label }}_error"></div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.location.id_for_label }}" class="form-label required-field">
+                                        {{ form.location.label }}
+                                    </label>
+                                    {{ form.location }}
+                                    <div class="form-text">{% trans "Maximum 200 characters" %}</div>
+                                    <div class="text-danger small mt-1" id="{{ form.location.id_for_label }}_error"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Описание -->
+                        <div class="mb-4">
+                            <h5 class="card-title mb-3">{% trans "Description" %}</h5>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.short_description.id_for_label }}" class="form-label required-field">
+                                    {{ form.short_description.label }}
+                                </label>
+                                {{ form.short_description }}
+                                <div class="form-text">
+                                    <span id="short-desc-counter" class="character-counter">0/300</span>
+                                </div>
+                                <div class="text-danger small mt-1" id="{{ form.short_description.id_for_label }}_error"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="{{ form.description.id_for_label }}" class="form-label required-field">
+                                    {{ form.description.label }}
+                                </label>
+                                {{ form.description }}
+                                <div class="form-text">
+                                    <span id="desc-counter" class="character-counter">0/5000</span>
+                                </div>
+                                <div class="text-danger small mt-1" id="{{ form.description.id_for_label }}_error"></div>
+                            </div>
+                        </div>
+
+                        <!-- Даты и время -->
+                        <div class="mb-4">
+                            <h5 class="card-title mb-3">{% trans "Dates & Time" %}</h5>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.start_date.id_for_label }}" class="form-label required-field">
+                                        {{ form.start_date.label }}
+                                    </label>
+                                    {{ form.start_date }}
+                                    <div class="text-danger small mt-1" id="{{ form.start_date.id_for_label }}_error"></div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.end_date.id_for_label }}" class="form-label">
+                                        {{ form.end_date.label }}
+                                    </label>
+                                    {{ form.end_date }}
+                                    <div class="form-text">{% trans "Optional" %}</div>
+                                    <div class="text-danger small mt-1" id="{{ form.end_date.id_for_label }}_error"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Изображения -->
+                        <div class="mb-4">
+                            <h5 class="card-title mb-3">{% trans "Images" %}</h5>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.banner_image.id_for_label }}" class="form-label">
+                                        {{ form.banner_image.label }}
+                                    </label>
+                                    {{ form.banner_image }}
+                                    <div class="form-text">{% trans "Recommended size: 1200x400px. Images will be automatically optimized." %}</div>
+                                    <div class="text-danger small mt-1" id="{{ form.banner_image.id_for_label }}_error"></div>
+                                    
+                                    <!-- Предпросмотр баннера -->
+                                    <div class="image-preview-container" id="banner-preview-container">
+                                        <img src="" alt="Banner Preview" class="image-preview" id="banner-preview">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.thumbnail.id_for_label }}" class="form-label">
+                                        {{ form.thumbnail.label }}
+                                    </label>
+                                    {{ form.thumbnail }}
+                                    <div class="form-text">{% trans "Recommended size: 400x300px. Images will be automatically optimized." %}</div>
+                                    <div class="text-danger small mt-1" id="{{ form.thumbnail.id_for_label }}_error"></div>
+                                    
+                                    <!-- Предпросмотр миниатюры -->
+                                    <div class="image-preview-container" id="thumbnail-preview-container">
+                                        <img src="" alt="Thumbnail Preview" class="image-preview" id="thumbnail-preview">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Теги -->
+                        <div class="mb-4">
+                            <h5 class="card-title mb-3">{% trans "Tags" %}</h5>
+                            <div class="mb-3">
+                                <label for="{{ form.tags.id_for_label }}" class="form-label">
+                                    {{ form.tags.label }}
+                                </label>
+                                {{ form.tags }}
+                                <div class="form-text">{% trans "Separate tags with commas (e.g., technology, workshop, networking)" %}</div>
+                                <div class="text-danger small mt-1" id="{{ form.tags.id_for_label }}_error"></div>
+                            </div>
+                        </div>
+
+                        <!-- Статус (если есть в форме) -->
+                        {% if form.status %}
+                        <div class="mb-4">
+                            <h5 class="card-title mb-3">{% trans "Status" %}</h5>
+                            <div class="mb-3">
+                                <label for="{{ form.status.id_for_label }}" class="form-label">
+                                    {{ form.status.label }}
+                                </label>
+                                {{ form.status }}
+                                <div class="form-text">
+                                    {% trans "'Draft' - only visible to you, 'Published' - visible to everyone" %}
+                                </div>
+                                <div class="text-danger small mt-1" id="{{ form.status.id_for_label }}_error"></div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Кнопки -->
+                        <div class="d-flex justify-content-between align-items-center pt-4 border-top">
+                            <a href="{% url 'events:manage_events' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>{% trans "Cancel" %}
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-calendar-plus me-2"></i>{% trans "Create Event" %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Подсказки по использованию -->
+            <div class="card mt-4 fade-in">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        {% trans "Tips for creating a great event" %}
+                    </h5>
+                    <ul class="mb-0">
+                        <li>{% trans "Use a clear and descriptive title" %}</li>
+                        <li>{% trans "Provide detailed information in the description" %}</li>
+                        <li>{% trans "Choose appropriate tags to help people find your event" %}</li>
+                        <li>{% trans "Upload high-quality images - they will be automatically optimized" %}</li>
+                        <li>{% trans "Double-check dates and times before publishing" %}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

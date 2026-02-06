@@ -1,0 +1,570 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Job Applications" %} - OXU Career{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4 apps-page">
+
+  <!-- Header -->
+  <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+    <div>
+      <h1 class="h4 fw-bold text-primary mb-1">
+        <i class="fas fa-users me-2"></i>{% trans "Job Applications" %}
+      </h1>
+      <div class="text-muted small">{% trans "List of all applications received for vacancies" %}</div>
+    </div>
+    <a href="{% url 'jobs:my_jobs' %}" class="btn btn-sm btn-outline-primary">
+      <i class="fas fa-arrow-left me-2"></i>{% trans "Back to My Jobs" %}
+    </a>
+  </div>
+
+  <!-- Stats -->
+  <div class="row g-3 mb-4">
+    <div class="col-xl-2 col-md-4 col-6">
+      <div class="stat-card stat-primary">
+        <center>
+            <div class="stat-icon"><i class="fas fa-layer-group"></i></div>
+            <div class="stat-label">{% trans "Total" %}</div>
+            <div class="stat-value">{{ status_counts.total }}</div>
+        </center>
+      </div>
+    </div>
+    <div class="col-xl-2 col-md-4 col-6">
+      <div class="stat-card stat-applied">
+        <center>
+            <div class="stat-icon"><i class="fas fa-paper-plane"></i></div>
+            <div class="stat-label">{% trans "Applied" %}</div>
+            <div class="stat-value">{{ status_counts.applied }}</div>
+        </center>
+      </div>
+    </div>
+    <div class="col-xl-2 col-md-4 col-6">
+      <div class="stat-card stat-reviewed">
+        <center>
+            <div class="stat-icon"><i class="fas fa-search"></i></div>
+            <div class="stat-label">{% trans "Under Review" %}</div>
+            <div class="stat-value">{{ status_counts.reviewed }}</div>
+        </center>
+      </div>
+    </div>
+    <div class="col-xl-2 col-md-4 col-6">
+      <div class="stat-card stat-shortlisted">
+        <center>
+            <div class="stat-icon"><i class="fas fa-star"></i></div>
+            <div class="stat-label">{% trans "Shortlisted" %}</div>
+            <div class="stat-value">{{ status_counts.shortlisted }}</div>
+        </center>
+      </div>
+    </div>
+    <div class="col-xl-2 col-md-4 col-6">
+      <div class="stat-card stat-interview">
+        <center>
+            <div class="stat-icon"><i class="fas fa-comments"></i></div>
+            <div class="stat-label">{% trans "Interview" %}</div>
+            <div class="stat-value">{{ status_counts.interview }}</div>
+        </center>
+      </div>
+    </div>
+    <div class="col-xl-2 col-md-4 col-6">
+      <div class="stat-card stat-hired">
+        <center>
+            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-label">{% trans "Hired" %}</div>
+            <div class="stat-value">{{ status_counts.hired }}</div>
+        </center>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="card border-0 shadow-sm mb-4 apps-card">
+    <div class="card-body py-3">
+      <div class="row align-items-center g-3">
+        <div class="col-lg-8">
+          <div class="d-flex flex-wrap align-items-center gap-2">
+            <span class="text-muted small me-2">
+              <i class="fas fa-filter me-1"></i>{% trans "Filter" %}:
+            </span>
+
+            <a href="{% url 'jobs:employer_applications' %}"
+               class="btn btn-sm {% if not status_filter %}btn-primary{% else %}btn-outline-primary{% endif %}">
+              {% trans "All" %}
+            </a>
+
+            <a href="{% url 'jobs:employer_applications' %}?status=applied"
+               class="btn btn-sm {% if status_filter == 'applied' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+              {% trans "Applied" %}
+            </a>
+
+            <a href="{% url 'jobs:employer_applications' %}?status=reviewed"
+               class="btn btn-sm {% if status_filter == 'reviewed' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+              {% trans "Under Review" %}
+            </a>
+
+            <a href="{% url 'jobs:employer_applications' %}?status=interview"
+               class="btn btn-sm {% if status_filter == 'interview' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+              {% trans "Interview" %}
+            </a>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="input-group input-group-sm">
+            <span class="input-group-text bg-white">
+              <i class="fas fa-search text-muted"></i>
+            </span>
+            <input type="text" class="form-control" placeholder="{% trans 'Search by candidate or vacancy...' %}" id="searchInput">
+            <button class="btn btn-outline-secondary" type="button" title="{% trans 'Search' %}">
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Applications Table -->
+  <div class="card border-0 shadow-sm apps-card">
+    <div class="card-body p-0">
+      {% if applications %}
+        <div class="table-responsive">
+          <table class="table table-hover mb-0 align-middle apps-table">
+            <thead class="table-light">
+              <tr>
+                <th>{% trans "Candidate" %}</th>
+                <th>{% trans "Vacancy" %}</th>
+                <th class="text-nowrap">{% trans "Status" %}</th>
+                <th class="text-nowrap">{% trans "Expected Salary" %}</th>
+                <th class="text-nowrap">{% trans "Application Date" %}</th>
+                <th class="text-nowrap">{% trans "CV" %}</th>
+                <th class="text-end text-nowrap">{% trans "Actions" %}</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for application in applications %}
+              <tr>
+                <!-- Candidate -->
+                <td>
+                  <div class="d-flex align-items-center">
+                    {% if application.user.avatar %}
+                      <img src="{{ application.user.avatar.url }}" alt="{{ application.user.get_full_name }}"
+                           class="rounded-circle me-3" width="40" height="40">
+                    {% else %}
+                      <div class="avatar-fallback me-3">
+                        <i class="fas fa-user"></i>
+                      </div>
+                    {% endif %}
+
+                    <div class="lh-sm">
+                      <div class="fw-semibold">{{ application.user.get_full_name }}</div>
+                      <div class="text-muted small"><i class="fas fa-envelope me-1"></i>{{ application.user.email }}</div>
+                      {% if application.user.phone_number %}
+                        <div class="text-muted small"><i class="fas fa-phone me-1"></i>{{ application.user.phone_number }}</div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Vacancy -->
+                <td>
+                  <div class="lh-sm">
+                    <div class="fw-semibold">{{ application.job.title }}</div>
+                    <div class="text-muted small">
+                      <i class="fas fa-map-marker-alt me-1"></i>{{ application.job.location }}
+                      <span class="ms-2"><i class="fas fa-briefcase me-1"></i>{{ application.job.get_employment_type_display }}</span>
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Status (opens modal) -->
+                <td class="text-nowrap">
+                  <button
+                      type="button"
+                      class="btn btn-sm status-pill status-{{ application.status }} open-status-modal"
+                      data-id="{{ application.id }}"
+                      data-current="{{ application.status }}"
+                      data-label="{{ application.get_status_display }}"
+                      data-candidate="{{ application.user.get_full_name }}"
+                      data-job="{{ application.job.title }}"
+                      title="{% trans 'Change status' %}"
+                  >
+                    <i class="fas fa-circle me-2 status-dot"></i>
+                    <span class="status-text">{{ application.get_status_display }}</span>
+                    <i class="fas fa-pen ms-2 opacity-75"></i>
+                  </button>
+
+                  {% if application.is_read %}
+                    <div class="text-muted small mt-1">
+                      <i class="fas fa-check-circle text-success me-1"></i>{% trans "Read" %}
+                    </div>
+                  {% else %}
+                    <div class="text-muted small mt-1">
+                      <i class="fas fa-bolt text-warning me-1"></i>{% trans "New" %}
+                    </div>
+                  {% endif %}
+                </td>
+
+                <!-- Salary -->
+                <td class="text-nowrap">
+                  {% if application.expected_salary %}
+                    <span class="fw-semibold text-success"><i class="fas fa-money-bill-wave me-1"></i>{{ application.expected_salary }} {{ application.job.currency }}</span>
+                  {% else %}
+                    <span class="text-muted">{% trans "Not specified" %}</span>
+                  {% endif %}
+                </td>
+
+                <!-- Date -->
+                <td class="text-nowrap">
+                  <div class="text-muted small"><i class="fas fa-calendar-alt me-1"></i>{{ application.created_at|date:"d.m.Y" }}</div>
+                  <div class="text-muted small"><i class="fas fa-clock me-1"></i>{{ application.created_at|time:"H:i" }}</div>
+                </td>
+
+                <!-- CV -->
+                <td class="text-nowrap">
+                  {% if application.cv %}
+                    <a href="{{ application.cv.get_absolute_url }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                      <i class="fas fa-file-pdf me-1"></i>{% trans "View" %}
+                    </a>
+                  {% else %}
+                    <span class="text-muted">{% trans "No CV" %}</span>
+                  {% endif %}
+                </td>
+
+                <!-- Actions -->
+                <td class="text-end text-nowrap">
+                  <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-primary view-application"
+                            data-application-id="{{ application.id }}"
+                            title="{% trans 'Application Details' %}">
+                      <i class="fas fa-eye"></i>
+                    </button>
+
+                    <a href="mailto:{{ application.user.email }}" class="btn btn-outline-secondary" title="{% trans 'Send Email' %}">
+                      <i class="fas fa-envelope"></i>
+                    </a>
+
+                    <!-- <button class="btn btn-outline-secondary add-note"
+                            data-application-id="{{ application.id }}"
+                            title="{% trans 'Add Note' %}">
+                      <i class="fas fa-sticky-note"></i>
+                    </button> -->
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+
+          </table>
+        </div>
+      {% else %}
+        <div class="text-center py-5">
+          <i class="fas fa-users fa-3x text-muted mb-3"></i>
+          <h6 class="text-muted">{% trans "No applications available yet" %}</h6>
+          <p class="text-muted small mb-4">
+            {% if status_filter %}
+              {% trans "No applications found with this status" %}
+            {% else %}
+              {% trans "No applications have been received for your vacancies yet" %}
+            {% endif %}
+          </p>
+          <a href="{% url 'jobs:job_create' %}" class="btn btn-sm btn-primary">
+            <i class="fas fa-plus me-2"></i>{% trans "Create New Vacancy" %}
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+<!-- Application Details Modal -->
+<div class="modal fade" id="applicationModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content apps-modal">
+      <div class="modal-header">
+        <h5 class="modal-title">{% trans "Application Details" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
+      </div>
+      <div class="modal-body" id="applicationModalBody"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Status Modal -->
+<div class="modal fade" id="statusModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content status-modal">
+      <div class="modal-header">
+        <div>
+          <h5 class="modal-title mb-0">
+            <i class="fas fa-exchange-alt me-2 text-primary"></i>{% trans "Change application status" %}
+          </h5>
+          <div class="text-muted small" id="statusModalSubtitle"></div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
+      </div>
+
+      <div class="modal-body">
+        <input type="hidden" id="statusModalApplicationId" value="" />
+
+        <div class="d-grid gap-2">
+          <button class="btn status-option status-applied" data-status="applied">
+            <i class="fas fa-paper-plane me-2"></i>{% trans "Applied" %}
+          </button>
+          <button class="btn status-option status-reviewed" data-status="reviewed">
+            <i class="fas fa-search me-2"></i>{% trans "Under Review" %}
+          </button>
+          <button class="btn status-option status-shortlisted" data-status="shortlisted">
+            <i class="fas fa-star me-2"></i>{% trans "Shortlisted" %}
+          </button>
+          <button class="btn status-option status-interview" data-status="interview">
+            <i class="fas fa-comments me-2"></i>{% trans "Interview" %}
+          </button>
+
+          <hr class="my-2">
+
+          <button class="btn status-option status-hired" data-status="hired">
+            <i class="fas fa-check-circle me-2"></i>{% trans "Hired" %}
+          </button>
+          <button class="btn status-option status-rejected" data-status="rejected">
+            <i class="fas fa-times-circle me-2"></i>{% trans "Rejected" %}
+          </button>
+        </div>
+
+        <div class="mt-3 small text-muted">
+          <i class="fas fa-info-circle me-1"></i>
+          {% trans "Click a status to update immediately." %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .apps-page .apps-card { border-radius: 14px; }
+  .apps-modal, .status-modal { border-radius: 16px; }
+
+  /* Stat cards */
+  .stat-card{
+    position: relative;
+    border: 1px solid rgba(0,0,0,.08);
+    background: #fff;
+    border-radius: 14px;
+    padding: 14px;
+    box-shadow: 0 10px 24px rgba(0,0,0,.06);
+    min-height: 92px;
+    overflow: hidden;
+  }
+  .stat-icon{
+    width: 36px; height: 36px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    border: 1px solid rgba(0,0,0,.08);
+  }
+  .stat-label{ color: #6c757d; font-size: 12px; }
+  .stat-value{ font-weight: 900; font-size: 22px; margin-top: 4px; }
+
+  .stat-primary .stat-icon{ background: rgba(13,110,253,.12); color:#0d6efd; }
+  .stat-applied .stat-icon{ background: rgba(255,193,7,.18); color:#7a5b00; }
+  .stat-reviewed .stat-icon{ background: rgba(13,202,240,.16); color:#055160; }
+  .stat-shortlisted .stat-icon{ background: rgba(111,66,193,.14); color:#3f2376; }
+  .stat-interview .stat-icon{ background: rgba(253,126,20,.14); color:#7a3a00; }
+  .stat-hired .stat-icon{ background: rgba(25,135,84,.14); color:#0f5132; }
+
+  /* Candidate avatar */
+  .avatar-fallback{
+    width:40px;height:40px;border-radius:999px;
+    display:flex;align-items:center;justify-content:center;
+    background: rgba(13,110,253,.12);
+    color:#0d6efd;
+    border: 1px solid rgba(13,110,253,.20);
+  }
+
+  /* Table */
+  .apps-table th{ font-size: 12px; color:#6c757d; }
+  .apps-table td{ vertical-align: middle; }
+  .table-hover tbody tr:hover{ background: rgba(13,110,253,.03); }
+
+  /* Status pill button */
+  .status-pill{
+    border-radius: 999px;
+    border: 1px solid rgba(0,0,0,.10);
+    padding: 8px 12px;
+    font-weight: 800;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    transition: transform .06s ease, box-shadow .12s ease;
+    box-shadow: 0 6px 18px rgba(0,0,0,.06);
+    background: #fff;
+  }
+  .status-pill:hover{
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px rgba(0,0,0,.10);
+  }
+  .status-dot{ font-size: 9px; }
+
+  /* Color mapping */
+  .status-applied{ background: rgba(255,193,7,.18); border-color: rgba(255,193,7,.35); color: #7a5b00; }
+  .status-reviewed{ background: rgba(13,202,240,.16); border-color: rgba(13,202,240,.35); color: #055160; }
+  .status-shortlisted{ background: rgba(111,66,193,.14); border-color: rgba(111,66,193,.35); color: #3f2376; }
+  .status-interview{ background: rgba(253,126,20,.14); border-color: rgba(253,126,20,.35); color: #7a3a00; }
+  .status-hired{ background: rgba(25,135,84,.14); border-color: rgba(25,135,84,.35); color: #0f5132; }
+  .status-rejected{ background: rgba(220,53,69,.14); border-color: rgba(220,53,69,.35); color: #842029; }
+
+  /* Modal options */
+  .status-option{
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,.10);
+    text-align: left;
+    padding: 12px 14px;
+    font-weight: 800;
+    box-shadow: 0 8px 18px rgba(0,0,0,.06);
+  }
+  .status-option:hover{ filter: brightness(0.98); }
+  .status-option.active{
+    outline: 3px solid rgba(13,110,253,.25);
+    border-color: rgba(13,110,253,.35);
+  }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+  // ---- CSRF from cookie (reliable) ----
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+  }
+  const csrftoken = getCookie('csrftoken');
+
+  // ---- Search ----
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      document.querySelectorAll('tbody tr').forEach(row => {
+        row.style.display = row.textContent.toLowerCase().includes(searchTerm) ? '' : 'none';
+      });
+    });
+  }
+
+  // ---- Application details modal (existing behavior) ----
+  const viewButtons = document.querySelectorAll('.view-application');
+  const modalEl = document.getElementById('applicationModal');
+  const applicationModal = modalEl ? new bootstrap.Modal(modalEl) : null;
+
+  viewButtons.forEach(button => {
+    button.addEventListener('click', async function() {
+      const applicationId = this.getAttribute('data-application-id');
+
+      try {
+        const url = `{% url 'jobs:application_detail' 0 %}`.replace('0', applicationId);
+        const resp = await fetch(url);
+
+        if (!resp.ok) throw new Error('Bad response');
+
+        const html = await resp.text();
+        document.getElementById('applicationModalBody').innerHTML = html;
+        applicationModal.show();
+      } catch (e) {
+        document.getElementById('applicationModalBody').innerHTML =
+          '<div class="alert alert-danger">{% trans "Error loading application information" %}</div>';
+        applicationModal.show();
+      }
+    });
+  });
+
+  // ---- Status modal ----
+  const statusModalEl = document.getElementById('statusModal');
+  const statusModal = statusModalEl ? new bootstrap.Modal(statusModalEl) : null;
+
+  const subtitleEl = document.getElementById('statusModalSubtitle');
+  const idInput = document.getElementById('statusModalApplicationId');
+
+  // open modal by clicking status pill
+  document.querySelectorAll('.open-status-modal').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const id = this.dataset.id;
+      const candidate = this.dataset.candidate || '';
+      const job = this.dataset.job || '';
+      const current = this.dataset.current || '';
+
+      idInput.value = id;
+      subtitleEl.textContent = `${candidate} — ${job}`;
+
+      // highlight current option
+      document.querySelectorAll('#statusModal .status-option').forEach(opt => {
+        opt.classList.remove('active');
+        if (opt.dataset.status === current) opt.classList.add('active');
+      });
+
+      statusModal.show();
+    });
+  });
+
+  // click status option -> update
+  document.querySelectorAll('#statusModal .status-option').forEach(opt => {
+    opt.addEventListener('click', async function() {
+      const applicationId = idInput.value;
+      const newStatus = this.dataset.status;
+
+      try {
+        const url = `{% url 'jobs:update_application_status' 0 %}`.replace('0', applicationId);
+
+        // send as form-urlencoded -> request.POST works
+        const body = new URLSearchParams({ status: newStatus });
+
+        const resp = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'X-CSRFToken': csrftoken,
+            'X-Requested-With': 'XMLHttpRequest'
+          },
+          body
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.success) {
+          console.error('Status update failed:', data);
+          alert('{% trans "Error changing status" %}' + (data?.error ? `: ${data.error}` : ''));
+          return;
+        }
+
+        // Update status button in table
+        const btn = document.querySelector(`.open-status-modal[data-id="${applicationId}"]`);
+        if (btn) {
+          btn.dataset.current = newStatus;
+
+          const text = btn.querySelector('.status-text');
+          if (text) text.textContent = data.new_status || text.textContent;
+
+          // reset classes
+          btn.className = 'btn btn-sm status-pill open-status-modal status-' + newStatus;
+        }
+
+        statusModal.hide();
+
+      } catch (err) {
+        console.error(err);
+        alert('{% trans "Error changing status" %}');
+      }
+    });
+  });
+
+});
+</script>
+{% endblock %}

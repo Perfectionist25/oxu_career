@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block extra_css %}
+<style>
+    .login-container {
+        max-width: 500px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+    
+    .oauth-button {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        margin-bottom: 20px;
+        transition: transform 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+    
+    .oauth-button:hover {
+        transform: translateY(-2px);
+        text-decoration: none;
+        color: white;
+    }
+    
+    .divider {
+        text-align: center;
+        margin: 20px 0;
+        color: #999;
+    }
+    
+    .divider::before {
+        content: '';
+        display: block;
+        height: 1px;
+        background: #ddd;
+        position: relative;
+        top: -10px;
+    }
+    
+    .divider span {
+        background: white;
+        padding: 0 10px;
+        position: relative;
+        z-index: 1;
+        display: inline-block;
+    }
+    
+    .legacy-login {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <h2>{% trans "Student Login" %}</h2>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    {% if error %}
+        <div class="alert alert-danger">
+            {{ error }}
+        </div>
+    {% endif %}
+    
+    <!-- OAuth Section -->
+    <a href="{% url 'accounts:oauth_login' %}" class="oauth-button">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm0-13c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5z"></path>
+        </svg>
+        {% trans "Login with University Account" %}
+    </a>
+    
+    <div class="divider">
+        <span>{% trans "or" %}</span>
+    </div>
+    
+    <!-- Legacy Login Form -->
+    <div class="legacy-login">
+        <h4>{% trans "Alternative Login" %}</h4>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_username">{% trans "Username" %}</label>
+                <input type="text" name="username" id="id_username" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <label for="id_password">{% trans "Password" %}</label>
+                <input type="password" name="password" id="id_password" class="form-control" required />
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    {% trans "Login" %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,1237 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block content %}
+<div class="full-width-container">
+    <!-- Gradient Header -->
+    <div class="gradient-header">
+        <div class="header-content">
+            <h1 class="main-title">{% trans "Career Resources" %}</h1>
+            <p class="subtitle">{% trans "Useful materials, templates and guides for your professional development" %}</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content-fullwidth">
+        <!-- Search and Filters - Full Width -->
+        <div class="search-section-fullwidth">
+            <div class="search-container">
+                <form method="get" class="search-form-fullwidth" id="filter-form">
+                    <div class="search-row-fullwidth">
+                        <div class="form-group-fullwidth search-input-fullwidth">
+                            <div class="input-with-icon-fullwidth">
+                                <i class="fas fa-search"></i>
+                                <input type="text"
+                                       name="q"
+                                       placeholder="{% trans 'Search resources...' %}"
+                                       value="{{ request.GET.q }}"
+                                       id="search-input">
+                            </div>
+                        </div>
+                        <div class="form-group-fullwidth category-select-fullwidth">
+                            <select name="category" id="category-select">
+                                <option value="">{% trans "All categories" %}</option>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"i" %}selected{% endif %}>
+                                    {{ category.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group-fullwidth filter-button-fullwidth">
+                            <button type="submit" class="btn-primary-fullwidth">
+                                <i class="fas fa-filter"></i>{% trans 'Filter' %}
+                            </button>
+                        </div>
+                        <div class="form-group-fullwidth reset-button-fullwidth">
+                            <button type="button" class="btn-outline-fullwidth" id="reset-filters">
+                                <i class="fas fa-times"></i>{% trans 'Reset' %}
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Active Filters Display -->
+                    {% if request.GET.q or request.GET.category %}
+                    <div class="active-filters-fullwidth">
+                        <div class="filters-container">
+                            <span class="filters-label">{% trans "Active filters:" %}</span>
+                            <div class="filter-tags-fullwidth">
+                                {% if request.GET.q %}
+                                <span class="filter-tag-fullwidth">
+                                    {% trans "Search" %}: "{{ request.GET.q }}"
+                                    <button type="button" class="remove-filter-fullwidth" data-filter="q">×</button>
+                                </span>
+                                {% endif %}
+                                {% if request.GET.category %}
+                                {% for category in categories %}
+                                    {% if request.GET.category == category.id|stringformat:"i" %}
+                                    <span class="filter-tag-fullwidth">
+                                        {% trans "Category" %}: {{ category.name }}
+                                        <button type="button" class="remove-filter-fullwidth" data-filter="category">×</button>
+                                    </span>
+                                    {% endif %}
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+
+        <!-- Results Header -->
+        <div class="results-header-fullwidth">
+            <div class="results-container">
+                <h2>{% trans "Found resources" %}</h2>
+                <p class="results-count">
+                    {% if page_obj %}
+                        {{ page_obj.paginator.count }} {% trans "materials found" %}
+                    {% else %}
+                        {% trans "No materials found" %}
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        {% if page_obj %}
+        <!-- Resources Grid - Full Width -->
+        <div class="resources-grid-fullwidth">
+            <div class="grid-container">
+                {% for resource in page_obj %}
+                <div class="resource-card-fullwidth {% if not resource.image %}no-image{% endif %}">
+                    <div class="card-content-fullwidth">
+                        <!-- Resource Header -->
+                        <div class="card-header-fullwidth">
+                            <div class="category-badge-fullwidth">
+                                {{ resource.category.name }}
+                            </div>
+                            {% if resource.url_youtube %}
+                            <div class="youtube-indicator">
+                                <i class="fab fa-youtube text-danger"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Resource Image or Placeholder -->
+                        <div class="resource-image-container-fullwidth">
+                            {% if resource.image %}
+                            <div class="resource-image-fullwidth">
+                                <img src="{{ resource.image.url }}" alt="{{ resource.title }}" loading="lazy">
+                            </div>
+                            {% else %}
+                            <div class="resource-image-placeholder-fullwidth">
+                                <div class="placeholder-icon">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Resource Title -->
+                        <h3 class="resource-title-fullwidth">{{ resource.title|truncatechars:60 }}</h3>
+
+                        <!-- Resource Description -->
+                        <div class="resource-description-fullwidth">
+                            {{ resource.description|truncatechars:100 }}
+                        </div>
+
+                        <!-- Resource Meta -->
+                        <div class="resource-meta-fullwidth">
+                            <span class="meta-item-fullwidth">
+                                <i class="fas fa-calendar"></i>
+                                {{ resource.created_at|date:"d.m.Y" }}
+                            </span>
+                            {% if resource.file %}
+                            <span class="meta-item-fullwidth">
+                                <i class="fas fa-download"></i>
+                                {% trans "File" %}
+                            </span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Resource Actions -->
+                        <div class="resource-actions-fullwidth">
+                            <a href="{% url 'resources:resource_detail' resource.pk %}" class="btn-primary-card">
+                                <i class="fas fa-eye"></i>{% trans "View" %}
+                            </a>
+                            {% if request.user.is_authenticated and request.user.is_staff %}
+                            <a href="{% url 'resources:resource_edit' resource.pk %}" class="btn-secondary-card">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Pagination - Full Width -->
+        {% if page_obj.has_other_pages %}
+        <div class="pagination-fullwidth">
+            <div class="pagination-container">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}" class="page-link-fullwidth">
+                        <i class="fas fa-chevron-left"></i> {% trans "Previous" %}
+                    </a>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <span class="page-link-fullwidth active">{{ num }}</span>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}" class="page-link-fullwidth">
+                            {{ num }}
+                        </a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}" class="page-link-fullwidth">
+                        {% trans "Next" %} <i class="fas fa-chevron-right"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <!-- Empty State - Full Width -->
+        <div class="empty-state-fullwidth">
+            <div class="empty-container">
+                <div class="empty-icon">
+                    <i class="fas fa-folder-open"></i>
+                </div>
+                <h3>{% trans "No resources found" %}</h3>
+                <p>{% trans "Try changing search conditions or select another category" %}</p>
+                <a href="{% url 'resources:list' %}" class="btn-primary">
+                    <i class="fas fa-redo"></i>{% trans "View all resources" %}
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Admin Actions - Full Width -->
+        {% if request.user.is_authenticated and request.user.is_staff %}
+        <div class="admin-actions-fullwidth">
+            <div class="admin-container">
+                <div class="action-buttons-fullwidth">
+                    <a href="{% url 'resources:resource_create' %}" class="btn-success">
+                        <i class="fas fa-plus"></i>{% trans "Add new resource" %}
+                    </a>
+                    <a href="{% url 'resources:unpublished_resources' %}" class="btn-warning">
+                        <i class="fas fa-eye-slash"></i>{% trans "Unpublished resources" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+/* Full width container - занимает всю ширину экрана */
+.full-width-container {
+    width: 100vw;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f0f8ff 0%, #e6f7ff 25%, #f0f8ff 50%, #e6f7ff 75%, #f0f8ff 100%);
+    background-size: 200% 200%;
+    animation: softGradient 20s ease infinite;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    overflow-x: hidden;
+}
+
+@keyframes softGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Main Content - занимает всю ширину */
+.main-content-fullwidth {
+    width: 100%;
+    padding: 0;
+}
+
+/* Gradient Header - на всю ширину с градиентом */
+.gradient-header {
+    width: 100vw;
+    background: linear-gradient(135deg, 
+        #012152 0%,
+        #0056b3 25%,
+        #1e90ff 50%,
+        #87ceeb 75%,
+        #ffffff 100%
+    );
+    background-size: 300% 300%;
+    animation: gradientShift 15s ease infinite;
+    padding: 5rem 0 4rem;
+    margin-bottom: 3rem;
+    box-shadow: 0 4px 20px rgba(1, 33, 82, 0.15);
+    position: relative;
+    overflow: hidden;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+}
+
+.gradient-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, 
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0.1) 100%
+    );
+    animation: shine 10s linear infinite;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes shine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.header-content {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 2rem;
+    text-align: center;
+    color: white;
+    position: relative;
+    z-index: 2;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.main-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 1.2rem;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 255, 255, 0.9) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.subtitle {
+    font-size: 1.3rem;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+    font-weight: 400;
+    opacity: 0.95;
+    color: rgba(255, 255, 255, 0.95);
+}
+
+/* Search Section - Full Width */
+.search-section-fullwidth {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    padding: 0;
+    background: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 2.5rem;
+}
+
+.search-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.search-form-fullwidth {
+    width: 100%;
+}
+
+.search-row-fullwidth {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    align-items: flex-end;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.form-group-fullwidth {
+    flex: 1;
+    min-width: 200px;
+}
+
+.search-input-fullwidth {
+    flex: 2;
+}
+
+.input-with-icon-fullwidth {
+    position: relative;
+    width: 100%;
+}
+
+.input-with-icon-fullwidth i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #1e90ff;
+    z-index: 1;
+}
+
+.input-with-icon-fullwidth input {
+    width: 100%;
+    padding: 0.85rem 1rem 0.85rem 3rem;
+    border: 2px solid rgba(30, 144, 255, 0.2);
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+    box-sizing: border-box;
+}
+
+.input-with-icon-fullwidth input:focus {
+    border-color: #1e90ff;
+    box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.1);
+    outline: none;
+}
+
+.category-select-fullwidth {
+    position: relative;
+}
+
+.category-select-fullwidth::after {
+    content: "▼";
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #1e90ff;
+    pointer-events: none;
+    font-size: 0.8rem;
+}
+
+.category-select-fullwidth select {
+    width: 100%;
+    padding: 0.85rem 2.5rem 0.85rem 1rem;
+    border: 2px solid rgba(30, 144, 255, 0.2);
+    border-radius: 10px;
+    font-size: 1rem;
+    background: white;
+    transition: all 0.3s ease;
+    appearance: none;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.category-select-fullwidth select:focus {
+    border-color: #1e90ff;
+    box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.1);
+    outline: none;
+}
+
+.btn-primary-fullwidth,
+.btn-outline-fullwidth {
+    width: 100%;
+    padding: 0.85rem 1.5rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    min-height: 50px;
+    border: none;
+}
+
+.btn-primary-fullwidth {
+    background: linear-gradient(135deg, #012152 0%, #1e90ff 100%);
+    color: white;
+}
+
+.btn-primary-fullwidth:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(30, 144, 255, 0.3);
+}
+
+.btn-outline-fullwidth {
+    background: transparent;
+    color: #1e90ff;
+    border: 2px solid #1e90ff;
+}
+
+.btn-outline-fullwidth:hover {
+    background: linear-gradient(135deg, #1e90ff 0%, #87ceeb 100%);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(30, 144, 255, 0.2);
+}
+
+/* Active Filters - Full Width */
+.active-filters-fullwidth {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    border-top: 2px solid rgba(30, 144, 255, 0.1);
+    padding: 1.5rem 0;
+    background: #f8fafc;
+}
+
+.filters-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.filters-label {
+    font-weight: 600;
+    color: #012152;
+    margin-right: 1rem;
+    font-size: 0.95rem;
+}
+
+.filter-tags-fullwidth {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+.filter-tag-fullwidth {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.6rem 1rem;
+    background: linear-gradient(135deg, #012152 0%, #1e90ff 100%);
+    color: white;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    box-shadow: 0 3px 10px rgba(30, 144, 255, 0.2);
+}
+
+.remove-filter-fullwidth {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.remove-filter-fullwidth:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+/* Results Header - Full Width */
+.results-header-fullwidth {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    padding: 2rem 0;
+    background: white;
+}
+
+.results-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.results-header-fullwidth h2 {
+    margin: 0 0 0.5rem 0;
+    color: #012152;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.results-count {
+    color: #1e90ff;
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+/* Resources Grid - Full Width */
+.resources-grid-fullwidth {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    padding: 3rem 0;
+    background: #f8fafc;
+}
+
+.grid-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+}
+
+.resource-card-fullwidth {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 6px 25px rgba(1, 33, 82, 0.08);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: 1px solid rgba(30, 144, 255, 0.1);
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.95) 0%,
+        rgba(240, 248, 255, 0.95) 100%
+    );
+}
+
+.resource-card-fullwidth:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(1, 33, 82, 0.15);
+    border-color: rgba(30, 144, 255, 0.3);
+}
+
+.card-content-fullwidth {
+    padding: 1.5rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.card-header-fullwidth {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.category-badge-fullwidth {
+    display: inline-block;
+    background: linear-gradient(135deg, #012152 0%, #1e90ff 100%);
+    color: white;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+/* Image Container */
+.resource-image-container-fullwidth {
+    margin-bottom: 1.2rem;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    height: 180px;
+    width: 100%;
+}
+
+.resource-image-fullwidth {
+    width: 100%;
+    height: 100%;
+}
+
+.resource-image-fullwidth img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    transition: transform 0.5s ease;
+}
+
+.resource-card-fullwidth:hover .resource-image-fullwidth img {
+    transform: scale(1.1);
+}
+
+.resource-image-placeholder-fullwidth {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #f0f8ff 0%, #e6f7ff 100%);
+    border: 2px dashed rgba(30, 144, 255, 0.3);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1e90ff;
+    transition: all 0.3s ease;
+}
+
+.resource-card-fullwidth:hover .resource-image-placeholder-fullwidth {
+    background: linear-gradient(135deg, #e6f7ff 0%, #d4edff 100%);
+    border-color: #1e90ff;
+}
+
+.placeholder-icon {
+    font-size: 3rem;
+    opacity: 0.5;
+}
+
+.resource-title-fullwidth {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #012152;
+    margin: 0 0 0.8rem 0;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.resource-description-fullwidth {
+    color: #5a6c7d;
+    line-height: 1.6;
+    flex: 1;
+    margin-bottom: 1.2rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 0.95rem;
+}
+
+.resource-meta-fullwidth {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: #87a2c1;
+}
+
+.meta-item-fullwidth {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.resource-actions-fullwidth {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: auto;
+}
+
+.btn-primary-card, .btn-secondary-card, .btn-success, .btn-warning {
+    padding: 0.8rem 1.2rem;
+    border: none;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    text-align: center;
+    justify-content: center;
+    flex: 1;
+}
+
+.btn-primary-card {
+    background: linear-gradient(135deg, #012152 0%, #1e90ff 100%);
+    color: white;
+}
+
+.btn-secondary-card {
+    background: linear-gradient(135deg, #5a6c7d 0%, #87a2c1 100%);
+    color: white;
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 50px;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #fd7e14 0%, #ffc107 100%);
+    color: #212529;
+}
+
+.btn-primary-card:hover { 
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(30, 144, 255, 0.3);
+}
+.btn-secondary-card:hover { 
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(90, 108, 125, 0.3);
+}
+.btn-success:hover { 
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
+}
+.btn-warning:hover { 
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(253, 126, 20, 0.3);
+}
+
+/* Pagination - Full Width */
+.pagination-fullwidth {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    padding: 3rem 0;
+    background: white;
+    border-top: 1px solid rgba(30, 144, 255, 0.1);
+}
+
+.pagination-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.page-link-fullwidth {
+    padding: 0.8rem 1.2rem;
+    border: 2px solid rgba(30, 144, 255, 0.2);
+    border-radius: 10px;
+    text-decoration: none;
+    color: #012152;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    min-width: 50px;
+    text-align: center;
+    background: white;
+}
+
+.page-link-fullwidth:hover,
+.page-link-fullwidth.active {
+    background: linear-gradient(135deg, #012152 0%, #1e90ff 100%);
+    color: white;
+    border-color: transparent;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(30, 144, 255, 0.3);
+}
+
+/* Empty State - Full Width */
+.empty-state-fullwidth {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    padding: 4rem 0;
+    background: white;
+}
+
+.empty-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    text-align: center;
+    color: #5a6c7d;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.95) 0%,
+        rgba(240, 248, 255, 0.95) 100%
+    );
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(1, 33, 82, 0.08);
+    padding: 3rem;
+    border: 1px solid rgba(30, 144, 255, 0.1);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: rgba(30, 144, 255, 0.3);
+    margin-bottom: 2rem;
+}
+
+.empty-state-fullwidth h3 {
+    margin: 0 0 1rem 0;
+    color: #012152;
+    font-size: 1.8rem;
+}
+
+.empty-state-fullwidth p {
+    margin: 0 0 2.5rem 0;
+    font-size: 1.1rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+}
+
+/* Admin Actions - Full Width */
+.admin-actions-fullwidth {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    padding: 3rem 0;
+    background: #f8fafc;
+    border-top: 2px solid rgba(30, 144, 255, 0.1);
+}
+
+.admin-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.action-buttons-fullwidth {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.action-buttons-fullwidth a {
+    min-width: 200px;
+    padding: 1rem 2rem;
+}
+
+/* Animation for cards */
+.resource-card-fullwidth {
+    animation: fadeInUp 0.6s ease-out;
+    animation-fill-mode: both;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 1400px) {
+    .search-container,
+    .results-container,
+    .grid-container,
+    .pagination-container,
+    .empty-container,
+    .admin-container {
+        padding: 0 1.5rem;
+    }
+}
+
+@media (max-width: 1200px) {
+    .main-title {
+        font-size: 3rem;
+    }
+    
+    .subtitle {
+        font-size: 1.2rem;
+    }
+    
+    .search-container {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .gradient-header {
+        padding: 3rem 0;
+    }
+    
+    .main-title {
+        font-size: 2.5rem;
+    }
+    
+    .subtitle {
+        font-size: 1.1rem;
+        padding: 0 1rem;
+    }
+    
+    .search-row-fullwidth {
+        flex-wrap: wrap;
+    }
+    
+    .form-group-fullwidth {
+        flex: 1 1 calc(50% - 0.5rem);
+        min-width: 200px;
+    }
+    
+    .search-input-fullwidth {
+        flex: 1 1 100%;
+    }
+    
+    .grid-container {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .gradient-header {
+        padding: 2.5rem 0;
+    }
+    
+    .header-content {
+        padding: 0 1rem;
+    }
+    
+    .main-title {
+        font-size: 2.2rem;
+    }
+    
+    .subtitle {
+        font-size: 1rem;
+    }
+    
+    .search-container,
+    .results-container,
+    .grid-container,
+    .pagination-container,
+    .empty-container,
+    .admin-container {
+        padding: 0 1rem;
+    }
+    
+    .search-container {
+        padding: 1.25rem;
+    }
+    
+    .search-row-fullwidth {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .form-group-fullwidth {
+        flex: 1 1 100%;
+        width: 100%;
+    }
+    
+    .grid-container {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+    
+    .resource-image-container-fullwidth {
+        height: 200px;
+    }
+    
+    .action-buttons-fullwidth {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .action-buttons-fullwidth a {
+        min-width: auto;
+        width: 100%;
+    }
+    
+    .pagination-container {
+        gap: 0.5rem;
+    }
+    
+    .page-link-fullwidth {
+        padding: 0.7rem 1rem;
+        min-width: 45px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .gradient-header {
+        padding: 2rem 0;
+    }
+    
+    .main-title {
+        font-size: 1.8rem;
+    }
+    
+    .subtitle {
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+    
+    .search-container,
+    .results-container,
+    .grid-container,
+    .pagination-container,
+    .empty-container,
+    .admin-container {
+        padding: 0 0.75rem;
+    }
+    
+    .search-container {
+        padding: 1rem;
+    }
+    
+    .resource-card-fullwidth {
+        border-radius: 12px;
+    }
+    
+    .card-content-fullwidth {
+        padding: 1.25rem;
+    }
+    
+    .resource-image-container-fullwidth {
+        height: 160px;
+    }
+    
+    .resource-title-fullwidth {
+        font-size: 1.1rem;
+    }
+    
+    .resource-description-fullwidth {
+        font-size: 0.9rem;
+    }
+    
+    .resource-actions-fullwidth {
+        flex-direction: row;
+    }
+    
+    .btn-primary-card, .btn-secondary-card, .btn-success, .btn-warning {
+        padding: 0.7rem 1rem;
+        font-size: 0.85rem;
+    }
+    
+    .empty-container {
+        padding: 2rem 1rem;
+    }
+    
+    .empty-state-fullwidth h3 {
+        font-size: 1.5rem;
+    }
+    
+    .empty-state-fullwidth p {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .main-title {
+        font-size: 1.6rem;
+    }
+    
+    .header-content {
+        padding: 0 0.5rem;
+    }
+    
+    .grid-container {
+        gap: 1rem;
+    }
+    
+    .resource-image-container-fullwidth {
+        height: 140px;
+    }
+    
+    .category-badge-fullwidth {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.8rem;
+    }
+    
+    .resource-meta-fullwidth {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Анимация карточек с задержкой
+    const cards = document.querySelectorAll('.resource-card-fullwidth');
+    cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+    });
+
+    // Сброс фильтров
+    const resetButton = document.getElementById('reset-filters');
+    const searchInput = document.getElementById('search-input');
+    const categorySelect = document.getElementById('category-select');
+    const filterForm = document.getElementById('filter-form');
+
+    if (resetButton) {
+        resetButton.addEventListener('click', function() {
+            searchInput.value = '';
+            categorySelect.value = '';
+            filterForm.submit();
+        });
+    }
+
+    // Удаление отдельных фильтров
+    document.querySelectorAll('.remove-filter-fullwidth').forEach(button => {
+        button.addEventListener('click', function() {
+            const filterName = this.getAttribute('data-filter');
+            const input = document.querySelector(`[name="${filterName}"]`);
+            
+            if (input) {
+                if (input.type === 'text') {
+                    input.value = '';
+                } else if (input.tagName === 'SELECT') {
+                    input.value = '';
+                }
+            }
+            
+            filterForm.submit();
+        });
+    });
+
+    // Состояние загрузки при отправке формы
+    if (filterForm) {
+        filterForm.addEventListener('submit', function() {
+            const submitButton = this.querySelector('button[type="submit"]');
+            if (submitButton) {
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>{% trans "Filtering..." %}';
+                submitButton.disabled = true;
+            }
+        });
+    }
+
+    // Плавный скролл для якорей
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            if (targetId !== '#') {
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        });
+    });
+
+    // Анимация при наведении на карточки
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.zIndex = '10';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.zIndex = '1';
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,262 @@
+<!-- templates/accounts/activity_log.html -->
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Activity Log" %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 fw-bold text-primary mb-1">{% trans "Activity Log" %}</h1>
+                    <p class="text-muted mb-0">
+                        {% trans "Track your account activities and actions" %}
+                    </p>
+                </div>
+                <div>
+                    <a href="{% url 'accounts:profile_view' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Card -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-6">
+                            <label for="typeFilter" class="form-label">{% trans "Filter by Activity Type" %}</label>
+                            <select name="type" id="typeFilter" class="form-select">
+                                <option value="">{% trans "All Activities" %}</option>
+                                {% for type_val, type_label in activity_types %}
+                                    <option value="{{ type_val }}" {% if selected_type == type_val %}selected{% endif %}>
+                                        {{ type_label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 d-flex align-items-end gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-filter"></i> {% trans "Filter" %}
+                            </button>
+                            <a href="{% url 'accounts:activity_log' %}" class="btn btn-outline-secondary">
+                                {% trans "Clear" %}
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activities Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="table-responsive">
+                    {% if activities %}
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="fw-bold text-dark">{% trans "Activity Type" %}</th>
+                                    <th class="fw-bold text-dark">{% trans "Description" %}</th>
+                                    <th class="fw-bold text-dark">{% trans "Date & Time" %}</th>
+                                    <th class="fw-bold text-dark">{% trans "IP Address" %}</th>
+                                    <th class="fw-bold text-dark">{% trans "Company" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for activity in activities %}
+                                    <tr>
+                                        <td>
+                                            <span class="badge bg-primary">
+                                                {{ activity.get_activity_type_display }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">
+                                                {% if activity.description %}
+                                                    {{ activity.description|truncatewords:15 }}
+                                                {% else %}
+                                                    <em>{% trans "No description" %}</em>
+                                                {% endif %}
+                                            </small>
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">
+                                                {{ activity.created_at|date:"d.m.Y H:i" }}
+                                            </small>
+                                        </td>
+                                        <td>
+                                            <small class="text-muted" title="{{ activity.ip_address }}">
+                                                {% if activity.ip_address %}
+                                                    {{ activity.ip_address }}
+                                                {% else %}
+                                                    <em>-</em>
+                                                {% endif %}
+                                            </small>
+                                        </td>
+                                        <td>
+                                            {% if activity.related_company %}
+                                                <a href="{% url 'accounts:company_detail' activity.related_company.id %}" 
+                                                   class="text-decoration-none">
+                                                    <small>{{ activity.related_company.name }}</small>
+                                                </a>
+                                            {% else %}
+                                                <small class="text-muted">-</small>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="card-body text-center py-5">
+                            <i class="fas fa-inbox fa-3x text-muted mb-3 d-block"></i>
+                            <p class="text-muted mb-0">
+                                {% trans "No activity found" %}
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Pagination -->
+                {% if page_obj.has_other_pages %}
+                    <div class="card-footer bg-light border-top">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination pagination-sm mb-0 justify-content-center">
+                                <!-- Previous button -->
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=1{% if selected_type %}&type={{ selected_type }}{% endif %}">
+                                            <i class="fas fa-angle-double-left"></i>
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if selected_type %}&type={{ selected_type }}{% endif %}">
+                                            <i class="fas fa-angle-left"></i>
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled">
+                                        <span class="page-link">
+                                            <i class="fas fa-angle-double-left"></i>
+                                        </span>
+                                    </li>
+                                    <li class="page-item disabled">
+                                        <span class="page-link">
+                                            <i class="fas fa-angle-left"></i>
+                                        </span>
+                                    </li>
+                                {% endif %}
+
+                                <!-- Page numbers -->
+                                {% for num in page_obj.paginator.page_range %}
+                                    {% if page_obj.number == num %}
+                                        <li class="page-item active" aria-current="page">
+                                            <span class="page-link">
+                                                {{ num }}
+                                                <span class="visually-hidden">(current)</span>
+                                            </span>
+                                        </li>
+                                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ num }}{% if selected_type %}&type={{ selected_type }}{% endif %}">
+                                                {{ num }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+
+                                <!-- Next button -->
+                                {% if page_obj.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if selected_type %}&type={{ selected_type }}{% endif %}">
+                                            <i class="fas fa-angle-right"></i>
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if selected_type %}&type={{ selected_type }}{% endif %}">
+                                            <i class="fas fa-angle-double-right"></i>
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled">
+                                        <span class="page-link">
+                                            <i class="fas fa-angle-right"></i>
+                                        </span>
+                                    </li>
+                                    <li class="page-item disabled">
+                                        <span class="page-link">
+                                            <i class="fas fa-angle-double-right"></i>
+                                        </span>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                        <div class="text-center mt-3">
+                            <small class="text-muted">
+                                {% blocktrans with current=page_obj.number total=page_obj.paginator.num_pages %}
+                                    Page {{ current }} of {{ total }}
+                                {% endblocktrans %}
+                            </small>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Statistics Card -->
+    {% if activities %}
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card border-0 bg-light shadow-sm">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted mb-2">{% trans "Total Activities" %}</h6>
+                        <h3 class="text-primary fw-bold">{{ page_obj.paginator.count }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 bg-light shadow-sm">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted mb-2">{% trans "Last Activity" %}</h6>
+                        <h6 class="text-secondary fw-bold">
+                            {% if activities %}
+                                {{ activities.0.created_at|date:"d.m.Y H:i" }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 bg-light shadow-sm">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted mb-2">{% trans "Current Page" %}</h6>
+                        <h6 class="text-secondary fw-bold">
+                            {% blocktrans with num=page_obj.number %}Page {{ num }}{% endblocktrans %}
+                        </h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .table-hover tbody tr:hover {
+        background-color: rgba(13, 110, 253, 0.05);
+    }
+</style>
+{% endblock %}

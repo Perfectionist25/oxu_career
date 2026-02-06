@@ -1,0 +1,191 @@
+{% extends 'accounts/profile_base.html' %}
+{% load i18n %}
+
+{% block profile_specific %}
+<!-- Education Information -->
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-header bg-white">
+    <h5 class="fw-bold mb-0">
+      <i class="fas fa-graduation-cap me-2 text-primary"></i>
+      {% trans "Education Information" %}
+    </h5>
+  </div>
+
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-6">
+
+        <div class="mb-3">
+          <strong class="text-muted">{% trans "Student ID" %}:</strong>
+          <p class="mb-0">{{ profile.student_id|default:"—" }}</p>
+        </div>
+
+        <div class="mb-3">
+          <strong class="text-muted">{% trans "Faculty" %}:</strong>
+          <p class="mb-0">{{ profile.faculty|default:"—" }}</p>
+        </div>
+
+        <div class="mb-3">
+          <strong class="text-muted">{% trans "Specialty" %}:</strong>
+          <p class="mb-0">{{ profile.specialty|default:"—" }}</p>
+        </div>
+
+      </div>
+
+      <div class="col-md-6">
+
+        <div class="mb-3">
+          <strong class="text-muted">{% trans "Education Level" %}:</strong>
+          <p class="mb-0">{{ profile.education_level|default:"—" }}</p>
+        </div>
+
+        <div class="mb-3">
+          <strong class="text-muted">{% trans "Graduation Year" %}:</strong>
+          <p class="mb-0">{{ profile.graduation_year|default_if_none:"—" }}</p>
+        </div>
+
+        <div class="mb-3">
+          <strong class="text-muted">{% trans "Work Type" %}:</strong>
+          <p class="mb-0">
+            {% if profile.work_type %}
+              {{ profile.get_work_type_display }}
+            {% else %}
+              —
+            {% endif %}
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Career Preferences -->
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-header bg-white">
+    <h5 class="fw-bold mb-0">
+      <i class="fas fa-briefcase me-2 text-primary"></i>
+      {% trans "Career Preferences" %}
+    </h5>
+  </div>
+
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="mb-3">
+          <strong class="text-muted">{% trans "Desired Position" %}:</strong>
+          <p class="mb-0">{{ profile.desired_position|default:"—" }}</p>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="mb-3">
+          <strong class="text-muted">{% trans "Desired Salary" %}:</strong>
+          <p class="mb-0">
+            {% if profile.desired_salary %}
+              {{ profile.desired_salary }}
+            {% else %}
+              —
+            {% endif %}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-0">
+      <strong class="text-muted">{% trans "Bio" %}:</strong>
+      <p class="mb-0">{{ profile.bio|default:"—" }}</p>
+    </div>
+  </div>
+</div>
+
+<!-- Links -->
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-header bg-white">
+    <h5 class="fw-bold mb-0">
+      <i class="fas fa-link me-2 text-primary"></i>
+      {% trans "Links" %}
+    </h5>
+  </div>
+
+  <div class="card-body">
+    <div class="row g-3">
+      <div class="col-md-4">
+        <strong class="text-muted">{% trans "Website" %}:</strong>
+        <p class="mb-0">
+          {% if profile.website %}
+            <a href="{{ profile.website }}" target="_blank" rel="noopener noreferrer">
+              {{ profile.website }}
+            </a>
+          {% else %}
+            —
+          {% endif %}
+        </p>
+      </div>
+
+      <div class="col-md-4">
+        <strong class="text-muted">LinkedIn:</strong>
+        <p class="mb-0">
+          {% if profile.linkedin %}
+            <a href="{{ profile.linkedin }}" target="_blank" rel="noopener noreferrer">
+              {{ profile.linkedin }}
+            </a>
+          {% else %}
+            —
+          {% endif %}
+        </p>
+      </div>
+
+      <div class="col-md-4">
+        <strong class="text-muted">GitHub:</strong>
+        <p class="mb-0">
+          {% if profile.github %}
+            <a href="{{ profile.github }}" target="_blank" rel="noopener noreferrer">
+              {{ profile.github }}
+            </a>
+          {% else %}
+            —
+          {% endif %}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block profile_stats %}
+{{ block.super }}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <span>{% trans "Created Resumes" %}</span>
+  <span class="badge bg-info">
+    {% if resumes is not None %}
+      {{ resumes|length }}
+    {% else %}
+      0
+    {% endif %}
+  </span>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <span>{% trans "Applied Jobs" %}</span>
+  <span class="badge bg-warning">{{ applications_count|default:0 }}</span>
+</div>
+{% endblock %}
+
+{% block quick_actions %}
+{{ block.super }}
+<div class="d-grid gap-2 mt-2">
+  <a href="{% url 'cvbuilder:cv_create' %}" class="btn btn-success btn-sm">
+    <i class="fas fa-file-alt me-2"></i>{% trans "Create Resume" %}
+  </a>
+
+  <a href="{% url 'jobs:list' %}" class="btn btn-primary btn-sm">
+    <i class="fas fa-briefcase me-2"></i>{% trans "Jobs" %}
+  </a>
+
+  <a href="{% url 'accounts:student_profile_update' %}" class="btn btn-outline-secondary btn-sm">
+    <i class="fas fa-user-edit me-2"></i>{% trans "Edit Profile" %}
+  </a>
+</div>
+{% endblock %}

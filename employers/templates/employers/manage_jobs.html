@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block content %}
+<div class="container py-5">
+	<h1 class="display-5 fw-bold text-primary mb-4">{% trans "Manage Jobs" %}</h1>
+	<div class="card shadow-sm mb-4">
+		<div class="card-body">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>{% trans "Job Title" %}</th>
+						<th>{% trans "Status" %}</th>
+						<th>{% trans "Actions" %}</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Example Job</td>
+						<td><span class="badge bg-success">{% trans "Active" %}</span></td>
+						<td><a href="{% url 'jobs:edit_job' job.id %}" class="btn btn-sm btn-primary">{% trans "Edit" %}</a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{% endblock %}

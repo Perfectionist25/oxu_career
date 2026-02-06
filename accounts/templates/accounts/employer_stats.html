@@ -1,0 +1,740 @@
+<!-- templates/accounts/employer_stats.html -->
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Employer Statistics" %} | {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 fw-bold text-primary mb-1">{% trans "Employer Statistics" %}</h1>
+                    <p class="text-muted mb-0">
+                        {% trans "Detailed analytics and insights for" %} <strong>{{ user.get_full_name|default:user.username }}</strong>
+                    </p>
+                    {% if primary_company %}
+                        <small class="text-muted">{% trans "Primary Company" %}: <strong>{{ primary_company.name }}</strong></small>
+                    {% endif %}
+                </div>
+                <div>
+                    <a href="{% url 'accounts:employer_dashboard' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-1"></i> {% trans "Back to Dashboard" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Time Period Selector -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 bg-light shadow-sm">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted me-2">{% trans "Time Period" %}:</small>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-secondary btn-sm active" data-period="7">{% trans "Last 7 days" %}</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm" data-period="30">{% trans "Last 30 days" %}</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm" data-period="90">{% trans "Last 90 days" %}</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm" data-period="365">{% trans "Last year" %}</button>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-muted small me-2">{% trans "Data as of" %} {{ today|date:"F d, Y" }}</span>
+                            <button class="btn btn-sm btn-outline-info" id="refreshStats">
+                                <i class="fas fa-sync-alt me-1"></i> {% trans "Refresh" %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overview Statistics -->
+    <div class="row mb-5">
+        <div class="col-md-3 mb-4">
+            <div class="card border-0 bg-primary text-white shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h3 class="fw-bold mb-0">{{ stats.total_companies|default:0 }}</h3>
+                            <small>{% trans "Total Companies" %}</small>
+                            {% if stats.verified_companies %}
+                            <div class="mt-1">
+                                <small><i class="fas fa-check-circle me-1"></i> {{ stats.verified_companies }} {% trans "verified" %}</small>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-building fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card border-0 bg-success text-white shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h3 class="fw-bold mb-0">{{ stats.total_jobs|default:0 }}</h3>
+                            <small>{% trans "Total Jobs Posted" %}</small>
+                            {% if stats.active_jobs %}
+                            <div class="mt-1">
+                                <small><i class="fas fa-briefcase me-1"></i> {{ stats.active_jobs }} {% trans "active" %}</small>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-briefcase fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card border-0 bg-info text-white shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h3 class="fw-bold mb-0">{{ stats.total_applications|default:0 }}</h3>
+                            <small>{% trans "Total Applications" %}</small>
+                            {% if stats.pending_applications %}
+                            <div class="mt-1">
+                                <small><i class="fas fa-clock me-1"></i> {{ stats.pending_applications }} {% trans "pending" %}</small>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-file-alt fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card border-0 bg-warning text-dark shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h3 class="fw-bold mb-0">{{ stats.total_views|default:0 }}</h3>
+                            <small>{% trans "Total Profile Views" %}</small>
+                            {% if stats.recent_views %}
+                            <div class="mt-1">
+                                <small><i class="fas fa-eye me-1"></i> {{ stats.recent_views }} {% trans "recent" %}</small>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-eye fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row">
+        <!-- Left Column -->
+        <div class="col-lg-8 mb-4">
+            <!-- Application Statistics -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="fw-bold mb-0">{% trans "Application Statistics" %}</h5>
+                </div>
+                <div class="card-body">
+                    {% if application_stats.total > 0 %}
+                    <div class="row">
+                        <!-- Status Breakdown -->
+                        <div class="col-md-6">
+                            <h6 class="fw-bold mb-3">{% trans "Application Status" %}</h6>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>{% trans "Pending" %}</span>
+                                    <span>{{ application_stats.pending }} ({{ application_stats.pending_percent|default:"0" }}%)</span>
+                                </div>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-warning" style="width: {{ application_stats.pending_percent|default:"0" }}%"></div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>{% trans "Reviewed" %}</span>
+                                    <span>{{ application_stats.reviewed }} ({{ application_stats.reviewed_percent|default:"0" }}%)</span>
+                                </div>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-info" style="width: {{ application_stats.reviewed_percent|default:"0" }}%"></div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>{% trans "Shortlisted" %}</span>
+                                    <span>{{ application_stats.shortlisted }} ({{ application_stats.shortlisted_percent|default:"0" }}%)</span>
+                                </div>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-primary" style="width: {{ application_stats.shortlisted_percent|default:"0" }}%"></div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>{% trans "Rejected" %}</span>
+                                    <span>{{ application_stats.rejected }} ({{ application_stats.rejected_percent|default:"0" }}%)</span>
+                                </div>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-danger" style="width: {{ application_stats.rejected_percent|default:"0" }}%"></div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>{% trans "Accepted" %}</span>
+                                    <span>{{ application_stats.accepted }} ({{ application_stats.accepted_percent|default:"0" }}%)</span>
+                                </div>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-success" style="width: {{ application_stats.accepted_percent|default:"0" }}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chart Visualization -->
+                        <div class="col-md-6">
+                            <h6 class="fw-bold mb-3">{% trans "Status Distribution" %}</h6>
+                            <div class="d-flex justify-content-center">
+                                <canvas id="applicationStatusChart" width="200" height="200"></canvas>
+                            </div>
+                            <div class="text-center mt-3">
+                                <small class="text-muted">{% trans "Total Applications" %}: <strong>{{ application_stats.total }}</strong></small>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted mb-3">{% trans "No Applications Yet" %}</h5>
+                        <p class="text-muted">{% trans "You haven't received any job applications yet" %}</p>
+                        <a href="{% url 'jobs:my_jobs' %}" class="btn btn-primary">
+                            <i class="fas fa-briefcase me-1"></i> {% trans "View Your Jobs" %}
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Job Statistics -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="fw-bold mb-0">{% trans "Job Statistics" %}</h5>
+                </div>
+                <div class="card-body">
+                    {% if stats.total_jobs > 0 %}
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-4">
+                            <div class="mb-2">
+                                <i class="fas fa-briefcase fa-3x text-success"></i>
+                            </div>
+                            <h3 class="fw-bold">{{ stats.active_jobs|default:0 }}</h3>
+                            <p class="text-muted mb-0">{% trans "Active Jobs" %}</p>
+                        </div>
+                        <div class="col-md-4 text-center mb-4">
+                            <div class="mb-2">
+                                <i class="fas fa-clock fa-3x text-warning"></i>
+                            </div>
+                            <h3 class="fw-bold">{{ stats.expired_jobs|default:0 }}</h3>
+                            <p class="text-muted mb-0">{% trans "Expired Jobs" %}</p>
+                        </div>
+                        <div class="col-md-4 text-center mb-4">
+                            <div class="mb-2">
+                                <i class="fas fa-ban fa-3x text-secondary"></i>
+                            </div>
+                            <h3 class="fw-bold">{{ stats.inactive_jobs|default:0 }}</h3>
+                            <p class="text-muted mb-0">{% trans "Inactive Jobs" %}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Job Performance -->
+                    <h6 class="fw-bold mb-3">{% trans "Job Performance" %}</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>{% trans "Job Title" %}</th>
+                                    <th>{% trans "Applications" %}</th>
+                                    <th>{% trans "Status" %}</th>
+                                    <th>{% trans "Posted" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for job in recent_jobs|slice:":5" %}
+                                <tr>
+                                    <td>{{ job.title|truncatechars:30 }}</td>
+                                    <td>{{ job.application_count|default:0 }}</td>
+                                    <td>
+                                        <span class="badge bg-{% if job.is_active %}success{% else %}secondary{% endif %}">
+                                            {{ job.is_active|yesno:"Active,Inactive" }}
+                                        </span>
+                                    </td>
+                                    <td>{{ job.created_at|date:"M d" }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted py-3">
+                                        {% trans "No job data available" %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-briefcase fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted mb-3">{% trans "No Jobs Posted Yet" %}</h5>
+                        <p class="text-muted">{% trans "Start posting jobs to see statistics" %}</p>
+                        <a href="{% url 'jobs:job_create' %}" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i> {% trans "Post Your First Job" %}
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-lg-4 mb-4">
+            <!-- Company Performance -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="fw-bold mb-0">{% trans "Company Performance" %}</h5>
+                </div>
+                <div class="card-body">
+                    {% if stats.total_companies > 0 %}
+                        {% for company in owned_companies|slice:":3" %}
+                        <div class="mb-3 pb-3 {% if not forloop.last %}border-bottom{% endif %}">
+                            <div class="d-flex align-items-start">
+                                <div class="me-3">
+                                    {% if company.logo %}
+                                    <img src="{{ company.logo.url }}" alt="{{ company.name }}" 
+                                         class="rounded" width="48" height="48" style="object-fit: cover;">
+                                    {% else %}
+                                    <div class="rounded bg-secondary d-flex align-items-center justify-content-center" 
+                                         style="width: 48px; height: 48px;">
+                                        <i class="fas fa-building text-white"></i>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="fw-bold mb-1">{{ company.name|truncatechars:25 }}</h6>
+                                    <div class="d-flex justify-content-between small">
+                                        <span class="text-muted">
+                                            <i class="fas fa-briefcase me-1"></i>{{ company.job_count|default:0 }} {% trans "jobs" %}
+                                        </span>
+                                        <span class="text-muted">
+                                            <i class="fas fa-file-alt me-1"></i>{{ company.application_count|default:0 }} {% trans "apps" %}
+                                        </span>
+                                        <span class="text-muted">
+                                            <i class="fas fa-eye me-1"></i>{{ company.views|default:0 }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        
+                        {% if stats.total_companies > 3 %}
+                        <div class="text-center">
+                            <a href="{% url 'accounts:company_list' %}" class="btn btn-outline-primary btn-sm">
+                                {% trans "View All Companies" %} ({{ stats.total_companies }})
+                            </a>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-building fa-3x text-muted mb-3"></i>
+                            <p class="text-muted mb-3">{% trans "No Companies Yet" %}</p>
+                            <a href="{% url 'accounts:company_create' %}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus me-1"></i> {% trans "Add Company" %}
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Activity Timeline -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="fw-bold mb-0">{% trans "Recent Activity" %}</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_activity %}
+                    <div class="timeline">
+                        {% for activity in recent_activity|slice:":5" %}
+                        <div class="timeline-item mb-3">
+                            <div class="timeline-marker">
+                                <i class="fas fa-circle text-{{ activity.activity_type|default:'primary' }}"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <div class="d-flex justify-content-between">
+                                    <small class="fw-medium">{{ activity.description|truncatechars:40 }}</small>
+                                    <small class="text-muted">{{ activity.created_at|timesince }} {% trans "ago" %}</small>
+                                </div>
+                                <small class="text-muted d-block">{{ activity.created_at|date:"M d, Y H:i" }}</small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-3">
+                        <i class="fas fa-history fa-2x text-muted mb-2"></i>
+                        <p class="text-muted mb-0">{% trans "No recent activity" %}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if recent_activity|length > 5 %}
+                    <div class="text-center mt-3">
+                        <a href="{% url 'accounts:activity_log' %}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-list me-1"></i> {% trans "View All Activity" %}
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Export Data -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="fw-bold mb-0">{% trans "Export Data" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <button class="btn btn-outline-primary btn-sm w-100" id="exportApplications">
+                                <i class="fas fa-download me-1"></i> {% trans "Applications" %}
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button class="btn btn-outline-success btn-sm w-100" id="exportJobs">
+                                <i class="fas fa-download me-1"></i> {% trans "Jobs" %}
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button class="btn btn-outline-info btn-sm w-100" id="exportCompanies">
+                                <i class="fas fa-download me-1"></i> {% trans "Companies" %}
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button class="btn btn-outline-warning btn-sm w-100" id="exportStats">
+                                <i class="fas fa-download me-1"></i> {% trans "Statistics" %}
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            {% trans "Exports will be generated as CSV files" %}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Advanced Analytics Section (Collapsed by default) -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <button class="btn btn-link text-decoration-none fw-bold d-flex justify-content-between align-items-center w-100 p-0" 
+                            data-bs-toggle="collapse" data-bs-target="#advancedAnalytics">
+                        <span>{% trans "Advanced Analytics" %}</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+                <div class="collapse" id="advancedAnalytics">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="fw-bold mb-3">{% trans "Performance Metrics" %}</h6>
+                                <div class="mb-3">
+                                    <label class="form-label small">{% trans "Application Response Rate" %}</label>
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar bg-success" style="width: {{ response_rate|default:"0" }}%"></div>
+                                    </div>
+                                    <small class="text-muted">{{ response_rate|default:"0" }}% {% trans "of applications responded to" %}</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label small">{% trans "Job Fill Rate" %}</label>
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar bg-primary" style="width: {{ fill_rate|default:"0" }}%"></div>
+                                    </div>
+                                    <small class="text-muted">{{ fill_rate|default:"0" }}% {% trans "of jobs filled" %}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <h6 class="fw-bold mb-3">{% trans "Trend Analysis" %}</h6>
+                                <div class="mb-3">
+                                    <label class="form-label small">{% trans "Monthly Applications Trend" %}</label>
+                                    <canvas id="monthlyTrendChart" height="80"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .timeline {
+        position: relative;
+        padding-left: 20px;
+    }
+    
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 9px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background-color: #e9ecef;
+    }
+    
+    .timeline-item {
+        position: relative;
+        margin-bottom: 15px;
+    }
+    
+    .timeline-marker {
+        position: absolute;
+        left: -20px;
+        top: 2px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .timeline-content {
+        padding-left: 10px;
+    }
+    
+    .progress {
+        border-radius: 10px;
+    }
+    
+    .progress-bar {
+        border-radius: 10px;
+    }
+    
+    .card {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Application Status Chart
+        {% if application_stats.total > 0 %}
+        const ctx = document.getElementById('applicationStatusChart').getContext('2d');
+        const applicationChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: [
+                    '{% trans "Pending" %}',
+                    '{% trans "Reviewed" %}',
+                    '{% trans "Shortlisted" %}',
+                    '{% trans "Rejected" %}',
+                    '{% trans "Accepted" %}'
+                ],
+                datasets: [{
+                    data: [
+                        {{ application_stats.pending|default:0 }},
+                        {{ application_stats.reviewed|default:0 }},
+                        {{ application_stats.shortlisted|default:0 }},
+                        {{ application_stats.rejected|default:0 }},
+                        {{ application_stats.accepted|default:0 }}
+                    ],
+                    backgroundColor: [
+                        '#ffc107', // Pending - Yellow
+                        '#17a2b8', // Reviewed - Cyan
+                        '#007bff', // Shortlisted - Blue
+                        '#dc3545', // Rejected - Red
+                        '#28a745'  // Accepted - Green
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                const value = context.raw;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                label += value + ' (' + percentage + '%)';
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        {% endif %}
+        
+        // Time Period Selector
+        const periodButtons = document.querySelectorAll('[data-period]');
+        periodButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                periodButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                const period = this.getAttribute('data-period');
+                // In a real implementation, you would fetch data for this period
+                // For now, we'll just show a loading message
+                showLoadingMessage();
+                
+                // Simulate loading delay
+                setTimeout(() => {
+                    hideLoadingMessage();
+                    // You would update the stats here based on the selected period
+                }, 500);
+            });
+        });
+        
+        // Export Buttons
+        document.getElementById('exportApplications').addEventListener('click', function() {
+            exportData('applications');
+        });
+        
+        document.getElementById('exportJobs').addEventListener('click', function() {
+            exportData('jobs');
+        });
+        
+        document.getElementById('exportCompanies').addEventListener('click', function() {
+            exportData('companies');
+        });
+        
+        document.getElementById('exportStats').addEventListener('click', function() {
+            exportData('statistics');
+        });
+        
+        // Refresh Button
+        document.getElementById('refreshStats').addEventListener('click', function() {
+            const btn = this;
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> {% trans "Loading..." %}';
+            btn.disabled = true;
+            
+            // Simulate refresh delay
+            setTimeout(() => {
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
+                location.reload();
+            }, 1000);
+        });
+        
+        function exportData(type) {
+            const btn = document.getElementById(`export${type.charAt(0).toUpperCase() + type.slice(1)}`);
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> {% trans "Preparing..." %}';
+            btn.disabled = true;
+            
+            // Simulate export delay
+            setTimeout(() => {
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
+                
+                // In a real implementation, this would trigger a download
+                // For now, show a success message
+                alert(`{% trans "Export of" %} ${type} {% trans "data started. Check your downloads folder." %}`);
+            }, 1500);
+        }
+        
+        function showLoadingMessage() {
+            // Show a loading message (you can implement this as needed)
+            console.log('Loading data for selected period...');
+        }
+        
+        function hideLoadingMessage() {
+            // Hide loading message
+            console.log('Data loaded');
+        }
+        
+        // Monthly Trend Chart (simplified example)
+        {% if monthly_stats %}
+        const trendCtx = document.getElementById('monthlyTrendChart').getContext('2d');
+        const trendChart = new Chart(trendCtx, {
+            type: 'line',
+            data: {
+                labels: {{ monthly_labels|safe|default:"[]" }},
+                datasets: [{
+                    label: '{% trans "Applications" %}',
+                    data: {{ monthly_data|safe|default:"[]" }},
+                    borderColor: '#007bff',
+                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            display: true,
+                            drawBorder: false
+                        },
+                        ticks: {
+                            precision: 0
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+        {% endif %}
+    });
+</script>
+{% endblock %}

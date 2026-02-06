@@ -1,0 +1,1069 @@
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.db.models import Count, Q, Sum
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
+from django.views.decorators.http import require_POST
+from django.core.exceptions import ValidationError
+
+from accounts.models import EmployerProfile, Company
+from accounts.views import *
+
+from .forms import *
+from .models import *
+
+@login_required
+def employer_applications(request):
+    """Ish beruvchilar uchun arizalarni ko'rish"""
+    if not request.user.is_employer:
+        messages.error(request, _("Faqat ish beruvchilar bu sahifani ko'rishi mumkin."))
+        return redirect("jobs:list")
+
+    try:
+        # Получаем профиль работодателя
+        employer_profile = EmployerProfile.objects.get(user=request.user)
+        
+        # Получаем компании работодателя (owner is CustomUser)
+        owned_companies = Company.objects.filter(owner=request.user, is_active=True)
+        user_companies = list(owned_companies)
+        
+        if not user_companies:
+            messages.info(request, _("Hali hech qanday kompaniya yaratilmagan."))
+            return redirect("accounts:company_create")
+            
+        # Получаем вакансии из всех компаний пользователя
+        employer_jobs = Job.objects.filter(company__in=user_companies)
+    except EmployerProfile.DoesNotExist:
+        messages.error(request, _("Ish beruvchi profili topilmadi."))
+        return redirect("accounts:employer_profile_update")
+    except Exception as e:
+        messages.error(request, _("Ma'lumotlarni yuklashda xatolik yuz berdi."))
+        return redirect("accounts:company_list")
+
+    if not employer_jobs.exists():
+        messages.info(
+            request, _("Arizalarni ko'rish uchun avval vakansiya yaratishingiz kerak.")
+        )
+        return redirect("jobs:job_create")
+
+    # Arizalarni olish
+    applications = (
+        JobApplication.objects.filter(job__in=employer_jobs)
+        .select_related("job", "job__company", "user", "cv")
+        .order_by("-created_at")
+    )
+
+    # Status bo'yicha filter
+    status_filter = request.GET.get("status")
+    if status_filter:
+        applications = applications.filter(status=status_filter)
+
+    # Arizalar statistikasi
+    status_counts = {
+        "total": applications.count(),
+        "applied": applications.filter(status="applied").count(),
+        "reviewed": applications.filter(status="reviewed").count(),
+        "shortlisted": applications.filter(status="shortlisted").count(),
+        "interview": applications.filter(status="interview").count(),
+        "rejected": applications.filter(status="rejected").count(),
+        "hired": applications.filter(status="hired").count(),
+    }
+
+    context = {
+        "applications": applications,
+        "status_filter": status_filter,
+        "status_counts": status_counts,
+        "user_companies": user_companies,
+        "user_companies_count": len(user_companies),
+    }
+
+    return render(request, "jobs/applications.html", context)
+
+@login_required
+def job_create(request):
+    """Yangi vakansiya yaratish"""
+    if not request.user.is_employer:
+        messages.error(request, _("Faqat ish beruvchilar vakansiya yarata oladi."))
+        return redirect("jobs:list")
+
+    try:
+        employer_profile = EmployerProfile.objects.get(user=request.user)
+    except EmployerProfile.DoesNotExist:
+        messages.error(request, _("Ish beruvchi profili topilmadi. Iltimos, profilingizni to'ldiring."))
+        return redirect("accounts:employer_profile_update")
+    
+    # Получаем компании пользователя (owner is CustomUser)
+    user_companies = Company.objects.filter(owner=request.user, is_active=True)
+    
+    if not user_companies.exists():
+        messages.error(request, _("Vakansiya yaratish uchun avval kompaniya yaratishingiz kerak."))
+        return redirect("accounts:company_create")
+
+    if request.method == "POST":
+        form = JobForm(request.POST, user=request.user)
+        
+        if form.is_valid():
+            try:
+                job = form.save(commit=False)
+                # Сохраняем EmployerProfile как создателя
+                job.created_by = employer_profile
+                
+                # Проверяем, принадлежит ли выбранная компания пользователю
+                selected_company = form.cleaned_data.get('company')
+                if selected_company not in user_companies:
+                    messages.error(request, _("Siz tanlagan kompaniyaga vakansiya yaratish huquqingiz yo'q."))
+                    context = {
+                        "form": form,
+                        "owned_companies": user_companies,
+                        "employer_profile": employer_profile,
+                    }
+                    return render(request, "jobs/job_form.html", context)
+
+                # Check which button was clicked
+                if 'save_draft' in request.POST:
+                    job.is_active = False
+                    save_message = _("Vakansiya qoralama sifatida saqlandi.")
+                else:  # publish button
+                    job.is_active = True
+                    save_message = _("Vakansiya muvaffaqiyatli e'lon qilindi!")
+
+                job.save()
+                messages.success(request, save_message)
+                return redirect("jobs:my_jobs")
+                
+            except ValidationError as e:
+                messages.error(request, str(e))
+                context = {
+                    "form": form,
+                    "owned_companies": user_companies,
+                    "employer_profile": employer_profile,
+                }
+                return render(request, "jobs/job_form.html", context)
+            except Exception as e:
+                messages.error(request, f"Xatolik yuz berdi: {str(e)}")
+                context = {
+                    "form": form,
+                    "owned_companies": user_companies,
+                    "employer_profile": employer_profile,
+                }
+                return render(request, "jobs/job_form.html", context)
+        else:
+            # Show form errors to user and re-render form with context
+            context = {
+                "form": form,
+                "owned_companies": user_companies,
+                "employer_profile": employer_profile,
+            }
+            return render(request, "jobs/job_form.html", context)
+    else:
+        # При GET запросе устанавливаем начальные значения
+        initial_data = {
+            'contact_email': request.user.email,
+            'contact_person': request.user.get_full_name() or request.user.username,
+        }
+        form = JobForm(initial=initial_data, user=request.user)
+        
+        # Ограничиваем выбор компаний только доступными пользователю
+        form.fields['company'].queryset = Company.objects.filter(
+            Q(owner=request.user),
+            is_active=True
+        ).distinct()
+        
+        if user_companies and len(user_companies) == 1:
+            form.fields['company'].initial = user_companies[0]
+
+    context = {
+        "form": form,
+        "today": timezone.now().date(),
+        "owned_companies": user_companies,
+        "employer_profile": employer_profile,
+    }
+    return render(request, "jobs/job_form.html", context)
+
+@login_required
+def job_edit(request, pk):
+    """Mavjud vakansiyani tahrirlash"""
+    job = get_object_or_404(Job, pk=pk)
+
+    # Получаем профиль работодателя
+    try:
+        employer_profile = EmployerProfile.objects.get(user=request.user)
+    except EmployerProfile.DoesNotExist:
+        messages.error(request, _("Ish beruvchi profili topilmadi."))
+        return redirect("accounts:employer_profile_update")
+
+    # Получаем компании пользователя (owner is CustomUser)
+    user_companies = Company.objects.filter(owner=request.user, is_active=True)
+    
+    # Проверяем доступ
+    if job.company not in user_companies and not request.user.is_staff:
+        messages.error(request, _("Sizda bu vakansiyani tahrirlash huquqi yo'q."))
+        return redirect("jobs:job_detail", pk=pk)
+
+    if request.method == "POST":
+        form = JobForm(request.POST, instance=job, user=request.user)
+        if form.is_valid():
+            try:
+                # Проверяем, принадлежит ли выбранная компания пользователю
+                selected_company = form.cleaned_data.get('company')
+                if selected_company not in user_companies and not request.user.is_staff:
+                    messages.error(request, _("Siz tanlagan kompaniyaga vakansiya tahrirlash huquqingiz yo'q."))
+                    return render(request, "jobs/job_form.html", {"form": form, "job": job})
+
+                job = form.save()
+
+                action = request.POST.get("action")
+                if action == "draft":
+                    job.is_active = False
+                    save_message = _("Vakansiya qoralama sifatida saqlandi.")
+                else:
+                    job.is_active = True
+                    save_message = _("Vakansiya muvaffaqiyatli yangilandi!")
+
+                job.save()
+                messages.success(request, save_message)
+                return redirect("jobs:my_jobs")
+                
+            except Exception as e:
+                messages.error(request, f"Xatolik yuz berdi: {str(e)}")
+        else:
+            messages.error(request, _("Iltimos, xatolarni to'g'rilang."))
+    else:
+        form = JobForm(instance=job, user=request.user)
+        # Ограничиваем выбор компаний только доступными пользователю
+        form.fields['company'].queryset = Company.objects.filter(
+            Q(owner=request.user),
+            is_active=True
+        ).distinct()
+
+    context = {
+        "form": form,
+        "job": job,
+        "employer_profile": employer_profile,
+        "today": timezone.now().date(),
+    }
+    return render(request, "jobs/job_form.html", context)
+
+@login_required
+def job_delete(request, pk):
+    """Vakansiyani o'chirish"""
+    job = get_object_or_404(Job, pk=pk)
+
+    # Получаем профиль работодателя
+    try:
+        employer_profile = EmployerProfile.objects.get(user=request.user)
+    except EmployerProfile.DoesNotExist:
+        messages.error(request, _("Ish beruvchi profili topilmadi."))
+        return redirect("jobs:list")
+
+    # Получаем компании пользователя (owner is CustomUser)
+    user_companies = Company.objects.filter(owner=request.user, is_active=True)
+    
+    # Проверяем доступ
+    if job.company not in user_companies and not request.user.is_staff:
+        messages.error(request, _("Sizda bu vakansiyani o'chirish huquqi yo'q."))
+        return redirect("jobs:job_detail", pk=pk)
+
+    if request.method == "POST":
+        job_title = job.title
+        job.delete()
+        messages.success(
+            request, _(f"'{job_title}' vakansiyasi muvaffaqiyatli o'chirildi.")
+        )
+        return redirect("jobs:my_jobs")
+
+    context = {
+        "job": job,
+    }
+    return render(request, "jobs/job_confirm_delete.html", context)
+
+@login_required
+def my_jobs(request):
+    """Мои вакансии (для работодателей) и мои заявки (для студентов)"""
+    context = {}
+
+    if request.user.is_employer:
+        # Работодатель - его вакансии
+        try:
+            # Получаем профиль работодателя
+            employer_profile = EmployerProfile.objects.get(user=request.user)
+            
+            # Получаем компании работодателя (owner is CustomUser)
+            user_companies = Company.objects.filter(owner=request.user, is_active=True)
+            
+            # Получаем вакансии из всех компаний пользователя
+            jobs = Job.objects.filter(company__in=user_companies)
+            
+            # Фильтрация по компании
+            company_id = request.GET.get('company_id')
+            filtered_company = None
+            if company_id:
+                try:
+                    filtered_company = Company.objects.get(id=company_id, owner=request.user)
+                    jobs = jobs.filter(company=filtered_company)
+                except Company.DoesNotExist:
+                    pass
+        except EmployerProfile.DoesNotExist:
+            messages.error(request, _("Ish beruvchi profili topilmadi."))
+            return redirect("accounts:employer_profile_update")
+        except Exception as e:
+            jobs = Job.objects.none()
+            messages.error(request, _("Ma'lumotlarni yuklashda xatolik yuz berdi."))
+
+        # Фильтрация по статусу
+        status_filter = request.GET.get('status')
+        if status_filter == 'active':
+            jobs = jobs.filter(is_active=True)
+        elif status_filter == 'draft':
+            jobs = jobs.filter(is_active=False)
+
+        # Поиск только по названию вакансии
+        search_query = request.GET.get('q')
+        if search_query:
+            jobs = jobs.filter(title__icontains=search_query)
+
+        # Сортировка
+        sort_by = request.GET.get('sort_by')
+        if sort_by == 'title_asc':
+            jobs = jobs.order_by('title')
+        elif sort_by == 'title_desc':
+            jobs = jobs.order_by('-title')
+        elif sort_by == 'date_asc':
+            jobs = jobs.order_by('created_at')
+        elif sort_by == 'date_desc':
+            jobs = jobs.order_by('-created_at')
+        elif sort_by == 'applications':
+            # Используем аннотацию для подсчета заявок
+            jobs = jobs.annotate(
+                app_count=Count('applications')
+            ).order_by('-app_count')
+        elif sort_by == 'views':
+            jobs = jobs.order_by('-views_count')
+        else:
+            # Сортировка по умолчанию
+            jobs = jobs.order_by('-created_at')
+
+        # Статистика
+        total_jobs = jobs.count()
+        active_jobs = jobs.filter(is_active=True).count()
+        draft_jobs = jobs.filter(is_active=False).count()
+        
+        # Общее количество просмотров
+        total_views = jobs.aggregate(total=Sum('views_count'))['total'] or 0
+        
+        # Общее количество заявок
+        total_applications_count = JobApplication.objects.filter(
+            job__company__in=user_companies
+        ).count()
+
+        # Пагинация
+        paginator = Paginator(jobs, 10)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        
+        # Добавляем количество заявок для каждой вакансии
+        for job in page_obj:
+            job.applications_count = JobApplication.objects.filter(job=job).count()
+
+        context.update({
+            'jobs': page_obj,
+            'total_jobs': total_jobs,
+            'active_jobs': active_jobs,
+            'draft_jobs': draft_jobs,
+            'total_views': total_views,
+            'total_applications_count': total_applications_count,
+            'status_filter': status_filter,
+            'sort_by': sort_by,
+            'search_query': search_query,
+            'is_employer_view': True,
+            'user_companies': user_companies,
+            'owned_companies': user_companies,
+            'filtered_company': filtered_company,
+            'employer_profile': employer_profile,
+        })
+
+    elif request.user.is_student or hasattr(request.user, 'alumni'):
+        # Студент - его заявки
+        applications = JobApplication.objects.filter(
+            user=request.user
+        ).select_related('job', 'job__company').order_by('-created_at')
+
+        # Сортировка заявок
+        sort_by = request.GET.get('sort_by')
+        if sort_by:
+            if sort_by == 'date_asc':
+                applications = applications.order_by('created_at')
+            elif sort_by == 'date_desc':
+                applications = applications.order_by('-created_at')
+            elif sort_by == 'job_title_asc':
+                applications = applications.order_by('job__title')
+            elif sort_by == 'job_title_desc':
+                applications = applications.order_by('-job__title')
+
+        # Статистика
+        total_applications = applications.count()
+        pending_applications = applications.filter(status='applied').count()
+        reviewed_applications = applications.filter(status='reviewed').count()
+        interview_applications = applications.filter(status='interview').count()
+        accepted_applications = applications.filter(status='hired').count()
+        rejected_applications = applications.filter(status='rejected').count()
+
+        # Пагинация
+        paginator = Paginator(applications, 10)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        context.update({
+            'applications': page_obj,
+            'total_applications': total_applications,
+            'pending_applications': pending_applications,
+            'reviewed_applications': reviewed_applications,
+            'interview_applications': interview_applications,
+            'accepted_applications': accepted_applications,
+            'rejected_applications': rejected_applications,
+            'sort_by': sort_by,
+            'is_employer_view': False,
+        })
+
+    else:
+        messages.error(request, _("У вас нет доступа к этой странице"))
+        return redirect('accounts:home')
+
+    return render(request, 'jobs/my_jobs.html', context)
+
+@login_required
+def saved_jobs(request):
+    """Saqlangan vakansiyalar"""
+    if not (request.user.is_student or hasattr(request.user, 'alumni')):
+        messages.error(request, _("Sizda bu sahifani ko'rish huquqi yo'q"))
+        return redirect("accounts:home")
+
+    saved_jobs = (
+        SavedJob.objects.filter(user=request.user)
+        .select_related("job", "job__company")
+        .order_by("-created_at")
+    )
+
+    # Paginatsiya
+    paginator = Paginator(saved_jobs, 12)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        "saved_jobs": page_obj,
+        "total_saved": saved_jobs.count(),
+    }
+
+    return render(request, "jobs/saved_jobs.html", context)
+
+@login_required
+def job_list(request):
+    """Vakansiyalar ro'yxati"""
+    form = JobSearchForm(request.GET or None)
+    
+    # Определяем, какие вакансии показывать
+    if request.user.is_staff or request.user.is_superuser:
+        # Админы видят все вакансии
+        jobs = Job.objects.all()
+    elif request.user.is_employer:
+        # Работодатели видят все вакансии (включая свои)
+        jobs = Job.objects.all()
+    else:
+        # Студенты и выпускники видят только активные вакансии
+        jobs = Job.objects.filter(is_active=True)
+
+    # Поиск и фильтрация
+    if form.is_valid():
+        query = form.cleaned_data.get("query")
+        employment_type = form.cleaned_data.get("employment_type")
+        experience_level = form.cleaned_data.get("experience_level")
+        work_type = form.cleaned_data.get("work_type")
+        salary_min = form.cleaned_data.get("salary_min")
+        salary_max = form.cleaned_data.get("salary_max")
+        currency = form.cleaned_data.get("currency")
+        remote_ok = form.cleaned_data.get("remote_ok")
+        is_featured = form.cleaned_data.get("is_featured")
+        is_urgent = form.cleaned_data.get("is_urgent")
+        has_salary = form.cleaned_data.get("has_salary")
+        industry = form.cleaned_data.get("industry")
+
+        if query:
+            jobs = jobs.filter(
+                Q(title__icontains=query)
+                | Q(short_description__icontains=query)
+                | Q(description__icontains=query)
+                | Q(company__name__icontains=query)
+                | Q(skills_required__icontains=query)
+            )
+
+        if employment_type:
+            jobs = jobs.filter(employment_type__in=employment_type)
+
+        if experience_level:
+            jobs = jobs.filter(experience_level__in=experience_level)
+
+        if work_type:
+            jobs = jobs.filter(work_type__in=work_type)
+
+        if industry and industry.strip():
+            jobs = jobs.filter(industry__icontains=industry.strip())
+
+        if salary_min:
+            jobs = jobs.filter(
+                Q(salary_min__gte=salary_min) | Q(salary_max__gte=salary_min)
+            )
+
+        if salary_max:
+            jobs = jobs.filter(
+                Q(salary_max__lte=salary_max) | Q(salary_min__lte=salary_max)
+            )
+
+        if currency:
+            jobs = jobs.filter(currency=currency)
+
+        if remote_ok:
+            jobs = jobs.filter(work_type="remote")
+
+        if is_featured:
+            jobs = jobs.filter(is_featured=True)
+
+        if is_urgent:
+            jobs = jobs.filter(is_urgent=True)
+
+        if has_salary:
+            jobs = jobs.filter(Q(salary_min__isnull=False) | Q(salary_max__isnull=False))
+
+    # Сортировка
+    sort = request.GET.get("sort", "newest")
+    if sort == "salary_high":
+        jobs = jobs.order_by("-salary_max", "-salary_min")
+    elif sort == "salary_low":
+        jobs = jobs.order_by("salary_min", "salary_max")
+    elif sort == "views":
+        jobs = jobs.order_by("-views_count")
+    elif sort == "applications":
+        jobs = jobs.order_by("-applications_count")
+    elif sort == "deadline":
+        jobs = jobs.order_by("expires_at")
+    else:  # newest
+        jobs = jobs.order_by("-created_at")
+
+    # Пагинация
+    paginator = Paginator(jobs, 15)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    # Статистика
+    total_jobs = jobs.count()
+    
+    # Для студентов и выпускников показываем рекомендуемые вакансии
+    featured_jobs = []
+    is_student_or_alumni = hasattr(request.user, 'student_profile') or hasattr(request.user, 'alumni')
+    if is_student_or_alumni or request.user.is_staff:
+        featured_jobs = Job.objects.filter(is_active=True, is_featured=True)[:5]
+
+    # Получаем уникальные значения индустрий
+    all_industries = Job.objects.filter(
+        is_active=True,
+        industry__isnull=False
+    ).exclude(industry='').values_list('industry', flat=True).distinct().order_by('industry')
+
+    # Получаем количество компаний (уникальных, которые имеют активные вакансии)
+    companies_count = Company.objects.filter(
+        jobs__is_active=True,
+        is_active=True
+    ).distinct().count()
+
+    context = {
+        "jobs": page_obj,
+        "page_obj": page_obj,
+        "form": form,
+        "total_jobs": total_jobs,
+        "featured_jobs": featured_jobs,
+        "employment_types": Job.EMPLOYMENT_TYPE_CHOICES,
+        "industries": list(all_industries),
+        "experience_levels": Job.EXPERIENCE_LEVEL_CHOICES,
+        "stats": {
+            "total_jobs": Job.objects.filter(is_active=True).count() if not request.user.is_staff else Job.objects.count(),
+            "internships_count": Job.objects.filter(employment_type='internship', is_active=True).count(),
+            "companies_count": companies_count,
+            "success_stories": JobApplication.objects.filter(status='hired').count(),
+        },
+        "is_admin": request.user.is_staff or request.user.is_superuser,
+        "is_employer": request.user.is_employer,
+        "is_student": is_student_or_alumni,
+    }
+    return render(request, "jobs/job_list.html", context)
+
+@login_required
+def job_detail(request, pk):
+    """Vakansiya batafsil sahifasi"""
+    # Проверяем, является ли пользователь выпускником
+    has_alumni_profile = hasattr(request.user, 'alumni')
+    has_student_profile = hasattr(request.user, 'student_profile')
+    
+    # Получаем вакансию с проверкой прав доступа
+    if request.user.is_staff or request.user.is_superuser:
+        # Админы видят все вакансии
+        job = get_object_or_404(Job, pk=pk)
+    elif request.user.is_employer:
+        # Работодатели видят все вакансии, но имеют особые права для своих
+        job = get_object_or_404(Job, pk=pk)
+    elif has_student_profile or has_alumni_profile:
+        # Студенты и выпускники видят только активные вакансии
+        job = get_object_or_404(Job, pk=pk, is_active=True)
+    else:
+        messages.error(request, _("Sizda bu vakansiyani ko'rish huquqi yo'q."))
+        return redirect("accounts:login")
+
+    # Уникальные просмотры через сессию
+    viewed_jobs = request.session.get('viewed_jobs', [])
+    
+    if pk not in viewed_jobs:
+        job.views_count += 1
+        job.save()
+        viewed_jobs.append(pk)
+        request.session['viewed_jobs'] = viewed_jobs
+
+    # Проверяем, подавал ли пользователь заявку
+    has_applied = False
+    application = None
+    if request.user.is_authenticated:
+        try:
+            application = JobApplication.objects.get(job=job, user=request.user)
+            has_applied = True
+        except JobApplication.DoesNotExist:
+            pass
+
+    # Проверяем, сохранена ли вакансия
+    is_saved = False
+    if request.user.is_authenticated:
+        is_saved = SavedJob.objects.filter(job=job, user=request.user).exists()
+
+    # Форма заявки (только для студентов и выпускников)
+    application_form = None
+    if has_student_profile or has_alumni_profile:
+        application_form = JobApplicationForm()
+
+    # Похожие вакансии (только для опубликованных)
+    similar_jobs = []
+    if job.is_active:
+        if job.industry:
+            similar_jobs = Job.objects.filter(
+                is_active=True,
+                industry__icontains=job.industry
+            ).exclude(pk=job.pk)[:4]
+        else:
+            similar_jobs = Job.objects.filter(
+                is_active=True,
+                experience_level=job.experience_level
+            ).exclude(pk=job.pk)[:4]
+
+    # Проверяем, может ли пользователь редактировать вакансию
+    can_edit = False
+    if request.user.is_authenticated:
+        if request.user.is_staff or request.user.is_superuser:
+            can_edit = True
+        elif request.user.is_employer:
+            # Проверяем, принадлежит ли компания пользователю
+            try:
+                employer_profile = EmployerProfile.objects.get(user=request.user)
+                user_companies = Company.objects.filter(owner=request.user, is_active=True)
+                can_edit = job.company in user_companies
+            except EmployerProfile.DoesNotExist:
+                can_edit = False
+
+    context = {
+        "job": job,
+        "has_applied": has_applied,
+        "application": application,
+        "is_saved": is_saved,
+        "application_form": application_form,
+        "similar_jobs": similar_jobs,
+        "can_edit": can_edit,
+    }
+    return render(request, "jobs/job_detail.html", context)
+
+@require_POST
+def increment_job_views(request, pk):
+    """Vakansiya ko'rishlar sonini oshirish (AJAX)"""
+    job = get_object_or_404(Job, pk=pk)
+    job.views_count += 1
+    job.save()
+    return JsonResponse({"success": True, "views_count": job.views_count})
+
+@login_required
+def apply_for_job(request, pk):
+    """Vakansiyaga ariza topshirish"""
+    from django.utils import timezone
+    
+    # Проверяем, может ли пользователь подавать заявки
+    has_student_profile = hasattr(request.user, 'student_profile')
+    has_alumni_profile = hasattr(request.user, 'alumni')
+    
+    if not (has_student_profile or has_alumni_profile):
+        messages.error(request, _("Faqat talabalar va bitiruvchilar ariza topshira oladi."))
+        return redirect("jobs:list")
+
+    job = get_object_or_404(Job, pk=pk, is_active=True)
+
+    # Проверяем, не подавал ли уже заявку
+    if JobApplication.objects.filter(job=job, user=request.user).exists():
+        messages.warning(request, _("Siz ushbu vakansiyaga allaqachon ariza topshirgansiz."))
+        return redirect("jobs:job_detail", pk=job.pk)
+
+    # Проверяем, не истек ли срок вакансии
+    if job.expires_at and job.expires_at < timezone.now():
+        messages.error(request, _("Ushbu vakansiyaning muddati tugagan."))
+        return redirect("jobs:job_detail", pk=job.pk)
+
+    if request.method == "POST":
+        form = JobApplicationForm(request.POST, user=request.user, job=job)
+        if form.is_valid():
+            try:
+                application = form.save(commit=False)
+                application.job = job
+                application.user = request.user
+                application.save()
+
+                # Увеличиваем счетчик заявок
+                job.applications_count += 1
+                job.save()
+
+                messages.success(
+                    request, _("Arizangiz muvaffaqiyatli yuborildi!")
+                )
+                return redirect("jobs:job_detail", pk=job.pk)
+            except Exception as e:
+                messages.error(request, f"Xatolik yuz berdi: {str(e)}")
+        else:
+            # Show form errors
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
+    else:
+        form = JobApplicationForm(user=request.user, job=job)
+
+    context = {
+        "job": job,
+        "form": form,
+    }
+    return render(request, "jobs/apply_for_job.html", context)
+
+@login_required
+@require_POST
+def save_job(request, pk):
+    """Vakansiyani saqlash"""
+    job = get_object_or_404(Job, pk=pk, is_active=True)
+
+    has_student_profile = hasattr(request.user, 'student_profile')
+    has_alumni_profile = hasattr(request.user, 'alumni')
+    
+    if not (has_student_profile or has_alumni_profile):
+        return JsonResponse({"success": False, "error": "Permission denied"})
+
+    saved_job, created = SavedJob.objects.get_or_create(job=job, user=request.user)
+
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({
+            "success": True,
+            "action": "saved" if created else "already_saved",
+            "saved": True
+        })
+    
+    if created:
+        messages.success(request, _("Vakansiya muvaffaqiyatli saqlandi!"))
+    else:
+        messages.info(request, _("Vakansiya allaqachon saqlangan."))
+
+    return redirect("jobs:job_detail", pk=job.pk)
+
+@login_required
+@require_POST
+def unsave_job(request, pk):
+    """Vakansiyani saqlanganlardan o'chirish"""
+    job = get_object_or_404(Job, pk=pk)
+
+    has_student_profile = hasattr(request.user, 'student_profile')
+    has_alumni_profile = hasattr(request.user, 'alumni')
+    
+    if not (has_student_profile or has_alumni_profile):
+        return JsonResponse({"success": False, "error": "Permission denied"})
+
+    deleted_count, _ = SavedJob.objects.filter(job=job, user=request.user).delete()
+
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({
+            "success": True,
+            "action": "unsaved",
+            "saved": False
+        })
+    
+    messages.success(request, _("Vakansiya saqlanganlardan o'chirildi."))
+    return redirect("jobs:job_detail", pk=job.pk)
+
+@login_required
+def my_applications(request):
+    """Mening arizalarim"""
+    applications = (
+        JobApplication.objects.filter(user=request.user)
+        .select_related("job", "job__company")
+        .order_by("-created_at")
+    )
+
+    # Статистики
+    stats = {
+        'total': applications.count(),
+        'applied': applications.filter(status="applied").count(),
+        'reviewed': applications.filter(status="reviewed").count(),
+        'interview': applications.filter(status="interview").count(),
+        'hired': applications.filter(status="hired").count(),
+        'rejected': applications.filter(status="rejected").count(),
+    }
+
+    context = {
+        "applications": applications,
+        "stats": stats,
+    }
+    return render(request, "jobs/my_applications.html", context)
+
+# AJAX viewlar
+@login_required
+def update_application_status(request, pk):
+    """Ariza statusini yangilash (AJAX)"""
+    if (
+        request.method == "POST"
+        and request.headers.get("X-Requested-With") == "XMLHttpRequest"
+    ):
+        application = get_object_or_404(JobApplication, pk=pk)
+        
+        # Проверяем права - только владелец компании может менять статус
+        # Получаем компании пользователя
+        try:
+            employer_profile = EmployerProfile.objects.get(user=request.user)
+            user_companies = Company.objects.filter(owner=request.user, is_active=True)
+        except EmployerProfile.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Permission denied"})
+        
+        if application.job.company not in user_companies and not request.user.is_staff:
+            return JsonResponse({"success": False, "error": "Permission denied"})
+
+        new_status = request.POST.get("status")
+
+        if new_status in dict(JobApplication.STATUS_CHOICES):
+            application.status = new_status
+            application.save()
+
+            return JsonResponse(
+                {
+                    "success": True,
+                    "new_status": application.get_status_display(),
+                    "status_class": new_status,
+                }
+            )
+
+    return JsonResponse({"success": False})
+
+@login_required
+def get_user_cvs(request):
+    """Foydalanuvchi rezyumelarini olish (AJAX)"""
+    from cvbuilder.models import CV
+
+    has_student_profile = hasattr(request.user, 'student_profile')
+    has_alumni_profile = hasattr(request.user, 'alumni')
+    
+    if not (has_student_profile or has_alumni_profile):
+        return JsonResponse({"error": "Permission denied"}, status=403)
+
+    cvs = CV.objects.filter(user=request.user, status="published")
+
+    cv_list = [
+        {
+            "id": cv.id,
+            "title": cv.title,
+            "full_name": cv.full_name,
+        }
+        for cv in cvs
+    ]
+
+    return JsonResponse({"cvs": cv_list})
+
+@login_required
+def application_detail(request, pk):
+    """Ariza batafsil (AJAX uchun)"""
+    application = get_object_or_404(JobApplication, pk=pk)
+
+    # Ruxsatni tekshiramiz
+    is_owner = application.user == request.user
+    is_employer_allowed = False
+    
+    if request.user.is_employer:
+        # Проверяем, принадлежит ли компания пользователю
+        try:
+            employer_profile = EmployerProfile.objects.get(user=request.user)
+            user_companies = Company.objects.filter(owner=request.user, is_active=True)
+            is_employer_allowed = application.job.company in user_companies
+        except EmployerProfile.DoesNotExist:
+            is_employer_allowed = False
+    
+    if not (is_owner or is_employer_allowed or request.user.is_staff):
+        return JsonResponse({"error": "Ruxsat rad etildi"}, status=403)
+
+    context = {
+        "application": application,
+    }
+    return render(request, "jobs/application_detail.html", context)
+
+@login_required
+@require_POST
+def add_application_note(request, pk):
+    """Arizaga izoh qo'shish (AJAX)"""
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+        application = get_object_or_404(JobApplication, pk=pk)
+
+        # Проверяем права - только владелец компании
+        try:
+            employer_profile = EmployerProfile.objects.get(user=request.user)
+            user_companies = Company.objects.filter(owner=employer_profile, is_active=True)
+        except EmployerProfile.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Ruxsat rad etildi"})
+        
+        if application.job.company not in user_companies and not request.user.is_staff:
+            return JsonResponse({"success": False, "error": "Ruxsat rad etildi"})
+
+        note = request.POST.get("note")
+        if note:
+            # Создаем заметку
+            ApplicationNote.objects.create(
+                application=application,
+                author=request.user,
+                note=note
+            )
+            return JsonResponse({"success": True})
+
+        return JsonResponse({"success": False, "error": "Izoh kiritish majburiy"})
+
+    return JsonResponse({"success": False, "error": "Noto'g'ri so'rov"})
+
+@login_required
+def job_settings(request, pk):
+    """Get job settings for modal"""
+    job = get_object_or_404(Job, pk=pk)
+    
+    # Check permission
+    can_edit = False
+    if request.user.is_staff:
+        can_edit = True
+    elif request.user.is_employer:
+        try:
+            employer_profile = EmployerProfile.objects.get(user=request.user)
+            user_companies = Company.objects.filter(owner=request.user, is_active=True)
+            can_edit = job.company in user_companies
+        except EmployerProfile.DoesNotExist:
+            can_edit = False
+    
+    if not can_edit:
+        return JsonResponse({"success": False, "error": "Permission denied"})
+    
+    return JsonResponse({
+        "success": True,
+        "is_urgent": job.is_urgent,
+        "is_active": job.is_active,
+    })
+
+
+@login_required
+@require_POST
+def update_job_settings(request, pk):
+    """Update job settings from modal"""
+    job = get_object_or_404(Job, pk=pk)
+    
+    # Check permission
+    can_edit = False
+    if request.user.is_staff:
+        can_edit = True
+    elif request.user.is_employer:
+        try:
+            employer_profile = EmployerProfile.objects.get(user=request.user)
+            user_companies = Company.objects.filter(owner=request.user, is_active=True)
+            can_edit = job.company in user_companies
+        except EmployerProfile.DoesNotExist:
+            can_edit = False
+            user_companies = Company.objects.filter(owner=request.user, is_active=True)
+            can_edit = job.company in user_companies
+        except EmployerProfile.DoesNotExist:
+            can_edit = False
+    
+    if not can_edit:
+        return JsonResponse({"success": False, "error": "Permission denied"})
+    
+    # Update settings
+    job.is_urgent = request.POST.get('is_urgent') == 'on'
+    job.is_active = request.POST.get('is_active') == 'on'
+    job.save()
+    
+    return JsonResponse({
+        "success": True,
+        "is_urgent": job.is_urgent,
+        "is_active": job.is_active,
+    })
+
+@login_required
+def dashboard_statistics(request):
+    """Dashboard statistikasi"""
+    if not request.user.is_employer:
+        return JsonResponse({"error": "Permission denied"}, status=403)
+    
+    try:
+        employer_profile = EmployerProfile.objects.get(user=request.user)
+    except EmployerProfile.DoesNotExist:
+        return JsonResponse({"error": "Employer profile not found"}, status=403)
+    
+    # Получаем компании работодателя (owner is CustomUser)
+    user_companies = Company.objects.filter(owner=request.user, is_active=True)
+    
+    # Статистика вакансий
+    jobs = Job.objects.filter(company__in=user_companies)
+    total_jobs = jobs.count()
+    active_jobs = jobs.filter(is_active=True).count()
+    draft_jobs = jobs.filter(is_active=False).count()
+    
+    # Статистика заявок
+    applications = JobApplication.objects.filter(job__company__in=user_companies)
+    total_applications = applications.count()
+    
+    # Статистика по статусам заявок
+    application_status_stats = applications.values('status').annotate(count=Count('id'))
+    
+    # Статистика просмотров
+    total_views = jobs.aggregate(total=Sum('views_count'))['total'] or 0
+    
+    # Недавние заявки
+    recent_applications = applications.select_related('user', 'job').order_by('-created_at')[:5]
+    recent_applications_list = [
+        {
+            'id': app.id,
+            'job_title': app.job.title,
+            'applicant_name': app.user.get_full_name() or app.user.username,
+            'status': app.status,
+            'created_at': app.created_at.strftime('%d.%m.%Y %H:%M'),
+        }
+        for app in recent_applications
+    ]
+    
+    return JsonResponse({
+        'success': True,
+        'stats': {
+            'total_jobs': total_jobs,
+            'active_jobs': active_jobs,
+            'draft_jobs': draft_jobs,
+            'total_applications': total_applications,
+            'total_views': total_views,
+            'companies_count': user_companies.count(),
+        },
+        'application_status_stats': list(application_status_stats),
+        'recent_applications': recent_applications_list,
+    })

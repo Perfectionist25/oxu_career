@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block content %}
+<div class="container py-5">
+	<h1 class="display-5 fw-bold text-primary mb-4">{% trans "Post Job" %}</h1>
+	<div class="card shadow-sm mb-4">
+		<div class="card-body">
+			<form method="post">
+				{% csrf_token %}
+				<div class="mb-3">
+					<label for="jobTitle" class="form-label">{% trans "Job Title" %}</label>
+					<input type="text" class="form-control" id="jobTitle" name="job_title">
+				</div>
+				<div class="mb-3">
+					<label for="jobDescription" class="form-label">{% trans "Job Description" %}</label>
+					<textarea class="form-control" id="jobDescription" name="job_description" rows="4"></textarea>
+				</div>
+				<button type="submit" class="btn btn-primary">{% trans "Post Job" %}</button>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}

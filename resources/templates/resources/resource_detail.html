@@ -1,0 +1,553 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'resources:list' %}">{% trans "All Resources" %}</a></li>
+            <li class="breadcrumb-item active">{{ resource.title }}</li>
+        </ol>
+    </nav>
+
+    <!-- Resource Header -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <span class="badge bg-primary">{{ resource.category.name }}</span>
+                        <span class="badge bg-{{ resource.is_published|yesno:'success,warning' }}">
+                            <i class="fas fa-{{ resource.is_published|yesno:'eye,eye-slash' }} me-1"></i>
+                            {{ resource.is_published|yesno:"Published,Unpublished" }}
+                        </span>
+                    </div>
+                    
+                    <h1 class="h2 mb-3 text-dark">{{ resource.title }}</h1>
+                    
+                    <div class="d-flex flex-wrap gap-3 text-muted">
+                        <small>
+                            <i class="fas fa-calendar me-1"></i>
+                            {% trans "Added" %}: {{ resource.created_at|date:"d.m.Y" }}
+                        </small>
+                        {% if resource.updated_at != resource.created_at %}
+                        <small>
+                            <i class="fas fa-sync me-1"></i>
+                            {% trans "Updated" %}: {{ resource.updated_at|date:"d.m.Y" }}
+                        </small>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-4 text-md-end">
+                    <button class="btn btn-outline-primary" onclick="shareResource()">
+                        <i class="fas fa-share-alt me-1"></i>
+                        {% trans "Share" %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Resource Image -->
+            {% if resource.image %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-0">
+                    <img src="{{ resource.image.url }}" alt="{{ resource.title }}" class="img-fluid w-100 rounded-top" style="max-height: 400px; object-fit: cover;">
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Description -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h3 class="h4 text-primary mb-3">
+                        <i class="fas fa-info-circle me-2"></i>
+                        {% trans "About Resource" %}
+                    </h3>
+                    <div class="description-content">
+                        {{ resource.description|linebreaks }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- YouTube Video -->
+            {% if resource.url_youtube %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h3 class="h4 text-primary mb-3">
+                        <i class="fab fa-youtube text-danger me-2"></i>
+                        {% trans "Video Material" %}
+                    </h3>
+                    
+                    {% if youtube_data and youtube_data.is_embeddable %}
+                        <!-- YouTube Player with API -->
+                        <div id="youtubePlayerContainer">
+                            <div id="youtubePlayer"></div>
+                            <div id="youtubeLoading" class="text-center py-4">
+                                <div class="spinner-border text-danger mb-3" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="text-muted">{% trans "Video is loading..." %}</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Debug info -->
+                        <div class="mt-2 text-center">
+                            <small class="text-muted">
+                                Video ID: {{ youtube_data.video_id }} |
+                                <a href="{{ resource.url_youtube }}" target="_blank" class="text-danger">
+                                    {% trans "Open on YouTube" %}
+                                </a>
+                            </small>
+                        </div>
+                        
+                    {% else %}
+                        <!-- Fallback - Direct link to YouTube -->
+                        <div class="text-center py-4">
+                            <div class="mb-4">
+                                <i class="fab fa-youtube fa-3x text-danger mb-3"></i>
+                                <h5 class="text-dark">{{ youtube_data.title|default:resource.title }}</h5>
+                                <p class="text-muted">{% trans "Video is available on YouTube platform" %}</p>
+                            </div>
+
+                            <a href="{{ resource.url_youtube }}" target="_blank" rel="noopener noreferrer" class="btn btn-danger btn-lg">
+                                <i class="fab fa-youtube me-2"></i>
+                                {% trans "Watch on YouTube" %}
+                            </a>
+
+                            <div class="mt-3">
+                                <small class="text-muted">
+                                    {% trans "Video will open in a new window" %}
+                                </small>
+                            </div>
+                            
+                            {% if not youtube_data or not youtube_data.is_embeddable %}
+                            <div class="alert alert-warning mt-3">
+                                <small>
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    {% if youtube_data %}
+                                        {% trans "Video embedding is not possible or restricted." %}
+                                    {% else %}
+                                        {% trans "YouTube video link not checked." %}
+                                    {% endif %}
+                                </small>
+                            </div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Quick Info -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        {% trans "Quick Information" %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-layer-group text-primary me-3"></i>
+                                <span class="fw-semibold">{% trans "Category" %}</span>
+                            </div>
+                            <span class="badge bg-primary">{{ resource.category.name }}</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-calendar-plus text-success me-3"></i>
+                                <span class="fw-semibold">{% trans "Added date" %}</span>
+                            </div>
+                            <span>{{ resource.created_at|date:"d.m.Y" }}</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-sync text-warning me-3"></i>
+                                <span class="fw-semibold">{% trans "Updated date" %}</span>
+                            </div>
+                            <span>{{ resource.updated_at|date:"d.m.Y" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Actions -->
+            {% if request.user.is_authenticated and request.user.is_staff %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-cog me-2"></i>
+                        {% trans "Management" %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'resources:resource_edit' resource.pk %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-edit me-1"></i>
+                            {% trans "Edit" %}
+                        </a>
+                        {% if resource.is_published %}
+                        <a href="{% url 'resources:unpublish_resource' resource.pk %}" class="btn btn-outline-warning btn-sm">
+                            <i class="fas fa-eye-slash me-1"></i>
+                            {% trans "Hide" %}
+                        </a>
+                        {% else %}
+                        <a href="{% url 'resources:publish_resource' resource.pk %}" class="btn btn-outline-success btn-sm">
+                            <i class="fas fa-check me-1"></i>
+                            {% trans "Publish" %}
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'resources:resource_delete' resource.pk %}" class="btn btn-outline-danger btn-sm">
+                            <i class="fas fa-trash me-1"></i>
+                            {% trans "Delete" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Share Card -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-share-alt me-2"></i>
+                        {% trans "Share" %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-2 text-center">
+                        <div class="col-4">
+                            <button class="btn btn-outline-primary w-100" onclick="shareOnSocial('facebook')" title="{% trans 'Share on Facebook' %}">
+                                <i class="fab fa-facebook-f"></i>
+                            </button>
+                        </div>
+                        <div class="col-4">
+                            <button class="btn btn-outline-info w-100" onclick="shareOnSocial('twitter')" title="{% trans 'Share on Twitter' %}">
+                                <i class="fab fa-twitter"></i>
+                            </button>
+                        </div>
+                        <div class="col-4">
+                            <button class="btn btn-outline-primary w-100" onclick="shareOnSocial('telegram')" title="{% trans 'Share on Telegram' %}">
+                                <i class="fab fa-telegram"></i>
+                            </button>
+                        </div>
+                        <div class="col-4">
+                            <button class="btn btn-outline-success w-100" onclick="shareOnSocial('whatsapp')" title="{% trans 'Share on WhatsApp' %}">
+                                <i class="fab fa-whatsapp"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Similar Resources -->
+    {% if similar_resources %}
+    <div class="mt-5 pt-4 border-top">
+        <div class="text-center mb-4">
+            <h3 class="h4 text-primary">{% trans "Similar Resources" %}</h3>
+            <p class="text-muted">{% trans "Other useful materials in this category" %}</p>
+        </div>
+        
+        <div class="row g-4">
+            {% for similar in similar_resources %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card shadow-sm h-100">
+                    {% if similar.image %}
+                    <img src="{{ similar.image.url }}" class="card-img-top" alt="{{ similar.title }}" style="height: 200px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body d-flex flex-column">
+                        <div class="mb-2">
+                            <span class="badge bg-primary">{{ similar.category.name }}</span>
+                        </div>
+                        <h5 class="card-title">
+                            <a href="{% url 'resources:resource_detail' similar.pk %}" class="text-decoration-none text-dark">
+                                {{ similar.title }}
+                            </a>
+                        </h5>
+                        <p class="card-text text-muted flex-grow-1">
+                            {{ similar.description|truncatechars:30 }}
+                        </p>
+                        <div class="mt-auto">
+                            <small class="text-muted">
+                                <i class="fas fa-calendar me-1"></i>
+                                {% trans "Added" %}: {{ similar.created_at|date:"d.m.Y" }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Navigation -->
+    <div class="d-flex justify-content-between align-items-center mt-5 pt-4 border-top">
+        <a href="{% url 'resources:list' %}" class="btn btn-outline-primary">
+            <i class="fas fa-arrow-left me-1"></i>
+            {% trans "Back to All Resources" %}
+        </a>
+
+        {% if request.user.is_authenticated and request.user.is_staff %}
+        <a href="{% url 'resources:unpublished_resources' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-eye-slash me-1"></i>
+            {% trans "Unpublished resources" %}
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- YouTube IFrame API -->
+{% if resource.url_youtube and youtube_data and youtube_data.is_embeddable %}
+<script src="https://www.youtube.com/iframe_api"></script>
+{% endif %}
+
+<style>
+.description-content {
+    line-height: 1.7;
+    font-size: 1.05rem;
+    color: #495057;
+}
+
+.description-content p {
+    margin-bottom: 1rem;
+}
+
+.card {
+    border: none;
+    border-radius: 12px;
+}
+
+.card-header {
+    border-radius: 12px 12px 0 0 !important;
+    border-bottom: 1px solid #e3e6f0;
+}
+
+.list-group-item {
+    padding: 0.75rem 0;
+}
+
+#youtubePlayer {
+    border-radius: 8px;
+    min-height: 400px;
+}
+
+/* Hover effects */
+.card:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s ease-in-out;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    transition: transform 0.2s ease-in-out;
+}
+
+/* Custom badge colors */
+.badge.bg-warning {
+    color: #000;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .card-body {
+        padding: 1.25rem;
+    }
+    
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    #youtubePlayer {
+        min-height: 250px;
+    }
+}
+</style>
+
+<script>
+// Share functionality
+function shareResource() {
+    const title = '{{ resource.title }}';
+    const url = window.location.href;
+    const text = '{{ resource.description|truncatewords:20 }}';
+    
+    if (navigator.share) {
+        navigator.share({
+            title: title + ' - OXU Career',
+            text: text,
+            url: url,
+        })
+        .then(() => console.log('Resource shared successfully'))
+        .catch((error) => console.log('Error sharing', error));
+    } else {
+        copyLink();
+    }
+}
+
+function shareOnSocial(platform) {
+    const url = encodeURIComponent(window.location.href);
+    const title = encodeURIComponent('{{ resource.title }} - OXU Career');
+    
+    let shareUrl = '';
+    
+    switch (platform) {
+        case 'facebook':
+            shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+            break;
+        case 'twitter':
+            shareUrl = `https://twitter.com/intent/tweet?text=${title}&url=${url}`;
+            break;
+        case 'telegram':
+            shareUrl = `https://t.me/share/url?url=${url}&text=${title}`;
+            break;
+        case 'whatsapp':
+            shareUrl = `https://wa.me/?text=${title}%20${url}`;
+            break;
+    }
+    
+    if (shareUrl) {
+        window.open(shareUrl, '_blank', 'width=600,height=400');
+    }
+}
+
+function copyLink() {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
+        // Show Bootstrap toast or alert
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3';
+        alert.style.zIndex = '9999';
+        alert.innerHTML = `
+            <i class="fas fa-check-circle me-2"></i>
+            Link copied to clipboard!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.body.appendChild(alert);
+        
+        setTimeout(() => {
+            alert.remove();
+        }, 3000);
+    });
+}
+
+// YouTube Player functionality
+{% if resource.url_youtube and youtube_data and youtube_data.is_embeddable %}
+var youtubePlayer;
+
+function onYouTubeIframeAPIReady() {
+    initializeYouTubePlayer('{{ youtube_data.video_id }}');
+}
+
+function initializeYouTubePlayer(videoId) {
+    try {
+        youtubePlayer = new YT.Player('youtubePlayer', {
+            height: '400',
+            width: '100%',
+            videoId: videoId,
+            playerVars: {
+                'playsinline': 1,
+                'rel': 0,
+                'modestbranding': 1,
+                'showinfo': 0,
+                'enablejsapi': 1
+            },
+            events: {
+                'onReady': function(event) {
+                    console.log('YouTube Player ready');
+                    document.getElementById('youtubeLoading').style.display = 'none';
+                },
+                'onStateChange': function(event) {
+                    // Handle player state changes if needed
+                },
+                'onError': function(event) {
+                    console.error('YouTube Player error:', event.data);
+                    showYouTubeFallback('Video failed to play. Error code: ' + event.data);
+                }
+            }
+        });
+        
+        // Fallback if player doesn't initialize within 5 seconds
+        setTimeout(function() {
+            const loadingElement = document.getElementById('youtubeLoading');
+            if (loadingElement && loadingElement.style.display !== 'none') {
+                showYouTubeFallback('Video pleer ishga tushmadi.');
+            }
+        }, 5000);
+        
+    } catch (error) {
+        console.error('YouTube Player initialization error:', error);
+        showYouTubeFallback('Video player could not be initialized.');
+    }
+}
+
+function showYouTubeFallback(message) {
+    const container = document.getElementById('youtubePlayerContainer');
+    if (container) {
+        container.innerHTML = `
+            <div class="text-center py-4">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    ${message}
+                    <div class="mt-3">
+                        <a href="{{ resource.url_youtube }}" target="_blank" rel="noopener noreferrer" class="btn btn-danger">
+                            <i class="fab fa-youtube me-1"></i>
+                            Watch on YouTube
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+}
+
+<!-- Fallback if YouTube API doesn't load -->
+setTimeout(function() {
+    {% if youtube_data and youtube_data.is_embeddable %}
+    if (typeof YT === 'undefined' && document.getElementById('youtubeLoading')) {
+        console.log('YouTube API not loaded, using fallback');
+        showYouTubeFallback('YouTube API not loaded.');
+    }
+    {% endif %}
+}, 10000);
+{% endif %}
+
+// Add smooth animations
+document.addEventListener('DOMContentLoaded', function() {
+    // Add loading animation to cards
+    const cards = document.querySelectorAll('.card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'all 0.5s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+});
+</script>
+{% endblock %}

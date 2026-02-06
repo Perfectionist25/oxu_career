@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Update Student Profile" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">{% trans "Update Student Profile" %}</h5>
+        </div>
+
+        <div class="card-body">
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+              <label for="{{ profile_form.faculty.id_for_label }}" class="form-label">
+                {% trans "Faculty" %}
+              </label>
+              {{ profile_form.faculty }}
+              {% if profile_form.faculty.errors %}
+                <div class="text-danger small mt-1">{{ profile_form.faculty.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label for="{{ profile_form.specialty.id_for_label }}" class="form-label">
+                {% trans "Specialty" %}
+              </label>
+              {{ profile_form.specialty }}
+              {% if profile_form.specialty.errors %}
+                <div class="text-danger small mt-1">{{ profile_form.specialty.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="{{ profile_form.education_level.id_for_label }}" class="form-label">
+                    {% trans "Education Level" %}
+                  </label>
+                  {{ profile_form.education_level }}
+                  {% if profile_form.education_level.errors %}
+                    <div class="text-danger small mt-1">{{ profile_form.education_level.errors }}</div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="{{ profile_form.graduation_year.id_for_label }}" class="form-label">
+                    {% trans "Graduation Year" %}
+                  </label>
+                  {{ profile_form.graduation_year }}
+                  {% if profile_form.graduation_year.errors %}
+                    <div class="text-danger small mt-1">{{ profile_form.graduation_year.errors }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="{{ profile_form.desired_position.id_for_label }}" class="form-label">
+                {% trans "Desired Position" %}
+              </label>
+              {{ profile_form.desired_position }}
+              {% if profile_form.desired_position.errors %}
+                <div class="text-danger small mt-1">{{ profile_form.desired_position.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label for="{{ profile_form.bio.id_for_label }}" class="form-label">
+                {% trans "Bio" %}
+              </label>
+              {{ profile_form.bio }}
+              {% if profile_form.bio.errors %}
+                <div class="text-danger small mt-1">{{ profile_form.bio.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="{{ profile_form.linkedin.id_for_label }}" class="form-label">LinkedIn</label>
+                  {{ profile_form.linkedin }}
+                  {% if profile_form.linkedin.errors %}
+                    <div class="text-danger small mt-1">{{ profile_form.linkedin.errors }}</div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="{{ profile_form.github.id_for_label }}" class="form-label">GitHub</label>
+                  {{ profile_form.github }}
+                  {% if profile_form.github.errors %}
+                    <div class="text-danger small mt-1">{{ profile_form.github.errors }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-2"></i>{% trans "Save Changes" %}
+              </button>
+
+              <a href="{% url 'accounts:profile_view' %}" class="btn btn-secondary">
+                {% trans "Cancel" %}
+              </a>
+            </div>
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

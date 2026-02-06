@@ -1,0 +1,873 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'django_ckeditor_5/dist/styles.css' %}">
+<style>
+/* ============ ИСПРАВЛЕННЫЕ СТИЛИ ДЛЯ ИЗОБРАЖЕНИЙ ============ */
+
+/* Контейнер для текущего изображения */
+.current-image {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 2px dashed #dee2e6;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.current-image:hover {
+    border-color: #667eea;
+    background: #f0f2f5;
+}
+
+/* Контейнер для превью текущего изображения */
+.current-image-preview {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+/* Само текущее изображение */
+.current-image img {
+    display: block;
+    max-width: 100%;
+    max-height: 250px; /* Увеличенная максимальная высота */
+    width: auto;
+    height: auto;
+    border-radius: 6px;
+    object-fit: contain; /* Сохраняет пропорции */
+    margin: 0 auto;
+    border: 2px solid #dee2e6;
+    background: white;
+    padding: 5px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Баннер изображение - горизонтальное */
+.current-image.current-banner img {
+    max-width: 100%;
+    max-height: 200px; /* Баннер выше */
+    min-height: 100px;
+    object-fit: cover; /* Заполняет контейнер для баннера */
+}
+
+/* Миниатюра изображение - квадратное */
+.current-image.current-thumbnail img {
+    max-width: 300px;
+    max-height: 200px;
+    min-width: 150px;
+    min-height: 100px;
+    object-fit: cover; /* Заполняет контейнер для миниатюры */
+}
+
+/* Превью нового изображения */
+.image-preview-container {
+    margin-top: 1rem;
+    display: none;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 2px dashed #adb5bd;
+    text-align: center;
+}
+
+.image-preview {
+    display: block;
+    max-width: 100%;
+    max-height: 250px;
+    width: auto;
+    height: auto;
+    border-radius: 6px;
+    margin: 0 auto;
+    object-fit: contain; /* Сохраняет пропорции */
+    border: 2px solid #667eea;
+    background: white;
+    padding: 5px;
+    box-shadow: 0 3px 10px rgba(102, 126, 234, 0.2);
+}
+
+/* Баннер превью - горизонтальное */
+.image-preview-container#banner-preview-container .image-preview {
+    max-height: 200px; /* Баннер выше */
+    min-height: 100px;
+    object-fit: cover; /* Заполняет для баннера */
+}
+
+/* Миниатюра превью - квадратное */
+.image-preview-container#thumbnail-preview-container .image-preview {
+    max-width: 300px;
+    max-height: 200px;
+    min-width: 150px;
+    min-height: 100px;
+    object-fit: cover; /* Заполняет для миниатюры */
+}
+
+/* Информация о файле */
+.file-info {
+    margin-top: 0.75rem;
+    padding: 0.5rem;
+    background: white;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+    font-size: 0.85rem;
+}
+
+.file-info i {
+    color: #667eea;
+    margin-right: 0.5rem;
+}
+
+/* Кнопки действий с изображениями */
+.image-actions {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.image-actions .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    border-radius: 6px;
+    margin: 0;
+    width: auto;
+}
+
+/* Индикатор замены */
+.replace-indicator {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: #ffc107;
+    color: #212529;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-top: 0.5rem;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+/* Заголовки в секции изображений */
+.image-section-title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    color: #495057;
+    font-size: 1rem;
+}
+
+.image-section-title i {
+    color: #667eea;
+    margin-right: 0.5rem;
+    font-size: 1.1rem;
+}
+
+/* Рекомендуемые размеры */
+.recommended-sizes {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: #e7f4ff;
+    color: #0056b3;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    margin-left: 0.5rem;
+    border: 1px solid #b3d7ff;
+}
+
+/* Состояние при наведении на загрузку файла */
+.form-control[type="file"]:hover {
+    border-color: #667eea;
+    background-color: #f8f9fa;
+}
+
+/* Анимация загрузки изображения */
+@keyframes imageLoad {
+    0% { opacity: 0; transform: scale(0.95); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+.image-preview.loaded,
+.current-image img.loaded {
+    animation: imageLoad 0.3s ease-out;
+}
+
+/* Индикатор загрузки */
+.image-loading {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Адаптивность для изображений */
+@media (max-width: 992px) {
+    .current-image img {
+        max-height: 200px;
+    }
+    
+    .image-preview {
+        max-height: 200px;
+    }
+    
+    .current-image.current-banner img,
+    .image-preview-container#banner-preview-container .image-preview {
+        max-height: 150px;
+    }
+    
+    .current-image.current-thumbnail img,
+    .image-preview-container#thumbnail-preview-container .image-preview {
+        max-width: 250px;
+        max-height: 150px;
+    }
+}
+
+@media (max-width: 768px) {
+    .row.mb-3 > [class*="col-"] {
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .current-image img {
+        max-height: 180px;
+    }
+    
+    .image-preview {
+        max-height: 180px;
+    }
+    
+    .current-image.current-banner img,
+    .image-preview-container#banner-preview-container .image-preview {
+        max-height: 120px;
+    }
+    
+    .current-image.current-thumbnail img,
+    .image-preview-container#thumbnail-preview-container .image-preview {
+        max-width: 200px;
+        max-height: 120px;
+    }
+    
+    .image-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .image-actions .btn {
+        width: 100%;
+        max-width: 200px;
+    }
+}
+
+@media (max-width: 576px) {
+    .current-image img {
+        max-height: 150px;
+    }
+    
+    .image-preview {
+        max-height: 150px;
+    }
+    
+    .current-image.current-banner img,
+    .image-preview-container#banner-preview-container .image-preview {
+        max-height: 100px;
+    }
+    
+    .current-image.current-thumbnail img,
+    .image-preview-container#thumbnail-preview-container .image-preview {
+        max-width: 150px;
+        max-height: 100px;
+    }
+}
+
+/* Дополнительные исправления */
+.required-field::after {
+    content: " *";
+    color: #dc3545;
+}
+
+.character-counter {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.form-select.is-invalid {
+    border-color: #dc3545;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e"), url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center, center right 2.25rem;
+    background-size: 16px 12px, calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+{{ form.media }} <!-- Это загрузит CKEditor 5 JS и CSS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============ УЛУЧШЕННАЯ ОБРАБОТКА ИЗОБРАЖЕНИЙ ============
+function setupImagePreview(inputId, previewId) {
+    const input = document.getElementById(inputId);
+    const previewContainer = document.getElementById(previewId + '-container');
+    const previewImg = document.getElementById(previewId);
+    
+    if (input && previewContainer && previewImg) {
+        input.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Проверка типа файла
+                const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+                if (!validTypes.includes(file.type)) {
+                    alert('{% trans "Please select a valid image file (JPEG, PNG, GIF, WebP)" %}');
+                    this.value = '';
+                    previewContainer.style.display = 'none';
+                    return;
+                }
+                
+                // Проверка размера файла (максимум 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('{% trans "Image size should not exceed 5MB" %}');
+                    this.value = '';
+                    previewContainer.style.display = 'none';
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onloadstart = function() {
+                    previewContainer.innerHTML = `
+                        <div class="d-flex flex-column align-items-center justify-content-center py-3">
+                            <div class="image-loading mb-2"></div>
+                            <small class="text-muted">{% trans "Loading image..." %}</small>
+                        </div>
+                    `;
+                    previewContainer.style.display = 'block';
+                };
+                
+                reader.onload = function(e) {
+                    // Создаем новый элемент изображения
+                    const newImg = new Image();
+                    newImg.src = e.target.result;
+                    newImg.className = 'image-preview';
+                    newImg.alt = 'Image preview';
+                    
+                    newImg.onload = function() {
+                        // Добавляем класс для анимации
+                        this.classList.add('loaded');
+                        
+                        // Создаем информацию о файле
+                        const fileInfo = document.createElement('div');
+                        fileInfo.className = 'file-info';
+                        fileInfo.innerHTML = `
+                            <div><i class="fas fa-file-image"></i> <strong>${file.name}</strong></div>
+                            <div class="mt-1">
+                                <i class="fas fa-expand-alt"></i> ${this.naturalWidth}×${this.naturalHeight}px |
+                                <i class="fas fa-weight-hanging ms-2"></i> ${Math.round(file.size / 1024)} KB
+                            </div>
+                        `;
+                        
+                        previewContainer.innerHTML = '';
+                        previewContainer.appendChild(newImg);
+                        previewContainer.appendChild(fileInfo);
+                        previewContainer.style.display = 'block';
+                        
+                        // Проверяем рекомендованные размеры
+                        checkImageDimensions(this, previewId);
+                    };
+                };
+                
+                reader.onerror = function() {
+                    alert('{% trans "Error loading image file" %}');
+                    previewContainer.style.display = 'none';
+                };
+                
+                reader.readAsDataURL(file);
+            } else {
+                previewContainer.style.display = 'none';
+            }
+        });
+    }
+}
+
+// Проверка размеров изображения
+function checkImageDimensions(img, type) {
+    let recommendedWidth, recommendedHeight, imageType;
+    
+    if (type === 'banner-preview') {
+        recommendedWidth = 1200;
+        recommendedHeight = 400;
+        imageType = 'banner';
+    } else if (type === 'thumbnail-preview') {
+        recommendedWidth = 400;
+        recommendedHeight = 300;
+        imageType = 'thumbnail';
+    } else {
+        return;
+    }
+    
+    const widthDiff = Math.abs(img.naturalWidth - recommendedWidth);
+    const heightDiff = Math.abs(img.naturalHeight - recommendedHeight);
+    const widthTolerance = recommendedWidth * 0.1; // 10% допустимое отклонение
+    const heightTolerance = recommendedHeight * 0.1;
+    
+    if (widthDiff > widthTolerance || heightDiff > heightTolerance) {
+        const container = document.getElementById(type + '-container');
+        const existingAlert = container.querySelector('.alert');
+        if (existingAlert) {
+            existingAlert.remove();
+        }
+        
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'alert alert-warning mt-2 small';
+        infoDiv.innerHTML = `
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>{% trans "Recommended size:" %}</strong> ${recommendedWidth}×${recommendedHeight}px<br>
+            <strong>{% trans "Your size:" %}</strong> ${img.naturalWidth}×${img.naturalHeight}px
+        `;
+        
+        container.appendChild(infoDiv);
+    }
+}
+
+// Отображение текущих изображений с проверкой размеров
+function displayCurrentImages() {
+    // Для текущего баннера
+    const currentBanner = document.querySelector('.current-banner img');
+    if (currentBanner) {
+        if (currentBanner.complete) {
+            checkImageDimensions(currentBanner, 'banner');
+        } else {
+            currentBanner.onload = function() {
+                checkImageDimensions(this, 'banner');
+            };
+        }
+    }
+    
+    // Для текущей миниатюры
+    const currentThumbnail = document.querySelector('.current-thumbnail img');
+    if (currentThumbnail) {
+        if (currentThumbnail.complete) {
+            checkImageDimensions(currentThumbnail, 'thumbnail');
+        } else {
+            currentThumbnail.onload = function() {
+                checkImageDimensions(this, 'thumbnail');
+            };
+        }
+    }
+}
+
+// Валидация формы
+function setupFormValidation() {
+    // Счетчик символов для описаний
+    const shortDescInput = document.getElementById('{{ form.short_description.id_for_label }}');
+    const descInput = document.getElementById('{{ form.description.id_for_label }}');
+    const shortDescCounter = document.getElementById('short-desc-counter');
+    const descCounter = document.getElementById('desc-counter');
+    
+    if (shortDescInput && shortDescCounter) {
+        shortDescInput.addEventListener('input', function() {
+            const count = this.value.length;
+            shortDescCounter.textContent = `${count}/300`;
+            shortDescCounter.style.color = count > 300 ? '#dc3545' : '#6c757d';
+        });
+        // Инициализируем начальное значение
+        shortDescCounter.textContent = `${shortDescInput.value.length}/300`;
+    }
+    
+    if (descInput && descCounter) {
+        descInput.addEventListener('input', function() {
+            const count = this.value.length;
+            descCounter.textContent = `${count}/5000`;
+            descCounter.style.color = count > 5000 ? '#dc3545' : '#6c757d';
+        });
+        // Инициализируем начальное значение
+        descCounter.textContent = `${descInput.value.length}/5000`;
+    }
+}
+
+// Инициализация при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+    setupImagePreview('id_banner_image', 'banner-preview');
+    setupImagePreview('id_thumbnail', 'thumbnail-preview');
+    displayCurrentImages();
+    setupFormValidation();
+    
+    // Добавляем классы для валидации Bootstrap
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    }
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 fw-bold text-primary mb-1">{{ title }}</h1>
+                    <p class="text-muted mb-0">{% trans "Edit event information" %}</p>
+                </div>
+                <div>
+                    <a href="{% url 'events:admin_event_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>{% trans "Back to List" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Общие ошибки формы -->
+    {% if form.errors %}
+    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+        <h5 class="alert-heading">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            {% trans "Please correct the following errors" %}
+        </h5>
+        <ul class="mb-0">
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+
+    <!-- Form -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Basic Information -->
+                        <div class="mb-4">
+                            <h5 class="fw-bold mb-3 text-primary">
+                                <i class="fas fa-info-circle me-2"></i>{% trans "Basic Information" %}
+                            </h5>
+
+                            <div class="row mb-3">
+                                <div class="col-md-8">
+                                    <label for="{{ form.title.id_for_label }}" class="form-label fw-bold required-field">
+                                        {{ form.title.label }}
+                                    </label>
+                                    {{ form.title }}
+                                    <div class="form-text">{% trans "Maximum 200 characters" %}</div>
+                                    <div class="text-danger small mt-1" id="{{ form.title.id_for_label }}_error"></div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="{{ form.category.id_for_label }}" class="form-label fw-bold required-field">
+                                        {{ form.category.label }}
+                                    </label>
+                                    {{ form.category }}
+                                    <div class="text-danger small mt-1" id="{{ form.category.id_for_label }}_error"></div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="{{ form.event_type.id_for_label }}" class="form-label fw-bold required-field">
+                                        {{ form.event_type.label }}
+                                    </label>
+                                    {{ form.event_type }}
+                                    <div class="text-danger small mt-1" id="{{ form.event_type.id_for_label }}_error"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="{{ form.location.id_for_label }}" class="form-label fw-bold required-field">
+                                        {{ form.location.label }}
+                                    </label>
+                                    {{ form.location }}
+                                    <div class="form-text">{% trans "Maximum 200 characters" %}</div>
+                                    <div class="text-danger small mt-1" id="{{ form.location.id_for_label }}_error"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-4">
+                            <h5 class="fw-bold mb-3 text-primary">
+                                <i class="fas fa-align-left me-2"></i>{% trans "Description" %}
+                            </h5>
+
+                            <div class="mb-3">
+                                <label for="{{ form.short_description.id_for_label }}" class="form-label fw-bold required-field">
+                                    {{ form.short_description.label }}
+                                </label>
+                                {{ form.short_description }}
+                                <div class="form-text">
+                                    <span id="short-desc-counter" class="character-counter">0/300</span>
+                                </div>
+                                <div class="text-danger small mt-1" id="{{ form.short_description.id_for_label }}_error"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="{{ form.description.id_for_label }}" class="form-label fw-bold required-field">
+                                    {{ form.description.label }}
+                                </label>
+                                {{ form.description }}
+                                <div class="form-text">
+                                    <span id="desc-counter" class="character-counter">0/5000</span>
+                                </div>
+                                <div class="text-danger small mt-1" id="{{ form.description.id_for_label }}_error"></div>
+                            </div>
+                        </div>
+
+                        <!-- Date and Time -->
+                        <div class="mb-4">
+                            <h5 class="fw-bold mb-3 text-primary">
+                                <i class="fas fa-calendar-alt me-2"></i>{% trans "Date and Time" %}
+                            </h5>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="{{ form.start_date.id_for_label }}" class="form-label fw-bold required-field">
+                                        {{ form.start_date.label }}
+                                    </label>
+                                    {{ form.start_date }}
+                                    <div class="text-danger small mt-1" id="{{ form.start_date.id_for_label }}_error"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="{{ form.end_date.id_for_label }}" class="form-label fw-bold">
+                                        {{ form.end_date.label }}
+                                    </label>
+                                    {{ form.end_date }}
+                                    <div class="form-text">{% trans "Optional" %}</div>
+                                    <div class="text-danger small mt-1" id="{{ form.end_date.id_for_label }}_error"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Images -->
+                        <div class="mb-4">
+                            <h5 class="fw-bold mb-3 text-primary">
+                                <i class="fas fa-image me-2"></i>{% trans "Images" %}
+                            </h5>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="{{ form.banner_image.id_for_label }}" class="form-label fw-bold">
+                                        {{ form.banner_image.label }}
+                                    </label>
+                                    {{ form.banner_image }}
+                                    <div class="form-text">{% trans "Recommended size: 1200x400px" %}</div>
+                                    {% if event.banner_image %}
+                                    <div class="current-image current-banner mt-2">
+                                        <strong>{% trans "Current Banner:" %}</strong>
+                                        <img src="{{ event.banner_image.url }}" alt="Current banner" class="img-fluid">
+                                        <div class="image-actions mt-2">
+                                            <a href="{{ event.banner_image.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-external-link-alt me-1"></i>{% trans "View" %}
+                                            </a>
+                                            <small class="text-muted d-block mt-1">{% trans "Upload new image to replace" %}</small>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    <div class="text-danger small mt-1" id="{{ form.banner_image.id_for_label }}_error"></div>
+                                    
+                                    <!-- Предпросмотр нового баннера -->
+                                    <div class="image-preview-container" id="banner-preview-container">
+                                        <img src="" alt="New Banner Preview" class="image-preview" id="banner-preview">
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="{{ form.thumbnail.id_for_label }}" class="form-label fw-bold">
+                                        {{ form.thumbnail.label }}
+                                    </label>
+                                    {{ form.thumbnail }}
+                                    <div class="form-text">{% trans "Recommended size: 400x300px" %}</div>
+                                    {% if event.thumbnail %}
+                                    <div class="current-image current-thumbnail mt-2">
+                                        <strong>{% trans "Current Thumbnail:" %}</strong>
+                                        <img src="{{ event.thumbnail.url }}" alt="Current thumbnail" class="img-fluid">
+                                        <div class="image-actions mt-2">
+                                            <a href="{{ event.thumbnail.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-external-link-alt me-1"></i>{% trans "View" %}
+                                            </a>
+                                            <small class="text-muted d-block mt-1">{% trans "Upload new image to replace" %}</small>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    <div class="text-danger small mt-1" id="{{ form.thumbnail.id_for_label }}_error"></div>
+                                    
+                                    <!-- Предпросмотр новой миниатюры -->
+                                    <div class="image-preview-container" id="thumbnail-preview-container">
+                                        <img src="" alt="New Thumbnail Preview" class="image-preview" id="thumbnail-preview">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tags -->
+                        <div class="mb-4">
+                            <h5 class="fw-bold mb-3 text-primary">
+                                <i class="fas fa-tags me-2"></i>{% trans "Tags" %}
+                            </h5>
+
+                            <div class="mb-3">
+                                <label for="{{ form.tags.id_for_label }}" class="form-label fw-bold">
+                                    {{ form.tags.label }}
+                                </label>
+                                {{ form.tags }}
+                                <div class="form-text">{% trans "Separate tags with commas (e.g., technology, workshop, networking)" %}</div>
+                                <div class="text-danger small mt-1" id="{{ form.tags.id_for_label }}_error"></div>
+                            </div>
+                        </div>
+
+                        <!-- Status (если есть) -->
+                        {% if form.status %}
+                        <div class="mb-4">
+                            <h5 class="fw-bold mb-3 text-primary">
+                                <i class="fas fa-toggle-on me-2"></i>{% trans "Status" %}
+                            </h5>
+                            
+                            <div class="status-field">
+                                <label for="{{ form.status.id_for_label }}" class="form-label fw-bold">
+                                    {{ form.status.label }}
+                                </label>
+                                {{ form.status }}
+                                <div class="form-text mt-2">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    {% trans "Draft: visible only to you | Published: visible to everyone" %}
+                                </div>
+                                <div class="text-danger small mt-1" id="{{ form.status.id_for_label }}_error"></div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-end mt-4 pt-3 border-top">
+                            <a href="{% url 'events:admin_event_list' %}" class="btn btn-outline-secondary me-2">
+                                <i class="fas fa-times me-2"></i>{% trans "Cancel" %}
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>{% trans "Save Changes" %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Event Preview -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0 fw-bold text-primary">
+                        <i class="fas fa-eye me-2"></i>{% trans "Event Preview" %}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>{% trans "Current Status:" %}</strong>
+                        <span class="badge {% if event.status == 'published' %}bg-success{% elif event.status == 'draft' %}bg-warning{% else %}bg-secondary{% endif %} ms-2">
+                            {{ event.get_status_display|default:event.status }}
+                        </span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>{% trans "Created:" %}</strong>
+                        <span>{{ event.created_at|date:"d.m.Y H:i" }}</span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>{% trans "Last Updated:" %}</strong>
+                        <span>{{ event.updated_at|date:"d.m.Y H:i" }}</span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>{% trans "Views:" %}</strong>
+                        <span class="badge bg-info">{{ event.views_count }}</span>
+                    </div>
+                    <div class="mt-3">
+                        <strong>{% trans "Quick Actions:" %}</strong>
+                        <div class="d-grid gap-2 mt-2">
+                            <a href="{% url 'events:event_detail' event.slug %}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-external-link-alt me-1"></i>{% trans "View Live" %}
+                            </a>
+                            {% if event.status == 'published' %}
+                            <a href="{% url 'events:unpublish_event' event.pk %}" class="btn btn-sm btn-outline-warning">
+                                <i class="fas fa-eye-slash me-1"></i>{% trans "Unpublish" %}
+                            </a>
+                            {% else %}
+                            <a href="{% url 'events:publish_event' event.pk %}" class="btn btn-sm btn-outline-success">
+                                <i class="fas fa-eye me-1"></i>{% trans "Publish" %}
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tips -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0 fw-bold text-primary">
+                        <i class="fas fa-lightbulb me-2"></i>{% trans "Editing Tips" %}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled small mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <strong>{% trans "Title & Description:" %}</strong> {% trans "Keep them clear, concise and informative" %}
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <strong>{% trans "Dates:" %}</strong> {% trans "Always double-check start and end times" %}
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <strong>{% trans "Images:" %}</strong> {% trans "High-quality visuals improve engagement significantly" %}
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <strong>{% trans "Tags:" %}</strong> {% trans "Use relevant keywords for better discoverability" %}
+                        </li>
+                        <li class="mb-0">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <strong>{% trans "Auto-Save:" %}</strong> {% trans "Your changes are saved automatically every 30 seconds" %}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

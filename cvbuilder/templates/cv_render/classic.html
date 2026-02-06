@@ -1,0 +1,279 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ cv.title }}</title>
+
+  <!-- Bootstrap 5 (для preview в браузере) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Твой css (можешь оставить/убрать) -->
+  <link rel="stylesheet" href="{% static 'cv_css/classic.css' %}">
+
+  <style>
+    /* Базовая типографика + печать/PDF */
+    body { background: #f6f7fb; }
+    .cv-sheet {
+      max-width: 980px;
+      margin: 24px auto;
+      background: #fff;
+      border: 1px solid rgba(0,0,0,.06);
+      border-radius: 16px;
+      padding: 28px;
+    }
+    .muted { color: rgba(0,0,0,.6); }
+    .section-title {
+      font-size: .95rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: rgba(0,0,0,.55);
+      margin-bottom: .75rem;
+    }
+    .divider { border-top: 1px solid rgba(0,0,0,.08); margin: 1rem 0; }
+
+    /* Чтобы summary/textarea красиво переносились */
+    .preserve { white-space: pre-line; }
+
+    /* Print/PDF friendly */
+    @media print {
+      body { background: #fff !important; }
+      .cv-sheet { border: none; border-radius: 0; margin: 0; padding: 0; max-width: 100%; }
+      a { text-decoration: none !important; color: inherit !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="cv-sheet shadow-sm">
+
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3">
+      <div>
+        <h1 class="h3 mb-1">{{ cv.full_name|default:"—" }}</h1>
+
+        {% if cv.desired_position %}
+          <div class="muted fw-medium">{{ cv.desired_position }}</div>
+        {% endif %}
+
+        {% if cv.summary %}
+          <div class="mt-3 preserve small text-body-secondary">
+            {{ cv.summary }}
+          </div>
+        {% endif %}
+      </div>
+
+      {% if cv.photo %}
+        <div class="text-md-end">
+          <img
+            src="{{ cv.photo.url }}"
+            alt="Photo"
+            class="rounded-3 border"
+            style="width: 108px; height: 108px; object-fit: cover;"
+          />
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Main layout -->
+    <div class="row g-4">
+      <!-- Left column: Contacts / Meta -->
+      <aside class="col-12 col-md-4">
+        <div class="mb-4">
+          <div class="section-title">Contacts</div>
+
+          <div class="d-flex flex-wrap gap-2">
+            {% if cv.email %}
+              <span class="badge text-bg-light border">
+                ✉️ {{ cv.email }}
+              </span>
+            {% endif %}
+
+            {% if cv.phone %}
+              <span class="badge text-bg-light border">
+                📞 {{ cv.phone }}
+              </span>
+            {% endif %}
+
+            {% if cv.phone_secondary %}
+              <span class="badge text-bg-light border">
+                📞 {{ cv.phone_secondary }}
+              </span>
+            {% endif %}
+
+            {% if cv.region or cv.city %}
+              <span class="badge text-bg-light border">
+                📍
+                {% if cv.region %}{{ cv.region }}{% endif %}
+                {% if cv.city %}{% if cv.region %}, {% endif %}{{ cv.city }}{% endif %}
+              </span>
+            {% endif %}
+
+            {% if cv.address %}
+              <span class="badge text-bg-light border">
+                🏠 {{ cv.address }}
+              </span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <div class="section-title">Personal</div>
+          <ul class="list-unstyled small mb-0">
+            {% if cv.birth_date %}<li><span class="muted">Birth:</span> {{ cv.birth_date }}</li>{% endif %}
+            {% if cv.gender %}<li><span class="muted">Gender:</span> {{ cv.get_gender_display|default:cv.gender }}</li>{% endif %}
+            {% if cv.marital_status %}<li><span class="muted">Status:</span> {{ cv.get_marital_status_display|default:cv.marital_status }}</li>{% endif %}
+            {% if cv.nationality %}<li><span class="muted">Nationality:</span> {{ cv.nationality }}</li>{% endif %}
+          </ul>
+        </div>
+
+        <div>
+          <div class="section-title">Links</div>
+          <ul class="list-unstyled small mb-0">
+            {% if cv.linkedin %}
+              <li><span class="muted">LinkedIn:</span> <a href="{{ cv.linkedin }}" target="_blank">{{ cv.linkedin }}</a></li>
+            {% endif %}
+            {% if cv.github %}
+              <li><span class="muted">GitHub:</span> <a href="{{ cv.github }}" target="_blank">{{ cv.github }}</a></li>
+            {% endif %}
+            {% if cv.portfolio %}
+              <li><span class="muted">Portfolio:</span> <a href="{{ cv.portfolio }}" target="_blank">{{ cv.portfolio }}</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </aside>
+
+      <!-- Right column: Content -->
+      <section class="col-12 col-md-8">
+        {% if cv.employment_type or cv.salary_expectation %}
+          <div class="mb-4">
+            <div class="section-title">Preferences</div>
+            <div class="row g-2 small">
+              {% if cv.employment_type %}
+                <div class="col-12 col-sm-6">
+                  <div class="p-3 rounded-3 border bg-light">
+                    <div class="muted">Employment</div>
+                    <div class="fw-semibold">{{ cv.get_employment_type_display|default:cv.employment_type }}</div>
+                  </div>
+                </div>
+              {% endif %}
+              {% if cv.salary_expectation %}
+                <div class="col-12 col-sm-6">
+                  <div class="p-3 rounded-3 border bg-light">
+                    <div class="muted">Salary</div>
+                    <div class="fw-semibold">
+                      {{ cv.salary_expectation }} {{ cv.salary_currency|default:"UZS" }}
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        {% endif %}
+
+        {% if cv.experiences.all %}
+          {% if cv.experiences.count %}
+            <div class="mb-4">
+              <div class="section-title">Experience</div>
+              <div class="vstack gap-3">
+                {% for exp in cv.experiences.all %}
+                  <div class="p-3 rounded-3 border">
+                    <div class="d-flex justify-content-between flex-wrap gap-2">
+                      <div class="fw-semibold">{{ exp.position }}</div>
+                      <div class="small muted">
+                        {{ exp.start_date }} — {% if exp.is_current %}Present{% else %}{{ exp.end_date }}{% endif %}
+                      </div>
+                    </div>
+                    <div class="muted small">{{ exp.company }}{% if exp.company_location %} • {{ exp.company_location }}{% endif %}</div>
+                    {% if exp.description %}
+                      <div class="mt-2 preserve small">{{ exp.description }}</div>
+                    {% endif %}
+                    {% if exp.technologies %}
+                      <div class="mt-2 small"><span class="muted">Tech:</span> {{ exp.technologies }}</div>
+                    {% endif %}
+                    {% if exp.achievements %}
+                      <div class="mt-2 small"><span class="muted">Achievements:</span> {{ exp.achievements }}</div>
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+        {% endif %}
+
+        {% if cv.educations.all %}
+          {% if cv.educations.count %}
+            <div class="mb-4">
+              <div class="section-title">Education</div>
+              <div class="vstack gap-3">
+                {% for edu in cv.educations.all %}
+                  <div class="p-3 rounded-3 border">
+                    <div class="d-flex justify-content-between flex-wrap gap-2">
+                      <div class="fw-semibold">{{ edu.institution }}</div>
+                      <div class="small muted">
+                        {{ edu.start_year }} — {{ edu.graduation_year }}
+                      </div>
+                    </div>
+                    <div class="muted small">
+                      {{ edu.degree }}{% if edu.field_of_study %} • {{ edu.field_of_study }}{% endif %}
+                      {% if edu.faculty %} • {{ edu.faculty }}{% endif %}
+                    </div>
+                    {% if edu.description %}
+                      <div class="mt-2 preserve small">{{ edu.description }}</div>
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+        {% endif %}
+
+        {% if cv.skills.all %}
+          {% if cv.skills.count %}
+            <div class="mb-4">
+              <div class="section-title">Skills</div>
+              <div class="d-flex flex-wrap gap-2">
+                {% for s in cv.skills.all %}
+                  <span class="badge text-bg-light border">
+                    {{ s.name }}{% if s.level %} • {{ s.level }}{% endif %}
+                  </span>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+        {% endif %}
+
+        {% if cv.languages.all %}
+          {% if cv.languages.count %}
+            <div class="mb-4">
+              <div class="section-title">Languages</div>
+              <div class="d-flex flex-wrap gap-2">
+                {% for l in cv.languages.all %}
+                  <span class="badge text-bg-light border">
+                    {{ l.name }}{% if l.level %} • {{ l.level }}{% endif %}
+                    {% if l.is_native %} • Native{% endif %}
+                  </span>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+        {% endif %}
+
+      </section>
+    </div>
+
+    <!-- Footer -->
+    <div class="divider"></div>
+    <div class="small muted d-flex justify-content-between flex-wrap gap-2">
+      <span>{{ cv.title }}</span>
+      <span>
+        {% if cv.template %}Template: {{ cv.template.name }}{% endif %}
+      </span>
+    </div>
+
+  </div>
+</body>
+</html>

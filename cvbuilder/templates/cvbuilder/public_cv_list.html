@@ -1,0 +1,843 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+/* ===== CUSTOM STYLES ===== */
+:root {
+    --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    --primary-hover-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    --card-gradient: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+}
+
+/* Hero section with gradient */
+.search-hero {
+    background: var(--primary-gradient);
+    position: relative;
+    overflow: hidden;
+    border-radius: 1rem;
+}
+
+.search-hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.hero-badge {
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+/* CV Card styles */
+.cv-card {
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 1rem;
+    overflow: hidden;
+    height: 100%;
+    background: var(--card-gradient);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    position: relative;
+}
+
+.cv-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(99, 102, 241, 0.15);
+}
+
+.cv-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--primary-gradient);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.cv-card:hover::before {
+    opacity: 1;
+}
+
+/* Avatar with gradient */
+.cv-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 16px;
+    background: var(--primary-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 1.75rem;
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+    flex-shrink: 0;
+}
+
+/* Skill tags */
+.skill-tag {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    color: #0369a1;
+    border: 1px solid rgba(14, 165, 233, 0.2);
+    border-radius: 12px;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.skill-tag:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(14, 165, 233, 0.15);
+}
+
+.skill-level {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.skill-level.beginner { background: #f59e0b; }
+.skill-level.intermediate { background: #10b981; }
+.skill-level.advanced { background: #3b82f6; }
+.skill-level.expert { background: #8b5cf6; }
+
+.skill-more {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    color: #6b7280;
+    border-color: #e5e7eb;
+}
+
+/* Contact icons */
+.contact-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6366f1;
+    flex-shrink: 0;
+}
+
+/* Summary text truncation */
+.summary-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.6;
+}
+
+/* Custom button */
+.btn-gradient {
+    background: var(--primary-gradient);
+    border: none;
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+    background: var(--primary-hover-gradient);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+    color: white;
+}
+
+/* Empty state */
+.empty-state-icon {
+    width: 90px;
+    height: 90px;
+    background: var(--primary-gradient);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2.25rem;
+    box-shadow: 0 12px 30px rgba(99, 102, 241, 0.3);
+    margin: 0 auto;
+}
+
+/* Form controls */
+.form-control, .form-select {
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.input-group-text {
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-right: none;
+    border-radius: 12px 0 0 12px;
+}
+
+/* Pagination */
+.page-link {
+    border: 2px solid #e5e7eb;
+    color: #6b7280;
+    font-weight: 500;
+    border-radius: 10px;
+    margin: 0 0.25rem;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+}
+
+.page-link:hover {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+    color: #4b5563;
+}
+
+.page-item.active .page-link {
+    background: var(--primary-gradient);
+    border-color: #6366f1;
+    color: white;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .cv-avatar {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+    
+    .search-hero .display-4 {
+        font-size: 2rem;
+    }
+    
+    .filter-card {
+        margin-top: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .cv-avatar {
+        width: 56px;
+        height: 56px;
+        font-size: 1.375rem;
+    }
+    
+    .contact-item {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+    
+    .contact-icon {
+        margin-bottom: 0.5rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Hero Section -->
+    <div class="search-hero text-white p-4 p-lg-5 mb-5">
+        <div class="row align-items-center">
+            <div class="col-lg-8 mb-4 mb-lg-0">
+                <h1 class="display-4 fw-bold mb-3 text-dark">{% trans "Discover Top Talent" %}</h1>
+                <p class="lead mb-4 text-dark">
+                    {% trans "Browse through professionally crafted resumes and find the perfect candidates for your team" %}
+                </p>
+                <span class="hero-badge d-inline-flex align-items-center px-3 py-2 rounded-pill text-dark">
+                    <i class="fas fa-shield-alt me-2"></i>
+                    {% trans "Verified resumes only" %}
+                </span>
+            </div>
+            <div class="col-lg-4">
+                <!-- Filter card will be displayed here on large screens -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row">
+        <!-- Filters Sidebar (Large screens) -->
+        <div class="col-lg-3 d-none d-lg-block">
+            <div class="card border-0 shadow-lg filter-card">
+                <div class="card-body p-4">
+                    <h5 class="card-title fw-bold mb-4">
+                        <i class="fas fa-filter text-primary me-2"></i>
+                        {% trans "Filters" %}
+                    </h5>
+                    
+                    <form method="get" id="searchForm">
+                        <!-- Search -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">{% trans "Search" %}</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white">
+                                    <i class="fas fa-search text-muted"></i>
+                                </span>
+                                <input type="text" 
+                                       name="q" 
+                                       value="{{ q|default:'' }}" 
+                                       class="form-control" 
+                                       placeholder="{% trans 'Name, skills, title...' %}">
+                            </div>
+                        </div>
+                        
+                        <!-- Template -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">{% trans "Template" %}</label>
+                            <select name="template" class="form-select">
+                                <option value="">{% trans "All Templates" %}</option>
+                                {% for template in templates %}
+                                <option value="{{ template.id }}" 
+                                        {% if template.id|stringformat:"s" == selected_template %}selected{% endif %}>
+                                    {{ template.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <!-- Location -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">{% trans "Location" %}</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white">
+                                    <i class="fas fa-map-marker-alt text-muted"></i>
+                                </span>
+                                <input type="text" 
+                                       name="location" 
+                                       value="{{ location|default:'' }}" 
+                                       class="form-control" 
+                                       placeholder="{% trans 'City, region...' %}">
+                            </div>
+                        </div>
+                        
+                        <!-- Sort -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">{% trans "Sort by" %}</label>
+                            <select name="sort" class="form-select">
+                                <option value="newest" {% if sort == 'newest' %}selected{% endif %}>
+                                    {% trans "Newest First" %}
+                                </option>
+                                <option value="oldest" {% if sort == 'oldest' %}selected{% endif %}>
+                                    {% trans "Oldest First" %}
+                                </option>
+                                <option value="name_asc" {% if sort == 'name_asc' %}selected{% endif %}>
+                                    {% trans "Name (A → Z)" %}
+                                </option>
+                                <option value="name_desc" {% if sort == 'name_desc' %}selected{% endif %}>
+                                    {% trans "Name (Z → A)" %}
+                                </option>
+                            </select>
+                        </div>
+                        
+                        <!-- Actions -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-gradient btn-lg">
+                                <i class="fas fa-search me-2"></i>
+                                {% trans "Apply Filters" %}
+                            </button>
+                            {% if q or selected_template or location %}
+                            <a href="{% url 'cvbuilder:public_cv_list' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i>
+                                {% trans "Clear All" %}
+                            </a>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- CV Grid -->
+        <div class="col-lg-9">
+            <!-- Mobile Filters (Collapsible) -->
+            <div class="d-lg-none mb-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white border-0">
+                        <button class="btn btn-link text-decoration-none w-100 text-start d-flex justify-content-between align-items-center" 
+                                type="button" 
+                                data-bs-toggle="collapse" 
+                                data-bs-target="#mobileFilters"
+                                aria-expanded="false">
+                            <span class="fw-bold">
+                                <i class="fas fa-filter text-primary me-2"></i>
+                                {% trans "Filters & Search" %}
+                            </span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div class="collapse" id="mobileFilters">
+                        <div class="card-body">
+                            <form method="get" class="row g-3">
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">{% trans "Search" %}</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white">
+                                            <i class="fas fa-search text-muted"></i>
+                                        </span>
+                                        <input type="text" 
+                                               name="q" 
+                                               value="{{ q|default:'' }}" 
+                                               class="form-control" 
+                                               placeholder="{% trans 'Search resumes...' %}">
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">{% trans "Template" %}</label>
+                                    <select name="template" class="form-select">
+                                        <option value="">{% trans "All Templates" %}</option>
+                                        {% for template in templates %}
+                                        <option value="{{ template.id }}" 
+                                                {% if template.id|stringformat:"s" == selected_template %}selected{% endif %}>
+                                            {{ template.name }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">{% trans "Location" %}</label>
+                                    <input type="text" 
+                                           name="location" 
+                                           value="{{ location|default:'' }}" 
+                                           class="form-control" 
+                                           placeholder="{% trans 'Location...' %}">
+                                </div>
+                                
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">{% trans "Sort by" %}</label>
+                                    <select name="sort" class="form-select">
+                                        <option value="newest" {% if sort == 'newest' %}selected{% endif %}>
+                                            {% trans "Newest First" %}
+                                        </option>
+                                        <option value="oldest" {% if sort == 'oldest' %}selected{% endif %}>
+                                            {% trans "Oldest First" %}
+                                        </option>
+                                        <option value="name_asc" {% if sort == 'name_asc' %}selected{% endif %}>
+                                            {% trans "Name (A → Z)" %}
+                                        </option>
+                                        <option value="name_desc" {% if sort == 'name_desc' %}selected{% endif %}>
+                                            {% trans "Name (Z → A)" %}
+                                        </option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-12">
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-gradient">
+                                            <i class="fas fa-search me-2"></i>
+                                            {% trans "Apply Filters" %}
+                                        </button>
+                                        {% if q or selected_template or location %}
+                                        <a href="{% url 'cvbuilder:public_cv_list' %}" class="btn btn-outline-secondary">
+                                            <i class="fas fa-times me-2"></i>
+                                            {% trans "Clear Filters" %}
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="h4 fw-bold mb-0">
+                        <i class="fas fa-file-alt text-primary me-2"></i>
+                        {% trans "Public Resumes" %}
+                    </h2>
+                    {% if cvs %}
+                    <p class="text-muted mb-0 mt-1">
+                        {% blocktrans with count=page_obj.paginator.count %}
+                        {{ count }} resumes found
+                        {% endblocktrans %}
+                    </p>
+                    {% endif %}
+                </div>
+                <div class="d-none d-md-block">
+                    {% if user.is_student %}
+                    <a href="{% url 'cvbuilder:cv_list' %}" class="btn btn-success">
+                        <i class="fas fa-plus me-2"></i>
+                        {% trans "Create CV" %}
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- CV Cards Grid -->
+            {% if cvs %}
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                {% for cv in cvs %}
+                <div class="col">
+                    <div class="card cv-card h-100 animate-fade-in-up" 
+                         style="animation-delay: {{ forloop.counter0|divisibleby:2|yesno:'0.1s,0.2s' }}">
+                        <!-- Card Header -->
+                        <div class="card-header bg-transparent border-bottom-0 pb-0">
+                            <div class="d-flex align-items-center">
+                                <div class="cv-avatar me-3">
+                                    {{ cv.full_name|first|upper }}
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h5 class="card-title fw-bold mb-1">{{ cv.full_name }}</h5>
+                                    <p class="card-text text-muted small mb-0">
+                                        {{ cv.title|default:"No title specified" }}
+                                    </p>
+                                </div>
+                                {% if cv.template %}
+                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">
+                                    {{ cv.template.name }}
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Card Body -->
+                        <div class="card-body">
+                            <!-- Contact Info -->
+                            <div class="mb-4">
+                                <div class="d-flex align-items-center contact-item mb-3">
+                                    <div class="contact-icon me-3">
+                                        <i class="fas fa-envelope"></i>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted d-block">{% trans "Email" %}</small>
+                                        <strong>{{ cv.email }}</strong>
+                                    </div>
+                                </div>
+                                
+                                {% if cv.phone %}
+                                <div class="d-flex align-items-center contact-item mb-3">
+                                    <div class="contact-icon me-3">
+                                        <i class="fas fa-phone"></i>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted d-block">{% trans "Phone" %}</small>
+                                        <strong>{{ cv.phone }}</strong>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                {% if cv.location %}
+                                <div class="d-flex align-items-center contact-item mb-3">
+                                    <div class="contact-icon me-3">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted d-block">{% trans "Location" %}</small>
+                                        <strong>{{ cv.location }}</strong>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Summary -->
+                            {% if cv.summary %}
+                            <div class="mb-4">
+                                <h6 class="text-uppercase text-muted small fw-bold mb-2">
+                                    <i class="fas fa-user-circle me-1"></i>
+                                    {% trans "Summary" %}
+                                </h6>
+                                <p class="summary-text mb-0">
+                                    {{ cv.summary|truncatechars:150 }}
+                                </p>
+                            </div>
+                            {% endif %}
+                            
+                            <!-- Skills -->
+                            {% with skills=cv.skills.all %}
+                            {% if skills %}
+                            <div>
+                                <h6 class="text-uppercase text-muted small fw-bold mb-2">
+                                    <i class="fas fa-code me-1"></i>
+                                    {% trans "Skills" %}
+                                </h6>
+                                <div class="d-flex flex-wrap gap-2">
+                                    {% for skill in skills|slice:":4" %}
+                                    <span class="skill-tag" 
+                                          data-bs-toggle="tooltip" 
+                                          title="{{ skill.name }} - {{ skill.get_level_display|capfirst }}">
+                                        {{ skill.name }}
+                                        <span class="skill-level {{ skill.level }}"></span>
+                                    </span>
+                                    {% endfor %}
+                                    
+                                    {% if skills|length > 4 %}
+                                    <span class="skill-tag skill-more" 
+                                          data-bs-toggle="tooltip" 
+                                          title="{% trans 'Total skills' %}: {{ skills|length }}">
+                                        +{{ skills|length|add:"-4" }}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% endwith %}
+                        </div>
+                        
+                        <!-- Card Footer -->
+                        <div class="card-footer bg-transparent border-top-0 pt-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="text-muted small">
+                                    <i class="fas fa-calendar-alt me-1"></i>
+                                    {{ cv.updated_at|date:"M d, Y" }}
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <a href="{% url 'cvbuilder:cv_detail' cv.id %}" 
+                                       class="btn btn-sm btn-outline-primary"
+                                       data-bs-toggle="tooltip"
+                                       title="{% trans 'View details' %}">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    
+                                    {% if user_type in "employer,admin,main_admin" %}
+                                    <a href="{% url 'cvbuilder:cv_export_pdf' cv.id %}" 
+                                       class="btn btn-sm btn-outline-danger"
+                                       target="_blank"
+                                       data-bs-toggle="tooltip"
+                                       title="{% trans 'Download PDF' %}">
+                                        <i class="fas fa-file-pdf"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+            <nav class="mt-5">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <!-- Results Info -->
+                            <div class="col-md-4 mb-3 mb-md-0">
+                                <p class="mb-0 text-muted">
+                                    <i class="fas fa-file-alt me-2"></i>
+                                    {% blocktrans with start=page_obj.start_index end=page_obj.end_index total=page_obj.paginator.count %}
+                                    Showing {{ start }}–{{ end }} of {{ total }} resumes
+                                    {% endblocktrans %}
+                                </p>
+                            </div>
+                            
+                            <!-- Page Navigation -->
+                            <div class="col-md-4 mb-3 mb-md-0">
+                                <ul class="pagination justify-content-center mb-0">
+                                    {% if page_obj.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" 
+                                           href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}{% if selected_template %}&template={{ selected_template }}{% endif %}{% if location %}&location={{ location }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}"
+                                           aria-label="Previous">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                    
+                                    {% for num in page_obj.paginator.page_range %}
+                                        {% if num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+                                        <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                                            <a class="page-link" 
+                                               href="?page={{ num }}{% if q %}&q={{ q }}{% endif %}{% if selected_template %}&template={{ selected_template }}{% endif %}{% if location %}&location={{ location }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">
+                                                {{ num }}
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                    
+                                    {% if page_obj.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" 
+                                           href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}{% if selected_template %}&template={{ selected_template }}{% endif %}{% if location %}&location={{ location }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}"
+                                           aria-label="Next">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                            
+                            <!-- Page Info -->
+                            <div class="col-md-4 text-md-end">
+                                <p class="mb-0 text-muted">
+                                    {% blocktrans with page=page_obj.number total_pages=page_obj.paginator.num_pages %}
+                                    Page {{ page }} of {{ total_pages }}
+                                    {% endblocktrans %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            {% endif %}
+            
+            {% else %}
+            <!-- Empty State -->
+            <div class="text-center py-5">
+                <div class="empty-state-icon mb-4">
+                    <i class="fas fa-file-search"></i>
+                </div>
+                <h3 class="h4 fw-bold mb-3">{% trans "No resumes found" %}</h3>
+                <p class="text-muted mb-4 mx-auto" style="max-width: 500px;">
+                    {% trans "We couldn't find any resumes matching your search criteria. Try adjusting your filters or search terms." %}
+                </p>
+                <div class="d-flex justify-content-center gap-3">
+                    {% if q or selected_template or location %}
+                    <a href="{% url 'cvbuilder:public_cv_list' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-redo me-2"></i>
+                        {% trans "Clear Filters" %}
+                    </a>
+                    {% endif %}
+                    {% if user.is_student %}
+                    <a href="{% url 'cvbuilder:cv_list' %}" class="btn btn-gradient">
+                        <i class="fas fa-plus me-2"></i>
+                        {% trans "Create Resume" %}
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tooltips
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    
+    // Form auto-submit for desktop filters
+    const desktopFilters = document.querySelectorAll('.filter-card select, .filter-card input');
+    desktopFilters.forEach(element => {
+        element.addEventListener('change', function() {
+            document.getElementById('searchForm').submit();
+        });
+    });
+    
+    // Loading state for form submission
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+        form.addEventListener('submit', function() {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> {% trans "Searching..." %}';
+                submitBtn.disabled = true;
+                
+                // Restore button after 3 seconds (in case of error)
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }, 3000);
+            }
+        });
+    });
+    
+    // Card hover effects
+    const cvCards = document.querySelectorAll('.cv-card');
+    cvCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.zIndex = '10';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.zIndex = '';
+        });
+    });
+    
+    // Mobile filters collapse
+    const mobileFiltersToggle = document.querySelector('[data-bs-target="#mobileFilters"]');
+    if (mobileFiltersToggle) {
+        mobileFiltersToggle.addEventListener('click', function() {
+            const icon = this.querySelector('.fa-chevron-down, .fa-chevron-up');
+            if (icon) {
+                icon.classList.toggle('fa-chevron-down');
+                icon.classList.toggle('fa-chevron-up');
+            }
+        });
+    }
+    
+    // Highlight active filters
+    const activeFilters = [];
+    if ("{{ q }}") activeFilters.push('search');
+    if ("{{ selected_template }}") activeFilters.push('template');
+    if ("{{ location }}") activeFilters.push('location');
+    if ("{{ sort }}" && "{{ sort }}" !== 'newest') activeFilters.push('sort');
+    
+    if (activeFilters.length > 0) {
+        // Add badge to filter button on mobile
+        const filterBtn = document.querySelector('[data-bs-target="#mobileFilters"]');
+        if (filterBtn) {
+            const badge = document.createElement('span');
+            badge.className = 'badge bg-primary rounded-pill ms-2';
+            badge.textContent = activeFilters.length;
+            filterBtn.querySelector('span').appendChild(badge);
+        }
+    }
+    
+    // Smooth scroll to top on filter change
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    };
+    
+    // Auto-scroll for mobile filters when opened
+    const mobileFilters = document.getElementById('mobileFilters');
+    if (mobileFilters) {
+        mobileFilters.addEventListener('show.bs.collapse', () => {
+            setTimeout(() => {
+                mobileFilters.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 300);
+        });
+    }
+});
+</script>
+{% endblock %}

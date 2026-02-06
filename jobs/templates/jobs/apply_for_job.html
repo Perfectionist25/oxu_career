@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="container py-5">
+  <h1 class="display-5 fw-bold text-primary mb-4">{% trans "Apply for Job" %}</h1>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <form method="post" novalidate>
+        {% csrf_token %}
+
+        {# Общие ошибки формы #}
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">
+            {{ form.non_field_errors }}
+          </div>
+        {% endif %}
+
+        <div class="mb-3">
+          <label class="form-label" for="{{ form.cv.id_for_label }}">{{ form.cv.label }}</label>
+          {{ form.cv }}
+          {% if form.cv.help_text %}<div class="form-text">{{ form.cv.help_text }}</div>{% endif %}
+          {% if form.cv.errors %}<div class="text-danger small">{{ form.cv.errors }}</div>{% endif %}
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="{{ form.cover_letter.id_for_label }}">{{ form.cover_letter.label }}</label>
+          {{ form.cover_letter }}
+          {% if form.cover_letter.help_text %}<div class="form-text">{{ form.cover_letter.help_text }}</div>{% endif %}
+          {% if form.cover_letter.errors %}<div class="text-danger small">{{ form.cover_letter.errors }}</div>{% endif %}
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label" for="{{ form.expected_salary.id_for_label }}">{{ form.expected_salary.label }}</label>
+            {{ form.expected_salary }}
+            {% if form.expected_salary.errors %}<div class="text-danger small">{{ form.expected_salary.errors }}</div>{% endif %}
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label" for="{{ form.available_from.id_for_label }}">{{ form.available_from.label }}</label>
+            {{ form.available_from }}
+            {% if form.available_from.errors %}<div class="text-danger small">{{ form.available_from.errors }}</div>{% endif %}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="{{ form.notice_period.id_for_label }}">{{ form.notice_period.label }}</label>
+          {{ form.notice_period }}
+          {% if form.notice_period.help_text %}<div class="form-text">{{ form.notice_period.help_text }}</div>{% endif %}
+          {% if form.notice_period.errors %}<div class="text-danger small">{{ form.notice_period.errors }}</div>{% endif %}
+        </div>
+
+        <div class="form-check mb-3">
+          {{ form.agree_to_terms }}
+          <label class="form-check-label" for="{{ form.agree_to_terms.id_for_label }}">
+            {{ form.agree_to_terms.label }}
+          </label>
+          {% if form.agree_to_terms.errors %}<div class="text-danger small">{{ form.agree_to_terms.errors }}</div>{% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+          {% trans "Submit Application" %}
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

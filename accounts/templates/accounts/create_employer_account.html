@@ -1,0 +1,1063 @@
+<!-- templates/accounts/create_employer_account.html -->
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+
+{% block title %}{% trans "Create New Employer" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-primary text-white py-3">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-building me-3 fa-lg"></i>
+                        <h4 class="mb-0 fw-bold">{% trans "Create New Employer Account" %}</h4>
+                    </div>
+                    <p class="mb-0 mt-2 opacity-75">{% trans "Create a new employer account with associated company" %}</p>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Общие ошибки формы -->
+                    {% if form.non_field_errors or user_form.non_field_errors or company_form.non_field_errors or profile_form.non_field_errors %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>{% trans "Please correct the errors below:" %}</strong>
+                        <ul class="mb-0 mt-2">
+                            {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                            {% for error in user_form.non_field_errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                            {% for error in company_form.non_field_errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                            {% for error in profile_form.non_field_errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endif %}
+
+                    <form method="post" enctype="multipart/form-data" novalidate id="employerForm">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <!-- User Basic Information -->
+                            <div class="col-lg-6">
+                                <h5 class="fw-bold text-primary mb-4 border-bottom pb-2">
+                                    <i class="fas fa-user me-2"></i>{% trans "User Account Information" %}
+                                </h5>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ user_form.username.id_for_label }}" class="form-label fw-semibold">
+                                        {% trans "Username" %} <span class="text-danger">*</span>
+                                    </label>
+                                    {{ user_form.username|add_class:"form-control" }}
+                                    {% if user_form.username.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in user_form.username.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only." %}</div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="{{ user_form.first_name.id_for_label }}" class="form-label fw-semibold">
+                                                {% trans "First Name" %} <span class="text-danger">*</span>
+                                            </label>
+                                            {{ user_form.first_name|add_class:"form-control" }}
+                                            {% if user_form.first_name.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in user_form.first_name.errors %}
+                                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="{{ user_form.last_name.id_for_label }}" class="form-label fw-semibold">
+                                                {% trans "Last Name" %} <span class="text-danger">*</span>
+                                            </label>
+                                            {{ user_form.last_name|add_class:"form-control" }}
+                                            {% if user_form.last_name.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in user_form.last_name.errors %}
+                                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="{{ user_form.email.id_for_label }}" class="form-label fw-semibold">
+                                        {% trans "Email Address" %} <span class="text-danger">*</span>
+                                    </label>
+                                    {{ user_form.email|add_class:"form-control" }}
+                                    {% if user_form.email.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in user_form.email.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Required. Enter a valid email address." %}</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="{{ user_form.phone_number.id_for_label }}" class="form-label fw-semibold">
+                                        {% trans "Phone Number" %} <span class="text-danger">*</span>
+                                    </label>
+                                    {{ user_form.phone_number|add_class:"form-control" }}
+                                    {% if user_form.phone_number.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in user_form.phone_number.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Phone number with country code (e.g., +998901234567)" %}</div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="{{ user_form.password1.id_for_label }}" class="form-label fw-semibold">
+                                                {% trans "Password" %} <span class="text-danger">*</span>
+                                            </label>
+                                            {{ user_form.password1|add_class:"form-control" }}
+                                            {% if user_form.password1.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in user_form.password1.errors %}
+                                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="{{ user_form.password2.id_for_label }}" class="form-label fw-semibold">
+                                                {% trans "Confirm Password" %} <span class="text-danger">*</span>
+                                            </label>
+                                            {{ user_form.password2|add_class:"form-control" }}
+                                            {% if user_form.password2.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in user_form.password2.errors %}
+                                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Company Information -->
+                            <div class="col-lg-6">
+                                <h5 class="fw-bold text-primary mb-4 border-bottom pb-2">
+                                    <i class="fas fa-building me-2"></i>{% trans "Company Information" %}
+                                </h5>
+
+                                <div class="mb-3">
+                                    <label for="{{ company_form.name.id_for_label }}" class="form-label fw-semibold">
+                                        {% trans "Company Name" %} <span class="text-danger">*</span>
+                                    </label>
+                                    {{ company_form.name|add_class:"form-control" }}
+                                    {% if company_form.name.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in company_form.name.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Official company name" %}</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="{{ company_form.legal_name.id_for_label }}" class="form-label fw-semibold">
+                                        {% trans "Legal Name" %}
+                                    </label>
+                                    {{ company_form.legal_name|add_class:"form-control" }}
+                                    {% if company_form.legal_name.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in company_form.legal_name.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Official legal name of the company (if different)" %}</div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="{{ company_form.tax_id.id_for_label }}" class="form-label fw-semibold">
+                                                {% trans "Tax ID/INN" %}
+                                            </label>
+                                            {{ company_form.tax_id|add_class:"form-control" }}
+                                            {% if company_form.tax_id.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in company_form.tax_id.errors %}
+                                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                            <div class="form-text">{% trans "Company tax identification number" %}</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="{{ company_form.company_type.id_for_label }}" class="form-label fw-semibold">
+                                                {% trans "Company Type" %}
+                                            </label>
+                                            {{ company_form.company_type|add_class:"form-control" }}
+                                            {% if company_form.company_type.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in company_form.company_type.errors %}
+                                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                            <div class="form-text">{% trans "LLC, Corporation, Startup, etc." %}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="{{ company_form.company_size.id_for_label }}" class="form-label fw-semibold">
+                                                {% trans "Company Size" %}
+                                            </label>
+                                            {{ company_form.company_size|add_class:"form-select" }}
+                                            {% if company_form.company_size.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in company_form.company_size.errors %}
+                                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="{{ company_form.industry.id_for_label }}" class="form-label fw-semibold">
+                                                {% trans "Industry" %}
+                                            </label>
+                                            {{ company_form.industry|add_class:"form-control" }}
+                                            {% if company_form.industry.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in company_form.industry.errors %}
+                                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                            <div class="form-text">{% trans "Technology, Education, Finance, etc." %}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Company Description -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h5 class="fw-bold text-primary mb-4 border-bottom pb-2">
+                                    <i class="fas fa-info-circle me-2"></i>{% trans "Company Description" %}
+                                </h5>
+                                <div class="mb-3">
+                                    <label for="{{ company_form.description.id_for_label }}" class="form-label fw-semibold">
+                                        {% trans "Detailed Description" %}
+                                    </label>
+                                    {{ company_form.description|add_class:"form-control"|attr:"rows:4" }}
+                                    {% if company_form.description.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in company_form.description.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Provide detailed description of your company" %}</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="{{ company_form.short_description.id_for_label }}" class="form-label fw-semibold">
+                                        {% trans "Short Description" %}
+                                    </label>
+                                    {{ company_form.short_description|add_class:"form-control"|attr:"rows:2" }}
+                                    {% if company_form.short_description.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in company_form.short_description.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Brief company description for listings (max 500 characters)" %}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Company Media -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h5 class="fw-bold text-primary mb-4 border-bottom pb-2">
+                                    <i class="fas fa-images me-2"></i>{% trans "Company Media" %}
+                                </h5>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ company_form.logo.id_for_label }}" class="form-label fw-semibold">
+                                        {% trans "Company Logo" %}
+                                    </label>
+                                    {{ company_form.logo|add_class:"form-control" }}
+                                    {% if company_form.logo.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in company_form.logo.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Upload company logo image" %}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ company_form.cover_image.id_for_label }}" class="form-label fw-semibold">
+                                        {% trans "Cover Image" %}
+                                    </label>
+                                    {{ company_form.cover_image|add_class:"form-control" }}
+                                    {% if company_form.cover_image.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in company_form.cover_image.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Upload company profile cover image" %}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact Information -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h5 class="fw-bold text-primary mb-4 border-bottom pb-2">
+                                    <i class="fas fa-address-book me-2"></i>{% trans "Contact Information" %}
+                                </h5>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ company_form.email.id_for_label }}" class="form-label fw-semibold">
+                                        {% trans "Company Email" %}
+                                    </label>
+                                    {{ company_form.email|add_class:"form-control" }}
+                                    {% if company_form.email.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in company_form.email.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Primary company email address" %}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ company_form.phone.id_for_label }}" class="form-label fw-semibold">
+                                        {% trans "Company Phone" %}
+                                    </label>
+                                    {{ company_form.phone|add_class:"form-control" }}
+                                    {% if company_form.phone.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in company_form.phone.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Company phone number" %}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ company_form.website.id_for_label }}" class="form-label fw-semibold">
+                                        {% trans "Website" %}
+                                    </label>
+                                    {{ company_form.website|add_class:"form-control" }}
+                                    {% if company_form.website.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in company_form.website.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Official company website" %}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h5 class="fw-bold text-primary mb-4 border-bottom pb-2">
+                                    <i class="fas fa-map-marker-alt me-2"></i>{% trans "Location" %}
+                                </h5>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="{{ company_form.country.id_for_label }}" class="form-label fw-semibold">
+                                        {% trans "Country" %}
+                                    </label>
+                                    {{ company_form.country|add_class:"form-control" }}
+                                    {% if company_form.country.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in company_form.country.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="{{ company_form.region.id_for_label }}" class="form-label fw-semibold">
+                                        {% trans "Region" %}
+                                    </label>
+                                    {{ company_form.region|add_class:"form-select" }}
+                                    {% if company_form.region.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in company_form.region.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="{{ company_form.city.id_for_label }}" class="form-label fw-semibold">
+                                        {% trans "City" %}
+                                    </label>
+                                    {{ company_form.city|add_class:"form-select" }}
+                                    {% if company_form.city.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in company_form.city.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label for="{{ company_form.address.id_for_label }}" class="form-label fw-semibold">
+                                        {% trans "Address" %}
+                                    </label>
+                                    {{ company_form.address|add_class:"form-control" }}
+                                    {% if company_form.address.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in company_form.address.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Social Networks -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h5 class="fw-bold text-primary mb-4 border-bottom pb-2">
+                                    <i class="fas fa-share-alt me-2"></i>{% trans "Social Networks" %}
+                                </h5>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ company_form.linkedin.id_for_label }}" class="form-label fw-semibold">
+                                        <i class="fab fa-linkedin me-2 text-primary"></i>LinkedIn
+                                    </label>
+                                    {{ company_form.linkedin|add_class:"form-control" }}
+                                    {% if company_form.linkedin.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in company_form.linkedin.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ company_form.telegram.id_for_label }}" class="form-label fw-semibold">
+                                        <i class="fab fa-telegram me-2 text-info"></i>Telegram
+                                    </label>
+                                    {{ company_form.telegram|add_class:"form-control" }}
+                                    {% if company_form.telegram.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in company_form.telegram.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ company_form.facebook.id_for_label }}" class="form-label fw-semibold">
+                                        <i class="fab fa-facebook me-2 text-primary"></i>Facebook
+                                    </label>
+                                    {{ company_form.facebook|add_class:"form-control" }}
+                                    {% if company_form.facebook.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in company_form.facebook.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ company_form.instagram.id_for_label }}" class="form-label fw-semibold">
+                                        <i class="fab fa-instagram me-2 text-danger"></i>Instagram
+                                    </label>
+                                    {{ company_form.instagram|add_class:"form-control" }}
+                                    {% if company_form.instagram.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in company_form.instagram.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Information -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h5 class="fw-bold text-primary mb-4 border-bottom pb-2">
+                                    <i class="fas fa-clipboard-list me-2"></i>{% trans "Additional Information" %}
+                                </h5>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ company_form.sub_industry.id_for_label }}" class="form-label fw-semibold">
+                                        {% trans "Sub-Industry" %}
+                                    </label>
+                                    {{ company_form.sub_industry|add_class:"form-control" }}
+                                    {% if company_form.sub_industry.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in company_form.sub_industry.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Specific industry category" %}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ company_form.founded_year.id_for_label }}" class="form-label fw-semibold">
+                                        {% trans "Founded Year" %}
+                                    </label>
+                                    {{ company_form.founded_year|add_class:"form-control" }}
+                                    {% if company_form.founded_year.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in company_form.founded_year.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Year the company was founded" %}</div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label for="{{ company_form.tags.id_for_label }}" class="form-label fw-semibold">
+                                        {% trans "Tags" %}
+                                    </label>
+                                    {{ company_form.tags|add_class:"form-control" }}
+                                    {% if company_form.tags.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in company_form.tags.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Comma-separated tags for searching (e.g., tech, startup, education)" %}</div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label for="{{ company_form.mission.id_for_label }}" class="form-label fw-semibold">
+                                        {% trans "Mission Statement" %}
+                                    </label>
+                                    {{ company_form.mission|add_class:"form-control"|attr:"rows:2" }}
+                                    {% if company_form.mission.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in company_form.mission.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Company mission and values" %}</div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label for="{{ company_form.vision.id_for_label }}" class="form-label fw-semibold">
+                                        {% trans "Vision Statement" %}
+                                    </label>
+                                    {{ company_form.vision|add_class:"form-control"|attr:"rows:2" }}
+                                    {% if company_form.vision.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in company_form.vision.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Company vision and future goals" %}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Employer Profile Information -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h5 class="fw-bold text-primary mb-4 border-bottom pb-2">
+                                    <i class="fas fa-briefcase me-2"></i>{% trans "Employer Profile" %}
+                                </h5>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ profile_form.job_title.id_for_label }}" class="form-label fw-semibold">
+                                        {% trans "Job Title" %}
+                                    </label>
+                                    {{ profile_form.job_title|add_class:"form-control" }}
+                                    {% if profile_form.job_title.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in profile_form.job_title.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Current professional position" %}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ profile_form.department.id_for_label }}" class="form-label fw-semibold">
+                                        {% trans "Department" %}
+                                    </label>
+                                    {{ profile_form.department|add_class:"form-control" }}
+                                    {% if profile_form.department.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in profile_form.department.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Department or division" %}</div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label for="{{ profile_form.professional_bio.id_for_label }}" class="form-label fw-semibold">
+                                        {% trans "Professional Bio" %}
+                                    </label>
+                                    {{ profile_form.professional_bio|add_class:"form-control"|attr:"rows:3" }}
+                                    {% if profile_form.professional_bio.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in profile_form.professional_bio.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Professional background and experience" %}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ profile_form.verification_document.id_for_label }}" class="form-label fw-semibold">
+                                        {% trans "Verification Document" %}
+                                    </label>
+                                    {{ profile_form.verification_document|add_class:"form-control" }}
+                                    {% if profile_form.verification_document.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in profile_form.verification_document.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Document proving employment/ownership" %}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ profile_form.preferred_contact_method.id_for_label }}" class="form-label fw-semibold">
+                                        {% trans "Preferred Contact Method" %}
+                                    </label>
+                                    {{ profile_form.preferred_contact_method|add_class:"form-select" }}
+                                    {% if profile_form.preferred_contact_method.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in profile_form.preferred_contact_method.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check mb-4">
+                                    {{ profile_form.receive_company_notifications|add_class:"form-check-input" }}
+                                    <label class="form-check-label fw-semibold" for="{{ profile_form.receive_company_notifications.id_for_label }}">
+                                        {% trans "Receive Company Notifications" %}
+                                    </label>
+                                    {% if profile_form.receive_company_notifications.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in profile_form.receive_company_notifications.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text">{% trans "Receive notifications for all owned companies" %}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Terms and Conditions -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="form-check mb-4">
+                                    {{ user_form.terms_accept|add_class:"form-check-input" }}
+                                    <label class="form-check-label fw-semibold" for="{{ user_form.terms_accept.id_for_label }}">
+                                        {% trans "I accept the terms and conditions" %} <span class="text-danger">*</span>
+                                    </label>
+                                    {% if user_form.terms_accept.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in user_form.terms_accept.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="row mt-5">
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between">
+                                    <a href="{% url 'accounts:admin_dashboard' %}" class="btn btn-secondary">
+                                        <i class="fas fa-arrow-left me-2"></i>{% trans "Back to Dashboard" %}
+                                    </a>
+                                    <button type="submit" class="btn btn-success btn-lg">
+                                        <i class="fas fa-user-plus me-2"></i>{% trans "Create Employer Account" %}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-control, .form-select {
+    border-radius: 8px;
+    padding: 10px;
+    border: 1px solid #dee2e6;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #4dabf7;
+    box-shadow: 0 0 0 0.25rem rgba(77, 171, 247, 0.25);
+}
+
+.form-control.is-invalid, .form-select.is-invalid {
+    border-color: #dc3545;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.card {
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.form-label {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.btn {
+    border-radius: 8px;
+    padding: 10px 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border: none;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #218838 0%, #1ca87c 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.btn-secondary:hover {
+    transform: translateY(-2px);
+}
+
+.invalid-feedback {
+    color: #dc3545;
+    font-size: 0.875em;
+    margin-top: 0.25rem;
+}
+
+.text-danger {
+    color: #dc3545 !important;
+}
+
+.alert {
+    border-radius: 10px;
+    border: none;
+}
+
+.card-header {
+    border-bottom: none;
+}
+
+.border-bottom {
+    border-bottom: 2px solid #e9ecef !important;
+}
+
+.form-text {
+    color: #6c757d;
+    font-size: 0.875em;
+    margin-top: 0.25rem;
+}
+
+.form-check-input {
+    width: 1.2em;
+    height: 1.2em;
+    margin-top: 0.2em;
+}
+
+.form-check-label {
+    margin-left: 0.5em;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1.5rem !important;
+    }
+    
+    .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    .d-flex.justify-content-between {
+        flex-direction: column;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Добавляем класс is-invalid к полям с ошибками при загрузке страницы
+    const errorFields = document.querySelectorAll('.invalid-feedback');
+    errorFields.forEach(errorDiv => {
+        let field = errorDiv.previousElementSibling;
+        
+        // Для чекбоксов может быть label между ними
+        if (field && field.tagName === 'LABEL') {
+            field = field.previousElementSibling;
+        }
+        
+        if (field && (field.tagName === 'INPUT' || field.tagName === 'SELECT' || field.tagName === 'TEXTAREA')) {
+            field.classList.add('is-invalid');
+        }
+    });
+
+    // Валидация формы перед отправкой
+    const form = document.getElementById('employerForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            let hasErrors = false;
+            const requiredFields = form.querySelectorAll('[required]');
+            
+            requiredFields.forEach(field => {
+                if (field.type === 'checkbox') {
+                    if (!field.checked) {
+                        hasErrors = true;
+                        field.classList.add('is-invalid');
+                        
+                        // Создаем сообщение об ошибке если его нет
+                        let errorDiv = field.parentNode.querySelector('.invalid-feedback');
+                        if (!errorDiv) {
+                            errorDiv = document.createElement('div');
+                            errorDiv.className = 'invalid-feedback d-block';
+                            errorDiv.innerHTML = '<i class="fas fa-exclamation-circle me-1"></i>{% trans "You must accept the terms and conditions." %}';
+                            field.parentNode.appendChild(errorDiv);
+                        }
+                    } else {
+                        field.classList.remove('is-invalid');
+                        const errorDiv = field.parentNode.querySelector('.invalid-feedback');
+                        if (errorDiv && errorDiv.textContent.includes('{% trans "You must accept the terms and conditions." %}')) {
+                            errorDiv.remove();
+                        }
+                    }
+                } else if (!field.value.trim()) {
+                    hasErrors = true;
+                    field.classList.add('is-invalid');
+                    
+                    // Создаем сообщение об ошибке если его нет
+                    let nextSibling = field.nextElementSibling;
+                    let hasExistingError = false;
+                    
+                    // Проверяем есть ли уже ошибка
+                    while (nextSibling) {
+                        if (nextSibling.classList && nextSibling.classList.contains('invalid-feedback')) {
+                            hasExistingError = true;
+                            break;
+                        }
+                        nextSibling = nextSibling.nextElementSibling;
+                    }
+                    
+                    if (!hasExistingError) {
+                        const errorDiv = document.createElement('div');
+                        errorDiv.className = 'invalid-feedback d-block';
+                        errorDiv.innerHTML = '<i class="fas fa-exclamation-circle me-1"></i>{% trans "This field is required." %}';
+                        field.parentNode.insertBefore(errorDiv, field.nextSibling);
+                    }
+                } else {
+                    field.classList.remove('is-invalid');
+                    const errorDiv = field.parentNode.querySelector('.invalid-feedback');
+                    if (errorDiv && errorDiv.textContent.includes('{% trans "This field is required." %}')) {
+                        errorDiv.remove();
+                    }
+                }
+            });
+
+            // Проверка паролей
+            const password1 = document.querySelector('#{{ user_form.password1.id_for_label }}');
+            const password2 = document.querySelector('#{{ user_form.password2.id_for_label }}');
+            
+            if (password1 && password2 && password1.value && password2.value) {
+                if (password1.value !== password2.value) {
+                    hasErrors = true;
+                    if (!password2.nextElementSibling || !password2.nextElementSibling.classList.contains('invalid-feedback')) {
+                        const errorDiv = document.createElement('div');
+                        errorDiv.className = 'invalid-feedback d-block';
+                        errorDiv.innerHTML = '<i class="fas fa-exclamation-circle me-1"></i>{% trans "Passwords do not match." %}';
+                        password2.parentNode.insertBefore(errorDiv, password2.nextSibling);
+                    }
+                    password2.classList.add('is-invalid');
+                }
+            }
+
+            if (hasErrors) {
+                e.preventDefault();
+                // Прокручиваем к первому полю с ошибкой
+                const firstError = form.querySelector('.is-invalid');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstError.focus();
+                }
+                
+                // Показываем общее уведомление
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-danger alert-dismissible fade show mt-3';
+                alertDiv.innerHTML = `
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>{% trans "Please correct the errors below:" %}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+                
+                const existingAlert = form.querySelector('.alert-danger');
+                if (!existingAlert) {
+                    form.insertBefore(alertDiv, form.firstChild);
+                }
+            }
+        });
+
+        // Убираем ошибку при вводе
+        form.addEventListener('input', function(e) {
+            if (e.target.classList.contains('is-invalid')) {
+                if (e.target.value.trim()) {
+                    e.target.classList.remove('is-invalid');
+                    const errorDiv = e.target.parentNode.querySelector('.invalid-feedback');
+                    if (errorDiv && errorDiv.textContent.includes('{% trans "This field is required." %}')) {
+                        errorDiv.remove();
+                    }
+                }
+            }
+        });
+
+        // Для чекбоксов
+        const checkboxes = form.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    this.classList.remove('is-invalid');
+                    const errorDiv = this.parentNode.querySelector('.invalid-feedback');
+                    if (errorDiv && errorDiv.textContent.includes('{% trans "You must accept the terms and conditions." %}')) {
+                        errorDiv.remove();
+                    }
+                }
+            });
+        });
+    }
+
+    // Прокручиваем к первой ошибке при загрузке страницы
+    const firstErrorOnLoad = document.querySelector('.invalid-feedback');
+    if (firstErrorOnLoad) {
+        setTimeout(() => {
+            firstErrorOnLoad.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+    }
+
+    // Автогенерация короткого описания из полного
+    const descriptionField = document.querySelector('#{{ company_form.description.id_for_label }}');
+    const shortDescriptionField = document.querySelector('#{{ company_form.short_description.id_for_label }}');
+    
+    if (descriptionField && shortDescriptionField) {
+        descriptionField.addEventListener('blur', function() {
+            if (!shortDescriptionField.value.trim() && this.value.trim()) {
+                const shortText = this.value.substring(0, 497);
+                if (shortText.length >= 497) {
+                    shortDescriptionField.value = shortText + '...';
+                } else {
+                    shortDescriptionField.value = shortText;
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,274 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{{ company.name }} - {% trans "Company Profile" %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-start">
+                <div class="d-flex align-items-start">
+                    {% if company.logo %}
+                    <img src="{{ company.logo.url }}" alt="{{ company.name }}" class="rounded me-4" 
+                         width="120" height="120" style="object-fit: cover;">
+                    {% else %}
+                    <div class="rounded bg-secondary d-flex align-items-center justify-content-center me-4" 
+                         style="width: 120px; height: 120px;">
+                        <i class="fas fa-building text-white fa-3x"></i>
+                    </div>
+                    {% endif %}
+                    <div>
+                        <h1 class="h3 fw-bold text-primary mb-2">{{ company.name }}</h1>
+                        <p class="text-muted mb-1">
+                            <i class="fas fa-map-marker-alt me-2"></i>
+                            {% if company.city %}{{ company.get_city_display }}, {% endif %}
+                            {% if company.region %}{{ company.get_region_display }}{% endif %}
+                        </p>
+                        <p class="text-muted mb-0">
+                            <i class="fas fa-tag me-2"></i>{{ company.industry|default:"-" }}
+                        </p>
+                    </div>
+                </div>
+                {% if is_owner %}
+                <div class="btn-group" role="group">
+                    <a href="{% url 'accounts:company_update' company.id %}" class="btn btn-primary">
+                        <i class="fas fa-edit me-1"></i>{% trans "Edit" %}
+                    </a>
+                    <a href="{% url 'jobs:job_create' %}?company={{ company.id }}" class="btn btn-success">
+                        <i class="fas fa-plus me-1"></i>{% trans "Post Job" %}
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8 mb-4">
+            <!-- Basic Information -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="fw-bold mb-0">{% trans "Company Information" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p><strong>{% trans "Company Type" %}:</strong></p>
+                            <p>{{ company.get_company_type_display|default:"-" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>{% trans "Company Size" %}:</strong></p>
+                            <p>{{ company.get_company_size_display|default:"-" }}</p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p><strong>{% trans "Founded Year" %}:</strong></p>
+                            <p>{{ company.founded_year|default:"-" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>{% trans "Region" %}:</strong></p>
+                            <p>{{ company.get_region_display|default:"-" }}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <p><strong>{% trans "About Company" %}:</strong></p>
+                            <p>{{ company.description|default:"-" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="fw-bold mb-0">{% trans "Contact Information" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p>
+                                <strong>{% trans "Email" %}:</strong><br>
+                                {% if company.email %}
+                                <a href="mailto:{{ company.email }}">{{ company.email }}</a>
+                                {% else %}-{% endif %}
+                            </p>
+                            <p>
+                                <strong>{% trans "Phone" %}:</strong><br>
+                                {% if company.phone %}
+                                <a href="tel:{{ company.phone }}">{{ company.phone }}</a>
+                                {% else %}-{% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p>
+                                <strong>{% trans "Website" %}:</strong><br>
+                                {% if company.website %}
+                                <a href="{{ company.website }}" target="_blank" rel="noopener noreferrer">
+                                    {{ company.website|truncatechars:40 }}
+                                </a>
+                                {% else %}-{% endif %}
+                            </p>
+                            <p>
+                                <strong>{% trans "Address" %}:</strong><br>
+                                {{ company.address|default:"-" }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Jobs -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">{% trans "Active Jobs" %} ({{ total_jobs }})</h5>
+                    {% if is_owner %}
+                    <a href="{% url 'jobs:job_create' %}?company={{ company.id }}" class="btn btn-sm btn-success">
+                        <i class="fas fa-plus me-1"></i>{% trans "Post Job" %}
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    {% if active_jobs %}
+                    <div class="list-group list-group-flush">
+                        {% for job in active_jobs %}
+                        <a href="{% url 'jobs:job_detail' job.id %}" class="list-group-item list-group-item-action">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1 fw-bold">{{ job.title }}</h6>
+                                    <small class="text-muted">
+                                        <i class="fas fa-map-marker-alt me-1"></i>
+                                        {% if job.city %}{{ job.get_city_display }}{% endif %}
+                                        • {{ job.applications.count }} {% trans "applications" %}
+                                    </small>
+                                </div>
+                                <small class="text-muted text-nowrap ms-2">
+                                    {{ job.created_at|date:"SHORT_DATE_FORMAT" }}
+                                </small>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% if total_jobs > 5 %}
+                    <div class="text-center mt-3">
+                        <a href="{% url 'jobs:my_jobs' %}?company={{ company.id }}" class="btn btn-outline-primary">
+                            {% trans "View All Jobs" %} ({{ total_jobs }})
+                        </a>
+                    </div>
+                    {% endif %}
+                    {% else %}
+                    <div class="alert alert-info mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        {% trans "No active jobs posted yet." %}
+                        {% if is_owner %}
+                        <a href="{% url 'jobs:job_create' %}?company={{ company.id }}" class="alert-link">
+                            {% trans "Post your first job" %}
+                        </a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Documents -->
+            {% if documents %}
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="fw-bold mb-0">{% trans "Verified Documents" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for document in documents %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card border">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ document.document_type }}</h6>
+                                    <p class="card-text small text-muted">
+                                        {% trans "Uploaded" %}: {{ document.uploaded_at|date:"SHORT_DATE_FORMAT" }}
+                                    </p>
+                                    <a href="{{ document.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-download me-1"></i>{% trans "Download" %}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Statistics -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="fw-bold mb-0">{% trans "Statistics" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6 mb-3">
+                            <div>
+                                <h3 class="text-primary fw-bold">{{ total_jobs }}</h3>
+                                <small class="text-muted">{% trans "Total Jobs" %}</small>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div>
+                                <h3 class="text-success fw-bold">{{ total_applications }}</h3>
+                                <small class="text-muted">{% trans "Applications" %}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Links -->
+            {% if company.website or company.email %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="fw-bold mb-0">{% trans "Contact" %}</h5>
+                </div>
+                <div class="card-body">
+                    {% if company.website %}
+                    <a href="{{ company.website }}" target="_blank" class="btn btn-outline-primary w-100 mb-2">
+                        <i class="fas fa-globe me-2"></i>{% trans "Visit Website" %}
+                    </a>
+                    {% endif %}
+                    {% if company.email %}
+                    <a href="mailto:{{ company.email }}" class="btn btn-outline-danger w-100">
+                        <i class="fas fa-envelope me-2"></i>{% trans "Send Email" %}
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Recent Activity -->
+            {% if recent_activity %}
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="fw-bold mb-0">{% trans "Recent Activity" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-sm list-group-flush">
+                        {% for activity in recent_activity|slice:":5" %}
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <small class="d-block text-muted">{{ activity.description|truncatechars:60 }}</small>
+                            <small class="text-muted">{{ activity.created_at|timesince }} {% trans "ago" %}</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

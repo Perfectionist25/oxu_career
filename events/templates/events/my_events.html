@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "My Events" %}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">{% trans "My Events" %}</h1>
+
+            <!-- Фильтры -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-3">
+                            <label for="status" class="form-label">{% trans "Status" %}</label>
+                            <select name="status" id="status" class="form-select">
+                                <option value="">{% trans "All Statuses" %}</option>
+                                {% for status_value, status_label in registration_statuses %}
+                                <option value="{{ status_value }}" {% if request.GET.status == status_value %}selected{% endif %}>
+                                    {{ status_label }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">&nbsp;</label>
+                            <button type="submit" class="btn btn-primary d-block">{% trans "Filter" %}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Список мероприятий -->
+            <div class="row">
+                {% for registration in page_obj %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        {% if registration.event.banner_image %}
+                        <img src="{{ registration.event.banner_image.url }}" class="card-img-top" alt="{{ registration.event.title }}">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ registration.event.title }}</h5>
+                            <p class="card-text">{{ registration.event.short_description }}</p>
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar"></i> {{ registration.event.start_date|date:"M d, Y H:i" }}
+                                </small>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-map-marker-alt"></i> {{ registration.event.location }}
+                                </small>
+                            </div>
+                            <div class="mb-3">
+                                <span class="badge bg-{{ registration.get_status_display|lower }}">{{ registration.get_status_display }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <a href="{% url 'events:event_detail' registration.event.slug %}" class="btn btn-outline-primary btn-sm">
+                                    {% trans "View Details" %}
+                                </a>
+                                {% if registration.status == 'registered' %}
+                                <form method="post" action="{% url 'events:cancel_registration' registration.event.slug %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('{% trans 'Are you sure you want to cancel your registration?' %}')">
+                                        {% trans "Cancel Registration" %}
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        {% trans "You haven't registered for any events yet." %}
+                        <a href="{% url 'events:event_list' %}">{% trans "Browse events" %}</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Пагинация -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Event pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">{% trans "Previous" %}</a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">{{ num }}</a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">{% trans "Next" %}</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

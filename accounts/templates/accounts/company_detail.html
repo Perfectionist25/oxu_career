@@ -1,0 +1,339 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{{ object.name }} | {% trans "Company" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Back and Edit Buttons -->
+    <div class="mb-4">
+        <a href="{% url 'accounts:company_list' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>{% trans "Back to Companies" %}
+        </a>
+        <a href="{% url 'accounts:company_update' object.pk %}" class="btn btn-primary">
+            <i class="fas fa-edit me-2"></i>{% trans "Edit Company" %}
+        </a>
+        {% if object.owner == request.user %}
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+            <i class="fas fa-trash me-2"></i>{% trans "Delete" %}
+        </button>
+        {% endif %}
+    </div>
+
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-start gap-4">
+                        {% if object.logo %}
+                        <div>
+                            <img src="{{ object.logo.url }}" alt="{{ object.name }}" class="rounded" style="width: 120px; height: 120px; object-fit: cover;">
+                        </div>
+                        {% endif %}
+                        <div class="flex-grow-1">
+                            <h2 class="mb-2">{{ object.name }}</h2>
+                            {% if object.company_type %}
+                            <p class="text-muted mb-1">
+                                <i class="fas fa-tag me-2"></i>{{ object.company_type }}
+                            </p>
+                            {% endif %}
+                            {% if object.industry %}
+                            <p class="text-muted mb-1">
+                                <i class="fas fa-industry me-2"></i>{{ object.industry }}
+                            </p>
+                            {% endif %}
+                            {% if object.company_size %}
+                            <p class="text-muted mb-1">
+                                <i class="fas fa-users me-2"></i>{{ object.get_company_size_display }}
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- About -->
+            {% if object.short_description or object.description %}
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-light border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>{% trans "About Company" %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if object.short_description %}
+                    <div class="mb-3">
+                        <h6 class="fw-bold">{% trans "Short Description" %}</h6>
+                        <p>{{ object.short_description }}</p>
+                    </div>
+                    {% endif %}
+                    {% if object.description %}
+                    <div>
+                        <h6 class="fw-bold">{% trans "Description" %}</h6>
+                        <p>{{ object.description|linebreaks }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Mission -->
+            {% if object.mission %}
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-light border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fas fa-target me-2"></i>{% trans "Mission & Values" %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p>{{ object.mission|linebreaks }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Contact Information -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-light border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fas fa-phone me-2"></i>{% trans "Contact Information" %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% if object.email %}
+                        <div class="col-md-6 mb-3">
+                            <strong>{% trans "Email" %}</strong>
+                            <p>
+                                <a href="mailto:{{ object.email }}">{{ object.email }}</a>
+                            </p>
+                        </div>
+                        {% endif %}
+                        {% if object.phone %}
+                        <div class="col-md-6 mb-3">
+                            <strong>{% trans "Phone" %}</strong>
+                            <p>
+                                <a href="tel:{{ object.phone }}">{{ object.phone }}</a>
+                            </p>
+                        </div>
+                        {% endif %}
+                        {% if object.website %}
+                        <div class="col-md-6 mb-3">
+                            <strong>{% trans "Website" %}</strong>
+                            <p>
+                                <a href="{{ object.website }}" target="_blank" rel="noopener noreferrer">{{ object.website }}</a>
+                            </p>
+                        </div>
+                        {% endif %}
+                        {% if object.address %}
+                        <div class="col-md-6 mb-3">
+                            <strong>{% trans "Address" %}</strong>
+                            <p>{{ object.address }}</p>
+                        </div>
+                        {% endif %}
+                        {% if object.region or object.city %}
+                        <div class="col-md-6 mb-3">
+                            <strong>{% trans "Location" %}</strong>
+                            <p>
+                                {% if object.city %}{{ object.get_city_display }}{% endif %}
+                                {% if object.region %}, {{ object.get_region_display }}{% endif %}
+                            </p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Networks -->
+            {% if object.linkedin or object.facebook or object.instagram or object.telegram %}
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-light border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fas fa-share-alt me-2"></i>{% trans "Social Networks" %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex gap-3">
+                        {% if object.linkedin %}
+                        <a href="{{ object.linkedin }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
+                            <i class="fab fa-linkedin"></i> LinkedIn
+                        </a>
+                        {% endif %}
+                        {% if object.facebook %}
+                        <a href="{{ object.facebook }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
+                            <i class="fab fa-facebook"></i> Facebook
+                        </a>
+                        {% endif %}
+                        {% if object.instagram %}
+                        <a href="{{ object.instagram }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-danger btn-sm">
+                            <i class="fab fa-instagram"></i> Instagram
+                        </a>
+                        {% endif %}
+                        {% if object.telegram %}
+                        <a href="{{ object.telegram }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-info btn-sm">
+                            <i class="fab fa-telegram"></i> Telegram
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Jobs Posted -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-light border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fas fa-briefcase me-2"></i>{% trans "Active Job Postings" %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if jobs %}
+                    <div class="list-group">
+                        {% for job in jobs %}
+                        <a href="{% url 'jobs:job_detail' job.pk %}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ job.title }}</h6>
+                                <small class="text-muted">
+                                    {% if job.is_active %}
+                                    <span class="badge bg-success">{% trans "Active" %}</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">{% trans "Draft" %}</span>
+                                    {% endif %}
+                                </small>
+                            </div>
+                            <p class="mb-1 text-muted small">
+                                <i class="fas fa-map-marker-alt me-1"></i>
+                                {% if job.city %}{{ job.get_city_display }}{% endif %}
+                            </p>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted mb-0">
+                        <i class="fas fa-briefcase me-2"></i>{% trans "No active jobs posted yet" %}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Company Stats -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-light border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>{% trans "Statistics" %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>{% trans "Total Views" %}</span>
+                            <strong class="h5">{{ object.total_views|default:0 }}</strong>
+                        </div>
+                        <div class="progress" role="progressbar">
+                            <div class="progress-bar" style="width: {{ object.total_views|default:0 }}%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>{% trans "Active Jobs" %}</span>
+                            <strong class="h5">{{ jobs|length }}</strong>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>{% trans "Founded" %}</span>
+                            <strong>
+                                {% if object.founded_year %}
+                                    {{ object.founded_year }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Owner Info -->
+            {% if object.owner %}
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-light border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user me-2"></i>{% trans "Company Owner" %}
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    <p class="mb-2">
+                        <strong>{{ object.owner.get_full_name|default:object.owner.username }}</strong>
+                    </p>
+                    <p class="text-muted small">{{ object.owner.email }}</p>
+                    <a href="{% url 'accounts:profile_detail' object.owner.id %}" class="btn btn-sm btn-outline-primary">
+                        {% trans "View Profile" %}
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Tags -->
+            {% if tags_list %}
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-light border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tags me-2"></i>{% trans "Tags" %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for tag in tags_list %}
+                        <span class="badge bg-light text-dark border">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    {% if object.owner == request.user %}
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        {% trans "Delete Company" %}
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        {% trans "Are you sure you want to delete" %} <strong>{{ object.name }}</strong>?
+                    </p>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-info-circle me-2"></i>
+                        {% trans "This action cannot be undone." %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <form method="post" action="{% url 'accounts:company_delete' object.pk %}">
+                        {% csrf_token %}
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            {% trans "Cancel" %}
+                        </button>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash me-1"></i>{% trans "Delete" %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

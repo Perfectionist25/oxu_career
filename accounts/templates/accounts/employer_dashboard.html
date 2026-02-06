@@ -1,0 +1,502 @@
+<!-- templates/accounts/employer_dashboard.html -->
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Employer Dashboard" %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <!-- Header and Welcome -->
+    <div class="row mx-0 mb-4">
+        <div class="col-12 px-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 fw-bold text-primary mb-1">{% trans "Employer Dashboard" %}</h1>
+                    <p class="text-muted mb-0">
+                        {% trans "Welcome" %}, <strong style="color: black;">{{ user.get_full_name|default:user.username }}!</strong>
+                        <span class="ms-2">
+                            <small>({{ owned_companies|length }} company{{ owned_companies|length|pluralize }})</small>
+                        </span>
+                    </p>
+                    {% if primary_company %}
+                        <small class="text-muted d-block">{% trans "Active Company" %}: <strong>{{ primary_company.name }}</strong></small>
+                    {% endif %}
+                </div>
+                <div class="text-end">
+                    <small class="text-muted d-block">{% trans "Account Status" %}:</small>
+                    <span class="badge bg-{% if employer_profile.is_verified %}success{% else %}warning{% endif %}">
+                        {% if employer_profile.is_verified %}{% trans "Verified" %}{% else %}{% trans "Unverified" %}{% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Company Selector -->
+    {% if owned_companies|length > 1 %}
+    <div class="row mx-0 mb-3">
+        <div class="col-12 px-4">
+            <div class="card border-0 bg-light shadow-sm">
+                <div class="card-body py-2">
+                    <div class="d-flex align-items-center">
+                        <small class="me-2 text-muted">{% trans "Active Company" %}:</small>
+                        <div class="dropdown">
+                            {% with first_company=owned_companies|first %}
+                            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" 
+                                    id="companyDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ primary_company.name|default:first_company.name }}
+                            </button>
+                            {% endwith %}
+                            <ul class="dropdown-menu" aria-labelledby="companyDropdown">
+                                {% for company in owned_companies %}
+                                <li>
+                                    <a class="dropdown-item {% if company.id == request.GET.company_id|add:"0" or company == primary_company %}active{% endif %}" 
+                                       href="?company_id={{ company.id }}">
+                                        <div class="d-flex align-items-center">
+                                            {% if company.logo %}
+                                            <img src="{{ company.logo.url }}" alt="{{ company.name }}" 
+                                                 class="rounded me-2" width="24" height="24" style="object-fit: cover;">
+                                            {% else %}
+                                            <div class="rounded bg-secondary me-2 d-flex align-items-center justify-content-center" 
+                                                 style="width: 24px; height: 24px;">
+                                                <i class="fas fa-building text-white"></i>
+                                            </div>
+                                            {% endif %}
+                                            <span>{{ company.name }}</span>
+                                        </div>
+                                    </a>
+                                </li>
+                                {% endfor %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item text-success" href="{% url 'accounts:company_create' %}">
+                                        <i class="fas fa-plus me-2"></i>{% trans "Add New Company" %}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'accounts:company_list' %}">
+                                        <i class="fas fa-list me-2"></i>{% trans "Manage All Companies" %}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="ms-auto">
+                            <a href="{% url 'accounts:company_create' %}" class="btn btn-sm btn-success">
+                                <i class="fas fa-plus me-1"></i>{% trans "Add Company" %}
+                            </a>
+                            <a href="{% url 'accounts:company_list' %}" class="btn btn-sm btn-outline-secondary ms-1">
+                                <i class="fas fa-cog me-1"></i>{% trans "Manage" %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Employer Statistics -->
+    <div class="row mx-0 mb-5 px-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 bg-primary text-white shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h4 class="fw-bold mb-0">{{ stats.active_jobs|default:0 }}</h4>
+                            <small>
+                                {% if primary_company %}
+                                    {% trans "Active Jobs in" %} {{ primary_company.name|truncatechars:15 }}
+                                {% else %}
+                                    {% trans "Active Jobs (All Companies)" %}
+                                {% endif %}
+                            </small>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-briefcase fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 bg-success text-white shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h4 class="fw-bold mb-0">{{ stats.total_applications|default:0 }}</h4>
+                            <small>
+                                {% if primary_company %}
+                                    {% trans "Total Applications in" %} {{ primary_company.name|truncatechars:15 }}
+                                {% else %}
+                                    {% trans "Total Applications (All Companies)" %}
+                                {% endif %}
+                            </small>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-file-alt fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 bg-info text-white shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h4 class="fw-bold mb-0">{{ stats.profile_views|default:0 }}</h4>
+                            <small>
+                                {% if primary_company %}
+                                    {% trans "Profile Views of" %} {{ primary_company.name|truncatechars:15 }}
+                                {% else %}
+                                    {% trans "Total Company Views" %}
+                                {% endif %}
+                            </small>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-eye fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 bg-warning text-dark shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h4 class="fw-bold mb-0">{{ owned_companies|length }}</h4>
+                            <small>{% trans "My Companies" %}</small>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-building fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mx-0 mb-5 px-4">
+        <div class="col-12">
+            <h4 class="fw-bold text-dark mb-4">{% trans "Quick Actions" %}</h4>
+            <div class="row g-3">
+                <div class="col-xl-2 col-md-4 col-6">
+                    <a href="{% url 'accounts:company_create' %}" class="btn btn-success w-100 h-100 py-3">
+                        <i class="fas fa-plus fa-2x mb-2"></i>
+                        <div>{% trans "Add Company" %}</div>
+                    </a>
+                </div>
+                <div class="col-xl-2 col-md-4 col-6">
+                    {% with first_company=owned_companies|first %}
+                    <a href="{% url 'jobs:job_create' %}{% if primary_company %}?company={{ primary_company.id }}{% elif first_company %}?company={{ first_company.id }}{% endif %}" 
+                       class="btn btn-primary w-100 h-100 py-3">
+                        <i class="fas fa-plus fa-2x mb-2"></i>
+                        <div>{% trans "New Job" %}</div>
+                    </a>
+                    {% endwith %}
+                </div>
+                <div class="col-xl-2 col-md-4 col-6">
+                    <a href="{% url 'jobs:my_jobs' %}" class="btn btn-success w-100 h-100 py-3">
+                        <i class="fas fa-list fa-2x mb-2"></i>
+                        <div>{% trans "My Jobs" %}</div>
+                    </a>
+                </div>
+                <div class="col-xl-2 col-md-4 col-6">
+                    <a href="{% url 'accounts:company_list' %}" class="btn btn-info w-100 h-100 py-3">
+                        <i class="fas fa-building fa-2x mb-2"></i>
+                        <div>{% trans "My Companies" %}</div>
+                    </a>
+                </div>
+                <div class="col-xl-2 col-md-4 col-6">
+                    <a href="{% url 'jobs:employer_applications' %}" class="btn btn-warning w-100 h-100 py-3">
+                        <i class="fas fa-users fa-2x mb-2"></i>
+                        <div>{% trans "Applications" %}</div>
+                    </a>
+                </div>
+                <div class="col-xl-2 col-md-4 col-6">
+                    <a href="{% url 'cvbuilder:public_cv_list' %}" class="btn btn-secondary w-100 h-100 py-3">
+                        <i class="fas fa-search fa-2x mb-2"></i>
+                        <div>{% trans "Search Students" %}</div>
+                    </a>
+                </div>
+                <div class="col-xl-2 col-md-4 col-6">
+                    <a href="{% url 'accounts:notifications' %}" class="btn btn-dark w-100 h-100 py-3">
+                        <i class="fas fa-bell fa-2x mb-2"></i>
+                        <div>{% trans "Notifications" %}</div>
+                    </a>
+                </div>
+                {% if user.is_superuser or user.is_staff %}
+                <div class="col-xl-2 col-md-4 col-6">
+                    <a href="{% url 'admin:index' %}" class="btn btn-outline-danger w-100 h-100 py-3">
+                        <i class="fas fa-cog fa-2x mb-2"></i>
+                        <div>{% trans "Admin Panel" %}</div>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Company Information -->
+    <div class="row mx-0 px-4">
+        <div class="col-lg-8 mb-4 pe-lg-3">
+            <!-- My Companies List -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">{% trans "My Companies" %}</h5>
+                    {% if owned_companies|length > 0 %}
+                    <div>
+                        <a href="{% url 'accounts:company_create' %}" class="btn btn-sm btn-success">
+                            <i class="fas fa-plus me-1"></i>{% trans "Add Company" %}
+                        </a>
+                        <a href="{% url 'accounts:company_list' %}" class="btn btn-sm btn-outline-secondary ms-1">
+                            <i class="fas fa-list me-1"></i>{% trans "View All" %}
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    {% if owned_companies %}
+                        <div class="row g-3">
+                            {% for company in owned_companies|slice:":4" %}
+                            <div class="col-md-6">
+                                <div class="card h-100 border {% if company == primary_company %}border-primary{% endif %}">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-start">
+                                            <div class="me-3">
+                                                {% if company.logo %}
+                                                <img src="{{ company.logo.url }}" alt="{{ company.name }}" 
+                                                     class="rounded" width="60" height="60" style="object-fit: cover;">
+                                                {% else %}
+                                                <div class="rounded bg-secondary d-flex align-items-center justify-content-center" 
+                                                     style="width: 60px; height: 60px;">
+                                                    <i class="fas fa-building text-white fa-2x"></i>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <h6 class="fw-bold mb-1">{{ company.name|truncatechars:30 }}</h6>
+                                                <div class="mb-2">
+                                                    <span class="badge bg-secondary">{{ company.industry|default:"-" }}</span>
+                                                    <span class="badge bg-light text-dark ms-1">{{ company.get_company_size_display|default:"-" }}</span>
+                                                </div>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-briefcase me-1"></i>{{ company.jobs.count }} {% trans "jobs" %}
+                                                    </small>
+                                                    <div>
+                                                        <a href="?company_id={{ company.id }}" class="btn btn-sm btn-outline-primary btn-sm">
+                                                            {% if company == primary_company %}{% trans "Selected" %}{% else %}{% trans "Select" %}{% endif %}
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% if owned_companies|length > 4 %}
+                        <div class="text-center mt-3">
+                            <a href="{% url 'accounts:company_list' %}" class="btn btn-outline-primary">
+                                {% trans "View All Companies" %} ({{ owned_companies|length }})
+                            </a>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-building fa-4x text-muted mb-4"></i>
+                            <h4 class="text-muted mb-3">{% trans "No Companies Yet" %}</h4>
+                            <p class="text-muted mb-4">{% trans "Create your first company to start posting jobs and managing your business" %}</p>
+                            <a href="{% url 'accounts:company_create' %}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-plus me-2"></i>{% trans "Create Your First Company" %}
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Selected Company Details -->
+            {% if primary_company %}
+                {% with display_company=primary_company %}
+                {% include 'accounts/particals/company_details.html' %}
+        </div>
+
+        <div class="col-lg-4 mb-4 ps-lg-3">
+            <!-- Social Networks -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="fw-bold mb-0">{% trans "Social Networks" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-3 justify-content-center">
+                        {% if display_company.linkedin %}
+                        <a href="{{ display_company.linkedin }}" target="_blank" class="text-primary" title="LinkedIn">
+                            <i class="fab fa-linkedin fa-3x"></i>
+                        </a>
+                        {% endif %}
+                        {% if display_company.telegram %}
+                        <a href="{{ display_company.telegram }}" target="_blank" class="text-info" title="Telegram">
+                            <i class="fab fa-telegram fa-3x"></i>
+                        </a>
+                        {% endif %}
+                        {% if display_company.facebook %}
+                        <a href="{{ display_company.facebook }}" target="_blank" class="text-primary" title="Facebook">
+                            <i class="fab fa-facebook fa-3x"></i>
+                        </a>
+                        {% endif %}
+                        {% if display_company.instagram %}
+                        <a href="{{ display_company.instagram }}" target="_blank" class="text-danger" title="Instagram">
+                            <i class="fab fa-instagram fa-3x"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                    {% if not display_company.linkedin and not display_company.telegram and not display_company.facebook and not display_company.instagram %}
+                    <div class="text-center mt-3">
+                        <p class="text-muted mb-2">{% trans "No social networks added" %}</p>
+                        <a href="{% url 'accounts:company_update' display_company.id %}" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-plus me-1"></i>{% trans "Add Social Links" %}
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+                {% endwith %}
+            {% elif owned_companies|length > 0 %}
+                {% with display_company=owned_companies|first %}
+                {% include 'accounts/particals/company_details.html' %}
+        </div>
+
+        <div class="col-lg-4 mb-4 ps-lg-3">
+            <!-- Social Networks -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="fw-bold mb-0">{% trans "Social Networks" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-3 justify-content-center">
+                        {% if display_company.linkedin %}
+                        <a href="{{ display_company.linkedin }}" target="_blank" class="text-primary" title="LinkedIn">
+                            <i class="fab fa-linkedin fa-3x"></i>
+                        </a>
+                        {% endif %}
+                        {% if display_company.telegram %}
+                        <a href="{{ display_company.telegram }}" target="_blank" class="text-info" title="Telegram">
+                            <i class="fab fa-telegram fa-3x"></i>
+                        </a>
+                        {% endif %}
+                        {% if display_company.facebook %}
+                        <a href="{{ display_company.facebook }}" target="_blank" class="text-primary" title="Facebook">
+                            <i class="fab fa-facebook fa-3x"></i>
+                        </a>
+                        {% endif %}
+                        {% if display_company.instagram %}
+                        <a href="{{ display_company.instagram }}" target="_blank" class="text-danger" title="Instagram">
+                            <i class="fab fa-instagram fa-3x"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                    {% if not display_company.linkedin and not display_company.telegram and not display_company.facebook and not display_company.instagram %}
+                    <div class="text-center mt-3">
+                        <p class="text-muted mb-2">{% trans "No social networks added" %}</p>
+                        <a href="{% url 'accounts:company_update' display_company.id %}" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-plus me-1"></i>{% trans "Add Social Links" %}
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+                {% endwith %}
+            {% endif %}
+
+            <!-- Recent Jobs -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">{% trans "Recent Jobs" %}</h5>
+                    <a href="{% url 'jobs:job_create' %}{% if primary_company %}?company={{ primary_company.id }}{% endif %}" 
+                       class="btn btn-sm btn-primary">
+                        <i class="fas fa-plus me-1"></i>{% trans "New" %}
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if recent_jobs %}
+                        {% for job in recent_jobs|slice:":5" %}
+                        <div class="mb-3 pb-3 {% if not forloop.last %}border-bottom{% endif %}">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="me-2 flex-grow-1">
+                                    <strong class="d-block">{{ job.title|truncatechars:25 }}</strong>
+                                    <small class="text-muted d-block">{{ job.company.name|default:"-" }}</small>
+                                    <div class="mt-1">
+                                        <span class="badge bg-{% if job.is_active %}success{% else %}secondary{% endif %}">
+                                            {{ job.is_active|yesno:"Active,Inactive" }}
+                                        </span>
+                                        <small class="text-muted ms-2">{{ job.created_at|date:"M d, Y" }}</small>
+                                    </div>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <a href="{% url 'jobs:job_detail' job.id %}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-briefcase fa-3x text-muted mb-3"></i>
+                            <p class="text-muted mb-3">{% trans "No jobs posted yet" %}</p>
+                            <a href="{% url 'jobs:job_create' %}{% if primary_company %}?company={{ primary_company.id }}{% endif %}" 
+                               class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus me-1"></i>{% trans "Post Your First Job" %}
+                            </a>
+                        </div>
+                    {% endif %}
+                    {% if recent_jobs|length > 0 %}
+                    <a href="{% url 'jobs:my_jobs' %}" class="btn btn-outline-primary btn-sm w-100 mt-2">
+                        <i class="fas fa-list me-1"></i>{% trans "View All Jobs" %}
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="fw-bold mb-0">{% trans "Quick Stats" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2 d-flex justify-content-between">
+                        <span>{% trans "Total Companies" %}:</span>
+                        <strong>{{ owned_companies|length }}</strong>
+                    </div>
+                    <div class="mb-2 d-flex justify-content-between">
+                        <span>{% trans "Active Jobs" %}:</span>
+                        <strong>{{ stats.active_jobs|default:0 }}</strong>
+                    </div>
+                    <div class="mb-2 d-flex justify-content-between">
+                        <span>{% trans "Total Applications" %}:</span>
+                        <strong>{{ stats.total_applications|default:0 }}</strong>
+                    </div>
+                    <div class="mb-2 d-flex justify-content-between">
+                        <span>{% trans "Profile Views" %}:</span>
+                        <strong>{{ stats.profile_views|default:0 }}</strong>
+                    </div>
+                    <hr>
+                    <div class="text-center">
+                        <a href="{% url 'accounts:employer_stats' %}" class="btn btn-outline-info btn-sm">
+                            <i class="fas fa-chart-bar me-1"></i>{% trans "View Detailed Stats" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

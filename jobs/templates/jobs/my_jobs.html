@@ -1,0 +1,1490 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+    {% if is_employer_view %}
+        {% trans "My Jobs" %}
+    {% else %}
+        {% trans "My Applications" %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Заголовок -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 fw-bold text-primary mb-1">
+                        {% if is_employer_view %}
+                            <i class="fas fa-briefcase me-2"></i>{% trans "My Jobs" %}
+                        {% else %}
+                            <i class="fas fa-file-alt me-2"></i>{% trans "My Applications" %}
+                        {% endif %}
+                    </h1>
+                    <p class="text-muted mb-0">
+                        {% if is_employer_view %}
+                            {% trans "List of all created jobs" %}
+                        {% else %}
+                            {% trans "All submitted job applications" %}
+                        {% endif %}
+                    </p>
+                </div>
+                <div>
+                    {% if is_employer_view %}
+                        <div class="btn-group">
+                            <a href="{% url 'jobs:job_create' %}" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>{% trans "New Job" %}
+                            </a>
+                            <a href="{% url 'jobs:employer_applications' %}" class="btn btn-outline-info position-relative">
+                                <i class="fas fa-users me-2"></i>{% trans "Applications" %}
+                                {% if total_applications_count and total_applications_count > 0 %}
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ total_applications_count }}
+                                </span>
+                                {% endif %}
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="btn-group">
+                            <a href="{% url 'jobs:list' %}" class="btn btn-primary">
+                                <i class="fas fa-search me-2"></i>{% trans "Job Search" %}
+                            </a>
+                            <a href="{% url 'jobs:saved_jobs' %}" class="btn btn-outline-primary">
+                                <i class="fas fa-bookmark me-2"></i>{% trans "Saved" %}
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Статистика -->
+    <div class="row mb-4">
+        {% if is_employer_view %}
+        <!-- Employer Statistics -->
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card border-0 bg-primary bg-gradient text-white shadow-sm h-100">
+                <div class="card-body d-flex flex-column justify-content-center py-3">
+                    <i class="fas fa-briefcase fa-2x mb-2 opacity-75"></i>
+                    <h3 class="fw-bold mb-1">{{ total_jobs|default:0 }}</h3>
+                    <small>{% trans "Total Jobs" %}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card border-0 bg-success bg-gradient text-white shadow-sm h-100">
+                <div class="card-body d-flex flex-column justify-content-center py-3">
+                    <i class="fas fa-play-circle fa-2x mb-2 opacity-75"></i>
+                    <h3 class="fw-bold mb-1">{{ active_jobs|default:0 }}</h3>
+                    <small>{% trans "Active Jobs" %}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card border-0 bg-warning text-dark shadow-sm h-100">
+                <div class="card-body d-flex flex-column justify-content-center py-3">
+                    <i class="fas fa-edit fa-2x mb-2 opacity-75"></i>
+                    <h3 class="fw-bold mb-1">{{ draft_jobs|default:0 }}</h3>
+                    <small>{% trans "Draft Jobs" %}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card border-0 bg-info bg-gradient text-white shadow-sm h-100">
+                <div class="card-body d-flex flex-column justify-content-center py-3">
+                    <i class="fas fa-eye fa-2x mb-2 opacity-75"></i>
+                    <h3 class="fw-bold mb-1">{{ total_views|default:0 }}</h3>
+                    <small>{% trans "Total Views" %}</small>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <!-- Student Statistics -->
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card border-0 bg-primary bg-gradient text-white shadow-sm h-100">
+                <div class="card-body d-flex flex-column justify-content-center py-3">
+                    <i class="fas fa-paper-plane fa-2x mb-2 opacity-75"></i>
+                    <h4 class="fw-bold mb-1">{{ total_applications|default:0 }}</h4>
+                    <small class="opacity-90">{% trans "Total Applications" %}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card border-0 bg-warning text-dark shadow-sm h-100">
+                <div class="card-body d-flex flex-column justify-content-center py-3">
+                    <i class="fas fa-clock fa-2x mb-2 opacity-75"></i>
+                    <h4 class="fw-bold mb-1">{{ pending_applications|default:0 }}</h4>
+                    <small class="opacity-90">{% trans "Submitted" %}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card border-0 bg-info bg-gradient text-white shadow-sm h-100">
+                <div class="card-body d-flex flex-column justify-content-center py-3">
+                    <i class="fas fa-search fa-2x mb-2 opacity-75"></i>
+                    <h4 class="fw-bold mb-1">{{ reviewed_applications|default:0 }}</h4>
+                    <small class="opacity-90">{% trans "Under Review" %}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card border-0 text-white shadow-sm h-100" style="background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);">
+                <div class="card-body d-flex flex-column justify-content-center py-3">
+                    <i class="fas fa-comments fa-2x mb-2 opacity-75"></i>
+                    <h4 class="fw-bold mb-1">{{ interview_applications|default:0 }}</h4>
+                    <small class="opacity-90">{% trans "Interview" %}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card border-0 bg-success bg-gradient text-white shadow-sm h-100">
+                <div class="card-body d-flex flex-column justify-content-center py-3">
+                    <i class="fas fa-check-circle fa-2x mb-2 opacity-75"></i>
+                    <h4 class="fw-bold mb-1">{{ accepted_applications|default:0 }}</h4>
+                    <small class="opacity-90">{% trans "Accepted" %}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card border-0 bg-danger bg-gradient text-white shadow-sm h-100">
+                <div class="card-body d-flex flex-column justify-content-center py-3">
+                    <i class="fas fa-times-circle fa-2x mb-2 opacity-75"></i>
+                    <h4 class="fw-bold mb-1">{{ rejected_applications|default:0 }}</h4>
+                    <small class="opacity-90">{% trans "Rejected" %}</small>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Фильтры, поиск и сортировка -->
+    {% if is_employer_view %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body py-3">
+                    <div class="row align-items-center">
+                        <!-- Company Filter + Status Buttons -->
+                        <div class="col-md-4 mb-2 mb-md-0">
+                            {% if owned_companies %}
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold mb-1">{% trans "Filter by Company:" %}</label>
+                                <select class="form-select form-select-sm" id="companyFilter" onchange="applyCompanyFilter()">
+                                    <option value="">{% trans "All Companies" %}</option>
+                                    {% for company in owned_companies %}
+                                    <option value="{{ company.id }}" {% if request.GET.company_id|add:"0" == company.id %}selected{% endif %}>
+                                        {{ company.name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            {% endif %}
+                            <div class="btn-group" role="group">
+                                <a href="?status=all{% if sort_by %}&sort_by={{ sort_by }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if request.GET.company_id %}&company_id={{ request.GET.company_id }}{% endif %}" class="btn {% if not status_filter or status_filter == 'all' %}btn-primary{% else %}btn-outline-primary{% endif %} btn-sm">
+                                    {% trans "All" %}
+                                </a>
+                                <a href="?status=active{% if sort_by %}&sort_by={{ sort_by }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if request.GET.company_id %}&company_id={{ request.GET.company_id }}{% endif %}" class="btn {% if status_filter == 'active' %}btn-success{% else %}btn-outline-success{% endif %} btn-sm">
+                                    {% trans "Active" %}
+                                </a>
+                                <a href="?status=draft{% if sort_by %}&sort_by={{ sort_by }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if request.GET.company_id %}&company_id={{ request.GET.company_id }}{% endif %}" class="btn {% if status_filter == 'draft' %}btn-warning{% else %}btn-outline-warning{% endif %} btn-sm">
+                                    {% trans "Draft" %}
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Поиск -->
+                        <div class="col-md-4 mb-2 mb-md-0">
+                            <div class="input-group input-group-sm">
+                                <input type="text" class="form-control" placeholder="{% trans 'Search by job title...' %}" id="searchInput" value="{{ search_query|default:'' }}">
+                                <button class="btn btn-outline-secondary" type="button" id="searchButton">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                                {% if search_query %}
+                                <button class="btn btn-outline-danger" type="button" id="clearSearchButton" title="{% trans 'Clear search' %}">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Сортировка -->
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center justify-content-end">
+                                <span class="me-2 small text-muted">{% trans "Sort by:" %}</span>
+                                <div class="position-relative">
+                                    <button type="button" 
+                                            class="btn btn-outline-primary btn-sm d-flex align-items-center"
+                                            id="sortModalBtn"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#sortOptionsModal">
+                                        {% if sort_by == 'title_asc' %}
+                                            <i class="fas fa-sort-alpha-down me-1"></i>{% trans "Title A-Z" %}
+                                        {% elif sort_by == 'title_desc' %}
+                                            <i class="fas fa-sort-alpha-up me-1"></i>{% trans "Title Z-A" %}
+                                        {% elif sort_by == 'date_asc' %}
+                                            <i class="fas fa-sort-numeric-down me-1"></i>{% trans "Date (Oldest)" %}
+                                        {% elif sort_by == 'date_desc' %}
+                                            <i class="fas fa-sort-numeric-up me-1"></i>{% trans "Date (Newest)" %}
+                                        {% elif sort_by == 'applications' %}
+                                            <i class="fas fa-users me-1"></i>{% trans "Applications" %}
+                                        {% elif sort_by == 'views' %}
+                                            <i class="fas fa-eye me-1"></i>{% trans "Views" %}
+                                        {% else %}
+                                            <i class="fas fa-sort me-1"></i>{% trans "Default" %}
+                                        {% endif %}
+                                        <i class="fas fa-chevron-down ms-1 small"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Информация о результатах -->
+                    {% if sort_by or search_query or status_filter %}
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div class="alert alert-info border-0 py-2 mb-0">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <div>
+                                        {% if sort_by %}
+                                        <small class="d-block">
+                                            {% if sort_by == 'title_asc' %}
+                                                {% trans "Sorted by Title (A-Z)" %}
+                                            {% elif sort_by == 'title_desc' %}
+                                                {% trans "Sorted by Title (Z-A)" %}
+                                            {% elif sort_by == 'date_asc' %}
+                                                {% trans "Sorted by Date (Oldest first)" %}
+                                            {% elif sort_by == 'date_desc' %}
+                                                {% trans "Sorted by Date (Newest first)" %}
+                                            {% elif sort_by == 'applications' %}
+                                                {% trans "Sorted by Applications (Most applications first)" %}
+                                            {% elif sort_by == 'views' %}
+                                                {% trans "Sorted by Views (Most viewed first)" %}
+                                            {% endif %}
+                                            {% if search_query %}
+                                                {% trans "and filtered by search" %} "<strong>{{ search_query }}</strong>"
+                                            {% endif %}
+                                        </small>
+                                        {% endif %}
+                                        
+                                        {% if jobs %}
+                                        <small class="d-block mt-1">
+                                            {% trans "Found" %} <strong>{{ jobs.paginator.count }}</strong> 
+                                            {% if jobs.paginator.count == 1 %}
+                                                {% trans "job" %}
+                                            {% else %}
+                                                {% trans "jobs" %}
+                                            {% endif %}
+                                            {% if status_filter == 'active' %}
+                                                {% trans "(Active only)" %}
+                                            {% elif status_filter == 'draft' %}
+                                                {% trans "(Draft only)" %}
+                                            {% endif %}
+                                            {% if search_query and not sort_by %}
+                                                {% trans "for search" %} "<strong>{{ search_query }}</strong>"
+                                            {% endif %}
+                                        </small>
+                                        {% else %}
+                                        <small class="d-block mt-1">
+                                            {% trans "No jobs found" %}
+                                            {% if status_filter == 'active' %}
+                                                {% trans "with active status" %}
+                                            {% elif status_filter == 'draft' %}
+                                                {% trans "with draft status" %}
+                                            {% endif %}
+                                            {% if search_query %}
+                                                {% trans "for search" %} "<strong>{{ search_query }}</strong>"
+                                            {% endif %}
+                                        </small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Содержимое -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-0">
+                    {% if is_employer_view %}
+                        <!-- Таблица вакансий для работодателя -->
+                        {% if jobs %}
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0" id="jobsTable">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th width="35%">
+                                                <div class="d-flex align-items-center">
+                                                    {% trans "Job Title" %}
+                                                    {% if sort_by == 'title_asc' %}
+                                                        <i class="fas fa-sort-alpha-down ms-1 text-primary small"></i>
+                                                    {% elif sort_by == 'title_desc' %}
+                                                        <i class="fas fa-sort-alpha-up ms-1 text-primary small"></i>
+                                                    {% endif %}
+                                                </div>
+                                            </th>
+                                            <th width="20%">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-building me-2"></i>{% trans "Company" %}
+                                                </div>
+                                            </th>
+                                            <th width="12%">{% trans "Status" %}</th>
+                                            <th width="12%">
+                                                <div class="d-flex align-items-center">
+                                                    {% trans "Applications" %}
+                                                    {% if sort_by == 'applications' %}
+                                                        <i class="fas fa-sort-numeric-down ms-1 text-primary small"></i>
+                                                    {% endif %}
+                                                </div>
+                                            </th>
+                                            <th width="12%">
+                                                <div class="d-flex align-items-center">
+                                                    {% trans "Views" %}
+                                                    {% if sort_by == 'views' %}
+                                                        <i class="fas fa-sort-numeric-down ms-1 text-primary small"></i>
+                                                    {% endif %}
+                                                </div>
+                                            </th>
+                                            <th width="9%">
+                                                <div class="d-flex align-items-center">
+                                                    {% trans "Created Date" %}
+                                                    {% if sort_by == 'date_asc' %}
+                                                        <i class="fas fa-sort-numeric-down ms-1 text-primary small"></i>
+                                                    {% elif sort_by == 'date_desc' %}
+                                                        <i class="fas fa-sort-numeric-up ms-1 text-primary small"></i>
+                                                    {% endif %}
+                                                </div>
+                                            </th>
+                                            <th width="15%">{% trans "Actions" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for job in jobs %}
+                                        <tr data-job-title="{{ job.title|lower }}">
+                                            <td>
+                                                <div>
+                                                    <h6 class="mb-1">
+                                                        <a href="{% url 'jobs:job_detail' job.id %}" class="text-decoration-none text-dark">
+                                                            {{ job.title|truncatechars:60 }}
+                                                        </a>
+                                                        {% if job.is_urgent %}
+                                                            <span class="badge bg-danger ms-1">{% trans "Urgent" %}</span>
+                                                        {% endif %}
+                                                    </h6>
+                                                    <small class="text-muted d-flex align-items-center">
+                                                        <i class="fas fa-map-marker-alt me-1 fs-6"></i>
+                                                        <span>{{ job.location|truncatechars:40 }}</span>
+                                                        {% if job.work_type == 'remote' %}
+                                                            <span class="badge bg-success ms-2">{% trans "Remote" %}</span>
+                                                        {% elif job.work_type == 'hybrid' %}
+                                                            <span class="badge bg-info ms-2">{% trans "Hybrid" %}</span>
+                                                        {% endif %}
+                                                    </small>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    {% if job.company.logo %}
+                                                        <img src="{{ job.company.logo.url }}" alt="{{ job.company.name }}" 
+                                                             class="rounded me-2" width="32" height="32" style="object-fit: cover;">
+                                                    {% else %}
+                                                        <div class="rounded bg-light d-flex align-items-center justify-content-center me-2" 
+                                                             style="width: 32px; height: 32px;">
+                                                            <i class="fas fa-building text-muted fa-sm"></i>
+                                                        </div>
+                                                    {% endif %}
+                                                    <div>
+                                                        <a href="{% url 'accounts:company_detail' job.company.id %}" class="text-decoration-none text-dark small fw-semibold d-block">
+                                                            {{ job.company.name|truncatechars:25 }}
+                                                        </a>
+                                                        {% if job.company.industry %}
+                                                            <small class="text-muted d-block">{{ job.company.industry|truncatechars:20 }}</small>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {% if job.is_active %}
+                                                    <span class="badge bg-success d-inline-flex align-items-center">
+                                                        <i class="fas fa-circle me-1" style="font-size: 8px;"></i>
+                                                        {% trans "Active" %}
+                                                    </span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary d-inline-flex align-items-center">
+                                                        <i class="fas fa-circle me-1" style="font-size: 8px;"></i>
+                                                        {% trans "Draft" %}
+                                                    </span>
+                                                {% endif %}
+                                                {% if job.expires_at and job.is_expired %}
+                                                    <span class="badge bg-danger mt-1 d-block">{% trans "Expired" %}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <a href="{% url 'jobs:employer_applications' %}?job={{ job.id }}" class="text-decoration-none d-flex align-items-center">
+                                                    <span class="badge bg-info rounded-pill px-2 py-1">
+                                                        <i class="fas fa-users me-1"></i>{{ job.applications_count }}
+                                                    </span>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-warning rounded-pill px-2 py-1">
+                                                    <i class="fas fa-eye me-1"></i>{{ job.views_count }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex flex-column">
+                                                    <small class="text-muted">{{ job.created_at|date:"d.m.Y" }}</small>
+                                                    {% if job.expires_at %}
+                                                        <small class="text-muted">
+                                                            <i class="fas fa-clock me-1"></i>{% trans "Expires" %}: {{ job.expires_at|date:"d.m.Y" }}
+                                                        </small>
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <a href="{% url 'jobs:job_detail' job.id %}" class="btn btn-outline-primary" title="{% trans 'View' %}" data-bs-toggle="tooltip">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a href="{% url 'jobs:job_edit' job.id %}" class="btn btn-outline-secondary" title="{% trans 'Edit' %}" data-bs-toggle="tooltip">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <button class="btn btn-outline-info" type="button" 
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#jobSettingsModal"
+                                                            data-job-id="{{ job.id }}"
+                                                            data-job-title="{{ job.title }}"
+                                                            title="{% trans 'Settings' %}">
+                                                        <i class="fas fa-cog"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Пагинация -->
+                            {% if jobs.has_other_pages %}
+                            <div class="card-footer border-top-0 bg-transparent">
+                                <nav aria-label="Page navigation">
+                                    <ul class="pagination justify-content-center mb-0">
+                                        {% if jobs.has_previous %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page={{ jobs.previous_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if sort_by %}&sort_by={{ sort_by }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}">
+                                                    <i class="fas fa-chevron-left"></i>
+                                                </a>
+                                            </li>
+                                        {% else %}
+                                            <li class="page-item disabled">
+                                                <span class="page-link"><i class="fas fa-chevron-left"></i></span>
+                                            </li>
+                                        {% endif %}
+                                        
+                                        {% for num in jobs.paginator.page_range %}
+                                            {% if jobs.number == num %}
+                                                <li class="page-item active">
+                                                    <span class="page-link">{{ num }}</span>
+                                                </li>
+                                            {% elif num > jobs.number|add:'-3' and num < jobs.number|add:'3' %}
+                                                <li class="page-item">
+                                                    <a class="page-link" href="?page={{ num }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if sort_by %}&sort_by={{ sort_by }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}">{{ num }}</a>
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                        
+                                        {% if jobs.has_next %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page={{ jobs.next_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if sort_by %}&sort_by={{ sort_by }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}">
+                                                    <i class="fas fa-chevron-right"></i>
+                                                </a>
+                                            </li>
+                                        {% else %}
+                                            <li class="page-item disabled">
+                                                <span class="page-link"><i class="fas fa-chevron-right"></i></span>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </nav>
+                            </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="text-center py-5">
+                                <div class="empty-state">
+                                    <i class="fas fa-briefcase fa-4x text-muted mb-3 opacity-50"></i>
+                                    <h5 class="text-muted mb-2">
+                                        {% if status_filter == 'active' %}
+                                            {% trans "No active jobs found" %}
+                                        {% elif status_filter == 'draft' %}
+                                            {% trans "No draft jobs found" %}
+                                        {% elif search_query %}
+                                            {% trans "No jobs found for your search" %}
+                                        {% else %}
+                                            {% trans "No jobs available yet" %}
+                                        {% endif %}
+                                    </h5>
+                                    <p class="text-muted mb-4">
+                                        {% if status_filter == 'active' %}
+                                            {% trans "You don't have any active job postings" %}
+                                        {% elif status_filter == 'draft' %}
+                                            {% trans "You don't have any draft job postings" %}
+                                        {% elif search_query %}
+                                            {% trans "Try a different search term or clear the search" %}
+                                        {% else %}
+                                            {% trans "Create your first job and find suitable candidates" %}
+                                        {% endif %}
+                                    </p>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a href="{% url 'jobs:job_create' %}" class="btn btn-primary px-4">
+                                            <i class="fas fa-plus me-2"></i>{% trans "New Job" %}
+                                        </a>
+                                        {% if status_filter or search_query %}
+                                        <a href="?status=all" class="btn btn-outline-secondary px-4">
+                                            <i class="fas fa-times me-2"></i>{% trans "Clear Filters" %}
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                    {% else %}
+                        <!-- Student Applications Table -->
+                        {% if applications %}
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th width="30%">{% trans "Job" %}</th>
+                                            <th width="15%">{% trans "Status" %}</th>
+                                            <th width="15%">{% trans "Expected Salary" %}</th>
+                                            <th width="10%">{% trans "Applied" %}</th>
+                                            <th width="10%">{% trans "Actions" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for application in applications %}
+                                        <tr>
+                                            <td>
+                                                <div>
+                                                    <h6 class="mb-1">
+                                                        <a href="{% url 'jobs:job_detail' application.job.id %}" class="text-decoration-none text-dark">
+                                                            {{ application.job.title|truncatechars:50 }}
+                                                        </a>
+                                                    </h6>
+                                                    <small class="text-muted d-flex align-items-center">
+                                                        <i class="fas fa-map-marker-alt me-1 fs-6"></i>
+                                                        <span>{{ application.job.location|truncatechars:30 }}</span>
+                                                    </small>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {% with status=application.status %}
+                                                <div class="dropdown">
+                                                     <button class="btn btn-sm dropdown-toggle d-flex align-items-center justify-content-between w-100
+                                                        {% if status == 'applied' %}btn-warning
+                                                        {% elif status == 'reviewed' %}btn-info
+                                                        {% elif status == 'shortlisted' %}text-white" style="background-color: #6f42c1; border-color: #6f42c1"
+                                                        {% elif status == 'interview' %}btn-primary
+                                                        {% elif status == 'hired' %}btn-success
+                                                        {% elif status == 'rejected' %}btn-danger
+                                                        {% else %}btn-secondary{% endif %}"
+                                                        type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <span>{{ application.get_status_display }}</span>
+                                                        <i class="fas fa-chevron-down ms-2"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li><span class="dropdown-item-text small">
+                                                            <i class="fas fa-clock me-1"></i>
+                                                            {% trans "Last Updated" %}: {{ application.status_changed_at|date:"d.m.Y H:i" }}
+                                                        </span></li>
+                                                        {% if application.status == 'interview' and application.job.contact_email %}
+                                                        <li>
+                                                            <a class="dropdown-item small" href="mailto:{{ application.job.contact_email }}">
+                                                                <i class="fas fa-envelope me-1"></i>{% trans "Contact Employer" %}
+                                                            </a>
+                                                        </li>
+                                                        {% endif %}
+                                                    </ul>
+                                                </div>
+                                                {% endwith %}
+                                            </td>
+                                            <td>
+                                                {% if application.expected_salary %}
+                                                    <strong class="text-success">{{ application.expected_salary }} {{ application.job.currency }}</strong>
+                                                {% else %}
+                                                    <span class="text-muted small">{% trans "Not Specified" %}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <div class="d-flex flex-column">
+                                                    <small class="text-muted">{{ application.created_at|date:"d.m.Y" }}</small>
+                                                    <small class="text-muted">{{ application.created_at|time:"H:i" }}</small>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <a href="{% url 'jobs:job_detail' application.job.id %}" class="btn btn-outline-primary" title="{% trans 'View Job' %}" data-bs-toggle="tooltip">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <button class="btn btn-outline-info view-application-details" 
+                                                            data-application-id="{{ application.id }}"
+                                                            title="{% trans 'Application Details' %}" data-bs-toggle="tooltip">
+                                                        <i class="fas fa-info-circle"></i>
+                                                    </button>
+                                                    {% if application.status == 'applied' or application.status == 'reviewed' %}
+                                                        <form method="post" action="{% url 'jobs:update_application_status' application.id %}" class="d-inline">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="status" value="withdrawn">
+                                                            <button type="submit" class="btn btn-outline-danger" 
+                                                                    data-confirm="true"
+                                                                    title="{% trans 'Withdraw Application' %}" data-bs-toggle="tooltip">
+                                                                <i class="fas fa-times"></i>
+                                                            </button>
+                                                        </form>
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Пагинация -->
+                            {% if applications.has_other_pages %}
+                            <div class="card-footer border-top-0 bg-transparent">
+                                <nav aria-label="Page navigation">
+                                    <ul class="pagination justify-content-center mb-0">
+                                        {% if applications.has_previous %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page={{ applications.previous_page_number }}{% if sort_by %}&sort_by={{ sort_by }}{% endif %}">
+                                                    <i class="fas fa-chevron-left"></i>
+                                                </a>
+                                            </li>
+                                        {% else %}
+                                            <li class="page-item disabled">
+                                                <span class="page-link"><i class="fas fa-chevron-left"></i></span>
+                                            </li>
+                                        {% endif %}
+                                        
+                                        {% for num in applications.paginator.page_range %}
+                                            {% if applications.number == num %}
+                                                <li class="page-item active">
+                                                    <span class="page-link">{{ num }}</span>
+                                                </li>
+                                            {% elif num > applications.number|add:'-3' and num < applications.number|add:'3' %}
+                                                <li class="page-item">
+                                                    <a class="page-link" href="?page={{ num }}{% if sort_by %}&sort_by={{ sort_by }}{% endif %}">{{ num }}</a>
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                        
+                                        {% if applications.has_next %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page={{ applications.next_page_number }}{% if sort_by %}&sort_by={{ sort_by }}{% endif %}">
+                                                    <i class="fas fa-chevron-right"></i>
+                                                </a>
+                                            </li>
+                                        {% else %}
+                                            <li class="page-item disabled">
+                                                <span class="page-link"><i class="fas fa-chevron-right"></i></span>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </nav>
+                            </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="text-center py-5">
+                                <div class="empty-state">
+                                    <i class="fas fa-file-alt fa-4x text-muted mb-3 opacity-50"></i>
+                                    <h5 class="text-muted mb-2">{% trans "No applications yet" %}</h5>
+                                    <p class="text-muted mb-4">{% trans "Submit your first job application and open career opportunities" %}</p>
+                                    <a href="{% url 'jobs:list' %}" class="btn btn-primary px-4">
+                                        <i class="fas fa-search me-2"></i>{% trans "Job Search" %}
+                                    </a>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Мини модальное окно для сортировки -->
+<div class="modal fade" id="sortOptionsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header border-0 pb-0">
+                <h6 class="modal-title text-primary">
+                    <i class="fas fa-sort me-2"></i>{% trans "Sort Options" %}
+                </h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body py-2">
+                <div class="sort-options">
+                    <!-- Группа по умолчанию -->
+                    <div class="sort-group mb-2">
+                        <h6 class="small text-muted mb-2 px-2">{% trans "Default" %}</h6>
+                        <a href="?{% if status_filter %}status={{ status_filter }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if filtered_company or request.GET.company_id %}&company_id={{ filtered_company.id|default:request.GET.company_id }}{% endif %}"
+                           class="sort-option d-flex align-items-center justify-content-between px-3 py-2 rounded text-decoration-none {% if not sort_by %}active-sort-option{% endif %}">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-sort text-muted me-2"></i>
+                                <span class="small">{% trans "Default" %}</span>
+                            </div>
+                            {% if not sort_by %}<i class="fas fa-check text-primary small"></i>{% endif %}
+                        </a>
+                    </div>
+
+                    <!-- Группа по названию -->
+                    <div class="sort-group mb-2">
+                        <h6 class="small text-muted mb-2 px-2">{% trans "Sort by Title" %}</h6>
+                        <a href="?sort_by=title_asc{% if status_filter %}&status={{ status_filter }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if filtered_company or request.GET.company_id %}&company_id={{ filtered_company.id|default:request.GET.company_id }}{% endif %}"
+                           class="sort-option d-flex align-items-center justify-content-between px-3 py-2 rounded text-decoration-none {% if sort_by == 'title_asc' %}active-sort-option{% endif %}">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-sort-alpha-down text-muted me-2"></i>
+                                <span class="small">{% trans "Title A-Z" %}</span>
+                            </div>
+                            {% if sort_by == 'title_asc' %}<i class="fas fa-check text-primary small"></i>{% endif %}
+                        </a>
+                        <a href="?sort_by=title_desc{% if status_filter %}&status={{ status_filter }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if filtered_company or request.GET.company_id %}&company_id={{ filtered_company.id|default:request.GET.company_id }}{% endif %}"
+                           class="sort-option d-flex align-items-center justify-content-between px-3 py-2 rounded text-decoration-none {% if sort_by == 'title_desc' %}active-sort-option{% endif %}">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-sort-alpha-up text-muted me-2"></i>
+                                <span class="small">{% trans "Title Z-A" %}</span>
+                            </div>
+                            {% if sort_by == 'title_desc' %}<i class="fas fa-check text-primary small"></i>{% endif %}
+                        </a>
+                    </div>
+
+                    <!-- Группа по дате -->
+                    <div class="sort-group mb-2">
+                        <h6 class="small text-muted mb-2 px-2">{% trans "Sort by Date" %}</h6>
+                        <a href="?sort_by=date_asc{% if status_filter %}&status={{ status_filter }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if filtered_company or request.GET.company_id %}&company_id={{ filtered_company.id|default:request.GET.company_id }}{% endif %}"
+                           class="sort-option d-flex align-items-center justify-content-between px-3 py-2 rounded text-decoration-none {% if sort_by == 'date_asc' %}active-sort-option{% endif %}">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-sort-numeric-down text-muted me-2"></i>
+                                <span class="small">{% trans "Date (Oldest)" %}</span>
+                            </div>
+                            {% if sort_by == 'date_asc' %}<i class="fas fa-check text-primary small"></i>{% endif %}
+                        </a>
+                        <a href="?sort_by=date_desc{% if status_filter %}&status={{ status_filter }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if filtered_company or request.GET.company_id %}&company_id={{ filtered_company.id|default:request.GET.company_id }}{% endif %}"
+                           class="sort-option d-flex align-items-center justify-content-between px-3 py-2 rounded text-decoration-none {% if sort_by == 'date_desc' %}active-sort-option{% endif %}">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-sort-numeric-up text-muted me-2"></i>
+                                <span class="small">{% trans "Date (Newest)" %}</span>
+                            </div>
+                            {% if sort_by == 'date_desc' %}<i class="fas fa-check text-primary small"></i>{% endif %}
+                        </a>
+                    </div>
+
+                    <!-- Группа по статистике -->
+                    <div class="sort-group">
+                        <h6 class="small text-muted mb-2 px-2">{% trans "Sort by Statistics" %}</h6>
+                        <a href="?sort_by=applications{% if status_filter %}&status={{ status_filter }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if filtered_company or request.GET.company_id %}&company_id={{ filtered_company.id|default:request.GET.company_id }}{% endif %}"
+                           class="sort-option d-flex align-items-center justify-content-between px-3 py-2 rounded text-decoration-none {% if sort_by == 'applications' %}active-sort-option{% endif %}">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-users text-muted me-2"></i>
+                                <span class="small">{% trans "Applications" %}</span>
+                            </div>
+                            {% if sort_by == 'applications' %}<i class="fas fa-check text-primary small"></i>{% endif %}
+                        </a>
+                        <a href="?sort_by=views{% if status_filter %}&status={{ status_filter }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if filtered_company or request.GET.company_id %}&company_id={{ filtered_company.id|default:request.GET.company_id }}{% endif %}"
+                           class="sort-option d-flex align-items-center justify-content-between px-3 py-2 rounded text-decoration-none {% if sort_by == 'views' %}active-sort-option{% endif %}">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-eye text-muted me-2"></i>
+                                <span class="small">{% trans "Views" %}</span>
+                            </div>
+                            {% if sort_by == 'views' %}<i class="fas fa-check text-primary small"></i>{% endif %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">
+                    {% trans "Close" %}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для настроек вакансии -->
+<div class="modal fade" id="jobSettingsModal" tabindex="-1" aria-labelledby="jobSettingsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="jobSettingsModalLabel">
+                    <i class="fas fa-cog me-2"></i><span id="modalJobTitle">{% trans "Job Settings" %}</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="jobSettingsForm" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="job_id" id="modalJobId">
+
+                    <div class="mb-4">
+                        <h6 class="text-primary mb-3">
+                            <i class="fas fa-fire me-2"></i>{% trans "Urgent Status" %}
+                        </h6>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="modalIsUrgent" name="is_urgent">
+                            <label class="form-check-label" for="modalIsUrgent">
+                                <span class="d-flex align-items-center">
+                                    <span class="badge bg-danger me-2">{% trans "URGENT" %}</span>
+                                    <span>{% trans "Mark as urgent hiring" %}</span>
+                                </span>
+                                <small class="text-muted d-block mt-1">{% trans "Indicates immediate hiring needs to candidates" %}</small>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-primary mb-3">
+                            <i class="fas fa-eye me-2"></i>{% trans "Visibility" %}
+                        </h6>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="modalIsActive" name="is_active" checked>
+                            <label class="form-check-label" for="modalIsActive">
+                                <span class="d-flex align-items-center">
+                                    <span class="badge bg-success me-2">{% trans "ACTIVE" %}</span>
+                                    <span>{% trans "Make job visible to candidates" %}</span>
+                                </span>
+                                <small class="text-muted d-block mt-1">{% trans "Turn off to hide job from public view" %}</small>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info border-0">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-info-circle me-2 mt-1"></i>
+                            <div>
+                                <small class="d-block">{% trans "Changes take effect immediately after saving" %}</small>
+                                <small class="d-block mt-1">{% trans "You can always update these settings later" %}</small>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-top-0 bg-light">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>{% trans "Cancel" %}
+                </button>
+                <button type="button" class="btn btn-primary" id="saveJobSettings">
+                    <i class="fas fa-save me-1"></i>{% trans "Save Changes" %}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для деталей заявки -->
+<div class="modal fade" id="applicationDetailsModal" tabindex="-1" aria-labelledby="applicationDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="applicationDetailsModalLabel">
+                    <i class="fas fa-file-alt me-2"></i>{% trans "Application Details" %}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="applicationDetailsContent">
+                <!-- Контент будет загружен через AJAX -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>{% trans "Close" %}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+:root {
+    --purple-color: #6f42c1;
+    --purple-light: #8a63d2;
+}
+
+.card-body {
+    align-items: center;
+}
+
+.card {
+    border-radius: 12px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table thead th {
+    border-bottom: 2px solid #e9ecef;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 1rem;
+}
+
+.table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.03);
+}
+
+.table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-top: 1px solid #f0f0f0;
+}
+
+.badge {
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+    font-size: 0.75em;
+}
+
+.btn-group-sm > .btn {
+    padding: 0.25rem 0.5rem;
+}
+
+.empty-state {
+    padding: 3rem 1rem;
+}
+
+.empty-state i {
+    opacity: 0.5;
+}
+
+.status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+/* Стили для мини модального окна сортировки */
+#sortOptionsModal .modal-dialog {
+    max-width: 320px;
+    margin: 0.5rem;
+}
+
+#sortOptionsModal .modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+}
+
+#sortOptionsModal .modal-header {
+    padding: 1rem 1.25rem 0.5rem;
+}
+
+#sortOptionsModal .modal-body {
+    padding: 0.5rem 0;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+#sortOptionsModal .modal-footer {
+    padding: 0.75rem 1.25rem 1rem;
+    border-top: 1px solid #f0f0f0;
+}
+
+.sort-option {
+    color: #495057;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    margin: 0.125rem 0.5rem;
+}
+
+.sort-option:hover {
+    background-color: rgba(13, 110, 253, 0.08);
+    color: #0d6efd;
+    border-color: rgba(13, 110, 253, 0.2);
+}
+
+.sort-option.active-sort-option {
+    background-color: rgba(13, 110, 253, 0.12);
+    color: #0d6efd;
+    border-color: rgba(13, 110, 253, 0.3);
+}
+
+.sort-option i {
+    font-size: 0.875rem;
+}
+
+.sort-group h6 {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.sort-group {
+    position: relative;
+}
+
+.sort-group:not(:last-child):after {
+    content: '';
+    position: absolute;
+    bottom: -0.5rem;
+    left: 0.75rem;
+    right: 0.75rem;
+    height: 1px;
+    background-color: #f0f0f0;
+}
+
+/* Кнопка сортировки */
+#sortModalBtn {
+    min-width: 160px;
+    justify-content: space-between;
+}
+
+/* Стили для модального окна настроек */
+#jobSettingsModal .modal-dialog {
+    max-width: 500px;
+}
+
+#jobSettingsModal .modal-header {
+    border-bottom: 2px solid rgba(255,255,255,0.2);
+    padding: 1.25rem 1.5rem;
+}
+
+#jobSettingsModal .modal-body {
+    padding: 1.5rem;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+#jobSettingsModal .modal-footer {
+    padding: 1rem 1.5rem;
+    background-color: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+}
+
+#jobSettingsModal .form-check-input:checked {
+    background-color: var(--purple-color);
+    border-color: var(--purple-color);
+}
+
+#jobSettingsModal .form-check-input:focus {
+    box-shadow: 0 0 0 0.25rem rgba(111, 66, 193, 0.25);
+}
+
+#jobSettingsModal .form-check-label {
+    cursor: pointer;
+    padding-left: 0.5rem;
+}
+
+#jobSettingsModal .alert {
+    background-color: #e7f3ff;
+    border: 1px solid #b3d7ff;
+    border-radius: 8px;
+    margin: 0;
+}
+
+.bg-purple-custom {
+    background-color: var(--purple-color) !important;
+    color: white !important;
+}
+
+/* Адаптивные стили */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem !important;
+    }
+    
+    .table-responsive {
+        border: 0;
+    }
+    
+    .btn-group {
+        flex-wrap: wrap;
+        gap: 0.25rem;
+    }
+    
+    .statistics-row .col {
+        margin-bottom: 1rem;
+    }
+    
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+    
+    #sortOptionsModal .modal-dialog {
+        margin: 0.5rem auto;
+    }
+    
+    #jobSettingsModal .modal-dialog {
+        margin: 0.5rem auto;
+    }
+    
+    #jobSettingsModal .modal-body {
+        padding: 1rem;
+    }
+    
+    #sortModalBtn {
+        min-width: auto;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.table tbody tr {
+    animation: fadeIn 0.3s ease forwards;
+}
+
+/* Эффекты переключения */
+.form-switch .form-check-input {
+    width: 3em;
+    height: 1.5em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.form-switch .form-check-input:checked {
+    background-position: right center;
+}
+
+/* Анимация для модального окна сортировки */
+#sortOptionsModal .modal-content {
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Инициализация тултипов
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // Поиск вакансий для работодателя
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    const clearSearchButton = document.getElementById('clearSearchButton');
+    
+    if (searchInput && searchButton) {
+        function performSearch() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // Убираем параметр page при новом поиске
+            urlParams.delete('page');
+            
+            if (searchTerm) {
+                urlParams.set('q', searchTerm);
+            } else {
+                urlParams.delete('q');
+            }
+            
+            // Сохраняем все существующие параметры
+            const newUrl = '?' + urlParams.toString();
+            
+            window.location.href = newUrl || '?';
+        }
+        
+        // Поиск работает ТОЛЬКО при нажатии на кнопку лупы
+        searchButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            performSearch();
+        });
+        
+        // Кнопка очистки поиска
+        if (clearSearchButton) {
+            clearSearchButton.addEventListener('click', function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.delete('q');
+                urlParams.delete('page');
+                const newUrl = '?' + urlParams.toString();
+                window.location.href = newUrl || '?';
+            });
+        }
+    }
+
+    // Обработка модального окна настроек вакансии
+    const jobSettingsModal = document.getElementById('jobSettingsModal');
+    if (jobSettingsModal) {
+        const modal = new bootstrap.Modal(jobSettingsModal);
+        
+        // Обработчик открытия модального окна
+        jobSettingsModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const jobId = button.getAttribute('data-job-id');
+            const jobTitle = button.getAttribute('data-job-title');
+            
+            // Установка данных в модальное окно
+            document.getElementById('modalJobId').value = jobId;
+            document.getElementById('modalJobTitle').textContent = jobTitle;
+            
+            // Загрузка текущих настроек вакансии
+            loadJobSettings(jobId);
+        });
+        
+        // Загрузка настроек вакансии
+        function loadJobSettings(jobId) {
+            fetch(`/jobs/${jobId}/settings/`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('modalIsUrgent').checked = data.is_urgent;
+                        document.getElementById('modalIsActive').checked = data.is_active;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading job settings:', error);
+                    showNotification('{% trans "Error loading job settings" %}', 'error');
+                });
+        }
+        
+        // Сохранение настроек вакансии
+        document.getElementById('saveJobSettings').addEventListener('click', function() {
+            const jobId = document.getElementById('modalJobId').value;
+            const formData = new FormData(document.getElementById('jobSettingsForm'));
+            
+            fetch(`/jobs/${jobId}/update-settings/`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    showNotification('{% trans "Settings updated successfully" %}', 'success');
+                    modal.hide();
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    showNotification('{% trans "Error updating settings" %}', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('{% trans "Error updating settings" %}', 'error');
+            });
+        });
+    }
+
+    // Просмотр деталей заявки для студента
+    const viewButtons = document.querySelectorAll('.view-application-details');
+    const applicationModal = new bootstrap.Modal(document.getElementById('applicationDetailsModal'));
+    
+    viewButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const applicationId = this.getAttribute('data-application-id');
+            
+            document.getElementById('applicationDetailsContent').innerHTML = `
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">{% trans "Loading..." %}</span>
+                    </div>
+                    <p class="mt-3 text-muted">{% trans "Loading application details..." %}</p>
+                </div>
+            `;
+            
+            applicationModal.show();
+            
+            // Загрузка данных через AJAX
+            fetch(`/jobs/applications/${applicationId}/detail/`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    document.getElementById('applicationDetailsContent').innerHTML = html;
+                    
+                    const modalTooltips = [].slice.call(document.querySelectorAll('#applicationDetailsModal [data-bs-toggle="tooltip"]'));
+                    modalTooltips.forEach(function (tooltipTriggerEl) {
+                        new bootstrap.Tooltip(tooltipTriggerEl);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('applicationDetailsContent').innerHTML = `
+                        <div class="alert alert-danger">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                                <div>
+                                    <h6 class="alert-heading">{% trans "Error" %}</h6>
+                                    <p class="mb-0">{% trans "Failed to load application details. Please try again later." %}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+        });
+    });
+
+    // Улучшение UX для мини-модального окна сортировки
+    const sortOptionsModal = new bootstrap.Modal(document.getElementById('sortOptionsModal'));
+    const sortOptions = document.querySelectorAll('.sort-option');
+    
+    sortOptions.forEach(option => {
+        option.addEventListener('click', function(e) {
+            e.preventDefault();
+            const url = this.getAttribute('href');
+            
+            const sortBtn = document.getElementById('sortModalBtn');
+            const originalHtml = sortBtn.innerHTML;
+            sortBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>{% trans "Applying..." %}';
+            sortBtn.disabled = true;
+            
+            sortOptionsModal.hide();
+            
+            setTimeout(() => {
+                window.location.href = url;
+            }, 300);
+        });
+    });
+
+    // Функция показа уведомлений
+    function showNotification(message, type = 'success') {
+        // Удаляем существующие уведомления
+        document.querySelectorAll('.toast').forEach(toast => toast.remove());
+        
+        const toast = document.createElement('div');
+        toast.className = `toast align-items-center text-bg-${type} border-0 position-fixed top-0 end-0 p-3`;
+        toast.style.zIndex = '9999';
+        toast.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+                    ${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        `;
+        document.body.appendChild(toast);
+        
+        const bsToast = new bootstrap.Toast(toast, { delay: 3000 });
+        bsToast.show();
+        
+        toast.addEventListener('hidden.bs.toast', function() {
+            toast.remove();
+        });
+    }
+
+    // Company filter handler - немедленно применяет фильтр при выборе компании
+    function applyCompanyFilter() {
+        const companyId = document.getElementById('companyFilter').value;
+        const currentParams = new URLSearchParams(window.location.search);
+        
+        // Сбрасываем страницу при смене фильтра
+        currentParams.delete('page');
+        
+        if (companyId) {
+            currentParams.set('company_id', companyId);
+        } else {
+            currentParams.delete('company_id');
+        }
+        
+        // Применяем фильтр немедленно
+        const newUrl = window.location.pathname + '?' + currentParams.toString();
+        window.location.href = newUrl || window.location.pathname;
+    }
+
+    // Функция для получения CSRF токена
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Обработка кнопок подтверждения отмены заявки
+    document.querySelectorAll('button[data-confirm="true"]').forEach(button => {
+        button.addEventListener('click', function(e) {
+            if (!confirm('{% trans "Are you sure you want to withdraw the application?" %}')) {
+                e.preventDefault();
+            }
+        });
+    });
+
+    // Обработка форм отмены заявки (fallback)
+    document.querySelectorAll('form[action*="update_application_status"]').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const submitButton = e.submitter;
+            if (submitButton && submitButton.hasAttribute('data-confirm')) {
+                // Уже обработано выше на кнопке
+                return;
+            }
+            if (!confirm('{% trans "Are you sure you want to withdraw the application?" %}')) {
+                e.preventDefault();
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

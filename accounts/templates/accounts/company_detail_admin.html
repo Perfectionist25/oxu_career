@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Company Detail" %} - Admin{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row">
+    <div class="col-lg-8">
+      <!-- Company Header -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <h4 class="mb-0">{{ company.name }}</h4>
+          <div>
+            <span class="badge {% if company.is_verified %}bg-success{% else %}bg-warning{% endif %}">
+              {% if company.is_verified %}{% trans "Verified" %}{% else %}{% trans "Pending" %}{% endif %}
+            </span>
+            <span class="badge {% if company.is_active %}bg-success{% else %}bg-danger{% endif %}">
+              {% if company.is_active %}{% trans "Active" %}{% else %}{% trans "Inactive" %}{% endif %}
+            </span>
+          </div>
+        </div>
+        <div class="card-body">
+          {% if company.logo %}
+            <div class="mb-3">
+              <img src="{{ company.logo.url }}" alt="{{ company.name }}" class="img-fluid" style="max-height: 200px;">
+            </div>
+          {% endif %}
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <strong>{% trans "Type" %}:</strong> {{ company.company_type }}
+            </div>
+            <div class="col-md-6">
+              <strong>{% trans "Size" %}:</strong> {{ company.get_company_size_display }}
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <strong>{% trans "Email" %}:</strong> {{ company.email|default:"—" }}
+            </div>
+            <div class="col-md-6">
+              <strong>{% trans "Phone" %}:</strong> {{ company.phone|default:"—" }}
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <strong>{% trans "City" %}:</strong> {{ company.city }}
+            </div>
+            <div class="col-md-6">
+              <strong>{% trans "Region" %}:</strong> {{ company.region }}
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <strong>{% trans "Address" %}:</strong>
+            <p>{{ company.address }}</p>
+          </div>
+
+          <div class="mb-3">
+            <strong>{% trans "Description" %}:</strong>
+            <p>{{ company.description }}</p>
+          </div>
+
+          {% if company.industry %}
+            <div class="mb-3">
+              <strong>{% trans "Industry" %}:</strong> {{ company.industry }}
+            </div>
+          {% endif %}
+
+          {% if company.tags %}
+            <div class="mb-3">
+              <strong>{% trans "Tags" %}:</strong>
+              {% for tag in company.formatted_tags %}
+                <span class="badge bg-secondary">{{ tag }}</span>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Statistics -->
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <div class="card text-center">
+            <div class="card-body">
+              <h3 class="text-primary">{{ company.total_jobs }}</h3>
+              <p class="text-muted mb-0">{% trans "Total Jobs" %}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card text-center">
+            <div class="card-body">
+              <h3 class="text-success">{{ company.active_jobs }}</h3>
+              <p class="text-muted mb-0">{% trans "Active Jobs" %}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card text-center">
+            <div class="card-body">
+              <h3 class="text-info">{{ company.applicants_count }}</h3>
+              <p class="text-muted mb-0">{% trans "Applicants" %}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Actions -->
+      <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white">
+          <h5 class="mb-0">{% trans "Admin Actions" %}</h5>
+        </div>
+        <div class="card-body">
+          <form method="post" class="d-flex gap-2">
+            {% csrf_token %}
+            
+            {% if not company.is_verified %}
+              <a href="{% url 'accounts:toggle_company_verification' company.pk %}" class="btn btn-success" onclick="return confirm('{% trans "Verify this company?" %}')">
+                <i class="fas fa-check me-2"></i>{% trans "Verify" %}
+              </a>
+            {% else %}
+              <a href="{% url 'accounts:toggle_company_verification' company.pk %}" class="btn btn-warning" onclick="return confirm('{% trans "Remove verification?" %}')">
+                <i class="fas fa-times me-2"></i>{% trans "Remove Verification" %}
+              </a>
+            {% endif %}
+
+            {% if company.is_active %}
+              <a href="{% url 'accounts:toggle_company_status' company.pk %}" class="btn btn-danger" onclick="return confirm('{% trans "Deactivate this company?" %}')">
+                <i class="fas fa-pause-circle me-2"></i>{% trans "Deactivate" %}
+              </a>
+            {% else %}
+              <a href="{% url 'accounts:toggle_company_status' company.pk %}" class="btn btn-primary" onclick="return confirm('{% trans "Activate this company?" %}')">
+                <i class="fas fa-play-circle me-2"></i>{% trans "Activate" %}
+              </a>
+            {% endif %}
+
+            <a href="{% url 'accounts:company_detail' company.pk %}" class="btn btn-outline-primary">
+              <i class="fas fa-edit me-2"></i>{% trans "Edit" %}
+            </a>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar Info -->
+    <div class="col-lg-4">
+      <div class="card shadow-sm mb-3">
+        <div class="card-header bg-secondary text-white">
+          <h5 class="mb-0">{% trans "Owner" %}</h5>
+        </div>
+        <div class="card-body text-center">
+          <h6>{{ company.owner.user.get_full_name }}</h6>
+          <p class="text-muted small mb-2">{{ company.owner.user.email }}</p>
+          <a href="{% url 'accounts:user_detail' company.owner.user.id %}" class="btn btn-sm btn-outline-primary">
+            {% trans "View Profile" %}
+          </a>
+        </div>
+      </div>
+
+      <div class="card shadow-sm">
+        <div class="card-header bg-secondary text-white">
+          <h5 class="mb-0">{% trans "Quick Links" %}</h5>
+        </div>
+        <div class="card-body">
+          <ul class="list-unstyled">
+            {% if company.website %}
+              <li class="mb-2">
+                <a href="{{ company.website }}" target="_blank" class="text-decoration-none">
+                  <i class="fas fa-globe me-2"></i>{% trans "Website" %}
+                </a>
+              </li>
+            {% endif %}
+            {% if company.linkedin %}
+              <li class="mb-2">
+                <a href="{{ company.linkedin }}" target="_blank" class="text-decoration-none">
+                  <i class="fab fa-linkedin me-2"></i>LinkedIn
+                </a>
+              </li>
+            {% endif %}
+            {% if company.telegram %}
+              <li class="mb-2">
+                <a href="{{ company.telegram }}" target="_blank" class="text-decoration-none">
+                  <i class="fab fa-telegram me-2"></i>Telegram
+                </a>
+              </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <a href="{% url 'accounts:admin_company_management' %}" class="btn btn-secondary">
+      <i class="fas fa-arrow-left me-2"></i>{% trans "Back to Companies" %}
+    </a>
+  </div>
+</div>
+{% endblock %}

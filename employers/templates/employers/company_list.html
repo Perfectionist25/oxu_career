@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block content %}
+<div class="container py-5">
+	<h1 class="display-5 fw-bold text-primary mb-4">{% trans "Company List" %}</h1>
+	<div class="card shadow-sm mb-4">
+		<div class="card-body">
+			<ul class="list-group">
+				<li class="list-group-item">{% trans "No companies found." %}</li>
+			</ul>
+		</div>
+	</div>
+</div>
+{% endblock %}

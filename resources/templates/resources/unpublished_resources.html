@@ -1,0 +1,990 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="header-section">
+        <h1 class="main-title">{% trans "Unpublished Resources" %}</h1>
+        <p class="subtitle">{% trans "All materials waiting for review and publication" %}</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon pending">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-info">
+                <div class="stat-number">{{ total_resources }}</div>
+                <div class="stat-label">{% trans "Total unpublished" %}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon today">
+                <i class="fas fa-calendar-day"></i>
+            </div>
+            <div class="stat-info">
+                <div class="stat-number">{{ today_count }}</div>
+                <div class="stat-label">{% trans "Added today" %}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon categories">
+                <i class="fas fa-tags"></i>
+            </div>
+            <div class="stat-info">
+                <div class="stat-number">{{ categories_count }}</div>
+                <div class="stat-label">{% trans "Categories" %}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Actions Bar -->
+    <div class="bulk-actions-bar" id="bulkActionsBar" style="display: none;">
+        <div class="bulk-info">
+            <span id="selectedCount">0</span> {% trans "resources selected" %}
+        </div>
+        <div class="bulk-buttons">
+            <form method="post" action="{% url 'resources:bulk_publish' %}" id="bulkPublishForm" class="d-inline">
+                {% csrf_token %}
+                <input type="hidden" name="resource_ids" id="bulkPublishIds">
+                <button type="submit" class="btn btn-success btn-sm" onclick="return confirmBulkAction('publish')">
+                    <i class="fas fa-check-double"></i>{% trans "Publish selected" %}
+                </button>
+            </form>
+            <form method="post" action="{% url 'resources:bulk_delete' %}" id="bulkDeleteForm" class="d-inline">
+                {% csrf_token %}
+                <input type="hidden" name="resource_ids" id="bulkDeleteIds">
+                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirmBulkAction('delete')">
+                    <i class="fas fa-trash"></i>{% trans "Delete selected" %}
+                </button>
+            </form>
+            <button class="btn btn-secondary btn-sm" onclick="clearSelection()">
+                <i class="fas fa-times"></i>{% trans "Clear selection" %}
+            </button>
+        </div>
+    </div>
+
+    <!-- Selection Controls - ПЕРЕМЕЩЕН НАВЕРХ -->
+    <div class="selection-controls-bar">
+        <div class="selection-info">
+            <label class="select-all-label">
+                <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)">
+                {% trans "Select all on this page" %}
+            </label>
+            <span class="selection-count" id="pageSelectionCount">0 {% trans "selected" %}</span>
+        </div>
+        <div class="selection-stats">
+            <span class="total-count">{{ page_obj.paginator.count }} {% trans "total resources" %}</span>
+        </div>
+    </div>
+
+    <!-- Actions Bar -->
+    <div class="actions-bar">
+        <div class="action-buttons">
+            <a href="{% url 'resources:resource_create' %}" class="btn btn-success">
+                <i class="fas fa-plus"></i>{% trans "Add new resource" %}
+            </a>
+            <a href="{% url 'resources:list' %}" class="btn btn-secondary">
+                <i class="fas fa-eye"></i>{% trans "Published resources" %}
+            </a>
+        </div>
+        
+        <div class="view-options">
+            <span class="view-label">{% trans "View" %}:</span>
+            <button class="view-btn active" data-view="grid">
+                <i class="fas fa-th"></i>
+            </button>
+            <button class="view-btn" data-view="list">
+                <i class="fas fa-list"></i>
+            </button>
+        </div>
+    </div>
+
+    {% if page_obj %}
+    <!-- Resources Table/Grid -->
+    <form id="resourcesForm">
+        <div class="resources-container view-grid" id="resourcesView">
+            {% for resource in page_obj %}
+            <div class="resource-card unpublished">
+                <div class="card-header">
+                    <div class="selection-checkbox">
+                        <input type="checkbox" class="resource-checkbox" name="resource_ids" value="{{ resource.pk }}" 
+                               onchange="updateBulkActions()">
+                    </div>
+                    <div class="status-badge">
+                        <i class="fas fa-eye-slash"></i>
+                        {% trans "Unpublished" %}
+                    </div>
+                    <div class="card-actions">
+                        <div class="dropdown">
+                            <button class="dropdown-btn">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <div class="dropdown-menu">
+                                <a href="{% url 'resources:publish_resource' resource.pk %}" 
+                                   class="dropdown-item publish-btn"
+                                   onclick="return confirm('{% trans "Do you want to publish this resource?" %}')">
+                                    <i class="fas fa-check"></i>{% trans "Publish" %}
+                                </a>
+                                <a href="{% url 'resources:resource_edit' resource.pk %}" class="dropdown-item">
+                                    <i class="fas fa-edit"></i>{% trans "Edit" %}
+                                </a>
+                                <a href="{% url 'resources:resource_detail' resource.pk %}" class="dropdown-item">
+                                    <i class="fas fa-eye"></i>{% trans "View" %}
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a href="{% url 'resources:resource_delete' resource.pk %}" 
+                                   class="dropdown-item delete-btn"
+                                   onclick="return confirm('{% trans "Do you confirm deletion of this resource?" %}')">
+                                    <i class="fas fa-trash"></i>{% trans "Delete" %}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-content">
+                    <!-- Resource Image -->
+                    {% if resource.image %}
+                    <div class="resource-image">
+                        <img src="{{ resource.image.url }}" alt="{{ resource.title }}">
+                    </div>
+                    {% else %}
+                    <div class="resource-image placeholder">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    {% endif %}
+
+                    <!-- Resource Info -->
+                    <div class="resource-info">
+                        <div class="category-badge">
+                            {{ resource.category.name|default:_("No category") }}
+                        </div>
+                        <h3 class="resource-title">{{ resource.title }}</h3>
+                        <p class="resource-description">{{ resource.description|truncatechars:100 }}</p>
+                        
+                        <!-- Resource Meta -->
+                        <div class="resource-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-calendar-plus"></i>
+                                {% trans "Added" %}: {{ resource.created_at|date:"d.m.Y" }}
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-sync"></i>
+                                {% trans "Updated" %}: {{ resource.updated_at|date:"d.m.Y" }}
+                            </div>
+                            {% if resource.url_youtube %}
+                            <div class="meta-item">
+                                <i class="fab fa-youtube"></i>
+                                {% trans "YouTube video available" %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="quick-actions">
+                        <form method="post" action="{% url 'resources:publish_resource' resource.pk %}" class="quick-form">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('{% trans "Do you confirm publishing?" %}')">
+                                <i class="fas fa-check"></i>{% trans "Publish" %}
+                            </button>
+                        </form>
+                        <a href="{% url 'resources:resource_edit' resource.pk %}" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-edit"></i>{% trans "Edit" %}
+                        </a>
+                        <a href="{% url 'resources:resource_detail' resource.pk %}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-eye"></i>{% trans "View" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <!-- Fill empty cards to maintain grid layout -->
+            {% with resources_count=page_obj.object_list.count %}
+                {% with remainder=resources_count|add:"0"|divisibleby:3 %}
+                    {% if remainder == 1 %}
+                        <div class="resource-card empty-card"></div>
+                        <div class="resource-card empty-card"></div>
+                    {% elif remainder == 2 %}
+                        <div class="resource-card empty-card"></div>
+                    {% endif %}
+                {% endwith %}
+            {% endwith %}
+        </div>
+    </form>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="page-link">
+                <i class="fas fa-chevron-left"></i> {% trans "Previous" %}
+            </a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <span class="page-link active">{{ num }}</span>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <a href="?page={{ num }}" class="page-link">
+                    {{ num }}
+                </a>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="page-link">
+                {% trans "Next" %} <i class="fas fa-chevron-right"></i>
+            </a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <!-- Empty State -->
+    <div class="empty-state">
+        <div class="empty-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h3>{% trans "All resources are published" %}</h3>
+        <p>{% trans "There are currently no unpublished resources. All materials have already been published." %}</p>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Header Section */
+.header-section {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.main-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #012152;
+    margin-bottom: 1rem;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: #666;
+    line-height: 1.6;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.stat-icon.pending { background: #ffc107; }
+.stat-icon.today { background: #17a2b8; }
+.stat-icon.categories { background: #6f42c1; }
+
+.stat-info {
+    flex: 1;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    line-height: 1;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+
+/* Bulk Actions Bar */
+.bulk-actions-bar {
+    background: #e3f2fd;
+    border: 1px solid #bbdefb;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.bulk-info {
+    font-weight: 600;
+    color: #1976d2;
+}
+
+.bulk-info span {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.bulk-buttons {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+/* Selection Controls Bar - НОВЫЙ СТИЛЬ */
+.selection-controls-bar {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.selection-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.select-all-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-weight: 500;
+    color: #495057;
+    margin: 0;
+}
+
+.selection-count {
+    font-weight: 600;
+    color: #012152;
+    background: #e9ecef;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.9rem;
+}
+
+.selection-stats {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.total-count {
+    background: #012152;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-weight: 500;
+}
+
+/* Actions Bar */
+.actions-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.view-options {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.view-label {
+    color: #666;
+    margin-right: 0.5rem;
+}
+
+.view-btn {
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 0.5rem;
+    cursor: pointer;
+    color: #666;
+    transition: all 0.3s ease;
+}
+
+.view-btn.active,
+.view-btn:hover {
+    background: #012152;
+    color: white;
+    border-color: #012152;
+}
+
+/* Resources Container */
+.resources-container {
+    margin-bottom: 3rem;
+}
+
+
+/* Resource Card */
+.resource-card.unpublished {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-left: 4px solid #ffc107;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    min-height: 450px; /* Фиксированная высота для выравнивания */
+}
+
+/* Убрать empty-card - они не нужны с CSS Grid */
+.resource-card.empty-card {
+    display: none;
+}
+
+.view-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 1.5rem;
+    align-items: start; /* Выравнивание по верху */
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1.5rem 1.5rem 0;
+    margin-bottom: 1rem;
+}
+
+.card-header .selection-checkbox {
+    flex-shrink: 0;
+    margin-right: 0.75rem;
+}
+
+.card-header .status-badge {
+    flex-grow: 1;
+    margin: 0 1rem;
+}
+
+.card-header .card-actions {
+    flex-shrink: 0;
+}
+
+.selection-checkbox {
+    margin-right: 0.75rem;
+}
+
+.resource-checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.status-badge {
+    background: #fff3cd;
+    color: #856404;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.card-actions {
+    position: relative;
+}
+
+.dropdown-btn {
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 0.5rem;
+    cursor: pointer;
+    color: #666;
+    transition: all 0.3s ease;
+}
+
+.dropdown-btn:hover {
+    background: #f8f9fa;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    min-width: 200px;
+    z-index: 1000;
+    display: none;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-item {
+    display: block;
+    padding: 0.75rem 1rem;
+    color: #333;
+    text-decoration: none;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.dropdown-item:hover {
+    background: #f8f9fa;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: #dee2e6;
+    margin: 0.5rem 0;
+}
+
+.publish-btn { color: #28a745; }
+.delete-btn { color: #dc3545; }
+
+.card-content {
+    padding: 0 1.5rem 1.5rem;
+}
+
+.resource-image {
+    margin-bottom: 1rem;
+}
+
+.resource-image img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.resource-image.placeholder {
+    height: 200px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ddd;
+    font-size: 3rem;
+}
+
+.resource-info {
+    margin-bottom: 1.5rem;
+}
+
+.category-badge {
+    display: inline-block;
+    background: #6c757d;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+}
+
+.resource-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 0.75rem 0;
+    line-height: 1.4;
+}
+
+.resource-description {
+    color: #666;
+    line-height: 1.6;
+    margin: 0 0 1rem 0;
+}
+
+.resource-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.quick-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.quick-form {
+    flex: 1;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    text-align: center;
+    justify-content: center;
+}
+
+.btn-sm {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+}
+
+.btn-primary { background: #012152; color: white; }
+.btn-secondary { background: #6c757d; color: white; }
+.btn-success { background: #28a745; color: white; }
+.btn-danger { background: #dc3545; color: white; }
+.btn-warning { background: #ffc107; color: #212529; }
+
+.btn-primary:hover { background: #012d6e; }
+.btn-secondary:hover { background: #5a6268; }
+.btn-success:hover { background: #218838; }
+.btn-danger:hover { background: #c82333; }
+.btn-warning:hover { background: #e0a800; }
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 3rem 0;
+}
+
+.page-link {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #012152;
+    transition: all 0.3s ease;
+}
+
+.page-link:hover,
+.page-link.active {
+    background: #012152;
+    color: white;
+    border-color: #012152;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: #28a745;
+    margin-bottom: 1.5rem;
+}
+
+.empty-state h3 {
+    margin: 0 0 1rem 0;
+    color: #333;
+    font-size: 1.5rem;
+}
+
+.empty-state p {
+    margin: 0 0 2rem 0;
+    color: #666;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+}
+
+.empty-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .view-grid {
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .view-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .selection-controls-bar {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+        text-align: center;
+    }
+    
+    .selection-info {
+        justify-content: center;
+    }
+    
+    .actions-bar {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .view-options {
+        justify-content: center;
+    }
+    
+    .empty-actions {
+        flex-direction: column;
+    }
+    
+    .bulk-actions-bar {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .bulk-buttons {
+        flex-direction: column;
+    }
+    
+    .quick-actions {
+        flex-direction: column;
+    }
+    
+    .card-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+    
+    .card-header .status-badge {
+        margin: 0;
+        order: 2;
+    }
+    
+    .card-header .selection-checkbox {
+        order: 1;
+    }
+    
+    .card-header .card-actions {
+        order: 3;
+        align-self: flex-end;
+    }
+    
+    .dropdown-menu {
+        right: auto;
+        left: 0;
+    }
+    
+    .main-title {
+        font-size: 2rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .view-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .container {
+        padding: 0 15px;
+    }
+}
+</style>
+
+<script>
+// Selection management
+function updateBulkActions() {
+    const checkboxes = document.querySelectorAll('.resource-checkbox:checked');
+    const selectedCount = checkboxes.length;
+    
+    // Update counters
+    document.getElementById('selectedCount').textContent = selectedCount;
+    document.getElementById('pageSelectionCount').textContent = selectedCount + ' {% trans "selected" %}';
+    
+    // Show/hide bulk actions bar
+    const bulkActionsBar = document.getElementById('bulkActionsBar');
+    if (selectedCount > 0) {
+        bulkActionsBar.style.display = 'flex';
+        
+        // Update form hidden fields
+        const selectedIds = Array.from(checkboxes).map(cb => cb.value).join(',');
+        document.getElementById('bulkPublishIds').value = selectedIds;
+        document.getElementById('bulkDeleteIds').value = selectedIds;
+    } else {
+        bulkActionsBar.style.display = 'none';
+    }
+    
+    // Update select all checkbox
+    const totalCheckboxes = document.querySelectorAll('.resource-checkbox').length;
+    const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+    selectAllCheckbox.checked = selectedCount === totalCheckboxes;
+    selectAllCheckbox.indeterminate = selectedCount > 0 && selectedCount < totalCheckboxes;
+}
+
+function toggleSelectAll(checkbox) {
+    const checkboxes = document.querySelectorAll('.resource-checkbox');
+    checkboxes.forEach(cb => {
+        cb.checked = checkbox.checked;
+    });
+    updateBulkActions();
+}
+
+function clearSelection() {
+    const checkboxes = document.querySelectorAll('.resource-checkbox');
+    checkboxes.forEach(cb => {
+        cb.checked = false;
+    });
+    updateBulkActions();
+}
+
+function confirmBulkAction(action) {
+    const selectedCount = document.querySelectorAll('.resource-checkbox:checked').length;
+    if (selectedCount === 0) {
+        alert('{% trans "Please select at least one resource" %}');
+        return false;
+    }
+    
+    const messages = {
+        'publish': '{% trans "Do you want to publish" %}',
+        'delete': '{% trans "Do you confirm deletion of" %}'
+    };
+    
+    return confirm(messages[action] + ' ' + selectedCount + ' {% trans "resources" %}?');
+}
+
+// View toggle functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const viewBtns = document.querySelectorAll('.view-btn');
+    const resourcesView = document.getElementById('resourcesView');
+    
+    viewBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Remove active class from all buttons
+            viewBtns.forEach(b => b.classList.remove('active'));
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            // Switch view
+            const viewType = this.dataset.view;
+            resourcesView.className = 'resources-container view-' + viewType;
+        });
+    });
+});
+
+// Auto-hide dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    if (!event.target.closest('.dropdown')) {
+        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+            menu.style.display = 'none';
+        });
+    }
+});
+
+// Grid layout optimization - ensure proper number of items per row
+function optimizeGridLayout() {
+    const container = document.getElementById('resourcesView');
+    const cards = container.querySelectorAll('.resource-card:not(.empty-card)');
+    const itemsPerRow = window.innerWidth > 1200 ? 3 : window.innerWidth > 768 ? 2 : 1;
+    
+    // Remove existing empty cards
+    const existingEmptyCards = container.querySelectorAll('.empty-card');
+    existingEmptyCards.forEach(card => card.remove());
+    
+    // Calculate needed empty slots
+    const remainingItems = cards.length % itemsPerRow;
+    const emptySlotsNeeded = remainingItems === 0 ? 0 : itemsPerRow - remainingItems;
+    
+    // Add empty cards to fill the grid
+    for (let i = 0; i < emptySlotsNeeded; i++) {
+        const emptyCard = document.createElement('div');
+        emptyCard.className = 'resource-card empty-card';
+        container.appendChild(emptyCard);
+    }
+}
+
+// Run on load and resize
+document.addEventListener('DOMContentLoaded', optimizeGridLayout);
+window.addEventListener('resize', optimizeGridLayout);
+</script>
+{% endblock %}

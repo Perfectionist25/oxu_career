@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Company Documents" %} - {{ company.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row">
+    <div class="col-lg-8 offset-lg-2">
+      <!-- Upload Document Section -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">
+            <i class="fas fa-file-upload me-2"></i>{% trans "Upload Document" %}
+          </h4>
+        </div>
+        <div class="card-body">
+          <form method="post" enctype="multipart/form-data" class="needs-validation">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+              <label for="id_document_type" class="form-label">{% trans "Document Type" %} <span class="text-danger">*</span></label>
+              {{ form.document_type }}
+              {% if form.document_type.errors %}
+                <div class="invalid-feedback d-block">
+                  {{ form.document_type.errors.0 }}
+                </div>
+              {% endif %}
+              <small class="form-text text-muted">
+                {% trans "Select the type of document you are uploading" %}
+              </small>
+            </div>
+
+            <div class="mb-3">
+              <label for="id_title" class="form-label">{% trans "Document Title" %} <span class="text-danger">*</span></label>
+              {{ form.title }}
+              {% if form.title.errors %}
+                <div class="invalid-feedback d-block">
+                  {{ form.title.errors.0 }}
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label for="id_file" class="form-label">{% trans "File" %} <span class="text-danger">*</span></label>
+              {{ form.file }}
+              {% if form.file.errors %}
+                <div class="invalid-feedback d-block">
+                  {{ form.file.errors.0 }}
+                </div>
+              {% endif %}
+              <small class="form-text text-muted">
+                {% trans "Supported formats: PDF, DOC, DOCX (max 10MB)" %}
+              </small>
+            </div>
+
+            <div class="mb-3">
+              <label for="id_description" class="form-label">{% trans "Description" %}</label>
+              {{ form.description }}
+              <small class="form-text text-muted">
+                {% trans "Optional description of the document" %}
+              </small>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-upload me-2"></i>{% trans "Upload Document" %}
+              </button>
+              <a href="{% url 'accounts:company_detail' company.pk %}" class="btn btn-outline-secondary">
+                {% trans "Cancel" %}
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Documents List -->
+      <div class="card shadow-sm">
+        <div class="card-header bg-secondary text-white">
+          <h4 class="mb-0">
+            <i class="fas fa-folder me-2"></i>{% trans "Uploaded Documents" %}
+            <span class="badge bg-light text-dark ms-2">{{ documents.count }}</span>
+          </h4>
+        </div>
+
+        <div class="card-body">
+          {% if documents %}
+            <div class="row">
+              {% for doc in documents %}
+                <div class="col-md-6 mb-3">
+                  <div class="card border-light h-100">
+                    <div class="card-body">
+                      <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                          <h6 class="card-title mb-1">
+                            <i class="fas fa-file-pdf text-danger me-2"></i>{{ doc.title }}
+                          </h6>
+                          <p class="text-muted small mb-1">
+                            <strong>{% trans "Type:" %}</strong> {{ doc.get_document_type_display }}
+                          </p>
+                          <p class="text-muted small mb-1">
+                            <strong>{% trans "Uploaded:" %}</strong> {{ doc.uploaded_at|date:"SHORT_DATE_FORMAT" }}
+                          </p>
+                        </div>
+                        
+                        <form method="post" action="" class="d-inline">
+                          {% csrf_token %}
+                          <input type="hidden" name="delete_doc_id" value="{{ doc.id }}">
+                          <button 
+                            type="submit" 
+                            class="btn btn-sm btn-danger"
+                            title="{% trans 'Delete document' %}"
+                            onclick="return confirm('{% trans "Delete this document?" %}')"
+                          >
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </form>
+                      </div>
+
+                      {% if doc.description %}
+                        <p class="card-text small">
+                          <em>{{ doc.description }}</em>
+                        </p>
+                      {% endif %}
+
+                      <a href="{{ doc.file.url }}" class="btn btn-sm btn-outline-primary" download>
+                        <i class="fas fa-download me-1"></i>{% trans "Download" %}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="alert alert-info">
+              <i class="fas fa-info-circle me-2"></i>
+              {% trans "No documents uploaded yet. Upload your first document above." %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Back Links -->
+      <div class="mt-4">
+        <a href="{% url 'accounts:company_detail' company.pk %}" class="btn btn-secondary">
+          <i class="fas fa-arrow-left me-2"></i>{% trans "Back to Company" %}
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Initialize form validation
+(function () {
+  'use strict';
+  window.addEventListener('load', function () {
+    var forms = document.querySelectorAll('.needs-validation');
+    Array.prototype.slice.call(forms).forEach(function (form) {
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  }, false);
+})();
+</script>
+{% endblock %}

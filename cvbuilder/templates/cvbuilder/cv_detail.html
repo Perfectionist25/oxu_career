@@ -1,0 +1,744 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Main Resume Content -->
+        <div class="col-lg-8 mx-auto">
+            <!-- Action Panel -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0 text-dark">{{ cv.title }}</h4>
+                            <small class="text-muted">
+                                Created: {{ cv.created_at|date:"d.m.Y" }} | 
+                                Template: {% if cv.template %}{{ cv.template.name }}{% else %}Default{% endif %}
+                            </small>
+                        </div>
+                        <div class="d-flex gap-2 align-items-center">
+                            <!-- Resume Status -->
+                            <span class="badge 
+                                {% if cv.status == 'published' %}bg-success
+                                {% elif cv.status == 'draft' %}bg-warning text-dark
+                                {% else %}bg-secondary{% endif %}">
+                                {{ cv.get_status_display }}
+                            </span>
+                            
+                            <!-- Print Button -->
+                            <button class="btn btn-outline-secondary btn-sm" onclick="window.print()">
+                                <i class="fas fa-print me-1"></i>Print
+                            </button>
+                            
+                            {% if cv.user.user == request.user %}
+                            <!-- Actions Button - Triggers Modal -->
+                            <button class="btn btn-outline-primary btn-sm" type="button" 
+                                    data-bs-toggle="modal" data-bs-target="#cvActionsModal"
+                                    id="actionsButton">
+                                <i class="fas fa-cog me-1"></i>Actions
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions Modal -->
+            {% if cv.user.user == request.user %}
+            <div class="modal" id="cvActionsModal" tabindex="-1" aria-labelledby="cvActionsModalLabel" aria-hidden="true" data-bs-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="cvActionsModalLabel">
+                                <i class="fas fa-cog me-2"></i>Resume Actions
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-0">
+                            <!-- Edit -->
+                            <a href="{% url 'cvbuilder:cv_edit' cv.pk %}" class="action-item d-flex align-items-center p-3 text-decoration-none border-bottom">
+                                <div class="action-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                    <i class="fas fa-edit"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Edit Resume</h6>
+                                    <small class="text-muted">Modify content and settings</small>
+                                </div>
+                            </a>
+                            
+                            <!-- Download PDF -->
+                            <a href="{% url 'cvbuilder:cv_export_pdf' cv.pk %}" class="action-item d-flex align-items-center p-3 text-decoration-none border-bottom">
+                                <div class="action-icon bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                    <i class="fas fa-download"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Download PDF</h6>
+                                    <small class="text-muted">Export as printable PDF</small>
+                                </div>
+                            </a>
+                            
+                            <!-- Preview -->
+                            <a href="{% url 'cvbuilder:cv_preview' cv.id %}" class="action-item d-flex align-items-center p-3 text-decoration-none border-bottom" target="_blank">
+                                <div class="action-icon bg-info text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                    <i class="fas fa-eye"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Preview</h6>
+                                    <small class="text-muted">View in template format</small>
+                                </div>
+                            </a>
+                            
+                            <!-- Duplicate -->
+                            <a href="{% url 'cvbuilder:cv_duplicate' cv.pk %}" 
+                               class="action-item d-flex align-items-center p-3 text-decoration-none border-bottom duplicate-action"
+                               data-cv-title="{{ cv.title }}">
+                                <div class="action-icon bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                    <i class="fas fa-copy"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Duplicate</h6>
+                                    <small class="text-muted">Create a copy with new title</small>
+                                </div>
+                            </a>
+                            
+                            <!-- Delete -->
+                            <div class="action-item d-flex align-items-center p-3 text-decoration-none border-bottom delete-action" 
+                                 data-cv-title="{{ cv.title }}"
+                                 data-delete-url="{% url 'cvbuilder:cv_delete' cv.pk %}">
+                                <div class="action-icon bg-danger text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                    <i class="fas fa-trash"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1 text-danger">Delete Resume</h6>
+                                    <small class="text-muted">Permanently remove this resume</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Main Resume Content -->
+            <div class="card shadow-sm">
+                <div class="card-body p-5">
+                    <!-- Header and Contact Information -->
+                    <div class="row mb-5">
+                        <div class="col-md-8">
+                            <h1 class="display-6 fw-bold text-primary mb-2">{{ cv.full_name }}</h1>
+                            {% if cv.desired_position %}
+                            <h3 class="text-secondary mb-4">{{ cv.desired_position }}</h3>
+                            {% endif %}
+                            
+                            {% if cv.summary %}
+                            <div class="mb-4">
+                                <p class="lead text-muted">{{ cv.summary }}</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <div class="contact-info">
+                                {% if cv.email %}
+                                <div class="mb-2">
+                                    <i class="fas fa-envelope text-primary me-2"></i>
+                                    <a href="mailto:{{ cv.email }}" class="text-decoration-none">{{ cv.email }}</a>
+                                </div>
+                                {% endif %}
+                                
+                                {% if cv.phone %}
+                                <div class="mb-2">
+                                    <i class="fas fa-phone text-primary me-2"></i>
+                                    {{ cv.phone }}
+                                    {% if cv.phone_secondary %}
+                                    / {{ cv.phone_secondary }}
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                                
+                                {% if cv.region or cv.city %}
+                                <div class="mb-2">
+                                    <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                                    {% if cv.city %}{{ cv.city }}{% endif %}
+                                    {% if cv.region %}, {{ cv.region }}{% endif %}
+                                    {% if cv.address %}<br><small>{{ cv.address }}</small>{% endif %}
+                                </div>
+                                {% endif %}
+                                
+                                {% if cv.linkedin %}
+                                <div class="mb-2">
+                                    <i class="fab fa-linkedin text-primary me-2"></i>
+                                    <a href="{{ cv.linkedin }}" target="_blank" class="text-decoration-none">LinkedIn</a>
+                                </div>
+                                {% endif %}
+                                
+                                {% if cv.github %}
+                                <div class="mb-2">
+                                    <i class="fab fa-github text-primary me-2"></i>
+                                    <a href="{{ cv.github }}" target="_blank" class="text-decoration-none">GitHub</a>
+                                </div>
+                                {% endif %}
+                                
+                                {% if cv.portfolio %}
+                                <div class="mb-2">
+                                    <i class="fas fa-globe text-primary me-2"></i>
+                                    <a href="{{ cv.portfolio }}" target="_blank" class="text-decoration-none">Portfolio</a>
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            {% if cv.salary_expectation %}
+                            <div class="mt-3 pt-3 border-top">
+                                <strong>Salary expectation:</strong><br>
+                                {{ cv.salary_expectation }} {{ cv.salary_currency }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Personal Information -->
+                    <div class="row mb-5">
+                        <div class="col-12">
+                            <h3 class="h4 fw-bold text-primary mb-3">Personal Information</h3>
+                            <div class="row">
+                                {% if cv.birth_date %}
+                                <div class="col-md-3 mb-2">
+                                    <strong>Date of Birth:</strong><br>
+                                    {{ cv.birth_date|date:"d.m.Y" }}
+                                </div>
+                                {% endif %}
+                                
+                                {% if cv.gender %}
+                                <div class="col-md-3 mb-2">
+                                    <strong>Gender:</strong><br>
+                                    {{ cv.get_gender_display }}
+                                </div>
+                                {% endif %}
+                                
+                                {% if cv.marital_status %}
+                                <div class="col-md-3 mb-2">
+                                    <strong>Marital Status:</strong><br>
+                                    {{ cv.get_marital_status_display }}
+                                </div>
+                                {% endif %}
+                                
+                                {% if cv.nationality %}
+                                <div class="col-md-3 mb-2">
+                                    <strong>Nationality:</strong><br>
+                                    {{ cv.nationality }}
+                                </div>
+                                {% endif %}
+                                
+                                {% if cv.employment_type %}
+                                <div class="col-md-3 mb-2">
+                                    <strong>Employment Type:</strong><br>
+                                    {{ cv.get_employment_type_display }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-5">
+
+                    <!-- Work Experience -->
+                    {% if cv.experiences.exists %}
+                    <section class="mb-5">
+                        <h2 class="h3 fw-bold text-primary mb-4">
+                            <i class="fas fa-briefcase me-2"></i>Work Experience
+                        </h2>
+                        {% for experience in cv.experiences.all %}
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h4 class="h5 fw-bold mb-1">{{ experience.position }}</h4>
+                                    <h5 class="h6 text-secondary mb-2">{{ experience.company }}</h5>
+                                    {% if experience.location %}
+                                    <p class="text-muted mb-2">
+                                        <i class="fas fa-map-marker-alt me-1"></i>{{ experience.location }}
+                                    </p>
+                                    {% endif %}
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-primary">
+                                        {{ experience.start_date|date:"M Y" }} - 
+                                        {% if experience.is_current %}Present{% else %}{{ experience.end_date|date:"M Y" }}{% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                            {% if experience.description %}
+                            <p class="text-muted">{{ experience.description|linebreaks }}</p>
+                            {% endif %}
+                        </div>
+                        {% if not forloop.last %}<hr class="mb-4">{% endif %}
+                        {% endfor %}
+                    </section>
+                    {% endif %}
+
+                    <!-- Education -->
+                    {% if cv.educations.exists %}
+                    <section class="mb-5">
+                        <h2 class="h3 fw-bold text-primary mb-4">
+                            <i class="fas fa-graduation-cap me-2"></i>Education
+                        </h2>
+                        {% for education in cv.educations.all %}
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h4 class="h5 fw-bold mb-1">{{ education.degree }}</h4>
+                                    <h5 class="h6 text-secondary mb-2">{{ education.institution }}</h5>
+                                    {% if education.field_of_study %}
+                                    <p class="text-muted mb-2">{{ education.field_of_study }}</p>
+                                    {% endif %}
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-primary">
+                                        {{ education.start_date|date:"M Y" }} - 
+                                        {% if education.is_current %}
+                                            Present
+                                        {% else %}
+                                            {{ education.end_date|date:"M Y" }}
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                            {% if education.description %}
+                            <p class="text-muted">{{ education.description|linebreaks }}</p>
+                            {% endif %}
+                        </div>
+                        {% if not forloop.last %}<hr class="mb-4">{% endif %}
+                        {% endfor %}
+                    </section>
+                    {% endif %}
+
+                    <!-- Skills -->
+                    {% if cv.skills.exists %}
+                    <section class="mb-5">
+                        <h2 class="h3 fw-bold text-primary mb-4">
+                            <i class="fas fa-code me-2"></i>Skills
+                        </h2>
+                        <div class="row">
+                            {% for skill in cv.skills.all %}
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-semibold">{{ skill.name }}</span>
+                                    <div>
+                                        <span class="badge bg-secondary me-2">{{ skill.get_level_display }}</span>
+                                        {% if skill.years_of_experience %}
+                                        <small class="text-muted">{{ skill.years_of_experience }} years</small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% if skill.category %}
+                                <small class="text-muted">{{ skill.get_category_display }}</small>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </section>
+                    {% endif %}
+
+                    <!-- Languages -->
+                    {% if cv.languages.exists %}
+                    <section class="mb-5">
+                        <h2 class="h3 fw-bold text-primary mb-4">
+                            <i class="fas fa-language me-2"></i>Languages
+                        </h2>
+                        <div class="row">
+                            {% for language in cv.languages.all %}
+                            <div class="col-md-4 mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-semibold">{{ language.name }}</span>
+                                    <span class="badge bg-primary">{{ language.get_level_display }}</span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </section>
+                    {% endif %}
+
+                    <!-- Additional Information -->
+                    <div class="row mt-5">
+                        {% if cv.driver_license %}
+                        <div class="col-md-6 mb-3">
+                            <h4 class="h5 fw-bold text-primary">{% trans "Driver's License" %}</h4>
+                            <p>
+                                {% if cv.driver_license_category %}
+                                {{ cv.driver_license_category }}
+                                {% endif %}
+                            </p>
+                        </div>
+                        {% endif %}
+                        
+                        {% if cv.military_service %}
+                        <div class="col-md-6 mb-3">
+                            <h4 class="h5 fw-bold text-primary">{% trans "Military Service" %}</h4>
+                            <p>{{ cv.military_service }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Template Information -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-body text-center py-3">
+                    <small class="text-muted">
+                        This resume was created using 
+                        {% if cv.template %}
+                        "{{ cv.template.name }}" template
+                        {% else %}
+                        standard template
+                        {% endif %}
+                        | 
+                        Last updated: {{ cv.updated_at|date:"d.m.Y H:i" }}
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-danger" id="deleteConfirmModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Confirm Deletion
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <div class="mb-4">
+                    <i class="fas fa-trash-alt fa-4x text-danger mb-3"></i>
+                    <h4 class="fw-bold">Delete Resume?</h4>
+                    <p class="text-muted" id="deleteResumeName">Are you sure you want to delete this resume?</p>
+                    <p class="text-danger small">
+                        <i class="fas fa-exclamation-circle me-1"></i>
+                        This action cannot be undone
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <a href="#" id="confirmDeleteBtn" class="btn btn-danger">
+                    <i class="fas fa-trash me-1"></i>Delete Resume
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.contact-info a {
+    color: #495057;
+    transition: color 0.3s ease;
+}
+
+.contact-info a:hover {
+    color: #012152;
+    text-decoration: underline;
+}
+
+.card {
+    border-radius: 12px;
+    border: none;
+}
+
+.badge {
+    font-size: 0.75em;
+    padding: 0.5em 0.75em;
+}
+
+.display-6 {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.lead {
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+
+/* Hover animations */
+.card:hover {
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+/* Section spacing */
+section {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+/* Modal styling - FIXED */
+#cvActionsModal {
+    z-index: 9999 !important;
+}
+
+#cvActionsModal .modal-dialog {
+    z-index: 10000 !important;
+}
+
+#cvActionsModal .modal-content {
+    z-index: 10001 !important;
+    position: relative;
+}
+
+#cvActionsModal .action-item {
+    transition: all 0.2s ease;
+    color: #495057;
+    cursor: pointer;
+}
+
+#cvActionsModal .action-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(5px);
+    text-decoration: none;
+}
+
+#cvActionsModal .delete-action:hover {
+    background-color: #fff5f5;
+}
+
+.action-icon {
+    transition: all 0.3s ease;
+}
+
+.action-item:hover .action-icon {
+    transform: scale(1.1);
+}
+
+/* Fix modal backdrop issues */
+.modal-backdrop {
+    z-index: 9998 !important;
+}
+
+.modal-backdrop.show {
+    opacity: 0.5 !important;
+}
+
+/* Ensure modals stay on top */
+.modal {
+    z-index: 9999 !important;
+}
+
+/* Prevent body scroll when modal is open */
+body.modal-open {
+    overflow: hidden;
+    padding-right: 0 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .display-6 {
+        font-size: 2rem;
+    }
+    
+    .card-body.p-5 {
+        padding: 2rem !important;
+    }
+    
+    .d-flex.gap-2 {
+        flex-wrap: wrap;
+        gap: 0.5rem !important;
+    }
+    
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+}
+
+/* Print styles */
+@media print {
+    .card.shadow-sm.mb-4,
+    .btn,
+    .modal,
+    .card.shadow-sm.mt-4 {
+        display: none !important;
+    }
+    
+    .card.shadow-sm {
+        box-shadow: none !important;
+        border: 1px solid #dee2e6 !important;
+    }
+    
+    .card-body.p-5 {
+        padding: 1rem !important;
+    }
+    
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+    
+    .contact-info a:after {
+        content: none !important;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Copy contact information
+    const contactItems = document.querySelectorAll('.contact-info div');
+    contactItems.forEach(item => {
+        item.style.cursor = 'pointer';
+        item.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const text = this.textContent || this.innerText;
+            const cleanText = text.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
+            const infoText = cleanText.replace(/^[^\w@]+/, '');
+            
+            navigator.clipboard.writeText(infoText).then(() => {
+                const originalHTML = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-check text-success me-2"></i>Copied!';
+                setTimeout(() => {
+                    this.innerHTML = originalHTML;
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        });
+    });
+    
+    // Initialize modals properly
+    let cvActionsModal = null;
+    let deleteConfirmModal = null;
+    
+    // Handle duplicate action
+    const duplicateAction = document.querySelector('.duplicate-action');
+    if (duplicateAction) {
+        duplicateAction.addEventListener('click', function(e) {
+            const cvTitle = this.getAttribute('data-cv-title');
+            if (!confirm(`Do you want to create a copy of "${cvTitle}"?`)) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (cvActionsModal) {
+                    cvActionsModal.hide();
+                }
+            }
+        });
+    }
+    
+    // Handle delete action with confirmation modal
+    const deleteAction = document.querySelector('.delete-action');
+    if (deleteAction) {
+        deleteAction.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const cvTitle = this.getAttribute('data-cv-title');
+            const deleteUrl = this.getAttribute('data-delete-url');
+            
+            // Update modal content
+            document.getElementById('deleteResumeName').textContent = 
+                `Are you sure you want to delete "${cvTitle}"?`;
+            document.getElementById('confirmDeleteBtn').href = deleteUrl;
+            
+            // Close actions modal
+            if (cvActionsModal) {
+                cvActionsModal.hide();
+            }
+            
+            // Show delete confirmation modal
+            if (!deleteConfirmModal) {
+                deleteConfirmModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+            }
+            deleteConfirmModal.show();
+        });
+    }
+    
+    // Initialize modals after DOM is ready
+    const actionsModalElement = document.getElementById('cvActionsModal');
+    if (actionsModalElement) {
+        cvActionsModal = new bootstrap.Modal(actionsModalElement, {
+            backdrop: true,
+            keyboard: true,
+            focus: true
+        });
+        
+        // Fix modal issues
+        actionsModalElement.addEventListener('show.bs.modal', function () {
+            document.body.classList.add('modal-open');
+            const backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach(backdrop => backdrop.remove());
+        });
+        
+        actionsModalElement.addEventListener('shown.bs.modal', function () {
+            // Ensure modal is clickable
+            this.style.pointerEvents = 'auto';
+            this.style.zIndex = '9999';
+        });
+        
+        actionsModalElement.addEventListener('hidden.bs.modal', function () {
+            document.body.classList.remove('modal-open');
+            // Clean up any extra backdrops
+            const extraBackdrops = document.querySelectorAll('.modal-backdrop');
+            if (extraBackdrops.length > 1) {
+                for (let i = 1; i < extraBackdrops.length; i++) {
+                    extraBackdrops[i].remove();
+                }
+            }
+        });
+    }
+    
+    // Initialize delete modal
+    const deleteModalElement = document.getElementById('deleteConfirmModal');
+    if (deleteModalElement) {
+        deleteConfirmModal = new bootstrap.Modal(deleteModalElement, {
+            backdrop: true,
+            keyboard: true,
+            focus: true
+        });
+        
+        deleteModalElement.addEventListener('shown.bs.modal', function () {
+            this.style.pointerEvents = 'auto';
+            this.style.zIndex = '10000';
+        });
+    }
+    
+    // Handle modal backdrop clicks - prevent closing when clicking on modal content
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('modal-backdrop')) {
+            // Find all open modals
+            const openModals = document.querySelectorAll('.modal.show');
+            openModals.forEach(modal => {
+                const bsModal = bootstrap.Modal.getInstance(modal);
+                if (bsModal) {
+                    bsModal.hide();
+                }
+            });
+        }
+    });
+    
+    // Fix for when multiple modals might be open
+    document.addEventListener('hide.bs.modal', function(e) {
+        // Remove backdrop only if no other modals are open
+        setTimeout(() => {
+            const openModals = document.querySelectorAll('.modal.show');
+            if (openModals.length === 0) {
+                document.body.classList.remove('modal-open');
+                const backdrops = document.querySelectorAll('.modal-backdrop');
+                backdrops.forEach(backdrop => backdrop.remove());
+            }
+        }, 150);
+    });
+});
+
+// Simple function to handle print
+function printResume() {
+    window.print();
+}
+</script>
+{% endblock %}

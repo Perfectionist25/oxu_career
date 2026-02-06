@@ -1,0 +1,504 @@
+{% load static %}
+{% load i18n %}
+
+<div class="app-detail">
+
+  <!-- Top bar -->
+  <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+    <div class="me-2">
+      <div class="fw-bold fs-5 mb-1">
+        <i class="fas fa-file-alt text-primary me-2"></i>{% trans "Application Details" %}
+      </div>
+      <div class="text-muted small">
+        <i class="fas fa-briefcase me-1"></i>{{ application.job.title }}
+        {% if application.job.company %}<span class="mx-1">•</span><i class="fas fa-building me-1"></i>{{ application.job.company.name }}{% endif %}
+      </div>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+      <span class="status-chip status-{{ application.status }}">
+        <i class="fas fa-circle me-2 status-dot"></i>
+        {{ application.get_status_display }}
+      </span>
+
+      {% if is_employer or request.user.is_staff %}
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#statusModal"
+          data-app-id="{{ application.id }}"
+          data-current-status="{{ application.status }}"
+          data-candidate="{{ application.user.get_full_name|default:'—' }}"
+          data-job="{{ application.job.title|default:'—' }}"
+          title="{% trans 'Change status' %}"
+        >
+          <i class="fas fa-pen me-1"></i>{% trans "Change" %}
+        </button>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Meta line -->
+  <div class="meta-grid mb-3">
+    <div class="meta-item">
+      <div class="meta-icon"><i class="fas fa-calendar-plus"></i></div>
+      <div>
+        <div class="meta-label">{% trans "Applied" %}</div>
+        <div class="meta-value">{{ application.created_at|date:"d.m.Y, H:i" }}</div>
+      </div>
+    </div>
+
+    <div class="meta-item">
+      <div class="meta-icon"><i class="fas fa-rotate"></i></div>
+      <div>
+        <div class="meta-label">{% trans "Updated" %}</div>
+        <div class="meta-value">{{ application.updated_at|date:"d.m.Y, H:i" }}</div>
+      </div>
+    </div>
+
+    {% if application.expected_salary %}
+    <div class="meta-item">
+      <div class="meta-icon"><i class="fas fa-money-bill-wave"></i></div>
+      <div>
+        <div class="meta-label">{% trans "Expected salary" %}</div>
+        <div class="meta-value">{{ application.expected_salary }} {{ application.job.currency }}</div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Two columns -->
+  <div class="row g-3 mb-3">
+    <!-- Applicant -->
+    <div class="col-lg-6">
+      <div class="info-card">
+        <div class="info-title">
+          <i class="fas fa-user text-primary me-2"></i>{% trans "Applicant" %}
+        </div>
+
+        <div class="d-flex align-items-start gap-3">
+          <div class="avatar">
+            {% if application.user.avatar %}
+              <img src="{{ application.user.avatar.url }}" alt="{{ application.user.get_full_name }}" />
+            {% else %}
+              <i class="fas fa-user"></i>
+            {% endif %}
+          </div>
+
+          <div class="flex-grow-1">
+            <div class="fw-semibold">
+              {{ application.user.get_full_name|default:"—" }}
+            </div>
+
+            <div class="text-muted small mt-1">
+              <div><i class="fas fa-envelope me-1"></i>{{ application.user.email|default:"—" }}</div>
+              {% if application.user.phone_number %}
+                <div class="mt-1"><i class="fas fa-phone me-1"></i>{{ application.user.phone_number }}</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Job -->
+    <div class="col-lg-6">
+      <div class="info-card">
+        <div class="info-title">
+          <i class="fas fa-briefcase text-primary me-2"></i>{% trans "Job" %}
+        </div>
+
+        <div class="fw-semibold">{{ application.job.title }}</div>
+
+        <div class="text-muted small mt-1">
+          {% if application.job.location %}
+            <div><i class="fas fa-location-dot me-1"></i>{{ application.job.location }}</div>
+          {% endif %}
+          <div class="mt-1">
+            <i class="fas fa-building me-1"></i>
+            {{ application.job.company.name|default:"—" }}
+          </div>
+
+          {% if application.job.salary_min and application.job.salary_max %}
+            <div class="mt-1">
+              <i class="fas fa-coins me-1"></i>
+              {{ application.job.salary_min|floatformat:0 }} - {{ application.job.salary_max|floatformat:0 }} {{ application.job.currency|default:"UZS" }}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="mt-3 d-flex flex-wrap gap-2">
+          {% if application.cv %}
+            <a href="{% url 'cvbuilder:cv_detail' application.cv.pk %}" class="btn btn-sm btn-outline-primary" target="_blank">
+              <i class="fas fa-file-pdf me-1"></i>{% trans "View CV" %}
+            </a>
+          {% endif %}
+          <a href="mailto:{{ application.user.email }}" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-envelope me-1"></i>{% trans "Email" %}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cover Letter -->
+  <div class="info-card mb-3">
+    <div class="info-title">
+      <i class="fas fa-quote-left text-primary me-2"></i>{% trans "Cover Letter" %}
+    </div>
+
+    {% if application.cover_letter %}
+      <div class="letter">
+        {{ application.cover_letter|linebreaks }}
+      </div>
+    {% else %}
+      <div class="text-muted small">{% trans "No cover letter provided." %}</div>
+    {% endif %}
+  </div>
+
+  <!-- Internal notes (only employer/admin) -->
+  {% if is_employer or request.user.is_staff %}
+    <div class="info-card">
+      <div class="info-title">
+        <i class="fas fa-note-sticky text-primary me-2"></i>{% trans "Internal Notes" %}
+      </div>
+
+      {% if application.admin_notes %}
+        <div class="note-box mb-3">
+          {{ application.admin_notes|linebreaks }}
+        </div>
+      {% endif %}
+
+      <form id="noteForm" class="d-flex flex-column gap-2">
+        {% csrf_token %}
+        <textarea name="note" class="form-control form-control-sm" rows="3" placeholder="{% trans 'Add internal note...' %}"></textarea>
+        <div class="d-flex justify-content-end">
+          <button type="submit" class="btn btn-sm btn-primary">
+            <i class="fas fa-plus me-1"></i>{% trans "Save note" %}
+          </button>
+        </div>
+      </form>
+
+      <div id="noteMsg" class="small mt-2"></div>
+    </div>
+  {% endif %}
+
+</div>
+
+{# ---- Status Modal (embedded here to be available inside details HTML) ---- #}
+{% if is_employer or request.user.is_staff %}
+<div class="modal fade" id="statusModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content status-modal">
+      <div class="modal-header">
+        <div>
+          <h5 class="modal-title mb-0">
+            <i class="fas fa-exchange-alt me-2 text-primary"></i>{% trans "Change status" %}
+          </h5>
+          <div class="text-muted small" id="statusModalSubtitle"></div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
+      </div>
+
+      <div class="modal-body">
+        <input type="hidden" id="statusModalApplicationId" value="{{ application.id }}" />
+
+        <div class="d-grid gap-2">
+          <button class="btn status-option status-applied" data-status="applied">
+            <i class="fas fa-paper-plane me-2"></i>{% trans "Applied" %}
+          </button>
+          <button class="btn status-option status-reviewed" data-status="reviewed">
+            <i class="fas fa-search me-2"></i>{% trans "Under Review" %}
+          </button>
+          <button class="btn status-option status-shortlisted" data-status="shortlisted">
+            <i class="fas fa-star me-2"></i>{% trans "Shortlisted" %}
+          </button>
+          <button class="btn status-option status-interview" data-status="interview">
+            <i class="fas fa-comments me-2"></i>{% trans "Interview" %}
+          </button>
+
+          <hr class="my-2">
+
+          <button class="btn status-option status-hired" data-status="hired">
+            <i class="fas fa-check-circle me-2"></i>{% trans "Hired" %}
+          </button>
+          <button class="btn status-option status-rejected" data-status="rejected">
+            <i class="fas fa-times-circle me-2"></i>{% trans "Rejected" %}
+          </button>
+        </div>
+
+        <div id="statusMsg" class="small mt-3"></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<style>
+  .app-detail * { box-sizing: border-box; }
+
+  /* Minimal, clean layout */
+  .meta-grid{
+    display:grid;
+    gap:10px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  @media (max-width: 992px){
+    .meta-grid{ grid-template-columns: 1fr; }
+  }
+
+  .meta-item{
+    display:flex;
+    gap:10px;
+    padding:10px 12px;
+    border:1px solid rgba(0,0,0,.08);
+    border-radius: 12px;
+    background:#fff;
+  }
+  .meta-icon{
+    width:34px;height:34px;
+    border-radius: 12px;
+    display:flex;align-items:center;justify-content:center;
+    background: rgba(13,110,253,.10);
+    border:1px solid rgba(13,110,253,.18);
+    color:#0d6efd;
+    flex: 0 0 auto;
+  }
+  .meta-label{ font-size: 11px; color:#6c757d; }
+  .meta-value{ font-weight: 800; font-size: 13px; }
+
+  .info-card{
+    border:1px solid rgba(0,0,0,.08);
+    border-radius: 14px;
+    background: #fff;
+    padding: 14px;
+    box-shadow: 0 10px 24px rgba(0,0,0,.06);
+  }
+  .info-title{
+    font-weight: 900;
+    font-size: 13px;
+    color: #0b2e58;
+    margin-bottom: 10px;
+    display:flex;
+    align-items:center;
+  }
+
+  .avatar{
+    width:44px;height:44px;border-radius:999px;
+    border:1px solid rgba(13,110,253,.18);
+    background: rgba(13,110,253,.10);
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;
+    color:#0d6efd;
+    flex: 0 0 auto;
+  }
+  .avatar img{ width:100%; height:100%; object-fit: cover; display:block; }
+
+  /* Cover letter */
+  .letter{
+    border: 1px solid rgba(0,0,0,.08);
+    border-radius: 12px;
+    padding: 12px;
+    background: #fafbff;
+  }
+
+  /* Notes */
+  .note-box{
+    border: 1px solid rgba(13,110,253,.18);
+    background: rgba(13,110,253,.06);
+    border-radius: 12px;
+    padding: 12px;
+  }
+
+  /* Status chip */
+  .status-chip{
+    border-radius: 999px;
+    padding: 8px 12px;
+    border:1px solid rgba(0,0,0,.10);
+    background:#fff;
+    font-weight: 900;
+    font-size: 12px;
+    display:inline-flex;
+    align-items:center;
+    box-shadow: 0 8px 18px rgba(0,0,0,.06);
+  }
+  .status-dot{ font-size: 9px; }
+
+  .status-applied{ background: rgba(255,193,7,.18); border-color: rgba(255,193,7,.35); color: #7a5b00; }
+  .status-reviewed{ background: rgba(13,202,240,.16); border-color: rgba(13,202,240,.35); color: #055160; }
+  .status-shortlisted{ background: rgba(111,66,193,.14); border-color: rgba(111,66,193,.35); color: #3f2376; }
+  .status-interview{ background: rgba(253,126,20,.14); border-color: rgba(253,126,20,.35); color: #7a3a00; }
+  .status-hired{ background: rgba(25,135,84,.14); border-color: rgba(25,135,84,.35); color: #0f5132; }
+  .status-rejected{ background: rgba(220,53,69,.14); border-color: rgba(220,53,69,.35); color: #842029; }
+
+  /* Status modal buttons */
+  .status-modal{ border-radius: 16px; }
+  .status-option{
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,.10);
+    text-align: left;
+    padding: 12px 14px;
+    font-weight: 900;
+    box-shadow: 0 8px 18px rgba(0,0,0,.06);
+  }
+  .status-option:hover{ filter: brightness(0.98); }
+  .status-option.active{
+    outline: 3px solid rgba(13,110,253,.25);
+    border-color: rgba(13,110,253,.35);
+  }
+</style>
+
+<script>
+(function() {
+  // Because this HTML is injected via AJAX, we need to attach handlers here too.
+
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+  }
+  const csrftoken = getCookie('csrftoken');
+
+  // ---- NOTE: AJAX save internal note (optional) ----
+  const noteForm = document.getElementById('noteForm');
+  const noteMsg = document.getElementById('noteMsg');
+  if (noteForm) {
+    noteForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(noteForm);
+      const note = (formData.get('note') || '').toString().trim();
+      if (!note) return;
+
+      try {
+        const url = `{% url 'jobs:add_application_note' application.pk %}`;
+        const body = new URLSearchParams({ note });
+
+        const resp = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'X-CSRFToken': csrftoken,
+            'X-Requested-With': 'XMLHttpRequest'
+          },
+          body
+        });
+
+        const data = await resp.json().catch(() => ({}));
+
+        if (!resp.ok || data.success === false) {
+          if (noteMsg) {
+            noteMsg.className = 'small mt-2 text-danger';
+            noteMsg.textContent = '{% trans "Error saving note" %}' + (data.error ? `: ${data.error}` : '');
+          }
+          return;
+        }
+
+        if (noteMsg) {
+          noteMsg.className = 'small mt-2 text-success';
+          noteMsg.textContent = '{% trans "Saved" %}';
+        }
+        noteForm.reset();
+      } catch (err) {
+        if (noteMsg) {
+          noteMsg.className = 'small mt-2 text-danger';
+          noteMsg.textContent = '{% trans "Error saving note" %}';
+        }
+      }
+    });
+  }
+
+  // ---- STATUS MODAL ----
+  const statusModalEl = document.getElementById('statusModal');
+  if (statusModalEl) {
+    const statusModal = new bootstrap.Modal(statusModalEl);
+    const subtitleEl = document.getElementById('statusModalSubtitle');
+    const idInput = document.getElementById('statusModalApplicationId');
+    const statusMsg = document.getElementById('statusMsg');
+
+    // When "Change" button clicked (opens modal)
+    // The button is inside this injected HTML, so we can bind directly.
+    const openBtn = document.querySelector('[data-bs-target="#statusModal"]');
+    if (openBtn) {
+      openBtn.addEventListener('click', function() {
+        const appId = this.getAttribute('data-app-id');
+        const current = this.getAttribute('data-current-status');
+        const cand = this.getAttribute('data-candidate') || '';
+        const job = this.getAttribute('data-job') || '';
+
+        if (idInput) idInput.value = appId;
+        if (subtitleEl) subtitleEl.textContent = `${cand} — ${job}`;
+        if (statusMsg) statusMsg.textContent = '';
+
+        document.querySelectorAll('#statusModal .status-option').forEach(opt => {
+          opt.classList.remove('active');
+          if (opt.dataset.status === current) opt.classList.add('active');
+        });
+      });
+    }
+
+    // Click status option -> update
+    document.querySelectorAll('#statusModal .status-option').forEach(opt => {
+      opt.addEventListener('click', async function() {
+        const applicationId = idInput ? idInput.value : null;
+        const newStatus = this.dataset.status;
+
+        if (!applicationId) return;
+
+        try {
+          const url = `{% url 'jobs:update_application_status' 0 %}`.replace('0', applicationId);
+
+          // send as form-urlencoded => backend can read request.POST
+          const body = new URLSearchParams({ status: newStatus });
+
+          const resp = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+              'X-CSRFToken': csrftoken,
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            body
+          });
+
+          const data = await resp.json().catch(() => ({}));
+
+          if (!resp.ok || data.success === false) {
+            if (statusMsg) {
+              statusMsg.className = 'small mt-3 text-danger';
+              statusMsg.textContent = '{% trans "Error changing status" %}' + (data.error ? `: ${data.error}` : '');
+            }
+            return;
+          }
+
+          // Update chip on this details view immediately
+          const chip = document.querySelector('.status-chip');
+          if (chip) {
+            chip.className = 'status-chip status-' + newStatus;
+            chip.innerHTML = `<i class="fas fa-circle me-2 status-dot"></i>${data.new_status || chip.textContent}`;
+          }
+
+          // Also update status pill in table behind modal (if exists)
+          const tableBtn = document.querySelector(`.open-status-modal[data-id="${applicationId}"]`);
+          if (tableBtn) {
+            tableBtn.dataset.current = newStatus;
+            const textEl = tableBtn.querySelector('.status-text');
+            if (textEl) textEl.textContent = data.new_status || textEl.textContent;
+            tableBtn.className = 'btn btn-sm status-pill open-status-modal status-' + newStatus;
+          }
+
+          statusModal.hide();
+
+        } catch (err) {
+          if (statusMsg) {
+            statusMsg.className = 'small mt-3 text-danger';
+            statusMsg.textContent = '{% trans "Error changing status" %}';
+          }
+        }
+      });
+    });
+  }
+})();
+</script>

@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Hero Section -->
+    <section class="text-center mb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold text-primary mb-4">Professional Resume Builder</h1>
+                <p class="lead text-muted mb-4">Create your modern and attractive resume in just a few minutes. Professional templates that capture employers' attention.</p>
+                <div class="d-flex justify-content-center flex-wrap gap-3">
+                    <a href="{% url 'cvbuilder:template_selector' %}" class="btn btn-primary btn-lg px-4 py-3">
+                        <i class="fas fa-plus me-2"></i>Create Resume
+                    </a>
+                    <a href="{% url 'cvbuilder:cv_list' %}" class="btn btn-outline-primary btn-lg px-4 py-3">
+                        <i class="fas fa-list me-2"></i>My Resumes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="row text-center mb-5">
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100 feature-card">
+                <div class="card-body p-4">
+                    <div class="text-primary mb-3">
+                        <i class="fas fa-bolt fa-3x"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-3">Fast and Easy</h5>
+                    <p class="text-muted">Create a professional resume in just a few minutes. No complex settings required.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100 feature-card">
+                <div class="card-body p-4">
+                    <div class="text-primary mb-3">
+                        <i class="fas fa-palette fa-3x"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-3">Modern Design</h5>
+                    <p class="text-muted">Various professional templates. Customized for any industry.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100 feature-card">
+                <div class="card-body p-4">
+                    <div class="text-primary mb-3">
+                        <i class="fas fa-mobile-alt fa-3x"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-3">Mobile Responsive</h5>
+                    <p class="text-muted">Looks perfect on all devices. Option to download in PDF format.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100 feature-card">
+                <div class="card-body p-4">
+                    <div class="text-primary mb-3">
+                        <i class="fas fa-shield-alt fa-3x"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-3">Secure and Private</h5>
+                    <p class="text-muted">Your data is stored securely. Only you can view it.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="row align-items-center mb-5 py-4">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <h2 class="fw-bold text-dark mb-4">How does resume creation work?</h2>
+            
+            <div class="d-flex mb-4">
+                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-4 flex-shrink-0" style="width: 60px; height: 60px;">
+                    <span class="text-white fw-bold h4 mb-0">1</span>
+                </div>
+                <div>
+                    <h5 class="fw-bold text-dark mb-2">Choose a Template</h5>
+                    <p class="text-muted mb-0">Select a professional template that you like</p>
+                </div>
+            </div>
+            
+            <div class="d-flex mb-4">
+                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-4 flex-shrink-0" style="width: 60px; height: 60px;">
+                    <span class="text-white fw-bold h4 mb-0">2</span>
+                </div>
+                <div>
+                    <h5 class="fw-bold text-dark mb-2">Enter Information</h5>
+                    <p class="text-muted mb-0">Enter your information accurately and completely</p>
+                </div>
+            </div>
+            
+            <div class="d-flex mb-4">
+                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-4 flex-shrink-0" style="width: 60px; height: 60px;">
+                    <span class="text-white fw-bold h4 mb-0">3</span>
+                </div>
+                <div>
+                    <h5 class="fw-bold text-dark mb-2">Review</h5>
+                    <p class="text-muted mb-0">Review and edit your created resume</p>
+                </div>
+            </div>
+            
+            <div class="d-flex">
+                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-4 flex-shrink-0" style="width: 60px; height: 60px;">
+                    <span class="text-white fw-bold h4 mb-0">4</span>
+                </div>
+                <div>
+                    <h5 class="fw-bold text-dark mb-2">Download</h5>
+                    <p class="text-muted mb-0">Download your resume in PDF format or share it</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="position-relative">
+                <img src="{% static 'img/cv-preview.png' %}" alt="Resume example" class="img-fluid rounded shadow-lg">
+                <div class="position-absolute top-0 start-0 bg-primary text-white p-3 rounded-end">
+                    <h5 class="mb-0">Professional appearance</h5>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Template Showcase -->
+    <section class="mb-5">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold text-dark mb-3">Popular Templates</h2>
+            <p class="text-muted">Professional templates designed for various industries</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="card border-0 shadow-sm template-card">
+                    <div class="card-body p-4 text-center">
+                        <div class="bg-light rounded p-4 mb-3">
+                            <i class="fas fa-file-alt fa-3x text-primary"></i>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-2">Modern</h5>
+                        <p class="text-muted small mb-3">Modern and minimalist design</p>
+                        <a href="{% url 'cvbuilder:template_selector' %}" class="btn btn-outline-primary btn-sm">Select</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="card border-0 shadow-sm template-card">
+                    <div class="card-body p-4 text-center">
+                        <div class="bg-light rounded p-4 mb-3">
+                            <i class="fas fa-briefcase fa-3x text-primary"></i>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-2">Professional</h5>
+                        <p class="text-muted small mb-3">Corporate and traditional style</p>
+                        <a href="{% url 'cvbuilder:template_selector' %}" class="btn btn-outline-primary btn-sm">Select</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="card border-0 shadow-sm template-card">
+                    <div class="card-body p-4 text-center">
+                        <div class="bg-light rounded p-4 mb-3">
+                            <i class="fas fa-paint-brush fa-3x text-primary"></i>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-2">Creative</h5>
+                        <p class="text-muted small mb-3">Creative and colorful design</p>
+                        <a href="{% url 'cvbuilder:template_selector' %}" class="btn btn-outline-primary btn-sm">Select</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="bg-light rounded p-5 text-center mb-5">
+        <div class="row">
+            <div class="col-md-3 mb-4 mb-md-0">
+                <div class="h2 fw-bold text-primary mb-1">{{ stats.total_cvs }}+</div>
+                <small class="text-muted">Created resumes</small>
+            </div>
+            <div class="col-md-3 mb-4 mb-md-0">
+                <div class="h2 fw-bold text-primary mb-1">{{ stats.templates }}+</div>
+                <small class="text-muted">Professional templates</small>
+            </div>
+            <div class="col-md-3 mb-4 mb-md-0">
+                <div class="h2 fw-bold text-primary mb-1">{{ stats.users }}+</div>
+                <small class="text-muted">Active users</small>
+            </div>
+            <div class="col-md-3">
+                <div class="h2 fw-bold text-primary mb-1">{{ stats.success_rate }}%</div>
+                <small class="text-muted">Successful job finding</small>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="text-center">
+        <div class="card border-0 bg-primary text-white shadow-lg">
+            <div class="card-body py-5 px-4">
+                <h3 class="fw-bold mb-3">Start Now!</h3>
+                <p class="lead mb-4 opacity-75">Create your professional resume in just a few minutes and unlock career opportunities</p>
+                <a href="{% url 'cvbuilder:template_selector' %}" class="btn btn-light btn-lg px-5">
+                    <i class="fas fa-rocket me-2"></i>Get Started
+                </a>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+.feature-card, .template-card {
+    transition: all 0.3s ease;
+}
+.feature-card:hover, .template-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+}
+
+.btn-primary {
+    background-color: #012152;
+    border-color: #012152;
+}
+.btn-primary:hover {
+    background-color: #012d6e;
+    border-color: #012d6e;
+}
+
+.card {
+    border-radius: 15px;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add animation to stats counters
+    const counters = document.querySelectorAll('.h2');
+    counters.forEach(counter => {
+        const target = parseInt(counter.textContent);
+        let current = 0;
+        const increment = target / 50;
+        
+        const updateCounter = () => {
+            if (current < target) {
+                current += increment;
+                counter.textContent = Math.ceil(current) + '+';
+                setTimeout(updateCounter, 30);
+            } else {
+                counter.textContent = target + '+';
+            }
+        };
+        
+        // Start animation when element is in viewport
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    updateCounter();
+                    observer.unobserve(entry.target);
+                }
+            });
+        });
+        
+        observer.observe(counter);
+    });
+});
+</script>
+{% endblock %}

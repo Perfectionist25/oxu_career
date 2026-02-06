@@ -1,0 +1,308 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "My Companies" %} | {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header and Statistics -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-2">
+                <i class="fas fa-building text-primary me-2"></i>
+                {% trans "My Companies" %}
+            </h1>
+            <p class="text-muted mb-0">
+                {% trans "Your registered companies" %} • {{ total_companies }} {% trans "total" %}
+            </p>
+        </div>
+        <a href="{% url 'accounts:company_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i> {% trans "Add New Company" %}
+        </a>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="card border-start border-primary border-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">{% trans "Companies You Own" %}</h6>
+                            <h3 class="mb-0">{{ owned_companies.count }}</h3>
+                        </div>
+                        <div class="bg-primary bg-opacity-10 p-3 rounded">
+                            <i class="fas fa-crown text-primary fa-lg"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card border-start border-info border-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">{% trans "Total Active Jobs" %}</h6>
+                            <h3 class="mb-0">{{ total_jobs }}</h3>
+                        </div>
+                        <div class="bg-info bg-opacity-10 p-3 rounded">
+                            <i class="fas fa-briefcase text-info fa-lg"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Companies Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <div>
+                        <h5 class="mb-0">{% trans "Your Companies" %}</h5>
+                    </div>
+                </div>
+                
+                <div class="card-body p-0">
+                    <div class="py-3">
+                        {% if owned_companies %}
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>{% trans "Company" %}</th>
+                                            <th>{% trans "Status" %}</th>
+                                            <th>{% trans "Jobs" %}</th>
+                                            <th>{% trans "Created" %}</th>
+                                            <th>{% trans "Actions" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for company in owned_companies %}
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    {% if company.logo %}
+                                                    <img src="{{ company.logo.url }}" alt="{{ company.name }}" 
+                                                         class="rounded me-3" width="40" height="40" style="object-fit: cover;">
+                                                    {% else %}
+                                                    <div class="bg-secondary text-white rounded me-3 d-flex align-items-center justify-content-center" 
+                                                         style="width: 40px; height: 40px;">
+                                                        <i class="fas fa-building"></i>
+                                                    </div>
+                                                    {% endif %}
+                                                    <div>
+                                                        <h6 class="mb-0">{{ company.name }}</h6>
+                                                        <small class="text-muted">{{ company.industry|default:"-" }}</small>
+                                                        {% if company == primary_company %}
+                                                        <span class="badge bg-primary badge-sm ms-2">Primary</span>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {% if company.is_verified %}
+                                                <span class="badge bg-success">
+                                                    <i class="fas fa-check-circle me-1"></i> {% trans "Verified" %}
+                                                </span>
+                                                {% else %}
+                                                <span class="badge bg-warning">
+                                                    <i class="fas fa-clock me-1"></i> {% trans "Pending" %}
+                                                </span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% with company.jobs.count as job_count %}
+                                                {% if job_count > 0 %}
+                                                <span class="badge bg-info">{{ job_count }}</span>
+                                                {% else %}
+                                                <span class="badge bg-secondary">{% trans "None" %}</span>
+                                                {% endif %}
+                                                {% endwith %}
+                                            </td>
+                                            <td>
+                                                <small>{{ company.created_at|date:"M d, Y" }}</small>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm" role="group">
+                                                    <a href="{% url 'accounts:company_detail' company.pk %}" 
+                                                       class="btn btn-outline-primary" title="{% trans "View" %}">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a href="{% url 'accounts:company_update' company.pk %}" 
+                                                       class="btn btn-outline-warning" title="{% trans "Edit" %}">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <a href="{% url 'jobs:my_jobs' %}?company={{ company.pk }}" 
+                                                       class="btn btn-outline-info" title="{% trans "View Jobs" %}">
+                                                        <i class="fas fa-briefcase"></i>
+                                                    </a>
+                                                    <button type="button" class="btn btn-outline-danger" 
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#deleteModal{{ company.pk }}"
+                                                            title="{% trans "Delete" %}">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                                
+                                                <!-- Delete Confirmation Modal -->
+                                                <div class="modal fade" id="deleteModal{{ company.pk }}" tabindex="-1">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header bg-danger text-white">
+                                                                <h5 class="modal-title">
+                                                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                                                    {% trans "Delete Company" %}
+                                                                </h5>
+                                                                <button type="button" class="btn-close btn-close-white" 
+                                                                        data-bs-dismiss="modal"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>
+                                                                    {% trans "Are you sure you want to delete" %} <strong>{{ company.name }}</strong>?
+                                                                </p>
+                                                                <div class="alert alert-warning">
+                                                                    <i class="fas fa-info-circle me-2"></i>
+                                                                    {% trans "This action cannot be undone. All company data and associated jobs will be permanently deleted." %}
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <form method="post" action="{% url 'accounts:company_delete' company.pk %}">
+                                                                    {% csrf_token %}
+                                                                    <button type="button" class="btn btn-secondary" 
+                                                                            data-bs-dismiss="modal">
+                                                                        {% trans "Cancel" %}
+                                                                    </button>
+                                                                    <button type="submit" class="btn btn-danger">
+                                                                        <i class="fas fa-trash me-2"></i> {% trans "Delete" %}
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-5">
+                                <div class="mb-3">
+                                    <i class="fas fa-building fa-3x text-muted"></i>
+                                </div>
+                                <h5 class="text-muted mb-3">{% trans "No Companies Yet" %}</h5>
+                                <p class="text-muted mb-4">
+                                    {% trans "Add your first company to start posting jobs and connecting with students" %}
+                                </p>
+                                <a href="{% url 'accounts:company_create' %}" class="btn btn-primary">
+                                    <i class="fas fa-plus me-2"></i> {% trans "Add Your First Company" %}
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="card-footer bg-light">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                {% trans "You can edit and manage all your companies from this page" %}
+                            </small>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <a href="{% url 'accounts:employer_dashboard' %}" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-arrow-left me-1"></i> {% trans "Back to Dashboard" %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card {
+        border-radius: 10px;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+    
+    .card-header {
+        border-radius: 10px 10px 0 0 !important;
+    }
+    
+    .table th {
+        font-weight: 600;
+        border-top: none;
+        padding: 1rem 0.75rem;
+    }
+    
+    .table td {
+        padding: 1rem 0.75rem;
+        vertical-align: middle;
+    }
+    
+    .table-hover tbody tr:hover {
+        background-color: rgba(78, 115, 223, 0.05);
+    }
+    
+    .badge {
+        font-weight: 500;
+        padding: 0.35em 0.65em;
+    }
+    
+    .badge-sm {
+        font-size: 0.65em;
+        padding: 0.2em 0.4em;
+    }
+    
+    .btn-group-sm .btn {
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+    }
+    
+    .modal-header {
+        border-radius: 0.375rem 0.375rem 0 0;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+        
+        // Delete confirmation
+        var deleteForms = document.querySelectorAll('form[action*="company_delete"]');
+        deleteForms.forEach(function(form) {
+            form.addEventListener('submit', function(e) {
+                if (!confirm('{% trans "This action cannot be undone. Are you sure you want to proceed?" %}')) {
+                    e.preventDefault();
+                }
+            });
+        });
+        
+        // Set primary company
+        var primaryButtons = document.querySelectorAll('.set-primary-btn');
+        primaryButtons.forEach(function(button) {
+            button.addEventListener('click', function(e) {
+                if (!confirm('{% trans "Set this as your primary company for dashboard and default job posting?" %}')) {
+                    e.preventDefault();
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

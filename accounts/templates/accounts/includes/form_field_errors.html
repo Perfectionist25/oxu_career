@@ -1,0 +1,12 @@
+{% load i18n %}
+
+{# Фрагмент для отображения ошибок поля формы #}
+{% if field.errors %}
+  <div class="invalid-feedback d-block mt-1">
+    {% for error in field.errors %}
+      <small class="d-block mb-1">
+        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+      </small>
+    {% endfor %}
+  </div>
+{% endif %}
