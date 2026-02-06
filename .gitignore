@@ -1,3 +1,21 @@
-.venv
-.vscode
+# venv
+venv/
+venv*/
+.venv/
+
+# python junk
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# django
+staticfiles/
+media/
+logs/
+*.log
+
+# env
 .env
+.env.*
+
