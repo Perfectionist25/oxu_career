@@ -26,7 +26,7 @@ DEBUG = os.getenv("DEBUG", "False") == "True"
 # ==========================
 # HOSTS / CSRF / HTTPS
 # ==========================
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "172.31.254.31"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "172.31.254.31", "career.oxu.uz"]
 
 
 if IS_RENDER:
@@ -186,23 +186,23 @@ WSGI_APPLICATION = "config.wsgi.application"
 #     }
 
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": os.getenv("DB_NAME", "myuser"),
-#         "USER": os.getenv("DB_USER", "mydb"),
-#         "PASSWORD": os.getenv("DB_PASSWORD", "oxu_career_2026"),
-#         "HOST": os.getenv("DB_HOST", "127.0.0.1"),
-#         "PORT": os.getenv("DB_PORT", "5432"),
-#     }
-# }
-
 DATABASES = {
-  "default": {
-    "ENGINE": "django.db.backends.sqlite3",
-    "NAME": BASE_DIR / "db.sqlite3",
-  }
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("DB_NAME", "myuser"),
+        "USER": os.getenv("DB_USER", "mydb"),
+        "PASSWORD": os.getenv("DB_PASSWORD", "oxu_career_2026"),
+        "HOST": os.getenv("DB_HOST", "127.0.0.1"),
+        "PORT": os.getenv("DB_PORT", "5432"),
+    }
 }
+
+# DATABASES = {
+#   "default": {
+#     "ENGINE": "django.db.backends.sqlite3",
+#     "NAME": BASE_DIR / "db.sqlite3",
+#   }
+# }
 
 
 # ==========================
