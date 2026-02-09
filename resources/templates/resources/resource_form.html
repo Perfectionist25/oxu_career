@@ -27,7 +27,7 @@
                 {% for message in messages %}
                     <div class="alert alert-{{ message.tags }}">
                         {{ message }}
-                        <button type="button" class="close-btn">&times;</button>
+                        <button type="button" class="close-btn">{% trans '&times;' %}</button>
                     </div>
                 {% endfor %}
             {% endif %}
@@ -775,10 +775,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     imagePreview.innerHTML = `
-                        <img src="${e.target.result}" alt="Preview">
+                        <img src="${e.target.result}" alt="{% trans 'Preview' %}">
                         <div class="preview-overlay">
                             <i class="fas fa-sync"></i>
-                            Rasmni almashtirish
+                            {% trans 'Replace image' %}
                         </div>
                     `;
                 };
@@ -800,7 +800,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Title update
     if (titleField && previewTitle) {
         titleField.addEventListener('input', function() {
-            previewTitle.textContent = this.value || "Resurs sarlavhasi";
+            previewTitle.textContent = this.value || "Resource title";
         });
     }
     
@@ -808,7 +808,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (categoryField && previewCategory) {
         categoryField.addEventListener('change', function() {
             const selectedOption = this.options[this.selectedIndex];
-            previewCategory.textContent = selectedOption.text || "Kategoriya";
+            previewCategory.textContent = selectedOption.text || "Category";
         });
     }
     
@@ -816,10 +816,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (publishedField && previewStatus) {
         publishedField.addEventListener('change', function() {
             if (this.checked) {
-                previewStatus.textContent = "Nashr etilgan";
+                previewStatus.textContent = "Published";
                 previewStatus.className = "preview-status";
             } else {
-                previewStatus.textContent = "Nashr etilmagan";
+                previewStatus.textContent = "Unpublished";
                 previewStatus.className = "preview-status unpublished";
             }
         });
@@ -828,7 +828,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Description update
     if (descriptionField && previewDescription) {
         descriptionField.addEventListener('input', function() {
-            previewDescription.textContent = this.value || "Resurs tavsifi bu yerda ko'rinadi...";
+            previewDescription.textContent = this.value || "Resource description will appear here...";
             if (this.value.length > 150) {
                 previewDescription.textContent = this.value.substring(0, 150) + '...';
             }
@@ -855,7 +855,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show loading state
         const buttons = form.querySelectorAll('button[type="submit"]');
         buttons.forEach(btn => {
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saqlanmoqda...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
             btn.disabled = true;
         });
     });

@@ -1,274 +1,392 @@
 {% extends 'accounts/profile_base.html' %}
 {% load static %}
 {% load i18n %}
+{% load tz %}
 
 {% block profile_specific %}
-<!-- Аватар и основная информация -->
+<!-- Basic Information -->
 <div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-white">
-        <h5 class="fw-bold mb-0">
-            <i class="fas fa-user-circle me-2 text-primary"></i>
-            {% trans "Basic Information" %}
-        </h5>
-    </div>
-    <div class="card-body">
-        <div class="row align-items-center">
-            <!-- Аватар -->
-            <div class="col-md-3 text-center mb-3 mb-md-0">
-                <div class="avatar-container position-relative">
-                    {% if profile_user.avatar %}
-                        <img src="{{ profile_user.avatar.url }}" 
-                             alt="{% trans 'Admin Avatar' %}" 
-                             class="avatar-img rounded-circle shadow-sm"
-                             style="width: 150px; height: 150px; object-fit: cover;">
-                    {% else %}
-                        <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center bg-light text-muted shadow-sm"
-                             style="width: 150px; height: 150px; font-size: 3rem;">
-                            <i class="fas fa-user-shield"></i>
-                        </div>
-                    {% endif %}
-                    {% if profile_user.is_main_admin %}
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            <i class="fas fa-crown"></i>
-                        </span>
-                    {% endif %}
-                </div>
-            </div>
-            
-            <!-- Основная информация -->
-            <div class="col-md-9">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <strong class="text-muted">{% trans "Username" %}:</strong>
-                            <p class="mb-0 fw-semibold">{{ profile_user.username }}</p>
-                        </div>
-                        <div class="mb-3">
-                            <strong class="text-muted">{% trans "Email" %}:</strong>
-                            <p class="mb-0">{{ profile_user.email }}</p>
-                        </div>
-                        <div class="mb-3">
-                            <strong class="text-muted">{% trans "Full Name" %}:</strong>
-                            <p class="mb-0">{{ profile_user.get_full_name|default:"—" }}</p>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <strong class="text-muted">{% trans "Phone Number" %}:</strong>
-                            <p class="mb-0">{{ profile_user.phone_number|default:"—" }}</p>
-                        </div>
-                        <div class="mb-3">
-                            <strong class="text-muted">{% trans "Profile Created" %}:</strong>
-                            <p class="mb-0">{{ profile_user.date_joined|date:"d.m.Y H:i" }}</p>
-                        </div>
-                        <div class="mb-3">
-                            <strong class="text-muted">{% trans "Last Activity" %}:</strong>
-                            <p class="mb-0">{{ profile_user.last_login|timesince|default:"—" }} {% trans "ago" %}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+  <div class="card-header bg-white">
+    <h5 class="fw-bold mb-0">
+      <i class="fas fa-user-circle me-2 text-primary"></i>
+      {% trans "Basic Information" %}
+    </h5>
+  </div>
 
-<!-- Административная информация -->
-<div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-white">
-        <h5 class="fw-bold mb-0">
-            <i class="fas fa-user-shield me-2 text-primary"></i>
-            {% trans "Admin Rights" %}
-        </h5>
-    </div>
-    <div class="card-body">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <strong class="text-muted">{% trans "Admin Level" %}:</strong>
-                    <p class="mb-0">
-                        {% if profile_user.is_main_admin %}
-                            <span class="badge bg-danger">
-                                <i class="fas fa-crown me-1"></i>{% trans "Main Admin" %}
-                            </span>
-                        {% else %}
-                            <span class="badge bg-warning">
-                                <i class="fas fa-user-shield me-1"></i>{% trans "Admin" %}
-                            </span>
-                        {% endif %}
-                    </p>
-                </div>
-                <div class="mb-3">
-                    <strong class="text-muted">{% trans "Active as Admin" %}:</strong>
-                    <p class="mb-0">
-                        {% if profile.is_active_admin %}
-                            <span class="badge bg-success">
-                                <i class="fas fa-check me-1"></i>{% trans "Active" %}
-                            </span>
-                        {% else %}
-                            <span class="badge bg-secondary">
-                                <i class="fas fa-times me-1"></i>{% trans "Inactive" %}
-                            </span>
-                        {% endif %}
-                    </p>
-                </div>
+  <div class="card-body">
+    <div class="row align-items-center">
+      <!-- Avatar -->
+      <div class="col-md-3 text-center mb-3 mb-md-0">
+        <div class="avatar-container position-relative d-inline-block">
+          {% if profile_user.avatar %}
+            <img
+              src="{{ profile_user.avatar.url }}"
+              alt="{% trans 'Admin Avatar' %}"
+              class="rounded-circle shadow-sm"
+              style="width:150px;height:150px;object-fit:cover;"
+              loading="lazy"
+            >
+          {% else %}
+            <div
+              class="rounded-circle d-flex align-items-center justify-content-center bg-light text-muted shadow-sm"
+              style="width:150px;height:150px;font-size:3rem;"
+              aria-label="{% trans 'No avatar' %}"
+            >
+              <i class="fas fa-user-shield"></i>
             </div>
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <strong class="text-muted">{% trans "Admin Tenure" %}:</strong>
-                    <p class="mb-0">{{ profile.admin_since|timesince|default:"—" }}</p>
-                </div>
-                <div class="mb-3">
-                    <strong class="text-muted">{% trans "Last Admin Activity" %}:</strong>
-                    <p class="mb-0">{{ profile.last_admin_activity|timesince|default:"—" }} {% trans "ago" %}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+          {% endif %}
 
-<!-- Права доступа -->
-<div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-white">
-        <h5 class="fw-bold mb-0">
-            <i class="fas fa-key me-2 text-primary"></i>
-            {% trans "Permissions" %}
-        </h5>
-    </div>
-    <div class="card-body">
+          {% if profile_user.is_main_admin %}
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" title="{% trans 'Main Admin' %}">
+              <i class="fas fa-crown"></i>
+            </span>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Main Info -->
+      <div class="col-md-9">
         <div class="row">
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <i class="fas {% if profile.can_manage_students %}fa-check text-success{% else %}fa-times text-danger{% endif %} me-2"></i>
-                    <span>{% trans "Manage Students" %}</span>
-                </div>
-                <div class="mb-3">
-                    <i class="fas {% if profile.can_manage_employers %}fa-check text-success{% else %}fa-times text-danger{% endif %} me-2"></i>
-                    <span>{% trans "Manage Employers" %}</span>
-                </div>
-                <div class="mb-3">
-                    <i class="fas {% if profile.can_manage_jobs %}fa-check text-success{% else %}fa-times text-danger{% endif %} me-2"></i>
-                    <span>{% trans "Manage Jobs" %}</span>
-                </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <strong class="text-muted">{% trans "Username" %}:</strong>
+              <p class="mb-0 fw-semibold">{{ profile_user.username|default:"—" }}</p>
             </div>
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <i class="fas {% if profile.can_manage_resumes %}fa-check text-success{% else %}fa-times text-danger{% endif %} me-2"></i>
-                    <span>{% trans "Manage Resumes" %}</span>
-                </div>
-                <div class="mb-3">
-                    <i class="fas {% if profile.can_view_statistics %}fa-check text-success{% else %}fa-times text-danger{% endif %} me-2"></i>
-                    <span>{% trans "View Statistics" %}</span>
-                </div>
-                {% if profile_user.is_main_admin %}
-                <div class="mb-3">
-                    <i class="fas fa-crown text-warning me-2"></i>
-                    <span>{% trans "Main Admin Rights" %}</span>
-                </div>
+
+            <div class="mb-3">
+              <strong class="text-muted">{% trans "Email" %}:</strong>
+              <p class="mb-0">
+                {% if profile_user.email %}
+                  <a class="text-decoration-none" href="mailto:{{ profile_user.email }}">{{ profile_user.email }}</a>
+                {% else %}
+                  —
                 {% endif %}
+              </p>
             </div>
-        </div>
-    </div>
+
+            <div class="mb-0">
+              <strong class="text-muted">{% trans "Full Name" %}:</strong>
+              <p class="mb-0">
+                {{ profile_user.full_name|default:profile_user.get_full_name|default:"—" }}
+              </p>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="mb-3">
+              <strong class="text-muted">{% trans "Phone Number" %}:</strong>
+              <p class="mb-0">
+                {% if profile_user.phone_number %}
+                  <a class="text-decoration-none" href="tel:{{ profile_user.phone_number }}">{{ profile_user.phone_number }}</a>
+                {% else %}
+                  —
+                {% endif %}
+              </p>
+            </div>
+
+            <div class="mb-3">
+              <strong class="text-muted">{% trans "Profile Created" %}:</strong>
+              <p class="mb-0">
+                {% if profile_user.date_joined %}
+                  {{ profile_user.date_joined|localtime|date:"d.m.Y H:i" }}
+                {% else %}
+                  —
+                {% endif %}
+              </p>
+            </div>
+
+            <div class="mb-0">
+              <strong class="text-muted">{% trans "Last Activity" %}:</strong>
+              <p class="mb-0">
+                {% if profile_user.last_login %}
+                  {% blocktrans with t=profile_user.last_login|timesince %}{{ t }} ago{% endblocktrans %}
+                {% else %}
+                  —
+                {% endif %}
+              </p>
+            </div>
+          </div>
+        </div><!-- /row -->
+      </div><!-- /col -->
+    </div><!-- /row -->
+  </div>
 </div>
 
-<!-- Статистика администрирования -->
+<!-- Admin Rights -->
 <div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-white">
-        <h5 class="fw-bold mb-0">
-            <i class="fas fa-chart-bar me-2 text-primary"></i>
-            {% trans "Admin Statistics" %}
-        </h5>
-    </div>
-    <div class="card-body">
-        <div class="row text-center">
-            <div class="col-md-4 mb-3">
-                <div class="card bg-light border-0">
-                    <div class="card-body">
-                        <h3 class="text-primary fw-bold">{{ profile.students_managed|default:0 }}</h3>
-                        <p class="text-muted mb-0">{% trans "Managed Students" %}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-3">
-                <div class="card bg-light border-0">
-                    <div class="card-body">
-                        <h3 class="text-success fw-bold">{{ profile.employers_created|default:0 }}</h3>
-                        <p class="text-muted mb-0">{% trans "Created Employers" %}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-3">
-                <div class="card bg-light border-0">
-                    <div class="card-body">
-                        <h3 class="text-info fw-bold">{{ profile.jobs_approved|default:0 }}</h3>
-                        <p class="text-muted mb-0">{% trans "Approved Jobs" %}</p>
-                    </div>
-                </div>
-            </div>
+  <div class="card-header bg-white">
+    <h5 class="fw-bold mb-0">
+      <i class="fas fa-user-shield me-2 text-primary"></i>
+      {% trans "Admin Rights" %}
+    </h5>
+  </div>
+
+  <div class="card-body">
+    {% if profile %}
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <strong class="text-muted">{% trans "Admin Level" %}:</strong>
+            <p class="mb-0">
+              {% if profile_user.is_main_admin %}
+                <span class="badge bg-danger">
+                  <i class="fas fa-crown me-1"></i>{% trans "Main Admin" %}
+                </span>
+              {% else %}
+                <span class="badge bg-warning text-dark">
+                  <i class="fas fa-user-shield me-1"></i>{% trans "Admin" %}
+                </span>
+              {% endif %}
+            </p>
+          </div>
+
+          <div class="mb-0">
+            <strong class="text-muted">{% trans "Active as Admin" %}:</strong>
+            <p class="mb-0">
+              {% if profile.is_active_admin %}
+                <span class="badge bg-success">
+                  <i class="fas fa-check me-1"></i>{% trans "Active" %}
+                </span>
+              {% else %}
+                <span class="badge bg-secondary">
+                  <i class="fas fa-times me-1"></i>{% trans "Inactive" %}
+                </span>
+              {% endif %}
+            </p>
+          </div>
         </div>
-    </div>
+
+        <div class="col-md-6">
+          <div class="mb-3">
+            <strong class="text-muted">{% trans "Admin Tenure" %}:</strong>
+            <p class="mb-0">
+              {% if profile.admin_since %}
+                {{ profile.admin_since|localtime|date:"d.m.Y" }}
+                <span class="text-muted">•</span>
+                {% blocktrans with t=profile.admin_since|timesince %}{{ t }}{% endblocktrans %}
+              {% else %}
+                —
+              {% endif %}
+            </p>
+          </div>
+
+          <div class="mb-0">
+            <strong class="text-muted">{% trans "Last Admin Activity" %}:</strong>
+            <p class="mb-0">
+              {% if profile.last_admin_activity %}
+                {% blocktrans with t=profile.last_admin_activity|timesince %}{{ t }} ago{% endblocktrans %}
+              {% else %}
+                —
+              {% endif %}
+            </p>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <p class="text-muted mb-0">{% trans "No admin profile data" %}</p>
+    {% endif %}
+  </div>
 </div>
 
-<!-- Последние административные действия -->
-<div class="card border-0 shadow-sm">
-    <div class="card-header bg-white">
-        <h5 class="fw-bold mb-0">
-            <i class="fas fa-history me-2 text-primary"></i>
-            {% trans "Recent Admin Activities" %}
-        </h5>
-    </div>
-    <div class="card-body">
-        {% if admin_activities %}
-            <div class="list-group list-group-flush">
-                {% for activity in admin_activities %}
-                <div class="list-group-item">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h6 class="mb-1">{{ activity.description }}</h6>
-                            <small class="text-muted">{{ activity.created_at|timesince }} {% trans "ago" %}</small>
-                        </div>
-                        <span class="badge bg-{{ activity.activity_type }}">{{ activity.get_activity_type_display }}</span>
-                    </div>
-                </div>
-                {% endfor %}
+<!-- Permissions -->
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-header bg-white">
+    <h5 class="fw-bold mb-0">
+      <i class="fas fa-key me-2 text-primary"></i>
+      {% trans "Permissions" %}
+    </h5>
+  </div>
+
+  <div class="card-body">
+    {% if profile %}
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3 d-flex align-items-center">
+            <i class="fas {% if profile.can_manage_students %}fa-check text-success{% else %}fa-times text-danger{% endif %} me-2"></i>
+            <span>{% trans "Manage Students" %}</span>
+          </div>
+
+          <div class="mb-3 d-flex align-items-center">
+            <i class="fas {% if profile.can_manage_employers %}fa-check text-success{% else %}fa-times text-danger{% endif %} me-2"></i>
+            <span>{% trans "Manage Employers" %}</span>
+          </div>
+
+          <div class="mb-0 d-flex align-items-center">
+            <i class="fas {% if profile.can_manage_jobs %}fa-check text-success{% else %}fa-times text-danger{% endif %} me-2"></i>
+            <span>{% trans "Manage Jobs" %}</span>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="mb-3 d-flex align-items-center">
+            <i class="fas {% if profile.can_manage_resumes %}fa-check text-success{% else %}fa-times text-danger{% endif %} me-2"></i>
+            <span>{% trans "Manage Resumes" %}</span>
+          </div>
+
+          <div class="mb-3 d-flex align-items-center">
+            <i class="fas {% if profile.can_view_statistics %}fa-check text-success{% else %}fa-times text-danger{% endif %} me-2"></i>
+            <span>{% trans "View Statistics" %}</span>
+          </div>
+
+          {% if profile_user.is_main_admin %}
+            <div class="mb-0 d-flex align-items-center">
+              <i class="fas fa-crown text-warning me-2"></i>
+              <span>{% trans "Main Admin Rights" %}</span>
             </div>
+          {% endif %}
+        </div>
+      </div>
+    {% else %}
+      <p class="text-muted mb-0">{% trans "No permissions data" %}</p>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Admin Statistics -->
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-header bg-white">
+    <h5 class="fw-bold mb-0">
+      <i class="fas fa-chart-bar me-2 text-primary"></i>
+      {% trans "Admin Statistics" %}
+    </h5>
+  </div>
+
+  <div class="card-body">
+    {% if profile %}
+      <div class="row text-center">
+        <div class="col-md-4 mb-3">
+          <div class="card bg-light border-0 h-100">
+            <div class="card-body">
+              <h3 class="text-primary fw-bold mb-1">{{ profile.students_managed|default:0 }}</h3>
+              <p class="text-muted mb-0">{% trans "Managed Students" %}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <div class="card bg-light border-0 h-100">
+            <div class="card-body">
+              <h3 class="text-success fw-bold mb-1">{{ profile.employers_created|default:0 }}</h3>
+              <p class="text-muted mb-0">{% trans "Created Employers" %}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <div class="card bg-light border-0 h-100">
+            <div class="card-body">
+              <h3 class="text-info fw-bold mb-1">{{ profile.jobs_approved|default:0 }}</h3>
+              <p class="text-muted mb-0">{% trans "Approved Jobs" %}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <p class="text-muted mb-0">{% trans "No statistics available" %}</p>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Recent Admin Activities -->
+<div class="card border-0 shadow-sm">
+  <div class="card-header bg-white">
+    <h5 class="fw-bold mb-0">
+      <i class="fas fa-history me-2 text-primary"></i>
+      {% trans "Recent Admin Activities" %}
+    </h5>
+  </div>
+
+  <div class="card-body">
+    {% if admin_activities %}
+    <div class="list-group list-group-flush">
+        {% for activity in admin_activities %}
+
+        {% if activity.activity_type == "success" %}
+        <span class="badge bg-success">
+            {{ activity.get_activity_type_display|default:activity.activity_type }}
+        </span>
+        {% elif activity.activity_type == "warning" %}
+        <span class="badge bg-warning text-dark">
+            {{ activity.get_activity_type_display|default:activity.activity_type }}
+        </span>
+        {% elif activity.activity_type == "danger" %}
+        <span class="badge bg-danger">
+            {{ activity.get_activity_type_display|default:activity.activity_type }}
+        </span>
+        {% elif activity.activity_type == "info" %}
+        <span class="badge bg-info text-dark">
+            {{ activity.get_activity_type_display|default:activity.activity_type }}
+        </span>
         {% else %}
-            <p class="text-muted mb-0">{% trans "No admin activities yet" %}</p>
+        <span class="badge bg-secondary">
+            {{ activity.get_activity_type_display|default:activity.activity_type }}
+        </span>
         {% endif %}
+
+        <div class="list-group-item">
+            <div class="d-flex justify-content-between align-items-start gap-3">
+            <div class="flex-grow-1">
+                <h6 class="mb-1">{{ activity.description|default:"—" }}</h6>
+                <small class="text-muted">
+                {% if activity.created_at %}
+                    {% blocktrans with t=activity.created_at|timesince %}{{ t }} ago{% endblocktrans %}
+                {% else %}
+                    —
+                {% endif %}
+                </small>
+            </div>
+
+            <span class="badge bg-{{ badge_class }}">
+                {{ activity.get_activity_type_display|default:activity.activity_type }}
+            </span>
+            </div>
+        </div>
+        {% endfor %}
     </div>
+    {% else %}
+    <p class="text-muted mb-0">{% trans "No admin activities yet" %}</p>
+    {% endif %}
+  </div>
 </div>
 {% endblock %}
 
 {% block profile_stats %}
 {{ block.super }}
+
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <span>{% trans "Managed Users" %}</span>
-    <span class="badge bg-info">{{ managed_users|default:0 }}</span>
+  <span>{% trans "Managed Users" %}</span>
+  <span class="badge bg-info">{{ managed_users|default:0 }}</span>
 </div>
+
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <span>{% trans "System Alerts" %}</span>
-    <span class="badge bg-warning">{{ system_alerts|default:0 }}</span>
+  <span>{% trans "System Alerts" %}</span>
+  <span class="badge bg-warning text-dark">{{ system_alerts|default:0 }}</span>
 </div>
+
 {% if profile_user.is_main_admin %}
-<div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
     <span>{% trans "Created Admins" %}</span>
     <span class="badge bg-success">{{ created_admins|default:0 }}</span>
-</div>
+  </div>
 {% endif %}
 {% endblock %}
 
 {% block quick_actions %}
 {{ block.super }}
+
 <div class="d-grid gap-2 mt-2">
-    <a href="{% url 'accounts:admin_dashboard' %}" class="btn btn-success btn-sm">
-        <i class="fas fa-tachometer-alt me-2"></i>{% trans "Admin Panel" %}
-    </a>
-    <a href="{% url 'accounts:user_management' %}" class="btn btn-primary btn-sm">
-        <i class="fas fa-users-cog me-2"></i>{% trans "Users" %}
-    </a>
-    {% if profile_user.is_main_admin %}
+  <a href="{% url 'accounts:admin_dashboard' %}" class="btn btn-success btn-sm">
+    <i class="fas fa-tachometer-alt me-2"></i>{% trans "Admin Panel" %}
+  </a>
+
+  <a href="{% url 'accounts:user_management' %}" class="btn btn-primary btn-sm">
+    <i class="fas fa-users-cog me-2"></i>{% trans "Users" %}
+  </a>
+
+  {% if profile_user.is_main_admin %}
     <a href="{% url 'accounts:create_admin_account' %}" class="btn btn-warning btn-sm">
-        <i class="fas fa-user-plus me-2"></i>{% trans "New Admin" %}
+      <i class="fas fa-user-plus me-2"></i>{% trans "New Admin" %}
     </a>
-    {% endif %}
+  {% endif %}
 </div>
 {% endblock %}

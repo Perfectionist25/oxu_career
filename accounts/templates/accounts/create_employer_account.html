@@ -38,7 +38,7 @@
                             <li>{{ error }}</li>
                             {% endfor %}
                         </ul>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Close' %}"></button>
                     </div>
                     {% endif %}
 
@@ -486,7 +486,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="{{ company_form.linkedin.id_for_label }}" class="form-label fw-semibold">
-                                        <i class="fab fa-linkedin me-2 text-primary"></i>LinkedIn
+                                        <i class="fab fa-linkedin me-2 text-primary"></i>{% trans 'LinkedIn' %}
                                     </label>
                                     {{ company_form.linkedin|add_class:"form-control" }}
                                     {% if company_form.linkedin.errors %}
@@ -501,7 +501,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="{{ company_form.telegram.id_for_label }}" class="form-label fw-semibold">
-                                        <i class="fab fa-telegram me-2 text-info"></i>Telegram
+                                        <i class="fab fa-telegram me-2 text-info"></i>{% trans 'Telegram' %}
                                     </label>
                                     {{ company_form.telegram|add_class:"form-control" }}
                                     {% if company_form.telegram.errors %}
@@ -516,7 +516,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="{{ company_form.facebook.id_for_label }}" class="form-label fw-semibold">
-                                        <i class="fab fa-facebook me-2 text-primary"></i>Facebook
+                                        <i class="fab fa-facebook me-2 text-primary"></i>{% trans 'Facebook' %}
                                     </label>
                                     {{ company_form.facebook|add_class:"form-control" }}
                                     {% if company_form.facebook.errors %}
@@ -531,7 +531,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="{{ company_form.instagram.id_for_label }}" class="form-label fw-semibold">
-                                        <i class="fab fa-instagram me-2 text-danger"></i>Instagram
+                                        <i class="fab fa-instagram me-2 text-danger"></i>{% trans 'Instagram' %}
                                     </label>
                                     {{ company_form.instagram|add_class:"form-control" }}
                                     {% if company_form.instagram.errors %}
@@ -996,7 +996,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 alertDiv.innerHTML = `
                     <i class="fas fa-exclamation-triangle me-2"></i>
                     <strong>{% trans "Please correct the errors below:" %}</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Close' %}"></button>
                 `;
                 
                 const existingAlert = form.querySelector('.alert-danger');

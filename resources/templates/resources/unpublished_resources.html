@@ -230,7 +230,7 @@
         {% for num in page_obj.paginator.page_range %}
             {% if page_obj.number == num %}
                 <span class="page-link active">{{ num }}</span>
-            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
                 <a href="?page={{ num }}" class="page-link">
                     {{ num }}
                 </a>
@@ -899,7 +899,7 @@ function updateBulkActions() {
     const totalCheckboxes = document.querySelectorAll('.resource-checkbox').length;
     const selectAllCheckbox = document.getElementById('selectAllCheckbox');
     selectAllCheckbox.checked = selectedCount === totalCheckboxes;
-    selectAllCheckbox.indeterminate = selectedCount > 0 && selectedCount < totalCheckboxes;
+    selectAllCheckbox.indeterminate = selectedCount > {% trans '0 && selectedCount' %} < totalCheckboxes;
 }
 
 function toggleSelectAll(checkbox) {
@@ -969,14 +969,14 @@ function optimizeGridLayout() {
     
     // Remove existing empty cards
     const existingEmptyCards = container.querySelectorAll('.empty-card');
-    existingEmptyCards.forEach(card => card.remove());
+    existingEmptyCards.forEach(card => {% trans 'card.remove());
     
     // Calculate needed empty slots
     const remainingItems = cards.length % itemsPerRow;
     const emptySlotsNeeded = remainingItems === 0 ? 0 : itemsPerRow - remainingItems;
     
     // Add empty cards to fill the grid
-    for (let i = 0; i < emptySlotsNeeded; i++) {
+    for (let i = 0; i' %} < emptySlotsNeeded; i++) {
         const emptyCard = document.createElement('div');
         emptyCard.className = 'resource-card empty-card';
         container.appendChild(emptyCard);

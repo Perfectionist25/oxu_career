@@ -94,7 +94,7 @@
                         <i class="fas fa-envelope me-3"></i>
                         <div>
                             <a href="mailto:info@oxu.uz" class="footer-link">
-                                info@oxu.uz
+                                {% trans 'info@oxu.uz' %}
                             </a>
                         </div>
                     </div>
@@ -102,16 +102,16 @@
                     <!-- Social Networks -->
                     <h6 class="footer-subtitle mb-3">{% trans "Social Networks" %}</h6>
                     <div class="footer-social mb-4">
-                        <a href="https://t.me/Oxu_uz" class="footer-social-btn" aria-label="Telegram">
+                        <a href="https://t.me/Oxu_uz" class="footer-social-btn" aria-label="{% trans 'Telegram' %}">
                             <i class="fab fa-telegram"></i>
                         </a>
-                        <a href="https://www.instagram.com/oxu_uz/" class="footer-social-btn" aria-label="Instagram">
+                        <a href="https://www.instagram.com/oxu_uz/" class="footer-social-btn" aria-label="{% trans 'Instagram' %}">
                             <i class="fab fa-instagram"></i>
                         </a>
-                        <a href="https://www.facebook.com/people/Osiyo-Xalqaro-Universiteti/100088012691808/?sk=about" class="footer-social-btn" aria-label="Facebook">
+                        <a href="https://www.facebook.com/people/Osiyo-Xalqaro-Universiteti/100088012691808/?sk=about" class="footer-social-btn" aria-label="{% trans 'Facebook' %}">
                             <i class="fab fa-facebook-f"></i>
                         </a>
-                        <a href="https://www.youtube.com/@Osiyo.Xalqaro.Universiteti." class="footer-social-btn" aria-label="YouTube">
+                        <a href="https://www.youtube.com/@Osiyo.Xalqaro.Universiteti." class="footer-social-btn" aria-label="{% trans 'YouTube' %}">
                             <i class="fab fa-youtube"></i>
                         </a>
                     </div>
@@ -124,25 +124,25 @@
                     <div class="col-12 col-md-6 mb-3 mb-md-0">
                         <a class="footer-logo d-flex align-items-center" href="/">
                             <div class="logo-container-wrapper">
-                                <div class="logo-container d-flex align-items-center">
-                                    <img src="{% static 'img/logo1.png' %}" alt="OXU Logo" class="logo-image me-3">
-                                    <div class="logo-text-wrapper">
-                                        {% get_current_language as CURRENT_LANG %}
-                                        {% if CURRENT_LANG == 'uz' %}
-                                            <div class="logo-main">Osiyo <br class="logo-line-break"> Xalqaro <br class="logo-line-break"> Universiteti</div>
-                                            <div class="logo-divider"></div>
-                                            <div class="logo-sub">Karyera markazi</div>
-                                        {% elif CURRENT_LANG == 'ru' %}
-                                            <div class="logo-main">Азиатский <br class="logo-line-break"> Международный <br class="logo-line-break"> Университет</div>
-                                            <div class="logo-divider"></div>
-                                            <div class="logo-sub">Карьерный центр</div>
-                                        {% else %}
-                                            <div class="logo-main">Asian <br class="logo-line-break"> International <br class="logo-line-break"> University</div>
-                                            <div class="logo-divider"></div>
-                                            <div class="logo-sub">Career center</div>
-                                        {% endif %}
-                                    </div>
+                            <div class="logo-container d-flex align-items-center">
+                                <img
+                                src="{% static 'img/logo1.png' %}"
+                                alt="{% trans 'OXU Logo' %}"
+                                class="logo-image me-3"
+                                >
+
+                                <div class="logo-text-wrapper">
+                                <div class="logo-main">
+                                    {% trans 'Asia' %} <br class="logo-line-break">
+                                    {% trans 'International' %} <br class="logo-line-break">
+                                    {% trans 'University' %}
                                 </div>
+
+                                <div class="logo-divider"></div>
+
+                                <div class="logo-sub">{% trans 'Career Center' %}</div>
+                                </div>
+                            </div>
                             </div>
                         </a>
                     </div>

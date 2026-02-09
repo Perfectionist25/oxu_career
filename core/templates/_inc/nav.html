@@ -8,7 +8,7 @@
             <div class="col-md-6">
                 <div class="contact-info d-flex align-items-center justify-content-center justify-content-md-start">
                     <a href="tel:+998901234567" class="me-4 text-light"><i class="fas fa-phone me-1"></i> +998 90 123-45-67</a>
-                    <a href="mailto:info@oxucareer.uz" class="text-light"><i class="fas fa-envelope me-1"></i> info@oxucareer.uz</a>
+                    <a href="mailto:info@oxucareer.uz" class="text-light"><i class="fas fa-envelope me-1"></i> {% trans 'info@oxucareer.uz' %}</a>
                 </div>
             </div>
             <div class="col-md-6">
@@ -38,18 +38,18 @@
             <div class="header">
                 <div class="logo-container-wrapper">
                     <a href="/" class="d-flex align-items text-decoration-none logo-container">
-                        <img src="{% static 'img/logo1.png' %}" alt="Logo" class="me-3 logo-image">
+                        <img src="{% static 'img/logo1.png' %}" alt="{% trans 'Logo' %}" class="me-3 logo-image">
                         <div class="logo-text-wrapper">
                             {% get_current_language as CURRENT_LANG %}
                             {% if CURRENT_LANG == 'uz' %}
-                                <div class="logo-main">Osiyo Xalqaro Universiteti</div>
-                                <div class="logo-sub">Karyera markazi</div>
+                                <div class="logo-main">{% trans 'Osiyo xalqaro universiteti' %}</div>
+                                <div class="logo-sub">{% trans 'Karyera markazi' %}</div>
                             {% elif CURRENT_LANG == 'ru' %}
-                                <div class="logo-main">Азиатский Международный Университет</div>
-                                <div class="logo-sub">Карьерный центр</div>
+                                <div class="logo-main">{% trans 'Азиатский международный университет' %}</div>
+                                <div class="logo-sub">{% trans 'Центр карьеры' %}</div>
                             {% else %}
-                                <div class="logo-main">Asia International University</div>
-                                <div class="logo-sub">Career center</div>
+                                <div class="logo-main">{% trans 'Asia International University' %}</div>
+                                <div class="logo-sub">{% trans 'Career Center' %}</div>
                             {% endif %}
                         </div>
                     </a>
@@ -71,38 +71,38 @@
                                 <button class="btn btn-language dropdown-toggle d-flex align-items-center" type="button" 
                                         data-bs-toggle="dropdown" aria-expanded="false">
                                     {% if CURRENT_LANG == 'en' %}
-                                    <img width="20" src="{% static 'img/uk.png' %}" alt="EN" class="me-2">
-                                    <span>EN</span>
+                                    <img width="20" src="{% static 'img/uk.png' %}" alt="{% trans 'EN' %}" class="me-2">
+                                    <span>{% trans 'EN' %}</span>
                                     {% elif CURRENT_LANG == 'uz' %}
-                                    <img width="20" src="{% static 'img/uzb.png' %}" alt="UZ" class="me-2">
-                                    <span>UZ</span>
+                                    <img width="20" src="{% static 'img/uzb.png' %}" alt="{% trans 'UZ' %}" class="me-2">
+                                    <span>{% trans 'UZ' %}</span>
                                     {% elif CURRENT_LANG == 'ru' %}
-                                    <img width="20" src="{% static 'img/ru.png' %}" alt="RU" class="me-2">
-                                    <span>RU</span>
+                                    <img width="20" src="{% static 'img/ru.png' %}" alt="{% trans 'RU' %}" class="me-2">
+                                    <span>{% trans 'RU' %}</span>
                                     {% endif %}
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end language-dropdown">
                                     <li>
                                         <button type="submit" name="language" value="en" 
                                                 class="dropdown-item d-flex align-items-center {% if CURRENT_LANG == 'en' %}active{% endif %}">
-                                            <img width="20" src="{% static 'img/uk.png' %}" alt="EN" class="me-2">
-                                            <span class="flex-grow-1">English</span>
+                                            <img width="20" src="{% static 'img/uk.png' %}" alt="{% trans 'EN' %}" class="me-2">
+                                            <span class="flex-grow-1">{% trans 'English' %}</span>
                                             {% if CURRENT_LANG == 'en' %}<i class="fas fa-check ms-2"></i>{% endif %}
                                         </button>
                                     </li>
                                     <li>
                                         <button type="submit" name="language" value="uz" 
                                                 class="dropdown-item d-flex align-items-center {% if CURRENT_LANG == 'uz' %}active{% endif %}">
-                                            <img width="20" src="{% static 'img/uzb.png' %}" alt="UZ" class="me-2">
-                                            <span class="flex-grow-1">O'zbekcha</span>
+                                            <img width="20" src="{% static 'img/uzb.png' %}" alt="{% trans 'UZ' %}" class="me-2">
+                                            <span class="flex-grow-1">{% trans 'Uzbek' %}</span>
                                             {% if CURRENT_LANG == 'uz' %}<i class="fas fa-check ms-2"></i>{% endif %}
                                         </button>
                                     </li>
                                     <li>
                                         <button type="submit" name="language" value="ru" 
                                                 class="dropdown-item d-flex align-items-center {% if CURRENT_LANG == 'ru' %}active{% endif %}">
-                                            <img width="20" src="{% static 'img/ru.png' %}" alt="RU" class="me-2">
-                                            <span class="flex-grow-1">Русский</span>
+                                            <img width="20" src="{% static 'img/ru.png' %}" alt="{% trans 'RU' %}" class="me-2">
+                                            <span class="flex-grow-1">{% trans 'Russian' %}</span>
                                             {% if CURRENT_LANG == 'ru' %}<i class="fas fa-check ms-2"></i>{% endif %}
                                         </button>
                                     </li>
@@ -122,7 +122,7 @@
                                     {% if unread_notifications_count > 0 %}
                                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                                         {{ unread_notifications_count }}
-                                        <span class="visually-hidden">unread notifications</span>
+                                        <span class="visually-hidden">{% trans 'unread notifications' %}</span>
                                     </span>
                                     {% endif %}
                                 </button>
@@ -454,15 +454,15 @@
                 
                 <button type="submit" name="language" value="en" 
                         class="btn btn-sm btn-outline-dark {% if CURRENT_LANG == 'en' %}active{% endif %}">
-                    EN
+                    {% trans 'EN' %}
                 </button>
                 <button type="submit" name="language" value="uz" 
                         class="btn btn-sm btn-outline-dark {% if CURRENT_LANG == 'uz' %}active{% endif %}">
-                    UZ
+                    {% trans 'UZ' %}
                 </button>
                 <button type="submit" name="language" value="ru" 
                         class="btn btn-sm btn-outline-dark {% if CURRENT_LANG == 'ru' %}active{% endif %}">
-                    RU
+                    {% trans 'RU' %}
                 </button>
             </form>
         </div>
@@ -476,7 +476,7 @@
             </p>
             <p class="mb-3 d-flex align-items-center">
                 <i class="fas fa-envelope me-3"></i>
-                <span>info@oxucareer.uz</span>
+                <span>{% trans 'info@oxucareer.uz' %}</span>
             </p>
             <div class="d-flex justify-content-center gap-3">
                 <a style="font-size: 3vh;" href=""><i class="fab fa-telegram"></i></a>

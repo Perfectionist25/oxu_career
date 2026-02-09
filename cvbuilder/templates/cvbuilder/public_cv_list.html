@@ -673,14 +673,14 @@
                                     <li class="page-item">
                                         <a class="page-link" 
                                            href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}{% if selected_template %}&template={{ selected_template }}{% endif %}{% if location %}&location={{ location }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}"
-                                           aria-label="Previous">
+                                           aria-label="{% trans 'Previous' %}">
                                             <i class="fas fa-chevron-left"></i>
                                         </a>
                                     </li>
                                     {% endif %}
                                     
                                     {% for num in page_obj.paginator.page_range %}
-                                        {% if num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+                {% if num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
                                         <li class="page-item {% if page_obj.number == num %}active{% endif %}">
                                             <a class="page-link" 
                                                href="?page={{ num }}{% if q %}&q={{ q }}{% endif %}{% if selected_template %}&template={{ selected_template }}{% endif %}{% if location %}&location={{ location }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">
@@ -694,7 +694,7 @@
                                     <li class="page-item">
                                         <a class="page-link" 
                                            href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}{% if selected_template %}&template={{ selected_template }}{% endif %}{% if location %}&location={{ location }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}"
-                                           aria-label="Next">
+                                           aria-label="{% trans 'Next' %}">
                                             <i class="fas fa-chevron-right"></i>
                                         </a>
                                     </li>

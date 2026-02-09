@@ -25,7 +25,7 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">&nbsp;</label>
+                            <label class="form-label">{% trans '&nbsp;' %}</label>
                             <button type="submit" class="btn btn-primary d-block">{% trans "Filter" %}</button>
                         </div>
                     </form>
@@ -84,7 +84,7 @@
 
             <!-- Пагинация -->
             {% if page_obj.has_other_pages %}
-            <nav aria-label="Event pagination" class="mt-4">
+            <nav aria-label="{% trans 'Event pagination' %}" class="mt-4">
                 <ul class="pagination justify-content-center">
                     {% if page_obj.has_previous %}
                     <li class="page-item">

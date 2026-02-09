@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -68,7 +69,7 @@
         <div class="text-md-end">
           <img
             src="{{ cv.photo.url }}"
-            alt="Photo"
+            alt="{% trans 'Photo' %}"
             class="rounded-3 border"
             style="width: 108px; height: 108px; object-fit: cover;"
           />
@@ -83,7 +84,7 @@
       <!-- Left column: Contacts / Meta -->
       <aside class="col-12 col-md-4">
         <div class="mb-4">
-          <div class="section-title">Contacts</div>
+          <div class="section-title">{% trans 'Contacts' %}</div>
 
           <div class="d-flex flex-wrap gap-2">
             {% if cv.email %}
@@ -121,26 +122,26 @@
         </div>
 
         <div class="mb-4">
-          <div class="section-title">Personal</div>
+          <div class="section-title">{% trans 'Personal' %}</div>
           <ul class="list-unstyled small mb-0">
-            {% if cv.birth_date %}<li><span class="muted">Birth:</span> {{ cv.birth_date }}</li>{% endif %}
-            {% if cv.gender %}<li><span class="muted">Gender:</span> {{ cv.get_gender_display|default:cv.gender }}</li>{% endif %}
-            {% if cv.marital_status %}<li><span class="muted">Status:</span> {{ cv.get_marital_status_display|default:cv.marital_status }}</li>{% endif %}
-            {% if cv.nationality %}<li><span class="muted">Nationality:</span> {{ cv.nationality }}</li>{% endif %}
+            {% if cv.birth_date %}<li><span class="muted">{% trans 'Birth:' %}</span> {{ cv.birth_date }}</li>{% endif %}
+            {% if cv.gender %}<li><span class="muted">{% trans 'Gender:' %}</span> {{ cv.get_gender_display|default:cv.gender }}</li>{% endif %}
+            {% if cv.marital_status %}<li><span class="muted">{% trans 'Status:' %}</span> {{ cv.get_marital_status_display|default:cv.marital_status }}</li>{% endif %}
+            {% if cv.nationality %}<li><span class="muted">{% trans 'Nationality:' %}</span> {{ cv.nationality }}</li>{% endif %}
           </ul>
         </div>
 
         <div>
-          <div class="section-title">Links</div>
+          <div class="section-title">{% trans 'Links' %}</div>
           <ul class="list-unstyled small mb-0">
             {% if cv.linkedin %}
-              <li><span class="muted">LinkedIn:</span> <a href="{{ cv.linkedin }}" target="_blank">{{ cv.linkedin }}</a></li>
+              <li><span class="muted">{% trans 'LinkedIn:' %}</span> <a href="{{ cv.linkedin }}" target="_blank">{{ cv.linkedin }}</a></li>
             {% endif %}
             {% if cv.github %}
-              <li><span class="muted">GitHub:</span> <a href="{{ cv.github }}" target="_blank">{{ cv.github }}</a></li>
+              <li><span class="muted">{% trans 'GitHub:' %}</span> <a href="{{ cv.github }}" target="_blank">{{ cv.github }}</a></li>
             {% endif %}
             {% if cv.portfolio %}
-              <li><span class="muted">Portfolio:</span> <a href="{{ cv.portfolio }}" target="_blank">{{ cv.portfolio }}</a></li>
+              <li><span class="muted">{% trans 'Portfolio:' %}</span> <a href="{{ cv.portfolio }}" target="_blank">{{ cv.portfolio }}</a></li>
             {% endif %}
           </ul>
         </div>
@@ -150,12 +151,12 @@
       <section class="col-12 col-md-8">
         {% if cv.employment_type or cv.salary_expectation %}
           <div class="mb-4">
-            <div class="section-title">Preferences</div>
+            <div class="section-title">{% trans 'Preferences' %}</div>
             <div class="row g-2 small">
               {% if cv.employment_type %}
                 <div class="col-12 col-sm-6">
                   <div class="p-3 rounded-3 border bg-light">
-                    <div class="muted">Employment</div>
+                    <div class="muted">{% trans 'Employment' %}</div>
                     <div class="fw-semibold">{{ cv.get_employment_type_display|default:cv.employment_type }}</div>
                   </div>
                 </div>
@@ -163,7 +164,7 @@
               {% if cv.salary_expectation %}
                 <div class="col-12 col-sm-6">
                   <div class="p-3 rounded-3 border bg-light">
-                    <div class="muted">Salary</div>
+                    <div class="muted">{% trans 'Salary' %}</div>
                     <div class="fw-semibold">
                       {{ cv.salary_expectation }} {{ cv.salary_currency|default:"UZS" }}
                     </div>
@@ -177,7 +178,7 @@
         {% if cv.experiences.all %}
           {% if cv.experiences.count %}
             <div class="mb-4">
-              <div class="section-title">Experience</div>
+              <div class="section-title">{% trans 'Experience' %}</div>
               <div class="vstack gap-3">
                 {% for exp in cv.experiences.all %}
                   <div class="p-3 rounded-3 border">
@@ -192,10 +193,10 @@
                       <div class="mt-2 preserve small">{{ exp.description }}</div>
                     {% endif %}
                     {% if exp.technologies %}
-                      <div class="mt-2 small"><span class="muted">Tech:</span> {{ exp.technologies }}</div>
+                      <div class="mt-2 small"><span class="muted">{% trans 'Tech:' %}</span> {{ exp.technologies }}</div>
                     {% endif %}
                     {% if exp.achievements %}
-                      <div class="mt-2 small"><span class="muted">Achievements:</span> {{ exp.achievements }}</div>
+                      <div class="mt-2 small"><span class="muted">{% trans 'Achievements:' %}</span> {{ exp.achievements }}</div>
                     {% endif %}
                   </div>
                 {% endfor %}
@@ -207,7 +208,7 @@
         {% if cv.educations.all %}
           {% if cv.educations.count %}
             <div class="mb-4">
-              <div class="section-title">Education</div>
+              <div class="section-title">{% trans 'Education' %}</div>
               <div class="vstack gap-3">
                 {% for edu in cv.educations.all %}
                   <div class="p-3 rounded-3 border">
@@ -234,7 +235,7 @@
         {% if cv.skills.all %}
           {% if cv.skills.count %}
             <div class="mb-4">
-              <div class="section-title">Skills</div>
+              <div class="section-title">{% trans 'Skills' %}</div>
               <div class="d-flex flex-wrap gap-2">
                 {% for s in cv.skills.all %}
                   <span class="badge text-bg-light border">
@@ -249,7 +250,7 @@
         {% if cv.languages.all %}
           {% if cv.languages.count %}
             <div class="mb-4">
-              <div class="section-title">Languages</div>
+              <div class="section-title">{% trans 'Languages' %}</div>
               <div class="d-flex flex-wrap gap-2">
                 {% for l in cv.languages.all %}
                   <span class="badge text-bg-light border">

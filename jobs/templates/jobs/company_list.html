@@ -130,7 +130,7 @@
 
                 <!-- Пагинация -->
                 {% if page_obj.has_other_pages %}
-                <nav aria-label="Page navigation" class="mt-4">
+                <nav aria-label="{% trans 'Page navigation' %}" class="mt-4">
                     <ul class="pagination justify-content-center">
                         {% if page_obj.has_previous %}
                             <li class="page-item">
@@ -150,7 +150,7 @@
                                 <li class="page-item active">
                                     <span class="page-link">{{ num }}</span>
                                 </li>
-                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
                                 <li class="page-item">
                                     <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
                                         {{ num }}

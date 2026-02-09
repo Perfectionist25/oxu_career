@@ -10,7 +10,7 @@
         <!-- Основной контент -->
         <div class="col-lg-8">
             <!-- Хлебные крошки -->
-            <nav aria-label="breadcrumb" class="mb-4">
+            <nav aria-label="{% trans 'breadcrumb' %}" class="mb-4">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{% url 'jobs:list' %}">{% trans "Jobs" %}</a></li>
                     <li class="breadcrumb-item active">{{ job.title }}</li>
@@ -410,7 +410,7 @@
                 <h5 class="modal-title" id="applyModalLabel">
                     <i class="fas fa-paper-plane me-2"></i>{% trans "Apply" %}
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
             </div>
             <form method="post" action="{% url 'jobs:apply_for_job' job.id %}">
                 {% csrf_token %}

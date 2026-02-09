@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load i18n static %}
 
 {% block title %}{% trans "Create Event" %}{% endblock %}
@@ -1026,7 +1027,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <li>{{ error }}</li>
                     {% endfor %}
                 </ul>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Close' %}"></button>
             </div>
             {% endif %}
 
@@ -1141,7 +1142,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     
                                     <!-- Предпросмотр баннера -->
                                     <div class="image-preview-container" id="banner-preview-container">
-                                        <img src="" alt="Banner Preview" class="image-preview" id="banner-preview">
+                                        <img src="" alt="{% trans 'Banner Preview' %}" class="image-preview" id="banner-preview">
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
@@ -1154,7 +1155,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     
                                     <!-- Предпросмотр миниатюры -->
                                     <div class="image-preview-container" id="thumbnail-preview-container">
-                                        <img src="" alt="Thumbnail Preview" class="image-preview" id="thumbnail-preview">
+                                        <img src="" alt="{% trans 'Thumbnail Preview' %}" class="image-preview" id="thumbnail-preview">
                                     </div>
                                 </div>
                             </div>

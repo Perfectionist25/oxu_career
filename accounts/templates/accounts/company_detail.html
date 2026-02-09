@@ -158,22 +158,22 @@
                     <div class="d-flex gap-3">
                         {% if object.linkedin %}
                         <a href="{{ object.linkedin }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
-                            <i class="fab fa-linkedin"></i> LinkedIn
+                            <i class="fab fa-linkedin"></i> {% trans 'LinkedIn' %}
                         </a>
                         {% endif %}
                         {% if object.facebook %}
                         <a href="{{ object.facebook }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
-                            <i class="fab fa-facebook"></i> Facebook
+                            <i class="fab fa-facebook"></i> {% trans 'Facebook' %}
                         </a>
                         {% endif %}
                         {% if object.instagram %}
                         <a href="{{ object.instagram }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-danger btn-sm">
-                            <i class="fab fa-instagram"></i> Instagram
+                            <i class="fab fa-instagram"></i> {% trans 'Instagram' %}
                         </a>
                         {% endif %}
                         {% if object.telegram %}
                         <a href="{{ object.telegram }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-info btn-sm">
-                            <i class="fab fa-telegram"></i> Telegram
+                            <i class="fab fa-telegram"></i> {% trans 'Telegram' %}
                         </a>
                         {% endif %}
                     </div>

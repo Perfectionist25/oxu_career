@@ -231,7 +231,6 @@ class AdminCompanyForm(CompanyForm):
         self.fields['country'].widget.attrs.update({'class': 'form-control'})
 
 
-
 class AdminEmployerProfileForm(forms.ModelForm):
     """Форма профиля работодателя для админа (расширенная)"""
     verification_document = forms.FileField(
@@ -511,7 +510,6 @@ class UserUpdateForm(forms.ModelForm):
         return email
 
 
-
 class PasswordChangeFormCustom(forms.Form):
     """Кастомная форма смены пароля"""
     old_password = forms.CharField(
@@ -550,7 +548,6 @@ class EmployerProfileForm(forms.ModelForm):
             'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
             'preferred_contact_method': forms.Select(attrs={'class': 'form-select'}),
         }
-
 
 
 class StudentUserReadonlyNameForm(forms.ModelForm):

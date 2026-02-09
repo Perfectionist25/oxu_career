@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load static %}
 
 {% block content %}
@@ -7,14 +8,14 @@
     <section class="text-center mb-5">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <h1 class="display-4 fw-bold text-primary mb-4">Professional Resume Builder</h1>
-                <p class="lead text-muted mb-4">Create your modern and attractive resume in just a few minutes. Professional templates that capture employers' attention.</p>
+                <h1 class="display-4 fw-bold text-primary mb-4">{% trans 'Professional Resume Builder' %}</h1>
+                <p class="lead text-muted mb-4">{% trans "Create your modern and attractive resume in just a few minutes. Professional templates that capture employers' attention." %}</p>
                 <div class="d-flex justify-content-center flex-wrap gap-3">
                     <a href="{% url 'cvbuilder:template_selector' %}" class="btn btn-primary btn-lg px-4 py-3">
-                        <i class="fas fa-plus me-2"></i>Create Resume
+                        <i class="fas fa-plus me-2"></i>{% trans 'Create Resume' %}
                     </a>
                     <a href="{% url 'cvbuilder:cv_list' %}" class="btn btn-outline-primary btn-lg px-4 py-3">
-                        <i class="fas fa-list me-2"></i>My Resumes
+                        <i class="fas fa-list me-2"></i>{% trans 'My Resumes' %}
                     </a>
                 </div>
             </div>
@@ -29,8 +30,8 @@
                     <div class="text-primary mb-3">
                         <i class="fas fa-bolt fa-3x"></i>
                     </div>
-                    <h5 class="fw-bold text-dark mb-3">Fast and Easy</h5>
-                    <p class="text-muted">Create a professional resume in just a few minutes. No complex settings required.</p>
+                    <h5 class="fw-bold text-dark mb-3">{% trans 'Fast and Easy' %}</h5>
+                    <p class="text-muted">{% trans 'Create a professional resume in just a few minutes. No complex settings required.' %}</p>
                 </div>
             </div>
         </div>
@@ -40,8 +41,8 @@
                     <div class="text-primary mb-3">
                         <i class="fas fa-palette fa-3x"></i>
                     </div>
-                    <h5 class="fw-bold text-dark mb-3">Modern Design</h5>
-                    <p class="text-muted">Various professional templates. Customized for any industry.</p>
+                    <h5 class="fw-bold text-dark mb-3">{% trans 'Modern Design' %}</h5>
+                    <p class="text-muted">{% trans 'Various professional templates. Customized for any industry.' %}</p>
                 </div>
             </div>
         </div>
@@ -51,8 +52,8 @@
                     <div class="text-primary mb-3">
                         <i class="fas fa-mobile-alt fa-3x"></i>
                     </div>
-                    <h5 class="fw-bold text-dark mb-3">Mobile Responsive</h5>
-                    <p class="text-muted">Looks perfect on all devices. Option to download in PDF format.</p>
+                    <h5 class="fw-bold text-dark mb-3">{% trans 'Mobile Responsive' %}</h5>
+                    <p class="text-muted">{% trans 'Looks perfect on all devices. Option to download in PDF format.' %}</p>
                 </div>
             </div>
         </div>
@@ -62,8 +63,8 @@
                     <div class="text-primary mb-3">
                         <i class="fas fa-shield-alt fa-3x"></i>
                     </div>
-                    <h5 class="fw-bold text-dark mb-3">Secure and Private</h5>
-                    <p class="text-muted">Your data is stored securely. Only you can view it.</p>
+                    <h5 class="fw-bold text-dark mb-3">{% trans 'Secure and Private' %}</h5>
+                    <p class="text-muted">{% trans 'Your data is stored securely. Only you can view it.' %}</p>
                 </div>
             </div>
         </div>
@@ -72,15 +73,15 @@
     <!-- How It Works -->
     <section class="row align-items-center mb-5 py-4">
         <div class="col-lg-6 mb-4 mb-lg-0">
-            <h2 class="fw-bold text-dark mb-4">How does resume creation work?</h2>
+            <h2 class="fw-bold text-dark mb-4">{% trans 'How does resume creation work?' %}</h2>
             
             <div class="d-flex mb-4">
                 <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-4 flex-shrink-0" style="width: 60px; height: 60px;">
                     <span class="text-white fw-bold h4 mb-0">1</span>
                 </div>
                 <div>
-                    <h5 class="fw-bold text-dark mb-2">Choose a Template</h5>
-                    <p class="text-muted mb-0">Select a professional template that you like</p>
+                    <h5 class="fw-bold text-dark mb-2">{% trans 'Choose a Template' %}</h5>
+                    <p class="text-muted mb-0">{% trans 'Select a professional template that you like' %}</p>
                 </div>
             </div>
             
@@ -89,8 +90,8 @@
                     <span class="text-white fw-bold h4 mb-0">2</span>
                 </div>
                 <div>
-                    <h5 class="fw-bold text-dark mb-2">Enter Information</h5>
-                    <p class="text-muted mb-0">Enter your information accurately and completely</p>
+                    <h5 class="fw-bold text-dark mb-2">{% trans 'Enter Information' %}</h5>
+                    <p class="text-muted mb-0">{% trans 'Enter your information accurately and completely' %}</p>
                 </div>
             </div>
             
@@ -99,8 +100,8 @@
                     <span class="text-white fw-bold h4 mb-0">3</span>
                 </div>
                 <div>
-                    <h5 class="fw-bold text-dark mb-2">Review</h5>
-                    <p class="text-muted mb-0">Review and edit your created resume</p>
+                    <h5 class="fw-bold text-dark mb-2">{% trans 'Review' %}</h5>
+                    <p class="text-muted mb-0">{% trans 'Review and edit your created resume' %}</p>
                 </div>
             </div>
             
@@ -109,17 +110,17 @@
                     <span class="text-white fw-bold h4 mb-0">4</span>
                 </div>
                 <div>
-                    <h5 class="fw-bold text-dark mb-2">Download</h5>
-                    <p class="text-muted mb-0">Download your resume in PDF format or share it</p>
+                    <h5 class="fw-bold text-dark mb-2">{% trans 'Download' %}</h5>
+                    <p class="text-muted mb-0">{% trans 'Download your resume in PDF format or share it' %}</p>
                 </div>
             </div>
         </div>
         
         <div class="col-lg-6">
             <div class="position-relative">
-                <img src="{% static 'img/cv-preview.png' %}" alt="Resume example" class="img-fluid rounded shadow-lg">
+                <img src="{% static 'img/cv-preview.png' %}" alt="{% trans 'Resume example' %}" class="img-fluid rounded shadow-lg">
                 <div class="position-absolute top-0 start-0 bg-primary text-white p-3 rounded-end">
-                    <h5 class="mb-0">Professional appearance</h5>
+                    <h5 class="mb-0">{% trans 'Professional appearance' %}</h5>
                 </div>
             </div>
         </div>
@@ -128,8 +129,8 @@
     <!-- Template Showcase -->
     <section class="mb-5">
         <div class="text-center mb-5">
-            <h2 class="fw-bold text-dark mb-3">Popular Templates</h2>
-            <p class="text-muted">Professional templates designed for various industries</p>
+            <h2 class="fw-bold text-dark mb-3">{% trans 'Popular Templates' %}</h2>
+            <p class="text-muted">{% trans 'Professional templates designed for various industries' %}</p>
         </div>
         
         <div class="row g-4">
@@ -139,9 +140,9 @@
                         <div class="bg-light rounded p-4 mb-3">
                             <i class="fas fa-file-alt fa-3x text-primary"></i>
                         </div>
-                        <h5 class="fw-bold text-dark mb-2">Modern</h5>
-                        <p class="text-muted small mb-3">Modern and minimalist design</p>
-                        <a href="{% url 'cvbuilder:template_selector' %}" class="btn btn-outline-primary btn-sm">Select</a>
+                        <h5 class="fw-bold text-dark mb-2">{% trans 'Modern' %}</h5>
+                        <p class="text-muted small mb-3">{% trans 'Modern and minimalist design' %}</p>
+                        <a href="{% url 'cvbuilder:template_selector' %}" class="btn btn-outline-primary btn-sm">{% trans 'Select' %}</a>
                     </div>
                 </div>
             </div>
@@ -152,9 +153,9 @@
                         <div class="bg-light rounded p-4 mb-3">
                             <i class="fas fa-briefcase fa-3x text-primary"></i>
                         </div>
-                        <h5 class="fw-bold text-dark mb-2">Professional</h5>
-                        <p class="text-muted small mb-3">Corporate and traditional style</p>
-                        <a href="{% url 'cvbuilder:template_selector' %}" class="btn btn-outline-primary btn-sm">Select</a>
+                        <h5 class="fw-bold text-dark mb-2">{% trans 'Professional' %}</h5>
+                        <p class="text-muted small mb-3">{% trans 'Corporate and traditional style' %}</p>
+                        <a href="{% url 'cvbuilder:template_selector' %}" class="btn btn-outline-primary btn-sm">{% trans 'Select' %}</a>
                     </div>
                 </div>
             </div>
@@ -165,9 +166,9 @@
                         <div class="bg-light rounded p-4 mb-3">
                             <i class="fas fa-paint-brush fa-3x text-primary"></i>
                         </div>
-                        <h5 class="fw-bold text-dark mb-2">Creative</h5>
-                        <p class="text-muted small mb-3">Creative and colorful design</p>
-                        <a href="{% url 'cvbuilder:template_selector' %}" class="btn btn-outline-primary btn-sm">Select</a>
+                        <h5 class="fw-bold text-dark mb-2">{% trans 'Creative' %}</h5>
+                        <p class="text-muted small mb-3">{% trans 'Creative and colorful design' %}</p>
+                        <a href="{% url 'cvbuilder:template_selector' %}" class="btn btn-outline-primary btn-sm">{% trans 'Select' %}</a>
                     </div>
                 </div>
             </div>
@@ -179,19 +180,19 @@
         <div class="row">
             <div class="col-md-3 mb-4 mb-md-0">
                 <div class="h2 fw-bold text-primary mb-1">{{ stats.total_cvs }}+</div>
-                <small class="text-muted">Created resumes</small>
+                <small class="text-muted">{% trans 'Created resumes' %}</small>
             </div>
             <div class="col-md-3 mb-4 mb-md-0">
                 <div class="h2 fw-bold text-primary mb-1">{{ stats.templates }}+</div>
-                <small class="text-muted">Professional templates</small>
+                <small class="text-muted">{% trans 'Professional templates' %}</small>
             </div>
             <div class="col-md-3 mb-4 mb-md-0">
                 <div class="h2 fw-bold text-primary mb-1">{{ stats.users }}+</div>
-                <small class="text-muted">Active users</small>
+                <small class="text-muted">{% trans 'Active users' %}</small>
             </div>
             <div class="col-md-3">
                 <div class="h2 fw-bold text-primary mb-1">{{ stats.success_rate }}%</div>
-                <small class="text-muted">Successful job finding</small>
+                <small class="text-muted">{% trans 'Successful job finding' %}</small>
             </div>
         </div>
     </section>
@@ -200,10 +201,10 @@
     <section class="text-center">
         <div class="card border-0 bg-primary text-white shadow-lg">
             <div class="card-body py-5 px-4">
-                <h3 class="fw-bold mb-3">Start Now!</h3>
-                <p class="lead mb-4 opacity-75">Create your professional resume in just a few minutes and unlock career opportunities</p>
+                <h3 class="fw-bold mb-3">{% trans 'Start Now!' %}</h3>
+                <p class="lead mb-4 opacity-75">{% trans 'Create your professional resume in just a few minutes and unlock career opportunities' %}</p>
                 <a href="{% url 'cvbuilder:template_selector' %}" class="btn btn-light btn-lg px-5">
-                    <i class="fas fa-rocket me-2"></i>Get Started
+                    <i class="fas fa-rocket me-2"></i>{% trans 'Get Started' %}
                 </a>
             </div>
         </div>

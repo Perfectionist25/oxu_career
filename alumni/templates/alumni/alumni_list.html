@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load static %}
 
 {% block content %}
@@ -6,8 +7,8 @@
     <!-- Header Section -->
     <div class="row mb-5">
         <div class="col-lg-8 mx-auto text-center">
-            <h1 class="display-5 fw-bold text-primary mb-3">Graduates Network</h1>
-            <p class="lead text-muted">Connect with Asia International University graduates and explore career opportunities</p>
+            <h1 class="display-5 fw-bold text-primary mb-3">{% trans 'Graduates Network' %}</h1>
+            <p class="lead text-muted">{% trans 'Connect with Asia International University graduates and explore career opportunities' %}</p>
         </div>
     </div>
 
@@ -17,23 +18,23 @@
             <form method="get" class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label fw-semibold">
-                        <i class="fas fa-university me-2 text-primary"></i>Faculty
+                        <i class="fas fa-university me-2 text-primary"></i>{% trans 'Faculty' %}
                     </label>
                     <select name="faculty" class="form-select">
-                        <option value="">All faculties</option>
-                        <option value="Software Engineering" {% if request.GET.faculty == "Software Engineering" %}selected{% endif %}>Software Engineering</option>
-                        <option value="Economics" {% if request.GET.faculty == "Economics" %}selected{% endif %}>Economics</option>
-                        <option value="Management" {% if request.GET.faculty == "Management" %}selected{% endif %}>Management</option>
-                        <option value="Law" {% if request.GET.faculty == "Law" %}selected{% endif %}>Law</option>
+                        <option value="">{% trans 'All faculties' %}</option>
+                        <option value="Software Engineering" {% if request.GET.faculty == "Software Engineering" %}selected{% endif %}>{% trans 'Software Engineering' %}</option>
+                        <option value="Economics" {% if request.GET.faculty == "Economics" %}selected{% endif %}>{% trans 'Economics' %}</option>
+                        <option value="Management" {% if request.GET.faculty == "Management" %}selected{% endif %}>{% trans 'Management' %}</option>
+                        <option value="Law" {% if request.GET.faculty == "Law" %}selected{% endif %}>{% trans 'Law' %}</option>
                     </select>
                 </div>
                 
                 <div class="col-md-3">
                     <label class="form-label fw-semibold">
-                        <i class="fas fa-graduation-cap me-2 text-primary"></i>Graduation Year
+                        <i class="fas fa-graduation-cap me-2 text-primary"></i>{% trans 'Graduation Year' %}
                     </label>
                     <select name="year" class="form-select">
-                        <option value="">All years</option>
+                        <option value="">{% trans 'All years' %}</option>
                         {% for year in years %}
                         <option value="{{ year }}" {% if request.GET.year == year %}selected{% endif %}>{{ year }}</option>
                         {% endfor %}
@@ -42,23 +43,23 @@
                 
                 <div class="col-md-3">
                     <label class="form-label fw-semibold">
-                        <i class="fas fa-briefcase me-2 text-primary"></i>Profession
+                        <i class="fas fa-briefcase me-2 text-primary"></i>{% trans 'Profession' %}
                     </label>
                     <input type="text" 
                            name="profession" 
                            class="form-control" 
-                           placeholder="Search by profession"
+                           placeholder="{% trans 'Search by profession' %}"
                            value="{{ request.GET.profession }}">
                 </div>
                 
                 <div class="col-md-3">
                     <label class="form-label fw-semibold">
-                        <i class="fas fa-building me-2 text-primary"></i>Company
+                        <i class="fas fa-building me-2 text-primary"></i>{% trans 'Company' %}
                     </label>
                     <input type="text" 
                            name="company" 
                            class="form-control" 
-                           placeholder="Company name"
+                           placeholder="{% trans 'Company name' %}"
                            value="{{ request.GET.company }}">
                 </div>
                 
@@ -71,16 +72,16 @@
                                    id="mentors" 
                                    {% if request.GET.mentors %}checked{% endif %}>
                             <label class="form-check-label fw-semibold" for="mentors">
-                                Only mentors
+                                {% trans 'Only mentors' %}
                             </label>
                         </div>
                         
                         <div class="d-flex gap-2">
                             <button type="submit" class="btn btn-primary px-4">
-                                <i class="fas fa-search me-2"></i>Search
+                                <i class="fas fa-search me-2"></i>{% trans 'Search' %}
                             </button>
                             <a href="{% url 'alumni:list' %}" class="btn btn-outline-secondary">
-                                <i class="fas fa-redo me-2"></i>Clear
+                                <i class="fas fa-redo me-2"></i>{% trans 'Clear' %}
                             </a>
                         </div>
                     </div>
@@ -92,7 +93,7 @@
     <!-- Results Summary -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h4 class="fw-bold text-dark mb-0">Graduates</h4>
+            <h4 class="fw-bold text-dark mb-0">{% trans 'Graduates' %}</h4>
             <p class="text-muted mb-0">
                 {% if alumni %}
                     {{ alumni.paginator.count }} results found
@@ -103,11 +104,11 @@
         </div>
         
         <div class="d-flex align-items-center gap-3">
-            <span class="text-muted small">Sort by:</span>
+            <span class="text-muted small">{% trans 'Sort by:' %}</span>
             <select class="form-select form-select-sm w-auto" onchange="location = this.value;">
-                <option value="?sort=name">By name</option>
-                <option value="?sort=year">Graduation year</option>
-                <option value="?sort=recent">Most recent</option>
+                <option value="?sort=name">{% trans 'By name' %}</option>
+                <option value="?sort=year">{% trans 'Graduation year' %}</option>
+                <option value="?sort=recent">{% trans 'Most recent' %}</option>
             </select>
         </div>
     </div>
@@ -138,7 +139,7 @@
                         </div>
                         {% if alum.is_mentor %}
                         <span class="badge bg-success">
-                            <i class="fas fa-hands-helping me-1"></i>Mentor
+                            <i class="fas fa-hands-helping me-1"></i>{% trans 'Mentor' %}
                         </span>
                         {% endif %}
                     </div>
@@ -160,7 +161,7 @@
                     
                     <div class="d-flex justify-content-between align-items-center">
                         <a href="{% url 'alumni:alumni_detail' alum.slug %}" class="btn btn-outline-primary btn-sm">
-                            <i class="fas fa-eye me-1"></i>View Profile
+                            <i class="fas fa-eye me-1"></i>{% trans 'View Profile' %}
                         </a>
                         
                         <div class="d-flex gap-2">
@@ -222,11 +223,11 @@
     <div class="text-center py-5">
         <div class="mb-4">
             <i class="fas fa-users fa-4x text-muted mb-3"></i>
-            <h4 class="text-muted">No graduates found</h4>
-            <p class="text-muted">Try changing your search criteria or try again later.</p>
+            <h4 class="text-muted">{% trans 'No graduates found' %}</h4>
+            <p class="text-muted">{% trans 'Try changing your search criteria or try again later.' %}</p>
         </div>
         <a href="{% url 'alumni:list' %}" class="btn btn-primary">
-            <i class="fas fa-redo me-2"></i>View all graduates
+            <i class="fas fa-redo me-2"></i>{% trans 'View all graduates' %}
         </a>
     </div>
     {% endif %}
@@ -235,19 +236,19 @@
     <div class="row mt-5 pt-5 border-top">
         <div class="col-md-3 text-center">
             <div class="h2 fw-bold text-primary mb-1">{{ total_alumni }}+</div>
-            <small class="text-muted">Total graduates</small>
+            <small class="text-muted">{% trans 'Total graduates' %}</small>
         </div>
         <div class="col-md-3 text-center">
             <div class="h2 fw-bold text-primary mb-1">{{ mentor_count }}+</div>
-            <small class="text-muted">Active mentors</small>
+            <small class="text-muted">{% trans 'Active mentors' %}</small>
         </div>
         <div class="col-md-3 text-center">
             <div class="h2 fw-bold text-primary mb-1">{{ companies_count }}+</div>
-            <small class="text-muted">Companies</small>
+            <small class="text-muted">{% trans 'Companies' %}</small>
         </div>
         <div class="col-md-3 text-center">
             <div class="h2 fw-bold text-primary mb-1">{{ countries_count }}+</div>
-            <small class="text-muted">Countries</small>
+            <small class="text-muted">{% trans 'Countries' %}</small>
         </div>
     </div>
 </div>

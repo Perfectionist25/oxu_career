@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load static %}
 {% block content %}
 <div class="container py-5">
@@ -31,14 +32,14 @@
                             {% if employer.employees_count %}
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-users text-primary me-2"></i>
-                                <span class="text-muted">{{ employer.employees_count }} xodim</span>
+                                <span class="text-muted">{{ employer.employees_count }} {% trans 'employees' %}</span>
                             </div>
                             {% endif %}
                             
                             {% if employer.founded_year %}
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-calendar text-primary me-2"></i>
-                                <span class="text-muted">{{ employer.founded_year }} yildan</span>
+                                <span class="text-muted">{{ employer.founded_year }} {% trans 'since' %}</span>
                             </div>
                             {% endif %}
                             
@@ -56,11 +57,11 @@
                 <div class="d-flex gap-2">
                     {% if employer.website %}
                     <a href="{{ employer.website }}" target="_blank" class="btn btn-outline-primary">
-                        <i class="fas fa-globe me-2"></i>Veb sayt
+                        <i class="fas fa-globe me-2"></i>{% trans 'Website' %}
                     </a>
                     {% endif %}
                     <button class="btn btn-outline-secondary" onclick="shareCompany()">
-                        <i class="fas fa-share-alt me-2"></i>Ulashish
+                        <i class="fas fa-share-alt me-2"></i>{% trans 'Share' %}
                     </button>
                 </div>
             </div>
@@ -75,7 +76,7 @@
                 <div class="card-header bg-white border-0 py-3">
                     <h4 class="fw-bold text-dark mb-0">
                         <i class="fas fa-info-circle me-2 text-primary"></i>
-                        Kompaniya haqida
+                        {% trans 'About the company' %}
                     </h4>
                 </div>
                 <div class="card-body">
@@ -103,7 +104,7 @@
                 <div class="card-header bg-white border-0 py-3">
                     <h4 class="fw-bold text-dark mb-0">
                         <i class="fas fa-users me-2 text-primary"></i>
-                        Kompaniya madaniyati
+                        {% trans 'Company culture' %}
                     </h4>
                 </div>
                 <div class="card-body">
@@ -117,13 +118,13 @@
                 <div class="card-header bg-white border-0 py-3">
                     <h4 class="fw-bold text-dark mb-0">
                         <i class="fas fa-envelope me-2 text-primary"></i>
-                        Bog'lanish
+                        {% trans 'Contact' %}
                     </h4>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold text-muted">Elektron pochta</label>
+                            <label class="form-label fw-semibold text-muted">{% trans 'Email' %}</label>
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-envelope text-primary me-3"></i>
                                 <a href="mailto:{{ employer.contact_email }}" class="text-decoration-none">{{ employer.contact_email }}</a>
@@ -132,7 +133,7 @@
                         
                         {% if employer.phone %}
                         <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold text-muted">Telefon</label>
+                            <label class="form-label fw-semibold text-muted">{% trans 'Phone' %}</label>
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-phone text-primary me-3"></i>
                                 <a href="tel:{{ employer.phone }}" class="text-decoration-none">{{ employer.phone }}</a>
@@ -142,7 +143,7 @@
                         
                         {% if employer.address %}
                         <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold text-muted">Manzil</label>
+                            <label class="form-label fw-semibold text-muted">{% trans 'Address' %}</label>
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-map-marker-alt text-primary me-3"></i>
                                 <span>{{ employer.address }}</span>
@@ -152,10 +153,10 @@
                         
                         {% if employer.website %}
                         <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold text-muted">Veb sayt</label>
+                            <label class="form-label fw-semibold text-muted">{% trans 'Website' %}</label>
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-globe text-primary me-3"></i>
-                                <a href="{{ employer.website }}" target="_blank" class="text-decoration-none">Saytga o'tish</a>
+                                <a href="{{ employer.website }}" target="_blank" class="text-decoration-none">{% trans 'Visit website' %}</a>
                             </div>
                         </div>
                         {% endif %}
@@ -171,26 +172,26 @@
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="fw-bold text-dark mb-0">
                         <i class="fas fa-chart-bar me-2 text-primary"></i>
-                        Statistika
+                        {% trans 'Statistics' %}
                     </h5>
                 </div>
                 <div class="card-body">
                     <div class="text-center mb-3">
                         <div class="h3 fw-bold text-primary mb-1">{{ jobs|length }}</div>
-                        <small class="text-muted">Aktiv vakansiyalar</small>
+                        <small class="text-muted">{% trans 'Active jobs' %}</small>
                     </div>
                     
                     {% if employer.avg_salary %}
                     <div class="text-center mb-3">
                         <div class="h4 fw-bold text-success mb-1">{{ employer.avg_salary }}</div>
-                        <small class="text-muted">O'rtacha maosh</small>
+                        <small class="text-muted">{% trans 'Average salary' %}</small>
                     </div>
                     {% endif %}
                     
                     {% if employer.rating %}
                     <div class="text-center">
                         <div class="h4 fw-bold text-warning mb-1">{{ employer.rating }}/5</div>
-                        <small class="text-muted">Reyting</small>
+                        <small class="text-muted">{% trans 'Rating' %}</small>
                     </div>
                     {% endif %}
                 </div>
@@ -202,7 +203,7 @@
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="fw-bold text-dark mb-0">
                         <i class="fas fa-hashtag me-2 text-primary"></i>
-                        Ijtimoiy tarmoqlar
+                        {% trans 'Social networks' %}
                     </h5>
                 </div>
                 <div class="card-body">
@@ -222,7 +223,7 @@
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="fw-bold text-dark mb-0">
                         <i class="fas fa-building me-2 text-primary"></i>
-                        O'xshash kompaniyalar
+                        {% trans 'Similar companies' %}
                     </h5>
                 </div>
                 <div class="card-body">
@@ -239,10 +240,10 @@
                             <h6 class="fw-bold mb-0">{{ similar.name }}</h6>
                             <small class="text-muted">{{ similar.industry }}</small>
                         </div>
-                        <a href="{% url 'employers:detail' similar.id %}" class="btn btn-outline-primary btn-sm">Ko'rish</a>
+                        <a href="{% url 'employers:detail' similar.id %}" class="btn btn-outline-primary btn-sm">{% trans 'View' %}</a>
                     </div>
                     {% empty %}
-                    <p class="text-muted text-center mb-0">Hozircha o'xshash kompaniyalar mavjud emas</p>
+                    <p class="text-muted text-center mb-0">{% trans 'No similar companies yet' %}</p>
                     {% endfor %}
                 </div>
             </div>
@@ -255,9 +256,9 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h3 class="fw-bold text-dark mb-0">
                     <i class="fas fa-briefcase me-2 text-primary"></i>
-                    {{ employer.name }} vakansiyalari
+                    {{ employer.name }} {% trans 'jobs' %}
                 </h3>
-                <span class="badge bg-primary fs-6">{{ jobs|length }} ta vakansiya</span>
+                <span class="badge bg-primary fs-6">{{ jobs|length }} {% trans 'jobs' %}</span>
             </div>
 
             {% if jobs %}
@@ -277,13 +278,13 @@
                                         <span class="badge bg-success">{{ job.salary }}</span>
                                         {% endif %}
                                         {% if job.is_remote %}
-                                        <span class="badge bg-info">Uzoq ish</span>
+                                        <span class="badge bg-info">{% trans 'Remote' %}</span>
                                         {% endif %}
                                     </div>
                                 </div>
                                 {% if job.is_featured %}
                                 <span class="badge bg-warning text-dark">
-                                    <i class="fas fa-star me-1"></i>Tavsiya etiladi
+                                    <i class="fas fa-star me-1"></i>{% trans 'Recommended' %}
                                 </span>
                                 {% endif %}
                             </div>
@@ -296,12 +297,12 @@
                                 {% if job.experience %}
                                 <div class="d-flex text-muted small mb-2">
                                     <i class="fas fa-briefcase me-2"></i>
-                                    <span>{{ job.experience }} tajriba</span>
+                                    <span>{{ job.experience }} {% trans 'experience' %}</span>
                                 </div>
                                 {% endif %}
                                 <div class="d-flex text-muted small">
                                     <i class="fas fa-clock me-2"></i>
-                                    <span>{{ job.created_at|timesince }} oldin</span>
+                                    <span>{{ job.created_at|timesince }} {% trans 'ago' %}</span>
                                 </div>
                             </div>
 
@@ -311,10 +312,10 @@
 
                             <div class="d-flex justify-content-between align-items-center">
                                 <a href="{% url 'jobs:detail' job.id %}" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-eye me-1"></i>Batafsil
+                                    <i class="fas fa-eye me-1"></i>{% trans 'Details' %}
                                 </a>
                                 <button class="btn btn-outline-secondary btn-sm" onclick="saveJob({{ job.id }})">
-                                    <i class="far fa-bookmark me-1"></i>Saqlash
+                                    <i class="far fa-bookmark me-1"></i>{% trans 'Save' %}
                                 </button>
                             </div>
                         </div>
@@ -326,10 +327,10 @@
             <!-- Empty Jobs State -->
             <div class="text-center py-5">
                 <i class="fas fa-briefcase fa-4x text-muted mb-3"></i>
-                <h4 class="text-muted">Hozircha vakansiyalar mavjud emas</h4>
-                <p class="text-muted">Kompaniya yangi vakansiyalarni tez orada e'lon qiladi</p>
+                <h4 class="text-muted">{% trans 'No jobs available yet' %}</h4>
+                <p class="text-muted">{% trans 'The company will announce new jobs soon' %}</p>
                 <button class="btn btn-outline-primary" onclick="notifyWhenAvailable()">
-                    <i class="fas fa-bell me-2"></i>Vakansiya paydo bo'lganda bildirish
+                    <i class="fas fa-bell me-2"></i>{% trans 'Notify when a job is available' %}
                 </button>
             </div>
             {% endif %}
@@ -373,12 +374,12 @@ function shareCompany() {
             text: "{{ employer.description|truncatewords:15|escapejs }}",
             url: window.location.href,
         })
-        .then(() => console.log('Muvaffaqiyatli ulashildi'))
-        .catch((error) => console.log('Ulashishda xatolik', error));
+        .then(() => console.log('Shared successfully'))
+        .catch((error) => console.log('Error while sharing', error));
     } else {
         // Fallback: copy to clipboard
         navigator.clipboard.writeText(window.location.href).then(() => {
-            alert('Havola buferga nusxalandi! Endi uni ulashishingiz mumkin.');
+            alert('Link copied to clipboard! You can now share it.');
         });
     }
 }
@@ -399,7 +400,7 @@ function saveJob(jobId) {
             // Show success message
             const button = event.target;
             const originalHTML = button.innerHTML;
-            button.innerHTML = '<i class="fas fa-check me-1"></i>Saqlandi';
+            button.innerHTML = '<i class="fas fa-check me-1"></i>Saved';
             button.classList.remove('btn-outline-secondary');
             button.classList.add('btn-success');
             
@@ -411,8 +412,8 @@ function saveJob(jobId) {
         }
     })
     .catch(error => {
-        console.error('Xatolik:', error);
-        alert('Vakansiyani saqlashda xatolik yuz berdi');
+        console.error('Error:', error);
+        alert('An error occurred while saving the job');
     });
 }
 
@@ -420,7 +421,7 @@ function saveJob(jobId) {
 function notifyWhenAvailable() {
     const employerId = {{ employer.id }};
     // Add subscription logic here
-    alert('Siz {{ employer.name|escapejs }} kompaniyasining yangi vakansiyalari haqida xabardor bo\'lasiz!');
+    alert('You will be notified about new jobs from {{ employer.name|escapejs }}!');
 }
 
 // Add smooth scrolling for better UX

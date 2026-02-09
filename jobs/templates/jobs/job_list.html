@@ -98,10 +98,10 @@
                             <label class="form-label fw-semibold mb-1">{% trans "Salary range" %}</label>
                             <select class="form-select" id="salaryFilter">
                                 <option value="">{% trans "Any salary" %}</option>
-                                <option value="0-3000000">Up to 3,000,000 UZS</option>
-                                <option value="3000000-6000000">3-6 million UZS</option>
-                                <option value="6000000-10000000">6-10 million UZS</option>
-                                <option value="10000000+">Over 10 million UZS</option>
+                                <option value="0-3000000">{% trans 'Up to 3,000,000 UZS' %}</option>
+                                <option value="3000000-6000000">{% trans '3-6 million UZS' %}</option>
+                                <option value="6000000-10000000">{% trans '6-10 million UZS' %}</option>
+                                <option value="10000000+">{% trans 'Over 10 million UZS' %}</option>
                             </select>
                         </div>
                         
@@ -342,11 +342,11 @@
         <!-- Pagination -->
         {% if jobs.has_other_pages %}
         <div class="d-flex justify-content-center mt-5">
-            <nav aria-label="Job pagination">
+            <nav aria-label="{% trans 'Job pagination' %}">
                 <ul class="pagination">
                     {% if jobs.has_previous %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ jobs.previous_page_number }}" aria-label="Previous">
+                        <a class="page-link" href="?page={{ jobs.previous_page_number }}" aria-label="{% trans 'Previous' %}">
                             <i class="fas fa-chevron-left"></i>
                         </a>
                     </li>
@@ -366,7 +366,7 @@
 
                     {% if jobs.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ jobs.next_page_number }}" aria-label="Next">
+                        <a class="page-link" href="?page={{ jobs.next_page_number }}" aria-label="{% trans 'Next' %}">
                             <i class="fas fa-chevron-right"></i>
                         </a>
                     </li>
@@ -862,8 +862,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const ranges = {
             '0-3000000': salary <= 3000000,
-            '3000000-6000000': salary >= 3000000 && salary <= 6000000,
-            '6000000-10000000': salary >= 6000000 && salary <= 10000000,
+            '3000000-6000000': salary >{% trans '= 3000000 && salary' %} <= 6000000,
+            '6000000-10000000': salary >{% trans '= 6000000 && salary' %} <= 10000000,
             '10000000+': salary >= 10000000
         };
         

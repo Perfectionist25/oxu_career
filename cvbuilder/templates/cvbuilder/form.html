@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load static %}
 
 {% block content %}
@@ -6,8 +7,8 @@
     <!-- Header Section -->
     <div class="row mb-5">
         <div class="col-lg-8 mx-auto text-center">
-            <h1 class="display-5 fw-bold text-primary mb-3">Create New Resume</h1>
-            <p class="lead text-muted">Create your professional resume and unlock career opportunities</p>
+            <h1 class="display-5 fw-bold text-primary mb-3">{% trans 'Create New Resume' %}</h1>
+            <p class="lead text-muted">{% trans 'Create your professional resume and unlock career opportunities' %}</p>
             
             <!-- Progress Steps -->
             <div class="row justify-content-center mt-4">
@@ -17,21 +18,21 @@
                             <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 40px; height: 40px;">
                                 <span class="text-white fw-bold">1</span>
                             </div>
-                            <small class="fw-semibold">Information</small>
+                            <small class="fw-semibold">{% trans 'Information' %}</small>
                         </div>
                         <div class="flex-grow-1 border-top border-2 border-primary mx-2"></div>
                         <div class="text-center">
                             <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 40px; height: 40px;">
                                 <span class="text-muted fw-bold">2</span>
                             </div>
-                            <small class="text-muted">Review</small>
+                            <small class="text-muted">{% trans 'Review' %}</small>
                         </div>
                         <div class="flex-grow-1 border-top border-2 border-light mx-2"></div>
                         <div class="text-center">
                             <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 40px; height: 40px;">
                                 <span class="text-muted fw-bold">3</span>
                             </div>
-                            <small class="text-muted">Download</small>
+                            <small class="text-muted">{% trans 'Download' %}</small>
                         </div>
                     </div>
                 </div>
@@ -60,7 +61,7 @@
                                 <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
                                     <i class="fas fa-user text-white"></i>
                                 </div>
-                                <h4 class="fw-bold text-dark mb-0">Personal Information</h4>
+                                <h4 class="fw-bold text-dark mb-0">{% trans 'Personal Information' %}</h4>
                             </div>
                             
                             <div class="row">
@@ -105,26 +106,26 @@
                                 <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
                                     <i class="fas fa-file-alt text-white"></i>
                                 </div>
-                                <h4 class="fw-bold text-dark mb-0">Professional Information</h4>
+                                <h4 class="fw-bold text-dark mb-0">{% trans 'Professional Information' %}</h4>
                             </div>
                             
                             {% for field in form %}
                                 {% if field.name == 'summary' or field.name == 'professional_summary' %}
                                 <div class="mb-3">
                                     <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
-                                        <i class="fas fa-briefcase me-2 text-primary"></i>Professional Summary
+                                        <i class="fas fa-briefcase me-2 text-primary"></i>{% trans 'Professional Summary' %}
                                     </label>
                                     <textarea name="{{ field.name }}" 
                                               id="{{ field.id_for_label }}" 
                                               class="form-control {% if field.errors %}is-invalid{% endif %}" 
                                               rows="4" 
-                                              placeholder="Brief information about yourself and your professional skills...">{{ field.value|default:'' }}</textarea>
+                                              placeholder="{% trans 'Brief information about yourself and your professional skills...' %}">{{ field.value|default:'' }}</textarea>
                                     {% if field.errors %}
                                     <div class="invalid-feedback d-block">
                                         {{ field.errors }}
                                     </div>
                                     {% endif %}
-                                    <div class="form-text">Write a short and clear description (100-200 words)</div>
+                                    <div class="form-text">{% trans 'Write a short and clear description (100-200 words)' %}</div>
                                 </div>
                                 {% endif %}
                             {% endfor %}
@@ -136,7 +137,7 @@
                                 <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
                                     <i class="fas fa-graduation-cap text-white"></i>
                                 </div>
-                                <h4 class="fw-bold text-dark mb-0">Education</h4>
+                                <h4 class="fw-bold text-dark mb-0">{% trans 'Education' %}</h4>
                             </div>
                             
                             {% for field in form %}
@@ -158,7 +159,7 @@
                                                   id="{{ field.id_for_label }}" 
                                                   class="form-control {% if field.errors %}is-invalid{% endif %}" 
                                                   rows="3" 
-                                                  placeholder="Enter your education details...">{{ field.value|default:'' }}</textarea>
+                                                  placeholder="{% trans 'Enter your education details...' %}">{{ field.value|default:'' }}</textarea>
                                     {% else %}
                                         <input type="{{ field.field.widget.input_type }}" 
                                                name="{{ field.name }}" 
@@ -183,7 +184,7 @@
                                 <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
                                     <i class="fas fa-briefcase text-white"></i>
                                 </div>
-                                <h4 class="fw-bold text-dark mb-0">Work Experience</h4>
+                                <h4 class="fw-bold text-dark mb-0">{% trans 'Work Experience' %}</h4>
                             </div>
                             
                             {% for field in form %}
@@ -209,7 +210,7 @@
                                     </div>
                                     {% endif %}
                                     {% if field.name == 'skills' %}
-                                    <div class="form-text">Example: Python, Django, JavaScript, Leadership, Communication</div>
+                                    <div class="form-text">{% trans 'Example: Python, Django, JavaScript, Leadership, Communication' %}</div>
                                     {% endif %}
                                 </div>
                                 {% endif %}
@@ -248,14 +249,14 @@
                         <!-- Form Actions -->
                         <div class="d-flex justify-content-between align-items-center pt-4 border-top">
                             <a href="{% url 'cvbuilder:template_selector' %}" class="btn btn-outline-secondary">
-                                <i class="fas fa-arrow-left me-2"></i>Go Back
+                                <i class="fas fa-arrow-left me-2"></i>{% trans 'Go Back' %}
                             </a>
                             <div class="d-flex gap-3">
                                 <button type="button" class="btn btn-outline-primary" id="previewBtn">
-                                    <i class="fas fa-eye me-2"></i>Preview
+                                    <i class="fas fa-eye me-2"></i>{% trans 'Preview' %}
                                 </button>
                                 <button type="submit" class="btn btn-primary px-4">
-                                    <i class="fas fa-save me-2"></i>Save and View
+                                    <i class="fas fa-save me-2"></i>{% trans 'Save and View' %}
                                 </button>
                             </div>
                         </div>
@@ -271,29 +272,29 @@
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="fw-bold text-dark mb-0">
                         <i class="fas fa-lightbulb me-2 text-primary"></i>
-                        Useful Tips
+                        {% trans 'Useful Tips' %}
                     </h5>
                 </div>
                 <div class="card-body">
                     <div class="d-flex mb-3">
                         <i class="fas fa-check text-success me-2 mt-1"></i>
-                        <small class="text-muted">Enter information accurately and correctly</small>
+                        <small class="text-muted">{% trans 'Enter information accurately and correctly' %}</small>
                     </div>
                     <div class="d-flex mb-3">
                         <i class="fas fa-check text-success me-2 mt-1"></i>
-                        <small class="text-muted">Write professional summary short and clear</small>
+                        <small class="text-muted">{% trans 'Write professional summary short and clear' %}</small>
                     </div>
                     <div class="d-flex mb-3">
                         <i class="fas fa-check text-success me-2 mt-1"></i>
-                        <small class="text-muted">Separate skills with commas</small>
+                        <small class="text-muted">{% trans 'Separate skills with commas' %}</small>
                     </div>
                     <div class="d-flex mb-3">
                         <i class="fas fa-check text-success me-2 mt-1"></i>
-                        <small class="text-muted">Support your achievements with numbers</small>
+                        <small class="text-muted">{% trans 'Support your achievements with numbers' %}</small>
                     </div>
                     <div class="d-flex">
                         <i class="fas fa-check text-success me-2 mt-1"></i>
-                        <small class="text-muted">Be careful with grammatical errors</small>
+                        <small class="text-muted">{% trans 'Be careful with grammatical errors' %}</small>
                     </div>
                 </div>
             </div>
@@ -303,14 +304,14 @@
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="fw-bold text-dark mb-0">
                         <i class="fas fa-chart-line me-2 text-primary"></i>
-                        Completion Progress
+                        {% trans 'Completion Progress' %}
                     </h5>
                 </div>
                 <div class="card-body">
                     <div class="progress mb-3" style="height: 10px;">
                         <div class="progress-bar bg-primary" role="progressbar" style="width: 0%;" id="progressBar"></div>
                     </div>
-                    <small class="text-muted" id="progressText">Form completion: 0%</small>
+                    <small class="text-muted" id="progressText">{% trans 'Form completion: 0%' %}</small>
                 </div>
             </div>
         </div>

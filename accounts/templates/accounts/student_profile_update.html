@@ -86,7 +86,7 @@
             <div class="row">
               <div class="col-md-6">
                 <div class="mb-3">
-                  <label for="{{ profile_form.linkedin.id_for_label }}" class="form-label">LinkedIn</label>
+                  <label for="{{ profile_form.linkedin.id_for_label }}" class="form-label">{% trans 'LinkedIn' %}</label>
                   {{ profile_form.linkedin }}
                   {% if profile_form.linkedin.errors %}
                     <div class="text-danger small mt-1">{{ profile_form.linkedin.errors }}</div>
@@ -96,7 +96,7 @@
 
               <div class="col-md-6">
                 <div class="mb-3">
-                  <label for="{{ profile_form.github.id_for_label }}" class="form-label">GitHub</label>
+                  <label for="{{ profile_form.github.id_for_label }}" class="form-label">{% trans 'GitHub' %}</label>
                   {{ profile_form.github }}
                   {% if profile_form.github.errors %}
                     <div class="text-danger small mt-1">{{ profile_form.github.errors }}</div>

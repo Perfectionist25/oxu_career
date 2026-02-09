@@ -98,7 +98,7 @@
                                        id="{{ user_form.email.id_for_label }}"
                                        class="form-control {% if user_form.email.errors %}is-invalid{% endif %}"
                                        value="{{ user_form.email.value|default:'' }}"
-                                       placeholder="email@example.com">
+                                       placeholder="{% trans 'email@example.com' %}">
                                 {% if user_form.email.errors %}
                                 <div class="invalid-feedback d-block">
                                     {% for error in user_form.email.errors %}
@@ -127,7 +127,7 @@
                                        id="{{ profile_form.phone_number.id_for_label }}"
                                        class="form-control {% if profile_form.phone_number.errors %}is-invalid{% endif %}"
                                        value="{{ profile_form.phone_number.value|default:'' }}"
-                                       placeholder="+998 (XX) XXX-XX-XX">
+                                       placeholder="{% trans '+998 (XX) XXX-XX-XX' %}">
                                 {% if profile_form.phone_number.errors %}
                                 <div class="invalid-feedback d-block">
                                     {% for error in profile_form.phone_number.errors %}

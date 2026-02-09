@@ -80,7 +80,7 @@
     
     <div class="col-lg-6">
       <div class="position-relative p-6">
-        <img style="width: 70vh;" src="{% static 'img/progress.jpg' %}" alt="Career Center" class="img-fluid rounded shadow-lg hero-image">
+        <img style="width: 70vh;" src="{% static 'img/progress.jpg' %}" alt="{% trans 'Career Center' %}" class="img-fluid rounded shadow-lg hero-image">
         <div class="position-absolute bottom-0 start-0 bg-primary text-white p-3 rounded-end">
           <h5 class="mb-0">{% trans "Build your career with us!" %}</h5>
         </div>
@@ -181,7 +181,7 @@
               <span class="badge bg-primary">{{ resource.category.name }}</span>
               {% if resource.url_youtube %}
               <span class="badge bg-danger">
-                <i class="fab fa-youtube me-1"></i>Video
+                <i class="fab fa-youtube me-1"></i>{% trans 'Video' %}
               </span>
               {% endif %}
             </div>

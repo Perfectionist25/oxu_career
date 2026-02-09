@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load static %}
 
 {% block content %}
@@ -12,7 +13,7 @@
                     <div class="mb-3">
                         <i class="fas fa-exclamation-triangle fa-3x"></i>
                     </div>
-                    <h2 class="h3 fw-bold mb-0">Delete Resume</h2>
+                    <h2 class="h3 fw-bold mb-0">{% trans 'Delete Resume' %}</h2>
                 </div>
 
                 <!-- Card Body -->
@@ -45,10 +46,10 @@
                         <div class="d-flex">
                             <i class="fas fa-exclamation-circle fa-lg text-warning me-3 mt-1"></i>
                             <div class="text-start">
-                                <h6 class="fw-bold text-warning mb-2">Attention!</h6>
+                                <h6 class="fw-bold text-warning mb-2">{% trans 'Attention!' %}</h6>
                                 <p class="mb-0">
-                                    You are about to delete the resume <strong>"{{ cv.title }}"</strong>. 
-                                    This action cannot be undone.
+                                    {% trans 'You are about to delete the resume' %} <strong>"{{ cv.title }}"</strong>{% trans '. 
+                                    This action cannot be undone.' %}
                                 </p>
                             </div>
                         </div>
@@ -56,23 +57,23 @@
 
                     <!-- Deletion Details -->
                     <div class="bg-light rounded p-3 mb-4">
-                        <h6 class="fw-bold text-dark mb-3">Data to be deleted:</h6>
+                        <h6 class="fw-bold text-dark mb-3">{% trans 'Data to be deleted:' %}</h6>
                         <div class="row text-start small">
                             <div class="col-md-6 mb-2">
                                 <i class="fas fa-briefcase text-danger me-2"></i>
-                                Work experience: <strong>{{ cv.experiences.count }} items</strong>
+                                {% trans 'Work experience:' %} <strong>{{ cv.experiences.count }} items</strong>
                             </div>
                             <div class="col-md-6 mb-2">
                                 <i class="fas fa-graduation-cap text-danger me-2"></i>
-                                Education: <strong>{{ cv.educations.count }} items</strong>
+                                {% trans 'Education:' %} <strong>{{ cv.educations.count }} items</strong>
                             </div>
                             <div class="col-md-6 mb-2">
                                 <i class="fas fa-code text-danger me-2"></i>
-                                Skills: <strong>{{ cv.skills.count }} items</strong>
+                                {% trans 'Skills:' %} <strong>{{ cv.skills.count }} items</strong>
                             </div>
                             <div class="col-md-6 mb-2">
                                 <i class="fas fa-project-diagram text-danger me-2"></i>
-                                Projects: <strong>{{ cv.projects.count }} items</strong>
+                                {% trans 'Projects:' %} <strong>{{ cv.projects.count }} items</strong>
                             </div>
                         </div>
                     </div>
@@ -83,12 +84,12 @@
                         <div class="d-grid gap-3">
                             <button type="submit" class="btn btn-danger btn-lg py-3">
                                 <i class="fas fa-trash-alt me-2"></i>
-                                YES, Delete Resume
+                                {% trans 'YES, Delete Resume' %}
                             </button>
                             
                             <a href="{% url 'cvbuilder:cv_list' %}" class="btn btn-outline-secondary btn-lg py-3">
                                 <i class="fas fa-arrow-left me-2"></i>
-                                Cancel and Go Back
+                                {% trans 'Cancel and Go Back' %}
                             </a>
                         </div>
                     </form>
@@ -97,7 +98,7 @@
                     <div class="text-muted small">
                         <p class="mb-0">
                             <i class="fas fa-info-circle me-1"></i>
-                            If you have doubts, we recommend archiving the resume
+                            {% trans 'If you have doubts, we recommend archiving the resume' %}
                         </p>
                     </div>
                 </div>
@@ -106,7 +107,7 @@
                 <div class="card-footer bg-light text-center py-3">
                     <small class="text-muted">
                         <i class="fas fa-shield-alt me-1"></i>
-                        Your data security is important to us
+                        {% trans 'Your data security is important to us' %}
                     </small>
                 </div>
             </div>
@@ -114,16 +115,16 @@
             <!-- Alternative Actions -->
             <div class="card border-0 shadow-sm mt-4">
                 <div class="card-body text-center">
-                    <h6 class="fw-bold text-dark mb-3">Alternative Options</h6>
+                    <h6 class="fw-bold text-dark mb-3">{% trans 'Alternative Options' %}</h6>
                     <div class="d-flex justify-content-center gap-3 flex-wrap">
                         <a href="{% url 'cvbuilder:cv_edit' cv.pk %}" class="btn btn-outline-primary btn-sm">
-                            <i class="fas fa-edit me-1"></i>Edit Resume
+                            <i class="fas fa-edit me-1"></i>{% trans 'Edit Resume' %}
                         </a>
                         <a href="{% url 'cvbuilder:cv_duplicate' cv.pk %}" class="btn btn-outline-success btn-sm">
-                            <i class="fas fa-copy me-1"></i>Make a Copy
+                            <i class="fas fa-copy me-1"></i>{% trans 'Make a Copy' %}
                         </a>
                         <a href="{% url 'cvbuilder:cv_detail' cv.pk %}" class="btn btn-outline-info btn-sm">
-                            <i class="fas fa-eye me-1"></i>View
+                            <i class="fas fa-eye me-1"></i>{% trans 'View' %}
                         </a>
                     </div>
                 </div>

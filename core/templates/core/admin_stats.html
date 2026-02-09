@@ -1,21 +1,22 @@
 {% extends "core/base.html" %}
+{% load i18n %}
 
 {% block content %}
 <h1>{{ page_title }}</h1>
 <div class="stats-grid">
-  <div class="card"> <h3>Студентов</h3> <p>{{ stats.students_count }}</p> </div>
-  <div class="card"> <h3>Компаний</h3> <p>{{ stats.companies_count }}</p> </div>
-  <div class="card"> <h3>Вакансий</h3> <p>{{ stats.jobs_count }} (активные: {{ stats.active_jobs }})</p> </div>
-  <div class="card"> <h3>Заявок</h3> <p>{{ stats.applications_count }}</p> </div>
-  <div class="card"> <h3>Событий</h3> <p>{{ stats.events_count }} (предстоящие: {{ stats.upcoming_events }})</p> </div>
-  <div class="card"> <h3>Ресурсов</h3> <p>{{ stats.resources_count }}</p> </div>
-  <div class="card"> <h3>CV</h3> <p>{{ stats.cvs_count }}</p> </div>
+  <div class="card"> <h3>{% trans 'Students' %}</h3> <p>{{ stats.students_count }}</p> </div>
+  <div class="card"> <h3>{% trans 'Companies' %}</h3> <p>{{ stats.companies_count }}</p> </div>
+  <div class="card"> <h3>{% trans 'Jobs' %}</h3> <p>{{ stats.jobs_count }} ({% trans 'active' %}: {{ stats.active_jobs }})</p> </div>
+  <div class="card"> <h3>{% trans 'Applications' %}</h3> <p>{{ stats.applications_count }}</p> </div>
+  <div class="card"> <h3>{% trans 'Events' %}</h3> <p>{{ stats.events_count }} ({% trans 'upcoming' %}: {{ stats.upcoming_events }})</p> </div>
+  <div class="card"> <h3>{% trans 'Resources' %}</h3> <p>{{ stats.resources_count }}</p> </div>
+  <div class="card"> <h3>{% trans 'CV' %}</h3> <p>{{ stats.cvs_count }}</p> </div>
 </div>
 
-<h2>Тренды за 7 дней</h2>
+<h2>{% trans 'Trends for 7 days' %}</h2>
 <ul>
-  <li>Новые вакансии: {{ recent_jobs }}</li>
-  <li>Новые регистрации студентов: {{ recent_users }}</li>
+  <li>{% trans 'New jobs' %}: {{ recent_jobs }}</li>
+  <li>{% trans 'New student registrations' %}: {{ recent_users }}</li>
 </ul>
 
 <style>

@@ -235,7 +235,7 @@
 
 <!-- Модальное окно для изображений -->
 <div id="imageModal" class="image-modal">
-    <span class="modal-close" onclick="closeModal()">&times;</span>
+    <span class="modal-close" onclick="closeModal()">{% trans '&times;' %}</span>
     <div class="modal-content-wrapper">
         <div class="modal-loader" id="modalLoader">
             <div class="spinner"></div>
@@ -1054,7 +1054,7 @@ function openModal(imageSrc, caption) {
     
     img.onerror = function() {
         // Если изображение не загрузилось
-        modalImg.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect width="400" height="300" fill="%23f0f0f0"/><text x="200" y="150" text-anchor="middle" font-family="Arial" font-size="16" fill="%23999">Image not found</text></svg>';
+        modalImg.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect width="400" height="300" fill="%23f0f0f0"/><text x="200" y="150" text-anchor="middle" font-family="Arial" font-size="16" fill="%23999">{% trans 'Image not found' %}</text></svg>';
         loader.classList.remove('active');
         modalImg.classList.add('loaded');
     };

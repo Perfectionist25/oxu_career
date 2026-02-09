@@ -131,7 +131,7 @@
                 <!-- Pagination -->
                 {% if page_obj.has_other_pages %}
                     <div class="card-footer bg-light border-top">
-                        <nav aria-label="Page navigation">
+                        <nav aria-label="{% trans 'Page navigation' %}">
                             <ul class="pagination pagination-sm mb-0 justify-content-center">
                                 <!-- Previous button -->
                                 {% if page_obj.has_previous %}
@@ -164,10 +164,10 @@
                                         <li class="page-item active" aria-current="page">
                                             <span class="page-link">
                                                 {{ num }}
-                                                <span class="visually-hidden">(current)</span>
+                                                <span class="visually-hidden">{% trans '(current)' %}</span>
                                             </span>
                                         </li>
-                                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
                                         <li class="page-item">
                                             <a class="page-link" href="?page={{ num }}{% if selected_type %}&type={{ selected_type }}{% endif %}">
                                                 {{ num }}

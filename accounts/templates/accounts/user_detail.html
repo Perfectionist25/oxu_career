@@ -590,7 +590,7 @@ body {
     <div class="row mb-4">
         <div class="col-12">
             <!-- Breadcrumb -->
-            <nav aria-label="breadcrumb" class="mb-3">
+            <nav aria-label="{% trans 'breadcrumb' %}" class="mb-3">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">
                         <a href="{% url 'accounts:admin_dashboard' %}" class="text-decoration-none">
@@ -718,7 +718,13 @@ body {
                 <div class="icon-wrapper bg-info-gradient">
                     <i class="fas fa-users fa-lg"></i>
                 </div>
-                <h3 class="fw-bold mb-1">{{ primary_company.get_company_size_display|default:"N/A" }}</h3>
+                <h3 class="fw-bold mb-1">
+                    {% if primary_company.get_company_size_display %}
+                        {{ primary_company.get_company_size_display }}
+                    {% else %}
+                        {% trans "N/A" %}
+                    {% endif %}
+                </h3>
                 <p class="text-muted mb-0">{% trans "Company Size" %}</p>
             </div>
         </div>
@@ -730,7 +736,13 @@ body {
                 <div class="icon-wrapper bg-success-gradient">
                     <i class="fas fa-star fa-lg"></i>
                 </div>
-                <h3 class="fw-bold mb-1">{{ profile.gpa|default:"N/A" }}</h3>
+                <h3 class="fw-bold mb-1">
+                    {% if profile.gpa %}
+                        {{ profile.gpa }}
+                    {% else %}
+                        {% trans "N/A" %}
+                    {% endif %}
+                </h3>
                 <p class="text-muted mb-0">{% trans "GPA Score" %}</p>
             </div>
         </div>
@@ -739,7 +751,13 @@ body {
                 <div class="icon-wrapper bg-info-gradient">
                     <i class="fas fa-graduation-cap fa-lg"></i>
                 </div>
-                <h3 class="fw-bold mb-1">{{ profile.graduation_year|default:"N/A" }}</h3>
+                <h3 class="fw-bold mb-1">
+                    {% if profile.graduation_year %}
+                        {{ profile.graduation_year }}
+                    {% else %}
+                        {% trans "N/A" %}
+                    {% endif %}
+                </h3>
                 <p class="text-muted mb-0">{% trans "Graduation Year" %}</p>
             </div>
         </div>
@@ -884,22 +902,46 @@ body {
                         <div class="col-md-6 mb-3">
                             <div class="mb-3">
                                 <small class="text-muted d-block">{% trans "Faculty" %}</small>
-                                <strong class="fs-5">{{ profile.faculty|default:"Not specified" }}</strong>
+                                <strong class="fs-5">
+                                    {% if profile.faculty %}
+                                        {{ profile.faculty }}
+                                    {% else %}
+                                        {% trans "Not specified" %}
+                                    {% endif %}
+                                </strong>
                             </div>
                             <div class="mb-3">
                                 <small class="text-muted d-block">{% trans "Specialization" %}</small>
-                                <strong class="fs-5">{{ profile.specialty|default:"Not specified" }}</strong>
+                                <strong class="fs-5">
+                                    {% if profile.specialty %}
+                                        {{ profile.specialty }}
+                                    {% else %}
+                                        {% trans "Not specified" %}
+                                    {% endif %}
+                                </strong>
                             </div>
                             <div class="mb-3">
                                 <small class="text-muted d-block">{% trans "Education Level" %}</small>
-                                <strong class="fs-5">{{ profile.get_education_level_display|default:"Not specified" }}</strong>
+                                <strong class="fs-5">
+                                    {% if profile.get_education_level_display %}
+                                        {{ profile.get_education_level_display }}
+                                    {% else %}
+                                        {% trans "Not specified" %}
+                                    {% endif %}
+                                </strong>
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="mb-3">
                                 <small class="text-muted d-block">{% trans "Current GPA" %}</small>
                                 <div class="d-flex align-items-center">
-                                    <strong class="fs-5 me-2">{{ profile.gpa|default:"N/A" }}</strong>
+                                    <strong class="fs-5 me-2">
+                                        {% if profile.gpa %}
+                                            {{ profile.gpa }}
+                                        {% else %}
+                                            {% trans "N/A" %}
+                                        {% endif %}
+                                    </strong>
                                     {% if profile.gpa %}
                                     <div class="progress flex-grow-1">
                                         <div class="progress-bar" data-gpa="{{ profile.gpa|floatformat:0 }}"></div>
@@ -909,11 +951,23 @@ body {
                             </div>
                             <div class="mb-3">
                                 <small class="text-muted d-block">{% trans "Graduation Year" %}</small>
-                                <strong class="fs-5">{{ profile.graduation_year|default:"Not specified" }}</strong>
+                                <strong class="fs-5">
+                                    {% if profile.graduation_year %}
+                                        {{ profile.graduation_year }}
+                                    {% else %}
+                                        {% trans "Not specified" %}
+                                    {% endif %}
+                                </strong>
                             </div>
                             <div class="mb-3">
                                 <small class="text-muted d-block">{% trans "Desired Position" %}</small>
-                                <strong class="fs-5">{{ profile.desired_position|default:"Not specified" }}</strong>
+                                <strong class="fs-5">
+                                    {% if profile.desired_position %}
+                                        {{ profile.desired_position }}
+                                    {% else %}
+                                        {% trans "Not specified" %}
+                                    {% endif %}
+                                </strong>
                             </div>
                         </div>
                     </div>
@@ -923,25 +977,55 @@ body {
                         <div class="col-md-6 mb-3">
                             <div class="mb-3">
                                 <small class="text-muted d-block">{% trans "Company Name" %}</small>
-                                <strong class="fs-5">{{ primary_company.name|default:"No company" }}</strong>
+                                <strong class="fs-5">
+                                    {% if primary_company.name %}
+                                        {{ primary_company.name }}
+                                    {% else %}
+                                        {% trans "No company" %}
+                                    {% endif %}
+                                </strong>
                             </div>
                             <div class="mb-3">
                                 <small class="text-muted d-block">{% trans "Industry" %}</small>
-                                <strong class="fs-5">{{ primary_company.industry|default:"Not specified" }}</strong>
+                                <strong class="fs-5">
+                                    {% if primary_company.industry %}
+                                        {{ primary_company.industry }}
+                                    {% else %}
+                                        {% trans "Not specified" %}
+                                    {% endif %}
+                                </strong>
                             </div>
                             <div class="mb-3">
                                 <small class="text-muted d-block">{% trans "Founded Year" %}</small>
-                                <strong class="fs-5">{{ primary_company.founded_year|default:"Not specified" }}</strong>
+                                <strong class="fs-5">
+                                    {% if primary_company.founded_year %}
+                                        {{ primary_company.founded_year }}
+                                    {% else %}
+                                        {% trans "Not specified" %}
+                                    {% endif %}
+                                </strong>
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="mb-3">
                                 <small class="text-muted d-block">{% trans "Company Size" %}</small>
-                                <strong class="fs-5">{{ primary_company.get_company_size_display|default:"Not specified" }}</strong>
+                                <strong class="fs-5">
+                                    {% if primary_company.get_company_size_display %}
+                                        {{ primary_company.get_company_size_display }}
+                                    {% else %}
+                                        {% trans "Not specified" %}
+                                    {% endif %}
+                                </strong>
                             </div>
                             <div class="mb-3">
                                 <small class="text-muted d-block">{% trans "Address" %}</small>
-                                <strong class="fs-5">{{ primary_company.address|default:"Not specified" }}</strong>
+                                <strong class="fs-5">
+                                    {% if primary_company.address %}
+                                        {{ primary_company.address }}
+                                    {% else %}
+                                        {% trans "Not specified" %}
+                                    {% endif %}
+                                </strong>
                             </div>
                             <div class="mb-3">
                                 <small class="text-muted d-block">{% trans "Jobs Posted" %}</small>

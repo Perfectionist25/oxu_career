@@ -481,7 +481,7 @@
                             <!-- Пагинация -->
                             {% if jobs.has_other_pages %}
                             <div class="card-footer border-top-0 bg-transparent">
-                                <nav aria-label="Page navigation">
+                                <nav aria-label="{% trans 'Page navigation' %}">
                                     <ul class="pagination justify-content-center mb-0">
                                         {% if jobs.has_previous %}
                                             <li class="page-item">
@@ -500,7 +500,7 @@
                                                 <li class="page-item active">
                                                     <span class="page-link">{{ num }}</span>
                                                 </li>
-                                            {% elif num > jobs.number|add:'-3' and num < jobs.number|add:'3' %}
+                                            {% elif num > {% trans "jobs.number|add:'-3' and num" %} < jobs.number|add:'3' %}
                                                 <li class="page-item">
                                                     <a class="page-link" href="?page={{ num }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if sort_by %}&sort_by={{ sort_by }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}">{{ num }}</a>
                                                 </li>
@@ -668,7 +668,7 @@
                             <!-- Пагинация -->
                             {% if applications.has_other_pages %}
                             <div class="card-footer border-top-0 bg-transparent">
-                                <nav aria-label="Page navigation">
+                                <nav aria-label="{% trans 'Page navigation' %}">
                                     <ul class="pagination justify-content-center mb-0">
                                         {% if applications.has_previous %}
                                             <li class="page-item">
@@ -687,7 +687,7 @@
                                                 <li class="page-item active">
                                                     <span class="page-link">{{ num }}</span>
                                                 </li>
-                                            {% elif num > applications.number|add:'-3' and num < applications.number|add:'3' %}
+                                            {% elif num > {% trans "applications.number|add:'-3' and num" %} < applications.number|add:'3' %}
                                                 <li class="page-item">
                                                     <a class="page-link" href="?page={{ num }}{% if sort_by %}&sort_by={{ sort_by }}{% endif %}">{{ num }}</a>
                                                 </li>
@@ -736,7 +736,7 @@
                 <h6 class="modal-title text-primary">
                     <i class="fas fa-sort me-2"></i>{% trans "Sort Options" %}
                 </h6>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
             </div>
             <div class="modal-body py-2">
                 <div class="sort-options">
@@ -834,7 +834,7 @@
                 <h5 class="modal-title" id="jobSettingsModalLabel">
                     <i class="fas fa-cog me-2"></i><span id="modalJobTitle">{% trans "Job Settings" %}</span>
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
             </div>
             <div class="modal-body">
                 <form id="jobSettingsForm" method="post">
@@ -904,7 +904,7 @@
                 <h5 class="modal-title" id="applicationDetailsModalLabel">
                     <i class="fas fa-file-alt me-2"></i>{% trans "Application Details" %}
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
             </div>
             <div class="modal-body" id="applicationDetailsContent">
                 <!-- Контент будет загружен через AJAX -->

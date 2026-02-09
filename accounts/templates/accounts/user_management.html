@@ -160,7 +160,7 @@
 
             <!-- Pagination -->
             {% if page_obj.has_other_pages %}
-            <nav aria-label="Page navigation" class="mt-4">
+            <nav aria-label="{% trans 'Page navigation' %}" class="mt-4">
                 <ul class="pagination justify-content-center">
                     {% if page_obj.has_previous %}
                     <li class="page-item">

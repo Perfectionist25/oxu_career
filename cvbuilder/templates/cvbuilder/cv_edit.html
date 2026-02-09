@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load static %}
 
 {% block title %}Edit Resume - {{ cv.title }}{% endblock %}
@@ -36,7 +37,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="{{ form.title.id_for_label }}" class="form-label">
-                                        <i class="fas fa-heading me-1"></i>Resume Title *
+                                        <i class="fas fa-heading me-1"></i>{% trans 'Resume Title *' %}
                                     </label>
                                     {{ form.title }}
                                     {% if form.title.errors %}
@@ -47,7 +48,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="{{ form.template.id_for_label }}" class="form-label">
-                                        <i class="fas fa-palette me-1"></i>Template
+                                        <i class="fas fa-palette me-1"></i>{% trans 'Template' %}
                                     </label>
                                     {{ form.template }}
                                 </div>
@@ -58,7 +59,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="{{ form.full_name.id_for_label }}" class="form-label">
-                                        <i class="fas fa-user me-1"></i>Full Name *
+                                        <i class="fas fa-user me-1"></i>{% trans 'Full Name *' %}
                                     </label>
                                     {{ form.full_name }}
                                 </div>
@@ -67,7 +68,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="{{ form.desired_position.id_for_label }}" class="form-label">
-                                        <i class="fas fa-briefcase me-1"></i>Desired Position *
+                                        <i class="fas fa-briefcase me-1"></i>{% trans 'Desired Position *' %}
                                     </label>
                                     {{ form.desired_position }}
                                     {% if form.desired_position.errors %}
@@ -81,7 +82,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="{{ form.email.id_for_label }}" class="form-label">
-                                        <i class="fas fa-envelope me-1"></i>Email *
+                                        <i class="fas fa-envelope me-1"></i>{% trans 'Email *' %}
                                     </label>
                                     {{ form.email }}
                                 </div>
@@ -89,7 +90,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="{{ form.phone.id_for_label }}" class="form-label">
-                                        <i class="fas fa-phone me-1"></i>Phone
+                                        <i class="fas fa-phone me-1"></i>{% trans 'Phone' %}
                                     </label>
                                     {{ form.phone }}
                                 </div>
@@ -99,7 +100,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="{{ form.region.id_for_label }}" class="form-label">
-                                    <i class="fas fa-map-marked-alt me-1"></i>Region *
+                                    <i class="fas fa-map-marked-alt me-1"></i>{% trans 'Region *' %}
                                 </label>
                                 {{ form.region }}
                                 {% if form.region.errors %}
@@ -108,7 +109,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="{{ form.city.id_for_label }}" class="form-label">
-                                    <i class="fas fa-city me-1"></i>City
+                                    <i class="fas fa-city me-1"></i>{% trans 'City' %}
                                 </label>
                                 {{ form.city }}
                                 {% if form.city.errors %}
@@ -120,28 +121,28 @@
                         <!-- Дополнительно можно добавить поле address: -->
                         <div class="mb-3">
                             <label for="{{ form.address.id_for_label }}" class="form-label">
-                                <i class="fas fa-home me-1"></i>Full Address
+                                <i class="fas fa-home me-1"></i>{% trans 'Full Address' %}
                             </label>
                             {{ form.address }}
-                            <small class="form-text text-muted">Optional - full street address</small>
+                            <small class="form-text text-muted">{% trans 'Optional - full street address' %}</small>
                         </div>
 
                         <div class="mb-3">
                             <label for="{{ form.summary.id_for_label }}" class="form-label">
-                                <i class="fas fa-file-alt me-1"></i>Summary
+                                <i class="fas fa-file-alt me-1"></i>{% trans 'Summary' %}
                             </label>
                             {{ form.summary }}
-                            <div class="form-text">Brief information about yourself and your career</div>
+                            <div class="form-text">{% trans 'Brief information about yourself and your career' %}</div>
                         </div>
 
                         <div class="mb-3">
                             <label for="{{ form.photo.id_for_label }}" class="form-label">
-                                <i class="fas fa-camera me-1"></i>Profile Photo
+                                <i class="fas fa-camera me-1"></i>{% trans 'Profile Photo' %}
                             </label>
                             {{ form.photo }}
                             {% if cv.photo %}
                             <div class="mt-2">
-                                <img src="{{ cv.photo.url }}" alt="Current photo" class="img-thumbnail" style="max-height: 100px;">
+                                <img src="{{ cv.photo.url }}" alt="{% trans 'Current photo' %}" class="img-thumbnail" style="max-height: 100px;">
                             </div>
                             {% endif %}
                         </div>
@@ -151,7 +152,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="{{ form.linkedin.id_for_label }}" class="form-label">
-                                        <i class="fab fa-linkedin me-1"></i>LinkedIn
+                                        <i class="fab fa-linkedin me-1"></i>{% trans 'LinkedIn' %}
                                     </label>
                                     {{ form.linkedin }}
                                 </div>
@@ -159,7 +160,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="{{ form.github.id_for_label }}" class="form-label">
-                                        <i class="fab fa-github me-1"></i>GitHub
+                                        <i class="fab fa-github me-1"></i>{% trans 'GitHub' %}
                                     </label>
                                     {{ form.github }}
                                 </div>
@@ -170,7 +171,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="{{ form.portfolio.id_for_label }}" class="form-label">
-                                        <i class="fas fa-globe me-1"></i>Portfolio
+                                        <i class="fas fa-globe me-1"></i>{% trans 'Portfolio' %}
                                     </label>
                                     {{ form.portfolio }}
                                 </div>
@@ -178,7 +179,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="{{ form.status.id_for_label }}" class="form-label">
-                                        <i class="fas fa-eye me-1"></i>Status
+                                        <i class="fas fa-eye me-1"></i>{% trans 'Status' %}
                                     </label>
                                     {{ form.status }}
                                 </div>
@@ -187,13 +188,13 @@
 
                         <div class="d-flex gap-2">
                             <button type="submit" class="btn btn-success">
-                                <i class="fas fa-save me-1"></i>Save
+                                <i class="fas fa-save me-1"></i>{% trans 'Save' %}
                             </button>
                             <a href="{% url 'cvbuilder:cv_detail' cv.pk %}" class="btn btn-outline-primary">
-                                <i class="fas fa-eye me-1"></i>View
+                                <i class="fas fa-eye me-1"></i>{% trans 'View' %}
                             </a>
                             <a href="{% url 'cvbuilder:cv_list' %}" class="btn btn-outline-secondary">
-                                <i class="fas fa-arrow-left me-1"></i>Back
+                                <i class="fas fa-arrow-left me-1"></i>{% trans 'Back' %}
                             </a>
                         </div>
                     </form>
@@ -207,13 +208,13 @@
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-info text-white">
                     <h6 class="mb-0">
-                        <i class="fas fa-graduation-cap me-2"></i>Education
+                        <i class="fas fa-graduation-cap me-2"></i>{% trans 'Education' %}
                     </h6>
                 </div>
                 <div class="card-body">
                     <button type="button" class="btn btn-outline-info btn-sm w-100 mb-3" 
                             data-bs-toggle="modal" data-bs-target="#educationModal">
-                        <i class="fas fa-plus me-1"></i>Add Education
+                        <i class="fas fa-plus me-1"></i>{% trans 'Add Education' %}
                     </button>
                     
                     {% if cv.educations.all %}
@@ -236,7 +237,7 @@
                         {% endfor %}
                     </div>
                     {% else %}
-                    <p class="text-muted text-center mb-0">No education information added</p>
+                    <p class="text-muted text-center mb-0">{% trans 'No education information added' %}</p>
                     {% endif %}
                 </div>
             </div>
@@ -245,13 +246,13 @@
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-warning text-dark">
                     <h6 class="mb-0">
-                        <i class="fas fa-briefcase me-2"></i>Work Experience
+                        <i class="fas fa-briefcase me-2"></i>{% trans 'Work Experience' %}
                     </h6>
                 </div>
                 <div class="card-body">
                     <button type="button" class="btn btn-outline-warning btn-sm w-100 mb-3" 
                             data-bs-toggle="modal" data-bs-target="#experienceModal">
-                        <i class="fas fa-plus me-1"></i>Add Experience
+                        <i class="fas fa-plus me-1"></i>{% trans 'Add Experience' %}
                     </button>
                     
                     {% if cv.experiences.all %}
@@ -265,7 +266,7 @@
                         {% endfor %}
                     </div>
                     {% else %}
-                    <p class="text-muted text-center mb-0">No work experience added</p>
+                    <p class="text-muted text-center mb-0">{% trans 'No work experience added' %}</p>
                     {% endif %}
                 </div>
             </div>
@@ -274,13 +275,13 @@
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-success text-white">
                     <h6 class="mb-0">
-                        <i class="fas fa-code me-2"></i>Skills
+                        <i class="fas fa-code me-2"></i>{% trans 'Skills' %}
                     </h6>
                 </div>
                 <div class="card-body">
                     <button type="button" class="btn btn-outline-success btn-sm w-100 mb-3" 
                             data-bs-toggle="modal" data-bs-target="#skillModal">
-                        <i class="fas fa-plus me-1"></i>Add Skill
+                        <i class="fas fa-plus me-1"></i>{% trans 'Add Skill' %}
                     </button>
                     
                     {% if cv.skills.all %}
@@ -290,7 +291,7 @@
                         {% endfor %}
                     </div>
                     {% else %}
-                    <p class="text-muted text-center mb-0">No skills added</p>
+                    <p class="text-muted text-center mb-0">{% trans 'No skills added' %}</p>
                     {% endif %}
                 </div>
             </div>
@@ -305,7 +306,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-info text-white">
-                <h5 class="modal-title">Add Education Information</h5>
+                <h5 class="modal-title">{% trans 'Add Education Information' %}</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form method="post" action="{% url 'cvbuilder:add_education' cv.pk %}">
@@ -314,8 +315,8 @@
                     {{ education_form.as_p }}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-info">Add</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans 'Cancel' %}</button>
+                    <button type="submit" class="btn btn-info">{% trans 'Add' %}</button>
                 </div>
             </form>
         </div>
@@ -327,7 +328,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-warning text-dark">
-                <h5 class="modal-title">Add Work Experience</h5>
+                <h5 class="modal-title">{% trans 'Add Work Experience' %}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form method="post" action="{% url 'cvbuilder:add_experience' cv.pk %}">
@@ -336,8 +337,8 @@
                     {{ experience_form.as_p }}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-warning">Add</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans 'Cancel' %}</button>
+                    <button type="submit" class="btn btn-warning">{% trans 'Add' %}</button>
                 </div>
             </form>
         </div>
@@ -349,7 +350,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-success text-white">
-                <h5 class="modal-title">Add Skill</h5>
+                <h5 class="modal-title">{% trans 'Add Skill' %}</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form method="post" action="{% url 'cvbuilder:add_skill' cv.pk %}">
@@ -358,8 +359,8 @@
                     {{ skill_form.as_p }}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success">Add</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans 'Cancel' %}</button>
+                    <button type="submit" class="btn btn-success">{% trans 'Add' %}</button>
                 </div>
             </form>
         </div>

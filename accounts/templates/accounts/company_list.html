@@ -98,7 +98,7 @@
                                                         <h6 class="mb-0">{{ company.name }}</h6>
                                                         <small class="text-muted">{{ company.industry|default:"-" }}</small>
                                                         {% if company == primary_company %}
-                                                        <span class="badge bg-primary badge-sm ms-2">Primary</span>
+                                                        <span class="badge bg-primary badge-sm ms-2">{% trans 'Primary' %}</span>
                                                         {% endif %}
                                                     </div>
                                                 </div>
