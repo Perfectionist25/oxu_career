@@ -3540,7 +3540,7 @@ msgstr "Полезные советы"
 
 #: .\core\templates\_inc\foot.html:15
 msgid "Developer"
-msgstr ""
+msgstr "Разработчик"
 
 #: .\core\templates\_inc\foot.html:21
 #, fuzzy

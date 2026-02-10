@@ -3538,7 +3538,7 @@ msgstr "Foydali maslahatlar"
 
 #: .\core\templates\_inc\foot.html:15
 msgid "Developer"
-msgstr ""
+msgstr "Dasturchi"
 
 #: .\core\templates\_inc\foot.html:21
 #, fuzzy
