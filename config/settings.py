@@ -13,6 +13,19 @@ from datetime import timedelta
 # ==========================
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+def _resolve_path_from_env(var_name: str, default_dir_name: str) -> Path:
+    raw = (os.getenv(var_name) or "").strip()
+    if not raw:
+        return BASE_DIR / default_dir_name
+    path = Path(raw).expanduser()
+    if not path.is_absolute():
+        return BASE_DIR / path
+    # Guard against accidental root-level paths like "/media_dir".
+    if path.parent == Path("/"):
+        return BASE_DIR / path.name
+    return path
+
 # Render detection (самый надёжный маркер)
 RENDER_HOST = os.getenv("RENDER_EXTERNAL_HOSTNAME", "").strip()
 IS_RENDER = bool(os.getenv("RENDER_EXTERNAL_HOSTNAME"))
@@ -21,37 +34,14 @@ SECRET_KEY = os.getenv("SECRET_KEY") or os.getenv("DJANGO_SECRET_KEY")
 if not SECRET_KEY:
     raise Exception("SECRET_KEY (or DJANGO_SECRET_KEY) environment variable not set")
 
-DEBUG = os.getenv("DEBUG", "False") == "True"
+DEBUG = os.getenv("DEBUG")
 
 # ==========================
 # HOSTS / CSRF / HTTPS
 # ==========================
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "172.31.254.31", "career.oxu.uz"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "172.31.254.31", "career.oxu.uz", "www.career.oxu.uz"]
 
-
-if IS_RENDER:
-    ALLOWED_HOSTS.append(os.getenv("RENDER_EXTERNAL_HOSTNAME"))
-
-CSRF_TRUSTED_ORIGINS = []
-
-if IS_RENDER:
-    CSRF_TRUSTED_ORIGINS.append(
-        f"https://{os.getenv('RENDER_EXTERNAL_HOSTNAME')}"
-    )
-
-# Если хочешь управлять hosts через env:
-extra_hosts = os.getenv("ALLOWED_HOSTS", "").strip()
-if extra_hosts:
-    ALLOWED_HOSTS += [h.strip() for h in extra_hosts.split(",") if h.strip()]
-
-# CSRF trusted origins (ВАЖНО: не перезаписываем, а дополняем)
-CSRF_TRUSTED_ORIGINS: list[str] = []
-if IS_RENDER:
-    CSRF_TRUSTED_ORIGINS.append(f"https://{RENDER_HOST}")
-
-extra_csrf = os.getenv("CSRF_TRUSTED_ORIGINS", "").strip()
-if extra_csrf:
-    CSRF_TRUSTED_ORIGINS += [x.strip() for x in extra_csrf.split(",") if x.strip()]
+CSRF_TRUSTED_ORIGINS = ["https://career.oxu.uz"]
 
 # Прод URL (для ссылок/редиректов)
 if DEBUG:
@@ -67,6 +57,7 @@ LOGOUT_REDIRECT_URL = "/"
 
 # Render за прокси отдаёт https — это правильно
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+USE_X_FORWARDED_HOST = True
 
 # ==========================
 # APPLICATIONS
@@ -361,10 +352,10 @@ CKEDITOR_5_UPLOAD_FILE_TYPES = ["jpeg", "jpg", "png", "gif", "bmp", "webp", "svg
 # ==========================
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = "/var/www/alijob/static"
+STATIC_ROOT = "/var/www/alijob/static" #_resolve_path_from_env("STATIC_ROOT", "staticfiles")
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = "/var/www/alijob/media"
+MEDIA_ROOT = "/var/www/alijob/media" #_resolve_path_from_env("MEDIA_ROOT", "media_dir")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -500,7 +491,7 @@ OAUTH_ALLOWED_UNIVERSITIES = [
 # ==========================
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
-SECURE_SSL_REDIRECT = not DEBUG
+SECURE_SSL_REDIRECT = True
 
 SESSION_COOKIE_AGE = 86400
 SESSION_COOKIE_SAMESITE = "Lax"

@@ -9,6 +9,10 @@ from django.dispatch import receiver
 from django.utils import timezone
 from datetime import timedelta
 import requests
+import io
+import uuid
+from PIL import Image, ImageOps
+from django.core.files.base import ContentFile
 
 REGIONS = [
     ("Tashkent", _("Tashkent")),
@@ -610,6 +614,11 @@ class StudentProfile(models.Model):
         help_text=_("Associated user account"),
     )
 
+    avatar = models.ImageField(
+        upload_to='student_avatars/%Y/%m/%d/',
+        blank=True, null=True
+    )
+
     student_id = models.CharField(
         max_length=50,
         blank=True,
@@ -715,6 +724,44 @@ class StudentProfile(models.Model):
 
     def get_absolute_url(self):
         return reverse("accounts:student_profile", kwargs={"pk": self.pk})
+    
+    def save(self, *args, **kwargs):
+        # если аватар не менялся — просто сохраняем
+        if not self.avatar:
+            return super().save(*args, **kwargs)
+
+        # открываем изображение
+        self.avatar.open()
+        img = Image.open(self.avatar)
+
+        # корректная ориентация (фото с телефона)
+        img = ImageOps.exif_transpose(img)
+
+        # приводим к RGB/RGBA
+        if img.mode not in ("RGB", "RGBA"):
+            img = img.convert("RGB")
+
+        # делаем квадрат (центр-кроп) и ресайз
+        target_size = (512, 512)
+        img = ImageOps.fit(img, target_size, method=Image.LANCZOS, centering=(0.5, 0.5))
+
+        # сохраняем в WEBP
+        buffer = io.BytesIO()
+        save_kwargs = {"format": "WEBP", "quality": 75, "method": 6}
+
+        # если есть прозрачность — сохраняем RGBA
+        if img.mode == "RGBA":
+            save_kwargs["lossless"] = False  # обычно не нужно lossless для аватарок
+
+        img.save(buffer, **save_kwargs)
+        buffer.seek(0)
+
+        # заменяем файл на сжатый (и гарантируем .webp)
+        new_name = f"{uuid.uuid4().hex}.webp"
+        self.avatar.save(new_name, ContentFile(buffer.read()), save=False)
+
+        super().save(*args, **kwargs)
+
 
 
 class AdminProfile(models.Model):

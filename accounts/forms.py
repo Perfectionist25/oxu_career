@@ -337,6 +337,7 @@ class StudentProfileForm(forms.ModelForm):
         model = StudentProfile
         fields = [
             "student_id",
+            "avatar",
             "faculty",
             "specialty",
             "education_level",
@@ -351,6 +352,7 @@ class StudentProfileForm(forms.ModelForm):
         ]
         widgets = {
             'student_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'avatar': forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': 'image/*'}),
             'faculty': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': _('Faculty or department')
@@ -476,21 +478,21 @@ class UserUpdateForm(forms.ModelForm):
         model = CustomUser
         fields = [
             # УБРАЛИ first_name, last_name
+            "avatar",
             "email",
             "phone_number",
             "date_of_birth",
             "bio",
-            "avatar",
             "city",
             "address",
             "telegram",
         ]
         widgets = {
+            'avatar': forms.FileInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
             'date_of_birth': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'bio': forms.Textarea(attrs={'rows': 4, 'class': 'form-control'}),
-            'avatar': forms.FileInput(attrs={'class': 'form-control'}),
             'city': forms.TextInput(attrs={'class': 'form-control'}),
             'address': forms.TextInput(attrs={'class': 'form-control'}),
             'telegram': forms.URLInput(attrs={'class': 'form-control'}),

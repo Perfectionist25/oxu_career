@@ -87,7 +87,7 @@
                   </div>
 
                   <div class="col-md-6 mb-3">
-                    <label for="{{ form.email.id_for_label }}" class="form-label">{% trans "Email" %} *</label>
+                    <label for="{{ form.email.id_for_label }}" class="form-label">Email *</label>
                     {{ form.email }}
                     {% if form.email.errors %}
                       <div class="invalid-feedback d-block">
@@ -134,7 +134,7 @@
                   </div>
 
                   <div class="col-md-6 mb-3">
-                    <label for="{{ form.city.id_for_label }}" class="form-label">{% trans "City" %} *</label>
+                    <label for="{{ form.city.id_for_label }}" class="form-label">{% trans "City / District" %} *</label>
                     {{ form.city }}
                     {% if form.city.errors %}
                       <div class="invalid-feedback d-block">

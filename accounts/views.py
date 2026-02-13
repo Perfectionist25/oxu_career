@@ -486,7 +486,7 @@ def hemis_login(request):
             },
         )
 
-        student_profile, _ = StudentProfile.objects.get_or_create(user=user)
+        student_profile, _profile_created = StudentProfile.objects.get_or_create(user=user)
 
         for field in ["faculty", "specialty", "graduation_year", "phone", "bio", "gpa"]:
             if field in user_data:
@@ -591,15 +591,18 @@ def student_dashboard(request):
 @user_passes_test(is_student, login_url="accounts:employer_login")
 def student_profile_update(request):
     """Update student profile"""
-    student_profile = get_object_or_404(StudentProfile, user=request.user)
+    student_profile, _profile_created = StudentProfile.objects.get_or_create(user=request.user)
 
     if request.method == "POST":
         user_form = StudentUserReadonlyNameForm(request.POST, instance=request.user)
-        profile_form = StudentProfileForm(request.POST, instance=student_profile)
+        profile_form = StudentProfileForm(request.POST, request.FILES, instance=student_profile)
 
         if user_form.is_valid() and profile_form.is_valid():
-            # ❌ НЕ сохраняем user_form вообще
-            profile_form.save()
+            updated_profile = profile_form.save()
+
+            # Keep student avatar in sync with the main user avatar used across templates.
+            request.user.avatar = updated_profile.avatar
+            request.user.save(update_fields=["avatar", "updated_at"])
 
             create_user_activity(request.user, "profile_update", "Student profile updated")
             messages.success(request, _("Profile updated successfully!"))

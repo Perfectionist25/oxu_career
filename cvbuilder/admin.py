@@ -1,7 +1,10 @@
 from django.contrib import admin
 from modeltranslation.admin import TranslationAdmin
 
-from .models import CV, Language
+from .models import CV, Language, CVTemplate
+
+
+admin.site.register(CVTemplate)
 
 
 # class EducationInline(admin.TabularInline):

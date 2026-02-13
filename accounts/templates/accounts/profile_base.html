@@ -16,6 +16,9 @@
                             {% if profile_user.avatar %}
                                 <img src="{{ profile_user.avatar.url }}" alt="{{ profile_user.get_full_name }}" 
                                      class="rounded-circle border border-3 border-primary" width="100" height="100" style="object-fit: cover;">
+                            {% elif profile_user.is_student and profile_user.student_profile.avatar %}
+                                <img src="{{ profile_user.student_profile.avatar.url }}" alt="{{ profile_user.get_full_name }}"
+                                     class="rounded-circle border border-3 border-primary" width="100" height="100" style="object-fit: cover;">
                             {% else %}
                                 <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center border border-3 border-primary" 
                                      style="width: 100px; height: 100px;">

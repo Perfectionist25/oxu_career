@@ -16,6 +16,29 @@
         <div class="card-body">
           <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
+
+            <div class="mb-3">
+              <label for="{{ profile_form.avatar.id_for_label }}" class="form-label">
+                {% trans "Avatar" %}
+              </label>
+              {{ profile_form.avatar }}
+              {% if profile_form.avatar.errors %}
+                <div class="text-danger small mt-1">{{ profile_form.avatar.errors }}</div>
+              {% endif %}
+              {% if profile_form.instance.avatar %}
+                <div class="small text-muted mt-2">
+                  {% trans "Current avatar:" %}
+                </div>
+                <img
+                  src="{{ profile_form.instance.avatar.url }}"
+                  alt="{% trans 'Current avatar' %}"
+                  class="rounded-circle mt-1"
+                  width="72"
+                  height="72"
+                  style="object-fit: cover;"
+                >
+              {% endif %}
+            </div>
             
             <div class="mb-3">
               <label for="{{ profile_form.faculty.id_for_label }}" class="form-label">

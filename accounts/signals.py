@@ -1,4 +1,4 @@
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 from django.db import transaction
 from .models import Company, EmployerProfile, CustomUser, StudentProfile, AdminProfile
@@ -48,3 +48,22 @@ def cleanup_inactive_primary_company(sender, instance, **kwargs):
             count = EmployerProfile.objects.filter(primary_company_id=instance).count()
             if count > 0:
                 print(f"Cleared primary_company_id for {count} employer profiles (company: {instance.name})")
+
+
+@receiver(pre_save, sender=StudentProfile)
+def delete_old_avatar_on_change(sender, instance, **kwargs):
+    if not instance.pk:
+        return
+    try:
+        old = sender.objects.get(pk=instance.pk)
+    except sender.DoesNotExist:
+        return
+
+    if old.avatar and old.avatar != instance.avatar:
+        old.avatar.delete(save=False)
+
+
+@receiver(post_delete, sender=StudentProfile)
+def delete_avatar_on_delete(sender, instance, **kwargs):
+    if instance.avatar:
+        instance.avatar.delete(save=False)
