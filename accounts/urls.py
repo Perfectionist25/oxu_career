@@ -31,6 +31,7 @@ urlpatterns = [
     
     # ============ HTML ЛОГИН СТРАНИЦЫ (EMPLOYER/ADMIN ONLY) ============
     path("employer-login/", views.employer_login, name="employer_login"),
+    path("login/", views.employer_login, name="login"),
     path("admin-login/", views.admin_login, name="admin_login"),
     path("logout/", views.logout_view, name="logout"),
     
