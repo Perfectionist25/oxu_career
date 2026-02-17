@@ -17,6 +17,64 @@
           <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
+            {% if user_form.non_field_errors or profile_form.non_field_errors %}
+              <div class="alert alert-danger">
+                {{ user_form.non_field_errors }}
+                {{ profile_form.non_field_errors }}
+              </div>
+            {% endif %}
+
+            <div class="mb-3">
+              <label for="{{ user_form.full_name.id_for_label }}" class="form-label">
+                {% trans "Full name" %}
+              </label>
+              {{ user_form.full_name }}
+              <div class="form-text">
+                {% trans "This field is provided by OAuth and cannot be changed." %}
+              </div>
+              {% if user_form.full_name.errors %}
+                <div class="text-danger small mt-1">{{ user_form.full_name.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="{{ user_form.email.id_for_label }}" class="form-label">
+                    {% trans "Email" %}
+                  </label>
+                  {{ user_form.email }}
+                  {% if user_form.email.errors %}
+                    <div class="text-danger small mt-1">{{ user_form.email.errors }}</div>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="{{ user_form.phone_number.id_for_label }}" class="form-label">
+                    {% trans "Phone Number" %}
+                  </label>
+                  {{ user_form.phone_number }}
+                  {% if user_form.phone_number.errors %}
+                    <div class="text-danger small mt-1">{{ user_form.phone_number.errors }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="{{ profile_form.student_id.id_for_label }}" class="form-label">
+                {% trans "Student ID" %}
+              </label>
+              {{ profile_form.student_id }}
+              <div class="form-text">
+                {% trans "This field is provided by OAuth and cannot be changed." %}
+              </div>
+              {% if profile_form.student_id.errors %}
+                <div class="text-danger small mt-1">{{ profile_form.student_id.errors }}</div>
+              {% endif %}
+            </div>
+
             <div class="mb-3">
               <label for="{{ profile_form.avatar.id_for_label }}" class="form-label">
                 {% trans "Avatar" %}
@@ -96,6 +154,32 @@
               {% endif %}
             </div>
 
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="{{ profile_form.work_type.id_for_label }}" class="form-label">
+                    {% trans "Work Type" %}
+                  </label>
+                  {{ profile_form.work_type }}
+                  {% if profile_form.work_type.errors %}
+                    <div class="text-danger small mt-1">{{ profile_form.work_type.errors }}</div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="{{ profile_form.desired_salary.id_for_label }}" class="form-label">
+                    {% trans "Desired Salary" %}
+                  </label>
+                  {{ profile_form.desired_salary }}
+                  {% if profile_form.desired_salary.errors %}
+                    <div class="text-danger small mt-1">{{ profile_form.desired_salary.errors }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
             <div class="mb-3">
               <label for="{{ profile_form.bio.id_for_label }}" class="form-label">
                 {% trans "Bio" %}
@@ -107,6 +191,16 @@
             </div>
 
             <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="{{ profile_form.website.id_for_label }}" class="form-label">{% trans 'Website' %}</label>
+                  {{ profile_form.website }}
+                  {% if profile_form.website.errors %}
+                    <div class="text-danger small mt-1">{{ profile_form.website.errors }}</div>
+                  {% endif %}
+                </div>
+              </div>
+
               <div class="col-md-6">
                 <div class="mb-3">
                   <label for="{{ profile_form.linkedin.id_for_label }}" class="form-label">{% trans 'LinkedIn' %}</label>

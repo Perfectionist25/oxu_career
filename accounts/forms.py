@@ -385,6 +385,11 @@ class StudentProfileForm(forms.ModelForm):
             'github': forms.URLInput(attrs={'class': 'form-control'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Student ID is provided externally and must remain read-only for students.
+        self.fields["student_id"].disabled = True
+
 
 class AdminProfileForm(forms.ModelForm):
     """Форма создания администратора"""
@@ -567,9 +572,19 @@ class StudentUserReadonlyNameForm(forms.ModelForm):
 
     class Meta:
         model = CustomUser
-        fields = []  # Важно: ничего не сохраняем из user тут (кроме отображения)
+        fields = ["email", "phone_number"]
+        widgets = {
+            "email": forms.EmailInput(attrs={"class": "form-control"}),
+            "phone_number": forms.TextInput(attrs={"class": "form-control"}),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Показать ФИО из OAuth
-        self.fields["full_name"].initial = getattr(self.instance, "full_name", "")
+        self.fields["full_name"].initial = getattr(self.instance, "full_name", "") or self.instance.get_full_name()
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        if email and CustomUser.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError(_("This email is already in use by another user."))
+        return email

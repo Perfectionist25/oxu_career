@@ -598,6 +598,7 @@ def student_profile_update(request):
         profile_form = StudentProfileForm(request.POST, request.FILES, instance=student_profile)
 
         if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
             updated_profile = profile_form.save()
 
             # Keep student avatar in sync with the main user avatar used across templates.
