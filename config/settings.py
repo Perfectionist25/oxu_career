@@ -13,6 +13,7 @@ from datetime import timedelta
 # ==========================
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+<<<<<<< HEAD
 
 def _resolve_path_from_env(var_name: str, default_dir_name: str) -> Path:
     raw = (os.getenv(var_name) or "").strip()
@@ -27,18 +28,32 @@ def _resolve_path_from_env(var_name: str, default_dir_name: str) -> Path:
     return path
 
 # Render detection (самый надёжный маркер)
+=======
+# Render detection
+>>>>>>> 1ab1a4c (VPS version)
 RENDER_HOST = os.getenv("RENDER_EXTERNAL_HOSTNAME", "").strip()
 IS_RENDER = bool(os.getenv("RENDER_EXTERNAL_HOSTNAME"))
 
 SECRET_KEY = os.getenv("SECRET_KEY") or os.getenv("DJANGO_SECRET_KEY")
 if not SECRET_KEY:
+<<<<<<< HEAD
     raise Exception("SECRET_KEY (or DJANGO_SECRET_KEY) environment variable not set")
 
 DEBUG = os.getenv("DEBUG")
+=======
+    # Xavfsizlik uchun vaqtincha default kalit (agar env da bo'lmasa)
+    if not IS_RENDER:
+        SECRET_KEY = 'django-insecure-default-key-change-me'
+    else:
+        raise Exception("SECRET_KEY (or DJANGO_SECRET_KEY) environment variable not set")
+
+DEBUG = os.getenv("DEBUG", "False") == "True"
+>>>>>>> 1ab1a4c (VPS version)
 
 # ==========================
 # HOSTS / CSRF / HTTPS
 # ==========================
+<<<<<<< HEAD
 ALLOWED_HOSTS = ["127.0.0.1", "localhost", "172.31.254.31", "career.oxu.uz", "www.career.oxu.uz"]
 
 CSRF_TRUSTED_ORIGINS = ["https://career.oxu.uz"]
@@ -48,6 +63,42 @@ if DEBUG:
     SITE_URL = "http://localhost:8000"
 elif IS_RENDER:
     SITE_URL = f"https://{RENDER_HOST}"
+=======
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+"172.31.254.31", 
+    "localhost", 
+    "0.0.0.0", 
+    "*",             # Hamma IP larni ruxsat etish (Test uchun)
+    "career.oxu.uz", 
+    "www.career.oxu.uz"
+]
+
+# Env orqali qo'shimcha hostlar
+extra_hosts = os.getenv("ALLOWED_HOSTS", "").strip()
+if extra_hosts:
+    ALLOWED_HOSTS += [h.strip() for h in extra_hosts.split(",") if h.strip()]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://0.0.0.0:8000",
+    "https://career.oxu.uz",
+    "https://www.career.oxu.uz",
+]
+
+# Sizning IP manzilingiz (Buni albatta o'zingiznikiga o'zgartiring agar aniq bo'lsa)
+# Masalan: "http://54.123.45.67:8000"
+
+# Qo'shimcha CSRF manbalari env dan
+extra_csrf = os.getenv("CSRF_TRUSTED_ORIGINS", "").strip()
+if extra_csrf:
+    CSRF_TRUSTED_ORIGINS += [x.strip() for x in extra_csrf.split(",") if x.strip()]
+
+# Site URL
+if DEBUG:
+    SITE_URL = "http://localhost:8000"
+>>>>>>> 1ab1a4c (VPS version)
 else:
     SITE_URL = "https://career.oxu.uz"
 
@@ -55,10 +106,13 @@ LOGIN_URL = "/accounts/login/"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
+<<<<<<< HEAD
 # Render за прокси отдаёт https — это правильно
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 USE_X_FORWARDED_HOST = True
 
+=======
+>>>>>>> 1ab1a4c (VPS version)
 # ==========================
 # APPLICATIONS
 # ==========================
@@ -71,10 +125,18 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
+<<<<<<< HEAD
     # Django OAuth Toolkit (если используешь как provider)
     "oauth2_provider",
 
     # Third-party apps
+=======
+    # Django OAuth Toolkit
+    "oauth2_provider",
+
+    # Third-party apps
+    "corsheaders",          # <--- [YANGI] CORS ishlashi uchun SHART
+>>>>>>> 1ab1a4c (VPS version)
     "jazzmin",
     "widget_tweaks",
     "modeltranslation",
@@ -104,7 +166,13 @@ AUTH_USER_MODEL = "accounts.CustomUser"
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+<<<<<<< HEAD
 
+=======
+    
+    "corsheaders.middleware.CorsMiddleware",  # <--- [YANGI] CORS Middleware (Eng tepada bo'lishi kerak)
+    
+>>>>>>> 1ab1a4c (VPS version)
     "accounts.middleware.NotificationMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "accounts.middleware.BruteForceProtectionMiddleware",
@@ -135,7 +203,10 @@ TEMPLATES = [
                 "django.template.context_processors.media",
                 "django.template.context_processors.static",
                 "django.template.context_processors.i18n",
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1ab1a4c (VPS version)
                 # Custom context processors
                 "core.context_processors.site_info",
                 "accounts.context_processors.auth_context",
@@ -154,6 +225,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 # ==========================
 # DATABASE
 # ==========================
+<<<<<<< HEAD
 #DATABASES = {
 #    "default": {
 #        "ENGINE": "django.db.backends.sqlite3",
@@ -196,6 +268,19 @@ DATABASES = {
 # }
 
 
+=======
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("DB_NAME", "mydb"),
+        "USER": os.getenv("DB_USER", "myuser"),
+        "PASSWORD": os.getenv("DB_PASSWORD", "password"),
+        "HOST": os.getenv("DB_HOST", "localhost"),
+        "PORT": os.getenv("DB_PORT", "5432"),
+    }
+}
+
+>>>>>>> 1ab1a4c (VPS version)
 # ==========================
 # PASSWORD VALIDATION
 # ==========================
@@ -211,8 +296,13 @@ AUTH_PASSWORD_VALIDATORS = [
 # ==========================
 LANGUAGES = [
     ("en", "English"),
+<<<<<<< HEAD
     ("ru", "Русский"),
     ("uz", "Oʻzbekcha"),
+=======
+    ("ru", "Ruscha"),
+    ("uz", "Ozbekcha"),
+>>>>>>> 1ab1a4c (VPS version)
 ]
 
 LOCALE_PATHS = [BASE_DIR / "locale"]
@@ -225,7 +315,10 @@ USE_TZ = True
 
 MODELTRANSLATION_DEFAULT_LANGUAGE = "en"
 MODELTRANSLATION_LANGUAGES = ("uz", "ru", "en")
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1ab1a4c (VPS version)
 PHONENUMBER_DEFAULT_REGION = "UZ"
 
 # ==========================
@@ -233,6 +326,7 @@ PHONENUMBER_DEFAULT_REGION = "UZ"
 # ==========================
 CKEDITOR_5_CONFIGS = {
     "default": {
+<<<<<<< HEAD
         "toolbar": [
             "heading",
             "|",
@@ -346,16 +440,37 @@ CKEDITOR_5_UPLOAD_PATH = "uploads/"
 CKEDITOR_5_FILE_UPLOAD_PERMISSION = "staff"
 CKEDITOR_5_ALLOW_ALL_FILE_TYPES = False
 CKEDITOR_5_UPLOAD_FILE_TYPES = ["jpeg", "jpg", "png", "gif", "bmp", "webp", "svg"]
+=======
+        "toolbar": ["heading", "|", "bold", "italic", "link", "bulletedList", "numberedList", "blockQuote", "imageUpload", "undo", "redo"],
+        "language": "ru",
+    },
+    "extends": {
+        "blockToolbar": ["paragraph", "heading1", "heading2"],
+        "toolbar": ["heading", "|", "bold", "italic", "link", "uploadImage", "blockQuote"],
+        "language": "ru",
+    },
+}
+CKEDITOR_5_UPLOAD_PATH = "uploads/"
+CKEDITOR_5_FILE_UPLOAD_PERMISSION = "staff"
+CKEDITOR_5_ALLOW_ALL_FILE_TYPES = True
+>>>>>>> 1ab1a4c (VPS version)
 
 # ==========================
 # STATIC / MEDIA
 # ==========================
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
+<<<<<<< HEAD
 STATIC_ROOT = "/var/www/alijob/static" #_resolve_path_from_env("STATIC_ROOT", "staticfiles")
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = "/var/www/alijob/media" #_resolve_path_from_env("MEDIA_ROOT", "media_dir")
+=======
+STATIC_ROOT = "/var/www/career/static"
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = "/var/www/career/media"
+>>>>>>> 1ab1a4c (VPS version)
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -375,7 +490,10 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
         "rest_framework.authentication.SessionAuthentication",
+<<<<<<< HEAD
         "rest_framework.authentication.TokenAuthentication",
+=======
+>>>>>>> 1ab1a4c (VPS version)
     ),
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.IsAuthenticatedOrReadOnly",
@@ -389,6 +507,7 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
+<<<<<<< HEAD
 
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
@@ -420,11 +539,23 @@ CORS_ALLOWED_ORIGINS = [
 if IS_RENDER:
     CORS_ALLOWED_ORIGINS.append(f"https://{RENDER_HOST}")
 
+=======
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
+
+# ==========================
+# CORS HEADERS (FIXED)
+# ==========================
+CORS_ALLOW_ALL_ORIGINS = True  # Hozircha hammaga ruxsat (Development)
+>>>>>>> 1ab1a4c (VPS version)
 CORS_ALLOW_CREDENTIALS = True
 
 # ==========================
 # CACHE
 # ==========================
+<<<<<<< HEAD
 # На Render redis://127.0.0.1 не существует — поэтому в проде оставим LocMemCache,
 # а локально можешь включить redis если хочешь.
 if DEBUG:
@@ -443,6 +574,14 @@ else:
             "LOCATION": "prod-snowflake",
         }
     }
+=======
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-snowflake",
+    }
+}
+>>>>>>> 1ab1a4c (VPS version)
 
 BRUTEFORCE_CONFIG = {
     "MAX_ATTEMPTS": 10,
@@ -456,14 +595,21 @@ BRUTEFORCE_CONFIG = {
 # ==========================
 EXPLORER_CONNECTIONS = {"Default": "default"}
 EXPLORER_DEFAULT_CONNECTION = "default"
+<<<<<<< HEAD
 EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES = ("auth_", "django_")
 
 # ==========================
 # OAUTH (external provider)
+=======
+
+# ==========================
+# OAUTH
+>>>>>>> 1ab1a4c (VPS version)
 # ==========================
 OAUTH2_PROVIDER_NAME = "oxu"
 OAUTH2_CLIENT_ID = os.getenv("OAUTH2_CLIENT_ID")
 OAUTH2_CLIENT_SECRET = os.getenv("OAUTH2_CLIENT_SECRET")
+<<<<<<< HEAD
 
 OAUTH2_BASE_URL = "https://digital.oxu.uz/oauth2"
 OAUTH2_AUTHORIZE_URL = f"{OAUTH2_BASE_URL}/authorize"
@@ -504,6 +650,26 @@ if not DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
     X_FRAME_OPTIONS = "DENY"
+=======
+OAUTH2_BASE_URL = "https://digital.oxu.uz/oauth2"
+OAUTH2_REDIRECT_URI = "https://career.oxu.uz/accounts/oauth/callback/"
+
+# ==========================
+# SECURITY / HTTPS (FIXED FOR IP ACCESS)
+# ==========================
+# DIQQAT: SSL (HTTPS) sertifikatingiz bo'lmaguncha bularni FALSE qilib turing
+SECURE_SSL_REDIRECT = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+SECURE_HSTS_SECONDS = 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+SECURE_HSTS_PRELOAD = False
+
+# Agar DEBUG=False bo'lsa ham HTTP da ishlashiga ruxsat berish
+if not DEBUG:
+    X_FRAME_OPTIONS = "DENY"
+    # SECURE_SSL_REDIRECT = True  <-- Buni yoqmang, toki domen va SSL ulamaguncha!
+>>>>>>> 1ab1a4c (VPS version)
 
 # ==========================
 # EMAIL
@@ -512,6 +678,7 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DEFAULT_FROM_EMAIL = "noreply@oxu.uz"
 
 # ==========================
+<<<<<<< HEAD
 # JAZZMIN
 # ==========================
 JAZZMIN_SETTINGS = {
@@ -582,11 +749,15 @@ JAZZMIN_UI_TWEAKS = {
 
 # ==========================
 # LOGGING
+=======
+# LOGGING (FIXED)
+>>>>>>> 1ab1a4c (VPS version)
 # ==========================
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
+<<<<<<< HEAD
         "verbose": {
             "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
             "style": "{",
@@ -595,6 +766,10 @@ LOGGING = {
             "format": "{levelname} {message}",
             "style": "{",
         },
+=======
+        "verbose": {"format": "{levelname} {asctime} {module} {message}", "style": "{"},
+        "simple": {"format": "{levelname} {message}", "style": "{"},
+>>>>>>> 1ab1a4c (VPS version)
     },
     "handlers": {
         "console": {"class": "logging.StreamHandler", "formatter": "simple"},
@@ -602,6 +777,7 @@ LOGGING = {
             "class": "logging.FileHandler",
             "filename": BASE_DIR / "logs/django.log",
             "formatter": "verbose",
+<<<<<<< HEAD
         },
     },
     "loggers": {
@@ -621,3 +797,20 @@ LOGGING = {
 # Создать папку logs
 logs_dir = BASE_DIR / "logs"
 logs_dir.mkdir(exist_ok=True)
+=======
+            "level": "INFO",
+        },
+    },
+    "loggers": {
+        "django": {"handlers": ["console", "file"], "level": "INFO", "propagate": True},
+    },
+}
+
+# Log papkasini xavfsiz yaratish
+try:
+    logs_dir = BASE_DIR / "logs"
+    if not logs_dir.exists():
+        logs_dir.mkdir(parents=True, exist_ok=True)
+except Exception as e:
+    print(f"Log papkasini yaratib bo'lmadi (Ruxsat yo'q): {e}")
+>>>>>>> 1ab1a4c (VPS version)

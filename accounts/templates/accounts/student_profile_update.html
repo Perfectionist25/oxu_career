@@ -17,6 +17,7 @@
           <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
+<<<<<<< HEAD
             {% if user_form.non_field_errors or profile_form.non_field_errors %}
               <div class="alert alert-danger">
                 {{ user_form.non_field_errors }}
@@ -75,6 +76,8 @@
               {% endif %}
             </div>
 
+=======
+>>>>>>> 1ab1a4c (VPS version)
             <div class="mb-3">
               <label for="{{ profile_form.avatar.id_for_label }}" class="form-label">
                 {% trans "Avatar" %}
@@ -154,6 +157,7 @@
               {% endif %}
             </div>
 
+<<<<<<< HEAD
             <div class="row">
               <div class="col-md-6">
                 <div class="mb-3">
@@ -180,6 +184,8 @@
               </div>
             </div>
 
+=======
+>>>>>>> 1ab1a4c (VPS version)
             <div class="mb-3">
               <label for="{{ profile_form.bio.id_for_label }}" class="form-label">
                 {% trans "Bio" %}
@@ -193,6 +199,7 @@
             <div class="row">
               <div class="col-md-6">
                 <div class="mb-3">
+<<<<<<< HEAD
                   <label for="{{ profile_form.website.id_for_label }}" class="form-label">{% trans 'Website' %}</label>
                   {{ profile_form.website }}
                   {% if profile_form.website.errors %}
@@ -203,6 +210,8 @@
 
               <div class="col-md-6">
                 <div class="mb-3">
+=======
+>>>>>>> 1ab1a4c (VPS version)
                   <label for="{{ profile_form.linkedin.id_for_label }}" class="form-label">{% trans 'LinkedIn' %}</label>
                   {{ profile_form.linkedin }}
                   {% if profile_form.linkedin.errors %}

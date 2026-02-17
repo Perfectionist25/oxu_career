@@ -31,7 +31,10 @@ urlpatterns = [
     
     # ============ HTML ЛОГИН СТРАНИЦЫ (EMPLOYER/ADMIN ONLY) ============
     path("employer-login/", views.employer_login, name="employer_login"),
+<<<<<<< HEAD
     path("login/", views.employer_login, name="login"),
+=======
+>>>>>>> 1ab1a4c (VPS version)
     path("admin-login/", views.admin_login, name="admin_login"),
     path("logout/", views.logout_view, name="logout"),
     
