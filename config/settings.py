@@ -13,7 +13,6 @@ from datetime import timedelta
 # ==========================
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-<<<<<<< HEAD
 
 def _resolve_path_from_env(var_name: str, default_dir_name: str) -> Path:
     raw = (os.getenv(var_name) or "").strip()
@@ -30,7 +29,7 @@ def _resolve_path_from_env(var_name: str, default_dir_name: str) -> Path:
 # Render detection (самый надёжный маркер)
 =======
 # Render detection
->>>>>>> 1ab1a4c (VPS version)
+
 RENDER_HOST = os.getenv("RENDER_EXTERNAL_HOSTNAME", "").strip()
 IS_RENDER = bool(os.getenv("RENDER_EXTERNAL_HOSTNAME"))
 
