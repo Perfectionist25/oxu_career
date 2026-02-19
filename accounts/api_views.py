@@ -82,8 +82,12 @@ def exchange_code_for_token(code: str) -> dict:
     config = get_oauth_config()
     
     try:
+        token_url = config["token_url"]
+        if not token_url.startswith("http"):
+            token_url = f"{config['base_url']}{token_url}"
+
         response = requests.post(
-            f"{config['base_url']}{config['token_url']}",
+            token_url,
             data={
                 "grant_type": "authorization_code",
                 "code": code,
@@ -111,8 +115,12 @@ def fetch_oauth_user_info(access_token: str) -> dict:
     config = get_oauth_config()
     
     try:
+        userinfo_url = config["userinfo_url"]
+        if not userinfo_url.startswith("http"):
+            userinfo_url = f"{config['base_url']}{userinfo_url}"
+
         response = requests.get(
-            f"{config['base_url']}{config['userinfo_url']}",
+            userinfo_url,
             headers={
                 "Authorization": f"Bearer {access_token}",
                 "Accept": "application/json"

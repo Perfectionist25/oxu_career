@@ -2,6 +2,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
+from accounts.api.views import oauth_callback
+from accounts.views import oauth_login
 from core import views as core_views
 from django.apps import apps
 
@@ -17,6 +19,8 @@ urlpatterns = [
     path("employers/", include(("employers.urls", "employers"), namespace="employers")),
     path("cvbuilder/", include(("cvbuilder.urls", "cvbuilder"), namespace="cvbuilder")),
     path("accounts/", include(("accounts.urls", "accounts"), namespace="accounts")),
+    path("oauth/login/", oauth_login, name="oauth_login"),
+    path("oauth/callback/", oauth_callback, name="oauth_callback"),
     path("admin/stats/", core_views.admin_stats, name="admin_stats"),
     path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     path('api/accounts/', include(('accounts.api.urls','accounts_api'), namespace='accounts_api')),

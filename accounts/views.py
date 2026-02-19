@@ -52,9 +52,9 @@ def oauth_login(request):
 
     params = {
         "response_type": "code",
-        "client_id": settings.OAUTH2_CLIENT_ID,
-        "redirect_uri": settings.OAUTH2_REDIRECT_URI,
-        "scope": settings.OAUTH2_SCOPE,
+        "client_id": settings.OAUTH_CLIENT_ID,
+        "redirect_uri": settings.OAUTH_REDIRECT_URI,
+        "scope": settings.OAUTH_SCOPE,
         "state": state,
     }
     url = settings.OAUTH_AUTHORIZE_URL + "?" + urlencode(params)

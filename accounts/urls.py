@@ -4,9 +4,8 @@ from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 
 from . import views
+from .api.views import oauth_callback, oauth_user_info
 from .api_views import (
-    oauth_callback, 
-    oauth_user_info,
     oauth_refresh_token,
     oauth_logout,
     StudentDashboardAPI,

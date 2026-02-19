@@ -414,21 +414,26 @@ EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES = ("auth_", "django_")
 # ==========================
 # OAUTH (custom integration)
 # ==========================
-OAUTH2_PROVIDER_NAME = "oxu"
-OAUTH2_CLIENT_ID = os.getenv("OAUTH2_CLIENT_ID")
-OAUTH2_CLIENT_SECRET = os.getenv("OAUTH2_CLIENT_SECRET")
-
-OAUTH2_BASE_URL = "https://digital.oxu.uz/oauth2"
-OAUTH2_AUTHORIZE_URL = f"{OAUTH2_BASE_URL}/authorize"
-OAUTH2_TOKEN_URL = f"{OAUTH2_BASE_URL}/token.asp"
-OAUTH2_USERINFO_URL = f"{OAUTH2_BASE_URL}/userinfo.asp"
-OAUTH2_SCOPE = "openid profile email phone"
+OAUTH_PROVIDER_NAME = "oxu"
 OAUTH_AUTHORIZE_URL = "https://digital.oxu.uz/oauth2/authorize.asp"
+OAUTH_TOKEN_URL = "https://digital.oxu.uz/oauth2/token.asp"
+OAUTH_USERINFO_URL = "https://digital.oxu.uz/oauth2/userinfo.asp"
+OAUTH_CLIENT_ID = os.getenv("OAUTH2_CLIENT_ID")
+OAUTH_CLIENT_SECRET = os.getenv("OAUTH2_CLIENT_SECRET")
+OAUTH_REDIRECT_URI = "https://career.oxu.uz/oauth/callback/"
+OAUTH_SCOPE = "openid profile email phone"
+OAUTH_SUCCESS_REDIRECT = "/"
 
-if DEBUG:
-    OAUTH2_REDIRECT_URI = "http://localhost:8000/oauth/callback/"
-else:
-    OAUTH2_REDIRECT_URI = "https://career.oxu.uz/oauth/callback/"
+# Backward-compatible aliases for legacy modules that still read OAUTH2_* keys.
+OAUTH2_PROVIDER_NAME = OAUTH_PROVIDER_NAME
+OAUTH2_CLIENT_ID = OAUTH_CLIENT_ID
+OAUTH2_CLIENT_SECRET = OAUTH_CLIENT_SECRET
+OAUTH2_BASE_URL = "https://digital.oxu.uz/oauth2"
+OAUTH2_AUTHORIZE_URL = OAUTH_AUTHORIZE_URL
+OAUTH2_TOKEN_URL = OAUTH_TOKEN_URL
+OAUTH2_USERINFO_URL = OAUTH_USERINFO_URL
+OAUTH2_SCOPE = OAUTH_SCOPE
+OAUTH2_REDIRECT_URI = OAUTH_REDIRECT_URI
 
 OAUTH_MICROSERVICE_URL = os.environ.get("OAUTH_MICROSERVICE_URL", "https://oauth-microservice.local")
 OAUTH_SERVICE_TOKEN = os.environ.get("OAUTH_SERVICE_TOKEN", "")

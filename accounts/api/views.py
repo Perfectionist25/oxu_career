@@ -1,4 +1,4 @@
-# accounts/api/views.py
+import uuid
 import requests
 
 from django.conf import settings
@@ -20,7 +20,7 @@ def oauth_user_info(request):
         "id": user.id,
         "email": user.email,
         "username": user.username,
-        "full_name": getattr(user, "full_name", ""),  # если добавил поле
+        "full_name": getattr(user, "full_name", ""),
         "is_authenticated": user.is_authenticated,
     })
 
@@ -33,6 +33,12 @@ def oauth_callback(request):
     code = request.GET.get("code")
     if not code:
         return HttpResponseBadRequest("No code provided")
+
+    state = request.GET.get("state")
+    session_state = request.session.get("oauth_state")
+    if not state or not session_state or state != session_state:
+        return HttpResponseBadRequest("Invalid state")
+    request.session.pop("oauth_state", None)
 
     # 1) Exchange code -> token
     token_response = requests.post(
@@ -78,37 +84,41 @@ def oauth_callback(request):
     )
     full_name = (user_data.get("full_name") or user_data.get("name") or "").strip()
 
+    if oauth_uid:
+        oauth_uid = str(oauth_uid).strip()
+
     if not email and not oauth_uid:
         return HttpResponseBadRequest("No email or uid from OAuth provider")
 
-    provider_name = getattr(settings, "OAUTH_PROVIDER_NAME", "hemis")  # можешь задать в settings.py
+    provider_name = getattr(settings, "OAUTH_PROVIDER_NAME", "oxu")
 
     # 3) Get or create user
-    # Сначала пытаемся найти по oauth_uid (надёжнее, чем email)
     with transaction.atomic():
         user = None
         created = False
 
         if oauth_uid:
-            user = User.objects.filter(oauth_uid=str(oauth_uid)).first()
+            user = User.objects.filter(oauth_uid=oauth_uid).first()
 
         if not user and email:
             user = User.objects.filter(email=email).first()
 
         if not user:
-            # Создаём нового студента
-            username = email if email else f"{provider_name}_{oauth_uid}"
+            base_username = email if email else f"{provider_name}_{oauth_uid or 'user'}"
+            username = base_username
+            while User.objects.filter(username=username).exists():
+                username = f"{base_username}_{uuid.uuid4().hex[:8]}"
+
             user = User.objects.create(
                 email=email if email else "",
                 username=username,
                 is_active=True,
                 user_type="student",  # чтобы создался StudentProfile через сигнал
                 oauth_provider=provider_name,
-                oauth_uid=str(oauth_uid) if oauth_uid else None,
+                oauth_uid=oauth_uid or None,
             )
             created = True
 
-        # Обновляем provider/uid, если не заполнены (НЕ трогаем, если уже есть)
         updates = []
 
         if not getattr(user, "oauth_provider", None):
@@ -116,12 +126,9 @@ def oauth_callback(request):
             updates.append("oauth_provider")
 
         if oauth_uid and not getattr(user, "oauth_uid", None):
-            user.oauth_uid = str(oauth_uid)
+            user.oauth_uid = oauth_uid
             updates.append("oauth_uid")
 
-        # Главное: ФИО пишем ТОЛЬКО 1 раз и сразу lock
-        # - если created -> ставим
-        # - если не created -> ставим только если пусто и не залочено
         if hasattr(user, "full_name") and hasattr(user, "full_name_locked"):
             if created:
                 if full_name:
@@ -143,5 +150,5 @@ def oauth_callback(request):
             user.save(update_fields=list(set(updates)))
 
     # 4) Login & redirect
-    login(request, user)
+    login(request, user, backend=settings.AUTHENTICATION_BACKENDS[0])
     return redirect(settings.OAUTH_SUCCESS_REDIRECT)
