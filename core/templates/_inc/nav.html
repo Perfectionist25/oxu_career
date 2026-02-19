@@ -265,7 +265,7 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end p-3">
                                     <li>
-                                        <a class="dropdown-item" href="{% url 'oauth_login' %}">
+                                        <a class="dropdown-item" href="{% url 'accounts:oauth_login' %}">
                                             <div class="d-flex align-items-center">
                                                 <i class="fas fa-graduation-cap text-success me-2"></i>
                                                 <div>
@@ -430,7 +430,7 @@
             {% else %}
                 <!-- Кнопки входа в сайдбаре -->
                 <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{% url 'oauth_login' %}">
+                    <a class="nav-link d-flex align-items-center" href="{% url 'accounts:oauth_login' %}">
                         <i class="fas fa-graduation-cap me-3"></i>
                         <span>{% trans "Login as Student" %}</span>
                     </a>
