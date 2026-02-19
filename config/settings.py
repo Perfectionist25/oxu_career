@@ -58,11 +58,8 @@ DEFAULT_CSRF_TRUSTED = [
     "https://www.career.oxu.uz",
 ]
 
-extra_csrf = os.getenv("CSRF_TRUSTED_ORIGINS", "").strip()
-if extra_csrf:
-    DEFAULT_CSRF_TRUSTED += [x.strip() for x in extra_csrf.split(",") if x.strip()]
+CSRF_TRUSTED_ORIGINS = ["https://career.oxu.uz"]
 
-CSRF_TRUSTED_ORIGINS = list(dict.fromkeys(DEFAULT_CSRF_TRUSTED))
 
 if DEBUG:
     SITE_URL = "http://localhost:8000"
@@ -444,7 +441,7 @@ OAUTH_ALLOWED_UNIVERSITIES = [
 # ==========================
 # Если SSL реально настроен (nginx + certbot), включи True.
 # Сейчас у тебя в файле было противоречие: включено и тут же выключено.
-SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", default=False)
+SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = env_bool("SESSION_COOKIE_SECURE", default=False)
 CSRF_COOKIE_SECURE = env_bool("CSRF_COOKIE_SECURE", default=False)
 
