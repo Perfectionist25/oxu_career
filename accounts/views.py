@@ -40,6 +40,27 @@ from .forms import (
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
+from urllib.parse import urlencode
+from django.conf import settings
+from django.shortcuts import redirect
+from django.utils.crypto import get_random_string
+
+
+def oauth_login(request):
+    state = get_random_string(40)
+    request.session["oauth_state"] = state
+
+    params = {
+        "response_type": "code",
+        "client_id": settings.OAUTH2_CLIENT_ID,
+        "redirect_uri": settings.OAUTH2_REDIRECT_URI,
+        "scope": settings.OAUTH2_SCOPE,
+        "state": state,
+    }
+    url = settings.OAUTH_AUTHORIZE_URL + "?" + urlencode(params)
+    return redirect(url)
+
+
 
 
 class CustomTokenObtainSerializer(TokenObtainPairSerializer):

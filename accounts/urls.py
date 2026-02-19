@@ -5,7 +5,6 @@ from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 
 from . import views
 from .api_views import (
-    oauth_login, 
     oauth_callback, 
     oauth_user_info,
     oauth_refresh_token,
@@ -17,7 +16,7 @@ app_name = "accounts"
 
 urlpatterns = [
     # ============ OAUTH ДЛЯ СТУДЕНТОВ ============
-    path("oauth/login/", oauth_login, name="oauth_login"),
+    path("oauth/login/", views.oauth_login, name="oauth_login"),
     path("oauth/callback/", oauth_callback, name="oauth_callback"),
     path("oauth/user-info/", oauth_user_info, name="oauth_user_info"),
     path("oauth/refresh/", oauth_refresh_token, name="oauth_refresh"),
