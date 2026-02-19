@@ -423,6 +423,7 @@ OAUTH2_AUTHORIZE_URL = f"{OAUTH2_BASE_URL}/authorize"
 OAUTH2_TOKEN_URL = f"{OAUTH2_BASE_URL}/token.asp"
 OAUTH2_USERINFO_URL = f"{OAUTH2_BASE_URL}/userinfo.asp"
 OAUTH2_SCOPE = "openid profile email phone"
+OAUTH_AUTHORIZE_URL = "https://digital.oxu.uz/oauth2/authorize.asp"
 
 if DEBUG:
     OAUTH2_REDIRECT_URI = "http://localhost:8000/oauth/callback/"

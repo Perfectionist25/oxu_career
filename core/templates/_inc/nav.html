@@ -265,7 +265,7 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end p-3">
                                     <li>
-                                        <a class="dropdown-item" href="https://digital.oxu.uz/oauth2/authorize.asp?response_type=code&client_id=ТВОЙ_CLIENT_ID&redirect_uri=https://oxu_career.onrender.com/oauth/callback/&scope=read profile">
+                                        <a class="dropdown-item" href="{{ OAUTH_AUTHORIZE_URL }}?response_type=code&client_id={{ OAUTH2_CLIENT_ID }}&redirect_uri={{ OAUTH2_REDIRECT_URI }}&scope=read profile">
                                             <div class="d-flex align-items-center">
                                                 <i class="fas fa-graduation-cap text-success me-2"></i>
                                                 <div>
@@ -430,7 +430,7 @@
             {% else %}
                 <!-- Кнопки входа в сайдбаре -->
                 <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="https://digital.oxu.uz/oauth2/authorize.asp?response_type=code&client_id=ТВОЙ_CLIENT_ID&redirect_uri=https://oxu_career.onrender.com/oauth/callback/&scope=read profile">
+                    <a class="nav-link d-flex align-items-center" href="{{ OAUTH_AUTHORIZE_URL }}?response_type=code&client_id={{ OAUTH2_CLIENT_ID }}&redirect_uri={{ OAUTH2_REDIRECT_URI }}&scope=read profile">
                         <i class="fas fa-graduation-cap me-3"></i>
                         <span>{% trans "Login as Student" %}</span>
                     </a>
