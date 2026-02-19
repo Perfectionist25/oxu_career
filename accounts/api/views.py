@@ -8,8 +8,20 @@ from django.shortcuts import redirect
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from urllib.parse import urlencode
 
 User = get_user_model()
+
+
+def oauth_login(request):
+    params = {
+        "response_type": "code",
+        "client_id": settings.OAUTH2_CLIENT_ID,
+        "redirect_uri": settings.OAUTH2_REDIRECT_URI,
+        "scope": "read profile",
+    }
+    url = settings.OAUTH_AUTHORIZE_URL + "?" + urlencode(params)
+    return redirect(url)
 
 
 @login_required
