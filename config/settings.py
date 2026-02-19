@@ -425,11 +425,9 @@ OAUTH2_USERINFO_URL = f"{OAUTH2_BASE_URL}/userinfo.asp"
 OAUTH2_SCOPE = "openid profile email phone"
 
 if DEBUG:
-    OAUTH2_REDIRECT_URI = "http://localhost:8000/accounts/oauth/callback/"
-elif IS_RENDER:
-    OAUTH2_REDIRECT_URI = f"https://{RENDER_HOST}/accounts/oauth/callback/"
+    OAUTH2_REDIRECT_URI = "http://localhost:8000/oauth/callback/"
 else:
-    OAUTH2_REDIRECT_URI = "https://career.oxu.uz/accounts/oauth/callback/"
+    OAUTH2_REDIRECT_URI = "https://career.oxu.uz/oauth/callback/"
 
 OAUTH_MICROSERVICE_URL = os.environ.get("OAUTH_MICROSERVICE_URL", "https://oauth-microservice.local")
 OAUTH_SERVICE_TOKEN = os.environ.get("OAUTH_SERVICE_TOKEN", "")
