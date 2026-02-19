@@ -321,10 +321,12 @@ CKEDITOR_5_UPLOAD_FILE_TYPES = ["jpeg", "jpg", "png", "gif", "bmp", "webp", "svg
 # ==========================
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = "/var/www/career/static"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+#STATIC_ROOT = "/var/www/career/static"
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = "/var/www/career/media"
+MEDIA_ROOT = BASE_DIR / "media"
+#MEDIA_ROOT = "/var/www/career/media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
