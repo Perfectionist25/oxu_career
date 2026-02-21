@@ -326,7 +326,7 @@ def oauth_callback(request):
             httponly=True,
             secure=cookie_secure,
             samesite=same_site,
-            max_age=int(getattr(settings, "SIMPLE_JWT", {}).get("ACCESS_TOKEN_LIFETIME", timedelta(minutes=60)).total_seconds()),
+            max_age=int(getattr(settings, "SIMPLE_JWT", {}).get("ACCESS_TOKEN_LIFETIME", timedelta(minutes=20)).total_seconds()),
         )
         response.set_cookie(
             getattr(settings, "OAUTH_REFRESH_COOKIE_NAME", "student_refresh"),
