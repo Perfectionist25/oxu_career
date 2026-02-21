@@ -459,6 +459,15 @@ SESSION_COOKIE_AGE = 86400
 SESSION_COOKIE_SAMESITE = "Lax"
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 
+# OAuth student session/token controls
+OAUTH_STATE_TTL = int(os.getenv("OAUTH_STATE_TTL", "600"))  # 10 minutes
+OAUTH_STUDENT_SESSION_AGE = int(
+    os.getenv("OAUTH_STUDENT_SESSION_AGE", str(SESSION_COOKIE_AGE))
+)
+OAUTH_SET_TOKEN_COOKIES = env_bool("OAUTH_SET_TOKEN_COOKIES", default=True)
+OAUTH_ACCESS_COOKIE_NAME = os.getenv("OAUTH_ACCESS_COOKIE_NAME", "student_access")
+OAUTH_REFRESH_COOKIE_NAME = os.getenv("OAUTH_REFRESH_COOKIE_NAME", "student_refresh")
+
 if not DEBUG:
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True

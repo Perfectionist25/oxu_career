@@ -1,95 +1,76 @@
 {% extends 'base.html' %}
-{% load static %}
 {% load i18n %}
 
 {% block title %}{% trans "My Applications" %}{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-  <div class="row">
-    <div class="col-lg-3">
-      <div class="card shadow-sm sticky-top" style="top: 20px;">
-        <div class="card-header bg-primary text-white">
-          <h5 class="mb-0">{% trans "Filter" %}</h5>
-        </div>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="mb-0">{% trans "My Applications" %}</h3>
+        <a href="{% url 'jobs:list' %}" class="btn btn-sm btn-outline-primary">
+            {% trans "Browse Jobs" %}
+        </a>
+    </div>
+
+    <div class="row g-2 mb-3">
+        <div class="col-md-2 col-6"><div class="card card-body py-2"><small>{% trans "Total" %}</small><strong>{{ stats.total }}</strong></div></div>
+        <div class="col-md-2 col-6"><div class="card card-body py-2"><small>{% trans "Applied" %}</small><strong>{{ stats.applied }}</strong></div></div>
+        <div class="col-md-2 col-6"><div class="card card-body py-2"><small>{% trans "Under Review" %}</small><strong>{{ stats.reviewed }}</strong></div></div>
+        <div class="col-md-2 col-6"><div class="card card-body py-2"><small>{% trans "Shortlisted" %}</small><strong>{{ stats.shortlisted }}</strong></div></div>
+        <div class="col-md-2 col-6"><div class="card card-body py-2"><small>{% trans "Interview" %}</small><strong>{{ stats.interview }}</strong></div></div>
+        <div class="col-md-2 col-6"><div class="card card-body py-2"><small>{% trans "Hired" %}</small><strong>{{ stats.hired }}</strong></div></div>
+    </div>
+
+    <div class="card shadow-sm mb-3">
         <div class="card-body">
-          <form method="get" class="mb-3">
-            <div class="mb-3">
-              <label for="status" class="form-label">{% trans "Status" %}</label>
-              <select name="status" id="status" class="form-select form-select-sm">
-                <option value="">{% trans "All" %}</option>
-                <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>{% trans "Pending" %}</option>
-                <option value="reviewing" {% if request.GET.status == 'reviewing' %}selected{% endif %}>{% trans "Reviewing" %}</option>
-                <option value="accepted" {% if request.GET.status == 'accepted' %}selected{% endif %}>{% trans "Accepted" %}</option>
-                <option value="rejected" {% if request.GET.status == 'rejected' %}selected{% endif %}>{% trans "Rejected" %}</option>
-              </select>
-            </div>
-            <button type="submit" class="btn btn-primary btn-sm w-100">{% trans "Filter" %}</button>
-            <a href="{% url 'jobs:my_applications' %}" class="btn btn-outline-secondary btn-sm w-100 mt-2">{% trans "Reset" %}</a>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-lg-9">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3>{% trans "My Applications" %} ({{ applications.count }})</h3>
-      </div>
-
-      {% if applications %}
-        <div class="row">
-          {% for application in applications %}
-            <div class="col-md-12 mb-3">
-              <div class="card shadow-sm">
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col-md-8">
-                      <h5 class="card-title">
-                        <a href="{% url 'jobs:job_detail' application.job.pk %}" class="text-decoration-none">
-                          {{ application.job.title }}
-                        </a>
-                      </h5>
-                      <p class="text-muted mb-2">
-                        <strong>{% trans "Company" %}:</strong> {{ application.job.company.name }}
-                      </p>
-                      <p class="text-muted mb-2">
-                        <strong>{% trans "Applied" %}:</strong> 
-                        {{ application.created_at|date:"SHORT_DATE_FORMAT" }}
-                      </p>
-                      {% if application.note %}
-                        <div class="alert alert-info alert-sm mb-0 py-2">
-                          <small><strong>{% trans "Note" %}:</strong> {{ application.note }}</small>
-                        </div>
-                      {% endif %}
-                    </div>
-                    <div class="col-md-4 text-end">
-                      <div class="mb-2">
-                        <span class="badge 
-                          {% if application.status == 'pending' %}bg-warning
-                          {% elif application.status == 'reviewing' %}bg-info
-                          {% elif application.status == 'accepted' %}bg-success
-                          {% else %}bg-danger{% endif %}">
-                          {{ application.get_status_display }}
-                        </span>
-                      </div>
-                      <a href="{% url 'jobs:application_detail' application.pk %}" class="btn btn-sm btn-outline-primary">
-                        {% trans "View Details" %}
-                      </a>
-                    </div>
-                  </div>
+            <form method="get" class="row g-2 align-items-end">
+                <div class="col-md-4">
+                    <label for="status" class="form-label mb-1">{% trans "Status" %}</label>
+                    <select class="form-select form-select-sm" id="status" name="status">
+                        <option value="">{% trans "All" %}</option>
+                        {% for value, label in status_choices %}
+                            <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
-              </div>
-            </div>
-          {% endfor %}
+                <div class="col-md-8">
+                    <button type="submit" class="btn btn-sm btn-primary">{% trans "Filter" %}</button>
+                    <a href="{% url 'jobs:my_applications' %}" class="btn btn-sm btn-outline-secondary">{% trans "Reset" %}</a>
+                </div>
+            </form>
         </div>
-      {% else %}
-        <div class="alert alert-info">
-          <i class="fas fa-info-circle me-2"></i>
-          {% trans "You haven't applied for any jobs yet." %}
-          <a href="{% url 'jobs:list' %}">{% trans "Browse jobs" %}</a>
-        </div>
-      {% endif %}
     </div>
-  </div>
+
+    <div class="card shadow-sm">
+        <div class="list-group list-group-flush">
+            {% for application in applications %}
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-start gap-3">
+                        <div>
+                            <h6 class="mb-1">
+                                <a href="{% url 'jobs:job_detail' application.job.pk %}" class="text-decoration-none">
+                                    {{ application.job.title }}
+                                </a>
+                            </h6>
+                            <p class="mb-1 text-muted">{{ application.job.company.name }}</p>
+                            <small class="text-muted">{{ application.created_at|date:"d.m.Y H:i" }}</small>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-primary">{{ application.get_status_display }}</span>
+                            <div class="mt-2">
+                                <a href="{% url 'jobs:application_detail' application.pk %}" class="btn btn-sm btn-outline-primary">
+                                    {% trans "View Details" %}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="list-group-item py-4 text-center text-muted">
+                    {% trans "You haven't applied for any jobs yet." %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 </div>
 {% endblock %}

@@ -1,16 +1,20 @@
 import json
 import logging
 from datetime import datetime, timedelta
+from pathlib import Path
+from urllib.parse import urlparse
+import base64
 
 import requests
 from django.conf import settings
-from django.contrib.auth import get_user_model, login
+from django.contrib.auth import get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils import timezone
+from django.core.files.base import ContentFile
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from rest_framework import status
@@ -25,6 +29,74 @@ from accounts.views import create_user_activity, get_client_ip
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
+
+
+def _pick(data, *keys):
+    for key in keys:
+        value = data.get(key)
+        if value is None:
+            continue
+        if isinstance(value, str):
+            value = value.strip()
+        if value != "":
+            return value
+    return None
+
+
+def _guess_ext(content_type=None, source_url=None):
+    if content_type:
+        ct = content_type.lower()
+        if "jpeg" in ct or "jpg" in ct:
+            return ".jpg"
+        if "png" in ct:
+            return ".png"
+        if "webp" in ct:
+            return ".webp"
+        if "gif" in ct:
+            return ".gif"
+    if source_url:
+        suffix = Path(urlparse(source_url).path).suffix.lower()
+        if suffix in {".jpg", ".jpeg", ".png", ".webp", ".gif"}:
+            return suffix
+    return ".jpg"
+
+
+def _save_user_avatar(user, picture):
+    if not picture or not isinstance(picture, str):
+        return False
+
+    picture = picture.strip()
+    if not picture:
+        return False
+
+    content = None
+    ext = ".jpg"
+    try:
+        if picture.startswith("data:image/") and ";base64," in picture:
+            header, b64data = picture.split(";base64,", 1)
+            ext = _guess_ext(content_type=header.replace("data:", ""))
+            content = base64.b64decode(b64data)
+        elif picture.startswith("http://") or picture.startswith("https://"):
+            resp = requests.get(picture, timeout=10)
+            if resp.status_code != 200 or not resp.content:
+                return False
+            ext = _guess_ext(resp.headers.get("Content-Type"), picture)
+            content = resp.content
+    except Exception:
+        return False
+
+    if not content:
+        return False
+
+    filename = f"oauth_avatar_{user.pk}_{timezone.now().strftime('%Y%m%d%H%M%S')}{ext}"
+    user.avatar.save(filename, ContentFile(content), save=False)
+    user.save(update_fields=["avatar", "updated_at"])
+
+    profile = StudentProfile.objects.filter(user=user).first()
+    if profile:
+        profile.avatar = user.avatar
+        profile.save(update_fields=["avatar", "updated_at"])
+    return True
 
 
 # ==========================
@@ -139,10 +211,16 @@ def find_or_create_student_user(oauth_user_data: dict) -> tuple:
     Find or create student user based on OAuth data
     Returns: (user, created)
     """
-    external_id = oauth_user_data.get("sub") or oauth_user_data.get("id")
-    email = oauth_user_data.get("email", "").strip().lower()
-    username = oauth_user_data.get("preferred_username") or oauth_user_data.get("username")
-    phone = oauth_user_data.get("phone_number")
+    external_id = _pick(oauth_user_data, "user_id", "sub", "id", "uid")
+    email_raw = _pick(oauth_user_data, "email")
+    email = email_raw.lower() if isinstance(email_raw, str) else ""
+    username = _pick(oauth_user_data, "login", "preferred_username", "username")
+    phone = _pick(oauth_user_data, "phone_number", "phone")
+    first_name = _pick(oauth_user_data, "ism", "given_name", "first_name") or ""
+    last_name = _pick(oauth_user_data, "fam", "family_name", "last_name") or ""
+    middle_name = _pick(oauth_user_data, "otasi", "middle_name", "patronymic") or ""
+    full_name = _pick(oauth_user_data, "full_name", "name") or ""
+    picture = _pick(oauth_user_data, "picture", "avatar", "photo", "image")
     
     if not external_id:
         raise ValueError("No external ID in OAuth response")
@@ -162,7 +240,7 @@ def find_or_create_student_user(oauth_user_data: dict) -> tuple:
                 # Update oauth_uid for existing student
                 user.oauth_uid = external_id
                 user.oauth_provider = "oxu"
-                user.save()
+                user.save(update_fields=["oauth_uid", "oauth_provider", "updated_at"])
                 logger.info(f"Updated existing student user with OAuth ID: {user.username}")
             except User.DoesNotExist:
                 pass
@@ -175,7 +253,7 @@ def find_or_create_student_user(oauth_user_data: dict) -> tuple:
         # Generate unique username if not provided
         if not username or User.objects.filter(username=username).exists():
             import uuid
-            username = f"student_{external_id[:8]}_{uuid.uuid4().hex[:6]}"
+            username = f"student_{str(external_id)[:8]}_{uuid.uuid4().hex[:6]}"
         
         # Handle duplicate email
         if email and User.objects.filter(email=email).exists():
@@ -183,14 +261,11 @@ def find_or_create_student_user(oauth_user_data: dict) -> tuple:
             email = f"{email.split('@')[0]}+{external_id[:4]}@{email.split('@')[1]}"
         
         # Extract names from OAuth data
-        first_name = oauth_user_data.get("given_name") or oauth_user_data.get("first_name", "")
-        last_name = oauth_user_data.get("family_name") or oauth_user_data.get("last_name", "")
-        
         # Create user with transaction for safety
         with transaction.atomic():
             user = User.objects.create(
                 username=username,
-                email=email if email else None,
+                email=email if email else "",
                 first_name=first_name,
                 last_name=last_name,
                 phone_number=phone,
@@ -225,6 +300,41 @@ def find_or_create_student_user(oauth_user_data: dict) -> tuple:
             
             created = True
             logger.info(f"Created new student user: {user.username}")
+
+    updates = []
+    if username and user.username != username and not User.objects.filter(username=username).exclude(pk=user.pk).exists():
+        user.username = username
+        updates.append("username")
+    if first_name and user.first_name != first_name:
+        user.first_name = first_name
+        updates.append("first_name")
+    if last_name and user.last_name != last_name:
+        user.last_name = last_name
+        updates.append("last_name")
+    if full_name and getattr(user, "full_name", "") != full_name:
+        user.full_name = full_name
+        user.full_name_locked = True
+        updates.extend(["full_name", "full_name_locked"])
+    if phone and str(user.phone_number or "") != phone:
+        user.phone_number = phone
+        updates.append("phone_number")
+    if middle_name:
+        middle_tag = f"Middle name: {middle_name}"
+        bio_current = (user.bio or "").strip()
+        if middle_tag not in bio_current:
+            user.bio = f"{bio_current}\n{middle_tag}" if bio_current else middle_tag
+            updates.append("bio")
+    if updates:
+        user.save(update_fields=list(set(updates)))
+
+    if external_id:
+        student_profile, _ = StudentProfile.objects.get_or_create(user=user)
+        if not student_profile.student_id:
+            student_profile.student_id = str(external_id)
+            student_profile.save(update_fields=["student_id", "updated_at"])
+
+    if picture:
+        _save_user_avatar(user, picture)
     
     return user, created
 
@@ -521,9 +631,12 @@ def oauth_refresh_token(request):
         serializer = TokenRefreshSerializer(data={'refresh': refresh_token})
         if serializer.is_valid():
             data = serializer.validated_data
-            return Response({
+            response_payload = {
                 "access": data['access'],
-            }, status=status.HTTP_200_OK)
+            }
+            if "refresh" in data:
+                response_payload["refresh"] = data["refresh"]
+            return Response(response_payload, status=status.HTTP_200_OK)
         else:
             return Response(
                 {"error": "Invalid refresh token"},
@@ -559,13 +672,18 @@ def oauth_logout(request):
     except Exception as e:
         logger.warning(f"Failed to log logout activity: {str(e)}")
     
-    # Note: In SimpleJWT, tokens are stateless.
-    # To invalidate on server side, you'd need token blacklisting
-    # For now, we just return success - client should delete tokens
-    
-    return Response({
+    if request.user.is_authenticated:
+        logout(request)
+
+    response = Response({
         "message": "Logged out successfully"
     }, status=status.HTTP_200_OK)
+
+    access_cookie = getattr(settings, "OAUTH_ACCESS_COOKIE_NAME", "student_access")
+    refresh_cookie = getattr(settings, "OAUTH_REFRESH_COOKIE_NAME", "student_refresh")
+    response.delete_cookie(access_cookie)
+    response.delete_cookie(refresh_cookie)
+    return response
 
 
 # ==========================

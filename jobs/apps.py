@@ -8,4 +8,4 @@ class JobsConfig(AppConfig):
     verbose_name = _("Jobs")
 
     def ready(self):
-        pass
+        import jobs.signals  # noqa: F401

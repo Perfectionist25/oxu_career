@@ -49,6 +49,8 @@ from django.utils.crypto import get_random_string
 def oauth_login(request):
     state = get_random_string(40)
     request.session["oauth_state"] = state
+    request.session["oauth_next"] = request.GET.get("next", settings.OAUTH_SUCCESS_REDIRECT)
+    request.session.set_expiry(getattr(settings, "OAUTH_STATE_TTL", 600))
 
     params = {
         "response_type": "code",
@@ -569,7 +571,13 @@ def logout_view(request):
     
     logout(request)
     messages.success(request, _("You have been logged out"))
-    return redirect("core:home")
+
+    response = redirect("core:home")
+    access_cookie = getattr(settings, "OAUTH_ACCESS_COOKIE_NAME", "student_access")
+    refresh_cookie = getattr(settings, "OAUTH_REFRESH_COOKIE_NAME", "student_refresh")
+    response.delete_cookie(access_cookie)
+    response.delete_cookie(refresh_cookie)
+    return response
 
 
 # ============ STUDENT VIEWS ============
@@ -591,8 +599,8 @@ def student_dashboard(request):
             "resumes_created": resumes.count(),
             "active_resumes": resumes.filter(status='published').count(),
             "jobs_applied": applications.count(),
-            "pending_applications": applications.filter(status="pending").count(),
-            "accepted_applications": applications.filter(status="accepted").count(),
+            "pending_applications": applications.filter(status="applied").count(),
+            "accepted_applications": applications.filter(status="hired").count(),
             "profile_views": request.user.profile_views or 0,
         },
         "recent_applications": applications.select_related('job', 'job__company').order_by('-created_at')[:5],
@@ -602,6 +610,8 @@ def student_dashboard(request):
             Q(title__icontains=student_profile.specialty) | Q(description__icontains=student_profile.specialty)
         )[:5] if student_profile.specialty else Job.objects.none(),
         "recent_activity": UserActivity.objects.filter(user=request.user).order_by('-created_at')[:10],
+        "recent_activities": UserActivity.objects.filter(user=request.user).order_by('-created_at')[:10],
+        "recent_notifications": Notification.objects.filter(user=request.user).order_by("-created_at")[:5],
         "resumes": resumes,  # Добавляем в контекст
     }
     
@@ -1438,23 +1448,23 @@ def notifications(request):
     
     if notification_type:
         notifications_list = notifications_list.filter(notification_type=notification_type)
-    
-    unread_notifications = notifications_list.filter(is_read=False)
-    unread_notifications.update(is_read=True)
-    
+
     paginator = Paginator(notifications_list, 15)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
     
     return render(request, "accounts/notifications.html", {
+        "notifications": page_obj,
         "page_obj": page_obj,
         "notification_type": notification_type,
         "unread_count": Notification.objects.filter(user=request.user, is_read=False).count(),
         "type_stats": {
             "system": Notification.objects.filter(user=request.user, notification_type="system").count(),
-            "job": Notification.objects.filter(user=request.user, notification_type="job").count(),
-            "application": Notification.objects.filter(user=request.user, notification_type="application").count(),
-            "company": Notification.objects.filter(user=request.user, notification_type="company").count(),
+            "job_alert": Notification.objects.filter(user=request.user, notification_type="job_alert").count(),
+            "application_update": Notification.objects.filter(user=request.user, notification_type="application_update").count(),
+            "event": Notification.objects.filter(user=request.user, notification_type="event").count(),
+            "company_update": Notification.objects.filter(user=request.user, notification_type="company_update").count(),
+            "company_verification": Notification.objects.filter(user=request.user, notification_type="company_verification").count(),
         },
     })
 

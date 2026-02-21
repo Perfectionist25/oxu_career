@@ -814,19 +814,27 @@ def my_applications(request):
         .order_by("-created_at")
     )
 
+    status_filter = request.GET.get("status")
+    if status_filter in dict(JobApplication.STATUS_CHOICES):
+        applications = applications.filter(status=status_filter)
+
     # Статистики
+    user_applications = JobApplication.objects.filter(user=request.user)
     stats = {
-        'total': applications.count(),
-        'applied': applications.filter(status="applied").count(),
-        'reviewed': applications.filter(status="reviewed").count(),
-        'interview': applications.filter(status="interview").count(),
-        'hired': applications.filter(status="hired").count(),
-        'rejected': applications.filter(status="rejected").count(),
+        'total': user_applications.count(),
+        'applied': user_applications.filter(status="applied").count(),
+        'reviewed': user_applications.filter(status="reviewed").count(),
+        'shortlisted': user_applications.filter(status="shortlisted").count(),
+        'interview': user_applications.filter(status="interview").count(),
+        'hired': user_applications.filter(status="hired").count(),
+        'rejected': user_applications.filter(status="rejected").count(),
     }
 
     context = {
         "applications": applications,
         "stats": stats,
+        "status_filter": status_filter,
+        "status_choices": JobApplication.STATUS_CHOICES,
     }
     return render(request, "jobs/my_applications.html", context)
 

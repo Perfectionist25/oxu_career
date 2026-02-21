@@ -1,11 +1,13 @@
 from django.conf import settings
 from django.core.mail import send_mail
+from django.db.models.signals import pre_save
 from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 
+from accounts.models import Notification
 from .models import Job, JobAlert, JobApplication
 
 
@@ -36,6 +38,57 @@ def send_application_confirmation(sender, instance, created, **kwargs):
             html_message=html_message,
             fail_silently=True,
         )
+
+        employer_user = getattr(instance.job.company, "owner", None)
+        if employer_user and employer_user != instance.user:
+            Notification.objects.create(
+                user=employer_user,
+                notification_type="application_update",
+                title=_("New job application received"),
+                message=_("{candidate} applied for '{job_title}'.").format(
+                    candidate=instance.user.get_full_name() or instance.user.username,
+                    job_title=instance.job.title,
+                ),
+                related_url=instance.job.get_absolute_url(),
+                related_company=instance.job.company,
+            )
+
+
+@receiver(pre_save, sender=JobApplication)
+def track_previous_application_status(sender, instance, **kwargs):
+    """Cache previous status to detect status changes on post_save."""
+    if not instance.pk:
+        instance._previous_status = None
+        return
+    previous_status = (
+        JobApplication.objects.filter(pk=instance.pk)
+        .values_list("status", flat=True)
+        .first()
+    )
+    instance._previous_status = previous_status
+
+
+@receiver(post_save, sender=JobApplication)
+def notify_candidate_on_status_change(sender, instance, created, **kwargs):
+    """Send in-app notification to candidate when application status changes."""
+    if created:
+        return
+
+    previous_status = getattr(instance, "_previous_status", None)
+    if not previous_status or previous_status == instance.status:
+        return
+
+    Notification.objects.create(
+        user=instance.user,
+        notification_type="application_update",
+        title=_("Application status updated"),
+        message=_("Your application for '{job_title}' is now '{status}'.").format(
+            job_title=instance.job.title,
+            status=instance.get_status_display(),
+        ),
+        related_url=instance.job.get_absolute_url(),
+        related_company=instance.job.company,
+    )
 
 
 @receiver(post_save, sender=Job)
