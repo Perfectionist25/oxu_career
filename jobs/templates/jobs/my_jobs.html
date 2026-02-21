@@ -500,7 +500,7 @@
                                                 <li class="page-item active">
                                                     <span class="page-link">{{ num }}</span>
                                                 </li>
-                                            {% elif num > {% trans "jobs.number|add:'-3' and num" %} < jobs.number|add:'3' %}
+                                            {% elif num > jobs.number|add:'-3' and num < jobs.number|add:'3' %}
                                                 <li class="page-item">
                                                     <a class="page-link" href="?page={{ num }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if sort_by %}&sort_by={{ sort_by }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}">{{ num }}</a>
                                                 </li>
@@ -687,7 +687,7 @@
                                                 <li class="page-item active">
                                                     <span class="page-link">{{ num }}</span>
                                                 </li>
-                                            {% elif num > {% trans "applications.number|add:'-3' and num" %} < applications.number|add:'3' %}
+                                            {% elif num > applications.number|add:'-3' and num < applications.number|add:'3' %}
                                                 <li class="page-item">
                                                     <a class="page-link" href="?page={{ num }}{% if sort_by %}&sort_by={{ sort_by }}{% endif %}">{{ num }}</a>
                                                 </li>
