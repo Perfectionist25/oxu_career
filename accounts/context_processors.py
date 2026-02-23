@@ -16,10 +16,14 @@ def auth_context(request):
         unread_notifications_count = Notification.objects.filter(
             user=request.user, is_read=False
         ).count()
+        recent_notifications = Notification.objects.filter(
+            user=request.user
+        ).order_by("-created_at")[:5]
 
         context.update(
             {
                 "unread_notifications_count": unread_notifications_count,
+                "recent_notifications": recent_notifications,
                 "user_full_name": request.user.get_full_name(),
                 "user_type": (
                     request.user.user_type

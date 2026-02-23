@@ -3,6 +3,43 @@
 
 {% block title %}{% trans "Notifications" %}{% endblock %}
 
+{% block extra_css %}
+<style>
+/* Flex-строка уведомления */
+.notification-row {
+    display: flex;
+    gap: 1rem;
+}
+
+/* Контейнер текста обязан уметь сжиматься */
+.notification-content {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+/* Заголовок */
+.notification-title {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    margin-bottom: 0.25rem;
+}
+
+/* Сообщение */
+.notification-message {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    max-width: 100%;
+}
+
+/* Кнопки не должны сжиматься */
+.notification-actions {
+    flex-shrink: 0;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container py-4">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
@@ -45,20 +82,29 @@
         <div class="list-group list-group-flush">
             {% for notification in notifications %}
                 <div class="list-group-item {% if not notification.is_read %}list-group-item-warning{% endif %}">
-                    <div class="d-flex justify-content-between align-items-start gap-3">
-                        <div>
-                            <h6 class="mb-1">{{ notification.title }}</h6>
-                            <p class="mb-1 text-muted">{{ notification.message }}</p>
+                    <div class="notification-row justify-content-between align-items-start">
+                        
+                        <div class="notification-content">
+                            <h6 class="notification-title">
+                                {{ notification.title }}
+                            </h6>
+
+                            <p class="text-muted notification-message mb-1">
+                                {{ notification.message }}
+                            </p>
+
                             <small class="text-muted">
                                 {{ notification.created_at|date:"d.m.Y H:i" }}
                             </small>
                         </div>
-                        <div class="d-flex flex-column align-items-end gap-2">
+
+                        <div class="d-flex flex-column align-items-end gap-2 notification-actions">
                             {% if notification.related_url %}
                                 <a href="{{ notification.related_url }}" class="btn btn-sm btn-outline-primary">
                                     {% trans "Open" %}
                                 </a>
                             {% endif %}
+
                             {% if not notification.is_read %}
                                 <a href="{% url 'accounts:mark_notification_read' notification.id %}?next={{ request.get_full_path|urlencode }}"
                                    class="btn btn-sm btn-outline-success">
@@ -66,6 +112,7 @@
                                 </a>
                             {% endif %}
                         </div>
+
                     </div>
                 </div>
             {% empty %}
@@ -87,9 +134,11 @@
                         </a>
                     </li>
                 {% endif %}
+
                 <li class="page-item active">
                     <span class="page-link">{{ page_obj.number }}</span>
                 </li>
+
                 {% if page_obj.has_next %}
                     <li class="page-item">
                         <a class="page-link"
