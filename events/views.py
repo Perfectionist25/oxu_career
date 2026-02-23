@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Q, Case, When, Value, IntegerField
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -45,15 +45,37 @@ def admin_required(function=None):
 def event_list(request):
     """Список опубликованных мероприятий - доступно всем"""
     events = Event.objects.filter(status="published").select_related("category")
-    
-    # Используем форму поиска для фильтрации
-    form = EventSearchForm(request.GET or None)
-    
-    if form.is_valid():
-        events = form.get_filtered_queryset(events)
-    else:
-        # Сортировка по умолчанию
-        events = events.order_by('-start_date')
+
+    search_query = request.GET.get("search", "").strip()
+    category_id = request.GET.get("category", "").strip()
+    event_type = request.GET.get("type", "").strip()
+
+    if search_query:
+        events = events.filter(
+            Q(title__icontains=search_query)
+            | Q(short_description__icontains=search_query)
+            | Q(description__icontains=search_query)
+            | Q(location__icontains=search_query)
+            | Q(tags__icontains=search_query)
+        )
+
+    if category_id.isdigit():
+        events = events.filter(category_id=int(category_id))
+
+    valid_event_types = {choice[0] for choice in Event.EVENT_TYPE_CHOICES}
+    if event_type in valid_event_types:
+        events = events.filter(event_type=event_type)
+
+    # Сначала показываем ближайшие предстоящие события, затем прошедшие
+    now = timezone.now()
+    events = events.order_by(
+        Case(
+            When(start_date__gte=now, then=Value(0)),
+            default=Value(1),
+            output_field=IntegerField(),
+        ),
+        "start_date",
+    )
     
     # Пагинация
     paginator = Paginator(events, 12)
@@ -62,7 +84,11 @@ def event_list(request):
     
     context = {
         "page_obj": page_obj,
-        "form": form,
+        "categories": EventCategory.objects.all().order_by("name"),
+        "event_types": Event.EVENT_TYPE_CHOICES,
+        "search_query": search_query,
+        "selected_category": category_id,
+        "selected_type": event_type,
         "total_events": events.count(),
     }
     return render(request, "events/event_list.html", context)

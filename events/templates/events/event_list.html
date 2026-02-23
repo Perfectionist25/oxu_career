@@ -46,7 +46,7 @@
                     <select name="category" id="category">
                         <option value="">{% trans "All Categories" %}</option>
                         {% for category in categories %}
-                        <option value="{{ category.slug }}" {% if request.GET.category == category.slug %}selected{% endif %}>
+                        <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>
                             {{ category.name }}
                         </option>
                         {% endfor %}
@@ -89,7 +89,7 @@
 
                     {% if request.GET.category %}
                         {% for category in categories %}
-                            {% if request.GET.category == category.slug %}
+                            {% if request.GET.category == category.id|stringformat:"s" %}
                             <span class="tag">
                                 {% trans "Category" %}: {{ category.name }}
                                 <a class="x" href="{% url 'events:event_list' %}?{% for key, value in request.GET.items %}{% if key != 'category' %}{{ key }}={{ value }}{% if not forloop.last %}&{% endif %}{% endif %}{% endfor %}">×</a>
@@ -123,8 +123,8 @@
             </a>
 
             {% for category in categories %}
-            <a href="{% url 'events:event_list' %}?category={{ category.slug }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}"
-               class="qtag {% if request.GET.category == category.slug %}active{% endif %}">
+            <a href="{% url 'events:event_list' %}?category={{ category.id }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}"
+               class="qtag {% if request.GET.category == category.id|stringformat:"s" %}active{% endif %}">
                 {% if category.icon %}<i class="{{ category.icon }}"></i>{% endif %}
                 {{ category.name }}
             </a>
@@ -192,7 +192,7 @@
                     <a href="{% url 'events:event_detail' event.slug %}" class="btn primary">
                         <i class="fas fa-eye"></i> {% trans "View" %}
                     </a>
-                    {% if user.admin or user.main_admin %}
+                    {% if user.is_admin or user.is_main_admin or user.is_staff %}
                     <a href="{% url 'events:edit_event' event.slug %}" class="btn ghost" title="{% trans 'Edit' %}">
                         <i class="fas fa-edit"></i>
                     </a>
@@ -306,8 +306,8 @@
 .events-filters{padding:0 2rem;}
 .filters-form{
     background:#fff;
-    max-width:1380px;
-    margin:0 auto;
+    width:100%;
+    margin:0;
     padding:1.2rem;
     border-radius:16px;
     box-shadow:0 12px 30px rgba(1,33,82,.08);
@@ -465,16 +465,16 @@
 /* RESULTS BAR */
 .results-bar{
     padding:0 2rem 1rem 2rem;
-    max-width:1380px;
-    margin:0 auto;
+    width:100%;
+    margin:0;
 }
 .results-bar h2{margin:0;color:#1b3658;font-size:1.4rem;font-weight:800;}
 .results-bar p{margin:.25rem 0 0 0;color:#56708f;}
 
 /* GRID */
 .events-grid{
-    max-width:1380px;
-    margin:0 auto;
+    width:100%;
+    margin:0;
     padding:1.5rem 2rem 2.5rem 2rem;
     display:grid;
     gap:1.55rem;
@@ -570,8 +570,8 @@
 
 /* EMPTY */
 .empty{
-    max-width:980px;
-    margin:0 auto;
+    width:100%;
+    margin:0;
     padding:4rem 2rem;
     text-align:center;
     color:#56708f;
