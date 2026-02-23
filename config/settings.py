@@ -47,8 +47,7 @@ extra_hosts = os.getenv("ALLOWED_HOSTS", "").strip()
 if extra_hosts:
     DEFAULT_ALLOWED_HOSTS += [h.strip() for h in extra_hosts.split(",") if h.strip()]
 
-# Убери "*" — он опасный и часто не нужен.
-ALLOWED_HOSTS = list(dict.fromkeys(DEFAULT_ALLOWED_HOSTS))  # unique, stable order
+ALLOWED_HOSTS = list(dict.fromkeys(DEFAULT_ALLOWED_HOSTS))
 
 DEFAULT_CSRF_TRUSTED = [
     "http://localhost:8000",
@@ -120,6 +119,7 @@ AUTH_USER_MODEL = "accounts.CustomUser"
 # ==========================
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
 
@@ -322,11 +322,10 @@ CKEDITOR_5_UPLOAD_FILE_TYPES = ["jpeg", "jpg", "png", "gif", "bmp", "webp", "svg
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
-#STATIC_ROOT = "/var/www/career/static"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
-#MEDIA_ROOT = "/var/www/career/media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -377,7 +376,6 @@ SIMPLE_JWT = {
 # ==========================
 # CORS
 # ==========================
-# В проде лучше явно задавать. В деве можно "all".
 CORS_ALLOW_ALL_ORIGINS = DEBUG
 CORS_ALLOW_CREDENTIALS = True
 
@@ -424,7 +422,6 @@ OAUTH_REDIRECT_URI = "https://career.oxu.uz/oauth/callback/"
 OAUTH_SCOPE = "openid profile email phone"
 OAUTH_SUCCESS_REDIRECT = "/"
 
-# Backward-compatible aliases for legacy modules that still read OAUTH2_* keys.
 OAUTH2_PROVIDER_NAME = OAUTH_PROVIDER_NAME
 OAUTH2_CLIENT_ID = OAUTH_CLIENT_ID
 OAUTH2_CLIENT_SECRET = OAUTH_CLIENT_SECRET
@@ -445,8 +442,6 @@ OAUTH_ALLOWED_UNIVERSITIES = [
 # ==========================
 # SECURITY
 # ==========================
-# Если SSL реально настроен (nginx + certbot), включи True.
-# Сейчас у тебя в файле было противоречие: включено и тут же выключено.
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = env_bool("SESSION_COOKIE_SECURE", default=False)
 CSRF_COOKIE_SECURE = env_bool("CSRF_COOKIE_SECURE", default=False)
@@ -459,8 +454,7 @@ SESSION_COOKIE_AGE = 86400
 SESSION_COOKIE_SAMESITE = "Lax"
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 
-# OAuth student session/token controls
-OAUTH_STATE_TTL = int(os.getenv("OAUTH_STATE_TTL", "600"))  # 10 minutes
+OAUTH_STATE_TTL = int(os.getenv("OAUTH_STATE_TTL", "600"))
 OAUTH_STUDENT_SESSION_AGE = int(
     os.getenv("OAUTH_STUDENT_SESSION_AGE", str(SESSION_COOKIE_AGE))
 )
@@ -583,7 +577,6 @@ LOGGING = {
     },
 }
 
-# Ensure logs directory exists
 try:
     (BASE_DIR / "logs").mkdir(parents=True, exist_ok=True)
 except Exception as e:
