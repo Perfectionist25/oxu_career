@@ -183,7 +183,7 @@ def edit_event(request, slug):
         "event": event,
         "title": _("Edit Event"),
     }
-    return render(request, "events/edit_event.html", context)
+    return render(request, "events/create_event.html", context)
 
 
 @login_required
@@ -204,7 +204,7 @@ def delete_event(request, slug):
     context = {
         "event": event,
     }
-    return render(request, "events/delete_event.html", context)
+    return render(request, "events/event_delete.html", context)
 
 
 @login_required
@@ -299,7 +299,7 @@ def admin_event_create(request):
         "form": form,
         "title": _("Create Event"),
     }
-    return render(request, "events/admin/event_form.html", context)
+    return render(request, "events/admin_event_form.html", context)
 
 
 @login_required
@@ -339,7 +339,7 @@ def admin_event_delete(request, pk):
     context = {
         "event": event,
     }
-    return render(request, "events/admin/event_delete.html", context)
+    return render(request, "events/admin_event_delete.html", context)
 
 
 @login_required
@@ -379,7 +379,7 @@ def admin_category_list(request):
     context = {
         "categories": categories,
     }
-    return render(request, "events/admin/category_list.html", context)
+    return render(request, "events/admin_category_list.html", context)
 
 
 @login_required
@@ -399,7 +399,7 @@ def admin_category_create(request):
         "form": form,
         "title": _("Create Category"),
     }
-    return render(request, "events/admin/category_form.html", context)
+    return render(request, "events/admin_category_form.html", context)
 
 
 @login_required
@@ -422,7 +422,7 @@ def admin_category_edit(request, pk):
         "category": category,
         "title": _("Edit Category"),
     }
-    return render(request, "events/admin/category_form.html", context)
+    return render(request, "events/admin_category_form.html", context)
 
 
 @login_required
@@ -439,7 +439,7 @@ def admin_category_delete(request, pk):
     context = {
         "category": category,
     }
-    return render(request, "events/admin/category_delete.html", context)
+    return render(request, "events/admin_category_delete.html", context)
 
 
 # ============ JSON API ============

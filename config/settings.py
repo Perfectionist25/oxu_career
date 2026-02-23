@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+import importlib.util
 from pathlib import Path
 from datetime import timedelta
 
@@ -17,11 +18,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 RENDER_HOST = os.getenv("RENDER_EXTERNAL_HOSTNAME", "").strip()
 IS_RENDER = bool(RENDER_HOST)
 
-SECRET_KEY = os.getenv("SECRET_KEY") or os.getenv("DJANGO_SECRET_KEY")
-if not SECRET_KEY:
-    raise Exception("SECRET_KEY (or DJANGO_SECRET_KEY) environment variable not set")
-
-
 def env_bool(name: str, default: bool = False) -> bool:
     raw = os.getenv(name)
     if raw is None:
@@ -29,7 +25,14 @@ def env_bool(name: str, default: bool = False) -> bool:
     return raw.strip().lower() in {"1", "true", "yes", "y", "on"}
 
 
-DEBUG = env_bool("DEBUG", default=False)
+DEBUG = env_bool("DEBUG", default=not IS_RENDER)
+
+SECRET_KEY = os.getenv("SECRET_KEY") or os.getenv("DJANGO_SECRET_KEY")
+if not SECRET_KEY:
+    if DEBUG:
+        SECRET_KEY = "django-insecure-local-dev-key-change-me"
+    else:
+        raise Exception("SECRET_KEY (or DJANGO_SECRET_KEY) environment variable not set")
 
 # ==========================
 # HOSTS / CSRF / SITE URL
@@ -86,9 +89,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    # OAuth provider
-    "oauth2_provider",
-
     # Third-party apps
     "corsheaders",
     "jazzmin",
@@ -111,6 +111,10 @@ INSTALLED_APPS = [
     "cvbuilder",
     "jobs",
 ]
+
+OAUTH2_PROVIDER_ENABLED = importlib.util.find_spec("oauth2_provider") is not None
+if OAUTH2_PROVIDER_ENABLED:
+    INSTALLED_APPS.append("oauth2_provider")
 
 AUTH_USER_MODEL = "accounts.CustomUser"
 
@@ -172,6 +176,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 # ==========================
 # DATABASE
 # ==========================
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -325,7 +330,9 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+default_media_root = BASE_DIR / ("media_dir" if DEBUG else "media")
+MEDIA_ROOT = Path(os.getenv("MEDIA_ROOT", str(default_media_root)))
+MEDIA_ROOT.mkdir(parents=True, exist_ok=True)
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -442,7 +449,7 @@ OAUTH_ALLOWED_UNIVERSITIES = [
 # ==========================
 # SECURITY
 # ==========================
-SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", default=not DEBUG)
 SESSION_COOKIE_SECURE = env_bool("SESSION_COOKIE_SECURE", default=False)
 CSRF_COOKIE_SECURE = env_bool("CSRF_COOKIE_SECURE", default=False)
 

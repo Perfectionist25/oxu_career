@@ -5,7 +5,6 @@ from django.urls import include, path
 from accounts.api.views import oauth_callback
 from accounts.views import oauth_login
 from core import views as core_views
-from django.apps import apps
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -22,7 +21,6 @@ urlpatterns = [
     path("oauth/login/", oauth_login, name="oauth_login"),
     path("oauth/callback/", oauth_callback, name="oauth_callback"),
     path("admin/stats/", core_views.admin_stats, name="admin_stats"),
-    path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     path('api/accounts/', include(('accounts.api.urls','accounts_api'), namespace='accounts_api')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
@@ -30,11 +28,13 @@ urlpatterns += [
     path('ckeditor5/', include('django_ckeditor_5.urls')),
 ]
 
+if getattr(settings, "OAUTH2_PROVIDER_ENABLED", False):
+    urlpatterns += [
+        path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+    ]
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-if apps.is_installed('oauth2_provider'):
-    path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 
 # Custom error handlers (optional)
 # handler404 = 'core.views.handler404'

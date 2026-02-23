@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Events Statistics" %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="h4 mb-4">{% trans "Events Statistics" %}</h1>
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted">{% trans "Published Events" %}</div>
+                    <div class="h3 mb-0">{{ events }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted">{% trans "Upcoming" %}</div>
+                    <div class="h3 mb-0">{{ upcoming_events }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted">{% trans "This Month" %}</div>
+                    <div class="h3 mb-0">{{ this_month_events }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
