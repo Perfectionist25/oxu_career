@@ -1,8 +1,11 @@
 # accounts/middleware.py
+from django.conf import settings
+from django.contrib.auth import logout
 from django.utils.deprecation import MiddlewareMixin
 from django.apps import apps
 from django.core.cache import cache
 from django.http import JsonResponse, HttpResponseForbidden
+from django.shortcuts import redirect
 from django.utils import timezone
 from datetime import timedelta
 from django.shortcuts import render
@@ -45,6 +48,70 @@ class NotificationMiddleware(MiddlewareMixin):
                 response.context_data['recent_notifications'] = []
         
         return response
+
+
+class StudentSessionTimeoutMiddleware(MiddlewareMixin):
+    """
+    Enforces inactivity timeout for student sessions.
+    Timeout defaults to OAUTH_STUDENT_SESSION_AGE (seconds), which is tied
+    to ACCESS_TOKEN_LIFETIME by default.
+    """
+
+    EXCLUDED_PATH_PREFIXES = (
+        "/static/",
+        "/media/",
+        "/accounts/login/",
+        "/accounts/logout/",
+        "/accounts/oauth/",
+        "/admin/",
+    )
+
+    def process_request(self, request):
+        if not hasattr(request, "user") or not request.user.is_authenticated:
+            return None
+
+        if getattr(request.user, "user_type", None) != "student":
+            return None
+
+        path = request.path or ""
+        if any(path.startswith(prefix) for prefix in self.EXCLUDED_PATH_PREFIXES):
+            return None
+
+        timeout_seconds = int(
+            getattr(settings, "OAUTH_STUDENT_SESSION_AGE", 20 * 60)
+        )
+        if timeout_seconds <= 0:
+            return None
+
+        now_ts = int(timezone.now().timestamp())
+        last_activity = request.session.get("student_last_activity_ts")
+
+        if last_activity is not None and (now_ts - int(last_activity)) > timeout_seconds:
+            logout(request)
+            request.session.flush()
+            response = redirect("accounts:login")
+
+            if getattr(settings, "OAUTH_SET_TOKEN_COOKIES", True):
+                secure = getattr(settings, "SESSION_COOKIE_SECURE", False)
+                samesite = getattr(settings, "SESSION_COOKIE_SAMESITE", "Lax")
+                response.delete_cookie(
+                    getattr(settings, "OAUTH_ACCESS_COOKIE_NAME", "student_access"),
+                    samesite=samesite,
+                    secure=secure,
+                )
+                response.delete_cookie(
+                    getattr(settings, "OAUTH_REFRESH_COOKIE_NAME", "student_refresh"),
+                    samesite=samesite,
+                    secure=secure,
+                )
+            return response
+
+        # Do not treat background API/AJAX polling as user activity.
+        is_ajax = request.headers.get("x-requested-with") == "XMLHttpRequest"
+        if not is_ajax and not path.startswith("/api/"):
+            request.session["student_last_activity_ts"] = now_ts
+
+        return None
 
 
 class BruteForceProtectionMiddleware(MiddlewareMixin):

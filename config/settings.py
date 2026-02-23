@@ -134,6 +134,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "accounts.middleware.StudentSessionTimeoutMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -333,11 +334,8 @@ MEDIA_URL = os.getenv("MEDIA_URL", "/media/").strip() or "/media/"
 if not MEDIA_URL.endswith("/"):
     MEDIA_URL = f"{MEDIA_URL}/"
 
-_legacy_media_root = Path("/var/www/alijob/media")
 if DEBUG:
     _default_media_root = BASE_DIR / "media_dir"
-elif _legacy_media_root.exists():
-    _default_media_root = _legacy_media_root
 else:
     _default_media_root = BASE_DIR / "media"
 
@@ -378,8 +376,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=int(os.getenv("JWT_ACCESS_MINUTES", "20"))),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=int(os.getenv("JWT_REFRESH_DAYS", "7"))),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
     "ALGORITHM": "HS256",
@@ -479,7 +477,10 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 
 OAUTH_STATE_TTL = int(os.getenv("OAUTH_STATE_TTL", "600"))
 OAUTH_STUDENT_SESSION_AGE = int(
-    os.getenv("OAUTH_STUDENT_SESSION_AGE", str(SESSION_COOKIE_AGE))
+    os.getenv(
+        "OAUTH_STUDENT_SESSION_AGE",
+        str(int(SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"].total_seconds())),
+    )
 )
 OAUTH_SET_TOKEN_COOKIES = env_bool("OAUTH_SET_TOKEN_COOKIES", default=True)
 OAUTH_ACCESS_COOKIE_NAME = os.getenv("OAUTH_ACCESS_COOKIE_NAME", "student_access")

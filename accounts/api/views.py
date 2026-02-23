@@ -297,6 +297,7 @@ def oauth_callback(request):
     request.session["oauth_refresh_token"] = refresh_token
     request.session["student_access_jwt"] = access_jwt
     request.session["student_refresh_jwt"] = refresh_jwt
+    request.session["student_last_activity_ts"] = int(timezone.now().timestamp())
 
     session_age = min(
         int(getattr(settings, "OAUTH_STUDENT_SESSION_AGE", settings.SESSION_COOKIE_AGE)),
