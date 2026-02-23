@@ -3,7 +3,7 @@
 {% load static %}
 {% load i18n %}
 
-{% block title %}{{ user.get_full_name|default:user.username }} - {% trans "User Profile" %}{% endblock %}
+{% block title %}{{ profile_user.get_full_name|default:profile_user.username }} - {% trans "User Profile" %}{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -602,7 +602,7 @@ body {
                             {% trans "User Management" %}
                         </a>
                     </li>
-                    <li class="breadcrumb-item active">{{ user.get_full_name|default:user.username|truncatechars:20 }}</li>
+                    <li class="breadcrumb-item active">{{ profile_user.get_full_name|default:profile_user.username|truncatechars:20 }}</li>
                 </ol>
             </nav>
 
@@ -613,10 +613,10 @@ body {
                         <!-- Avatar Column -->
                         <div class="col-md-auto mb-3 mb-md-0">
                             <div class="profile-avatar-container">
-                                {% if user.avatar %}
-                                <img src="{{ user.avatar.url }}" 
+                                {% if profile_user.avatar %}
+                                <img src="{{ profile_user.avatar.url }}" 
                                     style="width: 50vh;"
-                                    alt="{{ user.username }}" 
+                                    alt="{{ profile_user.username }}" 
                                     class="profile-avatar">
                                 {% else %}
                                 <div class="avatar-placeholder">
@@ -629,31 +629,31 @@ body {
                         <!-- User Info Column -->
                         <div class="col-md">
                             <div class="header-content">
-                                <h1 class="h2 fw-bold mb-2">{{ user.get_full_name|default:user.username }}</h1>
+                                <h1 class="h2 fw-bold mb-2">{{ profile_user.get_full_name|default:profile_user.username }}</h1>
                                 
                                 <p class="text-muted mb-3">
                                     <i class="fas fa-envelope me-2 text-primary"></i>
-                                    {{ user.email|truncatechars:30 }}
+                                    {{ profile_user.email|truncatechars:30 }}
                                 </p>
 
                                 <!-- Status Badges -->
                                 <div class="status-badges d-flex flex-wrap gap-2 mb-3">
                                     <span class="status-badge 
-                                        {% if user.is_student %}badge-student
-                                        {% elif user.is_employer %}badge-employer
-                                        {% elif user.is_admin %}badge-admin
-                                        {% elif user.is_main_admin %}badge-main-admin
+                                        {% if profile_user.is_student %}badge-student
+                                        {% elif profile_user.is_employer %}badge-employer
+                                        {% elif profile_user.is_admin %}badge-admin
+                                        {% elif profile_user.is_main_admin %}badge-main-admin
                                         {% else %}badge-inactive{% endif %}">
                                         <i class="fas 
-                                            {% if user.is_student %}fa-graduation-cap
-                                            {% elif user.is_employer %}fa-building
-                                            {% elif user.is_admin %}fa-user-shield
-                                            {% elif user.is_main_admin %}fa-crown
+                                            {% if profile_user.is_student %}fa-graduation-cap
+                                            {% elif profile_user.is_employer %}fa-building
+                                            {% elif profile_user.is_admin %}fa-user-shield
+                                            {% elif profile_user.is_main_admin %}fa-crown
                                             {% else %}fa-user{% endif %} me-1"></i>
-                                        {{ user.get_user_type_display }}
+                                        {{ profile_user.get_user_type_display }}
                                     </span>
                                     
-                                    {% if user.is_active %}
+                                    {% if profile_user.is_active %}
                                     <span class="status-badge badge-active">
                                         <i class="fas fa-check-circle me-1"></i>{% trans "Active" %}
                                     </span>
@@ -663,13 +663,13 @@ body {
                                     </span>
                                     {% endif %}
                                     
-                                    {% if user.is_verified %}
+                                    {% if profile_user.is_verified %}
                                     <span class="status-badge badge-verified">
                                         <i class="fas fa-badge-check me-1"></i>{% trans "Verified" %}
                                     </span>
                                     {% endif %}
                                     
-                                    {% if user.is_employer and user.is_active_employer %}
+                                    {% if profile_user.is_employer and profile_user.is_active_employer %}
                                     <span class="status-badge badge-employer-active">
                                         <i class="fas fa-briefcase me-1"></i>{% trans "Active Employer" %}
                                     </span>
@@ -678,17 +678,17 @@ body {
 
                                 <!-- Action Buttons -->
                                 <div class="form-actions d-flex flex-wrap gap-2">
-                                    {% if not user.is_main_admin %}
-                                    <form method="post" action="{% url 'accounts:toggle_user_status' user.id %}" class="d-inline">
+                                    {% if not profile_user.is_main_admin %}
+                                    <form method="post" action="{% url 'accounts:toggle_user_status' profile_user.id %}" class="d-inline">
                                         {% csrf_token %}
-                                        <button type="submit" class="btn {% if user.is_active %}btn-outline-warning{% else %}btn-outline-success{% endif %}">
-                                            <i class="fas {% if user.is_active %}fa-user-slash{% else %}fa-user-check{% endif %} me-1"></i>
-                                            {% if user.is_active %}{% trans "Deactivate" %}{% else %}{% trans "Activate" %}{% endif %}
+                                        <button type="submit" class="btn {% if profile_user.is_active %}btn-outline-warning{% else %}btn-outline-success{% endif %}">
+                                            <i class="fas {% if profile_user.is_active %}fa-user-slash{% else %}fa-user-check{% endif %} me-1"></i>
+                                            {% if profile_user.is_active %}{% trans "Deactivate" %}{% else %}{% trans "Activate" %}{% endif %}
                                         </button>
                                     </form>
                                     {% endif %}
                                     
-                                    <a href="mailto:{{ user.email }}" class="btn btn-outline-primary">
+                                    <a href="mailto:{{ profile_user.email }}" class="btn btn-outline-primary">
                                         <i class="fas fa-envelope me-1"></i>{% trans "Send Email" %}
                                     </a>
                                 </div>
@@ -701,9 +701,9 @@ body {
     </div>
 
     <!-- Stats Cards -->
-    {% if user.is_employer or user.is_student %}
+    {% if profile_user.is_employer or profile_user.is_student %}
     <div class="row mb-4 stats-grid">
-        {% if user.is_employer and profile %}
+        {% if profile_user.is_employer and profile %}
         <div class="col-md-3 col-sm-6 mb-3">
             <div class="stat-card card-hover">
                 <div class="icon-wrapper bg-primary-gradient">
@@ -730,7 +730,7 @@ body {
         </div>
         {% endif %}
         
-        {% if user.is_student and profile %}
+        {% if profile_user.is_student and profile %}
         <div class="col-md-3 col-sm-6 mb-3">
             <div class="stat-card card-hover">
                 <div class="icon-wrapper bg-success-gradient">
@@ -778,31 +778,31 @@ body {
                 </div>
                 <div class="card-body">
                     <div class="list-group list-group-flush">
-                        {% if user.phone_number %}
+                        {% if profile_user.phone_number %}
                         <div class="contact-item">
                             <div class="contact-icon">
                                 <i class="fas fa-phone"></i>
                             </div>
                             <div>
                                 <small class="text-muted d-block">{% trans "Phone" %}</small>
-                                <strong>{{ user.phone_number }}</strong>
+                                <strong>{{ profile_user.phone_number }}</strong>
                             </div>
                         </div>
                         {% endif %}
                         
-                        {% if user.country %}
+                        {% if profile_user.country %}
                         <div class="contact-item">
                             <div class="contact-icon">
                                 <i class="fas fa-map-marker-alt"></i>
                             </div>
                             <div>
                                 <small class="text-muted d-block">{% trans "Location" %}</small>
-                                <strong>{{ user.country.name }}{% if user.city %}, {{ user.city }}{% endif %}</strong>
+                                <strong>{{ profile_user.country.name }}{% if profile_user.city %}, {{ profile_user.city }}{% endif %}</strong>
                             </div>
                         </div>
                         {% endif %}
                         
-                        {% if profile and user.is_employer and primary_company.phone %}
+                        {% if profile and profile_user.is_employer and primary_company.phone %}
                         <div class="contact-item">
                             <div class="contact-icon">
                                 <i class="fas fa-building"></i>
@@ -820,18 +820,18 @@ body {
                             </div>
                             <div>
                                 <small class="text-muted d-block">{% trans "Member Since" %}</small>
-                                <strong>{{ user.date_joined|date:"F d, Y" }}</strong>
+                                <strong>{{ profile_user.date_joined|date:"F d, Y" }}</strong>
                             </div>
                         </div>
                         
-                        {% if user.last_login %}
+                        {% if profile_user.last_login %}
                         <div class="contact-item">
                             <div class="contact-icon">
                                 <i class="fas fa-clock"></i>
                             </div>
                             <div>
                                 <small class="text-muted d-block">{% trans "Last Login" %}</small>
-                                <strong>{{ user.last_login|timesince }} {% trans "ago" %}</strong>
+                                <strong>{{ profile_user.last_login|timesince }} {% trans "ago" %}</strong>
                             </div>
                         </div>
                         {% endif %}
@@ -851,29 +851,29 @@ body {
                         <div class="col-6 col-sm-6">
                             <div class="text-center p-3 border rounded-2">
                                 <div class="mb-2">
-                                    <i class="fas {% if user.is_active %}fa-check-circle text-success{% else %}fa-times-circle text-danger{% endif %} fa-2x"></i>
+                                    <i class="fas {% if profile_user.is_active %}fa-check-circle text-success{% else %}fa-times-circle text-danger{% endif %} fa-2x"></i>
                                 </div>
                                 <small class="text-muted d-block">{% trans "Status" %}</small>
-                                <strong>{% if user.is_active %}{% trans "Active" %}{% else %}{% trans "Inactive" %}{% endif %}</strong>
+                                <strong>{% if profile_user.is_active %}{% trans "Active" %}{% else %}{% trans "Inactive" %}{% endif %}</strong>
                             </div>
                         </div>
                         <div class="col-6 col-sm-6">
                             <div class="text-center p-3 border rounded-2">
                                 <div class="mb-2">
-                                    <i class="fas {% if user.is_verified %}fa-badge-check text-info{% else %}fa-clock text-warning{% endif %} fa-2x"></i>
+                                    <i class="fas {% if profile_user.is_verified %}fa-badge-check text-info{% else %}fa-clock text-warning{% endif %} fa-2x"></i>
                                 </div>
                                 <small class="text-muted d-block">{% trans "Verification" %}</small>
-                                <strong>{% if user.is_verified %}{% trans "Verified" %}{% else %}{% trans "Pending" %}{% endif %}</strong>
+                                <strong>{% if profile_user.is_verified %}{% trans "Verified" %}{% else %}{% trans "Pending" %}{% endif %}</strong>
                             </div>
                         </div>
-                        {% if user.is_employer %}
+                        {% if profile_user.is_employer %}
                         <div class="col-12 col-sm-6 mx-auto">
                             <div class="text-center p-3 border rounded-2">
                                 <div class="mb-2">
-                                    <i class="fas {% if user.is_active_employer %}fa-check text-success{% else %}fa-times text-danger{% endif %} fa-2x"></i>
+                                    <i class="fas {% if profile_user.is_active_employer %}fa-check text-success{% else %}fa-times text-danger{% endif %} fa-2x"></i>
                                 </div>
                                 <small class="text-muted d-block">{% trans "Employer Status" %}</small>
-                                <strong>{% if user.is_active_employer %}{% trans "Active" %}{% else %}{% trans "Inactive" %}{% endif %}</strong>
+                                <strong>{% if profile_user.is_active_employer %}{% trans "Active" %}{% else %}{% trans "Inactive" %}{% endif %}</strong>
                             </div>
                         </div>
                         {% endif %}
@@ -892,12 +892,12 @@ body {
                             <i class="fas fa-id-card text-primary me-2"></i>{% trans "Profile Details" %}
                         </h5>
                         <span class="badge bg-light text-dark border">
-                            <i class="fas fa-user-tag me-1"></i>{{ user.get_user_type_display }}
+                            <i class="fas fa-user-tag me-1"></i>{{ profile_user.get_user_type_display }}
                         </span>
                     </div>
                 </div>
                 <div class="card-body profile-details">
-                    {% if user.is_student and profile %}
+                    {% if profile_user.is_student and profile %}
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <div class="mb-3">
@@ -972,7 +972,7 @@ body {
                         </div>
                     </div>
                     
-                    {% elif user.is_employer and profile %}
+                    {% elif profile_user.is_employer and profile %}
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <div class="mb-3">
@@ -1043,7 +1043,7 @@ body {
                     </div>
                     {% endif %}
                     
-                    {% elif user.is_admin and profile %}
+                    {% elif profile_user.is_admin and profile %}
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <div class="mb-3">

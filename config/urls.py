@@ -22,7 +22,7 @@ urlpatterns = [
     path("oauth/callback/", oauth_callback, name="oauth_callback"),
     path("admin/stats/", core_views.admin_stats, name="admin_stats"),
     path('api/accounts/', include(('accounts.api.urls','accounts_api'), namespace='accounts_api')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
 
 urlpatterns += [
     path('ckeditor5/', include('django_ckeditor_5.urls')),
@@ -33,7 +33,7 @@ if getattr(settings, "OAUTH2_PROVIDER_ENABLED", False):
         path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     ]
 
-if settings.DEBUG:
+if getattr(settings, "SERVE_MEDIA_FILES", False) and settings.MEDIA_URL.startswith("/"):
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # Custom error handlers (optional)

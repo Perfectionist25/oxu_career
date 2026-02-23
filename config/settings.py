@@ -329,10 +329,26 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-MEDIA_URL = "/media/"
-default_media_root = BASE_DIR / ("media_dir" if DEBUG else "media")
-MEDIA_ROOT = Path(os.getenv("MEDIA_ROOT", str(default_media_root)))
-MEDIA_ROOT.mkdir(parents=True, exist_ok=True)
+MEDIA_URL = os.getenv("MEDIA_URL", "/media/").strip() or "/media/"
+if not MEDIA_URL.endswith("/"):
+    MEDIA_URL = f"{MEDIA_URL}/"
+
+_legacy_media_root = Path("/var/www/alijob/media")
+if DEBUG:
+    _default_media_root = BASE_DIR / "media_dir"
+elif _legacy_media_root.exists():
+    _default_media_root = _legacy_media_root
+else:
+    _default_media_root = BASE_DIR / "media"
+
+MEDIA_ROOT = Path(os.getenv("MEDIA_ROOT", str(_default_media_root)))
+try:
+    MEDIA_ROOT.mkdir(parents=True, exist_ok=True)
+except OSError:
+    # In production MEDIA_ROOT may point to a mounted path managed externally.
+    pass
+
+SERVE_MEDIA_FILES = env_bool("SERVE_MEDIA_FILES", default=True)
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

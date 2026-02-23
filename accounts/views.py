@@ -1621,7 +1621,6 @@ def user_management(request):
 
 @login_required
 @user_passes_test(is_admin, login_url="accounts:admin_login")
-@login_required
 def user_detail(request, user_id):
     """View user details"""
     user = get_object_or_404(CustomUser, id=user_id)
@@ -1656,14 +1655,15 @@ def user_detail(request, user_id):
     }
     
     if user.user_type == "student":
+        student_profile = StudentProfile.objects.filter(user=user).first()
         context.update({
             "applications": JobApplication.objects.filter(user=user).count(),
-            "cvs": CV.objects.filter(user=user).count(),
+            "cvs": CV.objects.filter(user=student_profile).count() if student_profile else 0,
         })
     elif user.user_type == "employer":
         context.update({
             "companies": Company.objects.filter(owner=user).count(),
-            "jobs": Job.objects.filter(company__owner=user).count(),
+            "jobs": Job.objects.filter(company__owner=user).distinct().count(),
         })
     
     return render(request, "accounts/user_detail.html", context)
