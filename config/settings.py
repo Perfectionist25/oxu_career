@@ -340,18 +340,8 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-MEDIA_URL = os.getenv("MEDIA_URL", "/media/").strip() or "/media/"
-if not MEDIA_URL.endswith("/"):
-    MEDIA_URL = f"{MEDIA_URL}/"
-
-_default_media_root = BASE_DIR / "media"
-
-MEDIA_ROOT = Path(os.getenv("MEDIA_ROOT", str(_default_media_root)))
-try:
-    MEDIA_ROOT.mkdir(parents=True, exist_ok=True)
-except OSError:
-    # In production MEDIA_ROOT may point to a mounted path managed externally.
-    pass
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 SERVE_MEDIA_FILES = env_bool("SERVE_MEDIA_FILES", default=True)
 
