@@ -344,10 +344,7 @@ MEDIA_URL = os.getenv("MEDIA_URL", "/media/").strip() or "/media/"
 if not MEDIA_URL.endswith("/"):
     MEDIA_URL = f"{MEDIA_URL}/"
 
-if DEBUG:
-    _default_media_root = BASE_DIR / "media_dir"
-else:
-    _default_media_root = BASE_DIR / "media"
+_default_media_root = BASE_DIR / "media"
 
 MEDIA_ROOT = Path(os.getenv("MEDIA_ROOT", str(_default_media_root)))
 try:
