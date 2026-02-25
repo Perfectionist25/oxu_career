@@ -21,6 +21,7 @@ from django.core.cache import cache
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
+from rest_framework.response import Response
 
 from accounts.models import (
     CustomUser, StudentProfile, EmployerProfile, AdminProfile,
@@ -97,6 +98,38 @@ class CustomTokenObtainSerializer(TokenObtainPairSerializer):
 
 class CustomTokenObtainView(TokenObtainPairView):
     serializer_class = CustomTokenObtainSerializer
+
+    def post(self, request, *args, **kwargs):
+        ip_address = get_client_ip(request)
+        username = str(request.data.get("username", "")).strip() if hasattr(request, "data") else ""
+
+        status = BruteForceProtectionMiddleware.get_block_status(ip_address, username or None)
+        if status["is_blocked"]:
+            return Response(
+                {
+                    "detail": _("Too many login attempts. Try again later."),
+                    "blocked_until": status["blocked_until"].isoformat() if status["blocked_until"] else None,
+                    "remaining_seconds": status["remaining_seconds"],
+                },
+                status=429,
+            )
+
+        response = super().post(request, *args, **kwargs)
+
+        if response.status_code == 200 and username:
+            BruteForceProtectionMiddleware.clear_attempts(ip_address, username)
+        elif username and response.status_code >= 400:
+            result = BruteForceProtectionMiddleware.record_failed_attempt(ip_address, username)
+            if not result["allowed"]:
+                return Response(
+                    {
+                        "detail": _("Too many login attempts. Try again later."),
+                        "remaining_seconds": result["remaining_seconds"],
+                    },
+                    status=429,
+                )
+
+        return response
 
 
 
@@ -191,12 +224,16 @@ def employer_login(request):
     if request.method == "POST":
         username = request.POST.get("username", "").strip()
         password = request.POST.get("password", "")
-        
-        allowed, warning_msg = BruteForceProtectionMiddleware.record_failed_attempt(ip_address, username)
-        
-        if not allowed:
-            messages.error(request, warning_msg)
-            return render(request, "accounts/employer_login.html")
+
+        status = BruteForceProtectionMiddleware.get_block_status(ip_address, username or None)
+        if status["is_blocked"]:
+            return BruteForceProtectionMiddleware.blocked_response(
+                request,
+                ip_address=ip_address,
+                username=username,
+                reason=status["reason"],
+                remaining_seconds=status["remaining_seconds"],
+            )
         
         user = authenticate(request, username=username, password=password)
         
@@ -215,9 +252,17 @@ def employer_login(request):
             messages.success(request, "Добро пожаловать!")
             return redirect("accounts:employer_dashboard")
         else:
-            # Показываем предупреждение если есть
-            if warning_msg:
-                messages.warning(request, warning_msg)
+            attempt_result = BruteForceProtectionMiddleware.record_failed_attempt(ip_address, username or None)
+            if not attempt_result["allowed"]:
+                return BruteForceProtectionMiddleware.blocked_response(
+                    request,
+                    ip_address=ip_address,
+                    username=username,
+                    reason="ip_blocked",
+                    remaining_seconds=attempt_result["remaining_seconds"],
+                )
+            if attempt_result["warning_message"]:
+                messages.warning(request, attempt_result["warning_message"])
             else:
                 messages.error(request, "Неверные учетные данные или вы не авторизованы как работодатель")
     
@@ -241,20 +286,31 @@ def admin_login(request):
             messages.error(request, "Пожалуйста, введите имя пользователя и пароль")
             return render(request, "accounts/admin_login.html")
         
-        # Проверка с использованием middleware
-        allowed, warning_msg = BruteForceProtectionMiddleware.record_failed_attempt(ip_address, username)
-        
-        if not allowed:
-            messages.error(request, warning_msg)
-            return render(request, "accounts/admin_login.html")
+        status = BruteForceProtectionMiddleware.get_block_status(ip_address, username or None)
+        if status["is_blocked"]:
+            return BruteForceProtectionMiddleware.blocked_response(
+                request,
+                ip_address=ip_address,
+                username=username,
+                reason=status["reason"],
+                remaining_seconds=status["remaining_seconds"],
+            )
         
         # Аутентификация пользователя
         user = authenticate(request, username=username, password=password)
         
         if user is None:
-            # Показываем предупреждение если есть
-            if warning_msg:
-                messages.warning(request, warning_msg)
+            attempt_result = BruteForceProtectionMiddleware.record_failed_attempt(ip_address, username or None)
+            if not attempt_result["allowed"]:
+                return BruteForceProtectionMiddleware.blocked_response(
+                    request,
+                    ip_address=ip_address,
+                    username=username,
+                    reason="ip_blocked",
+                    remaining_seconds=attempt_result["remaining_seconds"],
+                )
+            if attempt_result["warning_message"]:
+                messages.warning(request, attempt_result["warning_message"])
             else:
                 messages.error(request, "Неверное имя пользователя или пароль")
             return render(request, "accounts/admin_login.html")
@@ -880,13 +936,14 @@ class CompanyCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         return is_employer(self.request.user)
     
     def form_valid(self, form):
+        had_companies_before = Company.objects.filter(owner=self.request.user).exists()
         form.instance.owner = self.request.user
         form.instance.is_verified = True
         form.instance.is_active = True
         
         company = form.save()
         
-        if not Company.objects.filter(owner=self.request.user).exists():
+        if not had_companies_before:
             try:
                 employer_profile = self.request.user.employer_profile
                 employer_profile.primary_company = company
@@ -900,7 +957,7 @@ class CompanyCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         return super().form_valid(form)
     
     def get_success_url(self):
-        return reverse_lazy('accounts:company_list')
+        return reverse_lazy('accounts:employer_dashboard')
 
 
 class CompanyDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):

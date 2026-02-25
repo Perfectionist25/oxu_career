@@ -4,10 +4,11 @@ from django.contrib.auth import logout
 from django.utils.deprecation import MiddlewareMixin
 from django.apps import apps
 from django.core.cache import cache
-from django.http import JsonResponse, HttpResponseForbidden
+from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.utils import timezone
 from datetime import timedelta
+import json
 from django.shortcuts import render
 import logging
 
@@ -120,15 +121,19 @@ class BruteForceProtectionMiddleware(MiddlewareMixin):
     Проверяет все запросы на наличие блокировок.
     """
     
+    MAX_ATTEMPTS = int(getattr(settings, "BRUTEFORCE_MAX_ATTEMPTS", 10))
+    ATTEMPT_WINDOW_SECONDS = int(getattr(settings, "BRUTEFORCE_ATTEMPT_WINDOW_SECONDS", 300))
+    BLOCK_SECONDS = int(getattr(settings, "BRUTEFORCE_BLOCK_SECONDS", 900))
+    WARNING_THRESHOLD = int(getattr(settings, "BRUTEFORCE_WARNING_THRESHOLD", 5))
+
     def __init__(self, get_response):
         self.get_response = get_response
         # Пути, которые должны проверяться
         self.protected_paths = [
-            '/accounts/admin/login/',
-            '/accounts/employer/login/', 
-            '/accounts/student/login/',
-            '/accounts/hemis/login/',
-            '/accounts/temp-student-login/',
+            '/accounts/admin-login/',
+            '/accounts/employer-login/',
+            '/accounts/login/',
+            '/accounts/api/token/',
         ]
         
         # Пути, которые НЕ должны проверяться
@@ -142,6 +147,97 @@ class BruteForceProtectionMiddleware(MiddlewareMixin):
             '/api/',  # API endpoints (если есть)
         ]
     
+    @classmethod
+    def _now_ts(cls):
+        return int(timezone.now().timestamp())
+
+    @classmethod
+    def _attempts_ip_key(cls, ip_address):
+        return f'login_attempts_ip_{ip_address}'
+
+    @classmethod
+    def _attempts_user_key(cls, username):
+        return f'login_attempts_user_{username}'
+
+    @classmethod
+    def _blocked_ip_key(cls, ip_address):
+        return f'ip_blocked_{ip_address}'
+
+    @classmethod
+    def _blocked_user_key(cls, username):
+        return f'user_blocked_{username}'
+
+    @classmethod
+    def _remaining_seconds_from_value(cls, value):
+        if value is None:
+            return 0
+        # New format: UNIX timestamp when block ends
+        if isinstance(value, (int, float)):
+            return max(0, int(value) - cls._now_ts())
+        # Legacy boolean format from old implementation
+        if isinstance(value, bool) and value:
+            return cls.BLOCK_SECONDS
+        return 0
+
+    @classmethod
+    def get_block_status(cls, ip_address, username=None):
+        ip_remaining = cls._remaining_seconds_from_value(cache.get(cls._blocked_ip_key(ip_address)))
+        user_remaining = 0
+        if username:
+            user_remaining = cls._remaining_seconds_from_value(cache.get(cls._blocked_user_key(username)))
+
+        remaining_seconds = max(ip_remaining, user_remaining)
+        if remaining_seconds <= 0:
+            return {
+                "is_blocked": False,
+                "reason": None,
+                "remaining_seconds": 0,
+                "blocked_until": None,
+            }
+
+        reason = "ip_blocked" if ip_remaining >= user_remaining else "user_blocked"
+        blocked_until = timezone.now() + timedelta(seconds=remaining_seconds)
+        return {
+            "is_blocked": True,
+            "reason": reason,
+            "remaining_seconds": remaining_seconds,
+            "blocked_until": blocked_until,
+        }
+
+    @classmethod
+    def _build_context(cls, ip_address, username=None, reason="blocked", remaining_seconds=None):
+        remaining_seconds = remaining_seconds or cls.BLOCK_SECONDS
+        blocked_until = timezone.now() + timedelta(seconds=remaining_seconds)
+        remaining_minutes = max(1, (remaining_seconds + 59) // 60)
+        return {
+            'ip_address': ip_address,
+            'username': username,
+            'block_time': f'{remaining_minutes} минут',
+            'remaining_seconds': remaining_seconds,
+            'blocked_until': blocked_until,
+            'current_time': timezone.now(),
+            'reason': reason,
+        }
+
+    @classmethod
+    def blocked_response(cls, request, ip_address, username=None, reason="blocked", remaining_seconds=None):
+        context = cls._build_context(
+            ip_address=ip_address,
+            username=username,
+            reason=reason,
+            remaining_seconds=remaining_seconds,
+        )
+
+        # Если это AJAX запрос
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({
+                'error': f"Слишком много попыток входа. Попробуйте через {context['block_time']}.",
+                'blocked_until': context['blocked_until'].isoformat(),
+                'reason': reason,
+            }, status=429)
+
+        return render(request, 'accounts/too_many_requests.html', context, status=429)
+
     def __call__(self, request):
         # Проверяем, не исключен ли текущий путь
         if any(request.path.startswith(path) for path in self.excluded_paths):
@@ -152,14 +248,17 @@ class BruteForceProtectionMiddleware(MiddlewareMixin):
             ip_address = self._get_client_ip(request)
             
             # Проверка блокировки по IP
-            if self._is_ip_blocked(ip_address):
-                return self._blocked_response(request, ip_address, reason="ip_blocked")
-            
             # Проверка блокировки по пользователю (если есть username)
-            if request.POST.get('username'):
-                username = request.POST.get('username', '').strip()
-                if self._is_user_blocked(username):
-                    return self._blocked_response(request, ip_address, username, reason="user_blocked")
+            username = self._extract_username(request)
+            status = self.get_block_status(ip_address, username)
+            if status["is_blocked"]:
+                return self.blocked_response(
+                    request,
+                    ip_address=ip_address,
+                    username=username,
+                    reason=status["reason"],
+                    remaining_seconds=status["remaining_seconds"],
+                )
         
         return self.get_response(request)
     
@@ -172,100 +271,92 @@ class BruteForceProtectionMiddleware(MiddlewareMixin):
             ip = request.META.get('REMOTE_ADDR')
         return ip
     
-    def _is_ip_blocked(self, ip_address):
-        """Проверка, заблокирован ли IP"""
-        block_key = f'ip_blocked_{ip_address}'
-        return cache.get(block_key) is not None
-    
-    def _is_user_blocked(self, username):
-        """Проверка, заблокирован ли пользователь"""
-        if not username:
-            return False
-        block_key = f'user_blocked_{username}'
-        return cache.get(block_key) is not None
-    
-    def _blocked_response(self, request, ip_address, username=None, reason="blocked"):
-        """Ответ при блокировке"""
-        # Получаем оставшееся время блокировки
-        if reason == "ip_blocked":
-            ttl = cache.ttl(f'ip_blocked_{ip_address}')
-        elif reason == "user_blocked" and username:
-            ttl = cache.ttl(f'user_blocked_{username}')
-        else:
-            ttl = 900  # 15 минут по умолчанию
-        
-        remaining_minutes = max(1, ttl // 60) if ttl else 15
-        
-        # Если это AJAX запрос
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({
-                'error': f'Слишком много попыток входа. Попробуйте через {remaining_minutes} минут.',
-                'blocked_until': (timezone.now() + timedelta(minutes=remaining_minutes)).isoformat(),
-                'reason': reason
-            }, status=429)
-        
-        # Если обычный запрос
-        context = {
-            'ip_address': ip_address,
-            'username': username,
-            'block_time': f'{remaining_minutes} минут',
-            'current_time': timezone.now(),
-            'reason': reason,
-        }
-        
-        return render(request, 'accounts/too_many_requests.html', context, status=429)
+    def _extract_username(self, request):
+        """Извлекаем username из form-data или JSON тела запроса."""
+        username = request.POST.get('username', '').strip()
+        if username:
+            return username
+
+        if 'application/json' in (request.content_type or ''):
+            try:
+                payload = json.loads((request.body or b'{}').decode('utf-8'))
+                return str(payload.get('username', '')).strip()
+            except (json.JSONDecodeError, UnicodeDecodeError, TypeError):
+                return ""
+        return ""
     
     @staticmethod
     def record_failed_attempt(ip_address, username=None):
-        """Запись неудачной попытки входа (статический метод для использования в views)"""
-        from django.core.cache import cache
-        from datetime import timedelta
-        
-        # Ключи для счетчиков
-        ip_attempts_key = f'login_attempts_ip_{ip_address}'
-        user_attempts_key = f'login_attempts_user_{username}' if username else None
-        
-        # Увеличиваем счетчик для IP
-        attempts_ip = cache.get(ip_attempts_key, 0) + 1
-        cache.set(ip_attempts_key, attempts_ip, 300)  # 5 минут
-        
-        # Увеличиваем счетчик для пользователя (если есть)
-        if username and user_attempts_key:
-            attempts_user = cache.get(user_attempts_key, 0) + 1
-            cache.set(user_attempts_key, attempts_user, 300)
-        
-        # Проверяем, не превышен ли лимит
-        max_attempts = 10
-        if attempts_ip >= max_attempts or (username and attempts_user >= max_attempts):
-            # Блокируем IP
-            cache.set(f'ip_blocked_{ip_address}', True, 900)  # 15 минут
-            
-            # Блокируем пользователя (если есть)
+        """Запись неудачной попытки входа (статический метод для использования в views)."""
+        now_ts = BruteForceProtectionMiddleware._now_ts()
+        ip_attempts_key = BruteForceProtectionMiddleware._attempts_ip_key(ip_address)
+
+        attempts_ip = int(cache.get(ip_attempts_key, 0)) + 1
+        cache.set(
+            ip_attempts_key,
+            attempts_ip,
+            BruteForceProtectionMiddleware.ATTEMPT_WINDOW_SECONDS
+        )
+
+        attempts_user = 0
+        if username:
+            user_attempts_key = BruteForceProtectionMiddleware._attempts_user_key(username)
+            attempts_user = int(cache.get(user_attempts_key, 0)) + 1
+            cache.set(
+                user_attempts_key,
+                attempts_user,
+                BruteForceProtectionMiddleware.ATTEMPT_WINDOW_SECONDS
+            )
+
+        current_attempts = max(attempts_ip, attempts_user)
+        is_blocked = current_attempts >= BruteForceProtectionMiddleware.MAX_ATTEMPTS
+
+        warning_message = None
+        if is_blocked:
+            blocked_until_ts = now_ts + BruteForceProtectionMiddleware.BLOCK_SECONDS
+            cache.set(
+                BruteForceProtectionMiddleware._blocked_ip_key(ip_address),
+                blocked_until_ts,
+                BruteForceProtectionMiddleware.BLOCK_SECONDS,
+            )
             if username:
-                cache.set(f'user_blocked_{username}', True, 900)
-            
-            logger.warning(f"Блокировка: IP={ip_address}, User={username}, Attempts={attempts_ip}")
-            return False, f"Превышено максимальное количество попыток. Блокировка на 15 минут."
-        
-        # Проверяем предупреждение
-        warning_threshold = 5
-        if attempts_ip >= warning_threshold or (username and attempts_user >= warning_threshold):
-            remaining = max_attempts - max(attempts_ip, attempts_user if username else 0)
-            return True, f"Внимание: осталось {remaining} попыток до блокировки."
-        
-        return True, None
+                cache.set(
+                    BruteForceProtectionMiddleware._blocked_user_key(username),
+                    blocked_until_ts,
+                    BruteForceProtectionMiddleware.BLOCK_SECONDS,
+                )
+            remaining_seconds = BruteForceProtectionMiddleware.BLOCK_SECONDS
+            logger.warning(
+                "Bruteforce block triggered: ip=%s username=%s attempts=%s block_seconds=%s",
+                ip_address, username, current_attempts, remaining_seconds
+            )
+            warning_message = "Превышено максимальное количество попыток. Доступ временно заблокирован."
+            return {
+                "allowed": False,
+                "warning_message": warning_message,
+                "remaining_attempts": 0,
+                "remaining_seconds": remaining_seconds,
+            }
+
+        remaining_attempts = max(0, BruteForceProtectionMiddleware.MAX_ATTEMPTS - current_attempts)
+        if current_attempts >= BruteForceProtectionMiddleware.WARNING_THRESHOLD:
+            warning_message = f"Внимание: осталось {remaining_attempts} попыток до блокировки."
+
+        return {
+            "allowed": True,
+            "warning_message": warning_message,
+            "remaining_attempts": remaining_attempts,
+            "remaining_seconds": 0,
+        }
     
     @staticmethod
     def clear_attempts(ip_address, username=None):
         """Очистка счетчиков при успешном входе"""
-        from django.core.cache import cache
-        
-        # Удаляем счетчики
-        cache.delete(f'login_attempts_ip_{ip_address}')
-        cache.delete(f'ip_blocked_{ip_address}')
+        cache.delete(BruteForceProtectionMiddleware._attempts_ip_key(ip_address))
+        cache.delete(BruteForceProtectionMiddleware._blocked_ip_key(ip_address))
         
         if username:
-            cache.delete(f'login_attempts_user_{username}')
-            cache.delete(f'user_blocked_{username}')
+            cache.delete(BruteForceProtectionMiddleware._attempts_user_key(username))
+            cache.delete(BruteForceProtectionMiddleware._blocked_user_key(username))
         
         logger.info(f"Очистка счетчиков: IP={ip_address}, User={username}")

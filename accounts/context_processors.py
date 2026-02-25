@@ -10,24 +10,25 @@ def auth_context(request):
     Context processor for authentication-related data
     """
     context = {}
+    user = getattr(request, "user", None)
 
-    if request.user.is_authenticated:
+    if user and user.is_authenticated:
         # Get unread notifications count
         unread_notifications_count = Notification.objects.filter(
-            user=request.user, is_read=False
+            user=user, is_read=False
         ).count()
         recent_notifications = Notification.objects.filter(
-            user=request.user
+            user=user
         ).order_by("-created_at")[:5]
 
         context.update(
             {
                 "unread_notifications_count": unread_notifications_count,
                 "recent_notifications": recent_notifications,
-                "user_full_name": request.user.get_full_name(),
+                "user_full_name": user.get_full_name(),
                 "user_type": (
-                    request.user.user_type
-                    if hasattr(request.user, "user_type")
+                    user.user_type
+                    if hasattr(user, "user_type")
                     else None
                 ),
             }

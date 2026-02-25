@@ -85,42 +85,64 @@ def employer_applications(request):
 @login_required
 def job_create(request):
     """Yangi vakansiya yaratish"""
-    if not request.user.is_employer:
-        messages.error(request, _("Faqat ish beruvchilar vakansiya yarata oladi."))
+    is_admin_user = (
+        request.user.is_admin
+        or request.user.is_main_admin
+        or request.user.is_staff
+        or request.user.is_superuser
+    )
+
+    if not (request.user.is_employer or is_admin_user):
+        messages.error(request, _("Faqat ish beruvchilar yoki adminlar vakansiya yarata oladi."))
         return redirect("jobs:list")
 
-    try:
-        employer_profile = EmployerProfile.objects.get(user=request.user)
-    except EmployerProfile.DoesNotExist:
-        messages.error(request, _("Ish beruvchi profili topilmadi. Iltimos, profilingizni to'ldiring."))
-        return redirect("accounts:employer_profile_update")
+    form_class = AdminJobForm if is_admin_user and not request.user.is_employer else JobForm
+    template_name = "jobs/admin_job_form.html" if is_admin_user and not request.user.is_employer else "jobs/job_form.html"
+
+    employer_profile = None
+    if request.user.is_employer:
+        try:
+            employer_profile = EmployerProfile.objects.get(user=request.user)
+        except EmployerProfile.DoesNotExist:
+            messages.error(request, _("Ish beruvchi profili topilmadi. Iltimos, profilingizni to'ldiring."))
+            return redirect("accounts:employer_profile_update")
     
-    # Получаем компании пользователя (owner is CustomUser)
-    user_companies = Company.objects.filter(owner=request.user, is_active=True)
+    if is_admin_user and not request.user.is_employer:
+        available_companies = Company.objects.filter(is_active=True)
+    else:
+        # Получаем компании пользователя (owner is CustomUser)
+        available_companies = Company.objects.filter(owner=request.user, is_active=True)
     
-    if not user_companies.exists():
+    if not available_companies.exists():
+        if is_admin_user and not request.user.is_employer:
+            messages.error(request, _("Faol kompaniyalar topilmadi. Avval kompaniya yarating."))
+            return redirect("jobs:list")
         messages.error(request, _("Vakansiya yaratish uchun avval kompaniya yaratishingiz kerak."))
         return redirect("accounts:company_create")
 
     if request.method == "POST":
-        form = JobForm(request.POST, user=request.user)
+        form = form_class(request.POST, user=request.user)
         
         if form.is_valid():
             try:
                 job = form.save(commit=False)
-                # Сохраняем EmployerProfile как создателя
-                job.created_by = employer_profile
-                
-                # Проверяем, принадлежит ли выбранная компания пользователю
                 selected_company = form.cleaned_data.get('company')
-                if selected_company not in user_companies:
-                    messages.error(request, _("Siz tanlagan kompaniyaga vakansiya yaratish huquqingiz yo'q."))
+
+                # Проверяем, что выбранная компания доступна текущему пользователю
+                if selected_company not in available_companies:
+                    messages.error(request, _("Tanlangan kompaniyaga vakansiya yaratish huquqingiz yo'q."))
                     context = {
                         "form": form,
-                        "owned_companies": user_companies,
+                        "owned_companies": available_companies,
                         "employer_profile": employer_profile,
                     }
-                    return render(request, "jobs/job_form.html", context)
+                    return render(request, template_name, context)
+
+                # Для работодателя - его профиль, для админа - профиль владельца компании (если есть)
+                if request.user.is_employer:
+                    job.created_by = employer_profile
+                else:
+                    job.created_by = EmployerProfile.objects.filter(user=selected_company.owner).first()
 
                 # Check which button was clicked
                 if 'save_draft' in request.POST:
@@ -132,56 +154,55 @@ def job_create(request):
 
                 job.save()
                 messages.success(request, save_message)
-                return redirect("jobs:my_jobs")
+                if request.user.is_employer:
+                    return redirect("jobs:my_jobs")
+                return redirect("jobs:list")
                 
             except ValidationError as e:
                 messages.error(request, str(e))
                 context = {
                     "form": form,
-                    "owned_companies": user_companies,
+                    "owned_companies": available_companies,
                     "employer_profile": employer_profile,
                 }
-                return render(request, "jobs/job_form.html", context)
+                return render(request, template_name, context)
             except Exception as e:
                 messages.error(request, f"Xatolik yuz berdi: {str(e)}")
                 context = {
                     "form": form,
-                    "owned_companies": user_companies,
+                    "owned_companies": available_companies,
                     "employer_profile": employer_profile,
                 }
-                return render(request, "jobs/job_form.html", context)
+                return render(request, template_name, context)
         else:
             # Show form errors to user and re-render form with context
             context = {
                 "form": form,
-                "owned_companies": user_companies,
+                "owned_companies": available_companies,
                 "employer_profile": employer_profile,
             }
-            return render(request, "jobs/job_form.html", context)
+            return render(request, template_name, context)
     else:
         # При GET запросе устанавливаем начальные значения
         initial_data = {
             'contact_email': request.user.email,
             'contact_person': request.user.get_full_name() or request.user.username,
         }
-        form = JobForm(initial=initial_data, user=request.user)
+        form = form_class(initial=initial_data, user=request.user)
         
         # Ограничиваем выбор компаний только доступными пользователю
-        form.fields['company'].queryset = Company.objects.filter(
-            Q(owner=request.user),
-            is_active=True
-        ).distinct()
+        form.fields['company'].queryset = available_companies.distinct()
         
-        if user_companies and len(user_companies) == 1:
-            form.fields['company'].initial = user_companies[0]
+        if available_companies and len(available_companies) == 1:
+            form.fields['company'].initial = available_companies[0]
 
     context = {
         "form": form,
         "today": timezone.now().date(),
-        "owned_companies": user_companies,
+        "owned_companies": available_companies,
         "employer_profile": employer_profile,
     }
-    return render(request, "jobs/job_form.html", context)
+    return render(request, template_name, context)
 
 @login_required
 def job_edit(request, pk):

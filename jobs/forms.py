@@ -24,6 +24,24 @@ INDUSTRY_CHOICES = [
     ('Other', _('Other')),
 ]
 
+REGION_CHOICES = [
+    ("", _("Select region...")),
+    ("Republic of Karakalpakstan", _("Republic of Karakalpakstan")),
+    ("Andijan", _("Andijan")),
+    ("Bukhara", _("Bukhara")),
+    ("Fergana", _("Fergana")),
+    ("Jizzakh", _("Jizzakh")),
+    ("Khorezm", _("Khorezm")),
+    ("Namangan", _("Namangan")),
+    ("Navoiy", _("Navoiy")),
+    ("Qashqadaryo", _("Qashqadaryo")),
+    ("Samarqand", _("Samarqand")),
+    ("Sirdaryo", _("Sirdaryo")),
+    ("Surxondaryo", _("Surxondaryo")),
+    ("Tashkent Region", _("Tashkent Region")),
+    ("Tashkent City", _("Tashkent City")),
+]
+
 
 class JobForm(forms.ModelForm):
     """Form for creating/editing jobs with comprehensive validation"""
@@ -43,6 +61,13 @@ class JobForm(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-select'}),
         label=_("Industry"),
         help_text=_("Select the industry that best describes this job")
+    )
+    region = forms.ChoiceField(
+        choices=REGION_CHOICES,
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        label=_("Region"),
+        help_text=_("Select the region in Uzbekistan")
     )
 
     class Meta:
@@ -117,7 +142,7 @@ class JobForm(forms.ModelForm):
                 if field == 'industry':
                     # Для поля industry не нужно добавлять empty_label, так как оно уже есть в choices
                     self.fields[field].widget.attrs['class'] = 'form-select'
-                elif field != 'company':  # Для company empty_label уже установлен
+                elif field != 'company' and hasattr(self.fields[field], 'empty_label'):
                     self.fields[field].empty_label = _("Please select...")
                     self.fields[field].widget.attrs['class'] = 'form-select'
                 # Make required select fields more obvious
@@ -211,6 +236,18 @@ class JobForm(forms.ModelForm):
     #         self.save_m2m()
         
     #     return instance
+
+
+class AdminJobForm(JobForm):
+    """Admin form for creating jobs on behalf of any active company"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Admin can post for any active company in the system
+        self.fields["company"].queryset = Company.objects.filter(is_active=True).order_by("name")
+        self.fields["company"].help_text = _("Select a company to publish this vacancy on its behalf")
+        self.fields["company"].widget.attrs.pop("readonly", None)
 
 
 class JobSearchForm(forms.Form):

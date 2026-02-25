@@ -1,7 +1,7 @@
 # accounts/management/commands/check_bruteforce.py
 from django.core.management.base import BaseCommand
 from django.core.cache import cache
-import re
+from django.utils import timezone
 
 class Command(BaseCommand):
     help = 'Показать текущие блокировки и попытки входа'
@@ -31,7 +31,7 @@ class Command(BaseCommand):
 
     def clear_all_blocks(self):
         """Очистить все блокировки"""
-        keys = cache._cache.keys()
+        keys = self._iter_cache_keys()
         
         block_keys = [k for k in keys if 'blocked' in k or 'attempts' in k]
         
@@ -52,12 +52,12 @@ class Command(BaseCommand):
         self.stdout.write(f'Заблокирован: {"Да" if ip_blocked else "Нет"}')
         
         if ip_blocked:
-            ttl = cache.ttl(f'ip_blocked_{ip_address}')
+            ttl = self._remaining_seconds(ip_blocked)
             self.stdout.write(f'Блокировка истекает через: {ttl} секунд')
 
     def show_all_blocks(self):
         """Показать все текущие блокировки"""
-        keys = cache._cache.keys()
+        keys = self._iter_cache_keys()
         
         ip_blocks = []
         user_blocks = []
@@ -67,11 +67,11 @@ class Command(BaseCommand):
         for key in keys:
             if key.startswith('ip_blocked_'):
                 ip = key.replace('ip_blocked_', '')
-                ttl = cache.ttl(key)
+                ttl = self._remaining_seconds(cache.get(key))
                 ip_blocks.append((ip, ttl))
             elif key.startswith('user_blocked_'):
                 user = key.replace('user_blocked_', '')
-                ttl = cache.ttl(key)
+                ttl = self._remaining_seconds(cache.get(key))
                 user_blocks.append((user, ttl))
             elif key.startswith('login_attempts_ip_'):
                 ip = key.replace('login_attempts_ip_', '')
@@ -107,3 +107,21 @@ class Command(BaseCommand):
             self.stdout.write('\nАктивные счетчики попыток (Пользователи):')
             for user, attempts in user_attempts:
                 self.stdout.write(f'  {user}: {attempts} попыток')
+
+    def _iter_cache_keys(self):
+        # LocMemCache only. For other backends, key listing may not be available.
+        internal = getattr(cache, "_cache", None)
+        if internal is None:
+            self.stdout.write(self.style.WARNING(
+                "Текущий cache backend не поддерживает просмотр ключей. "
+                "Используйте --ip для точечной проверки."
+            ))
+            return []
+        return list(internal.keys())
+
+    def _remaining_seconds(self, raw_block_value):
+        if isinstance(raw_block_value, (int, float)):
+            return max(0, int(raw_block_value) - int(timezone.now().timestamp()))
+        if isinstance(raw_block_value, bool) and raw_block_value:
+            return 900
+        return 0

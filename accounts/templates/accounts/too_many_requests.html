@@ -8,15 +8,15 @@
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <div class="card border-danger">
-                <div class="card-header bg-danger text-white">
+            <div class="card border-0 shadow-lg overflow-hidden">
+                <div class="card-header bg-danger text-white py-3">
                     <h4 class="mb-0">
                         <i class="fas fa-ban me-2"></i>
                         {% trans "Access Temporarily Blocked" %}
                     </h4>
                 </div>
                 <div class="card-body">
-                    <div class="alert alert-warning">
+                    <div class="alert alert-warning border-0 shadow-sm">
                         <h5 class="alert-heading">
                             <i class="fas fa-exclamation-triangle me-2"></i>
                             {% trans "Too Many Login Attempts" %}
@@ -41,7 +41,14 @@
                             {% endif %}
                             <li class="list-group-item">
                                 <strong>{% trans "Blocked Until:" %}</strong> 
-                                {{ current_time|date:"H:i" }} ({% trans "approximately" %} {{ block_time }})
+                                {{ blocked_until|date:"H:i:s" }}
+                                <span class="text-muted">({% trans "approximately" %} {{ block_time }})</span>
+                            </li>
+                            <li class="list-group-item">
+                                <strong>{% trans "Remaining:" %}</strong>
+                                <span id="remaining-seconds" data-seconds="{{ remaining_seconds|default:0 }}">
+                                    {{ remaining_seconds|default:0 }} {% trans "seconds" %}
+                                </span>
                             </li>
                             <li class="list-group-item">
                                 <strong>{% trans "Reason:" %}</strong> 
@@ -64,7 +71,7 @@
                     </div>
                     
                     <div class="text-center mt-4">
-                        <a href="{% url 'home' %}" class="btn btn-primary">
+                        <a href="{% url 'core:home' %}" class="btn btn-primary">
                             <i class="fas fa-home me-2"></i>{% trans "Return to Home" %}
                         </a>
                         <a href="{% url 'accounts:contact_us' %}" class="btn btn-outline-secondary ms-2">
@@ -72,7 +79,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="card-footer text-muted text-center">
+                <div class="card-footer text-muted text-center bg-light">
                     <small>
                         <i class="fas fa-info-circle me-1"></i>
                         {% trans "This is an automated security measure to protect against brute force attacks." %}
@@ -82,4 +89,21 @@
         </div>
     </div>
 </div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const el = document.getElementById("remaining-seconds");
+    if (!el) return;
+    let left = parseInt(el.dataset.seconds || "0", 10);
+    const tick = () => {
+        if (left <= 0) {
+            el.textContent = "{% trans 'Less than a minute' %}";
+            return;
+        }
+        el.textContent = left + " {% trans 'seconds' %}";
+        left -= 1;
+    };
+    tick();
+    setInterval(tick, 1000);
+});
+</script>
 {% endblock %}

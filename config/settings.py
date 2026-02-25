@@ -78,6 +78,16 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 USE_X_FORWARDED_HOST = True
 
 # ==========================
+# BRUTEFORCE PROTECTION
+# ==========================
+BRUTEFORCE_MAX_ATTEMPTS = int(os.getenv("BRUTEFORCE_MAX_ATTEMPTS", "10"))
+BRUTEFORCE_ATTEMPT_WINDOW_SECONDS = int(os.getenv("BRUTEFORCE_ATTEMPT_WINDOW_SECONDS", "300"))
+BRUTEFORCE_BLOCK_SECONDS = int(os.getenv("BRUTEFORCE_BLOCK_SECONDS", "900"))
+BRUTEFORCE_WARNING_THRESHOLD = int(
+    os.getenv("BRUTEFORCE_WARNING_THRESHOLD", str(max(3, BRUTEFORCE_MAX_ATTEMPTS // 2)))
+)
+
+# ==========================
 # APPLICATIONS
 # ==========================
 INSTALLED_APPS = [
@@ -129,11 +139,11 @@ MIDDLEWARE = [
 
     "accounts.middleware.NotificationMiddleware",
     "django.middleware.locale.LocaleMiddleware",
-    "accounts.middleware.BruteForceProtectionMiddleware",
 
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "accounts.middleware.BruteForceProtectionMiddleware",
     "accounts.middleware.StudentSessionTimeoutMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
