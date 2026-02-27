@@ -4,6 +4,7 @@ from django.core.paginator import Paginator
 from django.db.models import Count, Q, Sum
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from datetime import timedelta
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_POST
@@ -496,77 +497,68 @@ def job_list(request):
         # Студенты и выпускники видят только активные вакансии
         jobs = Job.objects.filter(is_active=True)
 
-    # Поиск и фильтрация
-    if form.is_valid():
-        query = form.cleaned_data.get("query")
-        employment_type = form.cleaned_data.get("employment_type")
-        experience_level = form.cleaned_data.get("experience_level")
-        work_type = form.cleaned_data.get("work_type")
-        salary_min = form.cleaned_data.get("salary_min")
-        salary_max = form.cleaned_data.get("salary_max")
-        currency = form.cleaned_data.get("currency")
-        remote_ok = form.cleaned_data.get("remote_ok")
-        is_featured = form.cleaned_data.get("is_featured")
-        is_urgent = form.cleaned_data.get("is_urgent")
-        has_salary = form.cleaned_data.get("has_salary")
-        industry = form.cleaned_data.get("industry")
+    # Серверная фильтрация (применяется только после отправки формы)
+    query = request.GET.get("query", "").strip()
+    employment_type = request.GET.get("employment_type", "").strip()
+    experience_level = request.GET.get("experience_level", "").strip()
+    industry = request.GET.get("industry", "").strip()
+    work_types = request.GET.getlist("work_type")
+    salary_range = request.GET.get("salary_range", "").strip()
+    date_posted = request.GET.get("date_posted", "").strip()
 
-        if query:
-            jobs = jobs.filter(
-                Q(title__icontains=query)
-                | Q(short_description__icontains=query)
-                | Q(description__icontains=query)
-                | Q(company__name__icontains=query)
-                | Q(skills_required__icontains=query)
-            )
+    if query:
+        jobs = jobs.filter(
+            Q(title__icontains=query)
+            | Q(short_description__icontains=query)
+            | Q(description__icontains=query)
+            | Q(company__name__icontains=query)
+            | Q(skills_required__icontains=query)
+        )
 
-        if employment_type:
-            jobs = jobs.filter(employment_type__in=employment_type)
+    if employment_type:
+        jobs = jobs.filter(employment_type=employment_type)
 
-        if experience_level:
-            jobs = jobs.filter(experience_level__in=experience_level)
+    if experience_level:
+        jobs = jobs.filter(experience_level=experience_level)
 
-        if work_type:
-            jobs = jobs.filter(work_type__in=work_type)
+    if industry:
+        jobs = jobs.filter(industry__icontains=industry)
 
-        if industry and industry.strip():
-            jobs = jobs.filter(industry__icontains=industry.strip())
+    if work_types:
+        jobs = jobs.filter(work_type__in=work_types)
 
-        if salary_min:
-            jobs = jobs.filter(
-                Q(salary_min__gte=salary_min) | Q(salary_max__gte=salary_min)
-            )
+    if salary_range == "0-3000000":
+        jobs = jobs.filter(Q(salary_min__lte=3000000) | Q(salary_max__lte=3000000))
+    elif salary_range == "3000000-6000000":
+        jobs = jobs.filter(
+            Q(salary_min__gte=3000000, salary_min__lte=6000000)
+            | Q(salary_max__gte=3000000, salary_max__lte=6000000)
+        )
+    elif salary_range == "6000000-10000000":
+        jobs = jobs.filter(
+            Q(salary_min__gte=6000000, salary_min__lte=10000000)
+            | Q(salary_max__gte=6000000, salary_max__lte=10000000)
+        )
+    elif salary_range == "10000000+":
+        jobs = jobs.filter(Q(salary_min__gte=10000000) | Q(salary_max__gte=10000000))
 
-        if salary_max:
-            jobs = jobs.filter(
-                Q(salary_max__lte=salary_max) | Q(salary_min__lte=salary_max)
-            )
-
-        if currency:
-            jobs = jobs.filter(currency=currency)
-
-        if remote_ok:
-            jobs = jobs.filter(work_type="remote")
-
-        if is_featured:
-            jobs = jobs.filter(is_featured=True)
-
-        if is_urgent:
-            jobs = jobs.filter(is_urgent=True)
-
-        if has_salary:
-            jobs = jobs.filter(Q(salary_min__isnull=False) | Q(salary_max__isnull=False))
+    if date_posted == "today":
+        jobs = jobs.filter(created_at__date=timezone.now().date())
+    elif date_posted == "week":
+        jobs = jobs.filter(created_at__gte=timezone.now() - timedelta(days=7))
+    elif date_posted == "month":
+        jobs = jobs.filter(created_at__gte=timezone.now() - timedelta(days=30))
 
     # Сортировка
     sort = request.GET.get("sort", "newest")
-    if sort == "salary_high":
+    if sort in {"salary_high", "salary"}:
         jobs = jobs.order_by("-salary_max", "-salary_min")
     elif sort == "salary_low":
         jobs = jobs.order_by("salary_min", "salary_max")
     elif sort == "views":
         jobs = jobs.order_by("-views_count")
     elif sort == "applications":
-        jobs = jobs.order_by("-applications_count")
+        jobs = jobs.annotate(applications_count=Count("applications")).order_by("-applications_count")
     elif sort == "deadline":
         jobs = jobs.order_by("expires_at")
     else:  # newest
@@ -598,6 +590,9 @@ def job_list(request):
         is_active=True
     ).distinct().count()
 
+    query_params = request.GET.copy()
+    query_params.pop("page", None)
+
     context = {
         "jobs": page_obj,
         "page_obj": page_obj,
@@ -616,6 +611,17 @@ def job_list(request):
         "is_admin": request.user.is_staff or request.user.is_superuser,
         "is_employer": request.user.is_employer,
         "is_student": is_student_or_alumni,
+        "filters": {
+            "query": query,
+            "employment_type": employment_type,
+            "experience_level": experience_level,
+            "industry": industry,
+            "work_types": work_types,
+            "salary_range": salary_range,
+            "date_posted": date_posted,
+            "sort": sort,
+        },
+        "query_string": query_params.urlencode(),
     }
     return render(request, "jobs/job_list.html", context)
 

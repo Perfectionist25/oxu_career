@@ -18,6 +18,7 @@
 
     <!-- Main Content -->
     <div class="container-fluid px-3 px-lg-4 py-3 py-md-4">
+        <form method="get" id="jobFilterForm">
         <!-- Search and Filters -->
         <div class="card border-0 shadow-lg mb-4">
             <div class="card-body p-3 p-md-4">
@@ -30,35 +31,37 @@
                             </span>
                             <input type="text"
                                    class="form-control border-start-0 ps-2"
+                                   name="query"
                                    id="searchInput"
+                                   value="{{ filters.query }}"
                                    placeholder="{% trans 'Position, company or keywords...' %}">
                         </div>
                     </div>
                     
                     <!-- Filters -->
                     <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-                        <select class="form-select form-select-lg" id="typeFilter">
+                        <select class="form-select form-select-lg" id="typeFilter" name="employment_type">
                             <option value="">{% trans "All job types" %}</option>
                             {% for value, label in employment_types %}
-                            <option value="{{ value }}">{{ label }}</option>
+                            <option value="{{ value }}" {% if filters.employment_type == value %}selected{% endif %}>{{ label }}</option>
                             {% endfor %}
                         </select>
                     </div>
                     
                     <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-                        <select class="form-select form-select-lg" id="categoryFilter">
+                        <select class="form-select form-select-lg" id="categoryFilter" name="industry">
                             <option value="">{% trans "All industries" %}</option>
                             {% for industry in industries %}
-                            <option value="{{ industry }}">{{ industry }}</option>
+                            <option value="{{ industry }}" {% if filters.industry == industry %}selected{% endif %}>{{ industry }}</option>
                             {% endfor %}
                         </select>
                     </div>
                     
                     <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-                        <select class="form-select form-select-lg" id="experienceFilter">
+                        <select class="form-select form-select-lg" id="experienceFilter" name="experience_level">
                             <option value="">{% trans "Experience" %}</option>
                             {% for value, label in experience_levels %}
-                            <option value="{{ value }}">{{ label }}</option>
+                            <option value="{{ value }}" {% if filters.experience_level == value %}selected{% endif %}>{{ label }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -66,6 +69,9 @@
                     <!-- Action Buttons -->
                     <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
                         <div class="d-flex gap-2 h-100">
+                            <button class="btn btn-primary btn-lg w-100" type="submit">
+                                <i class="fas fa-search me-1"></i>{% trans "Search" %}
+                            </button>
                             <button class="btn btn-outline-primary btn-lg w-100" type="button" data-bs-toggle="collapse" data-bs-target="#advancedFilters">
                                 <i class="fas fa-sliders-h me-1"></i>{% trans "Advanced" %}
                             </button>
@@ -80,13 +86,13 @@
                             <label class="form-label fw-semibold mb-1">{% trans "Work type" %}</label>
                             <div class="d-flex flex-wrap gap-2">
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input work-type-filter" type="checkbox" value="remote" id="remoteWork">
+                                    <input class="form-check-input work-type-filter" type="checkbox" value="remote" id="remoteWork" name="work_type" {% if 'remote' in filters.work_types %}checked{% endif %}>
                                     <label class="form-check-label small" for="remoteWork">
                                         <i class="fas fa-laptop-house me-1"></i>{% trans "Remote" %}
                                     </label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input work-type-filter" type="checkbox" value="hybrid" id="hybridWork">
+                                    <input class="form-check-input work-type-filter" type="checkbox" value="hybrid" id="hybridWork" name="work_type" {% if 'hybrid' in filters.work_types %}checked{% endif %}>
                                     <label class="form-check-label small" for="hybridWork">
                                         <i class="fas fa-home-office me-1"></i>{% trans "Hybrid" %}
                                     </label>
@@ -96,29 +102,29 @@
                         
                         <div class="col-xl-3 col-lg-4 col-md-6">
                             <label class="form-label fw-semibold mb-1">{% trans "Salary range" %}</label>
-                            <select class="form-select" id="salaryFilter">
+                            <select class="form-select" id="salaryFilter" name="salary_range">
                                 <option value="">{% trans "Any salary" %}</option>
-                                <option value="0-3000000">{% trans 'Up to 3,000,000 UZS' %}</option>
-                                <option value="3000000-6000000">{% trans '3-6 million UZS' %}</option>
-                                <option value="6000000-10000000">{% trans '6-10 million UZS' %}</option>
-                                <option value="10000000+">{% trans 'Over 10 million UZS' %}</option>
+                                <option value="0-3000000" {% if filters.salary_range == '0-3000000' %}selected{% endif %}>{% trans 'Up to 3,000,000 UZS' %}</option>
+                                <option value="3000000-6000000" {% if filters.salary_range == '3000000-6000000' %}selected{% endif %}>{% trans '3-6 million UZS' %}</option>
+                                <option value="6000000-10000000" {% if filters.salary_range == '6000000-10000000' %}selected{% endif %}>{% trans '6-10 million UZS' %}</option>
+                                <option value="10000000+" {% if filters.salary_range == '10000000+' %}selected{% endif %}>{% trans 'Over 10 million UZS' %}</option>
                             </select>
                         </div>
                         
                         <div class="col-xl-3 col-lg-4 col-md-6">
                             <label class="form-label fw-semibold mb-1">{% trans "Date posted" %}</label>
-                            <select class="form-select" id="dateFilter">
+                            <select class="form-select" id="dateFilter" name="date_posted">
                                 <option value="">{% trans "Any time" %}</option>
-                                <option value="today">{% trans "Today" %}</option>
-                                <option value="week">{% trans "Last 7 days" %}</option>
-                                <option value="month">{% trans "Last 30 days" %}</option>
+                                <option value="today" {% if filters.date_posted == 'today' %}selected{% endif %}>{% trans "Today" %}</option>
+                                <option value="week" {% if filters.date_posted == 'week' %}selected{% endif %}>{% trans "Last 7 days" %}</option>
+                                <option value="month" {% if filters.date_posted == 'month' %}selected{% endif %}>{% trans "Last 30 days" %}</option>
                             </select>
                         </div>
                         
                         <div class="col-xl-3 col-lg-4 col-md-6 d-flex align-items-end">
-                            <button class="btn btn-outline-secondary w-100" onclick="clearFilters()">
+                            <a class="btn btn-outline-secondary w-100" href="{% url 'jobs:list' %}">
                                 <i class="fas fa-redo me-1"></i>{% trans "Clear all" %}
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -141,16 +147,17 @@
                     </div>
                     <div class="d-flex align-items-center gap-2">
                         <span class="text-muted small">{% trans "Sort by:" %}</span>
-                        <select class="form-select w-auto" id="sortSelect">
-                            <option value="newest">{% trans "Newest" %}</option>
+                        <select class="form-select w-auto" id="sortSelect" name="sort">
+                            <option value="newest" {% if filters.sort == 'newest' or not filters.sort %}selected{% endif %}>{% trans "Newest" %}</option>
                             <option value="relevant">{% trans "Relevance" %}</option>
-                            <option value="salary">{% trans "Salary" %}</option>
-                            <option value="deadline">{% trans "Deadline" %}</option>
+                            <option value="salary" {% if filters.sort == 'salary' %}selected{% endif %}>{% trans "Salary" %}</option>
+                            <option value="deadline" {% if filters.sort == 'deadline' %}selected{% endif %}>{% trans "Deadline" %}</option>
                         </select>
                     </div>
                 </div>
             </div>
         </div>
+        </form>
 
         {% if jobs %}
         <!-- Jobs Grid - 3 per row (BIGGER CARDS WITH FULL CONTENT) -->
@@ -160,12 +167,12 @@
                  data-title="{{ job.title|lower }}"
                  data-company="{{ job.company.name|lower }}"
                  data-type="{{ job.employment_type|default:'' }}"
-                 data-category="{{ job.company.industry|default:'' }}"
+                 data-category="{{ job.company.industry|default:''|lower }}"
                  data-experience="{{ job.experience_level|default:'' }}"
                  data-salary="{{ job.salary_min|default:0 }}"
-                 data-remote="{{ job.remote_work|yesno:'true,false' }}"
-                 data-hybrid="{{ job.hybrid_work|yesno:'true,false' }}"
-                 data-created="{{ job.created_at|date:'Y-m-d' }}">
+                 data-work-type="{{ job.work_type|default:'' }}"
+                 data-created="{{ job.created_at|date:'Y-m-d' }}"
+                 data-deadline="{{ job.expires_at|date:'Y-m-d' }}">
                 <div class="card border-0 shadow-sm h-100 job-card d-flex flex-column">
                     <!-- Card Header -->
                     <div class="card-header bg-white border-0 pt-4 pb-3 px-4">
@@ -213,13 +220,13 @@
                             </span>
                             {% endif %}
                             
-                            {% if job.remote_work %}
+                            {% if job.work_type == "remote" %}
                             <span class="badge bg-warning text-dark">
                                 <i class="fas fa-laptop-house me-1"></i>{% trans "Remote" %}
                             </span>
                             {% endif %}
 
-                            {% if job.hybrid_work %}
+                            {% if job.work_type == "hybrid" %}
                             <span class="badge bg-info text-dark">
                                 <i class="fas fa-home-office me-1"></i>{% trans "Hybrid" %}
                             </span>
@@ -346,7 +353,7 @@
                 <ul class="pagination">
                     {% if jobs.has_previous %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ jobs.previous_page_number }}" aria-label="{% trans 'Previous' %}">
+                        <a class="page-link" href="?page={{ jobs.previous_page_number }}{% if query_string %}&{{ query_string }}{% endif %}" aria-label="{% trans 'Previous' %}">
                             <i class="fas fa-chevron-left"></i>
                         </a>
                     </li>
@@ -360,13 +367,13 @@
                         {% if jobs.number == i %}
                         <li class="page-item active"><span class="page-link">{{ i }}</span></li>
                         {% else %}
-                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ i }}{% if query_string %}&{{ query_string }}{% endif %}">{{ i }}</a></li>
                         {% endif %}
                     {% endfor %}
 
                     {% if jobs.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ jobs.next_page_number }}" aria-label="{% trans 'Next' %}">
+                        <a class="page-link" href="?page={{ jobs.next_page_number }}{% if query_string %}&{{ query_string }}{% endif %}" aria-label="{% trans 'Next' %}">
                             <i class="fas fa-chevron-right"></i>
                         </a>
                     </li>
@@ -389,9 +396,9 @@
                 <p class="text-muted mb-4">{% trans "Try changing your search criteria or wait for new jobs to be posted" %}</p>
             </div>
             <div class="d-flex justify-content-center gap-3">
-                <button class="btn btn-primary btn-lg" onclick="clearFilters()">
+                <a class="btn btn-primary btn-lg" href="{% url 'jobs:list' %}">
                     <i class="fas fa-redo me-2"></i>{% trans "Clear filters" %}
-                </button>
+                </a>
                 <button class="btn btn-outline-primary btn-lg" onclick="subscribeToNotifications()">
                     <i class="fas fa-bell me-2"></i>{% trans "Get notifications" %}
                 </button>
@@ -701,294 +708,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const filters = {
-        search: document.getElementById('searchInput'),
-        type: document.getElementById('typeFilter'),
-        category: document.getElementById('categoryFilter'),
-        experience: document.getElementById('experienceFilter'),
-        salary: document.getElementById('salaryFilter'),
-        date: document.getElementById('dateFilter'),
-        workType: document.querySelectorAll('.work-type-filter'),
-        sort: document.getElementById('sortSelect')
-    };
-
-    const jobItems = document.querySelectorAll('.job-item');
-    let filterTimeout;
-
-    // Initialize filters
-    function initFilters() {
-        // Set up event listeners
-        filters.search.addEventListener('input', debounce(() => {
-            applyFilters();
-        }, 300));
-        
-        filters.type.addEventListener('change', () => applyFilters());
-        filters.category.addEventListener('change', () => applyFilters());
-        filters.experience.addEventListener('change', () => applyFilters());
-        filters.salary.addEventListener('change', () => applyFilters());
-        filters.date.addEventListener('change', () => applyFilters());
-        filters.sort.addEventListener('change', () => applySorting());
-        
-        filters.workType.forEach(filter => {
-            filter.addEventListener('change', () => applyFilters());
-        });
-
-        // Load saved filters from localStorage
-        loadSavedFilters();
-        
-        // Apply initial filters
-        applyFilters();
-        applySorting();
-    }
-
-    function debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    }
-
-    function applyFilters() {
-        const searchTerm = filters.search.value.toLowerCase().trim();
-        const typeVal = filters.type.value;
-        const categoryVal = filters.category.value;
-        const experienceVal = filters.experience.value;
-        const salaryVal = filters.salary.value;
-        const dateVal = filters.date.value;
-        
-        const workTypeVals = Array.from(filters.workType)
-            .filter(f => f.checked)
-            .map(f => f.value);
-
-        let visibleCount = 0;
-        let hasAnyFilter = false;
-
-        // Check if any filter is active
-        if (searchTerm || typeVal || categoryVal || experienceVal || 
-            salaryVal || dateVal || workTypeVals.length > 0) {
-            hasAnyFilter = true;
-        }
-
-        jobItems.forEach(item => {
-            const title = item.getAttribute('data-title') || '';
-            const company = item.getAttribute('data-company') || '';
-            const type = item.getAttribute('data-type') || '';
-            const category = item.getAttribute('data-category') || '';
-            const experience = item.getAttribute('data-experience') || '';
-            const salary = parseInt(item.getAttribute('data-salary')) || 0;
-            const isRemote = item.getAttribute('data-remote') === 'true';
-            const isHybrid = item.getAttribute('data-hybrid') === 'true';
-            const createdDate = item.getAttribute('data-created');
-
-            // Apply filters only if there are any active filters
-            let isVisible = true;
-            
-            if (hasAnyFilter) {
-                // Search filter
-                const matchesSearch = !searchTerm || 
-                                    title.includes(searchTerm) || 
-                                    company.includes(searchTerm);
-                
-                // Type filter
-                const matchesType = !typeVal || type === typeVal;
-                
-                // Category filter
-                const matchesCategory = !categoryVal || category === categoryVal;
-                
-                // Experience filter
-                const matchesExperience = !experienceVal || experience === experienceVal;
-                
-                // Salary filter
-                const matchesSalary = checkSalaryFilter(salary, salaryVal);
-                
-                // Date filter
-                const matchesDate = checkDateFilter(createdDate, dateVal);
-                
-                // Work type filters
-                const matchesWorkType = checkWorkTypeFilters(isRemote, isHybrid, workTypeVals);
-
-                isVisible = matchesSearch && matchesType && matchesCategory && 
-                          matchesExperience && matchesSalary && matchesDate && matchesWorkType;
-            }
-
-            item.style.display = isVisible ? 'flex' : 'none';
-            if (isVisible) visibleCount++;
-        });
-
-        // Update results count
-        updateResultsCount(visibleCount);
-        
-        // Save filters to localStorage
-        saveFilters();
-    }
-
-    function applySorting() {
-        const sortValue = filters.sort.value;
-        const container = document.getElementById('jobsContainer');
-        const visibleItems = Array.from(jobItems).filter(item => item.style.display !== 'none');
-        
-        if (visibleItems.length === 0) return;
-        
-        visibleItems.sort((a, b) => {
-            switch(sortValue) {
-                case 'newest':
-                    const dateA = new Date(a.getAttribute('data-created') || 0);
-                    const dateB = new Date(b.getAttribute('data-created') || 0);
-                    return dateB - dateA;
-                    
-                case 'salary':
-                    const salaryA = parseInt(a.getAttribute('data-salary')) || 0;
-                    const salaryB = parseInt(b.getAttribute('data-salary')) || 0;
-                    return salaryB - salaryA;
-                    
-                default: // 'relevant' or 'deadline'
-                    return 0;
-            }
-        });
-        
-        // Reorder only visible items in DOM
-        visibleItems.forEach(item => {
-            container.appendChild(item);
-        });
-    }
-
-    function checkSalaryFilter(salary, filterValue) {
-        if (!filterValue) return true;
-        
-        const ranges = {
-            '0-3000000': salary <= 3000000,
-            '3000000-6000000': salary >{% trans '= 3000000 && salary' %} <= 6000000,
-            '6000000-10000000': salary >{% trans '= 6000000 && salary' %} <= 10000000,
-            '10000000+': salary >= 10000000
-        };
-        
-        return ranges[filterValue] || true;
-    }
-
-    function checkWorkTypeFilters(isRemote, isHybrid, selectedTypes) {
-        if (selectedTypes.length === 0) return true;
-        
-        // Check if job matches any selected work type
-        const matchesRemote = selectedTypes.includes('remote') && isRemote;
-        const matchesHybrid = selectedTypes.includes('hybrid') && isHybrid;
-        
-        // If both remote and hybrid are selected, show jobs that are either remote OR hybrid
-        if (selectedTypes.includes('remote') && selectedTypes.includes('hybrid')) {
-            return matchesRemote || matchesHybrid;
-        }
-        
-        // If only remote is selected
-        if (selectedTypes.includes('remote') && !selectedTypes.includes('hybrid')) {
-            return matchesRemote;
-        }
-        
-        // If only hybrid is selected
-        if (selectedTypes.includes('hybrid') && !selectedTypes.includes('remote')) {
-            return matchesHybrid;
-        }
-        
-        return false;
-    }
-
-    function checkDateFilter(createdDate, filterValue) {
-        if (!filterValue || !createdDate) return true;
-        
-        const jobDate = new Date(createdDate);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        
-        switch(filterValue) {
-            case 'today':
-                const jobDay = new Date(jobDate);
-                jobDay.setHours(0, 0, 0, 0);
-                return jobDay.getTime() === today.getTime();
-                
-            case 'week':
-                const weekAgo = new Date(today);
-                weekAgo.setDate(today.getDate() - 7);
-                return jobDate >= weekAgo;
-                
-            case 'month':
-                const monthAgo = new Date(today);
-                monthAgo.setDate(today.getDate() - 30);
-                return jobDate >= monthAgo;
-                
-            default:
-                return true;
-        }
-    }
-
-    function updateResultsCount(count) {
-        const resultsElement = document.getElementById('resultsCount');
-        if (count === 0) {
-            resultsElement.innerHTML = '<strong>0</strong> {% trans "jobs found" %}';
-        } else {
-            resultsElement.innerHTML = `<strong>${count}</strong> {% trans "jobs found" %}`;
-        }
-    }
-
-    function saveFilters() {
-        const filterData = {
-            search: filters.search.value,
-            type: filters.type.value,
-            category: filters.category.value,
-            experience: filters.experience.value,
-            salary: filters.salary.value,
-            date: filters.date.value,
-            sort: filters.sort.value,
-            workType: Array.from(filters.workType)
-                .filter(f => f.checked)
-                .map(f => f.value)
-        };
-        
-        localStorage.setItem('jobFilters', JSON.stringify(filterData));
-    }
-
-    function loadSavedFilters() {
-        const saved = localStorage.getItem('jobFilters');
-        if (saved) {
-            try {
-                const filterData = JSON.parse(saved);
-                
-                filters.search.value = filterData.search || '';
-                filters.type.value = filterData.type || '';
-                filters.category.value = filterData.category || '';
-                filters.experience.value = filterData.experience || '';
-                filters.salary.value = filterData.salary || '';
-                filters.date.value = filterData.date || '';
-                filters.sort.value = filterData.sort || 'newest';
-                
-                filters.workType.forEach(filter => {
-                    filter.checked = filterData.workType?.includes(filter.value) || false;
-                });
-            } catch (e) {
-                console.error('Error loading saved filters:', e);
-            }
-        }
-    }
-
-    // Utility functions
-    window.clearFilters = function() {
-        filters.search.value = '';
-        filters.type.value = '';
-        filters.category.value = '';
-        filters.experience.value = '';
-        filters.salary.value = '';
-        filters.date.value = '';
-        filters.sort.value = 'newest';
-        filters.workType.forEach(f => f.checked = false);
-        applyFilters();
-        localStorage.removeItem('jobFilters');
-        
-        // Show notification
-        showNotification('{% trans "All filters have been cleared" %}', 'info');
-    };
-
     window.subscribeToNotifications = function() {
         showNotification('{% trans "Notification subscription feature will be implemented soon!" %}', 'info');
     };
@@ -1010,8 +729,10 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     window.toggleBookmark = function(jobId) {
-        const button = event.target.closest('button');
+        const button = document.querySelector(`button[data-job-id="${jobId}"]`);
+        if (!button) return;
         const icon = button.querySelector('i');
+        if (!icon) return;
         
         // Toggle bookmark state
         icon.classList.toggle('far');
@@ -1090,7 +811,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Initialize
-    initFilters();
     loadBookmarks();
 });
 </script>
