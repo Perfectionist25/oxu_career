@@ -51,6 +51,7 @@ urlpatterns = [
     path("student/dashboard/", views.student_dashboard, name="student_dashboard"),
     path("employer/dashboard/", views.employer_dashboard, name="employer_dashboard"),
     path("admin/dashboard/", views.admin_dashboard, name="admin_dashboard"),
+    path("admin/statistics/", views.admin_statistics, name="admin_statistics"),
     
     # Поиск вакансий для студентов
     path("student/search/", views.student_search, name="student_search"),

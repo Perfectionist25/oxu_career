@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "System Statistics" %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 fw-bold text-primary mb-1">{% trans "System Statistics" %}</h1>
+            <p class="text-muted mb-0">
+                {% trans "Updated" %}: {{ generated_at|date:"d.m.Y H:i" }}
+            </p>
+        </div>
+        <a href="{% url 'accounts:admin_dashboard' %}" class="btn btn-outline-primary">
+            <i class="fas fa-arrow-left me-2"></i>{% trans "Back to Dashboard" %}
+        </a>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="small text-muted">{% trans "Users" %}</div>
+                    <div class="h3 fw-bold mb-1">{{ users.total }}</div>
+                    <div class="small text-muted">{% trans "Students" %}: {{ users.students }} | {% trans "Employers" %}: {{ users.employers }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="small text-muted">{% trans "Resources" %}</div>
+                    <div class="h3 fw-bold mb-1">{{ resources.total }}</div>
+                    <div class="small text-muted">{% trans "Published" %}: {{ resources.published }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="small text-muted">{% trans "Events" %}</div>
+                    <div class="h3 fw-bold mb-1">{{ events.total }}</div>
+                    <div class="small text-muted">{% trans "Upcoming" %}: {{ events.upcoming }} | {% trans "Ongoing" %}: {{ events.ongoing }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="small text-muted">{% trans "Jobs / CV" %}</div>
+                    <div class="h3 fw-bold mb-1">{{ jobs.total }} / {{ cvs.total }}</div>
+                    <div class="small text-muted">{% trans "Active jobs" %}: {{ jobs.active }} | {% trans "Published CV" %}: {{ cvs.published }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-xl-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white"><strong>{% trans "Users by Role" %}</strong></div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between"><span>{% trans "Students" %}</span><strong>{{ users.students }}</strong></li>
+                        <li class="list-group-item d-flex justify-content-between"><span>{% trans "Employers" %}</span><strong>{{ users.employers }}</strong></li>
+                        <li class="list-group-item d-flex justify-content-between"><span>{% trans "Admins" %}</span><strong>{{ users.admins }}</strong></li>
+                        <li class="list-group-item d-flex justify-content-between"><span>{% trans "Main Admins" %}</span><strong>{{ users.main_admins }}</strong></li>
+                        <li class="list-group-item d-flex justify-content-between"><span>{% trans "Guests" %}</span><strong>{{ users.guests }}</strong></li>
+                        <li class="list-group-item d-flex justify-content-between"><span>{% trans "Other" %}</span><strong>{{ users.other }}</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white"><strong>{% trans "Events by Status" %}</strong></div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between"><span>{% trans "Published" %}</span><strong>{{ events.published }}</strong></li>
+                        <li class="list-group-item d-flex justify-content-between"><span>{% trans "Draft" %}</span><strong>{{ events.draft }}</strong></li>
+                        <li class="list-group-item d-flex justify-content-between"><span>{% trans "Cancelled" %}</span><strong>{{ events.cancelled }}</strong></li>
+                        <li class="list-group-item d-flex justify-content-between"><span>{% trans "Completed" %}</span><strong>{{ events.completed }}</strong></li>
+                        <li class="list-group-item d-flex justify-content-between"><span>{% trans "Upcoming" %}</span><strong>{{ events.upcoming }}</strong></li>
+                        <li class="list-group-item d-flex justify-content-between"><span>{% trans "Past" %}</span><strong>{{ events.past }}</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm mt-4">
+        <div class="card-header bg-white"><strong>{% trans "New Records by Period" %}</strong></div>
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>{% trans "Entity" %}</th>
+                        <th>{% trans "24h" %}</th>
+                        <th>{% trans "7 days" %}</th>
+                        <th>{% trans "30 days" %}</th>
+                        <th>{% trans "90 days" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{% trans "Users" %}</td>
+                        <td>{{ users.new.day }}</td>
+                        <td>{{ users.new.week }}</td>
+                        <td>{{ users.new.month }}</td>
+                        <td>{{ users.new.quarter }}</td>
+                    </tr>
+                    <tr>
+                        <td>{% trans "Resources" %}</td>
+                        <td>{{ resources.new.day }}</td>
+                        <td>{{ resources.new.week }}</td>
+                        <td>{{ resources.new.month }}</td>
+                        <td>{{ resources.new.quarter }}</td>
+                    </tr>
+                    <tr>
+                        <td>{% trans "Events" %}</td>
+                        <td>{{ events.new.day }}</td>
+                        <td>{{ events.new.week }}</td>
+                        <td>{{ events.new.month }}</td>
+                        <td>{{ events.new.quarter }}</td>
+                    </tr>
+                    <tr>
+                        <td>{% trans "Jobs" %}</td>
+                        <td>{{ jobs.new.day }}</td>
+                        <td>{{ jobs.new.week }}</td>
+                        <td>{{ jobs.new.month }}</td>
+                        <td>{{ jobs.new.quarter }}</td>
+                    </tr>
+                    <tr>
+                        <td>{% trans "CV" %}</td>
+                        <td>{{ cvs.new.day }}</td>
+                        <td>{{ cvs.new.week }}</td>
+                        <td>{{ cvs.new.month }}</td>
+                        <td>{{ cvs.new.quarter }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

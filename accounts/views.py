@@ -31,6 +31,7 @@ from accounts.models import (
 from jobs.models import Job, JobApplication
 from cvbuilder.models import CV
 from events.models import Event
+from resources.models import Resource
 from .middleware import BruteForceProtectionMiddleware
 from .forms import (
     UserUpdateForm, StudentProfileForm, EmployerProfileForm,
@@ -1174,6 +1175,95 @@ def admin_dashboard(request):
     }
     
     return render(request, "accounts/admin_dashboard.html", context)
+
+
+@login_required
+@user_passes_test(is_admin, login_url="accounts:admin_login")
+def admin_statistics(request):
+    """Extended platform statistics for administrators."""
+    now = timezone.now()
+    period_starts = {
+        "day": now - timedelta(days=1),
+        "week": now - timedelta(days=7),
+        "month": now - timedelta(days=30),
+        "quarter": now - timedelta(days=90),
+    }
+
+    users_qs = CustomUser.objects.all()
+    users_total = users_qs.count()
+    users_students = users_qs.filter(user_type="student").count()
+    users_employers = users_qs.filter(user_type="employer").count()
+    users_admins = users_qs.filter(user_type="admin").count()
+    users_main_admins = users_qs.filter(user_type="main_admin").count()
+    users_guests = users_qs.filter(user_type="guest").count()
+    users_other = users_total - (
+        users_students + users_employers + users_admins + users_main_admins + users_guests
+    )
+
+    resources_qs = Resource.objects.all()
+    events_qs = Event.objects.all()
+    jobs_qs = Job.objects.all()
+    cvs_qs = CV.objects.all()
+
+    context = {
+        "generated_at": now,
+        "users": {
+            "total": users_total,
+            "students": users_students,
+            "employers": users_employers,
+            "admins": users_admins,
+            "main_admins": users_main_admins,
+            "guests": users_guests,
+            "other": users_other,
+            "new": {
+                key: users_qs.filter(date_joined__gte=start).count()
+                for key, start in period_starts.items()
+            },
+        },
+        "resources": {
+            "total": resources_qs.count(),
+            "published": resources_qs.filter(is_published=True).count(),
+            "unpublished": resources_qs.filter(is_published=False).count(),
+            "new": {
+                key: resources_qs.filter(created_at__gte=start).count()
+                for key, start in period_starts.items()
+            },
+        },
+        "events": {
+            "total": events_qs.count(),
+            "published": events_qs.filter(status="published").count(),
+            "draft": events_qs.filter(status="draft").count(),
+            "cancelled": events_qs.filter(status="cancelled").count(),
+            "completed": events_qs.filter(status="completed").count(),
+            "upcoming": events_qs.filter(start_date__gt=now).count(),
+            "ongoing": events_qs.filter(start_date__lte=now, end_date__gte=now).count(),
+            "past": events_qs.filter(end_date__lt=now).count(),
+            "new": {
+                key: events_qs.filter(created_at__gte=start).count()
+                for key, start in period_starts.items()
+            },
+        },
+        "jobs": {
+            "total": jobs_qs.count(),
+            "active": jobs_qs.filter(is_active=True).count(),
+            "new": {
+                key: jobs_qs.filter(created_at__gte=start).count()
+                for key, start in period_starts.items()
+            },
+        },
+        "cvs": {
+            "total": cvs_qs.count(),
+            "published": cvs_qs.filter(status="published").count(),
+            "draft": cvs_qs.filter(status="draft").count(),
+            "archived": cvs_qs.filter(status="archived").count(),
+            "new": {
+                key: cvs_qs.filter(created_at__gte=start).count()
+                for key, start in period_starts.items()
+            },
+        },
+    }
+
+    return render(request, "accounts/admin_statistics.html", context)
 
 
 @login_required
