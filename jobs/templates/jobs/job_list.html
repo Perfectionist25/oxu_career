@@ -68,13 +68,16 @@
                     
                     <!-- Action Buttons -->
                     <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-                        <div class="d-flex gap-2 h-100">
-                            <button class="btn btn-primary btn-lg w-100" type="submit">
+                        <div class="d-flex gap-2 h-100 align-items-stretch">
+                            <button class="btn btn-primary w-100 filter-action-btn" type="submit">
                                 <i class="fas fa-search me-1"></i>{% trans "Search" %}
                             </button>
-                            <button class="btn btn-outline-primary btn-lg w-100" type="button" data-bs-toggle="collapse" data-bs-target="#advancedFilters">
+                            <button class="btn btn-outline-primary w-100 filter-action-btn" type="button" data-bs-toggle="collapse" data-bs-target="#advancedFilters">
                                 <i class="fas fa-sliders-h me-1"></i>{% trans "Advanced" %}
                             </button>
+                            <a class="btn btn-outline-secondary w-100 filter-action-btn" href="{% url 'jobs:list' %}">
+                                <i class="fas fa-redo me-1"></i>{% trans "Clear" %}
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -121,11 +124,6 @@
                             </select>
                         </div>
                         
-                        <div class="col-xl-3 col-lg-4 col-md-6 d-flex align-items-end">
-                            <a class="btn btn-outline-secondary w-100" href="{% url 'jobs:list' %}">
-                                <i class="fas fa-redo me-1"></i>{% trans "Clear all" %}
-                            </a>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -501,6 +499,13 @@
     border-radius: 8px;
     font-weight: 500;
     padding: 0.5rem 1rem;
+}
+
+.filter-action-btn {
+    padding: 0.45rem 0.75rem;
+    font-size: 0.875rem;
+    border-radius: 8px;
+    white-space: nowrap;
 }
 
 /* Form controls */
