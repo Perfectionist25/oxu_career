@@ -1651,9 +1651,18 @@ def user_management(request):
     """Manage user accounts"""
     users = CustomUser.objects.all().order_by("-date_joined")
     
-    user_type_filter = request.GET.get('user_type', '')
-    if user_type_filter:
-        users = users.filter(user_type=user_type_filter)
+    # Support both legacy `type` and canonical `user_type` query params.
+    user_type_filter = request.GET.get("user_type") or request.GET.get("type", "")
+    user_type_mapping = {
+        "all": "",
+        "students": "student",
+        "employers": "employer",
+    }
+    normalized_filter = user_type_mapping.get(user_type_filter, user_type_filter)
+    if normalized_filter == "admins":
+        users = users.filter(user_type__in=["admin", "main_admin"])
+    elif normalized_filter:
+        users = users.filter(user_type=normalized_filter)
     
     search_query = request.GET.get('search', '')
     if search_query:
@@ -1671,7 +1680,7 @@ def user_management(request):
     return render(request, "accounts/user_management.html", {
         "page_obj": page_obj,
         "search_query": search_query,
-        "user_type_filter": user_type_filter,
+        "user_type_filter": normalized_filter,
         "total_users": CustomUser.objects.count(),
     })
 

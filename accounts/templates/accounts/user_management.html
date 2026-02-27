@@ -18,16 +18,16 @@
                 <div class="d-flex gap-2">
                     <!-- User type filters -->
                     <div class="btn-group">
-                        <a href="?type=all" class="btn btn-outline-primary {% if user_type == 'all' or not user_type %}active{% endif %}">
+                        <a href="?user_type=all" class="btn btn-outline-primary {% if not user_type_filter %}active{% endif %}">
                             {% trans "All" %} ({{ total_users }})
                         </a>
-                        <a href="?type=students" class="btn btn-outline-success {% if user_type == 'students' %}active{% endif %}">
+                        <a href="?user_type=student" class="btn btn-outline-success {% if user_type_filter == 'student' %}active{% endif %}">
                             {% trans "Students" %}
                         </a>
-                        <a href="?type=employers" class="btn btn-outline-info {% if user_type == 'employers' %}active{% endif %}">
+                        <a href="?user_type=employer" class="btn btn-outline-info {% if user_type_filter == 'employer' %}active{% endif %}">
                             {% trans "Employers" %}
                         </a>
-                        <a href="?type=admins" class="btn btn-outline-warning {% if user_type == 'admins' %}active{% endif %}">
+                        <a href="?user_type=admins" class="btn btn-outline-warning {% if user_type_filter == 'admins' %}active{% endif %}">
                             {% trans "Admins" %}
                         </a>
                     </div>
@@ -40,6 +40,9 @@
     <div class="row mb-3">
         <div class="col-md-6">
             <form method="get" class="d-flex gap-2">
+                {% if user_type_filter %}
+                <input type="hidden" name="user_type" value="{{ user_type_filter }}">
+                {% endif %}
                 <input type="text" name="search" class="form-control" 
                        placeholder="{% trans 'Search by name, surname, username or email...' %}" 
                        value="{{ search_query }}">
@@ -47,7 +50,7 @@
                     <i class="fas fa-search"></i>
                 </button>
                 {% if search_query %}
-                <a href="?" class="btn btn-outline-secondary">
+                <a href="?{% if user_type_filter %}user_type={{ user_type_filter }}{% endif %}" class="btn btn-outline-secondary">
                     <i class="fas fa-times"></i>
                 </a>
                 {% endif %}
@@ -164,7 +167,7 @@
                 <ul class="pagination justify-content-center">
                     {% if page_obj.has_previous %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if user_type %}&type={{ user_type }}{% endif %}">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if user_type_filter %}&user_type={{ user_type_filter }}{% endif %}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}">
                             <i class="fas fa-chevron-left"></i>
                         </a>
                     </li>
@@ -177,14 +180,14 @@
                         </li>
                         {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
                         <li class="page-item">
-                            <a class="page-link" href="?page={{ num }}{% if user_type %}&type={{ user_type }}{% endif %}">{{ num }}</a>
+                            <a class="page-link" href="?page={{ num }}{% if user_type_filter %}&user_type={{ user_type_filter }}{% endif %}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}">{{ num }}</a>
                         </li>
                         {% endif %}
                     {% endfor %}
 
                     {% if page_obj.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if user_type %}&type={{ user_type }}{% endif %}">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if user_type_filter %}&user_type={{ user_type_filter }}{% endif %}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}">
                             <i class="fas fa-chevron-right"></i>
                         </a>
                     </li>
