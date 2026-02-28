@@ -25,6 +25,31 @@ def env_bool(name: str, default: bool = False) -> bool:
     return raw.strip().lower() in {"1", "true", "yes", "y", "on"}
 
 
+def env_list(name: str) -> list[str]:
+    raw = os.getenv(name, "").strip()
+    if not raw:
+        return []
+    return [item.strip() for item in raw.split(",") if item.strip()]
+
+
+def unique(items: list[str]) -> list[str]:
+    return list(dict.fromkeys(items))
+
+
+def host_to_csrf_origins(host: str, port: str) -> list[str]:
+    clean_host = host.strip().lstrip(".")
+    if not clean_host or clean_host == "*":
+        return []
+    return unique(
+        [
+            f"http://{clean_host}",
+            f"http://{clean_host}:{port}",
+            f"https://{clean_host}",
+            f"https://{clean_host}:{port}",
+        ]
+    )
+
+
 DEBUG = env_bool("DEBUG", default=not IS_RENDER)
 
 SECRET_KEY = os.getenv("SECRET_KEY") or os.getenv("DJANGO_SECRET_KEY")
@@ -46,11 +71,12 @@ DEFAULT_ALLOWED_HOSTS = [
     "www.career.oxu.uz",
 ]
 
-extra_hosts = os.getenv("ALLOWED_HOSTS", "").strip()
-if extra_hosts:
-    DEFAULT_ALLOWED_HOSTS += [h.strip() for h in extra_hosts.split(",") if h.strip()]
-
-ALLOWED_HOSTS = list(dict.fromkeys(DEFAULT_ALLOWED_HOSTS))
+RUNSERVER_PORT = os.getenv("RUNSERVER_PORT", "8000").strip() or "8000"
+extra_allowed_hosts = env_list("ALLOWED_HOSTS")
+if "*" in extra_allowed_hosts:
+    ALLOWED_HOSTS = ["*"]
+else:
+    ALLOWED_HOSTS = unique(DEFAULT_ALLOWED_HOSTS + extra_allowed_hosts)
 
 DEFAULT_CSRF_TRUSTED = [
     "http://localhost:8000",
@@ -60,11 +86,21 @@ DEFAULT_CSRF_TRUSTED = [
     "https://www.career.oxu.uz",
 ]
 
-CSRF_TRUSTED_ORIGINS = ["https://career.oxu.uz"]
+derived_csrf_origins: list[str] = []
+for allowed_host in ALLOWED_HOSTS:
+    derived_csrf_origins.extend(host_to_csrf_origins(allowed_host, RUNSERVER_PORT))
+
+CSRF_TRUSTED_ORIGINS = unique(
+    DEFAULT_CSRF_TRUSTED + derived_csrf_origins + env_list("CSRF_TRUSTED_ORIGINS")
+)
 
 
-if DEBUG:
-    SITE_URL = "http://localhost:8000"
+SITE_URL = (os.getenv("SITE_URL") or os.getenv("PUBLIC_SITE_URL") or "").strip().rstrip("/")
+if SITE_URL:
+    pass
+elif DEBUG:
+    dev_host = os.getenv("RUNSERVER_PUBLIC_HOST", "").strip() or "localhost"
+    SITE_URL = f"http://{dev_host}:{RUNSERVER_PORT}"
 elif IS_RENDER:
     SITE_URL = f"https://{RENDER_HOST}"
 else:
