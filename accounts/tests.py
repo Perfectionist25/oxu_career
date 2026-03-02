@@ -17,6 +17,15 @@ class AccountCreationTests(TestCase):
 		Client().force_login(self.main_admin)
 		self.client = Client()
 		self.client.force_login(self.main_admin)
+		self.admin = CustomUser.objects.create_user(
+			username="adminuser",
+			email="admin@example.com",
+			password="adminpass",
+			user_type="admin",
+		)
+		self.admin_profile, _ = AdminProfile.objects.get_or_create(user=self.admin)
+		self.admin_profile.can_manage_employers = True
+		self.admin_profile.save(update_fields=["can_manage_employers"])
 
 	def test_create_admin_account_view_creates_single_profile(self):
 		url = reverse("accounts:create_admin_account")
@@ -100,6 +109,24 @@ class AccountCreationTests(TestCase):
 		self.assertIsNotNone(user)
 		profiles = EmployerProfile.objects.filter(user=user)
 		self.assertEqual(profiles.count(), 1)
+
+	def test_admin_can_create_employer_account(self):
+		self.client.force_login(self.admin)
+		url = reverse("accounts:create_employer_account")
+		data = {
+			"username": "managedemployer",
+			"email": "managed@example.com",
+			"first_name": "Managed",
+			"last_name": "Employer",
+			"password1": "emppass123",
+			"password2": "emppass123",
+			"company_name": "Managed ACME Ltd",
+			"company_description": "Managed test company",
+		}
+
+		response = self.client.post(url, data)
+		self.assertIn(response.status_code, (302, 301))
+		self.assertTrue(CustomUser.objects.filter(username="managedemployer", user_type="employer").exists())
 
 	def test_temp_student_login_creates_profile_once(self):
 		url = reverse("accounts:temp_student_login")

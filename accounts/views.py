@@ -151,6 +151,17 @@ def is_main_admin(user):
     return user.is_authenticated and getattr(user, "user_type", None) == "main_admin"
 
 
+def can_manage_employers(user):
+    if not is_admin(user):
+        return False
+
+    if getattr(user, "is_main_admin", False):
+        return True
+
+    admin_profile, _ = AdminProfile.objects.get_or_create(user=user)
+    return admin_profile.can_manage_employers
+
+
 def can_manage_users(user):
     return is_admin(user)
 
@@ -1843,7 +1854,7 @@ def toggle_user_status(request, user_id):
 
 
 @login_required
-@user_passes_test(is_main_admin, login_url="accounts:admin_login")
+@user_passes_test(can_manage_employers, login_url="accounts:admin_login")
 def create_employer_account(request):
     if request.method == 'POST':
         user_form = EmployerRegistrationForm(request.POST, prefix='user')

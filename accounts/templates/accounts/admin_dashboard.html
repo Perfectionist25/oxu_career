@@ -106,12 +106,14 @@
                 </div>
                 {% endif %}
                 
+                {% if admin_profile.can_manage_employers %}
                 <div class="col-xl-2 col-md-3 col-6">
                     <a href="{% url 'accounts:create_employer_account' %}" class="btn btn-success w-100 h-100 py-4">
                         <i class="fas fa-building fa-2x mb-2"></i>
                         <div>{% trans "New Employer" %}</div>
                     </a>
                 </div>
+                {% endif %}
                 
                 <div class="col-xl-2 col-md-3 col-6">
                     <a href="{% url 'accounts:user_management' %}" class="btn btn-info w-100 h-100 py-4">
