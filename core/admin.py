@@ -91,7 +91,7 @@ class ContactMessageAdmin(admin.ModelAdmin):
     def export_emails(self, request, queryset):
         """Export email addresses of selected messages"""
         emails = list(queryset.values_list("email", flat=True).distinct())
-        # In a real application, generate a CSV file here
+
         preview_emails = ", ".join(emails[:5])
         more = "..." if len(emails) > 5 else ""
         self.message_user(
@@ -111,7 +111,7 @@ class ContactMessageAdmin(admin.ModelAdmin):
             )
             return
 
-        # In a real application, email sending logic would be here
+
         self.message_user(
             request,
             _("Ready to send bulk reply to {count} messages. In a real system, email would be sent here.").format(count=count),
@@ -142,14 +142,14 @@ class ContactMessageAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 
-# Регистрация модели
+
 admin.site.register(ContactMessage, ContactMessageAdmin)
 
-# Дополнительно: если у вас есть другие модели в core, добавьте их здесь
-# Например, для модели Settings (если есть)
 
-# class SettingsAdmin(admin.ModelAdmin):
-#     list_display = ('key', 'value', 'description')
-#     list_editable = ('value',)
-#
-# admin.site.register(Settings, SettingsAdmin)
+
+
+
+
+
+
+

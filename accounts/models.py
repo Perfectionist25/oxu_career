@@ -1,4 +1,4 @@
-# accounts/models.py
+
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.urls import reverse
@@ -75,7 +75,7 @@ class CustomUser(AbstractUser):
         help_text=_("If True, full_name cannot be changed")
     )
 
-    # Basic Information
+
     user_type = models.CharField(
         max_length=20,
         choices=USER_TYPE_CHOICES,
@@ -84,7 +84,7 @@ class CustomUser(AbstractUser):
         help_text=_("Type of user account (guest, student, employer, admin)")
     )
 
-    # Contact Information
+
     phone_number = PhoneNumberField(
         blank=True,
         null=True,
@@ -98,7 +98,7 @@ class CustomUser(AbstractUser):
         help_text=_("User's date of birth")
     )
 
-    # Profile
+
     bio = models.TextField(
         max_length=500,
         blank=True,
@@ -113,7 +113,7 @@ class CustomUser(AbstractUser):
         help_text=_("Profile picture")
     )
 
-    # Location
+
     city = models.CharField(
         max_length=100,
         blank=True,
@@ -127,14 +127,14 @@ class CustomUser(AbstractUser):
         help_text=_("Full address")
     )
 
-    # Social Media
+
     telegram = models.URLField(
         blank=True,
         verbose_name=_("Telegram"),
         help_text=_("Telegram username or link")
     )
-    
-    # Status
+
+
     is_verified = models.BooleanField(
         default=False,
         verbose_name=_("Verified"),
@@ -146,7 +146,7 @@ class CustomUser(AbstractUser):
         help_text=_("Whether this employer account is active")
     )
 
-    # Statistics
+
     profile_views = models.PositiveIntegerField(
         default=0,
         verbose_name=_("Profile Views"),
@@ -175,7 +175,7 @@ class CustomUser(AbstractUser):
     )
 
     last_login_ip = models.GenericIPAddressField(
-        blank=True, 
+        blank=True,
         null=True
     )
 
@@ -207,13 +207,13 @@ class CustomUser(AbstractUser):
         return self.notification_set.filter(is_read=False).count()
 
     def get_full_name(self):
-        # приоритет: full_name (OAuth), иначе стандартное поведение
+
         if self.full_name:
             return self.full_name.strip()
         full_name = f"{self.first_name} {self.last_name}".strip()
         return full_name or self.username
 
-    # Свойства для проверки ролей
+
     @property
     def is_guest(self):
         return self.user_type == "guest"
@@ -251,7 +251,7 @@ class CustomUser(AbstractUser):
     def can_manage_users(self):
         """Может ли пользователь управлять другими пользователями"""
         return self.user_type in ["admin", "main_admin"]
-    
+
     @property
     def companies(self):
         return self.companies_owned.all() if self.is_employer else Company.objects.none()
@@ -260,7 +260,7 @@ class CustomUser(AbstractUser):
 
 class Company(models.Model):
     """Model representing a company that can be owned by employers"""
-    
+
     COMPANY_SIZE_CHOICES = [
         ("1-10", _("1-10 employees")),
         ("11-50", _("11-50 employees")),
@@ -269,15 +269,15 @@ class Company(models.Model):
         ("501-1000", _("501-1000 employees")),
         ("1000+", _("1000+ employees")),
     ]
-    
-    # Company Identification
+
+
     name = models.CharField(
         max_length=255,
         verbose_name=_("Company Name"),
         help_text=_("Official company name")
     )
 
-    # Company Type and Size
+
     company_type = models.CharField(
         max_length=50,
         verbose_name=_("Company Type"),
@@ -290,10 +290,10 @@ class Company(models.Model):
         verbose_name=_("Company Size"),
         help_text=_("Number of employees in the company")
     )
-    
-    # Company Description
+
+
     description = models.TextField(
-        blank=True,  # Сделал необязательным
+        blank=True,
         verbose_name=_("Company Description"),
         help_text=_("Detailed description of the company")
     )
@@ -303,8 +303,8 @@ class Company(models.Model):
         verbose_name=_("Short Description"),
         help_text=_("Brief company description for listings")
     )
-    
-    # Company Logo and Images
+
+
     logo = models.ImageField(
         upload_to="company_logos/%Y/%m/%d/",
         null=True,
@@ -312,15 +312,15 @@ class Company(models.Model):
         verbose_name=_("Company Logo"),
         help_text=_("Company logo image")
     )
-    
-    # Contact Information
+
+
     email = models.EmailField(
         blank=True,
         verbose_name=_("Company Email"),
         help_text=_("Primary company email address")
     )
     phone = PhoneNumberField(
-        blank=True,  # Сделал необязательным
+        blank=True,
         verbose_name=_("Company Phone"),
         help_text=_("Company phone number")
     )
@@ -330,30 +330,30 @@ class Company(models.Model):
         verbose_name=_("Company Website"),
         help_text=_("Official company website")
     )
-    
-    # Location Information
+
+
     region = models.CharField(
         max_length=100,
         choices=REGIONS,
-        blank=True,  # Сделал необязательным
+        blank=True,
         verbose_name=_("Region"),
         help_text=_("Region where company is located")
     )
     city = models.CharField(
         max_length=100,
         choices=CITIES,
-        blank=True,  # Сделал необязательным
+        blank=True,
         verbose_name=_("City"),
         help_text=_("City where company is based")
     )
     address = models.CharField(
         max_length=255,
-        blank=True,  # Сделал необязательным
+        blank=True,
         verbose_name=_("Address"),
         help_text=_("Full company address")
     )
-    
-    # Social Media
+
+
     linkedin = models.URLField(
         blank=True,
         null=True,
@@ -378,11 +378,11 @@ class Company(models.Model):
         verbose_name=_("Instagram"),
         help_text=_("Company Instagram profile URL")
     )
-    
-    # Industry Information
+
+
     industry = models.CharField(
         max_length=150,
-        blank=True,  # Сделал необязательным
+        blank=True,
         verbose_name=_("Industry"),
         help_text=_("Main industry of the company")
     )
@@ -392,8 +392,8 @@ class Company(models.Model):
         verbose_name=_("Tags"),
         help_text=_("Comma-separated tags for searching")
     )
-    
-    # Company History
+
+
     founded_year = models.IntegerField(
         null=True,
         blank=True,
@@ -405,18 +405,18 @@ class Company(models.Model):
         verbose_name=_("Mission Statement"),
         help_text=_("Company mission and values")
     )
-    
-    # Ownership and Management
-    # ИЗМЕНЕНИЕ 1: owner должен ссылаться на CustomUser, а не на EmployerProfile
+
+
+
     owner = models.ForeignKey(
-        CustomUser,  # Исправлено с EmployerProfile на CustomUser
+        CustomUser,
         on_delete=models.CASCADE,
-        related_name="companies_owned",  # Изменен related_name для ясности
+        related_name="companies_owned",
         verbose_name=_("Owner"),
         help_text=_("Primary owner/administrator of the company")
     )
-    
-    # Company Status
+
+
     is_verified = models.BooleanField(
         default=False,
         verbose_name=_("Verified Company"),
@@ -427,8 +427,8 @@ class Company(models.Model):
         verbose_name=_("Active"),
         help_text=_("Whether the company is active and visible")
     )
-    
-    # Statistics
+
+
     total_jobs = models.PositiveIntegerField(
         default=0,
         verbose_name=_("Total Jobs"),
@@ -449,8 +449,8 @@ class Company(models.Model):
         verbose_name=_("Applicants Count"),
         help_text=_("Total number of job applicants")
     )
-    
-    # Timestamps
+
+
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name=_("Created At")
@@ -459,7 +459,7 @@ class Company(models.Model):
         auto_now=True,
         verbose_name=_("Updated At")
     )
-    
+
     class Meta:
         verbose_name = _("Company")
         verbose_name_plural = _("Companies")
@@ -469,31 +469,31 @@ class Company(models.Model):
             models.Index(fields=['is_verified', 'is_active']),
             models.Index(fields=['industry']),
         ]
-    
+
     def __str__(self):
         return f"{self.name} (Owner: {self.owner.username})"
-    
+
     def get_absolute_url(self):
         return reverse("accounts:company_detail", kwargs={"pk": self.pk})
-    
+
     def save(self, *args, **kwargs):
         """Generate short description if not provided"""
         if not self.short_description and self.description:
             self.short_description = self.description[:497] + "..."
         super().save(*args, **kwargs)
-    
+
     @property
     def formatted_tags(self):
         """Get tags as list"""
         if self.tags:
             return [tag.strip() for tag in self.tags.split(',')]
         return []
-    
+
     @property
     def rating(self):
         """Calculate company rating based on jobs and reviews"""
         return 0.0
-    
+
     @property
     def is_deleted(self):
         """Check if company is soft deleted"""
@@ -502,7 +502,7 @@ class Company(models.Model):
 
 class EmployerProfile(models.Model):
     """Profile for employer users with personal information (separate from Company)"""
-    
+
     user = models.OneToOneField(
         CustomUser,
         on_delete=models.CASCADE,
@@ -510,23 +510,23 @@ class EmployerProfile(models.Model):
         verbose_name=_("User"),
         help_text=_("Associated user account")
     )
-    
-    # Professional Information
+
+
     job_title = models.CharField(
         max_length=100,
         blank=True,
         verbose_name=_("Job Title"),
         help_text=_("Current professional position")
     )
-    
-    # Professional Bio
+
+
     professional_bio = models.TextField(
         blank=True,
         verbose_name=_("Professional Bio"),
         help_text=_("Professional background and experience")
     )
-    
-    # Contact Preferences
+
+
     preferred_contact_method = models.CharField(
         max_length=20,
         choices=[
@@ -538,16 +538,16 @@ class EmployerProfile(models.Model):
         verbose_name=_("Preferred Contact Method"),
         help_text=_("Preferred way to be contacted")
     )
-    
-    # Phone Number
+
+
     phone_number = models.CharField(
         max_length=20,
         blank=True,
         verbose_name=_("Phone Number"),
         help_text=_("Employer contact phone number")
     )
-    
-    # Primary Company (ForeignKey for assignment)
+
+
     primary_company_id = models.ForeignKey(
         "Company",
         on_delete=models.SET_NULL,
@@ -557,14 +557,14 @@ class EmployerProfile(models.Model):
         verbose_name=_("Primary Company"),
         help_text=_("Primary company for this employer")
     )
-    
-    # Statistics
+
+
     total_jobs_posted = models.PositiveIntegerField(
         default=0,
         verbose_name=_("Total Jobs Posted"),
         help_text=_("Total number of job postings created across all companies")
     )
-    
+
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name=_("Created At")
@@ -573,17 +573,17 @@ class EmployerProfile(models.Model):
         auto_now=True,
         verbose_name=_("Updated At")
     )
-    
+
     class Meta:
         verbose_name = _("Employer Profile")
         verbose_name_plural = _("Employer Profiles")
-    
+
     def __str__(self):
         return f"Employer Profile: {self.user.username}"
-    
+
     def get_absolute_url(self):
         return reverse("accounts:employer_profile", kwargs={"pk": self.pk})
-    
+
     @property
     def total_companies(self):
         return self.user.companies_owned.filter(is_active=True).count()
@@ -592,16 +592,16 @@ class EmployerProfile(models.Model):
     def primary_company(self):
         """Property to access primary_company_id with a more readable name"""
         return self.primary_company_id
-    
+
     @primary_company.setter
     def primary_company(self, value):
         """Setter for primary_company property"""
         self.primary_company_id = value
-    
+
     @property
     def owned_companies(self):
         """Get all companies owned by this user"""
-        return self.user.companies_owned.filter(is_active=True)  # Исправлено
+        return self.user.companies_owned.filter(is_active=True)
 
 
 class StudentProfile(models.Model):
@@ -724,39 +724,39 @@ class StudentProfile(models.Model):
 
     def get_absolute_url(self):
         return reverse("accounts:student_profile", kwargs={"pk": self.pk})
-    
+
     def save(self, *args, **kwargs):
-        # если аватар не менялся — просто сохраняем
+
         if not self.avatar:
             return super().save(*args, **kwargs)
 
-        # открываем изображение
+
         self.avatar.open()
         img = Image.open(self.avatar)
 
-        # корректная ориентация (фото с телефона)
+
         img = ImageOps.exif_transpose(img)
 
-        # приводим к RGB/RGBA
+
         if img.mode not in ("RGB", "RGBA"):
             img = img.convert("RGB")
 
-        # делаем квадрат (центр-кроп) и ресайз
+
         target_size = (512, 512)
         img = ImageOps.fit(img, target_size, method=Image.LANCZOS, centering=(0.5, 0.5))
 
-        # сохраняем в WEBP
+
         buffer = io.BytesIO()
         save_kwargs = {"format": "WEBP", "quality": 75, "method": 6}
 
-        # если есть прозрачность — сохраняем RGBA
+
         if img.mode == "RGBA":
-            save_kwargs["lossless"] = False  # обычно не нужно lossless для аватарок
+            save_kwargs["lossless"] = False
 
         img.save(buffer, **save_kwargs)
         buffer.seek(0)
 
-        # заменяем файл на сжатый (и гарантируем .webp)
+
         new_name = f"{uuid.uuid4().hex}.webp"
         self.avatar.save(new_name, ContentFile(buffer.read()), save=False)
 
@@ -766,7 +766,7 @@ class StudentProfile(models.Model):
 
 class AdminProfile(models.Model):
     """Profile for admin users with management permissions"""
-    
+
     user = models.OneToOneField(
         CustomUser,
         on_delete=models.CASCADE,
@@ -774,8 +774,8 @@ class AdminProfile(models.Model):
         verbose_name=_("User"),
         help_text=_("Associated user account")
     )
-    
-    # Admin Permissions
+
+
     can_manage_students = models.BooleanField(
         default=True,
         verbose_name=_("Manage Students"),
@@ -806,8 +806,8 @@ class AdminProfile(models.Model):
         verbose_name=_("View Statistics"),
         help_text=_("Permission to view system statistics and analytics")
     )
-    
-    # Administration Statistics
+
+
     employers_created = models.PositiveIntegerField(
         default=0,
         verbose_name=_("Employers Created"),
@@ -828,7 +828,7 @@ class AdminProfile(models.Model):
         verbose_name=_("Events Created"),
         help_text=_("Number of events or announcements created")
     )
-    
+
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name=_("Created At")
@@ -837,19 +837,19 @@ class AdminProfile(models.Model):
         auto_now=True,
         verbose_name=_("Updated At")
     )
-    
+
     class Meta:
         verbose_name = _("Admin Profile")
         verbose_name_plural = _("Admin Profiles")
-    
+
     def __str__(self):
         return f"Admin: {self.user.username}"
 
 
-# accounts/models.py - часть с HemisAuth
+
 class HemisAuth(models.Model):
     """Model for authentication through Hemis API integration"""
-    
+
     user = models.OneToOneField(
         CustomUser,
         on_delete=models.CASCADE,
@@ -857,7 +857,7 @@ class HemisAuth(models.Model):
         verbose_name=_("User"),
         help_text=_("Associated user account")
     )
-    
+
     hemis_user_id = models.CharField(
         max_length=100,
         blank=True,
@@ -865,7 +865,7 @@ class HemisAuth(models.Model):
         verbose_name=_("Hemis User ID"),
         help_text=_("User ID from Hemis system")
     )
-    
+
     access_token = models.TextField(
         verbose_name=_("Access Token"),
         help_text=_("OAuth access token for Hemis API")
@@ -878,30 +878,30 @@ class HemisAuth(models.Model):
         verbose_name=_("Token Expires"),
         help_text=_("Expiration date of the access token")
     )
-    
+
     hemis_user_data = models.JSONField(
         verbose_name=_("Hemis User Data"),
         help_text=_("JSON data retrieved from Hemis API")
     )
-    
+
     last_sync = models.DateTimeField(
         auto_now=True,
         verbose_name=_("Last Sync"),
         help_text=_("Timestamp of last data synchronization")
     )
-    
+
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name=_("Created At")
     )
-    
+
     class Meta:
         verbose_name = _("Hemis Authentication")
         verbose_name_plural = _("Hemis Authentications")
-    
+
     def __str__(self):
         return f"Hemis auth for {self.user.username}"
-    
+
     def is_token_valid(self):
         """Check if the access token is still valid"""
         from django.utils import timezone
@@ -910,7 +910,7 @@ class HemisAuth(models.Model):
 
 class UserActivity(models.Model):
     """Model for tracking user activities and interactions"""
-    
+
     ACTIVITY_TYPES = [
         ("login", _("Login")),
         ("logout", _("Logout")),
@@ -923,27 +923,27 @@ class UserActivity(models.Model):
         ("company_create", _("Company Creation")),
         ("company_update", _("Company Update")),
     ]
-    
+
     user = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
         verbose_name=_("User"),
         help_text=_("User who performed the activity")
     )
-    
+
     activity_type = models.CharField(
         max_length=50,
         choices=ACTIVITY_TYPES,
         verbose_name=_("Activity Type"),
         help_text=_("Type of user activity")
     )
-    
+
     description = models.TextField(
         blank=True,
         verbose_name=_("Description"),
         help_text=_("Optional description of the activity")
     )
-    
+
     related_company = models.ForeignKey(
         Company,
         on_delete=models.SET_NULL,
@@ -952,34 +952,34 @@ class UserActivity(models.Model):
         verbose_name=_("Related Company"),
         help_text=_("Company related to this activity")
     )
-    
+
     ip_address = models.GenericIPAddressField(
         null=True,
         blank=True,
         verbose_name=_("IP Address"),
         help_text=_("IP address of the user at the time of activity")
     )
-    
+
     user_agent = models.TextField(
         blank=True,
         verbose_name=_("User Agent"),
         help_text=_("Browser or device information")
     )
-    
+
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name=_("Created At"),
         help_text=_("Timestamp when the activity occurred")
     )
-    
+
     class Meta:
         verbose_name = _("User Activity")
         verbose_name_plural = _("User Activities")
         ordering = ["-created_at"]
-    
+
     def __str__(self):
         return f"{self.user.username} — {self.get_activity_type_display()} — {self.created_at}"
-    
+
     def save(self, *args, **kwargs):
         """Update user's last_activity timestamp when saving activity"""
         super().save(*args, **kwargs)
@@ -990,7 +990,7 @@ class UserActivity(models.Model):
 
 class Notification(models.Model):
     """Model for user notifications and system messages"""
-    
+
     NOTIFICATION_TYPES = [
         ("job_alert", _("Job Alert")),
         ("application_update", _("Application Update")),
@@ -1001,44 +1001,44 @@ class Notification(models.Model):
         ("company_update", _("Company Update")),
         ("company_verification", _("Company Verification")),
     ]
-    
+
     user = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
         verbose_name=_("User"),
         help_text=_("Recipient of the notification")
     )
-    
+
     notification_type = models.CharField(
         max_length=50,
         choices=NOTIFICATION_TYPES,
         verbose_name=_("Notification Type"),
         help_text=_("Category of the notification")
     )
-    
+
     title = models.CharField(
         max_length=255,
         verbose_name=_("Title"),
         help_text=_("Notification title or subject")
     )
-    
+
     message = models.TextField(
         verbose_name=_("Message"),
         help_text=_("Full notification content")
     )
-    
+
     is_read = models.BooleanField(
         default=False,
         verbose_name=_("Is Read"),
         help_text=_("Whether the notification has been read")
     )
-    
+
     related_url = models.URLField(
         blank=True,
         verbose_name=_("Related URL"),
         help_text=_("Optional link related to the notification")
     )
-    
+
     related_company = models.ForeignKey(
         Company,
         on_delete=models.SET_NULL,
@@ -1047,21 +1047,21 @@ class Notification(models.Model):
         verbose_name=_("Related Company"),
         help_text=_("Company related to this notification")
     )
-    
+
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name=_("Created At"),
         help_text=_("Timestamp when the notification was created")
     )
-    
+
     class Meta:
         verbose_name = _("Notification")
         verbose_name_plural = _("Notifications")
         ordering = ["-created_at"]
-    
+
     def __str__(self):
         return f"{self.title} — {self.user.username}"
-    
+
     def mark_as_read(self):
         """Mark the notification as read"""
         self.is_read = True
@@ -1070,7 +1070,7 @@ class Notification(models.Model):
 
 class CompanyDocument(models.Model):
     """Model for company verification documents and files"""
-    
+
     DOCUMENT_TYPES = [
         ("license", _("Business License")),
         ("registration", _("Registration Certificate")),
@@ -1078,7 +1078,7 @@ class CompanyDocument(models.Model):
         ("bank", _("Bank Statement")),
         ("other", _("Other Document")),
     ]
-    
+
     company = models.ForeignKey(
         Company,
         on_delete=models.CASCADE,
@@ -1086,32 +1086,32 @@ class CompanyDocument(models.Model):
         verbose_name=_("Company"),
         help_text=_("Company this document belongs to")
     )
-    
+
     document_type = models.CharField(
         max_length=50,
         choices=DOCUMENT_TYPES,
         verbose_name=_("Document Type"),
         help_text=_("Type of document")
     )
-    
+
     file = models.FileField(
         upload_to="company_documents/%Y/%m/%d/",
         verbose_name=_("Document File"),
         help_text=_("Upload document file")
     )
-    
+
     title = models.CharField(
         max_length=255,
         verbose_name=_("Document Title"),
         help_text=_("Title or description of the document")
     )
-    
+
     is_verified = models.BooleanField(
         default=False,
         verbose_name=_("Verified"),
         help_text=_("Whether the document is verified by administration")
     )
-    
+
     verified_by = models.ForeignKey(
         CustomUser,
         on_delete=models.SET_NULL,
@@ -1121,14 +1121,14 @@ class CompanyDocument(models.Model):
         verbose_name=_("Verified By"),
         help_text=_("Admin who verified the document")
     )
-    
+
     verified_at = models.DateTimeField(
         null=True,
         blank=True,
         verbose_name=_("Verified At"),
         help_text=_("When the document was verified")
     )
-    
+
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name=_("Created At")
@@ -1137,16 +1137,16 @@ class CompanyDocument(models.Model):
         auto_now=True,
         verbose_name=_("Updated At")
     )
-    
+
     class Meta:
         verbose_name = _("Company Document")
         verbose_name_plural = _("Company Documents")
-    
+
     def __str__(self):
         return f"{self.title} - {self.company.name}"
 
 
-# Signal handlers
+
 @receiver(post_save, sender=CustomUser)
 def create_user_profile(sender, instance, created, **kwargs):
     """Create corresponding profile when user is created"""
@@ -1174,19 +1174,19 @@ def create_user_activity_on_signup(sender, instance, created, **kwargs):
 def update_employer_stats(sender, instance, created, **kwargs):
     """Update employer statistics when company is created/updated"""
     try:
-        # Получаем EmployerProfile пользователя
+
         employer_profile = instance.owner.employer_profile
-        
-        # Обновляем общее количество компаний
+
+
         employer_profile.total_companies = instance.owner.companies_owned.filter(is_active=True).count()
-        
-        # Обновляем общее количество вакансий
+
+
         from jobs.models import Job
         employer_profile.total_jobs_posted = Job.objects.filter(company__owner=instance.owner).count()
-        
+
         employer_profile.save()
     except (EmployerProfile.DoesNotExist, AttributeError):
-        # Если профиль не существует или пользователь не работодатель
+
         pass
 
 
@@ -1198,12 +1198,12 @@ def activate_employer_user(sender, instance, created, **kwargs):
         instance.user.save()
 
 
-# ============ OAUTH MODELS ============
+
 
 class OAuthToken(models.Model):
     """
     Модель для хранения OAuth токенов пользователей.
-    
+
     Хранит:
     - Access token для API запросов
     - Refresh token для обновления access token
@@ -1215,112 +1215,112 @@ class OAuthToken(models.Model):
         related_name='oauth_token',
         verbose_name=_('Пользователь')
     )
-    
+
     access_token = models.TextField(
         verbose_name=_("Access Token"),
         help_text=_("Токен для доступа к API")
     )
-    
+
     refresh_token = models.TextField(
         verbose_name=_("Refresh Token"),
         blank=True,
         null=True,
         help_text=_("Токен для обновления access token")
     )
-    
+
     token_type = models.CharField(
         max_length=50,
         default='Bearer',
         verbose_name=_("Тип токена")
     )
-    
+
     expires_in = models.IntegerField(
         verbose_name=_("Срок действия (секунды)"),
         default=3600
     )
-    
+
     expires_at = models.DateTimeField(
         verbose_name=_("Истекает в"),
         null=True,
         blank=True
     )
-    
+
     scope = models.TextField(
         blank=True,
         null=True,
         verbose_name=_("Разрешения")
     )
-    
+
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name=_("Создан")
     )
-    
+
     updated_at = models.DateTimeField(
         auto_now=True,
         verbose_name=_("Обновлен")
     )
-    
+
     class Meta:
         verbose_name = _("OAuth Токен")
         verbose_name_plural = _("OAuth Токены")
         db_table = 'accounts_oauth_token'
-    
+
     def __str__(self):
         return f"OAuth Token for {self.user.username}"
-    
+
     def is_expired(self):
         """Проверка истечения срока действия токена."""
         from django.utils import timezone
         return timezone.now() >= self.expires_at
-    
+
     def refresh_access_token(self):
         """
         Обновление access token с помощью refresh token.
-        
+
         Returns:
             bool: True если успешно, False если ошибка
         """
         if not self.refresh_token:
             return False
-        
+
         try:
             from django.conf import settings
-            
+
             oauth_config = settings.OAUTH_PROVIDER
-            
+
             payload = {
                 'grant_type': 'refresh_token',
                 'refresh_token': self.refresh_token,
                 'client_id': oauth_config['CLIENT_ID'],
                 'client_secret': oauth_config['CLIENT_SECRET'],
             }
-            
+
             response = requests.post(
                 oauth_config['ACCESS_TOKEN_URL'],
                 data=payload,
                 timeout=10
             )
             response.raise_for_status()
-            
+
             token_data = response.json()
-            
-            # Обновление полей модели
+
+
             self.access_token = token_data.get('access_token')
             if 'refresh_token' in token_data:
                 self.refresh_token = token_data['refresh_token']
             self.expires_in = token_data.get('expires_in', 3600)
             self.expires_at = timezone.now() + timedelta(seconds=self.expires_in)
             self.save()
-            
+
             return True
-            
+
         except Exception as e:
             import logging
             logger = logging.getLogger(__name__)
             logger.error(f"Error refreshing token: {str(e)}")
             return False
-        
+
 
 
 

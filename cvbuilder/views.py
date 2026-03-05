@@ -1,4 +1,4 @@
-# cvbuilder/views.py
+
 
 from __future__ import annotations
 
@@ -21,11 +21,11 @@ from .forms import CVForm, EducationForm, ExperienceForm, SkillForm, LanguageFor
 from .models import CV, CVTemplate, Education, Experience, Skill, Language, Project, Certificate
 
 DEFAULT_TEMPLATE_TYPE = "classic"
-TEMPLATE_DIR = "cv_render" 
+TEMPLATE_DIR = "cv_render"
 
-# -----------------------------
-# Helpers
-# -----------------------------
+
+
+
 
 def get_student_profile(user):
     """
@@ -41,10 +41,10 @@ def is_owner(request_user, cv: CV) -> bool:
 
 
 def can_view_cv(user, cv: CV) -> bool:
-    # Владелец всегда
+
     if is_owner(user, cv):
         return True
-    # Иначе только published
+
     return cv.status == "published"
 
 
@@ -54,17 +54,17 @@ def can_access_public_list(user) -> bool:
 
 
 def can_export_cv(user, cv: CV) -> bool:
-    # Владелец всегда
+
     if is_owner(user, cv):
         return True
-    # Иначе только published и только employer/admin/main_admin
+
     user_type = getattr(user, "user_type", None)
     return cv.status == "published" and user_type in ["employer", "admin", "main_admin"]
 
 
-# -----------------------------
-# Templates
-# -----------------------------
+
+
+
 
 @login_required
 def template_selector(request):
@@ -72,9 +72,9 @@ def template_selector(request):
     return render(request, "cvbuilder/template_selector.html", {"templates": templates})
 
 
-# -----------------------------
-# CV list (owner list)
-# -----------------------------
+
+
+
 
 class CVListView(ListView):
     model = CV
@@ -109,9 +109,9 @@ class CVListView(ListView):
         return context
 
 
-# -----------------------------
-# CV create/edit/detail/preview/export/duplicate/delete
-# -----------------------------
+
+
+
 
 @login_required
 def cv_create(request):
@@ -194,7 +194,7 @@ def cv_preview(request, pk):
     return render(request, template_path, {
         "cv": cv,
         "template": cv.template,
-        "hide_chrome": True,   # ✅ вот это
+        "hide_chrome": True,
     })
 
 
@@ -216,7 +216,7 @@ def cv_export_pdf(request, pk):
     try:
         html_string = render_to_string(f"cvbuilder/{template_file}", {"cv": cv})
 
-        from weasyprint import HTML  # optional dependency
+        from weasyprint import HTML
         pdf_file = HTML(string=html_string).write_pdf()
 
         response = HttpResponse(pdf_file, content_type="application/pdf")
@@ -244,7 +244,7 @@ def cv_duplicate(request, pk):
         user=profile,
     )
 
-    # Копия CV (перечисляем поля явно, чтобы не переносить PK/uuid и т.п.)
+
     new_cv = CV.objects.create(
         user=profile,
         title=f"{original.title} (nusxa)",
@@ -284,7 +284,7 @@ def cv_duplicate(request, pk):
         portfolio=original.portfolio,
     )
 
-    # Education
+
     for edu in original.educations.all():
         Education.objects.create(
             cv=new_cv,
@@ -301,7 +301,7 @@ def cv_duplicate(request, pk):
             description=edu.description,
         )
 
-    # Experience
+
     for exp in original.experiences.all():
         Experience.objects.create(
             cv=new_cv,
@@ -317,7 +317,7 @@ def cv_duplicate(request, pk):
             achievements=exp.achievements,
         )
 
-    # Skills
+
     for s in original.skills.all():
         Skill.objects.create(
             cv=new_cv,
@@ -329,7 +329,7 @@ def cv_duplicate(request, pk):
             last_used=s.last_used,
         )
 
-    # Languages
+
     for lng in original.languages.all():
         Language.objects.create(
             cv=new_cv,
@@ -340,7 +340,7 @@ def cv_duplicate(request, pk):
             is_native=lng.is_native,
         )
 
-    # Projects (если используешь)
+
     for pr in original.projects.all():
         Project.objects.create(
             cv=new_cv,
@@ -354,7 +354,7 @@ def cv_duplicate(request, pk):
             is_personal=pr.is_personal,
         )
 
-    # Certificates (если используешь)
+
     for c in original.certificates.all():
         Certificate.objects.create(
             cv=new_cv,
@@ -365,7 +365,7 @@ def cv_duplicate(request, pk):
             certificate_id=c.certificate_id,
             certificate_url=c.certificate_url,
             description=c.description,
-            certificate_file=c.certificate_file,  # осторожно: это ссылка на тот же файл
+            certificate_file=c.certificate_file,
         )
 
     messages.success(request, _("Rezyume muvaffaqiyatli nusxalandi!"))
@@ -390,9 +390,9 @@ def cv_delete(request, pk):
     return render(request, "cvbuilder/cv_confirm_delete.html", {"cv": cv})
 
 
-# -----------------------------
-# Status update
-# -----------------------------
+
+
+
 
 @login_required
 def update_cv_status(request, pk):
@@ -420,9 +420,9 @@ def update_cv_status(request, pk):
     return redirect("cvbuilder:cv_edit", pk=cv.pk)
 
 
-# -----------------------------
-# Public CV list for employer/admin
-# -----------------------------
+
+
+
 
 @login_required
 def public_cv_list(request):
@@ -512,9 +512,9 @@ def public_cv_list(request):
     return render(request, "cvbuilder/public_cv_list.html", context)
 
 
-# -----------------------------
-# Stats (owner)
-# -----------------------------
+
+
+
 
 @login_required
 def cv_stats(request):
@@ -551,9 +551,9 @@ def cv_stats(request):
     return render(request, "cvbuilder/cv_stats.html", {"stats": stats})
 
 
-# -----------------------------
-# AJAX create/delete related objects
-# -----------------------------
+
+
+
 
 @login_required
 def add_education(request, pk):
@@ -678,20 +678,20 @@ def delete_language(request, pk):
     language.delete()
     return JsonResponse({"success": True})
 
-# -----------------------------
-# Template preview
-# -----------------------------
+
+
+
 @login_required
 def template_preview(request, template_id):
     template = get_object_or_404(CVTemplate, pk=template_id, is_active=True)
 
-    # Берём StudentProfile (иначе нельзя взять CV)
+
     profile = get_student_profile(request.user)
     if not profile:
         messages.error(request, _("Only users with StudentProfile can preview templates."))
         return redirect("cvbuilder:template_selector")
 
-    # Берём CV для предпросмотра: сначала published, иначе любой
+
     cv = (
         CV.objects.filter(user=profile)
         .select_related("template", "user")
@@ -705,7 +705,7 @@ def template_preview(request, template_id):
         .first()
     )
 
-    # Путь к HTML-шаблону (как в cv_preview)
+
     template_type = template.template_type or DEFAULT_TEMPLATE_TYPE
     template_path = f"{TEMPLATE_DIR}/{template_type}.html"
 
@@ -714,7 +714,7 @@ def template_preview(request, template_id):
         "cvbuilder/template_preview.html",
         {
             "template": template,
-            "cv": cv,  # может быть None
+            "cv": cv,
             "template_path": template_path,
             "hide_chrome": True,
         },

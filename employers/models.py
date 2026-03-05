@@ -78,7 +78,7 @@ class Company(models.Model):
         help_text=_("e.g., Tashkent, Uzbekistan"),
     )
 
-    # Contact Information
+
     contact_email = models.EmailField(
         verbose_name=_("Contact Email"),
         help_text=_("Primary contact email address")
@@ -89,7 +89,7 @@ class Company(models.Model):
         help_text=_("Primary contact phone number")
     )
 
-    # Social Media
+
     linkedin = models.URLField(
         blank=True,
         verbose_name=_("LinkedIn"),
@@ -137,7 +137,7 @@ class Company(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        # Company detail view lives under the `accounts` app
+
         return reverse("accounts:company_detail", kwargs={"pk": self.pk})
 
     def job_count(self):

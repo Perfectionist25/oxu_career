@@ -7,7 +7,7 @@ from .models import Company, EmployerProfile, CustomUser, StudentProfile, AdminP
 @receiver(post_save, sender=CustomUser)
 def create_profile(sender, instance, created, **kwargs):
     """Create a simple profile record after a CustomUser is created.
-    
+
     Используем get_or_create вместо create, чтобы избежать дублирования.
     """
     if not created:
@@ -18,14 +18,14 @@ def create_profile(sender, instance, created, **kwargs):
             if instance.user_type == "student":
                 StudentProfile.objects.get_or_create(user=instance)
             elif instance.user_type in ("admin", "main_admin"):
-                # Проверяем, существует ли уже профиль
+
                 admin_profile, created_profile = AdminProfile.objects.get_or_create(
                     user=instance
                 )
-                # Если профиль уже существует, просто возвращаем его
-                # В противном случае будет создан новый с дефолтными значениями
+
+
     except Exception as e:
-        # Логируем ошибку, но не прерываем выполнение
+
         import logging
         logger = logging.getLogger(__name__)
         logger.error(f"Error creating profile for user {instance.id}: {str(e)}")
@@ -34,16 +34,16 @@ def create_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Company)
 def cleanup_inactive_primary_company(sender, instance, **kwargs):
     """Очистить primary_company_id при деактивации компании
-    
+
     Внимание: в модели EmployerProfile поле называется primary_company_id,
     а не primary_company!
     """
     if not instance.is_active:
-        # Найти всех работодателей, у которых эта компания primary
-        # Используем primary_company_id, так как именно так называется поле
+
+
         EmployerProfile.objects.filter(primary_company_id=instance).update(primary_company_id=None)
-        
-        # Опционально: логирование для отладки
+
+
         if instance.pk:
             count = EmployerProfile.objects.filter(primary_company_id=instance).count()
             if count > 0:

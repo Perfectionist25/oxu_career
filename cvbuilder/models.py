@@ -1,4 +1,4 @@
-# Django functions
+
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.urls import reverse
@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 import uuid
 from django.core.exceptions import ValidationError
 
-# Accounts models
+
 from accounts.models import StudentProfile
 
 User = get_user_model()
@@ -31,25 +31,25 @@ REGIONS = [
 
 class CV(models.Model):
     """Model for user resumes and CVs - Uzbekistan standards"""
-    
+
     STATUS_CHOICES = [
         ("draft", _("Draft")),
         ("published", _("Published")),
         ("archived", _("Archived")),
     ]
-    
+
     MARITAL_STATUS_CHOICES = [
         ("single", _("Single")),
         ("married", _("Married")),
         ("divorced", _("Divorced")),
         ("widowed", _("Widowed")),
     ]
-    
+
     GENDER_CHOICES = [
         ("male", _("Male")),
         ("female", _("Female")),
     ]
-    
+
     EMPLOYMENT_TYPE_CHOICES = [
         ("full_time", _("Full-time")),
         ("part_time", _("Part-time")),
@@ -58,8 +58,8 @@ class CV(models.Model):
         ("internship", _("Internship")),
         ("remote", _("Remote")),
     ]
-    
-    # Basic information
+
+
     user = models.ForeignKey(
         StudentProfile,
         on_delete=models.CASCADE,
@@ -67,8 +67,8 @@ class CV(models.Model):
         help_text=_("User who owns this CV"),
         related_name="cvs"
     )
-    
-    # CV identification
+
+
     cv_id = models.UUIDField(
         default=uuid.uuid4,
         editable=False,
@@ -81,7 +81,7 @@ class CV(models.Model):
         default=_("My Resume"),
         help_text=_("Title or name of the resume")
     )
-    
+
     template = models.ForeignKey(
         "CVTemplate",
         null=True,
@@ -91,7 +91,7 @@ class CV(models.Model):
         verbose_name=_("Template"),
         help_text=_("Template used for rendering the CV"),
     )
-    
+
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
@@ -99,15 +99,15 @@ class CV(models.Model):
         verbose_name=_("Status"),
         help_text=_("Current status of the resume")
     )
-    
-    # Personal Information (Uzbekistan standards)
+
+
     full_name = models.CharField(
         max_length=200,
         verbose_name=_("Full Name"),
         help_text=_("Complete name as it should appear on the resume")
     )
-    
-    # Personal details for Uzbekistan
+
+
     photo = models.ImageField(
         upload_to='cv_photos/',
         null=True,
@@ -115,14 +115,14 @@ class CV(models.Model):
         verbose_name=_("Photo"),
         help_text=_("Professional photo (recommended size: 3x4 cm)")
     )
-    
+
     birth_date = models.DateField(
         null=True,
         blank=True,
         verbose_name=_("Date of Birth"),
         help_text=_("Date of birth (DD.MM.YYYY)")
     )
-    
+
     gender = models.CharField(
         max_length=10,
         choices=GENDER_CHOICES,
@@ -130,7 +130,7 @@ class CV(models.Model):
         blank=True,
         verbose_name=_("Gender")
     )
-    
+
     marital_status = models.CharField(
         max_length=20,
         choices=MARITAL_STATUS_CHOICES,
@@ -138,26 +138,26 @@ class CV(models.Model):
         blank=True,
         verbose_name=_("Marital Status")
     )
-    
+
     nationality = models.CharField(
         max_length=100,
         default="Uzbekistan",
         verbose_name=_("Nationality"),
         help_text=_("Citizenship")
     )
-    
-    # Contact Information
+
+
     email = models.EmailField(
         verbose_name=_("Email Address"),
         help_text=_("Professional email address")
     )
-    
+
     phone = models.CharField(
         max_length=20,
         verbose_name=_("Phone Number"),
         help_text=_("Contact phone number in format: +998 XX XXX XX XX")
     )
-    
+
     phone_secondary = models.CharField(
         max_length=20,
         null=True,
@@ -165,90 +165,90 @@ class CV(models.Model):
         verbose_name=_("Secondary Phone"),
         help_text=_("Additional contact number")
     )
-    
+
     region = models.CharField(
         choices=REGIONS,
         max_length=100,
         verbose_name=_("Region"),
         help_text=_("Region of Uzbekistan (e.g., Tashkent, Samarkand)")
     )
-    
+
     city = models.CharField(
         max_length=100,
         verbose_name=_("City"),
         help_text=_("City of residence")
     )
-    
+
     address = models.TextField(
         verbose_name=_("Full Address"),
         help_text=_("Complete residential address")
     )
-    
-    # Career Information
+
+
     desired_position = models.CharField(
         max_length=200,
         verbose_name=_("Desired Position"),
         help_text=_("Position you are applying for")
     )
-    
+
     employment_type = models.CharField(
         max_length=20,
         choices=EMPLOYMENT_TYPE_CHOICES,
         default="full_time",
         verbose_name=_("Employment Type")
     )
-    
+
     salary_expectation = models.BigIntegerField(
         null=True,
         blank=True,
         verbose_name=_("Salary Expectation"),
         help_text=_("Expected salary in UZS")
     )
-    
+
     salary_currency = models.CharField(
         max_length=3,
         default="UZS",
         verbose_name=_("Currency"),
         help_text=_("Currency code (UZS, USD, EUR)")
     )
-    
-    # Professional Summary
+
+
     summary = models.TextField(
         verbose_name=_("Professional Summary"),
         help_text=_("Brief professional summary and career objectives")
     )
-    
-    # Additional Information for Uzbekistan
-    # passport_series = models.CharField(
-    #     max_length=2,
-    #     null=True,
-    #     blank=True,
-    #     verbose_name=_("Passport Series"),
-    #     help_text=_("Passport series (e.g., AA)")
-    # )
-    
-    # passport_number = models.CharField(
-    #     max_length=7,
-    #     null=True,
-    #     blank=True,
-    #     verbose_name=_("Passport Number"),
-    #     help_text=_("Passport number (7 digits)")
-    # )
-    
-    # tin = models.CharField(
-    #     max_length=9,
-    #     null=True,
-    #     blank=True,
-    #     verbose_name=_("TIN"),
-    #     help_text=_("Tax Identification Number (9 digits)")
-    # )
-    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     driver_license = models.BooleanField(
         default=False,
         verbose_name=_("Driver's License"),
         help_text=_("Do you have a driver's license?")
     )
-    
+
     driver_license_category = models.CharField(
         max_length=10,
         null=True,
@@ -256,46 +256,46 @@ class CV(models.Model):
         verbose_name=_("License Category"),
         help_text=_("Driver's license category (e.g., B, C)")
     )
-    
+
     military_service = models.TextField(
         null=True,
         blank=True,
         verbose_name=_("Military Service"),
         help_text=_("Information about military service (for male candidates)")
     )
-    
-    # Social Media and Portfolio
+
+
     linkedin = models.URLField(
         null=True,
         blank=True,
         verbose_name=_("LinkedIn Profile")
     )
-    
+
     github = models.URLField(
         null=True,
         blank=True,
         verbose_name=_("GitHub Profile")
     )
-    
+
     portfolio = models.URLField(
         null=True,
         blank=True,
         verbose_name=_("Portfolio Website")
     )
-    
-    # Timestamps
+
+
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name=_("Created At"),
         help_text=_("When the CV was created")
     )
-    
+
     updated_at = models.DateTimeField(
         auto_now=True,
         verbose_name=_("Updated At"),
         help_text=_("Last update to the CV")
     )
-    
+
     published_date = models.DateTimeField(
         null=True,
         blank=True,
@@ -316,7 +316,7 @@ class CV(models.Model):
 
     def get_absolute_url(self):
         return reverse("cvbuilder:cv_detail", kwargs={"pk": self.pk})
-    
+
     @property
     def location(self):
         """Возвращает объединенный адрес для удобства"""
@@ -334,7 +334,7 @@ class CV(models.Model):
         if self.phone.startswith('+998'):
             return self.phone
         return f"+998{self.phone.lstrip('0')}"
-    
+
     @property
     def age(self):
         """Calculate age from birth date"""
@@ -347,7 +347,7 @@ class CV(models.Model):
 
 class Experience(models.Model):
     """Work experience model for CVs"""
-    
+
     cv = models.ForeignKey(
         CV,
         on_delete=models.CASCADE,
@@ -355,44 +355,44 @@ class Experience(models.Model):
         verbose_name=_("CV"),
         help_text=_("CV this experience belongs to")
     )
-    
+
     company = models.CharField(
         max_length=200,
         verbose_name=_("Company/Organization"),
         help_text=_("Name of the company or organization")
     )
-    
+
     position = models.CharField(
         max_length=200,
         verbose_name=_("Position"),
         help_text=_("Job title or position held")
     )
-    
+
     employment_type = models.CharField(
         max_length=20,
         choices=CV.EMPLOYMENT_TYPE_CHOICES,
         default="full_time",
         verbose_name=_("Employment Type")
     )
-    
+
     start_date = models.DateField(
         verbose_name=_("Start Date"),
         help_text=_("When you started this position")
     )
-    
+
     end_date = models.DateField(
         null=True,
         blank=True,
         verbose_name=_("End Date"),
         help_text=_("When you left this position")
     )
-    
+
     is_current = models.BooleanField(
         default=False,
         verbose_name=_("Current Position"),
         help_text=_("Check if this is your current job")
     )
-    
+
     company_location = models.CharField(
         max_length=100,
         null=True,
@@ -400,12 +400,12 @@ class Experience(models.Model):
         verbose_name=_("Location"),
         help_text=_("City and country of the company")
     )
-    
+
     description = models.TextField(
         verbose_name=_("Responsibilities and Achievements"),
         help_text=_("Key responsibilities, achievements, and skills used")
     )
-    
+
     technologies = models.CharField(
         max_length=300,
         null=True,
@@ -413,7 +413,7 @@ class Experience(models.Model):
         verbose_name=_("Technologies Used"),
         help_text=_("Technologies, tools, and methodologies used")
     )
-    
+
     achievements = models.TextField(
         null=True,
         blank=True,
@@ -431,7 +431,7 @@ class Experience(models.Model):
 
     def __str__(self):
         return f"{self.position} at {self.company}"
-    
+
     @property
     def duration(self):
         """Calculate duration of employment"""
@@ -445,7 +445,7 @@ class Experience(models.Model):
 
 class Education(models.Model):
     """Education entries linked to a CV"""
-    
+
     EDUCATION_LEVEL_CHOICES = [
         ("secondary", _("Secondary Education")),
         ("specialized_secondary", _("Specialized Secondary")),
@@ -455,39 +455,39 @@ class Education(models.Model):
         ("phd", _("PhD/Doctorate")),
         ("professional", _("Professional Training")),
     ]
-    
+
     cv = models.ForeignKey(
         CV,
         on_delete=models.CASCADE,
         related_name="educations",
         verbose_name=_("CV")
     )
-    
+
     institution = models.CharField(
         max_length=255,
         verbose_name=_("Educational Institution"),
         help_text=_("Name of university, college, or school")
     )
-    
+
     degree = models.CharField(
         max_length=100,
         verbose_name=_("Degree/Diploma"),
         help_text=_("Name of the degree or diploma")
     )
-    
+
     education_level = models.CharField(
         max_length=50,
         choices=EDUCATION_LEVEL_CHOICES,
         verbose_name=_("Education Level"),
         help_text=_("Level of education")
     )
-    
+
     field_of_study = models.CharField(
         max_length=100,
         verbose_name=_("Field of Study/Specialty"),
         help_text=_("Your major or specialty")
     )
-    
+
     faculty = models.CharField(
         max_length=150,
         null=True,
@@ -495,19 +495,19 @@ class Education(models.Model):
         verbose_name=_("Faculty"),
         help_text=_("Faculty or department")
     )
-    
+
     start_year = models.IntegerField(
         verbose_name=_("Start Year"),
         help_text=_("Year when studies began")
     )
-    
+
     graduation_year = models.IntegerField(
         null=True,
         blank=True,
         verbose_name=_("Graduation Year"),
         help_text=_("Year of graduation")
     )
-    
+
     gpa = models.DecimalField(
         max_digits=3,
         decimal_places=2,
@@ -516,7 +516,7 @@ class Education(models.Model):
         verbose_name=_("GPA"),
         help_text=_("Grade Point Average")
     )
-    
+
     honors = models.CharField(
         max_length=100,
         null=True,
@@ -524,7 +524,7 @@ class Education(models.Model):
         verbose_name=_("Honors"),
         help_text=_("Honors, awards, or distinctions")
     )
-    
+
     diploma_number = models.CharField(
         max_length=50,
         null=True,
@@ -532,7 +532,7 @@ class Education(models.Model):
         verbose_name=_("Diploma Number"),
         help_text=_("Diploma or certificate number")
     )
-    
+
     description = models.TextField(
         null=True,
         blank=True,
@@ -551,38 +551,38 @@ class Education(models.Model):
 
 class Certificate(models.Model):
     """Certificates, diplomas, and professional certifications"""
-    
+
     cv = models.ForeignKey(
         CV,
         on_delete=models.CASCADE,
         related_name="certificates",
         verbose_name=_("CV")
     )
-    
+
     name = models.CharField(
         max_length=200,
         verbose_name=_("Certificate Name"),
         help_text=_("Name of certificate or certification")
     )
-    
+
     issuing_organization = models.CharField(
         max_length=200,
         verbose_name=_("Issuing Organization"),
         help_text=_("Organization that issued the certificate")
     )
-    
+
     issue_date = models.DateField(
         verbose_name=_("Issue Date"),
         help_text=_("Date when certificate was issued")
     )
-    
+
     expiration_date = models.DateField(
         null=True,
         blank=True,
         verbose_name=_("Expiration Date"),
         help_text=_("Date when certificate expires (if applicable)")
     )
-    
+
     certificate_id = models.CharField(
         max_length=100,
         null=True,
@@ -590,22 +590,22 @@ class Certificate(models.Model):
         verbose_name=_("Certificate ID"),
         help_text=_("Certificate identification number")
     )
-    
+
     certificate_url = models.URLField(
         null=True,
         blank=True,
         verbose_name=_("Verification URL"),
         help_text=_("Link to verify certificate online")
     )
-    
+
     description = models.TextField(
         null=True,
         blank=True,
         verbose_name=_("Description"),
         help_text=_("Skills or knowledge acquired")
     )
-    
-    # File upload for certificate scan
+
+
     certificate_file = models.FileField(
         upload_to='certificates/',
         null=True,
@@ -621,7 +621,7 @@ class Certificate(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.issuing_organization}"
-    
+
     @property
     def is_expired(self):
         """Check if certificate is expired"""
@@ -633,55 +633,55 @@ class Certificate(models.Model):
 
 class Skill(models.Model):
     """Skill entries linked to a CV"""
-    
+
     SKILL_LEVEL_CHOICES = [
         ("beginner", _("Beginner")),
         ("intermediate", _("Intermediate")),
         ("advanced", _("Advanced")),
         ("expert", _("Expert")),
     ]
-    
+
     cv = models.ForeignKey(
         CV,
         on_delete=models.CASCADE,
         related_name="skills",
         verbose_name=_("CV")
     )
-    
+
     name = models.CharField(
         max_length=100,
         verbose_name=_("Skill Name"),
         help_text=_("Name of the skill")
     )
-    
+
     category = models.CharField(
         max_length=50,
         default="general",
         verbose_name=_("Category"),
         help_text=_("Skill category (e.g., technical, soft, language)")
     )
-    
+
     level = models.CharField(
         max_length=20,
         choices=SKILL_LEVEL_CHOICES,
         verbose_name=_("Proficiency Level"),
         help_text=_("Your proficiency level in this skill")
     )
-    
+
     years_of_experience = models.IntegerField(
         null=True,
         blank=True,
         verbose_name=_("Years of Experience"),
         help_text=_("Number of years using this skill")
     )
-    
+
     description = models.TextField(
         null=True,
         blank=True,
         verbose_name=_("Description"),
         help_text=_("Examples of how you used this skill")
     )
-    
+
     last_used = models.IntegerField(
         null=True,
         blank=True,
@@ -700,7 +700,7 @@ class Skill(models.Model):
 
 class Language(models.Model):
     """Languages model for CVs"""
-    
+
     LANGUAGE_LEVELS = [
         ("a1", _("A1 - Beginner")),
         ("a2", _("A2 - Elementary")),
@@ -710,14 +710,14 @@ class Language(models.Model):
         ("c2", _("C2 - Proficient")),
         ("native", _("Native")),
     ]
-    
+
     LANGUAGE_CERTIFICATES = [
         ("ielts", _("IELTS")),
         ("toefl", _("TOEFL")),
         ("cefr", _("CEFR Certificate")),
         ("none", _("No Certificate")),
     ]
-    
+
     cv = models.ForeignKey(
         CV,
         on_delete=models.CASCADE,
@@ -725,20 +725,20 @@ class Language(models.Model):
         verbose_name=_("CV"),
         help_text=_("CV this language belongs to")
     )
-    
+
     name = models.CharField(
         max_length=50,
         verbose_name=_("Language"),
         help_text=_("Name of the language")
     )
-    
+
     level = models.CharField(
         max_length=20,
         choices=LANGUAGE_LEVELS,
         verbose_name=_("Proficiency Level"),
         help_text=_("Your level of proficiency in this language")
     )
-    
+
     certificate_type = models.CharField(
         max_length=20,
         choices=LANGUAGE_CERTIFICATES,
@@ -746,7 +746,7 @@ class Language(models.Model):
         verbose_name=_("Certificate Type"),
         help_text=_("Language proficiency certificate")
     )
-    
+
     certificate_score = models.CharField(
         max_length=10,
         null=True,
@@ -754,7 +754,7 @@ class Language(models.Model):
         verbose_name=_("Certificate Score"),
         help_text=_("Test score (e.g., IELTS 7.5, TOEFL 100)")
     )
-    
+
     is_native = models.BooleanField(
         default=False,
         verbose_name=_("Native Language"),
@@ -772,54 +772,54 @@ class Language(models.Model):
 
 class Project(models.Model):
     """Personal or professional projects"""
-    
+
     cv = models.ForeignKey(
         CV,
         on_delete=models.CASCADE,
         related_name="projects",
         verbose_name=_("CV")
     )
-    
+
     name = models.CharField(
         max_length=200,
         verbose_name=_("Project Name"),
         help_text=_("Name of the project")
     )
-    
+
     role = models.CharField(
         max_length=100,
         verbose_name=_("Your Role"),
         help_text=_("Your role in the project")
     )
-    
+
     description = models.TextField(
         verbose_name=_("Project Description"),
         help_text=_("Brief description of the project")
     )
-    
+
     technologies = models.CharField(
         max_length=300,
         verbose_name=_("Technologies Used"),
         help_text=_("Technologies and tools used in the project")
     )
-    
+
     start_date = models.DateField(
         verbose_name=_("Start Date")
     )
-    
+
     end_date = models.DateField(
         null=True,
         blank=True,
         verbose_name=_("End Date")
     )
-    
+
     project_url = models.URLField(
         null=True,
         blank=True,
         verbose_name=_("Project URL"),
         help_text=_("Link to live project or repository")
     )
-    
+
     is_personal = models.BooleanField(
         default=False,
         verbose_name=_("Personal Project"),
@@ -837,43 +837,43 @@ class Project(models.Model):
 
 class Reference(models.Model):
     """Professional references"""
-    
+
     cv = models.ForeignKey(
         CV,
         on_delete=models.CASCADE,
         related_name="references",
         verbose_name=_("CV")
     )
-    
+
     name = models.CharField(
         max_length=200,
         verbose_name=_("Reference Name"),
         help_text=_("Full name of the reference")
     )
-    
+
     position = models.CharField(
         max_length=200,
         verbose_name=_("Position"),
         help_text=_("Position of the reference")
     )
-    
+
     company = models.CharField(
         max_length=200,
         verbose_name=_("Company"),
         help_text=_("Company where reference works")
     )
-    
+
     email = models.EmailField(
         verbose_name=_("Email"),
         help_text=_("Email address of the reference")
     )
-    
+
     phone = models.CharField(
         max_length=20,
         verbose_name=_("Phone"),
         help_text=_("Phone number of the reference")
     )
-    
+
     relationship = models.CharField(
         max_length=100,
         verbose_name=_("Relationship"),
@@ -896,33 +896,33 @@ class CVTemplate(models.Model):
         ("minimalist", _("Minimalist")),
         ("executive", _("Executive")),
     ]
-    
+
     name = models.CharField(
         max_length=200,
         verbose_name=_("Template Name")
     )
-    
+
     template_type = models.CharField(
         max_length=20,
         choices=TEMPLATE_TYPE_CHOICES,
         default="classic",
         verbose_name=_("Template Type")
     )
-    
+
     description = models.TextField(
         null=True,
         blank=True,
         verbose_name=_("Description"),
         help_text=_("Template description and features")
     )
-    
+
     thumbnail = models.ImageField(
         upload_to='cv_templates/thumbnails/',
         null=True,
         blank=True,
         verbose_name=_("Thumbnail")
     )
-    
+
     template_file = models.CharField(
         max_length=200,
         blank=True,
@@ -930,7 +930,7 @@ class CVTemplate(models.Model):
         verbose_name=_("Template File"),
         help_text=_("Path to template file")
     )
-    
+
     css_file = models.CharField(
         max_length=200,
         blank=True,
@@ -938,17 +938,17 @@ class CVTemplate(models.Model):
         verbose_name=_("CSS File"),
         help_text=_("Path to CSS file for styling")
     )
-    
+
     is_active = models.BooleanField(
         default=True,
         verbose_name=_("Active")
     )
-    
+
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name=_("Created At")
     )
-    
+
     updated_at = models.DateTimeField(
         auto_now=True,
         verbose_name=_("Updated At")
@@ -961,14 +961,14 @@ class CVTemplate(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.get_template_type_display()})"
-    
+
     def clean(self):
-        # чтобы нельзя было подсунуть "../"
+
         if self.template_file and (".." in self.template_file or self.template_file.startswith("/")):
             raise ValidationError("Invalid template_file path")
 
     def save(self, *args, **kwargs):
-        # автоподстановка, если не задано
+
         if not self.template_file:
             self.template_file = f"cv_render/{self.template_type}.html"
         if not self.css_file:

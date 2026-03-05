@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-# Формы
+
 from accounts.forms import CompanyForm, EmployerProfileForm
 from jobs.forms import JobForm
 from jobs.forms import INDUSTRY_CHOICES
@@ -16,7 +16,7 @@ from .forms import (
     JobSearchForm,
 )
 
-# Импорты моделей из соответствующих приложений
+
 from accounts.models import Company, EmployerProfile
 from jobs.models import Job, JobApplication
 from employers.models import (
@@ -62,7 +62,7 @@ def job_list(request):
         if remote_work:
             jobs = jobs.filter(remote_work=True)
 
-    # Пагинация
+
     paginator = Paginator(jobs, 10)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
@@ -79,11 +79,11 @@ def job_detail(request, pk):
     """Детальная страница вакансии"""
     job = get_object_or_404(Job, pk=pk, is_active=True)
 
-    # Увеличиваем счетчик просмотров
+
     job.views_count += 1
     job.save()
 
-    # Проверяем, откликался ли пользователь
+
     has_applied = False
     if request.user.is_authenticated:
         has_applied = JobApplication.objects.filter(
@@ -92,7 +92,7 @@ def job_detail(request, pk):
 
     application_form = JobApplicationForm()
 
-    # Похожие вакансии
+
     similar_jobs = Job.objects.filter(
         is_active=True,
         company__industry=job.company.industry,
@@ -113,7 +113,7 @@ def apply_for_job(request, pk):
     """Отклик на вакансию"""
     job = get_object_or_404(Job, pk=pk, is_active=True)
 
-    # Проверяем, не откликался ли уже
+
     if JobApplication.objects.filter(job=job, user=request.user).exists():
         messages.warning(request, _("You have already applied for this job."))
         return redirect("employers:job_detail", pk=job.pk)
@@ -140,35 +140,35 @@ def apply_for_job(request, pk):
     return render(request, "employers/apply_for_job.html", context)
 
 
-# @employer_required
+
 @login_required
 def employer_dashboard(request):
-    # Получаем профиль работодателя
+
     employer_profile = request.user.employer_profile
-    
-    # Получаем все компании работодателя
+
+
     companies = employer_profile.owned_companies.all()
-    
-    # Получаем все вакансии работодателя через его компании
+
+
     all_jobs = Job.objects.filter(company__in=companies).distinct()
-    
-    # Получаем все заявки на вакансии работодателя
+
+
     all_applications = JobApplication.objects.filter(job__in=all_jobs)
-    
-    # Статистика
+
+
     total_companies = companies.count()
     total_jobs = all_jobs.count()
     active_jobs = all_jobs.filter(status='active').count()
     total_applications = all_applications.count()
-    
-    # Последние 5 вакансий
+
+
     recent_jobs = all_jobs.order_by('-created_at')[:5]
-    
-    # Последние 5 заявок
+
+
     recent_applications = all_applications.select_related(
         'job', 'applicant'
     ).order_by('-created_at')[:5]
-    
+
     context = {
         'employer_profile': employer_profile,
         'primary_company': companies.first() if companies else None,
@@ -180,7 +180,7 @@ def employer_dashboard(request):
         'recent_jobs': recent_jobs,
         'recent_applications': recent_applications,
     }
-    
+
     return render(request, 'employers/employer_dashboard.html', context)
 
 
@@ -196,10 +196,10 @@ def create_employer_profile(request):
         profile_form = EmployerProfileForm(request.POST)
 
         if company_form.is_valid() and profile_form.is_valid():
-            # Сначала создаем профиль работодателя
+
             profile = profile_form.save(commit=False)
             profile.user = request.user
-            # Установим базовые права для нового профиля
+
             profile.is_primary_contact = True
             profile.can_post_jobs = True
             profile.can_manage_jobs = True
@@ -207,15 +207,15 @@ def create_employer_profile(request):
             profile.can_contact_candidates = True
             profile.save()
 
-            # Затем создаем компанию и привязываем ее к профилю как owner
+
             company = company_form.save(commit=False)
             company.owner = profile
-            # Создавать компанию сразу активной и верифицированной
+
             company.is_active = True
             company.is_verified = True
             company.save()
 
-            # Обновим статистику профиля
+
             profile.total_companies = profile.owned_companies.count()
             profile.save()
 
@@ -251,19 +251,19 @@ def company_list(request):
     """Список компаний"""
     companies = Company.objects.filter(is_active=True, is_verified=True)
 
-    # Фильтрация по индустрии
+
     industry = request.GET.get("industry")
     if industry:
         companies = companies.filter(industry=industry)
 
-    # Поиск
+
     query = request.GET.get("q")
     if query:
         companies = companies.filter(
             Q(name__icontains=query) | Q(description__icontains=query)
         )
 
-    # Пагинация
+
     paginator = Paginator(companies, 12)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
@@ -281,10 +281,10 @@ def company_detail(request, pk):
     company = get_object_or_404(Company, pk=pk, is_active=True)
     jobs = company.jobs.filter(is_active=True)
 
-    # Отзывы
+
     reviews = company.reviews.filter(is_published=True)
 
-    # Средний рейтинг
+
     from django.db.models import Avg
     avg_rating = reviews.aggregate(Avg("rating"))["rating__avg"] or 0
 
@@ -303,7 +303,7 @@ def employer_companies(request, employer_id):
     profile = get_object_or_404(EmployerProfile, pk=employer_id)
     companies = profile.owned_companies.filter(is_active=True, is_verified=True)
 
-    # Optional search
+
     q = request.GET.get("q")
     if q:
         companies = companies.filter(Q(name__icontains=q) | Q(description__icontains=q))
@@ -320,7 +320,7 @@ def employer_companies(request, employer_id):
     return render(request, "employers/employer_companies.html", context)
 
 
-# AJAX views
+
 @login_required
 def update_application_status(request, pk):
     """Обновление статуса отклика (AJAX)"""
@@ -365,7 +365,7 @@ def get_candidate_cvs(request, user_id):
     return JsonResponse({"cvs": cv_list})
 
 
-# Декоратор для проверки прав работодателя - ДОБАВЛЕНО
+
 def employer_required(function):
     def wrapper(request, *args, **kwargs):
         if not request.user.is_authenticated:
@@ -381,7 +381,7 @@ def employer_required(function):
     return wrapper
 
 
-# Дополнительные представления для работодателей - ДОБАВЛЕНО
+
 @employer_required
 def post_job(request):
     """Публикация новой вакансии"""
@@ -395,7 +395,7 @@ def post_job(request):
         form = JobForm(request.POST)
         if form.is_valid():
             job = form.save(commit=False)
-            # Используем компанию из формы (если она там выбирается) или первую компанию работодателя
+
             if not job.company:
                 primary_company = employer_profile.owned_companies.first()
                 if not primary_company:
@@ -417,11 +417,11 @@ def post_job(request):
 def manage_jobs(request):
     """Управление вакансиями компании"""
     employer_profile = EmployerProfile.objects.get(user=request.user, is_active=True)
-    # Получаем все вакансии всех компаний работодателя
+
     owned_companies = employer_profile.owned_companies.all()
     jobs = Job.objects.filter(company__in=owned_companies).order_by("-created_at")
 
-    # Статистика по вакансиям
+
     job_stats = {
         "total": jobs.count(),
         "active": jobs.filter(is_active=True).count(),

@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
-# Canonical models (aliases) — avoid duplicate definitions here.
+
 from jobs.models import Job, JobApplication
 from events.models import Event
 from django.conf import settings

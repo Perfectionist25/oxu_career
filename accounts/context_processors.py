@@ -13,7 +13,7 @@ def auth_context(request):
     user = getattr(request, "user", None)
 
     if user and user.is_authenticated:
-        # Get unread notifications count
+
         unread_notifications_count = Notification.objects.filter(
             user=user, is_read=False
         ).count()

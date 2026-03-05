@@ -1,4 +1,4 @@
-# events/forms.py
+
 from typing import Any, Dict
 
 from django import forms
@@ -54,7 +54,7 @@ class EventCategoryForm(forms.ModelForm):
             "color": _("Color"),
             "icon": _("Icon (Font Awesome class)"),
         }
-    
+
     def clean_name(self):
         name = self.cleaned_data.get('name')
         if not name or name.strip() == '':
@@ -62,7 +62,7 @@ class EventCategoryForm(forms.ModelForm):
         if len(name) > 100:
             raise ValidationError(_("Category name cannot exceed 100 characters."))
         return name.strip()
-    
+
     def clean_description(self):
         description = self.cleaned_data.get('description', '')
         if description and len(description) > 500:
@@ -72,8 +72,8 @@ class EventCategoryForm(forms.ModelForm):
 
 class EventForm(forms.ModelForm):
     """Форма для создания/редактирования мероприятий с CKEditor 5"""
-    
-    # Используем CKEditor5Widget для полей с HTML
+
+
     description = forms.CharField(
         widget=CKEditor5Widget(
             config_name='extends',
@@ -83,7 +83,7 @@ class EventForm(forms.ModelForm):
             }
         )
     )
-    
+
     short_description = forms.CharField(
         widget=CKEditor5Widget(
             config_name='default',
@@ -93,7 +93,7 @@ class EventForm(forms.ModelForm):
             }
         )
     )
-    
+
     banner_image = forms.ImageField(
         required=False,
         widget=forms.FileInput(attrs={
@@ -102,7 +102,7 @@ class EventForm(forms.ModelForm):
             'style': 'padding: 10px;'
         })
     )
-    
+
     thumbnail = forms.ImageField(
         required=False,
         widget=forms.FileInput(attrs={
@@ -128,7 +128,7 @@ class EventForm(forms.ModelForm):
             "tags",
             "status",
         ]
-        
+
         widgets = {
             "title": forms.TextInput(
                 attrs={
@@ -181,7 +181,7 @@ class EventForm(forms.ModelForm):
                 }
             ),
         }
-        
+
         if hasattr(Event, 'status'):
             widgets["status"] = forms.Select(
                 attrs={
@@ -189,7 +189,7 @@ class EventForm(forms.ModelForm):
                     "style": "padding: 10px;"
                 }
             )
-        
+
         labels = {
             "title": _("Event Title"),
             "short_description": _("Short Description"),
@@ -203,35 +203,35 @@ class EventForm(forms.ModelForm):
             "thumbnail": _("Thumbnail"),
             "tags": _("Tags"),
         }
-        
+
         if hasattr(Event, 'status'):
             labels["status"] = _("Status")
-        
+
         help_texts = {
             "short_description": _("Brief summary that appears in listings"),
             "description": _("Full event details with formatting"),
             "tags": _("Separate with commas, e.g., technology, workshop"),
         }
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
-        # Настраиваем queryset для категорий
+
+
         self.fields['category'].queryset = EventCategory.objects.all()
-        
-        # Устанавливаем текущее время как значение по умолчанию для дат
-        if not self.instance.pk:  # Только для создания нового
+
+
+        if not self.instance.pk:
             now = timezone.now()
             now_formatted = now.strftime('%Y-%m-%dT%H:%M')
             self.fields['start_date'].initial = now_formatted
             self.fields['end_date'].initial = now_formatted
-        
-        # Убираем поле status если его нет
+
+
         if 'status' in self.fields and not hasattr(Event, 'status'):
             del self.fields['status']
         elif 'status' in self.fields and not self.instance.pk:
-            self.fields['status'].initial = 'draft'  # или 'published'
-    
+            self.fields['status'].initial = 'draft'
+
     def clean_title(self):
         title = self.cleaned_data.get('title')
         if not title or title.strip() == '':
@@ -239,32 +239,32 @@ class EventForm(forms.ModelForm):
         if len(title) > 200:
             raise ValidationError(_("Title cannot exceed 200 characters."))
         return title.strip()
-    
+
     def clean_short_description(self):
         short_description = self.cleaned_data.get('short_description', '')
         if not short_description or short_description.strip() == '':
             raise ValidationError(_("Short description is required."))
-        
-        # Убираем HTML теги для подсчета символов
+
+
         from django.utils.html import strip_tags
         plain_text = strip_tags(short_description).strip()
-        
+
         if len(plain_text) > 300:
             raise ValidationError(_("Short description cannot exceed 300 characters."))
         return short_description.strip()
-    
+
     def clean_description(self):
         description = self.cleaned_data.get('description', '')
         if not description or description.strip() == '':
             raise ValidationError(_("Description is required."))
-        
+
         from django.utils.html import strip_tags
         plain_text = strip_tags(description).strip()
-        
+
         if len(plain_text) > 5000:
             raise ValidationError(_("Description cannot exceed 5000 characters."))
         return description.strip()
-    
+
     def clean_location(self):
         location = self.cleaned_data.get('location', '')
         if not location or location.strip() == '':
@@ -272,43 +272,43 @@ class EventForm(forms.ModelForm):
         if len(location) > 200:
             raise ValidationError(_("Location cannot exceed 200 characters."))
         return location.strip()
-    
+
     def clean_tags(self):
         tags = self.cleaned_data.get('tags', '')
         if tags:
-            # Разделяем по запятым
+
             tags_list = [tag.strip() for tag in tags.split(',') if tag.strip()]
-            
-            # Проверяем каждый тег
+
+
             for tag in tags_list:
                 if len(tag) > 50:
                     raise ValidationError(_(f"Tag '{tag}' is too long (max 50 characters)."))
-            
+
             if len(tags_list) > 10:
                 raise ValidationError(_("Maximum 10 tags allowed."))
-            
+
             return ', '.join(tags_list)
         return tags
-    
+
     def clean(self):
         cleaned_data = super().clean()
         start_date = cleaned_data.get("start_date")
         end_date = cleaned_data.get("end_date")
-        
-        # Проверка дат
+
+
         if start_date and start_date < timezone.now():
             self.add_error('start_date', _("Start date cannot be in the past."))
-        
+
         if start_date and end_date:
             if start_date >= end_date:
                 self.add_error('end_date', _("End date must be after start date."))
-        
+
         return cleaned_data
 
 
 class EventSearchForm(forms.Form):
     """Форма поиска мероприятий - только с существующими полями"""
-    
+
     query = forms.CharField(
         required=False,
         label=_("Search"),
@@ -321,7 +321,7 @@ class EventSearchForm(forms.Form):
             }
         )
     )
-    
+
     category = forms.ModelChoiceField(
         queryset=EventCategory.objects.all(),
         required=False,
@@ -334,7 +334,7 @@ class EventSearchForm(forms.Form):
             }
         )
     )
-    
+
     event_type = forms.ChoiceField(
         choices=[("", _("All Types"))] + Event.EVENT_TYPE_CHOICES,
         required=False,
@@ -346,7 +346,7 @@ class EventSearchForm(forms.Form):
             }
         )
     )
-    
+
     date_range = forms.ChoiceField(
         choices=[
             ("", _("Any Time")),
@@ -365,7 +365,7 @@ class EventSearchForm(forms.Form):
             }
         )
     )
-    
+
     location = forms.CharField(
         required=False,
         label=_("Location"),
@@ -378,43 +378,43 @@ class EventSearchForm(forms.Form):
             }
         )
     )
-    
-    # УБРАНО: online_only (нет поля online_event в модели)
-    # УБРАНО: free_only (нет поля is_free или price в модели)
-    
+
+
+
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Фильтруем только активные категории
+
         self.fields['category'].queryset = EventCategory.objects.all()
-    
+
     def clean_query(self):
         query = self.cleaned_data.get('query', '').strip()
         if query and len(query) > 100:
             raise ValidationError(_("Search query is too long."))
         return query
-    
+
     def clean_location(self):
         location = self.cleaned_data.get('location', '').strip()
         if location and len(location) > 100:
             raise ValidationError(_("Location is too long."))
         return location
-    
+
     def get_filtered_queryset(self, queryset):
         """Применяет фильтры к queryset"""
         if not self.is_valid():
             return queryset.none()
-            
+
         query = self.cleaned_data.get('query')
         category = self.cleaned_data.get('category')
         event_type = self.cleaned_data.get('event_type')
         date_range = self.cleaned_data.get('date_range')
         location = self.cleaned_data.get('location')
-        
-        # Фильтр по статусу (если есть)
+
+
         if hasattr(Event, 'status'):
             queryset = queryset.filter(status='published')
-        
-        # Поиск по тексту
+
+
         if query:
             queryset = queryset.filter(
                 models.Q(title__icontains=query) |
@@ -423,16 +423,16 @@ class EventSearchForm(forms.Form):
                 models.Q(location__icontains=query) |
                 models.Q(tags__icontains=query)
             )
-        
-        # Фильтр по категории
+
+
         if category:
             queryset = queryset.filter(category=category)
-        
-        # Фильтр по типу события
+
+
         if event_type:
             queryset = queryset.filter(event_type=event_type)
-        
-        # Фильтр по датам
+
+
         now = timezone.now()
         if date_range == 'today':
             today = now.date()
@@ -455,18 +455,18 @@ class EventSearchForm(forms.Form):
             queryset = queryset.filter(start_date__gte=now)
         elif date_range == 'past':
             queryset = queryset.filter(start_date__lt=now)
-        
-        # Фильтр по локации
+
+
         if location:
             queryset = queryset.filter(location__icontains=location)
-        
-        # Сортировка по дате по умолчанию
+
+
         queryset = queryset.order_by('-start_date')
-        
+
         return queryset
 
 
-# Простая форма для загрузки фото (если нужно)
+
 class EventPhotoForm(forms.ModelForm):
     class Meta:
         model = EventPhoto

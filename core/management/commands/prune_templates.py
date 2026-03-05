@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
-    help = "Find template files that are not referenced in code and optionally move them to templates/archived_unused" 
+    help = "Find template files that are not referenced in code and optionally move them to templates/archived_unused"
 
     def add_arguments(self, parser):
         parser.add_argument(

@@ -97,10 +97,10 @@ def check_job_alerts(sender, instance, created, **kwargs):
     if created and instance.is_active:
         from django.utils import timezone
 
-        # Поиск подходящих оповещений
+
         alerts = JobAlert.objects.filter(is_active=True)
 
-        # Базовые условия
+
         if instance.location:
             alerts = alerts.filter(
                 Q(location__icontains=instance.location) | Q(location="")
@@ -116,7 +116,7 @@ def check_job_alerts(sender, instance, created, **kwargs):
                 Q(experience_level=instance.experience_level) | Q(experience_level="")
             )
 
-        # Проверка ключевых слов
+
         if instance.company.industry:
             alerts = alerts.filter(
                 Q(industry=instance.company.industry) | Q(industry__isnull=True)
@@ -124,7 +124,7 @@ def check_job_alerts(sender, instance, created, **kwargs):
 
         matching_alerts = []
         for alert in alerts:
-            # Проверка ключевых слов
+
             if alert.keywords:
                 keywords = [kw.strip().lower() for kw in alert.keywords.split(",")]
                 matches = any(
@@ -138,7 +138,7 @@ def check_job_alerts(sender, instance, created, **kwargs):
 
             matching_alerts.append(alert)
 
-        # Отправка email для подходящих оповещений
+
         for alert in matching_alerts:
             subject = _("New Job Alert: {job_title}").format(job_title=instance.title)
 
@@ -160,6 +160,6 @@ def check_job_alerts(sender, instance, created, **kwargs):
                 fail_silently=True,
             )
 
-            # Обновляем время последней отправки
+
             alert.last_sent = timezone.now()
             alert.save()

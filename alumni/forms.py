@@ -1,4 +1,4 @@
-# alumni/forms.py
+
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
@@ -24,7 +24,7 @@ from events.forms import EventForm as EventsEventForm
 
 User = get_user_model()
 
-# Валидаторы для полей
+
 phone_validator = RegexValidator(
     regex=r"^\+?1?\d{9,15}$",
     message=_("Telefon raqami formati: '+999999999'. 15 ta raqamgacha."),
@@ -66,10 +66,10 @@ class AlumniRegistrationForm(UserCreationForm):
             attrs={"class": "form-control", "placeholder": _("Telefon raqamingiz")}
         ),
     )
-    
-    # Добавляем поле user_type
+
+
     user_type = forms.CharField(
-        initial='student',  # ИЛИ 'alumni' если есть такой тип в модели
+        initial='student',
         widget=forms.HiddenInput(),
         required=False
     )
@@ -103,11 +103,11 @@ class AlumniRegistrationForm(UserCreationForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data["email"]
-        user.user_type = 'student'  # Устанавливаем тип пользователя
-        
+        user.user_type = 'student'
+
         if commit:
             user.save()
-            # Create alumni profile
+
             Alumni.objects.create(
                 user=user,
                 name=self.cleaned_data["name"],
@@ -219,12 +219,12 @@ class AlumniProfileForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         # Make email field not required since it comes from User model
         self.fields["email"].required = False
-        
-        # Добавляем queryset для поля company
+
+
         self.fields["company"].queryset = Company.objects.filter(is_active=True)
 
 
-# Алиасы для форм из других приложений
+
 CompanyForm = AccountsCompanyForm
 QuickCompanyForm = AccountsQuickCompanyForm
 JobForm = JobsJobForm
@@ -365,7 +365,7 @@ class JobApplicationForm(forms.ModelForm):
     """Forma ariza ish"""
 
     class Meta:
-        model = Message  # Using Message model for job applications temporarily
+        model = Message
         fields = ["subject", "body"]
         widgets = {
             "subject": forms.TextInput(

@@ -24,7 +24,7 @@ def alumni_list(request):
     """Список всех выпускников"""
     alumni_list = Alumni.objects.filter(is_visible=True)
 
-    # Фильтрация
+
     faculty = request.GET.get("faculty")
     graduation_year = request.GET.get("graduation_year")
     search_query = request.GET.get("search")
@@ -41,7 +41,7 @@ def alumni_list(request):
             | Q(specialization__icontains=search_query)
         )
 
-    # Пагинация
+
     paginator = Paginator(alumni_list, 20)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
@@ -60,7 +60,7 @@ def alumni_detail(request, slug):
     """Детальная страница выпускника"""
     alumni = get_object_or_404(Alumni, slug=slug, is_visible=True)
 
-    # Увеличиваем счетчик просмотров
+
     if request.user != alumni.user:
         alumni.profile_views += 1
         alumni.save()
@@ -86,7 +86,7 @@ def alumni_profile_edit(request):
             if not alumni_profile.user:
                 alumni_profile.user = request.user
             alumni_profile.save()
-            form.save_m2m()  # Для ManyToMany полей
+            form.save_m2m()
             messages.success(request, "Profil muvaffaqiyatli yangilandi!")
             return redirect("alumni:profile")
     else:
@@ -114,7 +114,7 @@ def job_list(request):
     """Список вакансий"""
     job_list = Job.objects.filter(is_active=True)
 
-    # Фильтрация
+
     employment_type = request.GET.get("employment_type")
     company = request.GET.get("company")
     search_query = request.GET.get("search")
@@ -146,11 +146,11 @@ def job_detail(request, pk):
     """Детальная страница вакансии"""
     job = get_object_or_404(Job, pk=pk, is_active=True)
 
-    # Увеличиваем счетчик просмотров
+
     job.views += 1
     job.save()
 
-    # Проверяем, подавал ли текущий пользователь заявку
+
     has_applied = False
     if request.user.is_authenticated:
         try:
@@ -177,7 +177,7 @@ def job_apply(request, pk):
         messages.error(request, "Iltimos, avval profilingizni to'ldiring.")
         return redirect("alumni:profile_edit")
 
-    # Проверяем, не подавал ли уже заявку
+
     if job.jobapplication_set.filter(applicant=alumni).exists():
         messages.warning(request, "Siz bu vakansiyaga allaqachon ariza yuborgansiz.")
         return redirect("alumni:job_detail", pk=pk)
@@ -205,7 +205,7 @@ def event_list(request):
     """Список мероприятий"""
     event_list = Event.objects.filter(is_active=True)
 
-    # Фильтрация
+
     event_type = request.GET.get("event_type")
     search_query = request.GET.get("search")
 
@@ -216,7 +216,7 @@ def event_list(request):
             Q(title__icontains=search_query) | Q(description__icontains=search_query)
         )
 
-    # Разделение на предстоящие и прошедшие
+
     from datetime import date
 
     upcoming_events = event_list.filter(date__gte=date.today()).order_by("date")
@@ -234,7 +234,7 @@ def event_detail(request, pk):
     """Детальная страница мероприятия"""
     event = get_object_or_404(Event, pk=pk, is_active=True)
 
-    # Проверяем, зарегистрирован ли пользователь
+
     is_registered = False
     if request.user.is_authenticated:
         try:
@@ -293,7 +293,7 @@ def mentorship_request(request, alumni_slug):
         messages.error(request, "Siz o'zingizga mentorlik so'rab bo'lmaysiz.")
         return redirect("alumni:alumni_detail", slug=alumni_slug)
 
-    # Проверяем, есть ли уже активный запрос
+
     existing_request = Mentorship.objects.filter(
         mentor=mentor, mentee=mentee, status__in=["pending", "active"]
     ).exists()
@@ -336,7 +336,7 @@ def connection_request(request, alumni_slug):
         messages.error(request, "Siz o'zingiz bilan bog'lana olmaysiz.")
         return redirect("alumni:alumni_detail", slug=alumni_slug)
 
-    # Проверяем, есть ли уже запрос
+
     existing_connection = Connection.objects.filter(
         from_user=from_alumni, to_user=to_alumni
     ).exists()
@@ -362,7 +362,7 @@ def news_list(request):
     """Список новостей"""
     news_list = News.objects.filter(is_published=True)
 
-    # Фильтрация по категории
+
     category = request.GET.get("category")
     if category:
         news_list = news_list.filter(category=category)
@@ -382,7 +382,7 @@ def news_detail(request, slug):
     """Детальная страница новости"""
     news = get_object_or_404(News, slug=slug, is_published=True)
 
-    # Увеличиваем счетчик просмотров
+
     news.views += 1
     news.save()
 
@@ -398,7 +398,7 @@ def dashboard(request):
     try:
         alumni = Alumni.objects.get(user=request.user)
 
-        # Получаем relevant данные для дашборда
+
         mentorship_requests = Mentorship.objects.filter(mentee=alumni, status="pending")
         connection_requests = Connection.objects.filter(
             to_user=alumni, status="pending"

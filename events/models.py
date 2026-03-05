@@ -67,7 +67,7 @@ class Event(models.Model):
         ("completed", _("Completed")),
     ]
 
-    # Basic Information
+
     title = models.CharField(
         max_length=200,
         verbose_name=_("Event Title"),
@@ -96,7 +96,7 @@ class Event(models.Model):
         help_text=_("Type of event")
     )
 
-    # Dates and Time
+
     start_date = models.DateTimeField(
         verbose_name=_("Start Date"),
         help_text=_("Event start date and time")
@@ -106,14 +106,14 @@ class Event(models.Model):
         help_text=_("Event end date and time")
     )
 
-    # Location
+
     location = models.CharField(
         max_length=200,
         verbose_name=_("Location"),
         help_text=_("General location of the event")
     )
 
-    # Images
+
     banner_image = models.ImageField(
         upload_to="event_banners/",
         null=True,
@@ -129,7 +129,7 @@ class Event(models.Model):
         help_text=_("Small thumbnail image")
     )
 
-    # Settings
+
     status = models.CharField(
         max_length=20,
         choices=EVENT_STATUS_CHOICES,
@@ -138,7 +138,7 @@ class Event(models.Model):
         help_text=_("Current status of the event")
     )
 
-    # SEO and Additional Fields
+
     slug = models.SlugField(
         max_length=255,
         unique=True,
@@ -152,7 +152,7 @@ class Event(models.Model):
         help_text=_("Comma-separated tags for the event")
     )
 
-    # Statistics
+
     views_count = models.IntegerField(
         default=0,
         verbose_name=_("Views Count"),
@@ -248,7 +248,7 @@ class EventPhoto(models.Model):
         help_text=_("When the photo was uploaded")
     )
 
-    # For Sorting
+
     order = models.IntegerField(
         default=0,
         verbose_name=_("Display Order"),

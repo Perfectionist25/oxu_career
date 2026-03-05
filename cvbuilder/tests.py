@@ -7,44 +7,44 @@ from cvbuilder.models import CV, CVTemplate
 
 class PublicCVAccessTests(TestCase):
 	def setUp(self):
-		# create a published CV
+
 		self.user = CustomUser.objects.create_user(
-			username="alice",
-			email="alice@example.com",
-			password="pass123",
-			user_type="student",
+		 username="alice",
+		 email="alice@example.com",
+		 password="pass123",
+		 user_type="student",
 		)
 		self.template = CVTemplate.objects.create(
-			name="Default",
-			thumbnail="",
-			template_file="default.html",
-			is_active=True,
+		 name="Default",
+		 thumbnail="",
+		 template_file="default.html",
+		 is_active=True,
 		)
 		self.cv = CV.objects.create(
-			user=self.user,
-			title="Dev CV",
-			template=self.template,
-			status="published",
-			full_name="Alice",
-			email="alice@example.com",
-			phone="123",
-			location="City",
-			summary="About",
+		 user=self.user,
+		 title="Dev CV",
+		 template=self.template,
+		 status="published",
+		 full_name="Alice",
+		 email="alice@example.com",
+		 phone="123",
+		 location="City",
+		 summary="About",
 		)
 
-		# clients
+
 		self.client = Client()
 		self.employer = CustomUser.objects.create_user(
-			username="employer",
-			email="emp@example.com",
-			password="emppass",
-			user_type="employer",
+		 username="employer",
+		 email="emp@example.com",
+		 password="emppass",
+		 user_type="employer",
 		)
 		self.admin = CustomUser.objects.create_user(
-			username="admin",
-			email="admin@example.com",
-			password="adminpass",
-			user_type="admin",
+		 username="admin",
+		 email="admin@example.com",
+		 password="adminpass",
+		 user_type="admin",
 		)
 
 	def test_employer_can_access_public_list(self):
@@ -65,5 +65,5 @@ class PublicCVAccessTests(TestCase):
 		self.client.login(username="alice", password="pass123")
 		url = reverse("cvbuilder:public_cv_list")
 		resp = self.client.get(url)
-		# Redirect to cv_list with error
+
 		self.assertIn(resp.status_code, (302, 301))

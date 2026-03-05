@@ -12,22 +12,22 @@ def youtube_id(url):
     """
     if not url:
         return ""
-    # Remove URL parameters
+
     url = url.split('?')[0]
     url = url.split('&')[0]
-    # Match youtu.be/VIDEO_ID
+
     match = re.search(r"youtu\.be/([\w-]{11})", url)
     if match:
         return match.group(1)
-    # Match youtube.com/watch?v=VIDEO_ID
+
     match = re.search(r"v=([\w-]{11})", url)
     if match:
         return match.group(1)
-    # Match youtube.com/embed/VIDEO_ID
+
     match = re.search(r"embed/([\w-]{11})", url)
     if match:
         return match.group(1)
-    # Match youtube.com/shorts/VIDEO_ID
+
     match = re.search(r"shorts/([\w-]{11})", url)
     if match:
         return match.group(1)

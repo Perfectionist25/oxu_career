@@ -19,10 +19,10 @@ def manage_events(request):
     if not request.user.is_staff:
         messages.error(request, _("Access denied."))
         return redirect("events:event_list")
-    
-    # Получаем события, созданные текущим пользователем
+
+
     events = Event.objects.all().order_by('-created_at')
-    
+
     context = {
         'events': events,
         'title': _("Manage Events"),
@@ -30,7 +30,7 @@ def manage_events(request):
     return render(request, "events/manage_events.html", context)
 
 
-# Декоратор для проверки, что пользователь админ или суперадмин
+
 def admin_required(function=None):
     actual_decorator = user_passes_test(
         lambda u: u.is_active and (u.is_staff or u.is_superuser),
@@ -66,7 +66,7 @@ def event_list(request):
     if event_type in valid_event_types:
         events = events.filter(event_type=event_type)
 
-    # Сначала показываем ближайшие предстоящие события, затем прошедшие
+
     now = timezone.now()
     events = events.order_by(
         Case(
@@ -76,12 +76,12 @@ def event_list(request):
         ),
         "start_date",
     )
-    
-    # Пагинация
+
+
     paginator = Paginator(events, 12)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
-    
+
     context = {
         "page_obj": page_obj,
         "categories": EventCategory.objects.all().order_by("name"),
@@ -99,7 +99,7 @@ class EventCalendarView(ListView):
     model = Event
     template_name = "events/event_calendar.html"
     context_object_name = "events"
-    
+
     def get_queryset(self):
         return Event.objects.filter(status="published").select_related("category")
 
@@ -144,15 +144,15 @@ def event_detail(request, slug):
         ),
         slug=slug, status="published"
     )
-    
-    # Увеличение счетчика просмотров только один раз за сессию (24 часа)
+
+
     session_key = f"event_viewed_{event.id}"
     if not request.session.get(session_key):
         event.views_count += 1
         event.save(update_fields=["views_count"])
         request.session[session_key] = True
-        request.session.set_expiry(86400)  # 24 часа в секундах
-    
+        request.session.set_expiry(86400)
+
     context = {
         "event": event,
         "is_admin": request.user.is_staff or request.user.is_superuser,
@@ -160,7 +160,7 @@ def event_detail(request, slug):
     return render(request, "events/detail.html", context)
 
 
-# Only Admins can create events
+
 @login_required
 def create_event(request):
     if request.user.is_staff:
@@ -175,7 +175,7 @@ def create_event(request):
                 return redirect("events:event_detail", slug=event.slug)
         else:
             form = EventForm()
-        
+
         context = {
             "form": form,
             "title": _("Create Event"),
@@ -189,12 +189,12 @@ def create_event(request):
 def edit_event(request, slug):
     """Редактирование мероприятия - только автор или админ"""
     event = get_object_or_404(Event, slug=slug)
-    
-    # Проверка прав
+
+
     if not (request.user == event.organizer or request.user.is_staff or request.user.is_superuser):
         messages.error(request, _("You don't have permission to edit this event."))
         return redirect("events:event_detail", slug=slug)
-    
+
     if request.method == "POST":
         form = EventForm(request.POST, request.FILES, instance=event)
         if form.is_valid():
@@ -203,7 +203,7 @@ def edit_event(request, slug):
             return redirect("events:event_detail", slug=event.slug)
     else:
         form = EventForm(instance=event)
-    
+
     context = {
         "form": form,
         "event": event,
@@ -216,17 +216,17 @@ def edit_event(request, slug):
 def delete_event(request, slug):
     """Удаление мероприятия - только автор или админ"""
     event = get_object_or_404(Event, slug=slug)
-    
-    # Проверка прав
+
+
     if not (request.user == event.organizer or request.user.is_staff or request.user.is_superuser):
         messages.error(request, _("You don't have permission to delete this event."))
         return redirect("events:event_detail", slug=slug)
-    
+
     if request.method == "POST":
         event.delete()
         messages.success(request, _("Event deleted successfully!"))
         return redirect("events:event_list")
-    
+
     context = {
         "event": event,
     }
@@ -239,12 +239,12 @@ def my_events(request):
     events = Event.objects.filter(
         organizer=request.user
     ).select_related("category").order_by("-created_at")
-    
-    # Пагинация
+
+
     paginator = Paginator(events, 10)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
-    
+
     context = {
         "page_obj": page_obj,
         "total_events": events.count(),
@@ -252,46 +252,46 @@ def my_events(request):
     return render(request, "events/my_events.html", context)
 
 
-# ============ АДМИН ФУНКЦИИ ============
+
 
 @login_required
 @admin_required
 def admin_event_list(request):
     """Админ: список всех мероприятий"""
     events = Event.objects.all().select_related("category")
-    
-    # Фильтры
+
+
     status_filter = request.GET.get("status")
     category_filter = request.GET.get("category")
     search_query = request.GET.get("search", "")
-    
+
     if status_filter:
         events = events.filter(status=status_filter)
-    
+
     if category_filter:
         events = events.filter(category_id=category_filter)
-    
+
     if search_query:
         events = events.filter(
             Q(title__icontains=search_query) |
             Q(description__icontains=search_query) |
             Q(location__icontains=search_query)
         )
-    
-    # Сортировка
+
+
     sort_by = request.GET.get("sort", "-created_at")
     events = events.order_by(sort_by)
-    
-    # Статистика
+
+
     total_events = Event.objects.count()
     published_events = Event.objects.filter(status="published").count()
     draft_events = Event.objects.filter(status="draft").count()
-    
-    # Пагинация
+
+
     paginator = Paginator(events, 20)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
-    
+
     context = {
         "page_obj": page_obj,
         "categories": EventCategory.objects.all(),
@@ -320,7 +320,7 @@ def admin_event_create(request):
             return redirect("events:admin_event_edit", pk=event.pk)
     else:
         form = EventForm()
-    
+
     context = {
         "form": form,
         "title": _("Create Event"),
@@ -333,7 +333,7 @@ def admin_event_create(request):
 def admin_event_edit(request, pk):
     """Админ: редактирование мероприятия"""
     event = get_object_or_404(Event, pk=pk)
-    
+
     if request.method == "POST":
         form = EventForm(request.POST, request.FILES, instance=event)
         if form.is_valid():
@@ -342,7 +342,7 @@ def admin_event_edit(request, pk):
             return redirect("events:admin_event_list")
     else:
         form = EventForm(instance=event)
-    
+
     context = {
         "form": form,
         "event": event,
@@ -356,12 +356,12 @@ def admin_event_edit(request, pk):
 def admin_event_delete(request, pk):
     """Админ: удаление мероприятия"""
     event = get_object_or_404(Event, pk=pk)
-    
+
     if request.method == "POST":
         event.delete()
         messages.success(request, _("Event deleted successfully!"))
         return redirect("events:admin_event_list")
-    
+
     context = {
         "event": event,
     }
@@ -373,12 +373,12 @@ def admin_event_delete(request, pk):
 def admin_event_publish(request, pk):
     """Админ: публикация мероприятия"""
     event = get_object_or_404(Event, pk=pk)
-    
+
     if request.method == "POST":
         event.status = "published"
         event.save()
         messages.success(request, _(f'Event "{event.title}" published successfully!'))
-    
+
     return redirect("events:admin_event_list")
 
 
@@ -387,12 +387,12 @@ def admin_event_publish(request, pk):
 def admin_event_unpublish(request, pk):
     """Админ: снятие мероприятия с публикации"""
     event = get_object_or_404(Event, pk=pk)
-    
+
     if request.method == "POST":
         event.status = "draft"
         event.save()
         messages.success(request, _(f'Event "{event.title}" unpublished successfully!'))
-    
+
     return redirect("events:admin_event_list")
 
 
@@ -401,7 +401,7 @@ def admin_event_unpublish(request, pk):
 def admin_category_list(request):
     """Админ: список категорий"""
     categories = EventCategory.objects.all()
-    
+
     context = {
         "categories": categories,
     }
@@ -420,7 +420,7 @@ def admin_category_create(request):
             return redirect("events:admin_category_list")
     else:
         form = EventCategoryForm()
-    
+
     context = {
         "form": form,
         "title": _("Create Category"),
@@ -433,7 +433,7 @@ def admin_category_create(request):
 def admin_category_edit(request, pk):
     """Админ: редактирование категории"""
     category = get_object_or_404(EventCategory, pk=pk)
-    
+
     if request.method == "POST":
         form = EventCategoryForm(request.POST, instance=category)
         if form.is_valid():
@@ -442,7 +442,7 @@ def admin_category_edit(request, pk):
             return redirect("events:admin_category_list")
     else:
         form = EventCategoryForm(instance=category)
-    
+
     context = {
         "form": form,
         "category": category,
@@ -456,29 +456,29 @@ def admin_category_edit(request, pk):
 def admin_category_delete(request, pk):
     """Админ: удаление категории"""
     category = get_object_or_404(EventCategory, pk=pk)
-    
+
     if request.method == "POST":
         category.delete()
         messages.success(request, _("Category deleted successfully!"))
         return redirect("events:admin_category_list")
-    
+
     context = {
         "category": category,
     }
     return render(request, "events/admin_category_delete.html", context)
 
 
-# ============ JSON API ============
+
 
 def api_events(request):
     """API для получения событий (для календаря)"""
     events = Event.objects.filter(status="published").select_related("category")
-    
-    # Фильтры
+
+
     start = request.GET.get("start")
     end = request.GET.get("end")
     category = request.GET.get("category")
-    
+
     if start and end:
         try:
             start_date = timezone.datetime.fromisoformat(start)
@@ -489,10 +489,10 @@ def api_events(request):
             )
         except ValueError:
             pass
-    
+
     if category:
         events = events.filter(category_id=category)
-    
+
     data = []
     for event in events:
         data.append({
@@ -505,7 +505,7 @@ def api_events(request):
             "location": event.location,
             "category": event.category.name if event.category else "Other",
         })
-    
+
     return JsonResponse(data, safe=False)
 
 
@@ -513,15 +513,15 @@ def api_event_stats(request):
     """API для статистики событий"""
     if not (request.user.is_staff or request.user.is_superuser):
         return JsonResponse({"error": "Unauthorized"}, status=403)
-    
+
     total_events = Event.objects.count()
     published_events = Event.objects.filter(status="published").count()
     draft_events = Event.objects.filter(status="draft").count()
-    
-    # События по месяцам
+
+
     from django.db.models.functions import TruncMonth
     from django.db.models import Count
-    
+
     monthly_stats = (
         Event.objects
         .filter(created_at__year=timezone.now().year)
@@ -530,7 +530,7 @@ def api_event_stats(request):
         .annotate(count=Count('id'))
         .order_by('month')
     )
-    
+
     data = {
         "total": total_events,
         "upcoming_events": Event.objects.filter(start_date__gte=timezone.now()).count(),
@@ -539,7 +539,7 @@ def api_event_stats(request):
         "draft": draft_events,
         "monthly_stats": list(monthly_stats),
     }
-    
+
     return JsonResponse(data)
 
 def stats_calendar(request):

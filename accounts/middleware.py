@@ -1,4 +1,4 @@
-# accounts/middleware.py
+
 from django.conf import settings
 from django.contrib.auth import logout
 from django.utils.deprecation import MiddlewareMixin
@@ -20,34 +20,34 @@ class NotificationMiddleware(MiddlewareMixin):
         """Добавляем уведомления в контекст шаблона"""
         if hasattr(response, 'context_data') and request.user.is_authenticated:
             try:
-                # Получаем модель динамически
+
                 Notification = apps.get_model('accounts', 'Notification')
-                
-                # Добавляем количество непрочитанных уведомлений в контекст
+
+
                 unread_count = Notification.objects.filter(
                     user=request.user,
                     is_read=False
                 ).count()
-                
-                # Последние 5 непрочитанных уведомлений
+
+
                 recent_notifications = Notification.objects.filter(
                     user=request.user
                 ).order_by('-created_at')[:5]
-                
+
                 if response.context_data is None:
                     response.context_data = {}
-                
+
                 response.context_data['unread_notifications_count'] = unread_count
                 response.context_data['recent_notifications'] = recent_notifications
-                
+
             except (LookupError, Exception) as e:
-                # Если модель не найдена или произошла ошибка БД
+
                 if response.context_data is None:
                     response.context_data = {}
-                
+
                 response.context_data['unread_notifications_count'] = 0
                 response.context_data['recent_notifications'] = []
-        
+
         return response
 
 
@@ -120,7 +120,7 @@ class BruteForceProtectionMiddleware(MiddlewareMixin):
     Middleware для защиты от брутфорс-атак.
     Проверяет все запросы на наличие блокировок.
     """
-    
+
     MAX_ATTEMPTS = int(getattr(settings, "BRUTEFORCE_MAX_ATTEMPTS", 10))
     ATTEMPT_WINDOW_SECONDS = int(getattr(settings, "BRUTEFORCE_ATTEMPT_WINDOW_SECONDS", 300))
     BLOCK_SECONDS = int(getattr(settings, "BRUTEFORCE_BLOCK_SECONDS", 900))
@@ -128,25 +128,25 @@ class BruteForceProtectionMiddleware(MiddlewareMixin):
 
     def __init__(self, get_response):
         self.get_response = get_response
-        # Пути, которые должны проверяться
+
         self.protected_paths = [
             '/accounts/admin-login/',
             '/accounts/employer-login/',
             '/accounts/login/',
             '/accounts/api/token/',
         ]
-        
-        # Пути, которые НЕ должны проверяться
+
+
         self.excluded_paths = [
             '/accounts/admin/create-employer/',
             '/accounts/admin/create-admin/',
             '/accounts/admin/create-admin-account/',
-            '/admin/',  # Django admin
-            '/media/',  # Медиа файлы
-            '/static/',  # Статические файлы
-            '/api/',  # API endpoints (если есть)
+            '/admin/',
+            '/media/',
+            '/static/',
+            '/api/',
         ]
-    
+
     @classmethod
     def _now_ts(cls):
         return int(timezone.now().timestamp())
@@ -171,7 +171,7 @@ class BruteForceProtectionMiddleware(MiddlewareMixin):
     def _remaining_seconds_from_value(cls, value):
         if value is None:
             return 0
-        # New format: UNIX timestamp when block ends
+
         if isinstance(value, (int, float)):
             return max(0, int(value) - cls._now_ts())
         # Legacy boolean format from old implementation
@@ -228,7 +228,7 @@ class BruteForceProtectionMiddleware(MiddlewareMixin):
             remaining_seconds=remaining_seconds,
         )
 
-        # Если это AJAX запрос
+
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return JsonResponse({
                 'error': f"Слишком много попыток входа. Попробуйте через {context['block_time']}.",
@@ -239,16 +239,16 @@ class BruteForceProtectionMiddleware(MiddlewareMixin):
         return render(request, 'accounts/too_many_requests.html', context, status=429)
 
     def __call__(self, request):
-        # Проверяем, не исключен ли текущий путь
+
         if any(request.path.startswith(path) for path in self.excluded_paths):
             return self.get_response(request)
-        
-        # Проверяем только POST запросы на защищенные пути
+
+
         if request.method == "POST" and any(request.path.startswith(path) for path in self.protected_paths):
             ip_address = self._get_client_ip(request)
-            
-            # Проверка блокировки по IP
-            # Проверка блокировки по пользователю (если есть username)
+
+
+
             username = self._extract_username(request)
             status = self.get_block_status(ip_address, username)
             if status["is_blocked"]:
@@ -259,9 +259,9 @@ class BruteForceProtectionMiddleware(MiddlewareMixin):
                     reason=status["reason"],
                     remaining_seconds=status["remaining_seconds"],
                 )
-        
+
         return self.get_response(request)
-    
+
     def _get_client_ip(self, request):
         """Получение реального IP адреса клиента"""
         x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -270,7 +270,7 @@ class BruteForceProtectionMiddleware(MiddlewareMixin):
         else:
             ip = request.META.get('REMOTE_ADDR')
         return ip
-    
+
     def _extract_username(self, request):
         """Извлекаем username из form-data или JSON тела запроса."""
         username = request.POST.get('username', '').strip()
@@ -284,7 +284,7 @@ class BruteForceProtectionMiddleware(MiddlewareMixin):
             except (json.JSONDecodeError, UnicodeDecodeError, TypeError):
                 return ""
         return ""
-    
+
     @staticmethod
     def record_failed_attempt(ip_address, username=None):
         """Запись неудачной попытки входа (статический метод для использования в views)."""
@@ -348,15 +348,15 @@ class BruteForceProtectionMiddleware(MiddlewareMixin):
             "remaining_attempts": remaining_attempts,
             "remaining_seconds": 0,
         }
-    
+
     @staticmethod
     def clear_attempts(ip_address, username=None):
         """Очистка счетчиков при успешном входе"""
         cache.delete(BruteForceProtectionMiddleware._attempts_ip_key(ip_address))
         cache.delete(BruteForceProtectionMiddleware._blocked_ip_key(ip_address))
-        
+
         if username:
             cache.delete(BruteForceProtectionMiddleware._attempts_user_key(username))
             cache.delete(BruteForceProtectionMiddleware._blocked_user_key(username))
-        
+
         logger.info(f"Очистка счетчиков: IP={ip_address}, User={username}")

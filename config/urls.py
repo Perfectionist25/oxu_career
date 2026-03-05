@@ -36,6 +36,6 @@ if getattr(settings, "OAUTH2_PROVIDER_ENABLED", False):
 if getattr(settings, "SERVE_MEDIA_FILES", False) and settings.MEDIA_URL.startswith("/"):
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-# Custom error handlers (optional)
-# handler404 = 'core.views.handler404'
-# handler500 = 'core.views.handler500'
+
+
+

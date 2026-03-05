@@ -1,4 +1,4 @@
-# accounts/forms.py
+
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import gettext_lazy as _
@@ -13,17 +13,17 @@ class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True, help_text=_('Required. Enter a valid email address.'))
     first_name = forms.CharField(max_length=30, required=True)
     last_name = forms.CharField(max_length=30, required=True)
-    
+
     class Meta:
         model = CustomUser
         fields = ["username", "email", "first_name", "last_name", "password1", "password2"]
-    
+
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if email and CustomUser.objects.filter(email=email).exists():
             raise forms.ValidationError(_('A user with this email already exists.'))
         return email
-    
+
     def clean_username(self):
         username = self.cleaned_data.get('username')
         if username and CustomUser.objects.filter(username=username).exists():
@@ -46,13 +46,13 @@ class EmployerRegistrationForm(CustomUserCreationForm):
         help_text=_("Phone number with country code (e.g., +998901234567)"),
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
-    
+
     class Meta(CustomUserCreationForm.Meta):
         fields = CustomUserCreationForm.Meta.fields + ["phone_number"]
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Добавляем классы Bootstrap ко всем полям
+
         for field_name, field in self.fields.items():
             if field_name not in ['terms_accept']:
                 if hasattr(field, 'widget') and hasattr(field.widget, 'attrs'):
@@ -60,10 +60,10 @@ class EmployerRegistrationForm(CustomUserCreationForm):
                         field.widget.attrs.update({'class': 'form-control'})
                     elif field_name != 'terms_accept':
                         field.widget.attrs.update({'class': 'form-control'})
-    
+
     def clean_phone_number(self):
         phone = self.cleaned_data.get('phone_number')
-        # Простая валидация номера телефона
+
         if phone and not re.match(r'^\+?[1-9]\d{1,14}$', phone):
             raise forms.ValidationError(_('Enter a valid phone number with country code.'))
         return phone
@@ -71,7 +71,7 @@ class EmployerRegistrationForm(CustomUserCreationForm):
 
 class CompanyForm(forms.ModelForm):
     """Форма для создания/редактирования компании"""
-    
+
     class Meta:
         model = Company
         fields = [
@@ -98,28 +98,28 @@ class CompanyForm(forms.ModelForm):
         ]
         widgets = {
             'name': forms.TextInput(attrs={
-                'class': 'form-control', 
+                'class': 'form-control',
                 'placeholder': _('Company name...')
             }),
             'company_type': forms.TextInput(attrs={
-                'class': 'form-control', 
+                'class': 'form-control',
                 'placeholder': _('LLC, Corporation, Startup, etc.')
             }),
             'company_size': forms.Select(attrs={
                 'class': 'form-select'
             }),
             'description': forms.Textarea(attrs={
-                'rows': 5, 
-                'class': 'form-control', 
+                'rows': 5,
+                'class': 'form-control',
                 'placeholder': _('Detailed company description...')
             }),
             'short_description': forms.Textarea(attrs={
-                'rows': 3, 
-                'class': 'form-control', 
+                'rows': 3,
+                'class': 'form-control',
                 'placeholder': _('Brief company description for listings...')
             }),
             'logo': forms.FileInput(attrs={
-                'class': 'form-control', 
+                'class': 'form-control',
                 'accept': 'image/*'
             }),
             'email': forms.EmailInput(attrs={
@@ -153,62 +153,62 @@ class CompanyForm(forms.ModelForm):
                 'class': 'form-control'
             }),
             'industry': forms.TextInput(attrs={
-                'class': 'form-control', 
+                'class': 'form-control',
                 'placeholder': _('Technology, Education, Finance, etc.')
             }),
             'tags': forms.TextInput(attrs={
-                'class': 'form-control', 
+                'class': 'form-control',
                 'placeholder': _('tech, startup, education, etc.')
             }),
             'founded_year': forms.NumberInput(attrs={
-                'class': 'form-control', 
-                'min': 1900, 
+                'class': 'form-control',
+                'min': 1900,
                 'max': 2100
             }),
             'mission': forms.Textarea(attrs={
-                'rows': 3, 
-                'class': 'form-control', 
+                'rows': 3,
+                'class': 'form-control',
                 'placeholder': _('Company mission and values...')
             }),
         }
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Устанавливаем выборы для полей region и city
+
         self.fields['region'].choices = [('', _('Select region...'))] + REGIONS
         self.fields['city'].choices = [('', _('Select city...'))] + CITIES
-        
-        # Делаем необязательные поля необязательными в форме
-        for field_name in ['company_size', 'description', 'short_description', 'logo', 
-                          'email', 'phone', 'website', 'region', 'city', 'address', 
-                          'linkedin', 'telegram', 'facebook', 'instagram', 'industry', 
+
+
+        for field_name in ['company_size', 'description', 'short_description', 'logo',
+                          'email', 'phone', 'website', 'region', 'city', 'address',
+                          'linkedin', 'telegram', 'facebook', 'instagram', 'industry',
                           'tags', 'founded_year', 'mission']:
             self.fields[field_name].required = False
-    
+
     def clean(self):
         cleaned_data = super().clean()
         name = cleaned_data.get('name')
-        
-        # Проверка уникальности названия компании
+
+
         if name:
             query = Company.objects.filter(name__iexact=name)
-            if self.instance.pk:  # При редактировании исключаем текущую компанию
+            if self.instance.pk:
                 query = query.exclude(pk=self.instance.pk)
             if query.exists():
                 self.add_error('name', _('A company with this name already exists'))
-        
-        # Проверка года основания
+
+
         year = cleaned_data.get('founded_year')
         if year:
             current_year = timezone.now().year
             if year < 1800 or year > current_year:
                 self.add_error('founded_year', _('Please enter a valid year'))
-        
+
         return cleaned_data
 
 
 class AdminCompanyForm(CompanyForm):
-    # Добавляем дополнительные поля как обычные form fields
+
     legal_name = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
     tax_id = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
     cover_image = forms.ImageField(required=False, widget=forms.FileInput(attrs={'class': 'form-control'}))
@@ -217,12 +217,12 @@ class AdminCompanyForm(CompanyForm):
     country = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     class Meta(CompanyForm.Meta):
-        # Оставляем только поля из родительской формы
+
         fields = CompanyForm.Meta.fields
-        
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Добавляем дополнительные поля в widgets для правильного отображения
+
         self.fields['legal_name'].widget.attrs.update({'class': 'form-control'})
         self.fields['tax_id'].widget.attrs.update({'class': 'form-control'})
         self.fields['cover_image'].widget.attrs.update({'class': 'form-control'})
@@ -256,11 +256,11 @@ class AdminEmployerProfileForm(forms.ModelForm):
             'placeholder': _('Department or division')
         })
     )
-    
+
     class Meta:
         model = EmployerProfile
         fields = [
-            "job_title", "professional_bio", "phone_number", 
+            "job_title", "professional_bio", "phone_number",
             "preferred_contact_method", "verification_document",
             "receive_company_notifications", "department"
         ]
@@ -270,7 +270,7 @@ class AdminEmployerProfileForm(forms.ModelForm):
                 'placeholder': _('Current professional position')
             }),
             'professional_bio': forms.Textarea(attrs={
-                'rows': 3, 
+                'rows': 3,
                 'class': 'form-control',
                 'placeholder': _('Professional background and experience')
             }),
@@ -281,11 +281,11 @@ class AdminEmployerProfileForm(forms.ModelForm):
                 'class': 'form-select'
             }),
         }
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Делаем поля необязательными
-        for field_name in ['job_title', 'professional_bio', 'phone_number', 
+
+        for field_name in ['job_title', 'professional_bio', 'phone_number',
                           'preferred_contact_method', 'verification_document',
                           'receive_company_notifications', 'department']:
             self.fields[field_name].required = False
@@ -293,7 +293,7 @@ class AdminEmployerProfileForm(forms.ModelForm):
 
 class QuickCompanyForm(forms.ModelForm):
     """Упрощенная форма для быстрого создания компании"""
-    
+
     class Meta:
         model = Company
         fields = ['name', 'description', 'industry', 'region', 'city']
@@ -304,14 +304,14 @@ class QuickCompanyForm(forms.ModelForm):
             'region': forms.Select(attrs={'class': 'form-select'}),
             'city': forms.Select(attrs={'class': 'form-select'}),
         }
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Устанавливаем выборы для полей region и city
+
         self.fields['region'].choices = [('', _('Select region...'))] + REGIONS
         self.fields['city'].choices = [('', _('Select city...'))] + CITIES
-        
-        # Делаем все поля необязательными
+
+
         for field_name in self.fields:
             self.fields[field_name].required = False
 
@@ -371,13 +371,13 @@ class StudentProfileForm(forms.ModelForm):
                 'placeholder': _('Expected salary')
             }),
             'bio': forms.Textarea(attrs={
-                'rows': 4, 
+                'rows': 4,
                 'class': 'form-control',
                 'placeholder': _('About yourself, skills, experience...')
             }),
             'graduation_year': forms.NumberInput(attrs={
                 'class': 'form-control',
-                'min': 1900, 
+                'min': 1900,
                 'max': 2100
             }),
             'website': forms.URLInput(attrs={'class': 'form-control'}),
@@ -394,7 +394,7 @@ class StudentProfileForm(forms.ModelForm):
 class AdminProfileForm(forms.ModelForm):
     """Форма создания администратора"""
     username = forms.CharField(
-        max_length=150, 
+        max_length=150,
         required=True,
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
@@ -403,12 +403,12 @@ class AdminProfileForm(forms.ModelForm):
         widget=forms.EmailInput(attrs={'class': 'form-control'})
     )
     first_name = forms.CharField(
-        max_length=30, 
+        max_length=30,
         required=True,
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
     last_name = forms.CharField(
-        max_length=30, 
+        max_length=30,
         required=True,
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
@@ -428,7 +428,7 @@ class AdminProfileForm(forms.ModelForm):
         initial='admin',
         required=True
     )
-    
+
     class Meta:
         model = AdminProfile
         fields = [
@@ -471,7 +471,7 @@ class AdminProfileForm(forms.ModelForm):
 class UserUpdateForm(forms.ModelForm):
     """Форма обновления данных пользователя"""
 
-    # Это поле просто для отображения, НЕ сохраняется формой
+
     full_name = forms.CharField(
         label=_("Full name"),
         required=False,
@@ -482,7 +482,7 @@ class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = [
-            # УБРАЛИ first_name, last_name
+
             "avatar",
             "email",
             "phone_number",
@@ -506,7 +506,7 @@ class UserUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Подставляем ФИО из модели (OAuth)
+
         if self.instance and hasattr(self.instance, "full_name"):
             self.fields["full_name"].initial = self.instance.full_name
 
@@ -537,10 +537,10 @@ class PasswordChangeFormCustom(forms.Form):
         cleaned_data = super().clean()
         new_password1 = cleaned_data.get("new_password1")
         new_password2 = cleaned_data.get("new_password2")
-        
+
         if new_password1 and new_password2 and new_password1 != new_password2:
             self.add_error('new_password2', _("Passwords don't match"))
-        
+
         return cleaned_data
 
 
@@ -580,7 +580,7 @@ class StudentUserReadonlyNameForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Показать ФИО из OAuth
+
         self.fields["full_name"].initial = getattr(self.instance, "full_name", "") or self.instance.get_full_name()
 
     def clean_email(self):

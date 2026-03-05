@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.contrib.admin import display
 from django.utils.translation import gettext_lazy as _
-# ЗАКОММЕНТИРУЙТЕ эту строку - временно отключаем modeltranslation
-# from modeltranslation.admin import TranslationAdmin
+
+
 
 from .models import Job, JobApplication, SavedJob, JobAlert
 
@@ -16,13 +16,13 @@ class JobInline(admin.TabularInline):
 class JobApplicationInline(admin.TabularInline):
     model = JobApplication
     extra = 0
-    fields = ("user", "status", "created_at")  # Changed candidate to user
+    fields = ("user", "status", "created_at")
     readonly_fields = ("created_at",)
 
 
-# ИЗМЕНИТЕ TranslationAdmin на admin.ModelAdmin
+
 @admin.register(Job)
-class JobAdmin(admin.ModelAdmin):  # ИЗМЕНИТЕ здесь
+class JobAdmin(admin.ModelAdmin):
     """Admin interface for Job model with optimized display and filters"""
 
     list_display = (
@@ -126,28 +126,28 @@ class JobAdmin(admin.ModelAdmin):  # ИЗМЕНИТЕ здесь
         )
 
 
-# ИЗМЕНИТЕ TranslationAdmin на admin.ModelAdmin
+
 @admin.register(JobApplication)
-class JobApplicationAdmin(admin.ModelAdmin):  # ИЗМЕНИТЕ здесь
-    list_display = ("user", "job_with_company", "status", "is_read", "created_at")  # Changed candidate to user
+class JobApplicationAdmin(admin.ModelAdmin):
+    list_display = ("user", "job_with_company", "status", "is_read", "created_at")
     list_filter = ("status", "is_read", "created_at")
     search_fields = (
-        "user__username",  # Changed candidate to user
-        "user__email",     # Changed candidate to user
+        "user__username",
+        "user__email",
         "job__title",
         "job__company__name",
     )
-    raw_id_fields = ["user", "job", "cv"]  # Added raw_id_fields for better performance
+    raw_id_fields = ["user", "job", "cv"]
     readonly_fields = ("created_at", "updated_at", "status_changed_at")
 
     fieldsets = (
         (
             _("Application Information"),
-            {"fields": ("job", "user", "cv", "cover_letter")},  # Changed candidate to user
+            {"fields": ("job", "user", "cv", "cover_letter")},
         ),
         (
             _("Candidate Details"),
-            {"fields": ("expected_salary", "notice_period", "available_from")},  # Added available_from
+            {"fields": ("expected_salary", "notice_period", "available_from")},
         ),
         (_("Status"), {"fields": ("status", "is_read", "status_changed_at", "source")}),
         (_("Timestamps"), {"fields": ("created_at", "updated_at")}),
@@ -215,7 +215,7 @@ class SavedJobAdmin(admin.ModelAdmin):
     list_display = ("user", "job_with_company", "created_at")
     list_filter = ("created_at",)
     search_fields = ("user__username", "job__title", "job__company__name")
-    raw_id_fields = ["user", "job"]  # Added for better performance
+    raw_id_fields = ["user", "job"]
     readonly_fields = ("created_at",)
 
     @display(description=_("Job"))
@@ -228,7 +228,7 @@ class JobAlertAdmin(admin.ModelAdmin):
     list_display = ("user", "name", "is_active", "frequency", "last_sent", "created_at")
     list_filter = ("is_active", "frequency", "created_at")
     search_fields = ("user__username", "name", "keywords")
-    raw_id_fields = ["user"]  # Added for better performance
+    raw_id_fields = ["user"]
     readonly_fields = ("created_at", "updated_at", "last_sent")
 
     fieldsets = (

@@ -13,7 +13,7 @@ class Command(BaseCommand):
             return
 
         User = get_user_model()
-        # find a superuser to own the application
+
         owner = User.objects.filter(is_superuser=True).first()
         if not owner:
             self.stderr.write("No superuser found. Create a superuser first.")

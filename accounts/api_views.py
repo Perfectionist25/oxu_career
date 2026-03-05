@@ -99,9 +99,9 @@ def _save_user_avatar(user, picture):
     return True
 
 
-# ==========================
-# OAUTH CONFIGURATION
-# ==========================
+
+
+
 
 def get_oauth_config():
     """Get OAuth configuration from settings"""
@@ -120,39 +120,39 @@ def get_oauth_config():
 def build_oauth_authorize_url(request):
     """Build OAuth authorization URL with state parameter"""
     config = get_oauth_config()
-    
+
     # Generate state parameter for CSRF protection
     import secrets
     state = secrets.token_urlsafe(32)
     request.session['oauth_state'] = state
     request.session['oauth_redirect'] = request.GET.get('next', reverse('accounts:student_dashboard'))
-    
-    # Build authorization URL
+
+
     params = {
         'client_id': config['client_id'],
         'redirect_uri': config['redirect_uri'],
         'response_type': 'code',
         'scope': 'openid profile email phone',
         'state': state,
-        # Add optional parameters
+
         'prompt': 'select_account',
         'access_type': 'offline',
     }
-    
+
     from urllib.parse import urlencode
     return f"{config['authorize_url']}?{urlencode(params)}"
 
 
-# ==========================
-# OAUTH HELPERS
-# ==========================
+
+
+
 
 def exchange_code_for_token(code: str) -> dict:
     """
     Exchange authorization code for access token
     """
     config = get_oauth_config()
-    
+
     try:
         token_url = config["token_url"]
         if not token_url.startswith("http"):
@@ -185,7 +185,7 @@ def fetch_oauth_user_info(access_token: str) -> dict:
     Get user info from OAuth provider using access token
     """
     config = get_oauth_config()
-    
+
     try:
         userinfo_url = config["userinfo_url"]
         if not userinfo_url.startswith("http"):
@@ -221,23 +221,23 @@ def find_or_create_student_user(oauth_user_data: dict) -> tuple:
     middle_name = _pick(oauth_user_data, "otasi", "middle_name", "patronymic") or ""
     full_name = _pick(oauth_user_data, "full_name", "name") or ""
     picture = _pick(oauth_user_data, "picture", "avatar", "photo", "image")
-    
+
     if not external_id:
         raise ValueError("No external ID in OAuth response")
-    
-    # Try to find existing user by oauth_uid
+
+
     user = None
     created = False
-    
+
     try:
         user = User.objects.get(oauth_uid=external_id, user_type="student")
         logger.info(f"Found existing student user: {user.username}")
     except User.DoesNotExist:
-        # Try to find by email (but only if email exists and user is student)
+
         if email:
             try:
                 user = User.objects.get(email=email, user_type="student")
-                # Update oauth_uid for existing student
+
                 user.oauth_uid = external_id
                 user.oauth_provider = "oxu"
                 user.save(update_fields=["oauth_uid", "oauth_provider", "updated_at"])
@@ -245,23 +245,23 @@ def find_or_create_student_user(oauth_user_data: dict) -> tuple:
             except User.DoesNotExist:
                 pass
             except User.MultipleObjectsReturned:
-                # Handle duplicate emails
+
                 pass
-    
-    # Create new user if not found
+
+
     if not user:
-        # Generate unique username if not provided
+
         if not username or User.objects.filter(username=username).exists():
             import uuid
             username = f"student_{str(external_id)[:8]}_{uuid.uuid4().hex[:6]}"
-        
-        # Handle duplicate email
+
+
         if email and User.objects.filter(email=email).exists():
-            # Append suffix to email
+
             email = f"{email.split('@')[0]}+{external_id[:4]}@{email.split('@')[1]}"
-        
-        # Extract names from OAuth data
-        # Create user with transaction for safety
+
+
+
         with transaction.atomic():
             user = User.objects.create(
                 username=username,
@@ -275,29 +275,29 @@ def find_or_create_student_user(oauth_user_data: dict) -> tuple:
                 is_active=True,
                 is_verified=True,
             )
-            
-            # Set unusable password for students
+
+
             user.set_unusable_password()
             user.save()
-            
-            # Create student profile
+
+
             StudentProfile.objects.create(user=user)
-            
-            # Update profile with additional info if available
+
+
             profile_fields = {
                 'university': oauth_user_data.get('university'),
                 'faculty': oauth_user_data.get('faculty'),
                 'specialty': oauth_user_data.get('specialty'),
                 'graduation_year': oauth_user_data.get('graduation_year'),
             }
-            
+
             if any(profile_fields.values()):
                 student_profile = StudentProfile.objects.get(user=user)
                 for field, value in profile_fields.items():
                     if value and hasattr(student_profile, field):
                         setattr(student_profile, field, value)
                 student_profile.save()
-            
+
             created = True
             logger.info(f"Created new student user: {user.username}")
 
@@ -335,7 +335,7 @@ def find_or_create_student_user(oauth_user_data: dict) -> tuple:
 
     if picture:
         _save_user_avatar(user, picture)
-    
+
     return user, created
 
 
@@ -344,27 +344,27 @@ def generate_jwt_tokens_for_user(user):
     Generate JWT tokens manually (not through /api/token/)
     """
     refresh = RefreshToken.for_user(user)
-    
-    # Add custom claims if needed
+
+
     refresh['user_type'] = user.user_type
     refresh['username'] = user.username
-    
+
     return {
         'refresh': str(refresh),
         'access': str(refresh.access_token),
     }
 
 
-# ==========================
-# OAUTH VIEWS
-# ==========================
+
+
+
 
 @require_http_methods(["GET"])
 def oauth_login(request):
     """
     OAuth Login Redirect
     GET /oauth/login/
-    
+
     Redirects to OAuth provider's authorization endpoint
     """
     try:
@@ -385,40 +385,40 @@ def oauth_callback(request):
     """
     OAuth Callback Handler
     POST /oauth/callback/
-    
+
     Handles authorization code exchange, user creation, and JWT issuance
     """
     try:
-        # Get parameters
+
         code = request.data.get("code")
         state = request.data.get("state")
-        
-        # Validate input
+
+
         if not code:
             return Response(
                 {"error": "Authorization code is required"},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
+
         if not state:
             return Response(
                 {"error": "State parameter is required"},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
-        # Verify state parameter
+
+
         session_state = request.session.get('oauth_state')
         if not session_state or state != session_state:
             return Response(
                 {"error": "Invalid state parameter"},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
-        # Clear state from session
+
+
         if 'oauth_state' in request.session:
             del request.session['oauth_state']
-        
-        # 1️⃣ Exchange code for token
+
+
         try:
             token_data = exchange_code_for_token(code)
         except Exception as e:
@@ -427,15 +427,15 @@ def oauth_callback(request):
                 {"error": "OAuth token service unavailable"},
                 status=status.HTTP_503_SERVICE_UNAVAILABLE
             )
-        
+
         access_token = token_data.get("access_token")
         if not access_token:
             return Response(
                 {"error": "No access token received from OAuth provider"},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
-        # 2️⃣ Get user info from OAuth provider
+
+
         try:
             oauth_user_data = fetch_oauth_user_info(access_token)
         except Exception as e:
@@ -444,8 +444,8 @@ def oauth_callback(request):
                 {"error": "OAuth userinfo service unavailable"},
                 status=status.HTTP_503_SERVICE_UNAVAILABLE
             )
-        
-        # 3️⃣ Find or create student user
+
+
         try:
             user, created = find_or_create_student_user(oauth_user_data)
         except ValueError as e:
@@ -459,8 +459,8 @@ def oauth_callback(request):
                 {"error": "Failed to create or find user"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-        
-        # 4️⃣ Generate JWT tokens MANUALLY
+
+
         try:
             tokens = generate_jwt_tokens_for_user(user)
         except Exception as e:
@@ -469,12 +469,12 @@ def oauth_callback(request):
                 {"error": "Failed to generate authentication tokens"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-        
-        # 5️⃣ Log user activity
+
+
         try:
             ip_address = get_client_ip(request)
             user_agent = request.META.get('HTTP_USER_AGENT', '')
-            
+
             create_user_activity(
                 user,
                 "login",
@@ -484,8 +484,8 @@ def oauth_callback(request):
             )
         except Exception as e:
             logger.warning(f"Failed to log user activity: {str(e)}")
-        
-        # 6️⃣ Prepare response data
+
+
         response_data = {
             "access": tokens['access'],
             "refresh": tokens['refresh'],
@@ -502,8 +502,8 @@ def oauth_callback(request):
                 "created": created,
             }
         }
-        
-        # Add profile info for students
+
+
         if user.is_student:
             try:
                 profile = StudentProfile.objects.get(user=user)
@@ -516,10 +516,10 @@ def oauth_callback(request):
                 }
             except StudentProfile.DoesNotExist:
                 pass
-        
+
         logger.info(f"OAuth login successful for user: {user.username}")
         return Response(response_data, status=status.HTTP_200_OK)
-        
+
     except Exception as e:
         logger.error(f"Unhandled error in oauth_callback: {str(e)}", exc_info=True)
         return Response(
@@ -536,8 +536,8 @@ def oauth_user_info(request):
     GET /oauth/user-info/
     """
     user = request.user
-    
-    # Build response data
+
+
     data = {
         "id": user.id,
         "username": user.username,
@@ -554,8 +554,8 @@ def oauth_user_info(request):
         "oauth_provider": user.oauth_provider,
         "phone_number": user.phone_number,
     }
-    
-    # Add role-specific information
+
+
     if user.user_type == "student":
         try:
             profile = StudentProfile.objects.get(user=user)
@@ -574,7 +574,7 @@ def oauth_user_info(request):
             })
         except StudentProfile.DoesNotExist:
             data["profile"] = None
-    
+
     elif user.user_type == "employer":
         try:
             profile = EmployerProfile.objects.get(user=user)
@@ -588,7 +588,7 @@ def oauth_user_info(request):
             })
         except EmployerProfile.DoesNotExist:
             data["profile"] = None
-    
+
     elif user.user_type in ["admin", "main_admin"]:
         try:
             profile = AdminProfile.objects.get(user=user)
@@ -605,7 +605,7 @@ def oauth_user_info(request):
             })
         except AdminProfile.DoesNotExist:
             data["profile"] = None
-    
+
     return Response(data, status=status.HTTP_200_OK)
 
 
@@ -617,17 +617,17 @@ def oauth_refresh_token(request):
     POST /oauth/refresh/
     """
     refresh_token = request.data.get("refresh")
-    
+
     if not refresh_token:
         return Response(
             {"error": "Refresh token is required"},
             status=status.HTTP_400_BAD_REQUEST
         )
-    
+
     try:
-        # Use SimpleJWT's TokenRefreshView logic
+
         from rest_framework_simplejwt.serializers import TokenRefreshSerializer
-        
+
         serializer = TokenRefreshSerializer(data={'refresh': refresh_token})
         if serializer.is_valid():
             data = serializer.validated_data
@@ -658,8 +658,8 @@ def oauth_logout(request):
     POST /oauth/logout/
     """
     user = request.user
-    
-    # Log the activity
+
+
     try:
         ip_address = get_client_ip(request)
         create_user_activity(
@@ -671,7 +671,7 @@ def oauth_logout(request):
         )
     except Exception as e:
         logger.warning(f"Failed to log logout activity: {str(e)}")
-    
+
     if request.user.is_authenticated:
         logout(request)
 
@@ -686,9 +686,9 @@ def oauth_logout(request):
     return response
 
 
-# ==========================
-# STUDENT-ONLY API VIEWS (EXAMPLE)
-# ==========================
+
+
+
 
 from rest_framework.views import APIView
 from rest_framework.permissions import BasePermission
@@ -700,8 +700,8 @@ class IsStudentUser(BasePermission):
     """
     def has_permission(self, request, view):
         return bool(
-            request.user and 
-            request.user.is_authenticated and 
+            request.user and
+            request.user.is_authenticated and
             request.user.user_type == 'student'
         )
 
@@ -711,18 +711,18 @@ class StudentDashboardAPI(APIView):
     Example: Student-only API endpoint
     """
     permission_classes = [IsAuthenticated, IsStudentUser]
-    
+
     def get(self, request):
-        # This will only be accessible to authenticated students
+
         user = request.user
-        
-        # Example: Get student statistics
+
+
         from jobs.models import JobApplication
         from cvbuilder.models import CV
-        
+
         applications = JobApplication.objects.filter(user=user).count()
         cvs = CV.objects.filter(user=user).count()
-        
+
         return Response({
             "message": f"Welcome, {user.full_name}!",
             "stats": {

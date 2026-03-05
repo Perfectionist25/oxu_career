@@ -1,4 +1,4 @@
-# accounts/management/commands/check_bruteforce.py
+
 from django.core.management.base import BaseCommand
 from django.core.cache import cache
 from django.utils import timezone
@@ -22,22 +22,22 @@ class Command(BaseCommand):
         if options['clear']:
             self.clear_all_blocks()
             return
-        
+
         if options['ip']:
             self.show_ip_info(options['ip'])
             return
-        
+
         self.show_all_blocks()
 
     def clear_all_blocks(self):
         """Очистить все блокировки"""
         keys = self._iter_cache_keys()
-        
+
         block_keys = [k for k in keys if 'blocked' in k or 'attempts' in k]
-        
+
         for key in block_keys:
             cache.delete(key)
-        
+
         self.stdout.write(
             self.style.SUCCESS(f'Удалено {len(block_keys)} блокировок и счетчиков')
         )
@@ -46,11 +46,11 @@ class Command(BaseCommand):
         """Показать информацию по IP"""
         ip_attempts = cache.get(f'login_attempts_ip_{ip_address}', 0)
         ip_blocked = cache.get(f'ip_blocked_{ip_address}')
-        
+
         self.stdout.write(f'IP адрес: {ip_address}')
         self.stdout.write(f'Количество попыток: {ip_attempts}')
         self.stdout.write(f'Заблокирован: {"Да" if ip_blocked else "Нет"}')
-        
+
         if ip_blocked:
             ttl = self._remaining_seconds(ip_blocked)
             self.stdout.write(f'Блокировка истекает через: {ttl} секунд')
@@ -58,12 +58,12 @@ class Command(BaseCommand):
     def show_all_blocks(self):
         """Показать все текущие блокировки"""
         keys = self._iter_cache_keys()
-        
+
         ip_blocks = []
         user_blocks = []
         ip_attempts = []
         user_attempts = []
-        
+
         for key in keys:
             if key.startswith('ip_blocked_'):
                 ip = key.replace('ip_blocked_', '')
@@ -81,35 +81,35 @@ class Command(BaseCommand):
                 user = key.replace('login_attempts_user_', '')
                 attempts = cache.get(key, 0)
                 user_attempts.append((user, attempts))
-        
+
         self.stdout.write(self.style.SUCCESS('=== ТЕКУЩИЕ БЛОКИРОВКИ ==='))
-        
+
         if ip_blocks:
             self.stdout.write('\nЗаблокированные IP:')
             for ip, ttl in ip_blocks:
                 self.stdout.write(f'  {ip}: {ttl} секунд до разблокировки')
         else:
             self.stdout.write('\nНет заблокированных IP')
-        
+
         if user_blocks:
             self.stdout.write('\nЗаблокированные пользователи:')
             for user, ttl in user_blocks:
                 self.stdout.write(f'  {user}: {ttl} секунд до разблокировки')
         else:
             self.stdout.write('\nНет заблокированных пользователей')
-        
+
         if ip_attempts:
             self.stdout.write('\nАктивные счетчики попыток (IP):')
             for ip, attempts in ip_attempts:
                 self.stdout.write(f'  {ip}: {attempts} попыток')
-        
+
         if user_attempts:
             self.stdout.write('\nАктивные счетчики попыток (Пользователи):')
             for user, attempts in user_attempts:
                 self.stdout.write(f'  {user}: {attempts} попыток')
 
     def _iter_cache_keys(self):
-        # LocMemCache only. For other backends, key listing may not be available.
+
         internal = getattr(cache, "_cache", None)
         if internal is None:
             self.stdout.write(self.style.WARNING(

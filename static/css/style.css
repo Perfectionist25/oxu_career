@@ -1,4 +1,3 @@
-/* Color system */
 :root {
 	--color-bg: #ffffff;
 	--color-surface: #f7f9fc;
@@ -43,7 +42,6 @@
 	}
 }
 
-/* Base tokens application */
 html, body {
 	background-color: var(--color-bg);
 	color: var(--color-text);
@@ -87,7 +85,6 @@ a:hover { color: var(--color-primary-600); }
 .form-text,
 .text-muted { color: var(--color-muted) !important; }
 
-/* Header sections (used in base.html and nav) */
 .header-top { background-color: var(--header-top-bg); color: var(--header-text); }
 .header-middle { background-color: var(--header-middle-bg); color: var(--header-text); }
 .header-bottom { background-color: var(--header-bottom-bg); color: var(--header-text); }
@@ -95,7 +92,6 @@ a:hover { color: var(--color-primary-600); }
 .logo, .contact-info a, .language-selector a { color: var(--header-text); }
 .contact-info a:hover { color: rgba(255,255,255,0.85); }
 
-/* Navigation */
 .nav-link {
 	color: var(--nav-text) !important;
 	border-color: transparent;
@@ -115,17 +111,14 @@ a:hover { color: var(--color-primary-600); }
 .dropdown-item { color: var(--color-text); }
 .dropdown-item:hover { background-color: var(--color-primary); color: var(--color-on-primary); }
 
-/* Offcanvas + list group (mobile menu) */
 .offcanvas, .list-group-item { background-color: var(--card-bg); color: var(--color-text); }
 .border-top, .border-bottom, .border { border-color: var(--color-border) !important; }
 
-/* Badges */
 .badge.bg-warning { color: #1f2937; }
 @media (prefers-color-scheme: dark) {
 	.badge.bg-warning { color: #0b1220; }
 }
 
-/* Tables, misc */
 hr { border-color: var(--color-border); }
 
 

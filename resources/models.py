@@ -66,14 +66,14 @@ class Resource(models.Model):
         help_text=_("YouTube video URL if applicable")
     )
 
-    # Publication Status
+
     is_published = models.BooleanField(
         default=False,
         verbose_name=_("Published"),
         help_text=_("Whether this resource is publicly visible")
     )
 
-    # Timestamps
+
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name=_("Created At")

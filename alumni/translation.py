@@ -31,9 +31,9 @@ class NewsTranslationOptions(TranslationOptions):
 class MessageTranslationOptions(TranslationOptions):
     fields = ('subject', 'body')
 
-# Company translation should be registered in the `accounts` app to avoid
-# cross-app duplicate registrations. Skipping registration here.
-# translator.register(Job, JobTranslationOptions)
+
+
+
 translator.register(Skill, SkillTranslationOptions)
 # Note: JobApplication and Event are registered in their canonical apps
-# (jobs, events). Avoid duplicate registrations here.
+

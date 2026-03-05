@@ -10,7 +10,7 @@ User = get_user_model()
 class Job(models.Model):
     """Stores job vacancy information with multilingual support"""
 
-    # Employment type choices
+
     EMPLOYMENT_TYPE_CHOICES = [
         ("full_time", _("Full Time")),
         ("part_time", _("Part Time")),
@@ -22,7 +22,7 @@ class Job(models.Model):
         ("flexible", _("Flexible Schedule")),
     ]
 
-    # Experience level choices
+
     EXPERIENCE_LEVEL_CHOICES = [
         ("no_experience", _("No Experience Required")),
         ("intern", _("Intern")),
@@ -34,7 +34,7 @@ class Job(models.Model):
         ("director", _("Director")),
     ]
 
-    # Education level choices
+
     EDUCATION_LEVEL_CHOICES = [
         ("school", _("High School")),
         ("college", _("College")),
@@ -44,21 +44,21 @@ class Job(models.Model):
         ("none", _("No Education Required")),
     ]
 
-    # Currency choices
+
     CURRENCY_CHOICES = [
         ("UZS", _("UZS")),
         ("USD", _("USD")),
         ("EUR", _("EUR")),
     ]
 
-    # Work type choices
+
     WORK_TYPE_CHOICES = [
         ("remote", _("Remote")),
         ("hybrid", _("Hybrid")),
         ("office", _("Office")),
     ]
 
-    # Basic Information
+
     title = models.CharField(
         max_length=200,
         verbose_name=_("Job Title"),
@@ -74,8 +74,8 @@ class Job(models.Model):
         help_text=_("Brief summary of the job")
     )
 
-    # Company and Location
-    # ЗАМЕНА: employer -> company
+
+
     company = models.ForeignKey(
         "accounts.Company",
         on_delete=models.CASCADE,
@@ -84,7 +84,7 @@ class Job(models.Model):
         help_text=_("The company offering this job")
     )
 
-    # Владелец вакансии (кто создал)
+
     created_by = models.ForeignKey(
         EmployerProfile,
         on_delete=models.CASCADE,
@@ -114,8 +114,8 @@ class Job(models.Model):
         verbose_name=_("Region"),
         help_text=_("Region or province")
     )
-    
-    # Work Type
+
+
     work_type = models.CharField(
         max_length=20,
         choices=WORK_TYPE_CHOICES,
@@ -123,7 +123,7 @@ class Job(models.Model):
         help_text=_("Type of work arrangement")
     )
 
-    # Job Conditions
+
     employment_type = models.CharField(
         max_length=20,
         choices=EMPLOYMENT_TYPE_CHOICES,
@@ -143,7 +143,7 @@ class Job(models.Model):
         help_text=_("Required education level")
     )
 
-    # Salary
+
     salary_min = models.DecimalField(
         max_digits=15,
         decimal_places=2,
@@ -177,8 +177,8 @@ class Job(models.Model):
         verbose_name=_("Salary Negotiable"),
         help_text=_("Salary is open to negotiation")
     )
-    
-    # Additional Compensation
+
+
     bonus_system = models.BooleanField(
         default=False,
         verbose_name=_("Bonus System"),
@@ -195,7 +195,7 @@ class Job(models.Model):
         help_text=_("Bonuses based on overall performance")
     )
 
-    # Requirements
+
     requirements = models.TextField(
         verbose_name=_("Requirements"),
         help_text=_("Job requirements and qualifications")
@@ -210,7 +210,7 @@ class Job(models.Model):
         help_text=_("Employee benefits and perks")
     )
 
-    # Skills
+
     skills_required = models.TextField(
         verbose_name=_("Required Skills"),
         help_text=_("List required skills separated by commas")
@@ -221,14 +221,14 @@ class Job(models.Model):
         help_text=_("List preferred skills separated by commas")
     )
 
-    # Language Requirements
+
     language_requirements = models.TextField(
         blank=True,
         verbose_name=_("Language Requirements"),
         help_text=_("Required language proficiency levels")
     )
 
-    # Contact Information
+
     contact_email = models.EmailField(
         verbose_name=_("Contact Email"),
         help_text=_("Email for job applications")
@@ -251,7 +251,7 @@ class Job(models.Model):
         help_text=_("Direct link to apply")
     )
 
-    # Work Process
+
     work_schedule = models.CharField(
         max_length=100,
         blank=True,
@@ -265,7 +265,7 @@ class Job(models.Model):
         help_text=_("Duration of probation period")
     )
 
-    # Status and Statistics
+
     is_active = models.BooleanField(
         default=True,
         verbose_name=_("Active"),
@@ -303,7 +303,7 @@ class Job(models.Model):
         help_text=_("Number of times saved as favorite")
     )
 
-    # Dates
+
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name=_("Created At")
@@ -318,8 +318,8 @@ class Job(models.Model):
         verbose_name=_("Expires At"),
         help_text=_("Job posting expiration date")
     )
-    
-    # Добавьте это поле:
+
+
     industry = models.CharField(
         max_length=100,
         blank=True,
@@ -327,7 +327,7 @@ class Job(models.Model):
         verbose_name=_("Industry"),
         help_text=_("The industry of the job (e.g., IT, Finance, Healthcare)")
     )
-    
+
     class Meta:
         verbose_name = _("Job")
         verbose_name_plural = _("Jobs")
@@ -337,11 +337,11 @@ class Job(models.Model):
             models.Index(fields=['employment_type', 'experience_level']),
             models.Index(fields=['region', 'district']),
             models.Index(fields=['industry']),
-            models.Index(fields=['company', 'is_active']),  # Добавлен индекс для компании
+            models.Index(fields=['company', 'is_active']),
         ]
 
     def __str__(self):
-        # Обновлено: показываем название компании вместо работодателя
+
         return f"{self.title} - {self.company.name}"
 
     def get_absolute_url(self):
@@ -401,15 +401,15 @@ class Job(models.Model):
         if not user.is_authenticated:
             return False
 
-        # Владелец вакансии может редактировать
+
         if self.created_by and self.created_by.user == user:
             return True
 
-        # Владелец компании может редактировать
+
         if self.company.owner.user == user:
             return True
 
-        # Администраторы могут редактировать
+
         if user.is_admin or user.is_main_admin:
             return True
 
@@ -419,10 +419,10 @@ class Job(models.Model):
         """Переопределение save для автоматического заполнения полей"""
         if not self.industry and self.company.industry:
             self.industry = self.company.industry
-        
+
         if not self.created_by and hasattr(self, '_current_user'):
             self.created_by = self._current_user
-        
+
         super().save(*args, **kwargs)
 
 
@@ -454,7 +454,7 @@ class JobApplication(models.Model):
         related_name="job_applications"
     )
 
-    # Resume and Cover Letter
+
     cv = models.ForeignKey(
         "cvbuilder.CV",
         on_delete=models.SET_NULL,
@@ -468,7 +468,7 @@ class JobApplication(models.Model):
         help_text=_("Candidate's cover letter explaining their interest")
     )
 
-    # Expectations
+
     expected_salary = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -489,7 +489,7 @@ class JobApplication(models.Model):
         help_text=_("Date when candidate can start work")
     )
 
-    # Status
+
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
@@ -503,7 +503,7 @@ class JobApplication(models.Model):
         help_text=_("When status was last updated")
     )
 
-    # Additional Information
+
     is_read = models.BooleanField(
         default=False,
         verbose_name=_("Read by Employer"),
@@ -542,7 +542,7 @@ class JobApplication(models.Model):
     @property
     def employer_user(self):
         """Получить пользователя-работодателя (владельца или менеджера компании)"""
-        # Возвращаем владельца компании как основного контакта
+
         return self.job.company.owner
 
 
@@ -601,7 +601,7 @@ class JobAlert(models.Model):
         help_text=_("Name for this job alert")
     )
 
-    # Search Parameters
+
     keywords = models.CharField(
         max_length=200,
         blank=True,
@@ -636,7 +636,7 @@ class JobAlert(models.Model):
         help_text=_("Preferred experience level")
     )
 
-    # Settings
+
     is_active = models.BooleanField(
         default=True,
         verbose_name=_("Active"),
@@ -672,7 +672,7 @@ class JobAlert(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.user.username}"
-    
+
 
 
 class ApplicationNote(models.Model):

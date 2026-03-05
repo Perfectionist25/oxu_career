@@ -1,4 +1,4 @@
-# config/settings.py
+
 from __future__ import annotations
 
 import os
@@ -10,9 +10,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# ==========================
-# BASE / ENV
-# ==========================
+
+
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 RENDER_HOST = os.getenv("RENDER_EXTERNAL_HOSTNAME", "").strip()
@@ -59,9 +59,9 @@ if not SECRET_KEY:
     else:
         raise Exception("SECRET_KEY (or DJANGO_SECRET_KEY) environment variable not set")
 
-# ==========================
+
 # HOSTS / CSRF / SITE URL
-# ==========================
+
 DEFAULT_ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
@@ -113,9 +113,9 @@ LOGOUT_REDIRECT_URL = "/"
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 USE_X_FORWARDED_HOST = True
 
-# ==========================
-# BRUTEFORCE PROTECTION
-# ==========================
+
+
+
 BRUTEFORCE_MAX_ATTEMPTS = int(os.getenv("BRUTEFORCE_MAX_ATTEMPTS", "10"))
 BRUTEFORCE_ATTEMPT_WINDOW_SECONDS = int(os.getenv("BRUTEFORCE_ATTEMPT_WINDOW_SECONDS", "300"))
 BRUTEFORCE_BLOCK_SECONDS = int(os.getenv("BRUTEFORCE_BLOCK_SECONDS", "900"))
@@ -123,11 +123,11 @@ BRUTEFORCE_WARNING_THRESHOLD = int(
     os.getenv("BRUTEFORCE_WARNING_THRESHOLD", str(max(3, BRUTEFORCE_MAX_ATTEMPTS // 2)))
 )
 
-# ==========================
-# APPLICATIONS
-# ==========================
+
+
+
 INSTALLED_APPS = [
-    # Django apps
+
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -135,7 +135,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    # Third-party apps
+
     "corsheaders",
     "jazzmin",
     "widget_tweaks",
@@ -147,7 +147,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "explorer",
 
-    # Local apps
+
     "accounts",
     "core",
     "alumni",
@@ -164,9 +164,9 @@ if OAUTH2_PROVIDER_ENABLED:
 
 AUTH_USER_MODEL = "accounts.CustomUser"
 
-# ==========================
-# MIDDLEWARE
-# ==========================
+
+
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -187,9 +187,9 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "config.urls"
 
-# ==========================
-# TEMPLATES
-# ==========================
+
+
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -205,7 +205,7 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.i18n",
 
-                # Custom context processors
+
                 "core.context_processors.site_info",
                 "accounts.context_processors.auth_context",
                 "jobs.context_processors.jobs_context",
@@ -220,9 +220,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-# ==========================
-# DATABASE
-# ==========================
+
+
+
 
 DATABASES = {
     "default": {
@@ -235,9 +235,9 @@ DATABASES = {
     }
 }
 
-# ==========================
-# PASSWORD VALIDATION
-# ==========================
+
+
+
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -245,9 +245,9 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-# ==========================
-# INTERNATIONALIZATION
-# ==========================
+
+
+
 LANGUAGES = [
     ("en", "English"),
     ("ru", "Русский"),
@@ -266,9 +266,9 @@ MODELTRANSLATION_DEFAULT_LANGUAGE = "en"
 MODELTRANSLATION_LANGUAGES = ("uz", "ru", "en")
 PHONENUMBER_DEFAULT_REGION = "UZ"
 
-# ==========================
-# CKEDITOR 5
-# ==========================
+
+
+
 CKEDITOR_5_CONFIGS = {
     "default": {
         "toolbar": [
@@ -368,9 +368,9 @@ CKEDITOR_5_FILE_UPLOAD_PERMISSION = "staff"
 CKEDITOR_5_ALLOW_ALL_FILE_TYPES = False
 CKEDITOR_5_UPLOAD_FILE_TYPES = ["jpeg", "jpg", "png", "gif", "bmp", "webp", "svg"]
 
-# ==========================
-# STATIC / MEDIA
-# ==========================
+
+
+
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
@@ -383,18 +383,18 @@ SERVE_MEDIA_FILES = env_bool("SERVE_MEDIA_FILES", default=True)
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# ==========================
-# AUTH BACKENDS
-# ==========================
+
+
+
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
     "accounts.backends.EmailBackend",
     "accounts.backends.OAuthBackend",
 ]
 
-# ==========================
-# DRF / JWT
-# ==========================
+
+
+
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -427,9 +427,9 @@ SIMPLE_JWT = {
     "TOKEN_OBTAIN_SERIALIZER": "accounts.serializers.CustomTokenObtainPairSerializer",
 }
 
-# ==========================
-# CORS
-# ==========================
+
+
+
 CORS_ALLOW_ALL_ORIGINS = DEBUG
 CORS_ALLOW_CREDENTIALS = True
 
@@ -439,9 +439,9 @@ CORS_ALLOWED_ORIGINS = [
     "https://www.career.oxu.uz",
 ]
 
-# ==========================
-# CACHE
-# ==========================
+
+
+
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
@@ -456,16 +456,16 @@ BRUTEFORCE_CONFIG = {
     "WARNING_THRESHOLD": 5,
 }
 
-# ==========================
-# EXPLORER
-# ==========================
+
+
+
 EXPLORER_CONNECTIONS = {"Default": "default"}
 EXPLORER_DEFAULT_CONNECTION = "default"
 EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES = ("auth_", "django_")
 
-# ==========================
-# OAUTH (custom integration)
-# ==========================
+
+
+
 OAUTH_PROVIDER_NAME = "oxu"
 OAUTH_AUTHORIZE_URL = "https://digital.oxu.uz/oauth2/authorize.asp"
 OAUTH_TOKEN_URL = "https://digital.oxu.uz/oauth2/token.asp"
@@ -493,9 +493,9 @@ OAUTH_ALLOWED_UNIVERSITIES = [
     if u.strip()
 ]
 
-# ==========================
+
 # SECURITY
-# ==========================
+
 SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", default=not DEBUG)
 SESSION_COOKIE_SECURE = env_bool("SESSION_COOKIE_SECURE", default=False)
 CSRF_COOKIE_SECURE = env_bool("CSRF_COOKIE_SECURE", default=False)
@@ -524,15 +524,15 @@ if not DEBUG:
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = "DENY"
 
-# ==========================
-# EMAIL
-# ==========================
+
+
+
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DEFAULT_FROM_EMAIL = "noreply@oxu.uz"
 
-# ==========================
-# JAZZMIN
-# ==========================
+
+
+
 JAZZMIN_SETTINGS = {
     "site_title": "OXU University Admin",
     "site_header": "OXU University",
@@ -599,9 +599,9 @@ JAZZMIN_UI_TWEAKS = {
     },
 }
 
-# ==========================
-# LOGGING
-# ==========================
+
+
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,

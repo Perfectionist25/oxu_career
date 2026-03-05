@@ -5,33 +5,33 @@ from . import views
 app_name = "jobs"
 
 urlpatterns = [
-    # Umumiy sahifalar
+
     path("", views.job_list, name="list"),
     path("mening-ishlarim/", views.my_jobs, name="my_jobs"),
     path("mening-arizalarim/", views.my_applications, name="my_applications"),
     path("saqlanganlar/", views.saved_jobs, name="saved_jobs"),
-    
-    # Vakansiya yaratish va boshqarish (ish beruvchilar uchun)
+
+
     path("yaratish/", views.job_create, name="job_create"),
     path("<int:pk>/tahrirlash/", views.job_edit, name="job_edit"),
     path("<int:pk>/ochirish/", views.job_delete, name="job_delete"),
     path("<int:pk>/", views.job_detail, name="job_detail"),
-    
-    # Vakansiyaga murojaat qilish (talabalar uchun)
+
+
     path("<int:pk>/ariza-berish/", views.apply_for_job, name="apply_for_job"),
     path("<int:pk>/saqlash/", views.save_job, name="save_job"),
     path("<int:pk>/saqlanganlardan-olish/", views.unsave_job, name="unsave_job"),
     path('<int:pk>/settings/', views.job_settings, name='job_settings'),
     path('<int:pk>/update-settings/', views.update_job_settings, name='update_job_settings'),
-    
-    # Arizalarni boshqarish
+
+
     path(
         "ish-beruvchi/arizalar/",
         views.employer_applications,
         name="employer_applications",
     ),
-    
-    # AJAX endpointlar
+
+
     path(
         "<int:pk>/korishlar-soni/",
         views.increment_job_views,

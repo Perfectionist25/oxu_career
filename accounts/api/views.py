@@ -129,7 +129,7 @@ def oauth_callback(request):
     request.session.pop("oauth_state", None)
     next_url = request.session.pop("oauth_next", settings.OAUTH_SUCCESS_REDIRECT)
 
-    # 1) Exchange code -> token
+
     token_response = requests.post(
         settings.OAUTH_TOKEN_URL,
         data={
@@ -154,7 +154,7 @@ def oauth_callback(request):
     if not access_token:
         return HttpResponseBadRequest("No access token")
 
-    # 2) Get user info
+
     user_response = requests.get(
         settings.OAUTH_USERINFO_URL,
         headers={"Authorization": f"Bearer {access_token}"},
@@ -166,8 +166,8 @@ def oauth_callback(request):
 
     user_data = user_response.json()
 
-    # OXU OAuth data mapping:
-    # user_id, full_name, ism, fam, otasi, login, phone_number, picture
+
+
     email_raw = _pick(user_data, "email")
     email = email_raw.lower() if isinstance(email_raw, str) else ""
     oauth_uid = _pick(user_data, "user_id", "sub", "id", "uid", "user_id")
@@ -187,7 +187,7 @@ def oauth_callback(request):
 
     provider_name = getattr(settings, "OAUTH_PROVIDER_NAME", "oxu")
 
-    # 3) Get or create user
+
     with transaction.atomic():
         user = None
         created = False
@@ -208,7 +208,7 @@ def oauth_callback(request):
                 email=email if email else "",
                 username=username,
                 is_active=True,
-                user_type="student",  # чтобы создался StudentProfile через сигнал
+                user_type="student",
                 oauth_provider=provider_name,
                 oauth_uid=oauth_uid or None,
             )
@@ -249,7 +249,7 @@ def oauth_callback(request):
                 user.full_name_locked = True
                 updates += ["full_name", "full_name_locked"]
 
-        # На всякий: если существовал как guest — переключим в student (по твоим требованиям)
+
         if getattr(user, "user_type", None) != "student":
             user.user_type = "student"
             updates.append("user_type")
@@ -269,7 +269,7 @@ def oauth_callback(request):
             student_profile.student_id = str(oauth_uid)
             student_profile.save(update_fields=["student_id", "updated_at"])
 
-        # Save provider OAuth token for student session maintenance.
+
         oauth_token, _ = OAuthToken.objects.get_or_create(user=user)
         oauth_token.access_token = access_token
         oauth_token.refresh_token = refresh_token
@@ -282,7 +282,7 @@ def oauth_callback(request):
         if picture:
             _save_avatar_from_picture(user, picture)
 
-    # 4) Create JWT pair for student and login via session
+
     refresh = RefreshToken.for_user(user)
     refresh["user_type"] = "student"
     refresh["oauth_provider"] = provider_name

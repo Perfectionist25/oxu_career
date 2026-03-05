@@ -1,4 +1,4 @@
-# accounts/admin.py - ИСПРАВЛЕННАЯ ВЕРСИЯ
+
 from django.contrib import admin
 from django.contrib.admin import display
 from django.contrib.auth.admin import UserAdmin
@@ -24,7 +24,7 @@ class CustomUserAdmin(UserAdmin):
     search_fields = ("username", "email", "first_name", "last_name")
     ordering = ("-date_joined",)
     readonly_fields = ("date_joined", "last_login")
-    
+
     fieldsets = (
         (None, {"fields": ("username", "password")}),
         (
@@ -65,7 +65,7 @@ class CustomUserAdmin(UserAdmin):
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
     """Admin interface for Company model"""
-    
+
     list_display = (
         "name",
         "owner",
@@ -91,7 +91,7 @@ class CompanyAdmin(admin.ModelAdmin):
         "updated_at",
     )
     list_per_page = 20
-    
+
     fieldsets = (
         (
             _("Company Identification"),
@@ -119,7 +119,7 @@ class CompanyAdmin(admin.ModelAdmin):
 @admin.register(CompanyDocument)
 class CompanyDocumentAdmin(admin.ModelAdmin):
     """Admin interface for CompanyDocument model"""
-    
+
     list_display = (
         "title",
         "company",
@@ -142,7 +142,7 @@ class CompanyDocumentAdmin(admin.ModelAdmin):
     )
     readonly_fields = ("created_at", "updated_at")
     list_per_page = 20
-    
+
     fieldsets = (
         (
             _("Document Information"),
@@ -157,7 +157,7 @@ class CompanyDocumentAdmin(admin.ModelAdmin):
             {"fields": ("created_at", "updated_at")},
         ),
     )
-    
+
     def save_model(self, request, obj, form, change):
         """Сохранить модель и установить verified_by если документ верифицирован"""
         if obj.is_verified and not obj.verified_by:
@@ -172,7 +172,7 @@ class CompanyDocumentAdmin(admin.ModelAdmin):
 @admin.register(EmployerProfile)
 class EmployerProfileAdmin(admin.ModelAdmin):
     """Admin interface for EmployerProfile with personal information"""
-    
+
     list_display = (
         "user",
         "created_at",
@@ -188,7 +188,7 @@ class EmployerProfileAdmin(admin.ModelAdmin):
         "updated_at",
     )
     list_per_page = 20
-    
+
     fieldsets = (
         (
             _("User Information"),
@@ -204,7 +204,7 @@ class EmployerProfileAdmin(admin.ModelAdmin):
 @admin.register(StudentProfile)
 class StudentProfileAdmin(admin.ModelAdmin):
     """Admin interface for StudentProfile with educational information"""
-    
+
     list_display = (
         "user",
         "faculty",
@@ -216,7 +216,7 @@ class StudentProfileAdmin(admin.ModelAdmin):
     search_fields = ("user__username", "user__email", "faculty", "specialty", "student_id")
     readonly_fields = ("created_at", "updated_at")
     list_per_page = 20
-    
+
     fieldsets = (
         (
             _("Student Information"),
@@ -234,7 +234,7 @@ class StudentProfileAdmin(admin.ModelAdmin):
 @admin.register(AdminProfile)
 class AdminProfileAdmin(admin.ModelAdmin):
     """Admin interface for AdminProfile model"""
-    
+
     list_display = (
         "user",
         "can_manage_students",
@@ -256,7 +256,7 @@ class AdminProfileAdmin(admin.ModelAdmin):
     search_fields = ("user__username", "user__email")
     readonly_fields = ("created_at", "updated_at")
     list_per_page = 20
-    
+
     fieldsets = (
         (
             _("User Information"),
@@ -285,13 +285,13 @@ class AdminProfileAdmin(admin.ModelAdmin):
 @admin.register(HemisAuth)
 class HemisAuthAdmin(admin.ModelAdmin):
     """Admin interface for HemisAuth model"""
-    
+
     list_display = ("user", "hemis_user_id", "last_sync", "created_at")
     list_filter = ("last_sync", "created_at")
     search_fields = ("user__username", "user__email", "hemis_user_id")
     readonly_fields = ("created_at", "last_sync")
     list_per_page = 20
-    
+
     fieldsets = (
         (
             _("User Information"),
@@ -311,7 +311,7 @@ class HemisAuthAdmin(admin.ModelAdmin):
 @admin.register(UserActivity)
 class UserActivityAdmin(admin.ModelAdmin):
     """Admin interface for UserActivity model"""
-    
+
     list_display = (
         "user",
         "activity_type",
@@ -324,7 +324,7 @@ class UserActivityAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at",)
     list_per_page = 30
     date_hierarchy = "created_at"
-    
+
     fieldsets = (
         (
             _("Activity Information"),
@@ -344,7 +344,7 @@ class UserActivityAdmin(admin.ModelAdmin):
 @admin.register(Notification)
 class NotificationAdmin(admin.ModelAdmin):
     """Admin interface for Notification model"""
-    
+
     list_display = (
         "user",
         "notification_type",
@@ -358,7 +358,7 @@ class NotificationAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at",)
     list_per_page = 30
     date_hierarchy = "created_at"
-    
+
     fieldsets = (
         (
             _("Notification Information"),
@@ -375,12 +375,12 @@ class NotificationAdmin(admin.ModelAdmin):
     )
 
 
-# Убраны проблемные inline-классы
+
 
 @admin.register(OAuthToken)
 class OAuthTokenAdmin(admin.ModelAdmin):
     """Admin interface for OAuthToken model - manage OAuth tokens for users"""
-    
+
     list_display = (
         "user",
         "token_type",
@@ -392,7 +392,7 @@ class OAuthTokenAdmin(admin.ModelAdmin):
     list_filter = ("token_type", "created_at", "updated_at")
     search_fields = ("user__username", "user__email")
     readonly_fields = ("created_at", "updated_at", "access_token", "refresh_token")
-    
+
     fieldsets = (
         (
             _("User Information"),
@@ -416,7 +416,7 @@ class OAuthTokenAdmin(admin.ModelAdmin):
             {"fields": ("created_at", "updated_at")},
         ),
     )
-    
+
     def is_valid(self, obj):
         """Display if token is currently valid"""
         if obj.is_expired():

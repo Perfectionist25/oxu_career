@@ -23,7 +23,7 @@ def send_application_notification(sender, instance, created, **kwargs):
             application_url=f"{settings.SITE_URL}/employers/applications/{instance.pk}/",
         )
 
-        # Отправляем email работодателю
+
         employer_email = instance.job.contact_email
         send_mail(
             subject,
@@ -61,7 +61,7 @@ def send_interview_invitation(sender, instance, created, **kwargs):
             company=instance.application.job.company.name,
         )
 
-        # Отправляем email кандидату
+
         candidate_email = instance.application.candidate.email
         send_mail(
             subject,

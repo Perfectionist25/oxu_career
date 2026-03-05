@@ -19,7 +19,7 @@ def send_bulk_application_update(applications, subject, message):
             (
                 subject,
                 personalized_message,
-                None,  # from_email
+                None,
                 [application.candidate.email],
             )
         )
@@ -35,32 +35,32 @@ def get_job_recommendations(user, limit=10):
     from cvbuilder.models import CV
 
     try:
-        # Получаем навыки пользователя из его резюме
+
         user_cvs = CV.objects.filter(user=user, status="published")
         user_skills = []
 
         for cv in user_cvs:
             user_skills.extend([skill.name.lower() for skill in cv.skills.all()])
 
-        # Уникальные навыки
+
         user_skills = list(set(user_skills))
 
         if not user_skills:
-            # Если нет навыков, возвращаем популярные вакансии
+
             return Job.objects.filter(is_active=True).order_by("-views_count")[:limit]
 
-        # Ищем вакансии с совпадающими навыками
+
         recommended_jobs = Job.objects.filter(is_active=True)
 
-        # Создаем Q-объекты для поиска по навыкам
+
         skill_queries = Q()
-        for skill in user_skills[:10]:  # Ограничиваем количество навыков для поиска
+        for skill in user_skills[:10]:
             skill_queries |= Q(skills_required__icontains=skill)
             skill_queries |= Q(preferred_skills__icontains=skill)
 
         recommended_jobs = recommended_jobs.filter(skill_queries)
 
-        # Если недостаточно рекомендаций, добавляем популярные вакансии
+
         if recommended_jobs.count() < limit:
             additional_jobs = (
                 Job.objects.filter(is_active=True)
@@ -68,14 +68,14 @@ def get_job_recommendations(user, limit=10):
                 .order_by("-views_count")[: limit - recommended_jobs.count()]
             )
 
-            # Convert to lists and combine to avoid reassigning a QuerySet
+
             recommended_jobs_list = list(recommended_jobs) + list(additional_jobs)
             return recommended_jobs_list[:limit]
 
         return recommended_jobs[:limit]
 
     except Exception:
-        # В случае ошибки возвращаем популярные вакансии
+
         return Job.objects.filter(is_active=True).order_by("-views_count")[:limit]
 
 
@@ -93,7 +93,7 @@ def generate_job_stats(timeframe="all"):
         start_date = now - timedelta(days=30)
     elif timeframe == "year":
         start_date = now - timedelta(days=365)
-    else:  # all
+    else:
         start_date = None
 
     jobs = Job.objects.all()

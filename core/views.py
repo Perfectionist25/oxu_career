@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.generic import TemplateView
 
-# Временно закомментируем импорт Alumni
+
 from events.models import Event
 from jobs.models import Job
 from resources.models import Resource
@@ -15,13 +15,13 @@ from accounts.models import Company, CustomUser
 from .forms import ContactForm
 from .models import ContactMessage
 
-# Set up logger for API requests
+
 logger = logging.getLogger(__name__)
 
 
 def home(request):
     """Главная страница"""
-    # Получаем данные для главной страницы
+
     stats = {
         "alumni_count": CustomUser.objects.filter(user_type='student').count(),
         "jobs_count": Job.objects.filter(is_active=True).count(),
@@ -29,22 +29,22 @@ def home(request):
         "resources_count": Resource.objects.filter(is_published=True).count(),
     }
 
-    # Последние вакансии - ОБНОВЛЕНО: убрали employer, так как теперь company
+
     latest_jobs = Job.objects.filter(is_active=True).select_related("company")[:6]
 
     latest_resources = Resource.objects.filter(is_published=True).order_by('-created_at')[:3]
 
-    # Предстоящие мероприятия
+
     upcoming_events = Event.objects.filter(
         status="published", start_date__gt=timezone.now()
     ).order_by("start_date")[:3]
 
-    # Статистика для ресурсов
+
     resources_stats = {
         "total_resources": stats["resources_count"],
     }
 
-    # Статистика для админов
+
     resources_admin_stats = None
     if request.user.is_authenticated and request.user.is_staff:
         resources_admin_stats = {
@@ -85,14 +85,14 @@ def contact(request):
     if request.method == "POST":
         form = ContactForm(request.POST)
         if form.is_valid():
-            # Сохраняем сообщение
+
             contact_message = form.save(commit=False)
 
-            # Добавляем дополнительную информацию
+
             if request.user.is_authenticated:
                 contact_message.user = request.user
 
-            # Сохраняем IP и User Agent
+
             x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
             if x_forwarded_for:
                 contact_message.ip_address = x_forwarded_for.split(",")[0]
@@ -102,13 +102,13 @@ def contact(request):
             contact_message.user_agent = request.META.get("HTTP_USER_AGENT", "")[:500]
             contact_message.save()
 
-            # Показываем сообщение об успехе
+
             messages.success(
                 request,
                 "Ваше сообщение успешно отправлено! Мы свяжемся с вами в ближайшее время.",
             )
 
-            # Если это AJAX запрос
+
             if request.headers.get("X-Requested-With") == "XMLHttpRequest":
                 return JsonResponse(
                     {"success": True, "message": "Ваше сообщение успешно отправлено!"}
@@ -116,13 +116,13 @@ def contact(request):
 
             return redirect("contact_success")
         else:
-            # Если форма невалидна и это AJAX
+
             if request.headers.get("X-Requested-With") == "XMLHttpRequest":
                 return JsonResponse({"success": False, "errors": form.errors})
     else:
         form = ContactForm()
 
-    # Контактная информация
+
     contact_info = {
         "email": "contact@alumni-association.ru",
         "phone": "+7 (495) 123-45-67",
@@ -196,7 +196,7 @@ def faq(request):
     )
 
 
-# API views
+
 def api_stats(request):
     """API для получения статистики"""
     stats = {
@@ -216,10 +216,10 @@ def health_check(request):
 
 def welcome_api(request):
     """Welcome API endpoint that logs requests and returns JSON response"""
-    # Log request metadata
+
     logger.info(f"Request received: {request.method} {request.path}")
 
-    # Prepare response data
+
     response_data = {
         "message": "Welcome to the OXU Career API Service!",
         "method": request.method,
@@ -230,7 +230,7 @@ def welcome_api(request):
     return JsonResponse(response_data)
 
 
-# Обработчики ошибок
+
 def handler404(request, exception):
     """Кастомная страница 404"""
     return render(request, "core/404.html", status=404)
@@ -251,7 +251,7 @@ def handler400(request, exception):
     return render(request, "core/400.html", status=400)
 
 
-# Class-Based Views для статических страниц
+
 class AboutView(TemplateView):
     """Класс-представление для страницы "О нас" """
 
@@ -287,14 +287,14 @@ class FAQView(TemplateView):
                         "question": "Как присоединиться к ассоциации выпускников?",
                         "answer": "Для присоединения необходимо заполнить регистрационную форму...",
                     },
-                    # ... другие вопросы
+
                 ],
             }
         )
         return context
 
 
-# Дополнительные представления для администрирования (только для staff)
+
 def contact_messages_list(request):
     """Список сообщений обратной связи (для администраторов)"""
     if not request.user.is_staff:
@@ -303,12 +303,12 @@ def contact_messages_list(request):
 
     messages_list = ContactMessage.objects.all().order_by("-created_at")
 
-    # Пагинация
+
     paginator = Paginator(messages_list, 20)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
-    # Статистика
+
     stats = {
         "total": ContactMessage.objects.count(),
         "new": ContactMessage.objects.filter(is_processed=False).count(),
@@ -332,7 +332,7 @@ def contact_message_detail(request, pk):
     message = get_object_or_404(ContactMessage, pk=pk)
 
     if request.method == "POST":
-        # Обработка изменения статуса
+
         new_status = request.POST.get("status")
         admin_notes = request.POST.get("admin_notes")
 
@@ -357,7 +357,7 @@ def admin_stats(request):
         messages.error(request, "У вас нет прав для просмотра этой страницы.")
         return redirect("home")
 
-    # Импорты локально, чтобы избежать импорта в модуле на старте
+
     from accounts.models import CustomUser, Company
     from jobs.models import Job, JobApplication
     from events.models import Event
@@ -376,7 +376,7 @@ def admin_stats(request):
         "cvs_count": CV.objects.count(),
     }
 
-    # Простая временная визуализация трендов — последние 7 дней
+
     recent_jobs = Job.objects.filter(created_at__gte=timezone.now() - timezone.timedelta(days=7)).count()
     recent_users = CustomUser.objects.filter(date_joined__gte=timezone.now() - timezone.timedelta(days=7)).count()
 

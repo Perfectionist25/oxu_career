@@ -15,7 +15,7 @@ from .models import (
 )
 
 
-# ---------- helpers ----------
+
 
 BOOTSTRAP_CONTROL = "form-control"
 BOOTSTRAP_SELECT = "form-select"
@@ -31,7 +31,7 @@ def _set_placeholder(field: forms.Field, text: str) -> None:
     field.widget.attrs.setdefault("placeholder", text)
 
 
-# ---------- CV ----------
+
 
 class CVForm(forms.ModelForm):
     """Полная форма резюме под твою модель CV."""
@@ -39,12 +39,12 @@ class CVForm(forms.ModelForm):
     class Meta:
         model = CV
         fields = [
-            # meta
+
             "title",
             "template",
             "status",
 
-            # personal
+
             "full_name",
             "photo",
             "birth_date",
@@ -52,7 +52,7 @@ class CVForm(forms.ModelForm):
             "marital_status",
             "nationality",
 
-            # contacts
+
             "email",
             "phone",
             "phone_secondary",
@@ -60,19 +60,19 @@ class CVForm(forms.ModelForm):
             "city",
             "address",
 
-            # career
+
             "desired_position",
             "employment_type",
             "salary_expectation",
             "salary_currency",
             "summary",
 
-            # documents
+
             "driver_license",
             "driver_license_category",
             "military_service",
 
-            # links
+
             "linkedin",
             "github",
             "portfolio",
@@ -122,7 +122,7 @@ class CVForm(forms.ModelForm):
         if "template" in self.fields:
             self.fields["template"].queryset = CVTemplate.objects.filter(is_active=True)
 
-        # placeholders (чтобы красиво выглядело)
+
         _set_placeholder(self.fields["title"], _("My Resume / Backend Developer"))
         _set_placeholder(self.fields["full_name"], _("Full Name"))
         _set_placeholder(self.fields["email"], _("name@example.com"))
@@ -157,10 +157,10 @@ class CVForm(forms.ModelForm):
             if name in self.fields:
                 self.fields[name].required = False
 
-        # salary_currency: оставим default UZS если пусто
+
         self.fields["salary_currency"].required = False
 
-        # driver_license_category логично требовать только если driver_license=True
+
         self.fields["driver_license_category"].required = False
 
     def clean_birth_date(self):
@@ -177,14 +177,14 @@ class CVForm(forms.ModelForm):
         if driver_license and not driver_license_category:
             self.add_error("driver_license_category", _("Please specify license category (e.g., B)."))
 
-        # Если currency пустая — ставим UZS
+
         if cleaned.get("salary_currency"):
             cleaned["salary_currency"] = cleaned["salary_currency"].upper().strip()
 
         return cleaned
 
 
-# ---------- Experience ----------
+
 
 class ExperienceForm(forms.ModelForm):
     """Опыт работы (Experience) с логикой дат."""
@@ -224,7 +224,7 @@ class ExperienceForm(forms.ModelForm):
         _set_placeholder(self.fields["company_location"], _("City, Country"))
         _set_placeholder(self.fields["technologies"], _("Django, PostgreSQL, Docker..."))
 
-        # optional в модели
+
         for name in ["end_date", "company_location", "technologies", "achievements"]:
             self.fields[name].required = False
 
@@ -238,11 +238,11 @@ class ExperienceForm(forms.ModelForm):
             self.add_error("start_date", _("Start date cannot be in the future."))
 
         if is_current:
-            # если текущая работа — end_date должен быть пустой
+
             if end:
                 self.add_error("end_date", _("End date must be empty for current position."))
         else:
-            # если не текущая — end_date обязателен
+
             if start and not end:
                 self.add_error("end_date", _("Please set an end date or mark as current."))
             if start and end and end < start:
@@ -251,7 +251,7 @@ class ExperienceForm(forms.ModelForm):
         return cleaned
 
 
-# ---------- Education ----------
+
 
 class EducationForm(forms.ModelForm):
     """Образование (Education) под твою модель с годами."""
@@ -295,7 +295,7 @@ class EducationForm(forms.ModelForm):
         _set_placeholder(self.fields["honors"], _("Optional"))
         _set_placeholder(self.fields["diploma_number"], _("Optional"))
 
-        # optional в модели
+
         for name in ["faculty", "graduation_year", "gpa", "honors", "diploma_number", "description"]:
             self.fields[name].required = False
 
@@ -318,7 +318,7 @@ class EducationForm(forms.ModelForm):
         return cleaned
 
 
-# ---------- Skill ----------
+
 
 class SkillForm(forms.ModelForm):
     """Навыки (Skill) под твою модель."""
@@ -342,7 +342,7 @@ class SkillForm(forms.ModelForm):
         _set_placeholder(self.fields["years_of_experience"], _("Optional"))
         _set_placeholder(self.fields["last_used"], _("Optional, year"))
 
-        # optional в модели
+
         for name in ["years_of_experience", "description", "last_used"]:
             self.fields[name].required = False
 
@@ -355,7 +355,7 @@ class SkillForm(forms.ModelForm):
         return last_used
 
 
-# ---------- Language ----------
+
 
 class LanguageForm(forms.ModelForm):
     """Языки (Language) под твою модель."""
@@ -376,7 +376,7 @@ class LanguageForm(forms.ModelForm):
         _set_placeholder(self.fields["name"], _("English / Russian / Uzbek"))
         _set_placeholder(self.fields["certificate_score"], _("IELTS 7.0, TOEFL 95..."))
 
-        # optional в модели
+
         self.fields["certificate_score"].required = False
 
     def clean(self):
@@ -384,17 +384,17 @@ class LanguageForm(forms.ModelForm):
         cert_type = cleaned.get("certificate_type")
         cert_score = cleaned.get("certificate_score")
 
-        # если сертификата нет — score должен быть пустой
+
         if cert_type == "none" and cert_score:
             self.add_error("certificate_score", _("Remove score if you have no certificate."))
 
-        # если есть сертификат — score желательно указать (не обязательно, но полезно)
-        # хочешь сделать обязательным — скажи, добавлю строгое правило
+
+
 
         return cleaned
 
 
-# ---------- Quick CV ----------
+
 
 class QuickCVForm(forms.ModelForm):
     """Быстрое создание CV: минимальные поля + skills_text."""
@@ -413,7 +413,7 @@ class QuickCVForm(forms.ModelForm):
             "title": forms.TextInput(attrs={"class": BOOTSTRAP_CONTROL}),
             "email": forms.EmailInput(attrs={"class": BOOTSTRAP_CONTROL}),
             "phone": forms.TextInput(attrs={"class": BOOTSTRAP_CONTROL}),
-            "region": forms.Select(attrs={"class": BOOTSTRAP_SELECT}),  # choices!
+            "region": forms.Select(attrs={"class": BOOTSTRAP_SELECT}),
             "city": forms.TextInput(attrs={"class": BOOTSTRAP_CONTROL}),
             "summary": forms.Textarea(attrs={"class": BOOTSTRAP_CONTROL, "rows": 4}),
         }
@@ -433,7 +433,7 @@ class QuickCVForm(forms.ModelForm):
 
     def clean(self):
         cleaned = super().clean()
-        # Можно добавить простую чистку навыков (не создаём Skill тут, это лучше делать в view)
+
         skills_text = cleaned.get("skills_text") or ""
         cleaned["skills_text"] = ", ".join([s.strip() for s in skills_text.split(",") if s.strip()])
         return cleaned

@@ -15,13 +15,13 @@ def update_registration_count(sender, instance, **kwargs):
         try:
             old_instance = EventRegistration.objects.get(pk=instance.pk)
             if old_instance.status == "registered" and instance.status != "registered":
-                # Уменьшаем счетчик
+
                 instance.event.registration_count -= 1
                 instance.event.save()
             elif (
                 old_instance.status != "registered" and instance.status == "registered"
             ):
-                # Увеличиваем счетчик
+
                 instance.event.registration_count += 1
                 instance.event.save()
         except EventRegistration.DoesNotExist:
@@ -31,5 +31,5 @@ def update_registration_count(sender, instance, **kwargs):
 @receiver(post_save, sender=Event)
 def send_event_reminder(sender, instance, **kwargs):
     """Отправка напоминания о мероприятии (заглушка для демонстрации)"""
-    # В реальном приложении здесь была бы логика отправки напоминаний
-    # за день до мероприятия или в день мероприятия
+
+

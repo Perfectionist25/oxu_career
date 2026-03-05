@@ -13,7 +13,7 @@ def resources_context(request):
     context: Dict[str, Any] = {}
 
     try:
-        # Категории ресурсов с количеством опубликованных ресурсов
+
         categories = (
             ResourceCategory.objects.annotate(
                 published_resources_count=Count(
@@ -26,7 +26,7 @@ def resources_context(request):
 
         context["resource_categories"] = categories
 
-        # Популярные/рекомендуемые ресурсы (последние 5 опубликованных)
+
         featured_resources = (
             Resource.objects.filter(is_published=True)
             .select_related("category")
@@ -35,7 +35,7 @@ def resources_context(request):
 
         context["featured_resources"] = featured_resources
 
-        # Общая статистика ресурсов
+
         total_resources = Resource.objects.filter(is_published=True).count()
         total_categories = ResourceCategory.objects.count()
 
@@ -45,8 +45,8 @@ def resources_context(request):
         }
 
     except Exception:
-        # Если база данных еще не готова или другие ошибки
-        # Возвращаем QuerySet.none() чтобы сохранить согласованность типов
+
+
         context.update(
             {
                 "resource_categories": ResourceCategory.objects.none(),
@@ -69,7 +69,7 @@ def resources_admin_context(request):
 
     if request.user.is_authenticated and request.user.is_staff:
         try:
-            # Статистика для админов
+
             unpublished_count = Resource.objects.filter(is_published=False).count()
             total_resources = Resource.objects.count()
 
@@ -95,7 +95,7 @@ def resources_navigation_context(request):
     context: Dict[str, Any] = {}
 
     try:
-        # Категории для главного меню (только с опубликованными ресурсами)
+
         nav_categories = (
             ResourceCategory.objects.annotate(
                 published_resources_count=Count(
@@ -104,11 +104,11 @@ def resources_navigation_context(request):
             )
             .filter(published_resources_count__gt=0)
             .order_by("name")[:8]
-        )  # Ограничиваем для меню
+        )
 
         context["nav_resource_categories"] = nav_categories
 
-        # Быстрые ссылки для футера
+
         recent_resources = (
             Resource.objects.filter(is_published=True)
             .select_related("category")

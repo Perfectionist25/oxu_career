@@ -32,7 +32,7 @@ class LatestNewsFeed(Feed):
         return item.title
 
     def item_description(self, item):
-        # Ограничиваем длину описания для RSS
+
         content = item.content
         if len(content) > 300:
             return content[:300] + "..."
@@ -154,7 +154,7 @@ class AllUpdatesFeed(Feed):
     description = _("OXU bitiruvchilari portalidagi barcha yangilanishlar")
 
     def items(self):
-        # Объединяем новости, вакансии и мероприятия
+
         from itertools import chain
         from datetime import datetime
 
@@ -162,8 +162,8 @@ class AllUpdatesFeed(Feed):
         jobs = Job.objects.filter(is_active=True).order_by("-created_at")[:10]
         events = Event.objects.filter(is_active=True).order_by("-created_at")[:10]
 
-        # Сортируем все по дате создания. Use getattr to avoid mypy complaining
-        # about missing 'created_at' on the union of different model types.
+
+
         # Use a datetime fallback so the key is always comparable
         all_items = sorted(
             chain(news, jobs, events),
@@ -174,25 +174,25 @@ class AllUpdatesFeed(Feed):
         return all_items
 
     def item_title(self, item):
-        if hasattr(item, "content"):  # News
+        if hasattr(item, "content"):
             return f"📰 {item.title}"
-        elif hasattr(item, "description"):  # Job
+        elif hasattr(item, "description"):
             return f"💼 {item.title} - {item.company.name}"
-        elif hasattr(item, "event_type"):  # Event
+        elif hasattr(item, "event_type"):
             return f"🎯 {item.title}"
         return item.title
 
     def item_description(self, item):
-        if hasattr(item, "content"):  # News
+        if hasattr(item, "content"):
             content = item.content
             return content[:300] + "..." if len(content) > 300 else content
-        elif hasattr(item, "description"):  # Job
+        elif hasattr(item, "description"):
             return (
                 f"{item.description[:200]}..."
                 if len(item.description) > 200
                 else item.description
             )
-        elif hasattr(item, "event_type"):  # Event
+        elif hasattr(item, "event_type"):
             return (
                 f"{item.description[:200]}..."
                 if len(item.description) > 200
@@ -201,11 +201,11 @@ class AllUpdatesFeed(Feed):
         return ""
 
     def item_link(self, item):
-        if hasattr(item, "content"):  # News
+        if hasattr(item, "content"):
             return reverse("alumni:news_detail", kwargs={"slug": item.slug})
-        elif hasattr(item, "description"):  # Job
+        elif hasattr(item, "description"):
             return reverse("alumni:job_detail", kwargs={"pk": item.pk})
-        elif hasattr(item, "event_type"):  # Event
+        elif hasattr(item, "event_type"):
             return reverse("alumni:event_detail", kwargs={"pk": item.pk})
         return "/alumni/"
 

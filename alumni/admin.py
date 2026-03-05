@@ -22,7 +22,7 @@ class SkillAdmin(admin.ModelAdmin):
         ),
     )
 
-# Admin site customization
+
 admin.site.site_header = "Alumni Association Management Panel"
 admin.site.site_title = "Alumni Association"
 admin.site.index_title = "Welcome to the Management Panel"
