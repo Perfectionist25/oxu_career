@@ -167,7 +167,6 @@ def oauth_callback(request):
     user_data = user_response.json()
 
 
-
     email_raw = _pick(user_data, "email")
     email = email_raw.lower() if isinstance(email_raw, str) else ""
     oauth_uid = _pick(user_data, "user_id", "sub", "id", "uid", "user_id")
