@@ -5532,7 +5532,7 @@ msgstr "Контактные сообщения"
 #, fuzzy
 #| msgid "Useful Tips"
 msgid "Useful Links"
-msgstr "Полезные советы"
+msgstr "Полезные ссылки"
 
 #: core/templates/_inc/foot.html:22
 msgid "Developer"

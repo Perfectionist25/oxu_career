@@ -130,6 +130,7 @@ class BruteForceProtectionMiddleware(MiddlewareMixin):
         self.get_response = get_response
 
         self.protected_paths = [
+            '/admin/login/',
             '/accounts/admin-login/',
             '/accounts/employer-login/',
             '/accounts/login/',
@@ -141,7 +142,6 @@ class BruteForceProtectionMiddleware(MiddlewareMixin):
             '/accounts/admin/create-employer/',
             '/accounts/admin/create-admin/',
             '/accounts/admin/create-admin-account/',
-            '/admin/',
             '/media/',
             '/static/',
             '/api/',

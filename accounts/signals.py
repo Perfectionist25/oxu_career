@@ -1,6 +1,8 @@
+from django.contrib.auth.signals import user_logged_in, user_login_failed
 from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 from django.db import transaction
+from .middleware import BruteForceProtectionMiddleware
 from .models import Company, EmployerProfile, CustomUser, StudentProfile, AdminProfile
 
 
@@ -67,3 +69,40 @@ def delete_old_avatar_on_change(sender, instance, **kwargs):
 def delete_avatar_on_delete(sender, instance, **kwargs):
     if instance.avatar:
         instance.avatar.delete(save=False)
+
+
+def _get_request_ip(request):
+    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
+    if x_forwarded_for:
+        return x_forwarded_for.split(",")[0].strip()
+    return request.META.get("REMOTE_ADDR")
+
+
+def _is_django_admin_login_request(request):
+    return bool(request and (request.path or "").startswith("/admin/login/"))
+
+
+@receiver(user_login_failed)
+def track_django_admin_login_failures(sender, credentials, request=None, **kwargs):
+    if not _is_django_admin_login_request(request):
+        return
+
+    ip_address = _get_request_ip(request)
+    if not ip_address:
+        return
+
+    username = str((credentials or {}).get("username", "")).strip() or None
+    BruteForceProtectionMiddleware.record_failed_attempt(ip_address, username)
+
+
+@receiver(user_logged_in)
+def clear_django_admin_login_failures(sender, request, user, **kwargs):
+    if not _is_django_admin_login_request(request):
+        return
+
+    ip_address = _get_request_ip(request)
+    if not ip_address:
+        return
+
+    username = getattr(user, "get_username", lambda: None)()
+    BruteForceProtectionMiddleware.clear_attempts(ip_address, username)

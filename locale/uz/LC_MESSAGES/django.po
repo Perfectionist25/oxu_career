@@ -5420,7 +5420,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Contract"
 msgid "Contact"
-msgstr "Shartnoma"
+msgstr "Aloqa"
 
 #: alumni/templates/alumni/detail.html:249
 #, fuzzy
@@ -5533,7 +5533,7 @@ msgstr "Aloqa xabarlari"
 #, fuzzy
 #| msgid "Useful Tips"
 msgid "Useful Links"
-msgstr "Foydali maslahatlar"
+msgstr "Foydali havolalar"
 
 #: core/templates/_inc/foot.html:22
 msgid "Developer"
