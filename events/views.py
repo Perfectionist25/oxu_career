@@ -95,7 +95,6 @@ def event_list(request):
 
 
 class EventCalendarView(ListView):
-    """Календарь мероприятий - доступно всем"""
     model = Event
     template_name = "events/event_calendar.html"
     context_object_name = "events"
