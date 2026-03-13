@@ -2,6 +2,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from django.core.cache import cache
 
+from .captcha import LOGIN_CAPTCHA_RESULT_KEY
 from .middleware import BruteForceProtectionMiddleware
 from .models import CustomUser, AdminProfile, EmployerProfile, StudentProfile
 
@@ -160,9 +161,12 @@ class DjangoAdminBruteForceTests(TestCase):
 		self.ip_address = "127.0.0.1"
 
 	def _login_payload(self, password):
+		self.client.get(self.login_url)
+		captcha_answer = self.client.session.get(LOGIN_CAPTCHA_RESULT_KEY)
 		return {
 			"username": self.admin_user.username,
 			"password": password,
+			"captcha_answer": captcha_answer,
 			"next": "/admin/",
 		}
 
@@ -193,3 +197,60 @@ class DjangoAdminBruteForceTests(TestCase):
 		self.assertEqual(response.status_code, 302)
 		self.assertIsNone(cache.get(ip_key))
 		self.assertIsNone(cache.get(user_key))
+
+
+class LoginCaptchaTests(TestCase):
+	def setUp(self):
+		self.client = Client()
+		self.employer_password = "EmployerPass123"
+		self.admin_password = "AdminPass123"
+		self.employer = CustomUser.objects.create_user(
+			username="employer-user",
+			email="employer@example.com",
+			password=self.employer_password,
+			user_type="employer",
+		)
+		self.admin_user = CustomUser.objects.create_user(
+			username="admin-user",
+			email="admin-login@example.com",
+			password=self.admin_password,
+			user_type="admin",
+			is_staff=True,
+		)
+
+	def _captcha_answer(self):
+		return self.client.session.get(LOGIN_CAPTCHA_RESULT_KEY)
+
+	def test_employer_login_requires_captcha(self):
+		login_url = reverse("accounts:employer_login")
+		self.client.get(login_url)
+
+		response = self.client.post(
+			login_url,
+			{
+				"username": self.employer.username,
+				"password": self.employer_password,
+				"captcha_answer": self._captcha_answer() + 1,
+			},
+		)
+
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, "Incorrect answer to the security question.")
+		self.assertFalse("_auth_user_id" in self.client.session)
+
+	def test_admin_login_requires_captcha(self):
+		login_url = reverse("accounts:admin_login")
+		self.client.get(login_url)
+
+		response = self.client.post(
+			login_url,
+			{
+				"username": self.admin_user.username,
+				"password": self.admin_password,
+				"captcha_answer": self._captcha_answer() + 1,
+			},
+		)
+
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, "Incorrect answer to the security question.")
+		self.assertFalse("_auth_user_id" in self.client.session)

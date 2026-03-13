@@ -21,17 +21,29 @@
                     <!-- Форма входа -->
                     <form method="post" novalidate>
                         {% csrf_token %}
-                        
+
                         <div class="mb-3">
-                            <label for="username" class="form-label">{% trans "Login or Email" %}</label>
-                            <input type="text" name="username" class="form-control form-control-lg" 
-                                   id="username" placeholder="{% trans 'Username' %}" required>
+                            <label for="{{ form.username.id_for_label }}" class="form-label">{{ form.username.label }}</label>
+                            {{ form.username }}
+                            {% for error in form.username.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
                         </div>
 
                         <div class="mb-4">
-                            <label for="password" class="form-label">{% trans "Password" %}</label>
-                            <input type="password" name="password" class="form-control form-control-lg" 
-                                   id="password" placeholder="{% trans 'Your password' %}" required>
+                            <label for="{{ form.password.id_for_label }}" class="form-label">{{ form.password.label }}</label>
+                            {{ form.password }}
+                            {% for error in form.password.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.captcha_answer.id_for_label }}" class="form-label">{{ form.captcha_answer.label }}</label>
+                            {{ form.captcha_answer }}
+                            {% for error in form.captcha_answer.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
                         </div>
 
                         <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">

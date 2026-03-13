@@ -1,11 +1,175 @@
 
 from django import forms
+from django.contrib.admin.forms import AdminAuthenticationForm
+from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 import re
 
+from .captcha import ensure_login_captcha, rotate_login_captcha, validate_login_captcha
 from .models import *
+
+
+def build_login_captcha_field(widget_attrs=None):
+    attrs = {
+        "class": "form-control",
+        "placeholder": _("Enter the answer"),
+        "autocomplete": "off",
+    }
+    if widget_attrs:
+        attrs.update(widget_attrs)
+
+    return forms.IntegerField(
+        label=_("Security question"),
+        min_value=0,
+        widget=forms.NumberInput(attrs=attrs),
+        error_messages={
+            "required": _("Please solve the security question."),
+            "invalid": _("Enter a valid number."),
+        },
+    )
+
+
+class LoginCaptchaMixin:
+    captcha_widget_attrs = None
+
+    def __init__(self, *args, request=None, **kwargs):
+        if request is None and args and hasattr(args[0], "session") and hasattr(args[0], "META"):
+            request = args[0]
+        self.request = request
+        super().__init__(*args, **kwargs)
+        if "captcha_answer" not in self.fields:
+            self.fields["captcha_answer"] = build_login_captcha_field(self.captcha_widget_attrs)
+        question = ensure_login_captcha(self.request)
+        self.fields["captcha_answer"].label = question
+
+    def _rotate_captcha_field(self):
+        question = rotate_login_captcha(self.request)
+        self.fields["captcha_answer"].label = question
+        self.data = self.data.copy()
+        self.data.pop("captcha_answer", None)
+
+    def clean_captcha_answer(self):
+        answer = self.cleaned_data.get("captcha_answer")
+        if not validate_login_captcha(self.request, answer):
+            raise forms.ValidationError(_("Incorrect answer to the security question."))
+        return answer
+
+
+class EmployerLoginForm(LoginCaptchaMixin, forms.Form):
+    captcha_answer = build_login_captcha_field()
+    username = forms.CharField(
+        label=_("Login or Email"),
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control form-control-lg",
+                "placeholder": _("Username"),
+                "autofocus": True,
+            }
+        ),
+    )
+    password = forms.CharField(
+        label=_("Password"),
+        strip=False,
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "form-control form-control-lg",
+                "placeholder": _("Your password"),
+            }
+        ),
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        username = cleaned_data.get("username", "").strip()
+        password = cleaned_data.get("password")
+
+        if not username or not password:
+            return cleaned_data
+
+        user = authenticate(self.request, username=username, password=password)
+        if user is None or not user.is_employer:
+            self._rotate_captcha_field()
+            raise forms.ValidationError(
+                _("Invalid credentials or you are not authorized as an employer.")
+            )
+
+        self.user = user
+        return cleaned_data
+
+
+class AdminLoginForm(LoginCaptchaMixin, forms.Form):
+    captcha_answer = build_login_captcha_field()
+    username = forms.CharField(
+        label=_("Username"),
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": _("Enter your username"),
+                "autofocus": True,
+            }
+        ),
+    )
+    password = forms.CharField(
+        label=_("Password"),
+        strip=False,
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": _("Enter your password"),
+            }
+        ),
+    )
+    remember = forms.BooleanField(
+        label=_("Remember me"),
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        username = cleaned_data.get("username", "").strip()
+        password = cleaned_data.get("password")
+
+        if not username or not password:
+            raise forms.ValidationError(_("Please enter your username and password."))
+
+        user = authenticate(self.request, username=username, password=password)
+        if user is None:
+            self._rotate_captcha_field()
+            raise forms.ValidationError(_("Invalid username or password."))
+
+        if user.user_type not in ["admin", "main_admin"]:
+            self._rotate_captcha_field()
+            raise forms.ValidationError(_("You are not authorized to access the admin panel."))
+
+        self.user = user
+        return cleaned_data
+
+
+class CaptchaAdminAuthenticationForm(LoginCaptchaMixin, AdminAuthenticationForm):
+    captcha_widget_attrs = {
+        "class": "vIntegerField",
+        "placeholder": _("Enter the answer"),
+        "autocomplete": "off",
+    }
+    captcha_answer = build_login_captcha_field(captcha_widget_attrs)
+
+    def __init__(self, request=None, *args, **kwargs):
+        AdminAuthenticationForm.__init__(self, request=request, *args, **kwargs)
+        self.request = request
+        if "captcha_answer" not in self.fields:
+            self.fields["captcha_answer"] = build_login_captcha_field(self.captcha_widget_attrs)
+        question = ensure_login_captcha(self.request)
+        self.fields["captcha_answer"].label = question
+
+    def clean(self):
+        try:
+            return AdminAuthenticationForm.clean(self)
+        except forms.ValidationError:
+            self._rotate_captcha_field()
+            raise
 
 
 class CustomUserCreationForm(UserCreationForm):

@@ -36,7 +36,8 @@ from .middleware import BruteForceProtectionMiddleware
 from .forms import (
     UserUpdateForm, StudentProfileForm, EmployerProfileForm,
     AdminProfileForm, CompanyForm, CompanyDocumentForm,
-    EmployerRegistrationForm, AdminCompanyForm, AdminEmployerProfileForm, StudentUserReadonlyNameForm
+    EmployerRegistrationForm, AdminCompanyForm, AdminEmployerProfileForm,
+    StudentUserReadonlyNameForm, EmployerLoginForm, AdminLoginForm
 )
 
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -232,10 +233,10 @@ def employer_login(request):
         return redirect("accounts:employer_dashboard")
 
     ip_address = get_client_ip(request)
+    form = EmployerLoginForm(request=request, data=request.POST or None)
 
     if request.method == "POST":
         username = request.POST.get("username", "").strip()
-        password = request.POST.get("password", "")
 
         status = BruteForceProtectionMiddleware.get_block_status(ip_address, username or None)
         if status["is_blocked"]:
@@ -247,12 +248,11 @@ def employer_login(request):
                 remaining_seconds=status["remaining_seconds"],
             )
 
-        user = authenticate(request, username=username, password=password)
-
-        if user and user.is_employer:
+        if form.is_valid():
+            user = form.user
             if not user.is_active:
                 messages.error(request, "Ваш аккаунт деактивирован. Обратитесь к администратору.")
-                return render(request, "accounts/employer_login.html")
+                return render(request, "accounts/employer_login.html", {"form": form})
 
             login(request, user)
 
@@ -263,22 +263,22 @@ def employer_login(request):
 
             messages.success(request, "Добро пожаловать!")
             return redirect("accounts:employer_dashboard")
+        attempt_result = BruteForceProtectionMiddleware.record_failed_attempt(ip_address, username or None)
+        if not attempt_result["allowed"]:
+            return BruteForceProtectionMiddleware.blocked_response(
+                request,
+                ip_address=ip_address,
+                username=username,
+                reason="ip_blocked",
+                remaining_seconds=attempt_result["remaining_seconds"],
+            )
+        if attempt_result["warning_message"]:
+            messages.warning(request, attempt_result["warning_message"])
         else:
-            attempt_result = BruteForceProtectionMiddleware.record_failed_attempt(ip_address, username or None)
-            if not attempt_result["allowed"]:
-                return BruteForceProtectionMiddleware.blocked_response(
-                    request,
-                    ip_address=ip_address,
-                    username=username,
-                    reason="ip_blocked",
-                    remaining_seconds=attempt_result["remaining_seconds"],
-                )
-            if attempt_result["warning_message"]:
-                messages.warning(request, attempt_result["warning_message"])
-            else:
-                messages.error(request, "Неверные учетные данные или вы не авторизованы как работодатель")
+            for error in form.non_field_errors():
+                messages.error(request, error)
 
-    return render(request, "accounts/employer_login.html")
+    return render(request, "accounts/employer_login.html", {"form": form})
 
 
 def admin_login(request):
@@ -288,15 +288,10 @@ def admin_login(request):
         return redirect("accounts:admin_dashboard")
 
     ip_address = get_client_ip(request)
+    form = AdminLoginForm(request=request, data=request.POST or None)
 
     if request.method == "POST":
         username = request.POST.get("username", "").strip()
-        password = request.POST.get("password", "")
-
-
-        if not username or not password:
-            messages.error(request, "Пожалуйста, введите имя пользователя и пароль")
-            return render(request, "accounts/admin_login.html")
 
         status = BruteForceProtectionMiddleware.get_block_status(ip_address, username or None)
         if status["is_blocked"]:
@@ -308,10 +303,7 @@ def admin_login(request):
                 remaining_seconds=status["remaining_seconds"],
             )
 
-
-        user = authenticate(request, username=username, password=password)
-
-        if user is None:
+        if not form.is_valid():
             attempt_result = BruteForceProtectionMiddleware.record_failed_attempt(ip_address, username or None)
             if not attempt_result["allowed"]:
                 return BruteForceProtectionMiddleware.blocked_response(
@@ -324,18 +316,15 @@ def admin_login(request):
             if attempt_result["warning_message"]:
                 messages.warning(request, attempt_result["warning_message"])
             else:
-                messages.error(request, "Неверное имя пользователя или пароль")
-            return render(request, "accounts/admin_login.html")
+                for error in form.non_field_errors():
+                    messages.error(request, error)
+            return render(request, "accounts/admin_login.html", {"form": form})
 
-
-        if not user.user_type in ["admin", "main_admin"]:
-            messages.error(request, "Вы не авторизованы для доступа к админ-панели")
-            return render(request, "accounts/admin_login.html")
-
+        user = form.user
 
         if not user.is_active:
             messages.error(request, "Ваш аккаунт деактивирован. Обратитесь к главному администратору.")
-            return render(request, "accounts/admin_login.html")
+            return render(request, "accounts/admin_login.html", {"form": form})
 
 
         login(request, user)
@@ -355,7 +344,7 @@ def admin_login(request):
         messages.success(request, "Добро пожаловать в админ-панель!")
         return redirect("accounts:admin_dashboard")
 
-    return render(request, "accounts/admin_login.html")
+    return render(request, "accounts/admin_login.html", {"form": form})
 
 
 def admin_logout(request):
