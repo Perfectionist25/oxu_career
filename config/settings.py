@@ -127,6 +127,7 @@ BRUTEFORCE_WARNING_THRESHOLD = int(
 
 
 INSTALLED_APPS = [
+    "jazzmin",
 
     "django.contrib.admin",
     "django.contrib.auth",
@@ -137,7 +138,6 @@ INSTALLED_APPS = [
 
 
     "corsheaders",
-    "jazzmin",
     "widget_tweaks",
     "modeltranslation",
     "phonenumber_field",
