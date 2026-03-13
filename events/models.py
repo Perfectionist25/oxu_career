@@ -152,6 +152,13 @@ class Event(models.Model):
         help_text=_("Comma-separated tags for the event")
     )
 
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        verbose_name=_("Created By"),
+        help_text=_("User who created the event")
+    )
 
     views_count = models.IntegerField(
         default=0,

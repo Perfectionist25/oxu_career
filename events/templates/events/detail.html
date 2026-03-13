@@ -190,6 +190,12 @@
                                 <i class="fas fa-eye"></i>
                                 <span>{{ event.views_count }} {% trans "views" %}</span>
                             </div>
+                            {% if user.is_staff %}
+                            <div class="stat-item">
+                                <i class="fas fa-user-shield"></i>
+                                <span>{% trans "Created by" %}: {{ event.created_by.username }}</span>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
 
@@ -895,7 +901,7 @@
 .sidebar-title {
     font-size: 1.2rem;
     font-weight: 600;
-    color: #012152;
+    color: #012152 !important;
     margin: 1rem;
 }
 

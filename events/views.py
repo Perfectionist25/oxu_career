@@ -138,7 +138,7 @@ def event_categories(request):
 def event_detail(request, slug):
     """Детальная страница мероприятия - доступно всем"""
     event = get_object_or_404(
-        Event.objects.select_related("category").prefetch_related(
+        Event.objects.select_related("category", "created_by").prefetch_related(
             "photos"
         ),
         slug=slug, status="published"
@@ -167,7 +167,7 @@ def create_event(request):
             form = EventForm(request.POST, request.FILES)
             if form.is_valid():
                 event = form.save(commit=False)
-                event.organizer = request.user
+                event.created_by = request.user
                 event.status = "published"
                 event.save()
                 messages.success(request, _("Event created successfully!"))
@@ -190,7 +190,7 @@ def edit_event(request, slug):
     event = get_object_or_404(Event, slug=slug)
 
 
-    if not (request.user == event.organizer or request.user.is_staff or request.user.is_superuser):
+    if not (request.user == event.created_by or request.user.is_staff or request.user.is_superuser):
         messages.error(request, _("You don't have permission to edit this event."))
         return redirect("events:event_detail", slug=slug)
 
@@ -217,7 +217,7 @@ def delete_event(request, slug):
     event = get_object_or_404(Event, slug=slug)
 
 
-    if not (request.user == event.organizer or request.user.is_staff or request.user.is_superuser):
+    if not (request.user == event.created_by or request.user.is_staff or request.user.is_superuser):
         messages.error(request, _("You don't have permission to delete this event."))
         return redirect("events:event_detail", slug=slug)
 
@@ -236,7 +236,7 @@ def delete_event(request, slug):
 def my_events(request):
     """Мои мероприятия (организатора) - доступно авторизованным пользователям"""
     events = Event.objects.filter(
-        organizer=request.user
+        created_by=request.user
     ).select_related("category").order_by("-created_at")
 
 
@@ -312,8 +312,8 @@ def admin_event_create(request):
         form = EventForm(request.POST, request.FILES)
         if form.is_valid():
             event = form.save(commit=False)
-            if not event.organizer:
-                event.organizer = request.user
+            if not event.created_by:
+                event.created_by = request.user
             event.save()
             messages.success(request, _("Event created successfully!"))
             return redirect("events:admin_event_edit", pk=event.pk)

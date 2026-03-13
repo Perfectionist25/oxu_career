@@ -5,6 +5,7 @@ venv*/
 
 # python junk
 __pycache__/
+migrations/
 *.pyc
 *.pyo
 *.pyd
