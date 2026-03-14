@@ -3,12 +3,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-
 class IsStudentUser(BasePermission):
-    """
-    Разрешает доступ только студентам.
-    """
-
     def has_permission(self, request, view):
         return bool(
             request.user and
@@ -18,10 +13,6 @@ class IsStudentUser(BasePermission):
 
 
 class IsEmployerUser(BasePermission):
-    """
-    Разрешает доступ только работодателям.
-    """
-
     def has_permission(self, request, view):
         return bool(
             request.user and
@@ -31,10 +22,6 @@ class IsEmployerUser(BasePermission):
 
 
 class IsAdminUser(BasePermission):
-    """
-    Разрешает доступ только администраторам.
-    """
-
     def has_permission(self, request, view):
         return bool(
             request.user and
@@ -44,10 +31,6 @@ class IsAdminUser(BasePermission):
 
 
 class IsMainAdminUser(BasePermission):
-    """
-    Разрешает доступ только главному администратору.
-    """
-
     def has_permission(self, request, view):
         return bool(
             request.user and
@@ -57,10 +40,6 @@ class IsMainAdminUser(BasePermission):
 
 
 class ReadOnlyOrIsStudent(BasePermission):
-    """
-    Разрешает чтение всем, но запись только студентам.
-    """
-
     def has_permission(self, request, view):
         if request.method in SAFE_METHODS:
             return True
@@ -68,10 +47,6 @@ class ReadOnlyOrIsStudent(BasePermission):
 
 
 class StudentNoPasswordAuth(BasePermission):
-    """
-    Специальное разрешение для студентов - они не используют пароли.
-    """
-
     def has_permission(self, request, view):
 
         if request.user and request.user.is_authenticated:
