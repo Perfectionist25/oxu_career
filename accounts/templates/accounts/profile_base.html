@@ -5,595 +5,1161 @@
 {% block title %}{% trans "Profile" %} - {{ profile_user.get_full_name|default:profile_user.username }}{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <!-- Заголовок профиля -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm" style="border-left: 4px solid #012152;">
-                <div class="card-body py-4">
-                    <div class="row align-items-center">
-                        <div class="col-auto">
+<div class="profile-page container py-4">
+    <div class="profile-shell">
+
+        <!-- Hero -->
+        <div class="profile-hero mb-4">
+            <div class="row g-4 align-items-center">
+                <div class="col-lg-8">
+                    <div class="d-flex flex-column flex-md-row align-items-md-center gap-4">
+                        <div class="profile-avatar-wrap">
                             {% if profile_user.avatar %}
-                                <img src="{{ profile_user.avatar.url }}" alt="{{ profile_user.get_full_name }}" 
-                                     class="rounded-circle border border-3 border-primary" width="100" height="100" style="object-fit: cover;">
+                                <img src="{{ profile_user.avatar.url }}"
+                                     alt="{{ profile_user.get_full_name }}"
+                                     class="profile-avatar">
                             {% elif profile_user.is_student and profile_user.student_profile.avatar %}
-                                <img src="{{ profile_user.student_profile.avatar.url }}" alt="{{ profile_user.get_full_name }}"
-                                     class="rounded-circle border border-3 border-primary" width="100" height="100" style="object-fit: cover;">
+                                <img src="{{ profile_user.student_profile.avatar.url }}"
+                                     alt="{{ profile_user.get_full_name }}"
+                                     class="profile-avatar">
                             {% else %}
-                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center border border-3 border-primary" 
-                                     style="width: 100px; height: 100px;">
-                                    <i class="fas fa-user text-white fa-2x"></i>
+                                <div class="profile-avatar placeholder-avatar">
+                                    <i class="fas fa-user"></i>
                                 </div>
                             {% endif %}
                         </div>
-                        <div class="col">
-                            <h1 class="h3 fw-bold mb-2 text-dark">{{ profile_user.get_full_name|default:profile_user.username }}</h1>
-                            <p class="text-primary mb-2 fw-semibold">
-                                <i class="fas fa-user-tag me-2"></i>
-                                {{ profile_user.get_user_type_display }}
+
+                        <div class="profile-hero-content">
+                            <span class="profile-chip">
+                                <i class="fas fa-id-badge me-2"></i>{{ profile_user.get_user_type_display }}
+                            </span>
+
+                            <h1 class="profile-name mb-2">
+                                {{ profile_user.get_full_name|default:profile_user.username }}
+                            </h1>
+
+                            <p class="profile-subtitle mb-3">
+                                {% if profile_user.email %}{{ profile_user.email }}{% else %}@{{ profile_user.username }}{% endif %}
                             </p>
-                            <div class="d-flex flex-wrap gap-2">
-                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">
-                                    <i class="fas fa-eye me-1"></i>
+
+                            <div class="hero-badges">
+                                <span class="hero-badge">
+                                    <i class="fas fa-eye"></i>
                                     {{ profile_user.profile_views }} {% trans "views" %}
                                 </span>
-                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">
-                                    <i class="fas fa-calendar me-1"></i>
+
+                                <span class="hero-badge">
+                                    <i class="fas fa-calendar-alt"></i>
                                     {{ profile_user.date_joined|date:"d.m.Y" }} {% trans "since" %}
                                 </span>
+
                                 {% if profile_user.last_login %}
-                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">
-                                    <i class="fas fa-sign-in-alt me-1"></i>
+                                <span class="hero-badge">
+                                    <i class="fas fa-clock"></i>
                                     {{ profile_user.last_login|timesince }} {% trans "ago" %}
                                 </span>
                                 {% endif %}
+
                                 {% if profile_user.is_employer and profile_user.is_active_employer %}
-                                <span class="badge bg-success bg-opacity-10 text-light text-success border border-success border-opacity-25">
-                                    <i class="fas fa-check-circle me-1"></i>
+                                <span class="hero-badge badge-success-soft">
+                                    <i class="fas fa-check-circle"></i>
                                     {% trans "Active Employer" %}
                                 </span>
                                 {% endif %}
+
                                 {% if profile_user.is_verified %}
-                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">
-                                    <i class="fas fa-check-circle me-1"></i>
+                                <span class="hero-badge badge-success-soft">
+                                    <i class="fas fa-shield-check"></i>
                                     {% trans "Verified" %}
                                 </span>
                                 {% endif %}
                             </div>
                         </div>
-                        {% if is_own_profile %}
-                        <div class="col-auto">
-                            {% if profile_user.user_type == 'employer' %}
-                                <a href="{% url 'accounts:employer_profile_update' %}" class="btn btn-primary px-4">
-                                    <i class="fas fa-edit me-2"></i>{% trans "Edit Profile" %}
-                                </a>
-                            {% elif profile_user.user_type == 'student' %}
-                                <a href="{% url 'accounts:student_profile_update' %}" class="btn btn-primary px-4">
-                                    <i class="fas fa-edit me-2"></i>{% trans "Edit Profile" %}
-                                </a>
-                            {% elif profile_user.is_admin or profile_user.is_main_admin %}
-                                <a href="{% url 'accounts:admin_management' %}" class="btn btn-primary px-4">
-                                    <i class="fas fa-edit me-2"></i>{% trans "Edit Profile" %}
-                                </a>
-                            {% else %}
-                                <a href="{% url 'accounts:profile_view' %}" class="btn btn-primary px-4">
-                                    <i class="fas fa-edit me-2"></i>{% trans "Edit Profile" %}
-                                </a>
-                            {% endif %}
-                        </div>
-                        {% else %}
-                        <div class="col-auto">
-                            <button class="btn btn-outline-primary px-4">
-                                <i class="fas fa-envelope me-2"></i>{% trans "Send Message" %}
-                            </button>
-                        </div>
-                        {% endif %}
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Основная информация -->
-    <div class="row">
-        <!-- Левая колонка - Основная информация -->
-        <div class="col-lg-8">
-            <div class="card border-0 shadow-sm mb-4" style="border-left: 4px solid #012152;">
-                <div class="card-header bg-white py-3">
-                    <h5 class="fw-bold mb-0 text-dark">
-                        <i class="fas fa-info-circle me-2 text-primary"></i>
-                        {% trans "Basic Info" %}
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3 p-3 bg-light rounded">
-                                <strong class="text-primary d-block mb-1">{% trans "Full Name" %}:</strong>
-                                <p class="mb-0 text-dark fw-semibold">{{ profile_user.get_full_name|default:"—" }}</p>
-                            </div>
-                            <div class="mb-3 p-3 bg-light rounded">
-                                <strong class="text-primary d-block mb-1">{% trans "Email" %}:</strong>
-                                <p class="mb-0 text-dark fw-semibold">{{ profile_user.email|default:"—" }}</p>
-                            </div>
-                            <div class="mb-3 p-3 bg-light rounded">
-                                <strong class="text-primary d-block mb-1">{% trans "Phone" %}:</strong>
-                                <p class="mb-0 text-dark fw-semibold">{{ profile_user.phone_number|default:"—" }}</p>
-                            </div>
-                            {% if profile_user.country %}
-                            <div class="mb-3 p-3 bg-light rounded">
-                                <strong class="text-primary d-block mb-1">{% trans "Country" %}:</strong>
-                                <p class="mb-0 text-dark fw-semibold">{{ profile_user.country.name }}</p>
-                            </div>
-                            {% endif %}
+                <div class="col-lg-4">
+                    <div class="hero-side-panel">
+                        <div class="hero-side-top">
+                            <span>{% trans "Profile Status" %}</span>
+                            <i class="fas fa-sparkles"></i>
                         </div>
-                        <div class="col-md-6">
-                            <div class="mb-3 p-3 bg-light rounded">
-                                <strong class="text-primary d-block mb-1">{% trans "User Type" %}:</strong>
-                                <p class="mb-0">
-                                    <span class="badge bg-primary px-3 py-2">{{ profile_user.get_user_type_display }}</span>
-                                </p>
+
+                        <div class="hero-stat-grid">
+                            <div class="hero-stat-card">
+                                <strong>{{ profile_user.profile_views }}</strong>
+                                <span>{% trans "Views" %}</span>
                             </div>
-                            <div class="mb-3 p-3 bg-light rounded">
-                                <strong class="text-primary d-block mb-1">{% trans "Registration Date" %}:</strong>
-                                <p class="mb-0 text-dark fw-semibold">{{ profile_user.date_joined|date:"d.m.Y H:i" }}</p>
-                            </div>
-                            <div class="mb-3 p-3 bg-light rounded">
-                                <strong class="text-primary d-block mb-1">{% trans "Status" %}:</strong>
-                                <p class="mb-0">
+                            <div class="hero-stat-card">
+                                <strong>
                                     {% if profile_user.is_active %}
-                                        <span class="badge bg-success px-3 py-2">{% trans "Active" %}</span>
+                                        {% trans "Active" %}
                                     {% else %}
-                                        <span class="badge bg-danger px-3 py-2">{% trans "Inactive" %}</span>
+                                        {% trans "Inactive" %}
                                     {% endif %}
-                                </p>
+                                </strong>
+                                <span>{% trans "Account" %}</span>
                             </div>
-                            {% if profile_user.date_of_birth %}
-                            <div class="mb-3 p-3 bg-light rounded">
-                                <strong class="text-primary d-block mb-1">{% trans "Date of Birth" %}:</strong>
-                                <p class="mb-0 text-dark fw-semibold">{{ profile_user.date_of_birth|date:"d.m.Y" }}</p>
-                            </div>
-                            {% endif %}
                         </div>
-                    </div>
 
-                    <!-- Дополнительные поля профиля -->
-                    {% if profile_user.bio %}
-                    <div class="mt-4 p-3 bg-primary bg-opacity-5 rounded border-start border-4 border-primary">
-                        <strong class="text-primary d-block mb-2">{% trans "Bio" %}:</strong>
-                        <p class="mb-0 text-dark">{{ profile_user.bio|linebreaks }}</p>
-                    </div>
-                    {% endif %}
-
-                    <!-- Location Information -->
-                    {% if profile_user.city or profile_user.address %}
-                    <div class="mt-3 p-3 bg-primary bg-opacity-5 rounded border-start border-4 border-primary">
-                        <strong class="text-primary d-block mb-2">{% trans "Location" %}:</strong>
-                        <p class="mb-0 text-dark fw-semibold">
-                            {% if profile_user.city %}{{ profile_user.city }}{% endif %}
-                            {% if profile_user.city and profile_user.address %}, {% endif %}
-                            {% if profile_user.address %}{{ profile_user.address }}{% endif %}
-                        </p>
-                    </div>
-                    {% endif %}
-
-                    <!-- Company Information for Employers -->
-                    {% if profile_user.is_employer and profile_user.companies.exists %}
-                    <div class="mt-3 p-3 bg-primary bg-opacity-5 rounded border-start border-4 border-primary">
-                        <strong class="text-primary d-block mb-2">{% trans "Companies" %}:</strong>
-                        <div class="mt-2">
-                            {% for company in profile_user.companies.all|slice:":3" %}
-                            <div class="d-flex align-items-center mb-2">
-                                {% if company.logo %}
-                                <img src="{{ company.logo.url }}" alt="{{ company.name }}" 
-                                     class="rounded me-3" width="40" height="40" style="object-fit: cover;">
-                                {% else %}
-                                <div class="bg-secondary rounded d-flex align-items-center justify-content-center me-3" 
-                                     style="width: 40px; height: 40px;">
-                                    <i class="fas fa-building text-white"></i>
-                                </div>
-                                {% endif %}
-                                <div>
-                                    <a href="{{ company.get_absolute_url }}" class="text-decoration-none text-dark fw-semibold">
-                                        {{ company.name }}
+                        <div class="hero-action mt-3">
+                            {% if is_own_profile %}
+                                {% if profile_user.user_type == 'employer' %}
+                                    <a href="{% url 'accounts:employer_profile_update' %}" class="btn btn-light btn-modern w-100">
+                                        <i class="fas fa-edit me-2"></i>{% trans "Edit Profile" %}
                                     </a>
-                                    {% if company.is_verified %}
-                                    <span class="badge bg-success ms-2">{% trans "Verified" %}</span>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            {% endfor %}
-                            {% if profile_user.companies.count > 3 %}
-                            <p class="text-muted mb-0">+ {{ profile_user.companies.count|add:"-3" }} {% trans "more companies" %}</p>
+                                {% elif profile_user.user_type == 'student' %}
+                                    <a href="{% url 'accounts:student_profile_update' %}" class="btn btn-light btn-modern w-100">
+                                        <i class="fas fa-edit me-2"></i>{% trans "Edit Profile" %}
+                                    </a>
+                                {% elif profile_user.is_admin or profile_user.is_main_admin %}
+                                    <a href="{% url 'accounts:admin_management' %}" class="btn btn-light btn-modern w-100">
+                                        <i class="fas fa-edit me-2"></i>{% trans "Edit Profile" %}
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'accounts:profile_view' %}" class="btn btn-light btn-modern w-100">
+                                        <i class="fas fa-edit me-2"></i>{% trans "Edit Profile" %}
+                                    </a>
+                                {% endif %}
+                            {% else %}
+                                <button id="send-message-btn" class="btn btn-outline-light btn-modern w-100">
+                                    <i class="fas fa-envelope me-2"></i>{% trans "Send Message" %}
+                                </button>
                             {% endif %}
                         </div>
                     </div>
-                    {% endif %}
-
-                    <!-- Education Information for Students -->
-                    {% if profile_user.is_student and profile_user.student_profile %}
-                    {% with student=profile_user.student_profile %}
-                    <div class="mt-3 p-3 bg-primary bg-opacity-5 rounded border-start border-4 border-primary">
-                        <strong class="text-primary d-block mb-2">{% trans "Education" %}:</strong>
-                        {% if student.faculty %}
-                        <p class="mb-1 text-dark fw-semibold">{{ student.faculty }}</p>
-                        {% endif %}
-                        {% if student.specialty %}
-                        <p class="mb-1 text-muted">{{ student.specialty }}</p>
-                        {% endif %}
-                        {% if student.education_level %}
-                        <p class="mb-0 text-muted">
-                            <i class="fas fa-graduation-cap me-1"></i>
-                            {{ student.get_education_level_display }}
-                            {% if student.graduation_year %}
-                            ({{ student.graduation_year }})
-                            {% endif %}
-                        </p>
-                        {% endif %}
-                    </div>
-                    {% endwith %}
-                    {% endif %}
-
-                    <!-- Professional Information for Employers -->
-                    {% if profile_user.is_employer and profile_user.employer_profile %}
-                    {% with employer=profile_user.employer_profile %}
-                    {% if employer.job_title or employer.department %}
-                    <div class="mt-3 p-3 bg-primary bg-opacity-5 rounded border-start border-4 border-primary">
-                        <strong class="text-primary d-block mb-2">{% trans "Professional Information" %}:</strong>
-                        {% if employer.job_title %}
-                        <p class="mb-1 text-dark fw-semibold">{{ employer.job_title }}</p>
-                        {% endif %}
-                        {% if employer.department %}
-                        <p class="mb-0 text-muted">{{ employer.department }}</p>
-                        {% endif %}
-                    </div>
-                    {% endif %}
-                    {% if employer.professional_bio %}
-                    <div class="mt-3 p-3 bg-primary bg-opacity-5 rounded border-start border-4 border-primary">
-                        <strong class="text-primary d-block mb-2">{% trans "Professional Bio" %}:</strong>
-                        <p class="mb-0 text-dark">{{ employer.professional_bio|linebreaks }}</p>
-                    </div>
-                    {% endif %}
-                    {% endwith %}
-                    {% endif %}
                 </div>
             </div>
-
-            <!-- Social Media Links -->
-            {% if profile_user.website or profile_user.linkedin or profile_user.github or profile_user.telegram %}
-            <div class="card border-0 shadow-sm mb-4" style="border-left: 4px solid #012152;">
-                <div class="card-header bg-white py-3">
-                    <h5 class="fw-bold mb-0 text-dark">
-                        <i class="fas fa-share-alt me-2 text-primary"></i>
-                        {% trans "Social Media & Links" %}
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        {% if profile_user.website %}
-                        <div class="col-md-6 mb-3">
-                            <a href="{{ profile_user.website }}" target="_blank" class="d-flex align-items-center text-decoration-none">
-                                <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
-                                    <i class="fas fa-globe text-primary"></i>
-                                </div>
-                                <div>
-                                    <p class="mb-0 fw-semibold text-dark">{% trans "Website" %}</p>
-                                    <p class="mb-0 text-muted small">{{ profile_user.website|truncatechars:30 }}</p>
-                                </div>
-                            </a>
-                        </div>
-                        {% endif %}
-                        {% if profile_user.linkedin %}
-                        <div class="col-md-6 mb-3">
-                            <a href="{{ profile_user.linkedin }}" target="_blank" class="d-flex align-items-center text-decoration-none">
-                                <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
-                                    <i class="fab fa-linkedin text-primary"></i>
-                                </div>
-                                <div>
-                                    <p class="mb-0 fw-semibold text-dark">{% trans 'LinkedIn' %}</p>
-                                    <p class="mb-0 text-muted small">{{ profile_user.linkedin|truncatechars:30 }}</p>
-                                </div>
-                            </a>
-                        </div>
-                        {% endif %}
-                        {% if profile_user.github %}
-                        <div class="col-md-6 mb-3">
-                            <a href="{{ profile_user.github }}" target="_blank" class="d-flex align-items-center text-decoration-none">
-                                <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
-                                    <i class="fab fa-github text-dark"></i>
-                                </div>
-                                <div>
-                                    <p class="mb-0 fw-semibold text-dark">{% trans 'GitHub' %}</p>
-                                    <p class="mb-0 text-muted small">{{ profile_user.github|truncatechars:30 }}</p>
-                                </div>
-                            </a>
-                        </div>
-                        {% endif %}
-                        {% if profile_user.telegram %}
-                        <div class="col-md-6 mb-3">
-                            <a href="{{ profile_user.telegram }}" target="_blank" class="d-flex align-items-center text-decoration-none">
-                                <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
-                                    <i class="fab fa-telegram text-info"></i>
-                                </div>
-                                <div>
-                                    <p class="mb-0 fw-semibold text-dark">{% trans 'Telegram' %}</p>
-                                    <p class="mb-0 text-muted small">{{ profile_user.telegram|truncatechars:30 }}</p>
-                                </div>
-                            </a>
-                        </div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            {% endif %}
         </div>
 
-        <!-- Правая колонка - Дополнительная информация -->
-        <div class="col-lg-4">
-            <!-- Статистика -->
-            <div class="card border-0 shadow-sm mb-4" style="border-left: 4px solid #012152;">
-                <div class="card-header bg-white py-3">
-                    <h5 class="fw-bold mb-0 text-dark">
-                        <i class="fas fa-chart-bar me-2 text-primary"></i>
-                        {% trans "Statistics" %}
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
-                        <span class="text-primary fw-semibold">{% trans "Profile Views" %}</span>
-                        <span class="badge bg-primary">{{ profile_user.profile_views }}</span>
-                    </div>
-                    
-                    {% if profile_user.is_employer and profile_user.employer_profile %}
-                    <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
-                        <span class="text-primary fw-semibold">{% trans "Companies" %}</span>
-                        <span class="badge bg-primary">{{ profile_user.employer_profile.total_companies }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
-                        <span class="text-primary fw-semibold">{% trans "Jobs Posted" %}</span>
-                        <span class="badge bg-primary">{{ profile_user.employer_profile.total_jobs_posted }}</span>
-                    </div>
-                    {% endif %}
-                    
-                    {% if profile_user.is_student and profile_user.student_profile %}
-                    <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
-                        <span class="text-primary fw-semibold">{% trans "Resumes" %}</span>
-                        <span class="badge bg-primary">{{ profile_user.student_profile.resumes_created }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
-                        <span class="text-primary fw-semibold">{% trans "Jobs Applied" %}</span>
-                        <span class="badge bg-primary">{{ profile_user.student_profile.jobs_applied }}</span>
-                    </div>
-                    {% endif %}
-                    
-                    {% if profile_user.is_admin and profile_user.admin_profile %}
-                    <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
-                        <span class="text-primary fw-semibold">{% trans "Students Managed" %}</span>
-                        <span class="badge bg-primary">{{ profile_user.admin_profile.students_managed }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
-                        <span class="text-primary fw-semibold">{% trans "Companies Verified" %}</span>
-                        <span class="badge bg-primary">{{ profile_user.admin_profile.companies_verified }}</span>
-                    </div>
-                    {% endif %}
-                    
-                    {% if stats %}
-                        {% for key, value in stats.items %}
-                        <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
-                            <span class="text-primary fw-semibold">{{ key }}</span>
-                            <span class="badge bg-primary">{{ value }}</span>
+        <div class="row g-4">
+            <!-- Main column -->
+            <div class="col-lg-8">
+
+                <!-- Basic info -->
+                <div class="content-panel mb-4">
+                    <div class="panel-header">
+                        <div>
+                            <h5 class="panel-title mb-1">
+                                <i class="fas fa-circle-info me-2"></i>{% trans "Basic Info" %}
+                            </h5>
+                            <p class="panel-subtitle mb-0">{% trans "Core profile information and personal details" %}</p>
                         </div>
-                        {% endfor %}
-                    {% endif %}
+                    </div>
+
+                    <div class="panel-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="info-card">
+                                    <span class="info-label">{% trans "Full Name" %}</span>
+                                    <div class="info-value">{{ profile_user.get_full_name|default:"—" }}</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="info-card">
+                                    <span class="info-label">{% trans "User Type" %}</span>
+                                    <div class="info-value">
+                                        <span class="soft-badge">{{ profile_user.get_user_type_display }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="info-card">
+                                    <span class="info-label">{% trans "Email" %}</span>
+                                    <div class="info-value">{{ profile_user.email|default:"—" }}</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="info-card">
+                                    <span class="info-label">{% trans "Phone" %}</span>
+                                    <div class="info-value">{{ profile_user.phone_number|default:"—" }}</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="info-card">
+                                    <span class="info-label">{% trans "Registration Date" %}</span>
+                                    <div class="info-value">{{ profile_user.date_joined|date:"d.m.Y H:i" }}</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="info-card">
+                                    <span class="info-label">{% trans "Status" %}</span>
+                                    <div class="info-value">
+                                        {% if profile_user.is_active %}
+                                            <span class="soft-badge badge-green">{% trans "Active" %}</span>
+                                        {% else %}
+                                            <span class="soft-badge badge-red">{% trans "Inactive" %}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if profile_user.country %}
+                            <div class="col-md-6">
+                                <div class="info-card">
+                                    <span class="info-label">{% trans "Country" %}</span>
+                                    <div class="info-value">{{ profile_user.country.name }}</div>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if profile_user.date_of_birth %}
+                            <div class="col-md-6">
+                                <div class="info-card">
+                                    <span class="info-label">{% trans "Date of Birth" %}</span>
+                                    <div class="info-value">{{ profile_user.date_of_birth|date:"d.m.Y" }}</div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        {% if profile_user.bio %}
+                        <div class="feature-block mt-4">
+                            <div class="feature-title">{% trans "Bio" %}</div>
+                            <div class="feature-text">{{ profile_user.bio|linebreaks }}</div>
+                        </div>
+                        {% endif %}
+
+                        {% if profile_user.city or profile_user.address %}
+                        <div class="feature-block mt-3">
+                            <div class="feature-title">{% trans "Location" %}</div>
+                            <div class="feature-text">
+                                {% if profile_user.city %}{{ profile_user.city }}{% endif %}
+                                {% if profile_user.city and profile_user.address %}, {% endif %}
+                                {% if profile_user.address %}{{ profile_user.address }}{% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if profile_user.is_employer and profile_user.companies.exists %}
+                        <div class="feature-block mt-3">
+                            <div class="feature-title">{% trans "Companies" %}</div>
+                            <div class="company-list mt-3">
+                                {% for company in profile_user.companies.all|slice:":3" %}
+                                <div class="company-item">
+                                    <div class="company-logo-wrap">
+                                        {% if company.logo %}
+                                            <img src="{{ company.logo.url }}" alt="{{ company.name }}" class="company-logo">
+                                        {% else %}
+                                            <div class="company-logo placeholder-company-logo">
+                                                <i class="fas fa-building"></i>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="company-meta">
+                                        <a href="{{ company.get_absolute_url }}" class="company-name">
+                                            {{ company.name }}
+                                        </a>
+                                        <div class="company-badges">
+                                            {% if company.is_verified %}
+                                                <span class="soft-badge badge-green">{% trans "Verified" %}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                            {% if profile_user.companies.count > 3 %}
+                            <div class="more-note mt-2">
+                                + {{ profile_user.companies.count|add:"-3" }} {% trans "more companies" %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+                        {% if profile_user.is_student and profile_user.student_profile %}
+                        {% with student=profile_user.student_profile %}
+                        <div class="feature-block mt-3">
+                            <div class="feature-title">{% trans "Education" %}</div>
+                            <div class="feature-text">
+                                {% if student.faculty %}
+                                    <div class="mb-1 fw-semibold text-dark">{{ student.faculty }}</div>
+                                {% endif %}
+                                {% if student.specialty %}
+                                    <div class="text-muted mb-1">{{ student.specialty }}</div>
+                                {% endif %}
+                                {% if student.education_level %}
+                                    <div class="text-muted">
+                                        <i class="fas fa-graduation-cap me-1"></i>
+                                        {{ student.get_education_level_display }}
+                                        {% if student.graduation_year %}
+                                            ({{ student.graduation_year }})
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endwith %}
+                        {% endif %}
+
+                        {% if profile_user.is_employer and profile_user.employer_profile %}
+                        {% with employer=profile_user.employer_profile %}
+                            {% if employer.job_title or employer.department %}
+                            <div class="feature-block mt-3">
+                                <div class="feature-title">{% trans "Professional Information" %}</div>
+                                <div class="feature-text">
+                                    {% if employer.job_title %}
+                                        <div class="mb-1 fw-semibold text-dark">{{ employer.job_title }}</div>
+                                    {% endif %}
+                                    {% if employer.department %}
+                                        <div class="text-muted">{{ employer.department }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if employer.professional_bio %}
+                            <div class="feature-block mt-3">
+                                <div class="feature-title">{% trans "Professional Bio" %}</div>
+                                <div class="feature-text">{{ employer.professional_bio|linebreaks }}</div>
+                            </div>
+                            {% endif %}
+                        {% endwith %}
+                        {% endif %}
+                    </div>
                 </div>
+
+                <!-- Social links -->
+                {% if profile_user.website or profile_user.linkedin or profile_user.github or profile_user.telegram %}
+                <div class="content-panel mb-4">
+                    <div class="panel-header">
+                        <div>
+                            <h5 class="panel-title mb-1">
+                                <i class="fas fa-share-nodes me-2"></i>{% trans "Social Media & Links" %}
+                            </h5>
+                            <p class="panel-subtitle mb-0">{% trans "External links and public contact channels" %}</p>
+                        </div>
+                    </div>
+
+                    <div class="panel-body">
+                        <div class="row g-3">
+                            {% if profile_user.website %}
+                            <div class="col-md-6">
+                                <a href="{{ profile_user.website }}" target="_blank" class="social-card">
+                                    <div class="social-icon"><i class="fas fa-globe"></i></div>
+                                    <div class="social-meta">
+                                        <div class="social-title">{% trans "Website" %}</div>
+                                        <div class="social-link">{{ profile_user.website|truncatechars:40 }}</div>
+                                    </div>
+                                </a>
+                            </div>
+                            {% endif %}
+
+                            {% if profile_user.linkedin %}
+                            <div class="col-md-6">
+                                <a href="{{ profile_user.linkedin }}" target="_blank" class="social-card">
+                                    <div class="social-icon"><i class="fab fa-linkedin-in"></i></div>
+                                    <div class="social-meta">
+                                        <div class="social-title">{% trans "LinkedIn" %}</div>
+                                        <div class="social-link">{{ profile_user.linkedin|truncatechars:40 }}</div>
+                                    </div>
+                                </a>
+                            </div>
+                            {% endif %}
+
+                            {% if profile_user.github %}
+                            <div class="col-md-6">
+                                <a href="{{ profile_user.github }}" target="_blank" class="social-card">
+                                    <div class="social-icon"><i class="fab fa-github"></i></div>
+                                    <div class="social-meta">
+                                        <div class="social-title">{% trans "GitHub" %}</div>
+                                        <div class="social-link">{{ profile_user.github|truncatechars:40 }}</div>
+                                    </div>
+                                </a>
+                            </div>
+                            {% endif %}
+
+                            {% if profile_user.telegram %}
+                            <div class="col-md-6">
+                                <a href="{{ profile_user.telegram }}" target="_blank" class="social-card">
+                                    <div class="social-icon"><i class="fab fa-telegram-plane"></i></div>
+                                    <div class="social-meta">
+                                        <div class="social-title">{% trans "Telegram" %}</div>
+                                        <div class="social-link">{{ profile_user.telegram|truncatechars:40 }}</div>
+                                    </div>
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
             </div>
 
-            <!-- Контактная информация -->
-            <div class="card border-0 shadow-sm mb-4" style="border-left: 4px solid #012152;">
-                <div class="card-header bg-white py-3">
-                    <h5 class="fw-bold mb-0 text-dark">
-                        <i class="fas fa-address-card me-2 text-primary"></i>
-                        {% trans "Contact Info" %}
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="mb-3 p-2 bg-light rounded">
-                        <i class="fas fa-envelope text-primary me-2"></i>
-                        <a href="mailto:{{ profile_user.email }}" class="text-decoration-none text-dark fw-semibold">
-                            {{ profile_user.email|default:"—" }}
-                        </a>
-                    </div>
-                    {% if profile_user.phone_number %}
-                    <div class="mb-3 p-2 bg-light rounded">
-                        <i class="fas fa-phone text-primary me-2"></i>
-                        <span class="text-dark fw-semibold">{{ profile_user.phone_number }}</span>
-                    </div>
-                    {% endif %}
-                    {% if profile_user.city %}
-                    <div class="mb-3 p-2 bg-light rounded">
-                        <i class="fas fa-map-marker-alt text-primary me-2"></i>
-                        <span class="text-dark fw-semibold">
-                            {% if profile_user.city %}{{ profile_user.city }}{% endif %}
-                            {% if profile_user.country %}, {{ profile_user.country.name }}{% endif %}
-                        </span>
-                    </div>
-                    {% endif %}
-                    
-                    <!-- Professional Contact for Employers -->
-                    {% if profile_user.is_employer and profile_user.employer_profile %}
-                    {% with employer=profile_user.employer_profile %}
-                    {% if employer.preferred_contact_method %}
-                    <div class="mb-3 p-2 bg-light rounded">
-                        <i class="fas fa-comment-alt text-primary me-2"></i>
-                        <span class="text-dark fw-semibold">
-                            {% trans "Preferred Contact" %}: {{ employer.get_preferred_contact_method_display }}
-                        </span>
-                    </div>
-                    {% endif %}
-                    {% endwith %}
-                    {% endif %}
-                </div>
-            </div>
+            <!-- Sidebar -->
+            <div class="col-lg-4">
 
-            <!-- Быстрые действия -->
-            {% if is_own_profile %}
-            <div class="card border-0 shadow-sm" style="border-left: 4px solid #012152;">
-                <div class="card-header bg-white py-3">
-                    <h5 class="fw-bold mb-0 text-dark">
-                        <i class="fas fa-bolt me-2 text-primary"></i>
-                        {% trans "Quick Actions" %}
-                    </h5>
+                <!-- Statistics -->
+                <div class="sidebar-panel mb-4">
+                    <div class="panel-header">
+                        <div>
+                            <h5 class="panel-title mb-1">
+                                <i class="fas fa-chart-column me-2"></i>{% trans "Statistics" %}
+                            </h5>
+                            <p class="panel-subtitle mb-0">{% trans "Profile activity and related metrics" %}</p>
+                        </div>
+                    </div>
+
+                    <div class="panel-body">
+                        <div class="stat-list">
+                            <div class="stat-row">
+                                <span>{% trans "Profile Views" %}</span>
+                                <strong>{{ profile_user.profile_views }}</strong>
+                            </div>
+
+                            {% if profile_user.is_employer and profile_user.employer_profile %}
+                            <div class="stat-row">
+                                <span>{% trans "Companies" %}</span>
+                                <strong>{{ profile_user.employer_profile.total_companies }}</strong>
+                            </div>
+                            <div class="stat-row">
+                                <span>{% trans "Jobs Posted" %}</span>
+                                <strong>{{ profile_user.employer_profile.total_jobs_posted }}</strong>
+                            </div>
+                            {% endif %}
+
+                            {% if profile_user.is_student and profile_user.student_profile %}
+                            <div class="stat-row">
+                                <span>{% trans "Resumes" %}</span>
+                                <strong>{{ profile_user.student_profile.resumes_created }}</strong>
+                            </div>
+                            <div class="stat-row">
+                                <span>{% trans "Jobs Applied" %}</span>
+                                <strong>{{ profile_user.student_profile.jobs_applied }}</strong>
+                            </div>
+                            {% endif %}
+
+                            {% if profile_user.is_admin and profile_user.admin_profile %}
+                            <div class="stat-row">
+                                <span>{% trans "Students Managed" %}</span>
+                                <strong>{{ profile_user.admin_profile.students_managed }}</strong>
+                            </div>
+                            <div class="stat-row">
+                                <span>{% trans "Companies Verified" %}</span>
+                                <strong>{{ profile_user.admin_profile.companies_verified }}</strong>
+                            </div>
+                            {% endif %}
+
+                            {% if stats %}
+                                {% for key, value in stats.items %}
+                                <div class="stat-row">
+                                    <span>{{ key }}</span>
+                                    <strong>{{ value }}</strong>
+                                </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div class="d-grid gap-2">
-                        {% if profile_user.user_type == 'employer' %}
-                            <a href="{% url 'accounts:employer_profile_update' %}" class="btn btn-outline-primary btn-sm py-2">
-                                <i class="fas fa-edit me-2"></i>{% trans "Edit Profile" %}
-                            </a>
-                            {% if profile_user.companies.exists %}
-                            <a href="{% url 'accounts:company_list' %}" class="btn btn-outline-primary btn-sm py-2">
-                                <i class="fas fa-building me-2"></i>{% trans "My Companies" %}
-                            </a>
-                            <a href="{% url 'jobs:job_create' %}" class="btn btn-outline-primary btn-sm py-2">
-                                <i class="fas fa-briefcase me-2"></i>{% trans "Post Job" %}
-                            </a>
+
+                <!-- Contact info -->
+                <div class="sidebar-panel mb-4">
+                    <div class="panel-header">
+                        <div>
+                            <h5 class="panel-title mb-1">
+                                <i class="fas fa-address-card me-2"></i>{% trans "Contact Info" %}
+                            </h5>
+                            <p class="panel-subtitle mb-0">{% trans "Primary channels for communication" %}</p>
+                        </div>
+                    </div>
+
+                    <div class="panel-body">
+                        <div class="contact-list">
+                            <div class="contact-item">
+                                <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+                                <div class="contact-meta">
+                                    <div class="contact-label">{% trans "Email" %}</div>
+                                    <div class="contact-value">
+                                        <a href="mailto:{{ profile_user.email }}" class="contact-link">
+                                            {{ profile_user.email|default:"—" }}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if profile_user.phone_number %}
+                            <div class="contact-item">
+                                <div class="contact-icon"><i class="fas fa-phone"></i></div>
+                                <div class="contact-meta">
+                                    <div class="contact-label">{% trans "Phone" %}</div>
+                                    <div class="contact-value">{{ profile_user.phone_number }}</div>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if profile_user.city %}
+                            <div class="contact-item">
+                                <div class="contact-icon"><i class="fas fa-location-dot"></i></div>
+                                <div class="contact-meta">
+                                    <div class="contact-label">{% trans "Location" %}</div>
+                                    <div class="contact-value">
+                                        {% if profile_user.city %}{{ profile_user.city }}{% endif %}
+                                        {% if profile_user.country %}, {{ profile_user.country.name }}{% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if profile_user.is_employer and profile_user.employer_profile %}
+                            {% with employer=profile_user.employer_profile %}
+                            {% if employer.preferred_contact_method %}
+                            <div class="contact-item">
+                                <div class="contact-icon"><i class="fas fa-comments"></i></div>
+                                <div class="contact-meta">
+                                    <div class="contact-label">{% trans "Preferred Contact" %}</div>
+                                    <div class="contact-value">{{ employer.get_preferred_contact_method_display }}</div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% endwith %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick actions -->
+                {% if is_own_profile %}
+                <div class="sidebar-panel">
+                    <div class="panel-header">
+                        <div>
+                            <h5 class="panel-title mb-1">
+                                <i class="fas fa-bolt me-2"></i>{% trans "Quick Actions" %}
+                            </h5>
+                            <p class="panel-subtitle mb-0">{% trans "Fast shortcuts for the most used actions" %}</p>
+                        </div>
+                    </div>
+
+                    <div class="panel-body">
+                        <div class="quick-actions-grid">
+                            {% if profile_user.user_type == 'employer' %}
+                                <a href="{% url 'accounts:employer_profile_update' %}" class="quick-action-btn">
+                                    <i class="fas fa-edit"></i>
+                                    <span>{% trans "Edit Profile" %}</span>
+                                </a>
+
+                                {% if profile_user.companies.exists %}
+                                <a href="{% url 'accounts:company_list' %}" class="quick-action-btn">
+                                    <i class="fas fa-building"></i>
+                                    <span>{% trans "My Companies" %}</span>
+                                </a>
+                                <a href="{% url 'jobs:job_create' %}" class="quick-action-btn">
+                                    <i class="fas fa-briefcase"></i>
+                                    <span>{% trans "Post Job" %}</span>
+                                </a>
+                                {% else %}
+                                <a href="{% url 'accounts:company_create' %}" class="quick-action-btn">
+                                    <i class="fas fa-plus-circle"></i>
+                                    <span>{% trans "Create Company" %}</span>
+                                </a>
+                                {% endif %}
+                            {% elif profile_user.user_type == 'student' %}
+                                <a href="{% url 'accounts:student_profile_update' %}" class="quick-action-btn">
+                                    <i class="fas fa-edit"></i>
+                                    <span>{% trans "Edit Profile" %}</span>
+                                </a>
+                                <a href="{% url 'cvbuilder:cv_create' %}" class="quick-action-btn">
+                                    <i class="fas fa-file-alt"></i>
+                                    <span>{% trans "Create Resume" %}</span>
+                                </a>
+                            {% elif profile_user.is_admin or profile_user.is_main_admin %}
+                                <a href="{% url 'accounts:admin_management' %}" class="quick-action-btn">
+                                    <i class="fas fa-edit"></i>
+                                    <span>{% trans "Edit Profile" %}</span>
+                                </a>
+                                <a href="{% url 'accounts:admin_dashboard' %}" class="quick-action-btn">
+                                    <i class="fas fa-gauge-high"></i>
+                                    <span>{% trans "Admin Dashboard" %}</span>
+                                </a>
                             {% else %}
-                            <a href="{% url 'accounts:company_create' %}" class="btn btn-outline-primary btn-sm py-2">
-                                <i class="fas fa-plus-circle me-2"></i>{% trans "Create Company" %}
+                                <a href="{% url 'accounts:profile_view' %}" class="quick-action-btn">
+                                    <i class="fas fa-edit"></i>
+                                    <span>{% trans "Edit Profile" %}</span>
+                                </a>
+                            {% endif %}
+
+                            <a href="{% url 'accounts:password_change' %}" class="quick-action-btn">
+                                <i class="fas fa-lock"></i>
+                                <span>{% trans "Change Password" %}</span>
+                            </a>
+
+                            <a href="{% url 'accounts:notifications' %}" class="quick-action-btn">
+                                <i class="fas fa-bell"></i>
+                                <span>{% trans "Notifications" %}</span>
+                            </a>
+
+                            {% if profile_user.user_type == 'student' %}
+                            <a href="{% url 'jobs:my_applications' %}" class="quick-action-btn">
+                                <i class="fas fa-clipboard-list"></i>
+                                <span>{% trans "My Applications" %}</span>
                             </a>
                             {% endif %}
-                        {% elif profile_user.user_type == 'student' %}
-                            <a href="{% url 'accounts:student_profile_update' %}" class="btn btn-outline-primary btn-sm py-2">
-                                <i class="fas fa-edit me-2"></i>{% trans "Edit Profile" %}
+
+                            {% if profile_user.user_type == 'employer' %}
+                            <a href="{% url 'jobs:my_jobs' %}" class="quick-action-btn">
+                                <i class="fas fa-briefcase"></i>
+                                <span>{% trans "My Jobs" %}</span>
                             </a>
-                            <a href="{% url 'cvbuilder:cv_create' %}" class="btn btn-outline-primary btn-sm py-2">
-                                <i class="fas fa-file-alt me-2"></i>{% trans "Create Resume" %}
+                            <a href="{% url 'jobs:employer_applications' %}" class="quick-action-btn">
+                                <i class="fas fa-users"></i>
+                                <span>{% trans "View Applications" %}</span>
                             </a>
-                            {% elif profile_user.is_admin or profile_user.is_main_admin %}
-                            <a href="{% url 'accounts:admin_management' %}" class="btn btn-outline-primary btn-sm py-2">
-                                <i class="fas fa-edit me-2"></i>{% trans "Edit Profile" %}
-                            </a>
-                            <a href="{% url 'accounts:admin_dashboard' %}" class="btn btn-outline-primary btn-sm py-2">
-                                <i class="fas fa-tachometer-alt me-2"></i>{% trans "Admin Dashboard" %}
-                            </a>
-                        {% else %}
-                            <a href="{% url 'accounts:profile_view' %}" class="btn btn-outline-primary btn-sm py-2">
-                                <i class="fas fa-edit me-2"></i>{% trans "Edit Profile" %}
-                            </a>
-                        {% endif %}
-                        
-                        <a href="{% url 'accounts:password_change' %}" class="btn btn-outline-primary btn-sm py-2">
-                            <i class="fas fa-lock me-2"></i>{% trans "Change Password" %}
-                        </a>
-                        <a href="{% url 'accounts:notifications' %}" class="btn btn-outline-primary btn-sm py-2">
-                            <i class="fas fa-bell me-2"></i>{% trans "Notifications" %}
-                        </a>
-                        
-                        {% if profile_user.user_type == 'student' %}
-                        <a href="{% url 'jobs:my_applications' %}" class="btn btn-outline-primary btn-sm py-2">
-                            <i class="fas fa-clipboard-list me-2"></i>{% trans "My Applications" %}
-                        </a>
-                        {% endif %}
-                        
-                        {% if profile_user.user_type == 'employer' %}
-                        <a href="{% url 'jobs:my_jobs' %}" class="btn btn-outline-primary btn-sm py-2">
-                            <i class="fas fa-briefcase me-2"></i>{% trans "My Jobs" %}
-                        </a>
-                        <a href="{% url 'jobs:employer_applications' %}" class="btn btn-outline-primary btn-sm py-2">
-                            <i class="fas fa-users me-2"></i>{% trans "View Applications" %}
-                        </a>
-                        {% endif %}
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
+                {% endif %}
             </div>
-            {% endif %}
         </div>
     </div>
 </div>
 
 <style>
-.card {
-    transition: transform 0.2s ease-in-out;
-}
-.card:hover {
-    transform: translateY(-2px);
-}
-
-.badge {
-    font-size: 0.75rem;
-    font-weight: 500;
+.profile-page {
+    background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 24%),
+        radial-gradient(circle at top right, rgba(14, 165, 233, 0.08), transparent 20%),
+        linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+    min-height: 100vh;
 }
 
-.btn-primary {
-    background-color: #012152;
-    border-color: #012152;
-    font-weight: 500;
-}
-.btn-primary:hover {
-    background-color: #013580;
-    border-color: #013580;
+.profile-shell {
+    max-width: 1440px;
+    margin: 0 auto;
 }
 
-.btn-outline-primary {
-    color: #012152;
-    border-color: #012152;
-    font-weight: 500;
-}
-.btn-outline-primary:hover {
-    background-color: #012152;
-    border-color: #012152;
-    color: white;
+.profile-hero,
+.content-panel,
+.sidebar-panel,
+.social-card,
+.info-card,
+.quick-action-btn {
+    border-radius: 24px;
 }
 
-.bg-light {
-    background-color: #f8f9fa !important;
-}
-
-.border-primary {
-    border-color: #012152 !important;
-}
-
-.text-primary {
-    color: #012152 !important;
-}
-
-.bg-success {
-    background-color: #198754 !important;
-}
-
-.bg-danger {
-    background-color: #dc3545 !important;
-}
-
-.rounded-circle {
+.profile-hero {
+    position: relative;
     overflow: hidden;
+    padding: 2rem;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 45%, #2563eb 100%);
+    color: #fff;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.16);
+}
+
+.profile-hero::before,
+.profile-hero::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.profile-hero::before {
+    width: 240px;
+    height: 240px;
+    background: rgba(255, 255, 255, 0.06);
+    top: -60px;
+    right: -60px;
+}
+
+.profile-hero::after {
+    width: 180px;
+    height: 180px;
+    background: rgba(59, 130, 246, 0.18);
+    bottom: -60px;
+    left: -30px;
+}
+
+.profile-avatar-wrap,
+.profile-hero-content,
+.hero-side-panel {
+    position: relative;
+    z-index: 1;
+}
+
+.profile-avatar {
+    width: 116px;
+    height: 116px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid rgba(255,255,255,0.22);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.18);
+}
+
+.placeholder-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+}
+
+.profile-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 0.85rem;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.14);
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.profile-name {
+    font-size: clamp(2rem, 3vw, 2.8rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+.profile-subtitle {
+    color: rgba(255,255,255,0.78);
+    font-size: 1rem;
+}
+
+.hero-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.55rem 0.8rem;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.10);
+    color: #fff;
+    font-size: 0.84rem;
+    font-weight: 600;
+}
+
+.badge-success-soft {
+    background: rgba(34, 197, 94, 0.16);
+    border-color: rgba(34, 197, 94, 0.24);
+    color: #dcfce7;
+}
+
+.hero-side-panel {
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 24px;
+    padding: 1.25rem;
+    backdrop-filter: blur(10px);
+}
+
+.hero-side-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: rgba(255,255,255,0.82);
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.hero-stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
+}
+
+.hero-stat-card {
+    background: rgba(255,255,255,0.08);
+    border-radius: 18px;
+    padding: 1rem;
+    text-align: center;
+}
+
+.hero-stat-card strong {
+    display: block;
+    color: #fff;
+    font-size: 1.15rem;
+    line-height: 1.1;
+}
+
+.hero-stat-card span {
+    display: block;
+    color: rgba(255,255,255,0.7);
+    font-size: 0.82rem;
+    margin-top: 0.25rem;
+}
+
+.btn-modern {
+    border-radius: 16px;
+    padding: 0.85rem 1rem;
+    font-weight: 700;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+.content-panel,
+.sidebar-panel {
+    background: rgba(255,255,255,0.84);
+    border: 1px solid rgba(255,255,255,0.72);
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+}
+
+.panel-header {
+    padding: 1.35rem 1.4rem 0;
+}
+
+.panel-title {
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.panel-title i {
+    color: #2563eb;
+}
+
+.panel-subtitle {
+    color: #64748b;
+    font-size: 0.92rem;
+}
+
+.panel-body {
+    padding: 1.4rem;
+}
+
+.info-card {
+    background: #f8fafc;
+    border: 1px solid #e9eef5;
+    padding: 1rem 1.05rem;
+    height: 100%;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.info-card:hover,
+.social-card:hover,
+.quick-action-btn:hover,
+.content-panel:hover,
+.sidebar-panel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
+}
+
+.info-label {
+    display: block;
+    font-size: 0.82rem;
+    color: #64748b;
+    margin-bottom: 0.35rem;
+    font-weight: 600;
+}
+
+.info-value {
+    color: #0f172a;
+    font-weight: 700;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+.soft-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.42rem 0.8rem;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.badge-green {
+    background: #ecfdf5;
+    color: #15803d;
+}
+
+.badge-red {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.feature-block {
+    background: linear-gradient(135deg, #eff6ff, #f8fbff);
+    border: 1px solid #dbeafe;
+    border-left: 4px solid #2563eb;
+    border-radius: 20px;
+    padding: 1rem 1.1rem;
+}
+
+.feature-title {
+    font-weight: 800;
+    color: #1d4ed8;
+    margin-bottom: 0.55rem;
+}
+
+.feature-text {
+    color: #334155;
+    line-height: 1.7;
+}
+
+.feature-text p:last-child {
+    margin-bottom: 0;
+}
+
+.company-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.company-item {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.8rem;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.75);
+    border: 1px solid rgba(219, 234, 254, 0.9);
+}
+
+.company-logo {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.placeholder-company-logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #64748b;
+    color: #fff;
+}
+
+.company-name {
+    color: #0f172a;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.company-name:hover {
+    color: #1d4ed8;
+}
+
+.more-note {
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.social-card {
+    display: flex;
+    align-items: center;
+    gap: 0.95rem;
+    text-decoration: none;
+    background: #f8fafc;
+    border: 1px solid #e9eef5;
+    padding: 1rem;
+    color: inherit;
+    height: 100%;
+}
+
+.social-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #dbeafe, #eff6ff);
+    color: #2563eb;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.social-title {
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 0.15rem;
+}
+
+.social-link {
+    color: #64748b;
+    font-size: 0.88rem;
+    word-break: break-word;
+}
+
+.stat-list,
+.contact-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    background: #f8fafc;
+    border: 1px solid #e9eef5;
+    border-radius: 16px;
+    padding: 0.9rem 1rem;
+}
+
+.stat-row span {
+    color: #475569;
+    font-weight: 600;
+}
+
+.stat-row strong {
+    color: #0f172a;
+    background: #eff6ff;
+    padding: 0.35rem 0.65rem;
+    border-radius: 999px;
+    min-width: 42px;
+    text-align: center;
+}
+
+.contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    background: #f8fafc;
+    border: 1px solid #e9eef5;
+    border-radius: 16px;
+    padding: 0.95rem 1rem;
+}
+
+.contact-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #eff6ff;
+    color: #2563eb;
+    flex-shrink: 0;
+}
+
+.contact-label {
+    font-size: 0.82rem;
+    color: #64748b;
+    margin-bottom: 0.2rem;
+    font-weight: 600;
+}
+
+.contact-value {
+    color: #0f172a;
+    font-weight: 700;
+    word-break: break-word;
+}
+
+.contact-link {
+    color: #0f172a;
+    text-decoration: none;
+}
+
+.contact-link:hover {
+    color: #1d4ed8;
+}
+
+.quick-actions-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+}
+
+.quick-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    text-decoration: none;
+    background: linear-gradient(135deg, #ffffff, #f8fbff);
+    border: 1px solid #dbeafe;
+    padding: 0.95rem 1rem;
+    color: #1e293b;
+    font-weight: 700;
+}
+
+.quick-action-btn i {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #eff6ff;
+    color: #2563eb;
+    flex-shrink: 0;
+}
+
+.quick-action-btn:hover {
+    color: #1d4ed8;
+}
+
+@media (max-width: 991.98px) {
+    .profile-hero {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .profile-hero,
+    .content-panel,
+    .sidebar-panel,
+    .social-card,
+    .info-card,
+    .quick-action-btn {
+        border-radius: 18px;
+    }
+
+    .hero-stat-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .panel-header {
+        padding: 1.15rem 1.1rem 0;
+    }
+
+    .panel-body {
+        padding: 1.1rem;
+    }
+
+    .profile-avatar {
+        width: 96px;
+        height: 96px;
+    }
+
+    .profile-name {
+        font-size: 1.8rem;
+    }
 }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Обработка клика по кнопке отправки сообщения
-    const sendMessageBtn = document.querySelector('.btn-outline-primary');
-    if (sendMessageBtn && !sendMessageBtn.href) {
+    const sendMessageBtn = document.getElementById('send-message-btn');
+    if (sendMessageBtn) {
         sendMessageBtn.addEventListener('click', function() {
             alert('{% trans "Messaging functionality will be implemented soon!" %}');
         });
     }
-    
-    // Плавная прокрутка для ссылок
+
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
-            if (this.getAttribute('href') === '#') {
+            const href = this.getAttribute('href');
+            if (href === '#') {
                 e.preventDefault();
                 return;
             }
-            
-            const href = this.getAttribute('href');
-            if (href.startsWith('#') && document.querySelector(href)) {
+
+            const target = document.querySelector(href);
+            if (target) {
                 e.preventDefault();
-                document.querySelector(href).scrollIntoView({
-                    behavior: 'smooth'
-                });
+                target.scrollIntoView({ behavior: 'smooth' });
             }
         });
     });
