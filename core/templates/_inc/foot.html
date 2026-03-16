@@ -1,155 +1,181 @@
 {% load static %}
 {% load i18n %}
 
-<!-- Кнопка для открытия/закрытия футера -->
-<div id="footer-toggle-btn" class="footer-toggle-btn">
-    <i class="fas fa-chevron-up"></i>
-</div>
+<!-- Footer toggle -->
+<button
+    id="footer-toggle-btn"
+    class="footer-toggle-btn"
+    type="button"
+    aria-controls="main-footer"
+    aria-expanded="false"
+    aria-label="{% trans 'Open footer' %}"
+>
+    <span class="footer-toggle-btn__icon">
+        <i class="fas fa-chevron-up"></i>
+    </span>
+    <span class="footer-toggle-btn__text d-none d-sm-inline">{% trans "Contacts" %}</span>
+</button>
 
 <!-- Footer -->
-<footer id="main-footer" class="text-white">
-    <div class="footer-handle"></div>
-    <div class="footer-content">
-        <div class="container py-4 py-md-5">
-            <div class="row g-4">
-                <!-- Useful Links -->
-                <div class="col-12 col-md-6 col-lg-4">
-                    <h5 class="footer-title mb-4">{% trans "Useful Links" %}</h5>
-                    <ul class="footer-links">
-                        <li class="mb-3">
-                            <a href="https://t.me/Perfy25" class="footer-link">
-                                <i class="fas fa-external-link-alt me-3"></i>
-                                <span>{% trans "Developer" %}</span>
-                            </a>
-                        </li>
-                        <li class="mb-3">
-                            <a href="https://oxu.uz/university" class="footer-link">
-                                <i class="fas fa-university me-3"></i>
-                                <span>{% trans "About University" %}</span>
-                            </a>
-                        </li>
-                        <li class="mb-3">
-                            <a href="https://oxu.uz/yangiliklar" class="footer-link">
-                                <i class="fas fa-newspaper me-3"></i>
-                                <span>{% trans "News" %}</span>
-                            </a>
-                        </li>
-                        <li class="mb-3">
-                            <a href="/faq/" class="footer-link">
-                                <i class="fas fa-question-circle me-3"></i>
-                                <span>{% trans "FAQ" %}</span>
-                            </a>
-                        </li>
-                    </ul>
+<footer id="main-footer" class="site-footer" aria-hidden="true">
+    <div class="site-footer__panel">
+        <div class="site-footer__topbar">
+            <div class="site-footer__grabber" aria-hidden="true"></div>
+
+            <div class="site-footer__topbar-row">
+                <div>
+                    <h4 class="site-footer__heading mb-1">{% trans "Career Center" %}</h4>
+                    <p class="site-footer__toptext mb-0">{% trans "Contacts, links and university information" %}</p>
                 </div>
 
-                <!-- Address -->
-                <div class="col-12 col-md-6 col-lg-4">
-                    <h5 class="footer-title mb-4">{% trans "Address" %}</h5>
-                    <div class="footer-address mb-4">
-                        <div class="d-flex align-items-start mb-3">
-                            <i class="fas fa-map-marker-alt me-3 mt-1"></i>
-                            <div>
-                                <a href="https://maps.app.goo.gl/Vak1fFmHn8bcTJqk8" class="footer-link">
+                <button
+                    id="footer-close-btn"
+                    class="site-footer__close-btn"
+                    type="button"
+                    aria-label="{% trans 'Close footer' %}"
+                >
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="site-footer__content">
+            <div class="container py-4 py-md-5">
+                <div class="row g-4">
+                    <!-- Useful Links -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="footer-card h-100">
+                            <h5 class="footer-title">{% trans "Useful Links" %}</h5>
+
+                            <ul class="footer-links mb-0">
+                                <li>
+                                    <a href="https://t.me/Perfy25" class="footer-link">
+                                        <i class="fas fa-code"></i>
+                                        <span>{% trans "Developer" %}</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://oxu.uz/university" class="footer-link">
+                                        <i class="fas fa-university"></i>
+                                        <span>{% trans "About University" %}</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://oxu.uz/yangiliklar" class="footer-link">
+                                        <i class="fas fa-newspaper"></i>
+                                        <span>{% trans "News" %}</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/faq/" class="footer-link">
+                                        <i class="fas fa-circle-question"></i>
+                                        <span>{% trans "FAQ" %}</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="footer-card h-100">
+                            <h5 class="footer-title">{% trans "Address" %}</h5>
+
+                            <a href="https://maps.app.goo.gl/Vak1fFmHn8bcTJqk8" class="footer-address-card text-decoration-none">
+                                <div class="footer-address-card__icon">
+                                    <i class="fas fa-location-dot"></i>
+                                </div>
+                                <div class="footer-address-card__content">
+                                    <div class="footer-address-card__title">{% trans "University location" %}</div>
                                     <p class="mb-0">
                                         {% trans "Bukhara city, MFY 'Yangibod'," %}<br>
                                         {% trans "G'ijduvon street, 74-house" %}
                                     </p>
+                                </div>
+                            </a>
+
+                            <div class="footer-map mt-3">
+                                <div class="ratio ratio-16x9">
+                                    <iframe
+                                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d911.3392403764602!2d64.42590351321431!3d39.798748210538605!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3f50093729ce2b27%3A0x4cfc4ffe225f3750!2sOsiyo%20Xalqaro%20Universiteti!5e0!3m2!1sru!2s!4v1763974013257!5m2!1sru!2s"
+                                        style="border:0;"
+                                        allowfullscreen
+                                        loading="lazy"
+                                        referrerpolicy="no-referrer-when-downgrade"
+                                        title="{% trans 'University map' %}"
+                                    ></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact -->
+                    <div class="col-12 col-md-12 col-lg-4">
+                        <div class="footer-card h-100">
+                            <h5 class="footer-title">{% trans "Contact" %}</h5>
+
+                            <div class="footer-contact-list">
+                                <a href="tel:+998553050009" class="footer-contact-item">
+                                    <span class="footer-contact-item__icon"><i class="fas fa-phone-alt"></i></span>
+                                    <span class="footer-contact-item__text">+998 55 305 00 09</span>
+                                </a>
+
+                                <a href="mailto:info@oxu.uz" class="footer-contact-item">
+                                    <span class="footer-contact-item__icon"><i class="fas fa-envelope"></i></span>
+                                    <span class="footer-contact-item__text">info@oxu.uz</span>
+                                </a>
+                            </div>
+
+                            <h6 class="footer-subtitle mt-4 mb-3">{% trans "Social Networks" %}</h6>
+
+                            <div class="footer-social">
+                                <a href="https://t.me/Oxu_uz" class="footer-social-btn" aria-label="{% trans 'Telegram' %}">
+                                    <i class="fab fa-telegram-plane"></i>
+                                </a>
+                                <a href="https://www.instagram.com/oxu_uz/" class="footer-social-btn" aria-label="{% trans 'Instagram' %}">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                                <a href="https://www.facebook.com/people/Osiyo-Xalqaro-Universiteti/100088012691808/?sk=about" class="footer-social-btn" aria-label="{% trans 'Facebook' %}">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                                <a href="https://www.youtube.com/@Osiyo.Xalqaro.Universiteti." class="footer-social-btn" aria-label="{% trans 'YouTube' %}">
+                                    <i class="fab fa-youtube"></i>
                                 </a>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Map -->
-                    <div class="footer-map mb-4">
-                        <div class="ratio ratio-16x9">
-                            <iframe 
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d911.3392403764602!2d64.42590351321431!3d39.798748210538605!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3f50093729ce2b27%3A0x4cfc4ffe225f3750!2sOsiyo%20Xalqaro%20Universiteti!5e0!3m2!1sru!2s!4v1763974013257!5m2!1sru!2s" 
-                                style="border: 0;" 
-                                allowfullscreen 
-                                loading="lazy" 
-                                referrerpolicy="no-referrer-when-downgrade"
-                                class="rounded shadow-sm">
-                            </iframe>
-                        </div>
-                    </div>
                 </div>
 
-                <!-- Contact -->
-                <div class="col-12 col-md-6 col-lg-4">
-                    <h5 class="footer-title mb-4">{% trans "Contact" %}</h5>
-                    
-                    <!-- Phone -->
-                    <div class="d-flex align-items-center mb-3">
-                        <i class="fas fa-phone me-3"></i>
-                        <div>
-                            <a href="tel:+998553050009" class="footer-link">
-                                +998 55 305 00 09
+                <!-- Bottom -->
+                <div class="footer-bottom mt-4 pt-4">
+                    <div class="row align-items-center g-3">
+                        <div class="col-12 col-md-6">
+                            <a class="footer-logo" href="/">
+                                <div class="footer-logo__inner">
+                                    <img
+                                        src="{% static 'img/logo1.png' %}"
+                                        alt="{% trans 'OXU Logo' %}"
+                                        class="footer-logo__image"
+                                    >
+
+                                    <div class="footer-logo__text">
+                                        <div class="footer-logo__main">
+                                            {% trans 'Asia' %}
+                                            {% trans 'International' %}
+                                            {% trans 'University' %}
+                                        </div>
+                                        <div class="footer-logo__divider"></div>
+                                        <div class="footer-logo__sub">{% trans 'Career Center' %}</div>
+                                    </div>
+                                </div>
                             </a>
                         </div>
-                    </div>
-                    
-                    <!-- Email -->
-                    <div class="d-flex align-items-center mb-4">
-                        <i class="fas fa-envelope me-3"></i>
-                        <div>
-                            <a href="mailto:info@oxu.uz" class="footer-link">
-                                {% trans 'info@oxu.uz' %}
-                            </a>
+
+                        <div class="col-12 col-md-6 text-center text-md-end">
+                            <small class="footer-copyright">
+                                © {% now 'Y' %} {% trans "All rights reserved. Asia International University" %}
+                            </small>
                         </div>
-                    </div>
-                    
-                    <!-- Social Networks -->
-                    <h6 class="footer-subtitle mb-3">{% trans "Social Networks" %}</h6>
-                    <div class="footer-social mb-4">
-                        <a href="https://t.me/Oxu_uz" class="footer-social-btn" aria-label="{% trans 'Telegram' %}">
-                            <i class="fab fa-telegram"></i>
-                        </a>
-                        <a href="https://www.instagram.com/oxu_uz/" class="footer-social-btn" aria-label="{% trans 'Instagram' %}">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="https://www.facebook.com/people/Osiyo-Xalqaro-Universiteti/100088012691808/?sk=about" class="footer-social-btn" aria-label="{% trans 'Facebook' %}">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="https://www.youtube.com/@Osiyo.Xalqaro.Universiteti." class="footer-social-btn" aria-label="{% trans 'YouTube' %}">
-                            <i class="fab fa-youtube"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Logo and Copyright -->
-            <div class="footer-bottom pt-4 mt-4">
-                <div class="row align-items-center">
-                    <div class="col-12 col-md-6 mb-3 mb-md-0">
-                        <a class="footer-logo d-flex align-items-center" href="/">
-                            <div class="logo-container-wrapper">
-                            <div class="logo-container d-flex align-items-center">
-                                <img
-                                src="{% static 'img/logo1.png' %}"
-                                alt="{% trans 'OXU Logo' %}"
-                                class="logo-image me-3"
-                                >
-
-                                <div class="logo-text-wrapper">
-                                <div class="logo-main">
-                                    {% trans 'Asia' %} <br class="logo-line-break">
-                                    {% trans 'International' %} <br class="logo-line-break">
-                                    {% trans 'University' %}
-                                </div>
-
-                                <div class="logo-divider"></div>
-
-                                <div class="logo-sub">{% trans 'Career Center' %}</div>
-                                </div>
-                            </div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-12 col-md-6 text-center text-md-end">
-                        <small class="footer-copyright">
-                            © {% now 'Y' %} {% trans "All rights reserved. Asia International University" %}
-                        </small>
                     </div>
                 </div>
             </div>
@@ -157,407 +183,425 @@
     </div>
 </footer>
 
-<!-- Оверлей для затемнения фона -->
+<!-- Overlay -->
 <div class="footer-overlay" id="footerOverlay"></div>
 
 <style>
-/* ===================== */
-/* ОБЩИЕ СТИЛИ ФУТЕРА */
-/* ===================== */
 :root {
-    --footer-primary: #001b45;
-    --footer-secondary: #012d6e;
+    --footer-primary: #031b47;
+    --footer-primary-2: #0a3376;
+    --footer-primary-3: #123f92;
     --footer-accent: #4ade80;
-    --footer-text: #ffffff;
-    --footer-text-secondary: rgba(255, 255, 255, 0.7);
-    --footer-border: rgba(255, 255, 255, 0.15);
-    --footer-shadow: 0 -5px 25px rgba(0, 0, 0, 0.2);
-    --transition-speed: 0.4s;
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
+    --footer-accent-2: #22c55e;
+    --footer-white: #ffffff;
+    --footer-text-soft: rgba(255, 255, 255, 0.78);
+    --footer-border: rgba(255, 255, 255, 0.14);
+    --footer-surface: rgba(255, 255, 255, 0.07);
+    --footer-shadow: 0 -18px 48px rgba(2, 6, 23, 0.28);
+    --footer-radius: 24px;
+    --footer-radius-sm: 16px;
+    --footer-transition: 0.28s ease;
 }
 
-/* ===================== */
-/* КНОПКА ПЕРЕКЛЮЧЕНИЯ ФУТЕРА */
-/* ===================== */
 .footer-toggle-btn {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    background: linear-gradient(135deg, var(--footer-primary) 0%, #002255 100%);
-    color: var(--footer-text);
-    border-radius: 10px;
-    cursor: pointer;
-    z-index: 999;
-    box-shadow: var(--shadow-lg);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex;
+    right: 18px;
+    bottom: calc(18px + env(safe-area-inset-bottom));
+    z-index: 1065;
+    height: 52px;
+    padding: 0 16px 0 12px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--footer-primary) 0%, var(--footer-primary-2) 100%);
+    color: var(--footer-white);
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    gap: 10px;
+    box-shadow: 0 14px 30px rgba(2, 6, 23, 0.24);
+    cursor: pointer;
+    transition: transform var(--footer-transition), box-shadow var(--footer-transition), background var(--footer-transition);
     user-select: none;
     -webkit-tap-highlight-color: transparent;
-    backdrop-filter: blur(10px);
 }
 
 .footer-toggle-btn:hover {
-    background: linear-gradient(135deg, var(--footer-secondary) 0%, #003580 100%);
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-    border-color: var(--footer-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 20px 36px rgba(2, 6, 23, 0.3);
+}
+
+.footer-toggle-btn__icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.footer-toggle-btn__text {
+    font-weight: 700;
+    letter-spacing: 0.01em;
 }
 
 .footer-toggle-btn i {
-    font-size: 22px;
-    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    transform: rotate(-35deg);
+    transition: transform var(--footer-transition);
 }
 
-.footer-toggle-btn.active i {
+.footer-toggle-btn.is-open i {
     transform: rotate(180deg);
 }
 
-.footer-toggle-btn:hover i {
-    transform: rotate(-20deg);
-}
-
-.footer-toggle-btn.active:hover i {
-    transform: rotate(200deg);
-}
-
-/* ===================== */
-/* ОСНОВНОЙ ФУТЕР */
-/* ===================== */
-#main-footer {
+.site-footer {
     position: fixed;
-    bottom: -100vh;
-    left: 0;
-    right: 0;
-    height: 85vh;
-    max-height: 85vh;
-    background: linear-gradient(135deg, var(--footer-primary) 0%, #002255 100%);
-    z-index: 998;
+    inset: auto 0 0 0;
+    z-index: 1064;
+    pointer-events: none;
+}
+
+.site-footer__panel {
+    height: min(84vh, 860px);
+    transform: translateY(calc(100% - 14px));
+    transition: transform 0.34s ease;
+    background:
+        radial-gradient(circle at top right, rgba(74, 222, 128, 0.08), transparent 16%),
+        linear-gradient(135deg, var(--footer-primary) 0%, var(--footer-primary-2) 52%, var(--footer-primary-3) 100%);
+    color: var(--footer-white);
+    border-top-left-radius: var(--footer-radius);
+    border-top-right-radius: var(--footer-radius);
     box-shadow: var(--footer-shadow);
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
     overflow: hidden;
-    visibility: hidden;
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     display: flex;
     flex-direction: column;
+}
+
+.site-footer.is-open {
+    pointer-events: auto;
+}
+
+.site-footer.is-open .site-footer__panel {
+    transform: translateY(0);
+}
+
+.site-footer__topbar {
+    flex-shrink: 0;
+    padding: 10px 16px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
     backdrop-filter: blur(10px);
 }
 
-#main-footer.active {
-    bottom: 0;
-    visibility: visible;
-}
-
-#main-footer::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-}
-
-/* Хэндл для свайпа */
-.footer-handle {
-    width: 100%;
+.site-footer__grabber {
+    width: 56px;
     height: 6px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 3px;
-    margin: 12px auto;
-    cursor: grab;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.3);
+    margin: 0 auto 12px;
+}
+
+.site-footer__topbar-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.site-footer__heading {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.site-footer__toptext {
+    color: var(--footer-text-soft);
+    font-size: 0.94rem;
+}
+
+.site-footer__close-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    border: 1px solid var(--footer-border);
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--footer-white);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform var(--footer-transition), background var(--footer-transition);
     flex-shrink: 0;
 }
 
-.footer-handle:active {
-    cursor: grabbing;
+.site-footer__close-btn:hover {
+    transform: rotate(90deg);
+    background: rgba(255, 255, 255, 0.14);
 }
 
-/* Контент футера */
-.footer-content {
-    flex: 1;
-    margin-top: 5vh;
+.site-footer__content {
+    flex: 1 1 auto;
     overflow-y: auto;
-    padding: 0 15px;
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+    scrollbar-color: rgba(255,255,255,0.28) transparent;
 }
 
-.footer-content::-webkit-scrollbar {
+.site-footer__content::-webkit-scrollbar {
     width: 6px;
 }
 
-.footer-content::-webkit-scrollbar-track {
-    background: transparent;
+.site-footer__content::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.28);
+    border-radius: 999px;
 }
 
-.footer-content::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 3px;
+.footer-card {
+    height: 100%;
+    padding: 1.25rem;
+    border-radius: 20px;
+    background: var(--footer-surface);
+    border: 1px solid var(--footer-border);
+    backdrop-filter: blur(10px);
 }
 
-.footer-content::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.4);
-}
-
-/* ===================== */
-/* ЗАГОЛОВКИ */
-/* ===================== */
 .footer-title {
-    color: var(--footer-text);
-    font-weight: 700;
-    font-size: 1.2rem;
     position: relative;
-    padding-bottom: 12px;
-    font-family: 'Montserrat', 'Segoe UI', sans-serif;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    font-weight: 800;
+    font-size: 1.15rem;
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.7rem;
 }
 
 .footer-title::after {
-    content: '';
+    content: "";
     position: absolute;
-    bottom: 0;
     left: 0;
-    width: 45px;
+    bottom: 0;
+    width: 48px;
     height: 3px;
-    background: linear-gradient(90deg, var(--footer-accent), rgba(255, 255, 255, 0.8));
-    border-radius: 2px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--footer-accent), rgba(255,255,255,0.85));
 }
 
 .footer-subtitle {
-    color: var(--footer-text);
-    font-weight: 600;
-    font-size: 1rem;
-    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-weight: 700;
+    color: var(--footer-white);
 }
 
-/* ===================== */
-/* ССЫЛКИ */
-/* ===================== */
 .footer-links {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
+.footer-links li + li {
+    margin-top: 0.6rem;
+}
+
 .footer-link {
     display: flex;
     align-items: center;
-    color: var(--footer-text-secondary);
+    gap: 0.8rem;
+    padding: 0.85rem 0.95rem;
+    border-radius: 14px;
     text-decoration: none;
-    padding: 10px 14px;
-    border-radius: 10px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border-left: 4px solid transparent;
-    font-weight: 500;
-    background: rgba(255, 255, 255, 0.05);
-    margin-bottom: 8px;
-    backdrop-filter: blur(5px);
-}
-
-.footer-link:hover {
-    color: var(--footer-text);
-    background: rgba(255, 255, 255, 0.1);
-    border-left-color: var(--footer-accent);
-    transform: translateX(8px);
-    text-decoration: none;
-    box-shadow: var(--shadow-sm);
+    color: var(--footer-text-soft);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid transparent;
+    transition: transform var(--footer-transition), background var(--footer-transition), color var(--footer-transition), border-color var(--footer-transition);
 }
 
 .footer-link i {
-    width: 20px;
+    width: 18px;
     text-align: center;
-    font-size: 1.1rem;
     color: var(--footer-accent);
 }
 
-/* Адрес */
-.footer-address .footer-link {
-    padding: 8px 12px;
-    background: transparent;
-    border-left: none;
+.footer-link:hover {
+    color: var(--footer-white);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255,255,255,0.12);
+    transform: translateX(4px);
+    text-decoration: none;
 }
 
-.footer-address .footer-link:hover {
-    background: rgba(255, 255, 255, 0.05);
-    transform: translateX(0);
+.footer-address-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+    padding: 1rem;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--footer-text-soft);
+    transition: background var(--footer-transition), transform var(--footer-transition);
 }
 
-.footer-address .footer-link p {
-    line-height: 1.6;
-    margin: 0;
+.footer-address-card:hover {
+    color: var(--footer-white);
+    background: rgba(255,255,255,0.1);
+    transform: translateY(-1px);
 }
 
-/* ===================== */
-/* КАРТА */
-/* ===================== */
+.footer-address-card__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--footer-accent);
+    flex-shrink: 0;
+}
+
+.footer-address-card__title {
+    font-weight: 700;
+    color: var(--footer-white);
+    margin-bottom: 0.25rem;
+}
+
 .footer-map {
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
     overflow: hidden;
-    border: 1px solid var(--footer-border);
-    backdrop-filter: blur(5px);
-    box-shadow: var(--shadow-sm);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 0 10px 24px rgba(2, 6, 23, 0.18);
 }
 
-.footer-map iframe {
-    border: none;
+.footer-contact-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
 }
 
-/* ===================== */
-/* СОЦИАЛЬНЫЕ КНОПКИ */
-/* ===================== */
+.footer-contact-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    text-decoration: none;
+    color: var(--footer-text-soft);
+    padding: 0.85rem 0.95rem;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.04);
+    transition: background var(--footer-transition), transform var(--footer-transition), color var(--footer-transition);
+}
+
+.footer-contact-item:hover {
+    color: var(--footer-white);
+    background: rgba(255,255,255,0.1);
+    transform: translateX(4px);
+}
+
+.footer-contact-item__icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.08);
+    color: var(--footer-accent);
+    flex-shrink: 0;
+}
+
+.footer-contact-item__text {
+    word-break: break-word;
+}
+
 .footer-social {
     display: flex;
+    flex-wrap: wrap;
     gap: 12px;
 }
 
 .footer-social-btn {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 44px;
-    height: 44px;
-    background: rgba(255, 255, 255, 0.12);
-    color: var(--footer-text);
-    border: 1px solid var(--footer-border);
-    border-radius: 50%;
     text-decoration: none;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    font-size: 1.2rem;
-    backdrop-filter: blur(10px);
+    color: var(--footer-white);
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.14);
+    transition: transform var(--footer-transition), background var(--footer-transition), color var(--footer-transition);
 }
 
 .footer-social-btn:hover {
+    transform: translateY(-3px);
     background: var(--footer-accent);
     color: var(--footer-primary);
-    transform: translateY(-3px) scale(1.1);
-    box-shadow: 0 5px 20px rgba(74, 222, 128, 0.4);
-    border-color: transparent;
 }
 
-/* ===================== */
-/* ЛОГОТИП В ФУТЕРЕ */
-/* ===================== */
-.footer-logo {
-    text-decoration: none;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    padding: 12px 16px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--footer-border);
-    max-width: 100%;
-    width: fit-content;
-}
-
-.footer-logo:hover {
-    transform: translateY(-3px);
-    background: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    border-color: rgba(255, 255, 255, 0.2);
-}
-
-/* Контейнер логотипа */
-.logo-container-wrapper {
-    width: 100%;
-}
-
-.logo-container {
-    display: flex;
-    align-items: center;
-    max-width: 100%;
-    flex-wrap: nowrap;
-}
-
-.logo-image {
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2)) brightness(0) invert(1);
-    flex-shrink: 0;
-    object-fit: contain;
-}
-
-.footer-logo:hover .logo-image {
-    transform: scale(1.1) rotate(5deg);
-}
-
-.logo-text-wrapper {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    flex: 1;
-    position: relative;
-}
-
-.logo-main {
-    font-family: 'Montserrat', 'Segoe UI', sans-serif;
-    font-weight: 800;
-    line-height: 1.1;
-    color: white;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    letter-spacing: 0.5px;
-    font-size: 1.2rem;
-}
-
-.logo-line-break {
-    display: block;
-}
-
-.logo-divider {
-    height: 2px;
-    width: 40px;
-    background: linear-gradient(90deg, var(--footer-accent), rgba(255, 255, 255, 0.8));
-    margin: 6px 0;
-    border-radius: 1px;
-    opacity: 0.8;
-}
-
-.logo-sub {
-    font-family: 'Montserrat', 'Segoe UI', sans-serif;
-    font-weight: 600;
-    color: var(--footer-accent) !important;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    opacity: 0.95;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-    font-size: 0.9rem;
-}
-
-/* ===================== */
-/* НИЖНЯЯ ЧАСТЬ ФУТЕРА */
-/* ===================== */
 .footer-bottom {
-    border-top: 1px solid var(--footer-border);
+    border-top: 1px solid rgba(255,255,255,0.12);
+}
+
+.footer-logo {
+    display: inline-block;
+    text-decoration: none;
+    color: inherit;
+    max-width: 100%;
+}
+
+.footer-logo__inner {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.9rem 1rem;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    max-width: 100%;
+}
+
+.footer-logo__image {
+    width: clamp(46px, 8vw, 64px);
+    height: auto;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+    flex-shrink: 0;
+}
+
+.footer-logo__text {
+    min-width: 0;
+}
+
+.footer-logo__main {
+    color: var(--footer-white);
+    font-weight: 800;
+    line-height: 1.12;
+    font-size: 1.05rem;
+    word-break: break-word;
+}
+
+.footer-logo__divider {
+    width: 40px;
+    height: 2px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--footer-accent), rgba(255,255,255,0.85));
+    margin: 0.45rem 0;
+}
+
+.footer-logo__sub {
+    color: var(--footer-accent);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.76rem;
 }
 
 .footer-copyright {
-    color: var(--footer-text-secondary);
-    font-size: 0.9rem;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--footer-text-soft);
+    font-size: 0.92rem;
 }
 
-/* ===================== */
-/* ОВЕРЛЕЙ */
-/* ===================== */
 .footer-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 997;
+    inset: 0;
+    z-index: 1063;
+    background: rgba(2, 6, 23, 0.48);
+    backdrop-filter: blur(3px);
     opacity: 0;
     visibility: hidden;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(3px);
+    transition: opacity var(--footer-transition), visibility var(--footer-transition);
 }
 
 .footer-overlay.active {
@@ -565,575 +609,175 @@
     visibility: visible;
 }
 
-/* ===================== */
-/* АДАПТИВНОСТЬ */
-/* ===================== */
-@media (max-width: 768px) {
-    #main-footer {
-        height: 80vh;
-        max-height: 80vh;
-        border-top-left-radius: 16px;
-        border-top-right-radius: 16px;
+@media (max-width: 767.98px) {
+    .site-footer__panel {
+        height: min(82vh, 760px);
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
     }
-    
-    .footer-toggle-btn {
-        width: 45px;
-        height: 45px;
-        bottom: 15px;
-        right: 15px;
-    }
-    
-    .footer-toggle-btn i {
-        font-size: 20px;
-    }
-    
-    .footer-social-btn {
-        width: 40px;
-        height: 40px;
-        font-size: 1.1rem;
-    }
-    
-    .footer-content {
-        padding: 0 10px;
-    }
-    
-    .footer-title {
-        font-size: 1.1rem;
-    }
-    
-    .logo-main {
-        font-size: 1.1rem;
-    }
-    
-    .logo-sub {
-        font-size: 0.85rem;
-    }
-    
-    .logo-image {
-        width: 60px;
-        height: 60px;
-    }
-}
 
-@media (max-width: 576px) {
-    #main-footer {
-        height: 75vh;
-        max-height: 75vh;
-    }
-    
     .footer-toggle-btn {
-        width: 42px;
-        height: 42px;
-        bottom: 12px;
         right: 12px;
+        bottom: calc(12px + env(safe-area-inset-bottom));
+        height: 48px;
+        padding: 0 14px 0 10px;
     }
-    
+
+    .footer-card {
+        padding: 1rem;
+        border-radius: 18px;
+    }
+
     .footer-social {
-        gap: 10px;
+        justify-content: center;
     }
-    
-    .footer-social-btn {
-        width: 38px;
-        height: 38px;
-        font-size: 1rem;
-    }
-    
-    .footer-link {
-        padding: 8px 12px;
-        font-size: 0.95rem;
-    }
-    
-    .logo-main {
-        font-size: 1rem;
-    }
-    
-    .logo-sub {
-        font-size: 0.8rem;
-        display: block;
-    }
-    
-    .logo-divider {
-        display: block;
-    }
-    
-    .logo-image {
-        width: 50px;
-        height: 50px;
-    }
-    
-    .footer-copyright {
-        font-size: 0.8rem;
-    }
-}
 
-@media (max-width: 425px) {
-    #main-footer {
-        height: 70vh;
-        max-height: 70vh;
+    .footer-bottom .row {
+        text-align: center;
     }
-    
-    .footer-toggle-btn {
-        width: 40px;
-        height: 40px;
-        bottom: 10px;
-        right: 10px;
-    }
-    
-    .footer-social-btn {
-        width: 36px;
-        height: 36px;
-    }
-    
-    .logo-main {
-        font-size: 0.9rem;
-    }
-    
-    .logo-sub {
-        font-size: 0.75rem;
-    }
-    
-    .logo-image {
-        width: 45px;
-        height: 45px;
-        margin-right: 10px !important;
-    }
-    
+
     .footer-logo {
-        padding: 8px 12px;
+        display: flex;
+        justify-content: center;
     }
 }
 
-@media (max-width: 375px) {
-    .logo-main {
-        font-size: 0.85rem;
+@media (max-width: 480px) {
+    .site-footer__panel {
+        height: min(78vh, 700px);
     }
-    
-    .logo-sub {
-        font-size: 0.7rem;
+
+    .footer-toggle-btn {
+        width: 48px;
+        padding: 0;
+        justify-content: center;
+        border-radius: 14px;
     }
-    
-    .logo-divider {
-        height: 1.5px;
-        width: 30px;
-        margin: 4px 0;
+
+    .footer-toggle-btn__text {
+        display: none !important;
     }
-    
-    .footer-link {
-        padding: 6px 10px;
-    }
-    
+
     .footer-title {
-        font-size: 1rem;
+        font-size: 1.05rem;
     }
-}
 
-@media (max-width: 320px) {
-    .logo-main br.logo-line-break {
-        display: none;
+    .footer-logo__main {
+        font-size: 0.92rem;
     }
-    
-    .logo-main {
-        white-space: normal;
-        line-height: 1.2;
-        max-height: 2.4em;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-    }
-    
-    .logo-sub {
-        display: none;
-    }
-    
-    .logo-divider {
-        display: none;
-    }
-    
-    .logo-image {
-        width: 40px;
-        height: 40px;
-    }
-}
 
-/* Плавные переходы */
-.logo-main,
-.logo-sub,
-.logo-image,
-.logo-container,
-.footer-link,
-.footer-social-btn,
-.footer-toggle-btn {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Анимация появления футера */
-@keyframes slideUpFooter {
-    from {
-        transform: translateY(100%);
-    }
-    to {
-        transform: translateY(0);
-    }
-}
-
-#main-footer.active {
-    animation: slideUpFooter 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-/* Для темной темы */
-@media (prefers-color-scheme: dark) {
-    :root {
-        --footer-primary: #001a3d;
-        --footer-secondary: #002d5c;
+    .footer-logo__sub {
+        font-size: 0.68rem;
     }
 }
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const footer = document.getElementById('main-footer');
+    const footerPanel = footer ? footer.querySelector('.site-footer__panel') : null;
     const toggleBtn = document.getElementById('footer-toggle-btn');
+    const closeBtn = document.getElementById('footer-close-btn');
     const overlay = document.getElementById('footerOverlay');
-    const icon = toggleBtn.querySelector('i');
-    const footerHandle = footer.querySelector('.footer-handle');
-    
-    let isFooterOpen = false;
-    let isAnimating = false;
-    let touchStartY = 0;
-    let footerStartY = 0;
+    const grabber = footer ? footer.querySelector('.site-footer__grabber') : null;
+
+    if (!footer || !footerPanel || !toggleBtn || !overlay) return;
+
+    let isOpen = false;
+    let startY = 0;
+    let currentY = 0;
     let isDragging = false;
-    
-    // Сохраненное состояние
-    const savedState = localStorage.getItem('footerActive');
-    if (savedState === 'true') {
-        setTimeout(openFooter, 100);
+
+    function syncState() {
+        footer.classList.toggle('is-open', isOpen);
+        overlay.classList.toggle('active', isOpen);
+        toggleBtn.classList.toggle('is-open', isOpen);
+        toggleBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        toggleBtn.setAttribute('aria-label', isOpen ? '{% trans "Close footer" %}' : '{% trans "Open footer" %}');
+        footer.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+        document.body.style.overflow = isOpen ? 'hidden' : '';
     }
-    
-    // Функция открытия футера
+
     function openFooter() {
-        if (isAnimating || isFooterOpen) return;
-        
-        isAnimating = true;
-        isFooterOpen = true;
-        
-        // Показываем элементы
-        footer.classList.add('active');
-        overlay.classList.add('active');
-        toggleBtn.classList.add('active');
-        
-        // Блокируем скролл страницы
-        document.body.style.overflow = 'hidden';
-        
-        // Сохраняем состояние
-        localStorage.setItem('footerActive', 'true');
-        
-        // Сбрасываем флаг анимации
-        setTimeout(() => {
-            isAnimating = false;
-        }, 400);
+        if (isOpen) return;
+        isOpen = true;
+        footerPanel.style.transform = '';
+        syncState();
     }
-    
-    // Функция закрытия футера
+
     function closeFooter() {
-        if (isAnimating || !isFooterOpen) return;
-        
-        isAnimating = true;
-        isFooterOpen = false;
-        
-        // Скрываем элементы
-        footer.classList.remove('active');
-        overlay.classList.remove('active');
-        toggleBtn.classList.remove('active');
-        
-        // Разблокируем скролл страницы
-        document.body.style.overflow = '';
-        
-        // Сохраняем состояние
-        localStorage.setItem('footerActive', 'false');
-        
-        // Сбрасываем флаг анимации
-        setTimeout(() => {
-            isAnimating = false;
-        }, 400);
+        if (!isOpen) return;
+        isOpen = false;
+        footerPanel.style.transform = '';
+        syncState();
     }
-    
-    // Функция переключения футера
+
     function toggleFooter() {
-        if (isFooterOpen) {
+        if (isOpen) {
             closeFooter();
         } else {
             openFooter();
         }
     }
-    
-    // Обработчики событий
-    toggleBtn.addEventListener('click', function(e) {
+
+    toggleBtn.addEventListener('click', function (e) {
         e.preventDefault();
-        e.stopPropagation();
         toggleFooter();
     });
-    
-    overlay.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        if (isFooterOpen) {
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function (e) {
+            e.preventDefault();
             closeFooter();
-        }
-    });
-    
-    // Закрытие по клавише Escape
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && isFooterOpen) {
-            closeFooter();
-        }
-    });
-    
-    // Свайп для закрытия
-    footerHandle.addEventListener('touchstart', function(e) {
-        if (!isFooterOpen || isAnimating) return;
-        
-        isDragging = true;
-        touchStartY = e.touches[0].clientY;
-        footerStartY = footer.getBoundingClientRect().top;
-        e.preventDefault();
-    });
-    
-    footerHandle.addEventListener('touchmove', function(e) {
-        if (!isDragging) return;
-        
-        const currentY = e.touches[0].clientY;
-        const deltaY = currentY - touchStartY;
-        
-        // Если свайпаем вниз
-        if (deltaY > 0) {
-            const newTop = Math.min(footerStartY + deltaY, window.innerHeight);
-            footer.style.transform = `translateY(${deltaY}px)`;
-            
-            // Затемняем оверлей пропорционально
-            const progress = 1 - (deltaY / 300);
-            overlay.style.opacity = Math.max(0, Math.min(1, progress));
-        }
-        
-        e.preventDefault();
-    });
-    
-    footerHandle.addEventListener('touchend', function(e) {
-        if (!isDragging) return;
-        
-        isDragging = false;
-        const endY = e.changedTouches[0].clientY;
-        const deltaY = endY - touchStartY;
-        
-        // Если свайп был достаточно большим - закрываем
-        if (deltaY > 100) {
-            closeFooter();
-        } else {
-            // Иначе возвращаем на место
-            footer.style.transform = 'translateY(0)';
-            footer.style.transition = 'transform 0.3s ease';
-            
-            // Возвращаем прозрачность оверлея
-            overlay.style.opacity = '1';
-            overlay.style.transition = 'opacity 0.3s ease';
-            
-            // Убираем transition после анимации
-            setTimeout(() => {
-                footer.style.transition = '';
-                overlay.style.transition = '';
-            }, 300);
-        }
-        
-        e.preventDefault();
-    });
-    
-    // Закрытие при клике на ссылку (опционально)
-    const footerLinks = footer.querySelectorAll('.footer-link');
-    footerLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            // Если это ссылка на внешний ресурс или якорь, закрываем футер
-            if (this.href.includes('://') || this.getAttribute('href').startsWith('#')) {
-                setTimeout(() => {
-                    if (isFooterOpen) {
-                        closeFooter();
-                    }
-                }, 300);
-            }
         });
+    }
+
+    overlay.addEventListener('click', function () {
+        closeFooter();
     });
-    
-    // Анимация наклона при наведении
-    toggleBtn.addEventListener('mouseenter', function() {
-        if (!isFooterOpen) {
-            icon.style.transform = 'rotate(-20deg) scale(1.1)';
-        } else {
-            icon.style.transform = 'rotate(200deg) scale(1.1)';
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && isOpen) {
+            closeFooter();
         }
     });
-    
-    toggleBtn.addEventListener('mouseleave', function() {
-        if (!isFooterOpen) {
-            icon.style.transform = 'rotate(-35deg) scale(1)';
+
+    function onTouchStart(e) {
+        if (!isOpen) return;
+        isDragging = true;
+        startY = e.touches[0].clientY;
+        currentY = startY;
+        footerPanel.style.transition = 'none';
+    }
+
+    function onTouchMove(e) {
+        if (!isDragging) return;
+        currentY = e.touches[0].clientY;
+        const delta = Math.max(0, currentY - startY);
+
+        footerPanel.style.transform = `translateY(${delta}px)`;
+        overlay.style.opacity = String(Math.max(0, 1 - delta / 260));
+    }
+
+    function onTouchEnd() {
+        if (!isDragging) return;
+        const delta = Math.max(0, currentY - startY);
+        isDragging = false;
+
+        footerPanel.style.transition = '';
+        overlay.style.opacity = '';
+
+        if (delta > 110) {
+            closeFooter();
         } else {
-            icon.style.transform = 'rotate(180deg) scale(1)';
-        }
-    });
-    
-    // Эффект нажатия для мобильных
-    toggleBtn.addEventListener('touchstart', function(e) {
-        this.style.transform = 'scale(0.95)';
-    }, { passive: true });
-    
-    toggleBtn.addEventListener('touchend', function(e) {
-        this.style.transform = '';
-    }, { passive: true });
-    
-    // Функция для динамической адаптации логотипа в футере
-    function adaptFooterLogoForScreen() {
-        const screenWidth = window.innerWidth;
-        const logoMain = footer.querySelector('.logo-main');
-        const logoSub = footer.querySelector('.logo-sub');
-        const logoDivider = footer.querySelector('.logo-divider');
-        const logoImage = footer.querySelector('.logo-image');
-        
-        if (!logoMain) return;
-        
-        if (screenWidth <= 320) {
-            if (logoSub) logoSub.style.display = 'none';
-            if (logoDivider) logoDivider.style.display = 'none';
-            if (logoImage) {
-                logoImage.style.width = '40px';
-                logoImage.style.height = '40px';
-            }
-        } else if (screenWidth <= 375) {
-            if (logoSub) logoSub.style.display = 'block';
-            if (logoDivider) logoDivider.style.display = 'block';
-            if (logoImage) {
-                logoImage.style.width = '45px';
-                logoImage.style.height = '45px';
-            }
-        } else if (screenWidth <= 425) {
-            if (logoSub) logoSub.style.display = 'block';
-            if (logoDivider) logoDivider.style.display = 'block';
-            if (logoImage) {
-                logoImage.style.width = '50px';
-                logoImage.style.height = '50px';
-            }
-        }
-        
-        // На мобильных делаем текст многострочным
-        if (screenWidth <= 576) {
-            if (screenWidth <= 320) {
-                logoMain.style.whiteSpace = 'normal';
-                logoMain.style.lineHeight = '1.2';
-                logoMain.style.maxHeight = '2.4em';
-                logoMain.style.overflow = 'hidden';
-                logoMain.style.textOverflow = 'ellipsis';
-                logoMain.style.display = '-webkit-box';
-                logoMain.style.webkitLineClamp = '2';
-                logoMain.style.webkitBoxOrient = 'vertical';
-            }
-        } else {
-            // На десктопах возвращаем однострочное отображение
-            logoMain.style.whiteSpace = 'normal';
-            logoMain.style.lineHeight = '1.1';
-            logoMain.style.maxHeight = 'none';
-            logoMain.style.overflow = 'visible';
-            logoMain.style.textOverflow = 'clip';
-            logoMain.style.display = 'block';
-            logoMain.style.webkitLineClamp = 'none';
+            footerPanel.style.transform = '';
         }
     }
-    
-    // Вызываем при загрузке и изменении размера
-    adaptFooterLogoForScreen();
-    window.addEventListener('resize', adaptFooterLogoForScreen);
-    window.addEventListener('orientationchange', adaptFooterLogoForScreen);
+
+    if (grabber) {
+        grabber.addEventListener('touchstart', onTouchStart, { passive: true });
+        grabber.addEventListener('touchmove', onTouchMove, { passive: true });
+        grabber.addEventListener('touchend', onTouchEnd, { passive: true });
+    }
 });
 </script>
-
-<style>
-/* Symmetry + small screen fixes for footer */
-@media (max-width: 767px) {
-    .footer-social {
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-
-    .footer-bottom .row {
-        text-align: center;
-        justify-content: center;
-        row-gap: 12px;
-    }
-
-    .footer-logo {
-        margin-left: auto;
-        margin-right: auto;
-        text-align: center;
-    }
-
-    .footer-logo .logo-container {
-        justify-content: center;
-    }
-}
-
-@media (max-width: 425px) {
-    .footer-content {
-        padding-left: 10px;
-        padding-right: 10px;
-    }
-
-    .footer-link {
-        justify-content: center;
-        text-align: center;
-    }
-
-    .footer-address .footer-link {
-        justify-content: flex-start;
-        text-align: left;
-    }
-}
-
-@media (max-width: 576px) {
-    .footer-toggle-btn {
-        bottom: calc(28px + env(safe-area-inset-bottom));
-        right: 12px;
-    }
-}
-
-/* Logo stability on small screens */
-#main-footer .logo-container {
-    flex-wrap: nowrap;
-    gap: 8px;
-}
-
-#main-footer .logo-image {
-    width: clamp(36px, 12vw, 55px);
-    height: auto;
-    max-height: 55px;
-    object-fit: contain;
-    flex-shrink: 0;
-}
-
-#main-footer .logo-text-wrapper {
-    min-width: 0;
-    max-width: 100%;
-}
-
-#main-footer .logo-main {
-    word-break: break-word;
-    hyphens: auto;
-}
-
-@media (max-width: 480px) {
-    #main-footer .logo-main {
-        font-size: 0.85rem;
-        line-height: 1.15;
-    }
-
-    #main-footer .logo-sub {
-        font-size: 0.7rem;
-    }
-}
-</style>

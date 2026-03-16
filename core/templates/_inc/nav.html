@@ -1,1009 +1,1142 @@
 {% load static %}
 {% load i18n %}
+{% get_current_language as CURRENT_LANG %}
 
-<!-- Верхняя часть хэдэра -->
-<div class="header-top d-none d-md-block">
-    <div class="container-fluid px-4">
-        <div class="row align-items-center">
+<div class="site-header-shell">
+    <!-- Top bar -->
+    <div class="site-header-top d-none d-md-block">
+        <div class="container-fluid px-4">
+            <div class="row align-items-center gy-2">
+                <div class="col-md-6">
+                    <div class="site-topbar-links d-flex align-items-center justify-content-center justify-content-md-start">
+                        <a href="tel:+998553050009" class="site-topbar-link me-4">
+                            <i class="fas fa-phone-alt me-2"></i>
+                            <span>+998 55 305-00-09</span>
+                        </a>
+                        <a href="mailto:info@oxucareer.uz" class="site-topbar-link">
+                            <i class="fas fa-envelope me-2"></i>
+                            <span>info@oxucareer.uz</span>
+                        </a>
+                    </div>
+                </div>
 
-            <div class="col-md-6">
-                <div class="contact-info d-flex align-items-center justify-content-center justify-content-md-start">
-                    <a href="tel:+998553050009" class="me-4 text-light"><i class="fas fa-phone me-1"></i> +998 55 305-00-09</a>
-                    <a href="mailto:info@oxucareer.uz" class="text-light"><i class="fas fa-envelope me-1"></i>info@oxucareer.uz</a>
+                <div class="col-md-6">
+                    <div class="site-topbar-social d-flex align-items-center justify-content-center justify-content-md-end">
+                        <a href="https://t.me/OXU_KARYERA" class="site-social-btn me-2" aria-label="Telegram">
+                            <i class="fab fa-telegram-plane"></i>
+                        </a>
+                        <a href="https://www.instagram.com/oxu_uz?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="site-social-btn" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
-
-            <div class="col-md-6">
-                <div class="social-links d-flex align-items-center justify-content-center justify-content-md-end">
-                    <a style="font-size: 2vh;" href="https://t.me/OXU_KARYERA" class="me-4 text-light"><i class="fab fa-telegram"></i></a>
-                    <a style="font-size: 2vh;" href="https://www.instagram.com/oxu_uz?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="me-4 text-light"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-
         </div>
     </div>
-</div>
 
-<!-- Средняя часть хэдэра -->
-<div class="header-middle">
-    <div class="container-fluid px-4">
-        <div class="header-middle-container">
-            <!-- Левая часть - кнопка меню -->
-            <div class="header-left">
-                <button class="sidebar-toggle-btn" id="sidebarToggleBtn">
-                    <span class="toggle-icon">
+    <!-- Main header -->
+    <header class="site-header-main">
+        <div class="container-fluid px-3 px-lg-4">
+            <div class="site-header-main__inner">
+
+                <!-- Left -->
+                <div class="site-header-main__left">
+                    <button class="site-menu-btn" id="sidebarToggleBtn" type="button" aria-label="{% trans 'Open menu' %}">
                         <i class="fas fa-bars"></i>
-                    </span>
-                </button>
-            </div>
-            
-            <!-- Центральная часть - логотип -->
-            <div class="header">
-                <div class="logo-container-wrapper">
-                    <a href="/" class="d-flex align-items text-decoration-none logo-container" style="width: 50vh;">
-                        <img src="{% static 'img/logo1.png' %}" alt="{% trans 'Logo' %}" class="me-3 logo-image">
-                        <div class="logo-text-wrapper">
-                            {% get_current_language as CURRENT_LANG %}
+                    </button>
+                </div>
+
+                <!-- Center -->
+                <div class="site-header-main__center">
+                    <a href="/" class="site-brand text-decoration-none">
+                        <img src="{% static 'img/logo1.png' %}" alt="{% trans 'Logo' %}" class="site-brand__logo">
+
+                        <div class="site-brand__text">
                             {% if CURRENT_LANG == 'uz' %}
-                                <div class="logo-main">{% trans 'Osiyo Xalqaro Universiteti' %}</div>
-                                <div class="logo-sub">{% trans 'Karyera markazi' %}</div>
+                                <div class="site-brand__title">{% trans 'Osiyo Xalqaro Universiteti' %}</div>
+                                <div class="site-brand__subtitle">{% trans 'Karyera markazi' %}</div>
                             {% elif CURRENT_LANG == 'ru' %}
-                                <div class="logo-main">{% trans 'Азиатский Международный Университет' %}</div>
-                                <div class="logo-sub">{% trans 'Центр карьеры' %}</div>
+                                <div class="site-brand__title">{% trans 'Азиатский Международный Университет' %}</div>
+                                <div class="site-brand__subtitle">{% trans 'Центр карьеры' %}</div>
                             {% else %}
-                                <div class="logo-main">{% trans 'Asia International University' %}</div>
-                                <div class="logo-sub">{% trans 'Career center' %}</div>
+                                <div class="site-brand__title">{% trans 'Asia International University' %}</div>
+                                <div class="site-brand__subtitle">{% trans 'Career center' %}</div>
                             {% endif %}
                         </div>
                     </a>
                 </div>
-            </div>
-            
-            <!-- Правая часть - элементы управления -->
-            <div class="header-right">
-                <div class="d-flex align-items-center justify-content-end">
-                    <!-- Языковой селектор (скрывается на мобильных) -->
-                    <div class="language-selector me-3 desktop-language d-none d-md-block">
-                        <form action="{% url 'set_language' %}" method="post" class="d-inline">
-                            {% csrf_token %}
-                            <input name="next" type="hidden" value="{{ request.get_full_path }}">
-                            
-                            {% get_current_language as CURRENT_LANG %}
-                            
-                            <div class="dropdown">
-                                <button class="btn btn-language dropdown-toggle d-flex align-items-center" type="button" 
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                    {% if CURRENT_LANG == 'en' %}
-                                    <img width="20" src="{% static 'img/uk.png' %}" alt="{% trans 'EN' %}" class="me-2">
-                                    <span>{% trans 'EN' %}</span>
-                                    {% elif CURRENT_LANG == 'uz' %}
-                                    <img width="20" src="{% static 'img/uzb.png' %}" alt="{% trans 'UZ' %}" class="me-2">
-                                    <span>{% trans 'UZ' %}</span>
-                                    {% elif CURRENT_LANG == 'ru' %}
-                                    <img width="20" src="{% static 'img/ru.png' %}" alt="{% trans 'RU' %}" class="me-2">
-                                    <span>{% trans 'RU' %}</span>
-                                    {% endif %}
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end language-dropdown">
-                                    <li>
-                                        <button type="submit" name="language" value="en" 
-                                                class="dropdown-item d-flex align-items-center {% if CURRENT_LANG == 'en' %}active{% endif %}">
-                                            <img width="20" src="{% static 'img/uk.png' %}" alt="{% trans 'EN' %}" class="me-2">
-                                            <span class="flex-grow-1">{% trans 'English' %}</span>
-                                            {% if CURRENT_LANG == 'en' %}<i class="fas fa-check ms-2"></i>{% endif %}
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <button type="submit" name="language" value="uz" 
-                                                class="dropdown-item d-flex align-items-center {% if CURRENT_LANG == 'uz' %}active{% endif %}">
-                                            <img width="20" src="{% static 'img/uzb.png' %}" alt="{% trans 'UZ' %}" class="me-2">
-                                            <span class="flex-grow-1">{% trans 'Uzbek' %}</span>
-                                            {% if CURRENT_LANG == 'uz' %}<i class="fas fa-check ms-2"></i>{% endif %}
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <button type="submit" name="language" value="ru" 
-                                                class="dropdown-item d-flex align-items-center {% if CURRENT_LANG == 'ru' %}active{% endif %}">
-                                            <img width="20" src="{% static 'img/ru.png' %}" alt="{% trans 'RU' %}" class="me-2">
-                                            <span class="flex-grow-1">{% trans 'Russian' %}</span>
-                                            {% if CURRENT_LANG == 'ru' %}<i class="fas fa-check ms-2"></i>{% endif %}
-                                        </button>
-                                    </li>
-                                </ul>
-                            </div>
-                        </form>
-                    </div>
-                    
-                    <!-- Кнопки входа/профиля (скрываются на мобильных) -->
-                    <div class="auth-section d-none d-md-block">
-                        {% if user.is_authenticated %}
-                            <!-- Уведомления -->
-                            <div class="dropdown me-3 d-inline-block">
-                                <button id="notificationsDropdown" class="btn btn-notification position-relative" type="button" 
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-bell"></i>
-                                    {% if unread_notifications_count > 0 %}
-                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                        {{ unread_notifications_count }}
-                                        <span class="visually-hidden">{% trans 'unread notifications' %}</span>
-                                    </span>
-                                    {% endif %}
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end p-0" aria-labelledby="notificationsDropdown" style="width: 350px;">
-                                    <li>
-                                        <div class="p-3 border-bottom">
-                                            <h6 class="mb-0 fw-bold">{% trans "Notifications" %}</h6>
-                                            <small class="text-muted">
-                                                {% if unread_notifications_count > 0 %}
-                                                    {{ unread_notifications_count }} {% trans "unread" %}
-                                                {% else %}
-                                                    {% trans "No new notifications" %}
-                                                {% endif %}
-                                            </small>
-                                        </div>
-                                    </li>
-                                    
-                                    <li>
-                                        <div class="notification-list" style="max-height: 300px; overflow-y: auto;">
-                                            {% for notification in recent_notifications %}
-                                            <a href="{% if notification.related_url %}{% url 'accounts:mark_notification_read' notification.id %}?next={{ notification.related_url|urlencode }}{% else %}{% url 'accounts:mark_notification_read' notification.id %}?next={{ request.get_full_path|urlencode }}{% endif %}" 
-                                               class="dropdown-item p-3 border-bottom notification-item {% if not notification.is_read %}bg-light{% endif %}"
-                                               data-notification-id="{{ notification.id }}">
-                                                <div class="d-flex align-items-start">
-                                                    <div class="me-3">
-                                                        {% if notification.notification_type == 'success' %}
-                                                        <i class="fas fa-check-circle text-success"></i>
-                                                        {% elif notification.notification_type == 'error' %}
-                                                        <i class="fas fa-exclamation-circle text-danger"></i>
-                                                        {% elif notification.notification_type == 'warning' %}
-                                                        <i class="fas fa-exclamation-triangle text-warning"></i>
-                                                        {% elif notification.notification_type == 'job_application' %}
-                                                        <i class="fas fa-briefcase text-primary"></i>
-                                                        {% elif notification.notification_type == 'job_status' %}
-                                                        <i class="fas fa-file-alt text-info"></i>
+
+                <!-- Right -->
+                <div class="site-header-main__right">
+                    <div class="d-flex align-items-center justify-content-end">
+
+                        <!-- Language selector desktop -->
+                        <div class="me-2 me-lg-3 d-none d-md-block">
+                            <form action="{% url 'set_language' %}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input name="next" type="hidden" value="{{ request.get_full_path }}">
+
+                                <div class="dropdown">
+                                    <button class="site-control-btn site-control-btn--ghost dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        {% if CURRENT_LANG == 'en' %}
+                                            <img width="18" src="{% static 'img/uk.png' %}" alt="{% trans 'EN' %}" class="me-2 rounded-circle">
+                                            <span>EN</span>
+                                        {% elif CURRENT_LANG == 'uz' %}
+                                            <img width="18" src="{% static 'img/uzb.png' %}" alt="{% trans 'UZ' %}" class="me-2 rounded-circle">
+                                            <span>UZ</span>
+                                        {% elif CURRENT_LANG == 'ru' %}
+                                            <img width="18" src="{% static 'img/ru.png' %}" alt="{% trans 'RU' %}" class="me-2 rounded-circle">
+                                            <span>RU</span>
+                                        {% endif %}
+                                    </button>
+
+                                    <ul class="dropdown-menu dropdown-menu-end site-dropdown-menu site-language-menu">
+                                        <li>
+                                            <button type="submit" name="language" value="en" class="dropdown-item site-dropdown-item {% if CURRENT_LANG == 'en' %}active{% endif %}">
+                                                <img width="20" src="{% static 'img/uk.png' %}" alt="{% trans 'EN' %}" class="me-2 rounded-circle">
+                                                <span class="flex-grow-1">{% trans 'English' %}</span>
+                                                {% if CURRENT_LANG == 'en' %}<i class="fas fa-check ms-2"></i>{% endif %}
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button type="submit" name="language" value="uz" class="dropdown-item site-dropdown-item {% if CURRENT_LANG == 'uz' %}active{% endif %}">
+                                                <img width="20" src="{% static 'img/uzb.png' %}" alt="{% trans 'UZ' %}" class="me-2 rounded-circle">
+                                                <span class="flex-grow-1">{% trans 'Uzbek' %}</span>
+                                                {% if CURRENT_LANG == 'uz' %}<i class="fas fa-check ms-2"></i>{% endif %}
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button type="submit" name="language" value="ru" class="dropdown-item site-dropdown-item {% if CURRENT_LANG == 'ru' %}active{% endif %}">
+                                                <img width="20" src="{% static 'img/ru.png' %}" alt="{% trans 'RU' %}" class="me-2 rounded-circle">
+                                                <span class="flex-grow-1">{% trans 'Russian' %}</span>
+                                                {% if CURRENT_LANG == 'ru' %}<i class="fas fa-check ms-2"></i>{% endif %}
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Auth / profile desktop -->
+                        <div class="d-none d-md-flex align-items-center">
+                            {% if user.is_authenticated %}
+
+                                <!-- Notifications -->
+                                <div class="dropdown me-2 me-lg-3">
+                                    <button id="notificationsDropdown"
+                                            class="site-control-btn site-control-btn--ghost position-relative"
+                                            type="button"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false"
+                                            aria-label="{% trans 'Notifications' %}">
+                                        <i class="fas fa-bell"></i>
+                                        {% if unread_notifications_count > 0 %}
+                                        <span class="site-badge-counter">
+                                            {{ unread_notifications_count }}
+                                            <span class="visually-hidden">{% trans 'unread notifications' %}</span>
+                                        </span>
+                                        {% endif %}
+                                    </button>
+
+                                    <ul class="dropdown-menu dropdown-menu-end site-dropdown-menu site-notifications-menu" aria-labelledby="notificationsDropdown">
+                                        <li class="site-dropdown-head">
+                                            <div class="d-flex justify-content-between align-items-start gap-3">
+                                                <div>
+                                                    <h6 class="mb-1 fw-bold">{% trans "Notifications" %}</h6>
+                                                    <small class="text-muted">
+                                                        {% if unread_notifications_count > 0 %}
+                                                            {{ unread_notifications_count }} {% trans "unread" %}
                                                         {% else %}
-                                                        <i class="fas fa-info-circle text-secondary"></i>
+                                                            {% trans "No new notifications" %}
+                                                        {% endif %}
+                                                    </small>
+                                                </div>
+                                                <i class="fas fa-bell text-primary opacity-75"></i>
+                                            </div>
+                                        </li>
+
+                                        <li>
+                                            <div class="site-notification-list">
+                                                {% for notification in recent_notifications %}
+                                                <a href="{% if notification.related_url %}{% url 'accounts:mark_notification_read' notification.id %}?next={{ notification.related_url|urlencode }}{% else %}{% url 'accounts:mark_notification_read' notification.id %}?next={{ request.get_full_path|urlencode }}{% endif %}"
+                                                   class="dropdown-item site-notification-item {% if not notification.is_read %}is-unread{% endif %}"
+                                                   data-notification-id="{{ notification.id }}">
+                                                    <div class="site-notification-item__icon">
+                                                        {% if notification.notification_type == 'success' %}
+                                                            <i class="fas fa-check-circle text-success"></i>
+                                                        {% elif notification.notification_type == 'error' %}
+                                                            <i class="fas fa-exclamation-circle text-danger"></i>
+                                                        {% elif notification.notification_type == 'warning' %}
+                                                            <i class="fas fa-exclamation-triangle text-warning"></i>
+                                                        {% elif notification.notification_type == 'job_application' %}
+                                                            <i class="fas fa-briefcase text-primary"></i>
+                                                        {% elif notification.notification_type == 'job_status' %}
+                                                            <i class="fas fa-file-alt text-info"></i>
+                                                        {% else %}
+                                                            <i class="fas fa-info-circle text-secondary"></i>
                                                         {% endif %}
                                                     </div>
-                                                    <div class="flex-grow-1">
-                                                        <h6 class="mb-1 fw-bold">{{ notification.title }}</h6>
-                                                        <p class="mb-1 small text-muted">{{ notification.message|truncatechars:100 }}</p>
+
+                                                    <div class="site-notification-item__content">
+                                                        <div class="fw-bold mb-1">{{ notification.title }}</div>
+                                                        <div class="small text-muted mb-1">{{ notification.message|truncatechars:100 }}</div>
                                                         <small class="text-muted">{{ notification.created_at|timesince }} {% trans "ago" %}</small>
                                                     </div>
+
                                                     {% if not notification.is_read %}
-                                                    <div class="ms-2">
-                                                        <span class="badge bg-primary rounded-pill">{% trans "New" %}</span>
+                                                    <div class="site-notification-item__new">
+                                                        <span class="badge rounded-pill text-bg-primary">{% trans "New" %}</span>
                                                     </div>
                                                     {% endif %}
+                                                </a>
+                                                {% empty %}
+                                                <div class="site-empty-state">
+                                                    <i class="fas fa-bell-slash mb-2"></i>
+                                                    <p class="mb-0 text-muted">{% trans "No notifications yet" %}</p>
                                                 </div>
-                                            </a>
-                                            {% empty %}
-                                            <div class="p-3 text-center">
-                                                <i class="fas fa-bell-slash fa-2x text-muted mb-2"></i>
-                                                <p class="mb-0 text-muted">{% trans "No notifications yet" %}</p>
+                                                {% endfor %}
                                             </div>
-                                            {% endfor %}
-                                        </div>
-                                    </li>
-                                    
-                                    <li>
-                                        <div class="p-2 border-top">
+                                        </li>
+
+                                        <li class="site-dropdown-foot">
                                             <a href="{% url 'accounts:notifications' %}" class="btn btn-sm btn-outline-primary w-100">
-                                                <i class="fas fa-list me-1"></i> {% trans "View All" %}
+                                                <i class="fas fa-list me-1"></i>{% trans "View All" %}
                                             </a>
                                             {% if unread_notifications_count > 0 %}
                                             <a href="{% url 'accounts:mark_all_notifications_read' %}?next={{ request.get_full_path|urlencode }}" class="btn btn-sm btn-outline-success w-100 mt-2">
-                                                <i class="fas fa-check-double me-1"></i> {% trans "Mark All as Read" %}
+                                                <i class="fas fa-check-double me-1"></i>{% trans "Mark All as Read" %}
                                             </a>
                                             {% endif %}
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                            
-                            <!-- Профиль пользователя -->
-                            <div class="dropdown d-inline-block">
-                                <button class="btn btn-user dropdown-toggle d-flex align-items-center" type="button" 
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-user me-2"></i>
-                                    <span class="user-text">{{ user.get_full_name|default:user.username|truncatechars:12 }}</span>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    {% if user.is_student %}
-                                    <li>
-                                        <a class="dropdown-item d-flex align-items-center" href="{% url 'accounts:student_dashboard' %}">
-                                            <i class="fas fa-tachometer-alt me-2"></i>
-                                            <span>{% trans "Personal Cabinet" %}</span>
-                                        </a>
-                                    </li>
-                                    {% elif user.is_employer %}
-                                    <li>
-                                        <a class="dropdown-item d-flex align-items-center" href="{% url 'accounts:employer_dashboard' %}">
-                                            <i class="fas fa-building me-2"></i>
-                                            <span>{% trans "Company Cabinet" %}</span>
-                                        </a>
-                                    </li>
-                                    {% elif user.is_admin or user.is_main_admin %}
-                                    <li>
-                                        <a class="dropdown-item d-flex align-items-center" href="{% url 'accounts:admin_dashboard' %}">
-                                            <i class="fas fa-cogs me-2"></i>
-                                            <span>{% trans "Admin Panel" %}</span>
-                                        </a>
-                                    </li>
-                                    {% endif %}
-                                    
-                                    <li>
-                                        <a class="dropdown-item d-flex align-items-center" href="{% url 'accounts:profile_view' %}">
-                                            <i class="fas fa-user-edit me-2"></i>
-                                            <span>{% trans "Profile" %}</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item d-flex align-items-center" href="{% url 'accounts:notifications' %}">
-                                            <i class="fas fa-bell me-2"></i>
-                                            <span class="flex-grow-1">{% trans "Notifications" %}</span>
-                                            {% if unread_notifications_count > 0 %}
-                                            <span class="badge bg-danger">{{ unread_notifications_count }}</span>
-                                            {% endif %}
-                                        </a>
-                                    </li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li>
-                                        <a class="dropdown-item d-flex align-items-center text-danger" href="{% url 'accounts:logout' %}">
-                                            <i class="fas fa-sign-out-alt me-2"></i>
-                                            <span>{% trans "Logout" %}</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        {% else %}
-                            <div class="dropdown d-inline-block">
-                                <button class="btn btn-login dropdown-toggle d-flex align-items-center" type="button" 
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-sign-in-alt me-2"></i>
-                                    <span class="login-text">{% trans "Login" %}</span>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end p-3">
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'accounts:oauth_login' %}">
-                                            <div class="d-flex align-items-center">
-                                                <i class="fas fa-graduation-cap text-success me-2"></i>
-                                                <div>
-                                                    <div class="fw-bold">{% trans "As Student" %}</div>
-                                                    <small class="text-muted">{% trans "Login via OAuth" %}</small>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <!-- User profile -->
+                                <div class="dropdown">
+                                    <button class="site-user-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span class="site-user-btn__icon">
+                                            <i class="fas fa-user"></i>
+                                        </span>
+                                        <span class="site-user-btn__text">{{ user.get_full_name|default:user.username|truncatechars:12 }}</span>
+                                    </button>
+
+                                    <ul class="dropdown-menu dropdown-menu-end site-dropdown-menu">
+                                        {% if user.is_student %}
+                                        <li>
+                                            <a class="dropdown-item site-dropdown-item" href="{% url 'accounts:student_dashboard' %}">
+                                                <i class="fas fa-tachometer-alt me-2"></i>
+                                                <span>{% trans "Personal Cabinet" %}</span>
+                                            </a>
+                                        </li>
+                                        {% elif user.is_employer %}
+                                        <li>
+                                            <a class="dropdown-item site-dropdown-item" href="{% url 'accounts:employer_dashboard' %}">
+                                                <i class="fas fa-building me-2"></i>
+                                                <span>{% trans "Company Cabinet" %}</span>
+                                            </a>
+                                        </li>
+                                        {% elif user.is_admin or user.is_main_admin %}
+                                        <li>
+                                            <a class="dropdown-item site-dropdown-item" href="{% url 'accounts:admin_dashboard' %}">
+                                                <i class="fas fa-cogs me-2"></i>
+                                                <span>{% trans "Admin Panel" %}</span>
+                                            </a>
+                                        </li>
+                                        {% endif %}
+
+                                        <li>
+                                            <a class="dropdown-item site-dropdown-item" href="{% url 'accounts:profile_view' %}">
+                                                <i class="fas fa-user-edit me-2"></i>
+                                                <span>{% trans "Profile" %}</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item site-dropdown-item" href="{% url 'accounts:notifications' %}">
+                                                <i class="fas fa-bell me-2"></i>
+                                                <span class="flex-grow-1">{% trans "Notifications" %}</span>
+                                                {% if unread_notifications_count > 0 %}
+                                                <span class="badge text-bg-danger">{{ unread_notifications_count }}</span>
+                                                {% endif %}
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider my-1"></li>
+                                        <li>
+                                            <a class="dropdown-item site-dropdown-item text-danger" href="{% url 'accounts:logout' %}">
+                                                <i class="fas fa-sign-out-alt me-2"></i>
+                                                <span>{% trans "Logout" %}</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                            {% else %}
+                                <div class="dropdown">
+                                    <button class="site-login-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-sign-in-alt me-2"></i>
+                                        <span>{% trans "Login" %}</span>
+                                    </button>
+
+                                    <ul class="dropdown-menu dropdown-menu-end site-dropdown-menu p-2">
+                                        <li>
+                                            <a class="dropdown-item site-dropdown-item" href="{% url 'accounts:oauth_login' %}">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-graduation-cap text-success me-3"></i>
+                                                    <div>
+                                                        <div class="fw-bold">{% trans "As Student" %}</div>
+                                                        <small class="text-muted">{% trans "Login via OAuth" %}</small>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'accounts:employer_login' %}">
-                                            <div class="d-flex align-items-center">
-                                                <i class="fas fa-building text-primary me-2"></i>
-                                                <div>
-                                                    <div class="fw-bold">{% trans "As Employer" %}</div>
-                                                    <small class="text-muted">{% trans "Company Account" %}</small>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item site-dropdown-item" href="{% url 'accounts:employer_login' %}">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-building text-primary me-3"></i>
+                                                    <div>
+                                                        <div class="fw-bold">{% trans "As Employer" %}</div>
+                                                        <small class="text-muted">{% trans "Company Account" %}</small>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        {% endif %}
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
+
             </div>
         </div>
-    </div>
+    </header>
 </div>
 
-<!-- Боковое меню (скрыто по умолчанию) -->
-<nav class="sidebar-nav" id="sidebarNav">
-    <div class="sidebar-header">
+<!-- Sidebar -->
+<nav class="site-sidebar" id="sidebarNav" aria-hidden="true">
+    <div class="site-sidebar__header">
         <div class="d-flex align-items-center justify-content-between w-100">
-            <h5 class="sidebar-title mb-0">{% trans "Menu" %}</h5>
-            <button class="sidebar-close-btn" id="sidebarCloseBtn">
+            <div>
+                <h5 class="mb-0 fw-bold">{% trans "Menu" %}</h5>
+                <small class="opacity-75">{% trans "Quick navigation" %}</small>
+            </div>
+            <button class="site-sidebar__close" id="sidebarCloseBtn" type="button" aria-label="{% trans 'Close menu' %}">
                 <i class="fas fa-times"></i>
             </button>
         </div>
     </div>
-    
-    <div class="sidebar-content">
-        <ul class="sidebar-menu">
-            <!-- Основные пункты меню -->
-            <li class="nav-item">
-                <a class="nav-link d-flex align-items-center" href="/">
-                    <i class="fas fa-home me-3"></i>
+
+    <div class="site-sidebar__body">
+        <ul class="site-sidebar__menu">
+            <li>
+                <a class="site-sidebar__link" href="/">
+                    <i class="fas fa-home"></i>
                     <span>{% trans "Home" %}</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link d-flex align-items-center" href="https://oxu.uz/university">
-                    <i class="fas fa-university me-3"></i>
+            <li>
+                <a class="site-sidebar__link" href="https://oxu.uz/university">
+                    <i class="fas fa-university"></i>
                     <span>{% trans "University" %}</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link d-flex align-items-center" href="{% url 'resources:list' %}">
-                    <i class="fas fa-book me-3"></i>
+            <li>
+                <a class="site-sidebar__link" href="{% url 'resources:list' %}">
+                    <i class="fas fa-book"></i>
                     <span>{% trans "Resources" %}</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link d-flex align-items-center" href="{% url 'events:event_list' %}">
-                    <i class="fas fa-calendar-alt me-3"></i>
+            <li>
+                <a class="site-sidebar__link" href="{% url 'events:event_list' %}">
+                    <i class="fas fa-calendar-alt"></i>
                     <span>{% trans "Events" %}</span>
                 </a>
             </li>
 
-            <!-- Авторизованные пользователи -->
             {% if user.is_authenticated %}
-                <!-- Уведомления в боковом меню -->
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{% url 'accounts:notifications' %}">
-                        <i class="fas fa-bell me-3"></i>
-                        <span>{% trans "Notifications" %}</span>
+                <li>
+                    <a class="site-sidebar__link" href="{% url 'accounts:notifications' %}">
+                        <i class="fas fa-bell"></i>
+                        <span class="flex-grow-1">{% trans "Notifications" %}</span>
                         {% if unread_notifications_count > 0 %}
-                        <span>{{ unread_notifications_count }}</span>
+                        <span class="site-sidebar__count">{{ unread_notifications_count }}</span>
                         {% endif %}
                     </a>
                 </li>
-                
+
                 {% if user.is_student %}
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{% url 'jobs:list' %}">
-                        <i class="fas fa-briefcase me-3"></i>
+                <li>
+                    <a class="site-sidebar__link" href="{% url 'jobs:list' %}">
+                        <i class="fas fa-briefcase"></i>
                         <span>{% trans "Jobs" %}</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{% url 'cvbuilder:cv_list' %}">
-                        <i class="fas fa-file-alt me-3"></i>
+                <li>
+                    <a class="site-sidebar__link" href="{% url 'cvbuilder:cv_list' %}">
+                        <i class="fas fa-file-alt"></i>
                         <span>{% trans "My Resumes" %}</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{% url 'cvbuilder:cv_create' %}">
-                        <i class="fas fa-plus-circle me-3"></i>
+                <li>
+                    <a class="site-sidebar__link" href="{% url 'cvbuilder:cv_create' %}">
+                        <i class="fas fa-plus-circle"></i>
                         <span>{% trans "Create Resume" %}</span>
                     </a>
                 </li>
                 {% elif user.is_employer %}
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{% url 'jobs:my_jobs' %}">
-                        <i class="fas fa-suitcase me-3"></i>
+                <li>
+                    <a class="site-sidebar__link" href="{% url 'jobs:my_jobs' %}">
+                        <i class="fas fa-suitcase"></i>
                         <span>{% trans "My Jobs" %}</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{% url 'jobs:job_create' %}">
-                        <i class="fas fa-plus me-3"></i>
+                <li>
+                    <a class="site-sidebar__link" href="{% url 'jobs:job_create' %}">
+                        <i class="fas fa-plus"></i>
                         <span>{% trans "Add Job" %}</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{% url 'cvbuilder:public_cv_list' %}">
-                        <i class="fas fa-users me-3"></i>
+                <li>
+                    <a class="site-sidebar__link" href="{% url 'cvbuilder:public_cv_list' %}">
+                        <i class="fas fa-users"></i>
                         <span>{% trans "Public Resumes" %}</span>
                     </a>
                 </li>
                 {% elif user.is_admin or user.is_main_admin %}
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{% url 'jobs:list' %}">
-                        <i class="fas fa-briefcase me-3"></i>
+                <li>
+                    <a class="site-sidebar__link" href="{% url 'jobs:list' %}">
+                        <i class="fas fa-briefcase"></i>
                         <span>{% trans "Jobs" %}</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{% url 'accounts:admin_dashboard' %}">
-                        <i class="fas fa-cogs me-3"></i>
+                <li>
+                    <a class="site-sidebar__link" href="{% url 'accounts:admin_dashboard' %}">
+                        <i class="fas fa-cogs"></i>
                         <span>{% trans "Admin Panel" %}</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{% url 'accounts:user_management' %}">
-                        <i class="fas fa-users-cog me-3"></i>
+                <li>
+                    <a class="site-sidebar__link" href="{% url 'accounts:user_management' %}">
+                        <i class="fas fa-users-cog"></i>
                         <span>{% trans "Users" %}</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{% url 'cvbuilder:public_cv_list' %}">
-                        <i class="fas fa-id-card me-3"></i>
+                <li>
+                    <a class="site-sidebar__link" href="{% url 'cvbuilder:public_cv_list' %}">
+                        <i class="fas fa-id-card"></i>
                         <span>{% trans "Public Resumes" %}</span>
                     </a>
                 </li>
                 {% endif %}
-                
-                <!-- Профиль пользователя в сайдбаре -->
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{% url 'accounts:profile_view' %}">
-                        <i class="fas fa-user-edit me-3"></i>
+
+                <li>
+                    <a class="site-sidebar__link" href="{% url 'accounts:profile_view' %}">
+                        <i class="fas fa-user-edit"></i>
                         <span>{% trans "Profile" %}</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center text-danger" href="{% url 'accounts:logout' %}">
-                        <i class="fas fa-sign-out-alt me-3"></i>
+                <li>
+                    <a class="site-sidebar__link text-danger" href="{% url 'accounts:logout' %}">
+                        <i class="fas fa-sign-out-alt"></i>
                         <span>{% trans "Logout" %}</span>
                     </a>
                 </li>
-                
             {% else %}
-                <!-- Кнопки входа в сайдбаре -->
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{% url 'accounts:oauth_login' %}">
-                        <i class="fas fa-graduation-cap me-3"></i>
+                <li>
+                    <a class="site-sidebar__link" href="{% url 'accounts:oauth_login' %}">
+                        <i class="fas fa-graduation-cap"></i>
                         <span>{% trans "Login as Student" %}</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{% url 'accounts:employer_login' %}">
-                        <i class="fas fa-building me-3"></i>
+                <li>
+                    <a class="site-sidebar__link" href="{% url 'accounts:employer_login' %}">
+                        <i class="fas fa-building"></i>
                         <span>{% trans "Login as Employer" %}</span>
                     </a>
                 </li>
             {% endif %}
         </ul>
     </div>
-    
-    <!-- Футер сайдбара (все внизу) -->
-    <div class="sidebar-footer">
-        <!-- Языковой селектор (внизу) -->
-        <div class="sidebar-language mb-3 p-3">
+
+    <div class="site-sidebar__footer">
+        <div class="site-sidebar__lang">
             <h6 class="mb-2">{% trans "Language" %}</h6>
-            <form action="{% url 'set_language' %}" method="post" class="d-inline-flex gap-2">
+            <form action="{% url 'set_language' %}" method="post" class="d-flex flex-wrap gap-2">
                 {% csrf_token %}
                 <input name="next" type="hidden" value="{{ request.get_full_path }}">
-                {% get_current_language as CURRENT_LANG %}
-                
-                <button type="submit" name="language" value="en" 
-                        class="btn btn-sm btn-outline-dark {% if CURRENT_LANG == 'en' %}active{% endif %}">
-                    {% trans 'EN' %}
+
+                <button type="submit" name="language" value="en" class="site-lang-pill {% if CURRENT_LANG == 'en' %}active{% endif %}">
+                    EN
                 </button>
-                <button type="submit" name="language" value="uz" 
-                        class="btn btn-sm btn-outline-dark {% if CURRENT_LANG == 'uz' %}active{% endif %}">
-                    {% trans 'UZ' %}
+                <button type="submit" name="language" value="uz" class="site-lang-pill {% if CURRENT_LANG == 'uz' %}active{% endif %}">
+                    UZ
                 </button>
-                <button type="submit" name="language" value="ru" 
-                        class="btn btn-sm btn-outline-dark {% if CURRENT_LANG == 'ru' %}active{% endif %}">
-                    {% trans 'RU' %}
+                <button type="submit" name="language" value="ru" class="site-lang-pill {% if CURRENT_LANG == 'ru' %}active{% endif %}">
+                    RU
                 </button>
             </form>
         </div>
-        
-        <!-- Контакты и соцсети в самом низу -->
-        <div class="contact-info p-3 border-top">
+
+        <div class="site-sidebar__contacts">
             <h6 class="mb-2">{% trans "Contacts" %}</h6>
-            <p class="mb-2 d-flex align-items-center">
-                <i class="fas fa-phone me-3"></i>
-                <span>+998 90 123-45-67</span>
-            </p>
-            <p class="mb-3 d-flex align-items-center">
-                <i class="fas fa-envelope me-3"></i>
-                <span>{% trans 'info@oxucareer.uz' %}</span>
-            </p>
-            <div class="d-flex justify-content-center gap-3">
-                <a style="font-size: 3vh;" href=""><i class="fab fa-telegram"></i></a>
-                <a style="font-size: 3vh;" href=""><i class="fab fa-instagram"></i></a>
+
+            <a href="tel:+998553050009" class="site-sidebar__contact">
+                <i class="fas fa-phone-alt"></i>
+                <span>+998 55 305-00-09</span>
+            </a>
+
+            <a href="mailto:info@oxucareer.uz" class="site-sidebar__contact">
+                <i class="fas fa-envelope"></i>
+                <span>info@oxucareer.uz</span>
+            </a>
+
+            <div class="site-sidebar__socials">
+                <a href="https://t.me/OXU_KARYERA" class="site-social-btn site-social-btn--sidebar" aria-label="Telegram">
+                    <i class="fab fa-telegram-plane"></i>
+                </a>
+                <a href="https://www.instagram.com/oxu_uz?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="site-social-btn site-social-btn--sidebar" aria-label="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
             </div>
         </div>
     </div>
 </nav>
 
-<!-- Затемнение фона при открытом меню -->
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="site-sidebar-overlay" id="sidebarOverlay"></div>
 
 <style>
-/* ===================== */
-/* БАЗОВЫЕ НАСТРОЙКИ */
-/* ===================== */
 :root {
-    --primary-color: #001b45;
-    --secondary-color: #012d6e;
-    --accent-color: #4ade80;
-    --dark-text: #333333;
-    --light-text: #666666;
-    --sidebar-width: 320px;
-    --transition-speed: 0.4s;
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
+    --site-primary: #031b47;
+    --site-primary-2: #0a3376;
+    --site-primary-3: #123f92;
+    --site-accent: #4ade80;
+    --site-accent-2: #22c55e;
+    --site-white: #ffffff;
+    --site-text: #0f172a;
+    --site-muted: #64748b;
+    --site-border: rgba(255, 255, 255, 0.16);
+    --site-surface: rgba(255, 255, 255, 0.08);
+    --site-shadow-sm: 0 8px 20px rgba(15, 23, 42, 0.08);
+    --site-shadow-md: 0 12px 30px rgba(15, 23, 42, 0.14);
+    --site-shadow-lg: 0 22px 48px rgba(2, 6, 23, 0.24);
+    --site-radius: 18px;
+    --site-radius-sm: 12px;
+    --site-sidebar-width: 340px;
+    --site-transition: 0.28s ease;
 }
 
-/* ===================== */
-/* ХЕДЕР НА ВСЕХ ЭКРАНАХ */
-/* ===================== */
-.header-middle-container {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: 20px;
-    width: 100%;
+.site-header-top {
+    background: linear-gradient(135deg, var(--site-primary) 0%, #07275f 100%);
+    color: var(--site-white);
+    padding: 0.72rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.header-left {
-    grid-column: 1;
-    justify-self: start;
-    display: flex;
-    align-items: center;
-}
-
-.header-center {
-    grid-column: 2;
-    justify-self: center;
-    display: flex;
-    align-items: center;
-    min-width: 0;
-}
-
-.header-right {
-    grid-column: 3;
-    justify-self: end;
-    display: flex;
-    align-items: center;
-}
-
-/* Кнопка меню ВСЕГДА видна */
-.sidebar-toggle-btn {
-    width: 46px;
-    height: 46px;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    padding: 0;
-}
-
-.sidebar-toggle-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: var(--accent-color);
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 4px 16px rgba(74, 222, 128, 0.3);
-}
-
-/* Логотип */
-.logo-container {
-    display: flex;
-    align-items: center;
-    background: transparent !important;
-    border: none !important;
-    padding: 0 !important;
+.site-topbar-link {
+    color: rgba(255, 255, 255, 0.88);
     text-decoration: none;
+    font-size: 0.92rem;
+    transition: color var(--site-transition), opacity var(--site-transition);
 }
 
-.logo-image {
-    width: 70px;
-    height: 70px;
-    margin-right: 15px;
-    transition: all 0.3s ease;
-    flex-shrink: 0;
+.site-topbar-link:hover {
+    color: var(--site-white);
 }
 
-.logo-container:hover .logo-image {
-    transform: scale(1.05);
+.site-topbar-social {
+    gap: 0.25rem;
 }
 
-.logo-text-wrapper {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-}
-
-.logo-main {
-    font-family: 'Montserrat', 'Segoe UI', sans-serif;
-    font-weight: 800;
-    line-height: 1.1;
-    color: white;
-    font-size: 1.3rem;
-    white-space: nowrap;
-}
-
-.logo-sub {
-    font-family: 'Montserrat', 'Segoe UI', sans-serif;
-    font-weight: 600;
-    color: var(--accent-color) !important;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 0.85rem;
-    margin-top: 2px;
-}
-
-/* Кнопки управления (десктоп) */
-.btn-language, .btn-notification, .btn-user, .btn-login {
-    height: 46px;
-    border-radius: 10px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 500;
-}
-
-.btn-language {
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
-    padding: 10px 16px;
-    min-width: 85px;
-}
-
-.btn-notification {
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
-    padding: 10px;
-    width: 52px;
-}
-
-.btn-user {
-    background: linear-gradient(135deg, var(--accent-color) 0%, #3bd171 100%);
-    border: none;
-    color: white;
-    padding: 10px 18px;
-    min-width: 125px;
-    font-weight: 600;
-}
-
-.btn-login {
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    color: white;
-    padding: 10px 18px;
-    min-width: 105px;
-    font-weight: 600;
-}
-
-/* ===================== */
-/* МОБИЛЬНАЯ АДАПТАЦИЯ (до 767px) */
-/* ===================== */
-@media (max-width: 767px) {
-    .header-top {
-        display: none !important;
-    }
-    
-    .header-middle-container {
-        grid-template-columns: 46px 1fr auto;
-        gap: 15px;
-    }
-    
-    /* Скрываем элементы управления на мобильных */
-    .header-right .language-selector,
-    .header-right .auth-section {
-        display: none !important;
-    }
-    
-    /* Уменьшаем кнопку меню на мобильных */
-    .sidebar-toggle-btn {
-        width: 40px;
-        height: 40px;
-    }
-    
-    /* Уменьшаем логотип на мобильных */
-    .logo-image {
-        width: 45px;
-        height: 45px;
-        margin-right: 10px;
-    }
-    
-    .logo-main {
-        font-size: 0.9rem;
-        white-space: normal;
-        line-height: 1.1;
-    }
-    
-    .logo-sub {
-        font-size: 0.7rem;
-    }
-    
-    /* Уменьшаем кнопки управления */
-    .btn-language, .btn-notification, .btn-user, .btn-login {
-        height: 40px;
-    }
-    
-    .btn-language {
-        min-width: 70px;
-        padding: 8px 12px;
-        font-size: 0.9rem;
-    }
-    
-    .btn-notification {
-        width: 45px;
-    }
-    
-    .btn-user, .btn-login {
-        min-width: 100px;
-        padding: 8px 14px;
-        font-size: 0.9rem;
-    }
-}
-
-/* Очень маленькие экраны */
-@media (max-width: 374px) {
-    .header-middle-container {
-        grid-template-columns: 40px 1fr auto;
-        gap: 10px;
-    }
-    
-    .sidebar-toggle-btn {
-        width: 36px;
-        height: 36px;
-    }
-    
-    .logo-image {
-        width: 40px;
-        height: 40px;
-        margin-right: 8px;
-    }
-    
-    .logo-main {
-        font-size: 0.8rem;
-    }
-    
-    .logo-sub {
-        font-size: 0.65rem;
-    }
-}
-
-/* ===================== */
-/* ОБЩИЕ СТИЛИ ДЛЯ ХЕДЕРА */
-/* ===================== */
-.header-top {
-    background: linear-gradient(135deg, var(--primary-color) 0%, #002255 100%);
-    padding: 10px 0;
-    color: white;
-    font-size: 0.9rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.header-middle {
-    background: linear-gradient(135deg, var(--secondary-color) 0%, #003580 100%);
-    padding: 14px 0;
-    position: relative;
-}
-
-/* ===================== */
-/* САЙДБАР */
-/* ===================== */
-.sidebar-nav {
-    position: fixed;
-    top: 0;
-    left: -100%;
-    width: var(--sidebar-width);
-    height: 100vh;
-    background: white;
-    transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: var(--shadow-lg);
-    display: flex;
-    flex-direction: column;
-    border-right: 1px solid rgba(0, 0, 0, 0.05);
-    z-index: 1100 !important;
-}
-
-.sidebar-nav.active {
-    left: 0;
-}
-
-/* Шапка сайдбара БЕЗ ЛОГОТИПА */
-.sidebar-header {
-    background: var(--primary-color);
-    padding: 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.sidebar-title {
-    color: white !important;
-    margin: 0;
-    font-weight: 700;
-    font-size: 1.3rem;
-}
-
-.sidebar-close-btn {
-    background: rgba(255, 255, 255, 0.15);
-    border: none;
-    color: white;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
+.site-social-btn {
     width: 38px;
     height: 38px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-}
-
-.sidebar-close-btn:hover {
-    background: rgba(255, 255, 255, 0.25);
-    transform: rotate(90deg) scale(1.1);
-}
-
-/* Контент сайдбара */
-.sidebar-content {
-    flex: 1;
-    overflow-y: auto;
-    padding-bottom: 20px;
-}
-
-/* Ссылки в сайдбаре - БЕЛЫЙ ТЕКСТ на темном фоне */
-.nav-link {
-    display: flex;
-    align-items: center;
-    padding: 14px 20px;
-    color: var(--dark-text) !important; /* Белый цвет текста */
-    text-decoration: none;
-    transition: all 0.3s ease;
-    border-left: 4px solid transparent;
-    margin: 2px 10px;
-    border-radius: 8px;
-    font-weight: 500;
-}
-
-.nav-link:hover {
-    background: rgba(0, 27, 69, 0.08);
-    color: var(--primary-color) !important; /* Белый цвет текста при наведении */
-    border-left-color: var(--primary-color);
-    transform: translateX(5px);
-}
-
-.nav-link i {
-    color: var(--primary-color) !important; /* Белые иконки */
-    font-size: 1.1rem;
-    min-width: 24px;
-    text-align: center;
-}
-
-/* Футер сайдбара (все внизу) */
-.sidebar-footer {
-    margin-top: auto;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    background: rgba(0, 27, 69, 0.03);
-}
-
-/* Языковой селектор в футере */
-.sidebar-language {
-    background: white;
-}
-
-.sidebar-language h6 {
-    color: var(--dark-text);
-    font-weight: 600;
-    margin-bottom: 10px;
-}
-
-.sidebar-language .btn-outline-dark {
-    border-color: rgba(0, 0, 0, 0.2);
-    color: var(--dark-text);
-}
-
-.sidebar-language .btn-outline-dark.active {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-    color: white;
-}
-
-.sidebar-language .btn-outline-dark:hover {
-    background-color: rgba(0, 27, 69, 0.1);
-    border-color: var(--primary-color);
-}
-
-/* Контакты в футере */
-.contact-info {
-    color: var(--dark-text);
-}
-
-.contact-info h6 {
-    color: var(--dark-text);
-    font-weight: 600;
-    margin-bottom: 10px;
-}
-
-.contact-info i {
-    color: var(--primary-color) !important;
-}
-
-.social-icon {
+    border-radius: 999px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 3vh;
-    height: 3vh;
-    border-radius: 50%;
-    background: rgba(0, 27, 69, 0.1);
-    color: var(--primary-color) !important;
+    color: var(--site-white);
     text-decoration: none;
-    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    transition: transform var(--site-transition), background var(--site-transition), border-color var(--site-transition);
 }
 
-.social-icon:hover {
-    background: var(--primary-color);
-    color: white !important;
-    transform: translateY(-3px);
+.site-social-btn:hover {
+    color: var(--site-white);
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.24);
 }
 
-/* Затемнение фона */
-.sidebar-overlay {
+.site-header-main {
+    position: sticky;
+    top: 0;
+    z-index: 1040;
+    background:
+        radial-gradient(circle at top right, rgba(74, 222, 128, 0.08), transparent 18%),
+        linear-gradient(135deg, var(--site-primary-2) 0%, var(--site-primary-3) 100%);
+    box-shadow: 0 10px 28px rgba(2, 6, 23, 0.14);
+}
+
+.site-header-main__inner {
+    min-height: 86px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 1rem;
+    align-items: center;
+}
+
+.site-header-main__left,
+.site-header-main__right {
+    display: flex;
+    align-items: center;
+}
+
+.site-header-main__center {
+    min-width: 0;
+    display: flex;
+    justify-content: left;
+}
+
+.site-menu-btn,
+.site-control-btn,
+.site-login-btn,
+.site-user-btn {
+    height: 46px;
+    border-radius: 14px;
+    border: 1px solid var(--site-border);
+    color: var(--site-white);
+    transition: transform var(--site-transition), box-shadow var(--site-transition), background var(--site-transition), border-color var(--site-transition);
+}
+
+.site-menu-btn {
+    width: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: var(--site-shadow-sm);
+}
+
+.site-menu-btn:hover,
+.site-control-btn:hover,
+.site-login-btn:hover,
+.site-user-btn:hover {
+    transform: translateY(-1px);
+    border-color: rgba(255, 255, 255, 0.28);
+}
+
+.site-menu-btn:hover,
+.site-control-btn:hover {
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.site-brand {
+    display: inline-flex;
+    min-width: 0;
+    align-items: center;
+    max-width: min(100%, 640px);
+    color: var(--site-white);
+}
+
+.site-brand__logo {
+    width: 68px;
+    height: 68px;
+    object-fit: contain;
+    flex-shrink: 0;
+    margin-right: 0.95rem;
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.12));
+    transition: transform var(--site-transition);
+}
+
+.site-brand:hover .site-brand__logo {
+    transform: scale(1.03);
+}
+
+.site-brand__text {
+    min-width: 0;
+}
+
+.site-brand__title {
+    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-size: 1.25rem;
+    line-height: 1.15;
+    font-weight: 800;
+    color: var(--site-white);
+    letter-spacing: -0.01em;
+}
+
+.site-brand__subtitle {
+    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    margin-top: 0.22rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--site-accent);
+}
+
+.site-control-btn {
+    min-width: 52px;
+    padding: 0 0.95rem;
+    background: rgba(255, 255, 255, 0.1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--site-shadow-sm);
+}
+
+.site-control-btn--ghost {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.site-badge-counter {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 0.3rem;
+    border-radius: 999px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 18px rgba(239, 68, 68, 0.35);
+}
+
+.site-user-btn {
+    padding: 0 0.95rem 0 0.55rem;
+    background: linear-gradient(135deg, var(--site-accent) 0%, var(--site-accent-2) 100%);
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    box-shadow: 0 12px 24px rgba(34, 197, 94, 0.26);
+}
+
+.site-user-btn__icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.18);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.site-user-btn__text {
+    max-width: 130px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 700;
+}
+
+.site-login-btn {
+    padding: 0 1rem;
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: var(--site-shadow-sm);
+    font-weight: 700;
+}
+
+.site-dropdown-menu {
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 18px;
+    box-shadow: 0 18px 42px rgba(15, 23, 42, 0.16);
+    padding: 0.45rem;
+    min-width: 240px;
+    z-index: 1045;
+    overflow: hidden;
+}
+
+.site-dropdown-item {
+    border-radius: 12px;
+    padding: 0.75rem 0.85rem;
+    transition: background var(--site-transition), color var(--site-transition), transform var(--site-transition);
+}
+
+.site-dropdown-item:hover,
+.site-dropdown-item.active {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.site-language-menu {
+    min-width: 220px;
+}
+
+.site-notifications-menu {
+    width: 370px;
+    padding: 0;
+}
+
+.site-dropdown-head,
+.site-dropdown-foot {
+    padding: 1rem;
+    background: #fff;
+}
+
+.site-dropdown-head {
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.site-dropdown-foot {
+    border-top: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.site-notification-list {
+    max-height: 320px;
+    overflow-y: auto;
+    background: #fff;
+}
+
+.site-notification-item {
+    padding: 0.95rem 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+    white-space: normal;
+}
+
+.site-notification-item:last-child {
+    border-bottom: 0;
+}
+
+.site-notification-item:hover {
+    background: #f8fafc;
+}
+
+.site-notification-item.is-unread {
+    background: #f8fbff;
+}
+
+.site-notification-item__icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
+    background: #f1f5f9;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.site-notification-item__content {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.site-notification-item__new {
+    flex-shrink: 0;
+    margin-left: 0.25rem;
+}
+
+.site-empty-state {
+    padding: 1.6rem 1rem;
+    text-align: center;
+    color: var(--site-muted);
+}
+
+.site-empty-state i {
+    font-size: 1.6rem;
+    opacity: 0.6;
+}
+
+/* Sidebar */
+.site-sidebar {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.5s ease;
-    z-index: 1099 !important;
+    width: min(var(--site-sidebar-width), 92vw);
+    height: 100vh;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    box-shadow: var(--site-shadow-lg);
+    transform: translateX(-105%);
+    transition: transform 0.34s ease;
+    z-index: 1089;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
-.sidebar-overlay.active {
+.site-sidebar.active {
+    transform: translateX(0);
+}
+
+.site-sidebar__header {
+    padding: 1.15rem 1.15rem 1rem;
+    background: linear-gradient(135deg, var(--site-primary) 0%, var(--site-primary-2) 100%);
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.site-sidebar__close {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    transition: transform var(--site-transition), background var(--site-transition);
+}
+
+.site-sidebar__close:hover {
+    transform: rotate(90deg);
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.site-sidebar__body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 1rem 0.8rem;
+}
+
+.site-sidebar__menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.site-sidebar__menu li + li {
+    margin-top: 0.28rem;
+}
+
+.site-sidebar__link {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    text-decoration: none;
+    color: var(--site-text);
+    font-weight: 600;
+    padding: 0.9rem 0.95rem;
+    border-radius: 16px;
+    transition: transform var(--site-transition), background var(--site-transition), color var(--site-transition);
+}
+
+.site-sidebar__link i {
+    width: 20px;
+    text-align: center;
+    color: var(--site-primary-2);
+    font-size: 1rem;
+}
+
+.site-sidebar__link:hover {
+    background: #eff6ff;
+    color: #1d4ed8;
+    transform: translateX(4px);
+}
+
+.site-sidebar__count {
+    min-width: 24px;
+    height: 24px;
+    padding: 0 0.45rem;
+    border-radius: 999px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+}
+
+.site-sidebar__footer {
+    border-top: 1px solid rgba(15, 23, 42, 0.06);
+    background: #fff;
+    padding: 1rem;
+}
+
+.site-sidebar__lang,
+.site-sidebar__contacts {
+    border-radius: 16px;
+    background: #f8fafc;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    padding: 0.95rem;
+}
+
+.site-sidebar__contacts {
+    margin-top: 0.9rem;
+}
+
+.site-lang-pill {
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    color: var(--site-text);
+    border-radius: 999px;
+    padding: 0.45rem 0.8rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    transition: background var(--site-transition), border-color var(--site-transition), color var(--site-transition);
+}
+
+.site-lang-pill:hover,
+.site-lang-pill.active {
+    background: var(--site-primary);
+    border-color: var(--site-primary);
+    color: #fff;
+}
+
+.site-sidebar__contact {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--site-text);
+    text-decoration: none;
+    padding: 0.55rem 0;
+    font-weight: 500;
+}
+
+.site-sidebar__contact i {
+    width: 18px;
+    color: var(--site-primary-2);
+}
+
+.site-sidebar__socials {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.65rem;
+}
+
+.site-social-btn--sidebar {
+    width: 42px;
+    height: 42px;
+    background: #eff6ff;
+    border: 1px solid rgba(37, 99, 235, 0.1);
+    color: var(--site-primary-2);
+}
+
+.site-social-btn--sidebar:hover {
+    color: #fff;
+    background: var(--site-primary-2);
+}
+
+/* Overlay */
+.site-sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.48);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.32s ease, visibility 0.32s ease;
+    z-index: 1088;
+}
+
+.site-sidebar-overlay.active {
     opacity: 1;
     visibility: visible;
 }
 
-/* Адаптация для разных размеров */
-@media (min-width: 768px) and (max-width: 991px) {
-    .logo-image {
-        width: 60px;
-        height: 60px;
+/* Responsive */
+@media (max-width: 991.98px) {
+    .site-brand__logo {
+        width: 58px;
+        height: 58px;
     }
-    
-    .logo-main {
-        font-size: 1.1rem;
+
+    .site-brand__title {
+        font-size: 1.08rem;
     }
-    
-    .logo-sub {
-        font-size: 0.75rem;
+
+    .site-brand__subtitle {
+        font-size: 0.74rem;
     }
 }
 
-@media (min-width: 992px) and (max-width: 1199px) {
-    .logo-image {
-        width: 65px;
-        height: 65px;
+@media (max-width: 767.98px) {
+    .site-header-main__inner {
+        min-height: 74px;
+        grid-template-columns: auto 1fr;
+        gap: 0.8rem;
     }
-    
-    .logo-main {
-        font-size: 1.2rem;
+
+    .site-header-main__right {
+        display: none;
     }
-    
-    .logo-sub {
-        font-size: 0.8rem;
+
+    .site-menu-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+    }
+
+    .site-brand {
+        justify-content: flex-start;
+        max-width: 100%;
+    }
+
+    .site-brand__logo {
+        width: 46px;
+        height: 46px;
+        margin-right: 0.75rem;
+    }
+
+    .site-brand__title {
+        font-size: 0.94rem;
+        white-space: normal;
+    }
+
+    .site-brand__subtitle {
+        font-size: 0.66rem;
+        letter-spacing: 0.12em;
+    }
+
+    .site-notifications-menu {
+        width: min(370px, 92vw);
+    }
+}
+
+@media (max-width: 374px) {
+    .site-brand__logo {
+        width: 40px;
+        height: 40px;
+        margin-right: 0.6rem;
+    }
+
+    .site-brand__title {
+        font-size: 0.86rem;
+    }
+
+    .site-brand__subtitle {
+        font-size: 0.62rem;
     }
 }
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
     const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
     const sidebarNav = document.getElementById('sidebarNav');
     const sidebarOverlay = document.getElementById('sidebarOverlay');
-    
+
     let isSidebarOpen = false;
-    
+
     function openSidebar() {
-        if (isSidebarOpen) return;
-        
+        if (isSidebarOpen || !sidebarNav || !sidebarOverlay) return;
+
         isSidebarOpen = true;
         sidebarNav.classList.add('active');
         sidebarOverlay.classList.add('active');
+        sidebarNav.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
     }
-    
+
     function closeSidebar() {
-        if (!isSidebarOpen) return;
-        
+        if (!isSidebarOpen || !sidebarNav || !sidebarOverlay) return;
+
         isSidebarOpen = false;
         sidebarNav.classList.remove('active');
         sidebarOverlay.classList.remove('active');
+        sidebarNav.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
     }
-    
+
     function toggleSidebar() {
         if (isSidebarOpen) {
             closeSidebar();
@@ -1011,23 +1144,27 @@ document.addEventListener('DOMContentLoaded', function() {
             openSidebar();
         }
     }
-    
-    // Обработчики событий
-    if (sidebarToggleBtn) sidebarToggleBtn.addEventListener('click', toggleSidebar);
-    if (sidebarCloseBtn) sidebarCloseBtn.addEventListener('click', closeSidebar);
-    if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
-    
-    // Закрытие по клавише Escape
-    document.addEventListener('keydown', function(e) {
+
+    if (sidebarToggleBtn) {
+        sidebarToggleBtn.addEventListener('click', toggleSidebar);
+    }
+
+    if (sidebarCloseBtn) {
+        sidebarCloseBtn.addEventListener('click', closeSidebar);
+    }
+
+    if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', closeSidebar);
+    }
+
+    document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && isSidebarOpen) {
             closeSidebar();
         }
     });
-    
-    // Закрытие меню при клике на ссылку
-    const navLinks = document.querySelectorAll('.sidebar-nav .nav-link');
-    navLinks.forEach(link => {
-        link.addEventListener('click', function() {
+
+    document.querySelectorAll('.site-sidebar__link').forEach(function (link) {
+        link.addEventListener('click', function () {
             closeSidebar();
         });
     });
