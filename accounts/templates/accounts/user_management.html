@@ -6,218 +6,861 @@
 {% block title %}{% trans "User management" %}{% endblock %}
 
 {% block content %}
-<div class="container-fluid py-4">
-    <!-- Header and Filters -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h1 class="h3 fw-bold text-primary mb-1">{% trans "User Management" %}</h1>
-                    <p class="text-muted mb-0">{% trans "List and management of all users" %}</p>
+<div class="user-management-page container-fluid py-4">
+    <div class="dashboard-shell">
+
+        <!-- Header -->
+        <div class="users-hero mb-4">
+            <div class="row g-4 align-items-center">
+                <div class="col-lg-8">
+                    <div class="users-hero-content">
+                        <span class="hero-chip">
+                            <i class="fas fa-users-cog me-2"></i>{% trans "Administration" %}
+                        </span>
+
+                        <h1 class="users-title mb-2">{% trans "User Management" %}</h1>
+                        <p class="users-subtitle mb-0">
+                            {% trans "List and management of all users" %}
+                        </p>
+                    </div>
                 </div>
-                <div class="d-flex gap-2">
-                    <!-- User type filters -->
-                    <div class="btn-group">
-                        <a href="?user_type=all" class="btn btn-outline-primary {% if not user_type_filter %}active{% endif %}">
-                            {% trans "All" %} ({{ total_users }})
-                        </a>
-                        <a href="?user_type=student" class="btn btn-outline-success {% if user_type_filter == 'student' %}active{% endif %}">
-                            {% trans "Students" %}
-                        </a>
-                        <a href="?user_type=employer" class="btn btn-outline-info {% if user_type_filter == 'employer' %}active{% endif %}">
-                            {% trans "Employers" %}
-                        </a>
-                        <a href="?user_type=admins" class="btn btn-outline-warning {% if user_type_filter == 'admins' %}active{% endif %}">
-                            {% trans "Admins" %}
-                        </a>
+
+                <div class="col-lg-4">
+                    <div class="users-hero-side">
+                        <div class="mini-stat-card">
+                            <span>{% trans "Total Users" %}</span>
+                            <strong>{{ total_users }}</strong>
+                        </div>
+                        <div class="mini-stat-card">
+                            <span>{% trans "Found" %}</span>
+                            <strong>{{ page_obj.paginator.count }}</strong>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Search and Filter -->
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <form method="get" class="d-flex gap-2">
-                {% if user_type_filter %}
-                <input type="hidden" name="user_type" value="{{ user_type_filter }}">
-                {% endif %}
-                <input type="text" name="search" class="form-control" 
-                       placeholder="{% trans 'Search by name, surname, username or email...' %}" 
-                       value="{{ search_query }}">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-search"></i>
-                </button>
-                {% if search_query %}
-                <a href="?{% if user_type_filter %}user_type={{ user_type_filter }}{% endif %}" class="btn btn-outline-secondary">
-                    <i class="fas fa-times"></i>
-                </a>
-                {% endif %}
-            </form>
-        </div>
-    </div>
+        <!-- Filters + Search -->
+        <div class="filter-panel mb-4">
+            <div class="row g-3 align-items-center">
+                <div class="col-xl-7">
+                    <div class="filter-group">
+                        <a href="?user_type=all{% if search_query %}&search={{ search_query|urlencode }}{% endif %}"
+                           class="filter-pill {% if not user_type_filter %}active{% endif %}">
+                            <i class="fas fa-layer-group"></i>
+                            <span>{% trans "All" %}</span>
+                            <strong>{{ total_users }}</strong>
+                        </a>
 
-    <!-- Users Table -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th style="color: black;">{% trans "User" %}</th>
-                                    <th style="color: black;">{% trans "Role" %}</th>
-                                    <th style="color: black;">{% trans "Status" %}</th>
-                                    <th style="color: black;">{% trans "Registered" %}</th>
-                                    <th style="color: black;">{% trans "Last Activity" %}</th>
-                                    <th style="color: black;">{% trans "Actions" %}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for user in page_obj %}
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            {% if user.avatar %}
-                                            <img src="{{ user.avatar.url }}" alt="{{ user.username }}" 
-                                                 class="rounded-circle me-3" width="40" height="40" style="object-fit: cover;">
-                                            {% else %}
-                                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" 
-                                                 style="width: 40px; height: 40px;">
-                                                <i class="fas fa-user text-white"></i>
-                                            </div>
-                                            {% endif %}
-                                            <div>
-                                                <div class="fw-bold">{{ user.get_full_name|default:user.username }}</div>
-                                                <small class="text-muted">{{ user.email }}</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="badge 
-                                            {% if user.is_student %}bg-success
-                                            {% elif user.is_employer %}bg-info
-                                            {% elif user.is_admin %}bg-warning
-                                            {% elif user.is_main_admin %}bg-danger
-                                            {% else %}bg-secondary{% endif %}">
-                                            {{ user.get_user_type_display }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        {% if user.is_active %}
-                                        <span class="badge bg-success">{% trans "Active" %}</span>
-                                        {% else %}
-                                        <span class="badge bg-danger">{% trans "Inactive" %}</span>
-                                        {% endif %}
-                                        {% if user.is_employer and user.is_active_employer %}
-                                        <span class="badge bg-info ms-1">{% trans "Verified" %}</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        <small class="text-muted">{{ user.date_joined|date:"d.m.Y" }}</small>
-                                    </td>
-                                    <td>
-                                        <small class="text-muted">
-                                            {% if user.last_activity %}
-                                            {{ user.last_activity|timesince }} {% trans "ago" %}
-                                            {% else %}
-                                            {% trans "No activity" %}
-                                            {% endif %}
-                                        </small>
-                                    </td>
-                                    <td>
-                                        <div class="btn-group btn-group-sm">
-                                            <a href="{% url 'accounts:user_detail' user.id %}" 
-                                               class="btn btn-outline-primary" title="{% trans 'View' %}">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            {% if not user.is_main_admin %}
-                                            <form method="post" action="{% url 'accounts:toggle_user_status' user.id %}" 
-                                                  class="d-inline">
-                                                {% csrf_token %}
-                                                <button type="submit" class="btn {% if user.is_active %}btn-outline-warning{% else %}btn-outline-success{% endif %}"
-                                                        title="{% if user.is_active %}{% trans 'Deactivate' %}{% else %}{% trans 'Activate' %}{% endif %}">
-                                                    <i class="fas {% if user.is_active %}fa-times{% else %}fa-check{% endif %}"></i>
-                                                </button>
-                                            </form>
-                                            {% endif %}
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="6" class="text-center py-5">
-                                        <i class="fas fa-users fa-3x text-muted mb-3"></i>
-                                        <h5 class="text-muted">{% trans "No users found" %}</h5>
-                                        <p class="text-muted">{% trans "No users available at the moment" %}</p>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                        <a href="?user_type=student{% if search_query %}&search={{ search_query|urlencode }}{% endif %}"
+                           class="filter-pill filter-student {% if user_type_filter == 'student' %}active{% endif %}">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>{% trans "Students" %}</span>
+                        </a>
+
+                        <a href="?user_type=employer{% if search_query %}&search={{ search_query|urlencode }}{% endif %}"
+                           class="filter-pill filter-employer {% if user_type_filter == 'employer' %}active{% endif %}">
+                            <i class="fas fa-building"></i>
+                            <span>{% trans "Employers" %}</span>
+                        </a>
+
+                        <a href="?user_type=admins{% if search_query %}&search={{ search_query|urlencode }}{% endif %}"
+                           class="filter-pill filter-admin {% if user_type_filter == 'admins' %}active{% endif %}">
+                            <i class="fas fa-user-shield"></i>
+                            <span>{% trans "Admins" %}</span>
+                        </a>
                     </div>
                 </div>
-            </div>
 
-            <!-- Pagination -->
-            {% if page_obj.has_other_pages %}
-            <nav aria-label="{% trans 'Page navigation' %}" class="mt-4">
-                <ul class="pagination justify-content-center">
-                    {% if page_obj.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if user_type_filter %}&user_type={{ user_type_filter }}{% endif %}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}">
-                            <i class="fas fa-chevron-left"></i>
-                        </a>
-                    </li>
-                    {% endif %}
-
-                    {% for num in page_obj.paginator.page_range %}
-                        {% if page_obj.number == num %}
-                        <li class="page-item active">
-                            <span class="page-link">{{ num }}</span>
-                        </li>
-                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ num }}{% if user_type_filter %}&user_type={{ user_type_filter }}{% endif %}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}">{{ num }}</a>
-                        </li>
+                <div class="col-xl-5">
+                    <form method="get" class="search-form">
+                        {% if user_type_filter %}
+                            <input type="hidden" name="user_type" value="{{ user_type_filter }}">
                         {% endif %}
-                    {% endfor %}
 
-                    {% if page_obj.has_next %}
+                        <div class="search-box">
+                            <span class="search-icon">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text"
+                                   name="search"
+                                   class="search-input"
+                                   placeholder="{% trans 'Search by name, surname, username or email...' %}"
+                                   value="{{ search_query }}">
+                            <button type="submit" class="search-btn">
+                                {% trans "Search" %}
+                            </button>
+                        </div>
+
+                        {% if search_query %}
+                        <a href="?{% if user_type_filter %}user_type={{ user_type_filter }}{% endif %}" class="clear-search-btn">
+                            <i class="fas fa-times me-1"></i>{% trans "Clear" %}
+                        </a>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="users-table-card">
+            <div class="table-topbar">
+                <div>
+                    <h5 class="mb-1">{% trans "Users Directory" %}</h5>
+                    <p class="mb-0 text-muted small">
+                        {% trans "Manage roles, statuses and view user activity" %}
+                    </p>
+                </div>
+
+                <div class="table-topbar-meta">
+                    <span class="results-pill">
+                        {% trans "Results" %}: {{ page_obj.paginator.count }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table users-table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>{% trans "User" %}</th>
+                            <th>{% trans "Role" %}</th>
+                            <th>{% trans "Status" %}</th>
+                            <th>{% trans "Registered" %}</th>
+                            <th>{% trans "Last Activity" %}</th>
+                            <th class="text-end">{% trans "Actions" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in page_obj %}
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    {% if user.avatar %}
+                                        <img src="{{ user.avatar.url }}"
+                                             alt="{{ user.username }}"
+                                             class="user-avatar">
+                                    {% else %}
+                                        <div class="user-avatar placeholder-avatar">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                    {% endif %}
+
+                                    <div class="user-meta">
+                                        <div class="user-name">
+                                            {{ user.get_full_name|default:user.username }}
+                                        </div>
+                                        <div class="user-email">
+                                            {{ user.email|default:"-" }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                {% if user.is_main_admin %}
+                                    <span class="role-badge role-main-admin">
+                                        <i class="fas fa-crown"></i>
+                                        {{ user.get_user_type_display }}
+                                    </span>
+                                {% elif user.is_admin %}
+                                    <span class="role-badge role-admin">
+                                        <i class="fas fa-user-shield"></i>
+                                        {{ user.get_user_type_display }}
+                                    </span>
+                                {% elif user.is_employer %}
+                                    <span class="role-badge role-employer">
+                                        <i class="fas fa-building"></i>
+                                        {{ user.get_user_type_display }}
+                                    </span>
+                                {% elif user.is_student %}
+                                    <span class="role-badge role-student">
+                                        <i class="fas fa-graduation-cap"></i>
+                                        {{ user.get_user_type_display }}
+                                    </span>
+                                {% else %}
+                                    <span class="role-badge role-other">
+                                        <i class="fas fa-user"></i>
+                                        {{ user.get_user_type_display }}
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <div class="status-stack">
+                                    {% if user.is_active %}
+                                        <span class="status-badge status-active">
+                                            <span class="status-dot"></span>
+                                            {% trans "Active" %}
+                                        </span>
+                                    {% else %}
+                                        <span class="status-badge status-inactive">
+                                            <span class="status-dot"></span>
+                                            {% trans "Inactive" %}
+                                        </span>
+                                    {% endif %}
+
+                                    {% if user.is_employer and user.is_active_employer %}
+                                        <span class="status-badge status-verified">
+                                            <i class="fas fa-badge-check"></i>
+                                            {% trans "Verified" %}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="meta-pill">
+                                    {{ user.date_joined|date:"d.m.Y" }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="activity-text">
+                                    {% if user.last_activity %}
+                                        {{ user.last_activity|timesince }} {% trans "ago" %}
+                                    {% else %}
+                                        {% trans "No activity" %}
+                                    {% endif %}
+                                </span>
+                            </td>
+
+                            <td class="text-end">
+                                <div class="action-buttons">
+                                    <a href="{% url 'accounts:user_detail' user.id %}"
+                                       class="action-btn action-view"
+                                       title="{% trans 'View' %}">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+
+                                    {% if not user.is_main_admin %}
+                                    <form method="post"
+                                          action="{% url 'accounts:toggle_user_status' user.id %}"
+                                          class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit"
+                                                class="action-btn {% if user.is_active %}action-toggle-off{% else %}action-toggle-on{% endif %}"
+                                                title="{% if user.is_active %}{% trans 'Deactivate' %}{% else %}{% trans 'Activate' %}{% endif %}">
+                                            <i class="fas {% if user.is_active %}fa-user-slash{% else %}fa-user-check{% endif %}"></i>
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-5">
+                                <div class="empty-state">
+                                    <div class="empty-icon">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <h5 class="mb-2">{% trans "No users found" %}</h5>
+                                    <p class="text-muted mb-0">
+                                        {% trans "No users available at the moment" %}
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <nav aria-label="{% trans 'Page navigation' %}" class="mt-4">
+            <ul class="pagination custom-pagination justify-content-center mb-0">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ page_obj.previous_page_number }}{% if user_type_filter %}&user_type={{ user_type_filter }}{% endif %}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if user_type_filter %}&user_type={{ user_type_filter }}{% endif %}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}">
-                            <i class="fas fa-chevron-right"></i>
+                        <a class="page-link"
+                           href="?page={{ num }}{% if user_type_filter %}&user_type={{ user_type_filter }}{% endif %}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}">
+                            {{ num }}
                         </a>
                     </li>
                     {% endif %}
-                </ul>
-            </nav>
-            {% endif %}
-        </div>
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ page_obj.next_page_number }}{% if user_type_filter %}&user_type={{ user_type_filter }}{% endif %}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
     </div>
 </div>
 
 <style>
-.table th {
-    border-top: none;
+.user-management-page {
+    background:
+        radial-gradient(circle at top left, rgba(59, 130, 246, 0.07), transparent 24%),
+        radial-gradient(circle at top right, rgba(99, 102, 241, 0.07), transparent 20%),
+        linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+    min-height: 100vh;
+}
+
+.dashboard-shell {
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.users-hero,
+.filter-panel,
+.users-table-card {
+    border-radius: 24px;
+}
+
+.users-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 2rem;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 45%, #2563eb 100%);
+    color: #fff;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.16);
+}
+
+.users-hero::before,
+.users-hero::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.users-hero::before {
+    width: 220px;
+    height: 220px;
+    background: rgba(255,255,255,0.06);
+    top: -60px;
+    right: -50px;
+}
+
+.users-hero::after {
+    width: 180px;
+    height: 180px;
+    background: rgba(59,130,246,0.20);
+    bottom: -70px;
+    left: -40px;
+}
+
+.users-hero-content,
+.users-hero-side {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 0.85rem;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.14);
+    font-size: 0.85rem;
     font-weight: 600;
-    color: #495057;
-    background-color: #f8f9fa;
+    margin-bottom: 1rem;
 }
 
-.btn-group .btn {
-    border-radius: 6px;
+.users-title {
+    font-size: clamp(2rem, 3vw, 2.8rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
 }
 
-.page-link {
-    border-radius: 6px;
-    margin: 0 2px;
+.users-subtitle {
+    color: rgba(255,255,255,0.80);
+    font-size: 1rem;
 }
 
-.card {
+.users-hero-side {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.mini-stat-card {
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 18px;
+    padding: 1rem;
+    text-align: center;
+    backdrop-filter: blur(10px);
+}
+
+.mini-stat-card span {
+    display: block;
+    color: rgba(255,255,255,0.70);
+    font-size: 0.82rem;
+    margin-bottom: 0.25rem;
+}
+
+.mini-stat-card strong {
+    display: block;
+    font-size: 1.6rem;
+    color: #fff;
+    line-height: 1.1;
+}
+
+.filter-panel,
+.users-table-card {
+    background: rgba(255,255,255,0.82);
+    border: 1px solid rgba(255,255,255,0.70);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
+}
+
+.filter-panel {
+    padding: 1.2rem;
+}
+
+.filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.filter-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.75rem 1rem;
+    border-radius: 999px;
+    text-decoration: none;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #334155;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.filter-pill i {
+    font-size: 0.9rem;
+}
+
+.filter-pill strong {
+    padding: 0.15rem 0.45rem;
+    border-radius: 999px;
+    background: #e2e8f0;
+    font-size: 0.78rem;
+}
+
+.filter-pill:hover {
+    color: #0f172a;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+}
+
+.filter-pill.active {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    border-color: transparent;
+    color: #fff;
+}
+
+.filter-pill.active strong {
+    background: rgba(255,255,255,0.16);
+    color: #fff;
+}
+
+.filter-student.active {
+    background: linear-gradient(135deg, #22c55e, #15803d);
+}
+
+.filter-employer.active {
+    background: linear-gradient(135deg, #06b6d4, #0f766e);
+}
+
+.filter-admin.active {
+    background: linear-gradient(135deg, #f59e0b, #b45309);
+}
+
+.search-form {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    background: #fff;
+    border: 1px solid #dbe4ee;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.03);
+}
+
+.search-icon {
+    padding-left: 1rem;
+    color: #64748b;
+    flex-shrink: 0;
+}
+
+.search-input {
+    flex: 1 1 auto;
+    border: 0;
+    outline: 0;
+    padding: 0.95rem 0.9rem;
+    background: transparent;
+    color: #0f172a;
+}
+
+.search-btn {
+    border: 0;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #fff;
+    padding: 0.95rem 1.15rem;
+    font-weight: 700;
+    transition: opacity 0.2s ease;
+}
+
+.search-btn:hover {
+    opacity: 0.95;
+}
+
+.clear-search-btn {
+    text-decoration: none;
+    color: #64748b;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.clear-search-btn:hover {
+    color: #0f172a;
+}
+
+.users-table-card {
+    overflow: hidden;
+}
+
+.table-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.35rem 1.4rem 1rem;
+    border-bottom: 1px solid #eef2f7;
+}
+
+.table-topbar h5 {
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.results-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 0.85rem;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-weight: 700;
+    font-size: 0.86rem;
+}
+
+.users-table thead th {
+    color: #64748b;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+    border-bottom: 1px solid #e2e8f0;
+    background: #f8fafc;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.users-table tbody td {
+    vertical-align: middle;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    border-color: #eef2f7;
+}
+
+.users-table tbody tr:hover {
+    background: rgba(248, 250, 252, 0.75);
+}
+
+.user-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    min-width: 240px;
+}
+
+.user-avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.placeholder-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #fff;
+}
+
+.user-name {
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.2;
+}
+
+.user-email {
+    color: #64748b;
+    font-size: 0.86rem;
+    word-break: break-word;
+}
+
+.role-badge,
+.status-badge,
+.meta-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    border-radius: 999px;
+    padding: 0.42rem 0.8rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.role-badge i {
+    font-size: 0.78rem;
+}
+
+.role-student {
+    background: #ecfdf5;
+    color: #15803d;
+}
+
+.role-employer {
+    background: #ecfeff;
+    color: #0f766e;
+}
+
+.role-admin {
+    background: #fffbeb;
+    color: #b45309;
+}
+
+.role-main-admin {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.role-other {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.status-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.status-badge {
+    font-weight: 700;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-active {
+    background: #ecfdf5;
+    color: #15803d;
+}
+
+.status-active .status-dot {
+    background: #22c55e;
+}
+
+.status-inactive {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.status-inactive .status-dot {
+    background: #ef4444;
+}
+
+.status-verified {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.meta-pill {
+    background: #f8fafc;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+}
+
+.activity-text {
+    color: #64748b;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.action-buttons {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    justify-content: flex-end;
+}
+
+.action-btn {
+    width: 38px;
+    height: 38px;
     border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    background: #fff;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+    transform: translateY(-1px);
+}
+
+.action-view {
+    color: #2563eb;
+    border-color: rgba(37, 99, 235, 0.15);
+    background: #eff6ff;
+}
+
+.action-toggle-off {
+    color: #b45309;
+    border-color: rgba(245, 158, 11, 0.16);
+    background: #fffbeb;
+}
+
+.action-toggle-on {
+    color: #15803d;
+    border-color: rgba(34, 197, 94, 0.16);
+    background: #ecfdf5;
+}
+
+.empty-state {
+    padding: 1rem;
+}
+
+.empty-icon {
+    width: 78px;
+    height: 78px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+    color: #475569;
+    font-size: 1.6rem;
+}
+
+.custom-pagination .page-link {
+    border: none;
+    color: #334155;
+    background: rgba(255,255,255,0.85);
+    margin: 0 4px;
+    border-radius: 12px !important;
+    min-width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+    font-weight: 700;
+}
+
+.custom-pagination .page-item.active .page-link {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #fff;
+}
+
+.custom-pagination .page-link:hover {
+    color: #0f172a;
+    background: #eff6ff;
+}
+
+@media (max-width: 991.98px) {
+    .users-hero {
+        padding: 1.5rem;
+    }
+
+    .users-hero-side {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .filter-group {
+        gap: 0.6rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .users-hero,
+    .filter-panel,
+    .users-table-card {
+        border-radius: 18px;
+    }
+
+    .users-hero-side {
+        grid-template-columns: 1fr;
+    }
+
+    .search-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .clear-search-btn {
+        text-align: center;
+    }
+
+    .table-topbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .user-cell {
+        min-width: 200px;
+    }
+
+    .activity-text {
+        white-space: normal;
+    }
 }
 </style>
 {% endblock %}

@@ -4,144 +4,696 @@
 {% block title %}{% trans "System Statistics" %}{% endblock %}
 
 {% block content %}
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="container-fluid py-4 stats-dashboard">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
         <div>
-            <h1 class="h3 fw-bold text-primary mb-1">{% trans "System Statistics" %}</h1>
-            <p class="text-muted mb-0">
+            <h1 class="stats-title mb-1">{% trans "System Statistics" %}</h1>
+            <p class="stats-subtitle mb-0">
+                <i class="fas fa-clock me-1"></i>
                 {% trans "Updated" %}: {{ generated_at|date:"d.m.Y H:i" }}
             </p>
         </div>
-        <a href="{% url 'accounts:admin_dashboard' %}" class="btn btn-outline-primary">
+        <a href="{% url 'accounts:admin_dashboard' %}" class="btn btn-light stats-back-btn">
             <i class="fas fa-arrow-left me-2"></i>{% trans "Back to Dashboard" %}
         </a>
     </div>
 
     <div class="row g-3 mb-4">
-        <div class="col-xl-3 col-md-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="small text-muted">{% trans "Users" %}</div>
-                    <div class="h3 fw-bold mb-1">{{ users.total }}</div>
-                    <div class="small text-muted">{% trans "Students" %}: {{ users.students }} | {% trans "Employers" %}: {{ users.employers }}</div>
+        <div class="col-xxl-3 col-md-6">
+            <div class="stats-card stats-card-primary h-100">
+                <div class="stats-card-icon"><i class="fas fa-users"></i></div>
+                <div class="small text-uppercase fw-semibold opacity-75">{% trans "Users" %}</div>
+                <div class="stats-number">{{ users.total }}</div>
+                <div class="stats-meta">
+                    <span>{% trans "Students" %}: <strong>{{ users.students }}</strong></span>
+                    <span>{% trans "Employers" %}: <strong>{{ users.employers }}</strong></span>
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-md-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="small text-muted">{% trans "Resources" %}</div>
-                    <div class="h3 fw-bold mb-1">{{ resources.total }}</div>
-                    <div class="small text-muted">{% trans "Published" %}: {{ resources.published }}</div>
+
+        <div class="col-xxl-3 col-md-6">
+            <div class="stats-card stats-card-success h-100">
+                <div class="stats-card-icon"><i class="fas fa-book-open"></i></div>
+                <div class="small text-uppercase fw-semibold opacity-75">{% trans "Resources" %}</div>
+                <div class="stats-number">{{ resources.total }}</div>
+                <div class="stats-meta">
+                    <span>{% trans "Published" %}: <strong>{{ resources.published }}</strong></span>
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-md-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="small text-muted">{% trans "Events" %}</div>
-                    <div class="h3 fw-bold mb-1">{{ events.total }}</div>
-                    <div class="small text-muted">{% trans "Upcoming" %}: {{ events.upcoming }} | {% trans "Ongoing" %}: {{ events.ongoing }}</div>
+
+        <div class="col-xxl-3 col-md-6">
+            <div class="stats-card stats-card-warning h-100">
+                <div class="stats-card-icon"><i class="fas fa-calendar-alt"></i></div>
+                <div class="small text-uppercase fw-semibold opacity-75">{% trans "Events" %}</div>
+                <div class="stats-number">{{ events.total }}</div>
+                <div class="stats-meta">
+                    <span>{% trans "Upcoming" %}: <strong>{{ events.upcoming }}</strong></span>
+                    <span>{% trans "Ongoing" %}: <strong>{{ events.ongoing }}</strong></span>
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-md-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="small text-muted">{% trans "Jobs / CV" %}</div>
-                    <div class="h3 fw-bold mb-1">{{ jobs.total }} / {{ cvs.total }}</div>
-                    <div class="small text-muted">{% trans "Active jobs" %}: {{ jobs.active }} | {% trans "Published CV" %}: {{ cvs.published }}</div>
+
+        <div class="col-xxl-3 col-md-6">
+            <div class="stats-card stats-card-dark h-100">
+                <div class="stats-card-icon"><i class="fas fa-briefcase"></i></div>
+                <div class="small text-uppercase fw-semibold opacity-75">{% trans "Jobs / CV" %}</div>
+                <div class="stats-number">{{ jobs.total }} <span class="slash-divider">/</span> {{ cvs.total }}</div>
+                <div class="stats-meta">
+                    <span>{% trans "Active jobs" %}: <strong>{{ jobs.active }}</strong></span>
+                    <span>{% trans "Published CV" %}: <strong>{{ cvs.published }}</strong></span>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row g-4">
+    <div class="row g-4 mb-4">
         <div class="col-xl-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white"><strong>{% trans "Users by Role" %}</strong></div>
-                <div class="card-body">
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item d-flex justify-content-between"><span>{% trans "Students" %}</span><strong>{{ users.students }}</strong></li>
-                        <li class="list-group-item d-flex justify-content-between"><span>{% trans "Employers" %}</span><strong>{{ users.employers }}</strong></li>
-                        <li class="list-group-item d-flex justify-content-between"><span>{% trans "Admins" %}</span><strong>{{ users.admins }}</strong></li>
-                        <li class="list-group-item d-flex justify-content-between"><span>{% trans "Main Admins" %}</span><strong>{{ users.main_admins }}</strong></li>
-                        <li class="list-group-item d-flex justify-content-between"><span>{% trans "Guests" %}</span><strong>{{ users.guests }}</strong></li>
-                        <li class="list-group-item d-flex justify-content-between"><span>{% trans "Other" %}</span><strong>{{ users.other }}</strong></li>
-                    </ul>
+            <div class="card dashboard-panel border-0 shadow-sm h-100">
+                <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0">
+                    <h5 class="mb-1 fw-bold">{% trans "Users by Role" %}</h5>
+                    <p class="text-muted small mb-0">{% trans "Distribution of system users by access role" %}</p>
+                </div>
+                <div class="card-body px-4">
+                    <div class="chart-box">
+                        <canvas id="usersRoleChart"></canvas>
+                    </div>
+
+                    <div class="mt-4">
+                        <div class="progress-stat mb-3">
+                            <div class="d-flex justify-content-between small mb-1">
+                                <span>{% trans "Students" %}</span>
+                                <strong>{{ users.students }}</strong>
+                            </div>
+                            <div class="progress slim-progress">
+                                <div class="progress-bar bg-primary" style="width: {% widthratio users.students users.total 100 %}%"></div>
+                            </div>
+                        </div>
+
+                        <div class="progress-stat mb-3">
+                            <div class="d-flex justify-content-between small mb-1">
+                                <span>{% trans "Employers" %}</span>
+                                <strong>{{ users.employers }}</strong>
+                            </div>
+                            <div class="progress slim-progress">
+                                <div class="progress-bar bg-success" style="width: {% widthratio users.employers users.total 100 %}%"></div>
+                            </div>
+                        </div>
+
+                        <div class="progress-stat mb-3">
+                            <div class="d-flex justify-content-between small mb-1">
+                                <span>{% trans "Admins" %}</span>
+                                <strong>{{ users.admins }}</strong>
+                            </div>
+                            <div class="progress slim-progress">
+                                <div class="progress-bar bg-warning" style="width: {% widthratio users.admins users.total 100 %}%"></div>
+                            </div>
+                        </div>
+
+                        <div class="progress-stat mb-3">
+                            <div class="d-flex justify-content-between small mb-1">
+                                <span>{% trans "Main Admins" %}</span>
+                                <strong>{{ users.main_admins }}</strong>
+                            </div>
+                            <div class="progress slim-progress">
+                                <div class="progress-bar bg-danger" style="width: {% widthratio users.main_admins users.total 100 %}%"></div>
+                            </div>
+                        </div>
+
+                        <div class="progress-stat mb-3">
+                            <div class="d-flex justify-content-between small mb-1">
+                                <span>{% trans "Guests" %}</span>
+                                <strong>{{ users.guests }}</strong>
+                            </div>
+                            <div class="progress slim-progress">
+                                <div class="progress-bar bg-info" style="width: {% widthratio users.guests users.total 100 %}%"></div>
+                            </div>
+                        </div>
+
+                        <div class="progress-stat">
+                            <div class="d-flex justify-content-between small mb-1">
+                                <span>{% trans "Other" %}</span>
+                                <strong>{{ users.other }}</strong>
+                            </div>
+                            <div class="progress slim-progress">
+                                <div class="progress-bar bg-secondary" style="width: {% widthratio users.other users.total 100 %}%"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="col-xl-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white"><strong>{% trans "Events by Status" %}</strong></div>
-                <div class="card-body">
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item d-flex justify-content-between"><span>{% trans "Published" %}</span><strong>{{ events.published }}</strong></li>
-                        <li class="list-group-item d-flex justify-content-between"><span>{% trans "Draft" %}</span><strong>{{ events.draft }}</strong></li>
-                        <li class="list-group-item d-flex justify-content-between"><span>{% trans "Cancelled" %}</span><strong>{{ events.cancelled }}</strong></li>
-                        <li class="list-group-item d-flex justify-content-between"><span>{% trans "Completed" %}</span><strong>{{ events.completed }}</strong></li>
-                        <li class="list-group-item d-flex justify-content-between"><span>{% trans "Upcoming" %}</span><strong>{{ events.upcoming }}</strong></li>
-                        <li class="list-group-item d-flex justify-content-between"><span>{% trans "Past" %}</span><strong>{{ events.past }}</strong></li>
-                    </ul>
+            <div class="card dashboard-panel border-0 shadow-sm h-100">
+                <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0">
+                    <h5 class="mb-1 fw-bold">{% trans "Events by Status" %}</h5>
+                    <p class="text-muted small mb-0">{% trans "Current event lifecycle breakdown" %}</p>
+                </div>
+                <div class="card-body px-4">
+                    <div class="chart-box">
+                        <canvas id="eventsStatusChart"></canvas>
+                    </div>
+
+                    <div class="row g-3 mt-2">
+                        <div class="col-6">
+                            <div class="mini-info-card">
+                                <span>{% trans "Published" %}</span>
+                                <strong>{{ events.published }}</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mini-info-card">
+                                <span>{% trans "Draft" %}</span>
+                                <strong>{{ events.draft }}</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mini-info-card">
+                                <span>{% trans "Cancelled" %}</span>
+                                <strong>{{ events.cancelled }}</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mini-info-card">
+                                <span>{% trans "Completed" %}</span>
+                                <strong>{{ events.completed }}</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mini-info-card">
+                                <span>{% trans "Upcoming" %}</span>
+                                <strong>{{ events.upcoming }}</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mini-info-card">
+                                <span>{% trans "Past" %}</span>
+                                <strong>{{ events.past }}</strong>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm mt-4">
-        <div class="card-header bg-white"><strong>{% trans "New Records by Period" %}</strong></div>
-        <div class="table-responsive">
-            <table class="table mb-0">
-                <thead>
-                    <tr>
-                        <th>{% trans "Entity" %}</th>
-                        <th>{% trans "24h" %}</th>
-                        <th>{% trans "7 days" %}</th>
-                        <th>{% trans "30 days" %}</th>
-                        <th>{% trans "90 days" %}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>{% trans "Users" %}</td>
-                        <td>{{ users.new.day }}</td>
-                        <td>{{ users.new.week }}</td>
-                        <td>{{ users.new.month }}</td>
-                        <td>{{ users.new.quarter }}</td>
-                    </tr>
-                    <tr>
-                        <td>{% trans "Resources" %}</td>
-                        <td>{{ resources.new.day }}</td>
-                        <td>{{ resources.new.week }}</td>
-                        <td>{{ resources.new.month }}</td>
-                        <td>{{ resources.new.quarter }}</td>
-                    </tr>
-                    <tr>
-                        <td>{% trans "Events" %}</td>
-                        <td>{{ events.new.day }}</td>
-                        <td>{{ events.new.week }}</td>
-                        <td>{{ events.new.month }}</td>
-                        <td>{{ events.new.quarter }}</td>
-                    </tr>
-                    <tr>
-                        <td>{% trans "Jobs" %}</td>
-                        <td>{{ jobs.new.day }}</td>
-                        <td>{{ jobs.new.week }}</td>
-                        <td>{{ jobs.new.month }}</td>
-                        <td>{{ jobs.new.quarter }}</td>
-                    </tr>
-                    <tr>
-                        <td>{% trans "CV" %}</td>
-                        <td>{{ cvs.new.day }}</td>
-                        <td>{{ cvs.new.week }}</td>
-                        <td>{{ cvs.new.month }}</td>
-                        <td>{{ cvs.new.quarter }}</td>
-                    </tr>
-                </tbody>
-            </table>
+    <div class="card dashboard-panel border-0 shadow-sm">
+        <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0">
+            <h5 class="mb-1 fw-bold">{% trans "New Records by Period" %}</h5>
+            <p class="text-muted small mb-0">{% trans "Growth dynamics across different time windows" %}</p>
+        </div>
+
+        <div class="card-body px-4 pt-4">
+            <div class="table-responsive">
+                <table class="table stats-table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>{% trans "Entity" %}</th>
+                            <th>{% trans "24h" %}</th>
+                            <th>{% trans "7 days" %}</th>
+                            <th>{% trans "30 days" %}</th>
+                            <th>{% trans "90 days" %}</th>
+                            <th class="text-end">{% trans "Visual Trend" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="fw-semibold">{% trans "Users" %}</td>
+                            <td>{{ users.new.day }}</td>
+                            <td>{{ users.new.week }}</td>
+                            <td>{{ users.new.month }}</td>
+                            <td>{{ users.new.quarter }}</td>
+                            <td class="text-end">
+                                <div class="table-bar">
+                                    <span class="bar bar-primary" style="width: {% if users.new.quarter %}{% widthratio users.new.month users.new.quarter 100 %}{% else %}0{% endif %}%"></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-semibold">{% trans "Resources" %}</td>
+                            <td>{{ resources.new.day }}</td>
+                            <td>{{ resources.new.week }}</td>
+                            <td>{{ resources.new.month }}</td>
+                            <td>{{ resources.new.quarter }}</td>
+                            <td class="text-end">
+                                <div class="table-bar">
+                                    <span class="bar bar-success" style="width: {% if resources.new.quarter %}{% widthratio resources.new.month resources.new.quarter 100 %}{% else %}0{% endif %}%"></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-semibold">{% trans "Events" %}</td>
+                            <td>{{ events.new.day }}</td>
+                            <td>{{ events.new.week }}</td>
+                            <td>{{ events.new.month }}</td>
+                            <td>{{ events.new.quarter }}</td>
+                            <td class="text-end">
+                                <div class="table-bar">
+                                    <span class="bar bar-warning" style="width: {% if events.new.quarter %}{% widthratio events.new.month events.new.quarter 100 %}{% else %}0{% endif %}%"></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-semibold">{% trans "Jobs" %}</td>
+                            <td>{{ jobs.new.day }}</td>
+                            <td>{{ jobs.new.week }}</td>
+                            <td>{{ jobs.new.month }}</td>
+                            <td>{{ jobs.new.quarter }}</td>
+                            <td class="text-end">
+                                <div class="table-bar">
+                                    <span class="bar bar-dark" style="width: {% if jobs.new.quarter %}{% widthratio jobs.new.month jobs.new.quarter 100 %}{% else %}0{% endif %}%"></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-semibold">{% trans "CV" %}</td>
+                            <td>{{ cvs.new.day }}</td>
+                            <td>{{ cvs.new.week }}</td>
+                            <td>{{ cvs.new.month }}</td>
+                            <td>{{ cvs.new.quarter }}</td>
+                            <td class="text-end">
+                                <div class="table-bar">
+                                    <span class="bar bar-info" style="width: {% if cvs.new.quarter %}{% widthratio cvs.new.month cvs.new.quarter 100 %}{% else %}0{% endif %}%"></span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-4">
+                <div class="chart-box-wide">
+                    <canvas id="recordsPeriodChart"></canvas>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const usersTotal = {{ users.total|default:0 }};
+    const eventsTotal = {{ events.total|default:0 }};
+
+    new Chart(document.getElementById('usersRoleChart'), {
+        type: 'doughnut',
+        data: {
+            labels: [
+                "{% trans 'Students' %}",
+                "{% trans 'Employers' %}",
+                "{% trans 'Admins' %}",
+                "{% trans 'Main Admins' %}",
+                "{% trans 'Guests' %}",
+                "{% trans 'Other' %}"
+            ],
+            datasets: [{
+                data: [
+                    {{ users.students|default:0 }},
+                    {{ users.employers|default:0 }},
+                    {{ users.admins|default:0 }},
+                    {{ users.main_admins|default:0 }},
+                    {{ users.guests|default:0 }},
+                    {{ users.other|default:0 }}
+                ],
+                backgroundColor: [
+                    '#4f46e5',
+                    '#22c55e',
+                    '#f59e0b',
+                    '#ef4444',
+                    '#06b6d4',
+                    '#94a3b8'
+                ],
+                borderWidth: 0,
+                hoverOffset: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '68%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 16,
+                        usePointStyle: true,
+                        pointStyle: 'circle'
+                    }
+                }
+            }
+        }
+    });
+
+    new Chart(document.getElementById('eventsStatusChart'), {
+        type: 'bar',
+        data: {
+            labels: [
+                "{% trans 'Published' %}",
+                "{% trans 'Draft' %}",
+                "{% trans 'Cancelled' %}",
+                "{% trans 'Completed' %}",
+                "{% trans 'Upcoming' %}",
+                "{% trans 'Past' %}"
+            ],
+            datasets: [{
+                label: "{% trans 'Events' %}",
+                data: [
+                    {{ events.published|default:0 }},
+                    {{ events.draft|default:0 }},
+                    {{ events.cancelled|default:0 }},
+                    {{ events.completed|default:0 }},
+                    {{ events.upcoming|default:0 }},
+                    {{ events.past|default:0 }}
+                ],
+                backgroundColor: [
+                    '#4f46e5',
+                    '#94a3b8',
+                    '#ef4444',
+                    '#22c55e',
+                    '#f59e0b',
+                    '#06b6d4'
+                ],
+                borderRadius: 12,
+                borderSkipped: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: {
+                    grid: { display: false }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: { precision: 0 }
+                }
+            }
+        }
+    });
+
+    new Chart(document.getElementById('recordsPeriodChart'), {
+        type: 'bar',
+        data: {
+            labels: [
+                "{% trans '24h' %}",
+                "{% trans '7 days' %}",
+                "{% trans '30 days' %}",
+                "{% trans '90 days' %}"
+            ],
+            datasets: [
+                {
+                    label: "{% trans 'Users' %}",
+                    data: [
+                        {{ users.new.day|default:0 }},
+                        {{ users.new.week|default:0 }},
+                        {{ users.new.month|default:0 }},
+                        {{ users.new.quarter|default:0 }}
+                    ],
+                    backgroundColor: '#4f46e5',
+                    borderRadius: 10
+                },
+                {
+                    label: "{% trans 'Resources' %}",
+                    data: [
+                        {{ resources.new.day|default:0 }},
+                        {{ resources.new.week|default:0 }},
+                        {{ resources.new.month|default:0 }},
+                        {{ resources.new.quarter|default:0 }}
+                    ],
+                    backgroundColor: '#22c55e',
+                    borderRadius: 10
+                },
+                {
+                    label: "{% trans 'Events' %}",
+                    data: [
+                        {{ events.new.day|default:0 }},
+                        {{ events.new.week|default:0 }},
+                        {{ events.new.month|default:0 }},
+                        {{ events.new.quarter|default:0 }}
+                    ],
+                    backgroundColor: '#f59e0b',
+                    borderRadius: 10
+                },
+                {
+                    label: "{% trans 'Jobs' %}",
+                    data: [
+                        {{ jobs.new.day|default:0 }},
+                        {{ jobs.new.week|default:0 }},
+                        {{ jobs.new.month|default:0 }},
+                        {{ jobs.new.quarter|default:0 }}
+                    ],
+                    backgroundColor: '#0f172a',
+                    borderRadius: 10
+                },
+                {
+                    label: "{% trans 'CV' %}",
+                    data: [
+                        {{ cvs.new.day|default:0 }},
+                        {{ cvs.new.week|default:0 }},
+                        {{ cvs.new.month|default:0 }},
+                        {{ cvs.new.quarter|default:0 }}
+                    ],
+                    backgroundColor: '#06b6d4',
+                    borderRadius: 10
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        padding: 16
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: { precision: 0 }
+                }
+            }
+        }
+    });
+});
+</script>
+
+<style>
+.stats-dashboard {
+    background:
+        radial-gradient(circle at top left, rgba(79, 70, 229, 0.08), transparent 25%),
+        radial-gradient(circle at top right, rgba(6, 182, 212, 0.08), transparent 20%),
+        linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    min-height: 100vh;
+}
+
+.stats-title {
+    font-size: clamp(1.8rem, 2.8vw, 2.5rem);
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+}
+
+.stats-subtitle {
+    color: #64748b;
+    font-size: 0.95rem;
+}
+
+.stats-back-btn {
+    border-radius: 14px;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+}
+
+.stats-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 22px;
+    padding: 1.4rem;
+    color: #fff;
+    box-shadow: 0 14px 35px rgba(15, 23, 42, 0.10);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.stats-card:hover,
+.dashboard-panel:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+}
+
+.stats-card-primary {
+    background: linear-gradient(135deg, #4f46e5, #312e81);
+}
+
+.stats-card-success {
+    background: linear-gradient(135deg, #22c55e, #166534);
+}
+
+.stats-card-warning {
+    background: linear-gradient(135deg, #f59e0b, #b45309);
+}
+
+.stats-card-dark {
+    background: linear-gradient(135deg, #1e293b, #020617);
+}
+
+.stats-card-icon {
+    width: 52px;
+    height: 52px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.14);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.stats-number {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin: 0.3rem 0 0.55rem;
+}
+
+.stats-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    font-size: 0.92rem;
+    color: rgba(255,255,255,0.92);
+}
+
+.slash-divider {
+    opacity: 0.5;
+}
+
+.dashboard-panel {
+    border-radius: 22px;
+    background: rgba(255,255,255,0.88);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.chart-box {
+    position: relative;
+    height: 320px;
+}
+
+.chart-box-wide {
+    position: relative;
+    height: 360px;
+}
+
+.mini-info-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 0.9rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.mini-info-card span {
+    font-size: 0.86rem;
+    color: #64748b;
+}
+
+.mini-info-card strong {
+    font-size: 1.1rem;
+    color: #0f172a;
+}
+
+.slim-progress {
+    height: 9px;
+    border-radius: 999px;
+    background: #e2e8f0;
+    overflow: hidden;
+}
+
+.slim-progress .progress-bar {
+    border-radius: 999px;
+}
+
+.stats-table thead th {
+    border-bottom: 1px solid #e2e8f0;
+    color: #64748b;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-weight: 700;
+    background: transparent;
+}
+
+.stats-table tbody td {
+    border-color: #eef2f7;
+    vertical-align: middle;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.table-bar {
+    width: 140px;
+    height: 10px;
+    background: #e2e8f0;
+    border-radius: 999px;
+    margin-left: auto;
+    overflow: hidden;
+}
+
+.table-bar .bar {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+}
+
+.bar-primary { background: linear-gradient(90deg, #6366f1, #4338ca); }
+.bar-success { background: linear-gradient(90deg, #22c55e, #15803d); }
+.bar-warning { background: linear-gradient(90deg, #f59e0b, #d97706); }
+.bar-dark { background: linear-gradient(90deg, #334155, #0f172a); }
+.bar-info { background: linear-gradient(90deg, #06b6d4, #0891b2); }
+
+@media (max-width: 991.98px) {
+    .chart-box,
+    .chart-box-wide {
+        height: 280px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .stats-card {
+        padding: 1.2rem;
+        border-radius: 18px;
+    }
+
+    .stats-number {
+        font-size: 1.7rem;
+    }
+
+    .dashboard-panel {
+        border-radius: 18px;
+    }
+
+    .table-bar {
+        width: 90px;
+    }
+}
+</style>
 {% endblock %}
