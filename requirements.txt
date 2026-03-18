@@ -137,6 +137,7 @@ zopfli==0.2.3.post1
 # Media / rendering
 # --------------------
 pillow==12.0.0
+qrcode==8.2
 pydyf==0.11.0
 pyphen==0.17.2
 weasyprint==66.0

@@ -30,7 +30,7 @@ from accounts.models import (
 
 from jobs.models import Job, JobApplication
 from cvbuilder.models import CV
-from events.models import Event
+from events.models import Event, EventParticipation
 from resources.models import Resource
 from .middleware import BruteForceProtectionMiddleware
 from .forms import (
@@ -650,6 +650,10 @@ def student_dashboard(request):
 
     applications = JobApplication.objects.filter(user=request.user)
 
+    recent_event_participations = EventParticipation.objects.filter(
+        user=request.user
+    ).select_related("event").order_by("-registered_at")[:5]
+
     context = {
         "student_profile": student_profile,
         "stats": {
@@ -670,6 +674,7 @@ def student_dashboard(request):
         "recent_activities": UserActivity.objects.filter(user=request.user).order_by('-created_at')[:10],
         "recent_notifications": Notification.objects.filter(user=request.user).order_by("-created_at")[:5],
         "resumes": resumes,
+        "recent_event_participations": recent_event_participations,
     }
 
     return render(request, "accounts/student_dashboard.html", context)
@@ -805,6 +810,10 @@ def employer_dashboard(request):
         'profile_views': profile_views,
     }
 
+    recent_event_participations = EventParticipation.objects.filter(
+        user=request.user
+    ).select_related("event").order_by("-registered_at")[:5]
+
     context = {
         'employer_profile': employer_profile,
         'primary_company': primary_company,
@@ -818,6 +827,7 @@ def employer_dashboard(request):
         ).select_related('user', 'job').order_by('-created_at')[:5],
         'recent_activity': UserActivity.objects.filter(user=request.user).order_by('-created_at')[:10],
         'notifications': Notification.objects.filter(user=request.user, is_read=False).order_by('-created_at')[:5],
+        'recent_event_participations': recent_event_participations,
     }
 
     return render(request, 'accounts/employer_dashboard.html', context)
@@ -1520,6 +1530,7 @@ def profile_view(request, user_id=None):
     context = {
         "profile_user": user,
         "is_own_profile": is_own_profile,
+        "event_participations": EventParticipation.objects.filter(user=user).select_related("event").order_by("-registered_at")[:6],
     }
 
     if user.is_student:

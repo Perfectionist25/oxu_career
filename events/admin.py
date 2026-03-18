@@ -6,7 +6,13 @@ from django.utils.translation import gettext_lazy as _
 from django import forms
 from django_ckeditor_5.widgets import CKEditor5Widget
 
-from .models import Event, EventCategory, EventPhoto
+from .models import (
+    Event,
+    EventCategory,
+    EventEmployerCategory,
+    EventParticipation,
+    EventPhoto,
+)
 from .forms import EventForm
 
 
@@ -45,6 +51,8 @@ class EventAdmin(admin.ModelAdmin):
         "start_date",
         "end_date",
         "status",
+        "max_participants",
+        "occupied_seats",
         "views_count",
     )
 
@@ -86,7 +94,7 @@ class EventAdmin(admin.ModelAdmin):
         (
             _("Location"),
             {
-                "fields": ("location",),
+                "fields": ("location", "max_participants", "allowed_employer_categories"),
                 "classes": ("collapse",)
             },
         ),
@@ -143,6 +151,32 @@ class EventAdmin(admin.ModelAdmin):
     list_per_page = 25
     date_hierarchy = 'start_date'
     save_on_top = True
+
+    @display(description=_("Occupied Seats"))
+    def occupied_seats(self, obj):
+        return obj.seats_occupied
+
+
+@admin.register(EventEmployerCategory)
+class EventEmployerCategoryAdmin(admin.ModelAdmin):
+    list_display = ("name", "created_at")
+    search_fields = ("name",)
+
+
+@admin.register(EventParticipation)
+class EventParticipationAdmin(admin.ModelAdmin):
+    list_display = (
+        "event",
+        "user",
+        "role",
+        "status",
+        "attendance_status",
+        "registered_at",
+        "checked_in_at",
+    )
+    list_filter = ("role", "status", "attendance_status", "event")
+    search_fields = ("event__title", "user__username", "user__email", "user__full_name")
+    readonly_fields = ("registered_at", "checked_in_at", "updated_at", "qr_token")
 
 
 @admin.register(EventPhoto)

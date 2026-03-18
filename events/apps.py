@@ -8,4 +8,4 @@ class EventsConfig(AppConfig):
     verbose_name = _("Events")
 
     def ready(self):
-        pass
+        from . import signals  # noqa: F401

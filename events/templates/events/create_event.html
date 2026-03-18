@@ -700,7 +700,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 'id_category',
                 'id_event_type',
                 'id_start_date',
-                'id_location'
+                'id_location',
+                'id_max_participants'
             ];
             
             requiredFields.forEach(fieldId => {
@@ -872,6 +873,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const tips = {
             'id_title': '{% trans "Enter a clear and descriptive title for your event" %}',
             'id_location': '{% trans "Physical address or online platform" %}',
+            'id_max_participants': '{% trans "Set the maximum number of participants who can register" %}',
             'id_tags': '{% trans "Use relevant keywords to help people find your event" %}'
         };
         
@@ -1073,6 +1075,25 @@ document.addEventListener('DOMContentLoaded', function() {
                                     {{ form.location }}
                                     <div class="form-text">{% trans "Maximum 200 characters" %}</div>
                                     <div class="text-danger small mt-1" id="{{ form.location.id_for_label }}_error"></div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="{{ form.max_participants.id_for_label }}" class="form-label required-field">
+                                        {{ form.max_participants.label }}
+                                    </label>
+                                    {{ form.max_participants }}
+                                    <div class="form-text">{% trans "Maximum number of participants allowed for the event" %}</div>
+                                    <div class="text-danger small mt-1" id="{{ form.max_participants.id_for_label }}_error"></div>
+                                </div>
+                                <div class="col-md-8 mb-3">
+                                    <label for="{{ form.allowed_employer_categories.id_for_label }}" class="form-label">
+                                        {{ form.allowed_employer_categories.label }}
+                                    </label>
+                                    {{ form.allowed_employer_categories }}
+                                    <div class="form-text">{% trans "Leave empty to allow employers from all business categories" %}</div>
+                                    <div class="text-danger small mt-1" id="{{ form.allowed_employer_categories.id_for_label }}_error"></div>
                                 </div>
                             </div>
                         </div>

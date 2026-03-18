@@ -325,6 +325,45 @@
                     </div>
                 </div>
 
+                {% if event_participations %}
+                <div class="content-panel mb-4">
+                    <div class="panel-header">
+                        <div>
+                            <h5 class="panel-title mb-1">
+                                <i class="fas fa-calendar-check me-2"></i>{% trans "Events I Participate In" %}
+                            </h5>
+                            <p class="panel-subtitle mb-0">{% trans "Recent event participation history and personal passes" %}</p>
+                        </div>
+                    </div>
+
+                    <div class="panel-body">
+                        {% for participation in event_participations %}
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 border rounded-4 p-3 mb-3">
+                            <div>
+                                <div class="fw-semibold">{{ participation.event.title }}</div>
+                                <div class="small text-muted">{{ participation.event.start_date|date:"M d, Y H:i" }} · {{ participation.event.location }}</div>
+                                <div class="small mt-2">
+                                    <span class="soft-badge">{{ participation.get_status_display }}</span>
+                                    <span class="soft-badge">{{ participation.get_effective_attendance_status_display }}</span>
+                                </div>
+                            </div>
+                            {% if is_own_profile %}
+                            <a href="{% url 'events:participation_pass' participation.pk %}" class="btn btn-outline-primary btn-sm">
+                                {% trans "Open Pass" %}
+                            </a>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+
+                        {% if is_own_profile %}
+                        <a href="{% url 'events:my_events' %}" class="btn btn-outline-secondary">
+                            {% trans "View All My Events" %}
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
                 <!-- Social links -->
                 {% if profile_user.website or profile_user.linkedin or profile_user.github or profile_user.telegram %}
                 <div class="content-panel mb-4">
@@ -598,6 +637,10 @@
                                 <i class="fas fa-clipboard-list"></i>
                                 <span>{% trans "My Applications" %}</span>
                             </a>
+                            <a href="{% url 'events:my_events' %}" class="quick-action-btn">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>{% trans "My Events" %}</span>
+                            </a>
                             {% endif %}
 
                             {% if profile_user.user_type == 'employer' %}
@@ -608,6 +651,10 @@
                             <a href="{% url 'jobs:employer_applications' %}" class="quick-action-btn">
                                 <i class="fas fa-users"></i>
                                 <span>{% trans "View Applications" %}</span>
+                            </a>
+                            <a href="{% url 'events:my_events' %}" class="quick-action-btn">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>{% trans "My Events" %}</span>
                             </a>
                             {% endif %}
                         </div>

@@ -123,6 +123,8 @@ class EventForm(forms.ModelForm):
             "start_date",
             "end_date",
             "location",
+            "max_participants",
+            "allowed_employer_categories",
             "banner_image",
             "thumbnail",
             "tags",
@@ -172,6 +174,20 @@ class EventForm(forms.ModelForm):
                     "style": "padding: 10px;"
                 }
             ),
+            "max_participants": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "min": "1",
+                    "placeholder": _("100"),
+                    "style": "padding: 10px;"
+                }
+            ),
+            "allowed_employer_categories": forms.SelectMultiple(
+                attrs={
+                    "class": "form-select form-control",
+                    "style": "padding: 10px; min-height: 140px;"
+                }
+            ),
             "tags": forms.TextInput(
                 attrs={
                     "class": "form-control",
@@ -199,6 +215,8 @@ class EventForm(forms.ModelForm):
             "start_date": _("Start Date"),
             "end_date": _("End Date"),
             "location": _("Location"),
+            "max_participants": _("Maximum Participants"),
+            "allowed_employer_categories": _("Allowed Employer Categories"),
             "banner_image": _("Banner Image"),
             "thumbnail": _("Thumbnail"),
             "tags": _("Tags"),
@@ -210,6 +228,10 @@ class EventForm(forms.ModelForm):
         help_texts = {
             "short_description": _("Brief summary that appears in listings"),
             "description": _("Full event details with formatting"),
+            "max_participants": _("Maximum number of people who can register"),
+            "allowed_employer_categories": _(
+                "Optional restriction for employer participation by business category"
+            ),
             "tags": _("Separate with commas, e.g., technology, workshop"),
         }
 
@@ -218,6 +240,7 @@ class EventForm(forms.ModelForm):
 
 
         self.fields['category'].queryset = EventCategory.objects.all()
+        self.fields['allowed_employer_categories'].queryset = EventEmployerCategory.objects.all()
 
 
         if not self.instance.pk:
@@ -273,6 +296,12 @@ class EventForm(forms.ModelForm):
             raise ValidationError(_("Location cannot exceed 200 characters."))
         return location.strip()
 
+    def clean_max_participants(self):
+        max_participants = self.cleaned_data.get("max_participants")
+        if max_participants is None or max_participants < 1:
+            raise ValidationError(_("Maximum participants must be at least 1."))
+        return max_participants
+
     def clean_tags(self):
         tags = self.cleaned_data.get('tags', '')
         if tags:
@@ -304,6 +333,19 @@ class EventForm(forms.ModelForm):
                 self.add_error('end_date', _("End date must be after start date."))
 
         return cleaned_data
+
+
+class EventAttendanceScanForm(forms.Form):
+    qr_payload = forms.CharField(
+        label=_("QR Payload"),
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": _("Scan QR code or paste the attendance link"),
+                "autocomplete": "off",
+            }
+        ),
+    )
 
 
 class EventSearchForm(forms.Form):

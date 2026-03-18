@@ -10,6 +10,8 @@ urlpatterns = [
     path('calendar/', views.EventCalendarView.as_view(), name='event_calendar'),
     path('categories/', views.event_categories, name='categories'),
     path('event/<slug:slug>/', views.event_detail, name='event_detail'),
+    path('event/<slug:slug>/join/', views.join_event, name='join_event'),
+    path('event/<slug:slug>/cancel/', views.cancel_registration, name='cancel_registration'),
     path('stats/', views.stats_calendar, name='stats_calendar'),
 
 
@@ -18,6 +20,8 @@ urlpatterns = [
     path('delete/<slug:slug>/', views.delete_event, name='delete_event'),
     path('manage_events/', views.manage_events, name='manage_events'),
     path('my-events/', views.my_events, name='my_events'),
+    path('participations/<int:pk>/pass/', views.participation_pass, name='participation_pass'),
+    path('participations/<int:pk>/qr/', views.participation_qr_image, name='participation_qr_image'),
 
 
     path('admin/events/', views.admin_event_list, name='admin_event_list'),
@@ -26,6 +30,9 @@ urlpatterns = [
     path('admin/events/<int:pk>/delete/', views.admin_event_delete, name='admin_event_delete'),
     path('admin/events/<int:pk>/publish/', views.admin_event_publish, name='publish_event'),
     path('admin/events/<int:pk>/unpublish/', views.admin_event_unpublish, name='unpublish_event'),
+    path('admin/events/<int:pk>/participants/', views.admin_event_participants, name='admin_event_participants'),
+    path('admin/events/<int:pk>/check-in/', views.admin_event_check_in, name='admin_event_check_in'),
+    path('admin/events/<int:pk>/check-in/<uuid:token>/', views.admin_event_check_in_token, name='admin_event_check_in_token'),
 
     path('admin/categories/', views.admin_category_list, name='admin_category_list'),
     path('admin/categories/create/', views.admin_category_create, name='admin_category_create'),

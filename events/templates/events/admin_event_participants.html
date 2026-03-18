@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Event Participants" %} - {{ event.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+        <div>
+            <h1 class="h3 fw-bold mb-1">{{ event.title }}</h1>
+            <p class="text-muted mb-0">{% trans "Participants, attendance, and check-in management" %}</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="{% url 'events:admin_event_check_in' event.pk %}" class="btn btn-success">
+                <i class="fas fa-qrcode me-2"></i>{% trans "Open Check-in" %}
+            </a>
+            <a href="{% url 'events:admin_event_edit' event.pk %}" class="btn btn-outline-primary">
+                <i class="fas fa-edit me-2"></i>{% trans "Edit Event" %}
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-2 col-6"><div class="card border-0 shadow-sm"><div class="card-body"><small class="text-muted d-block">{% trans "Total" %}</small><strong>{{ stats.total }}</strong></div></div></div>
+        <div class="col-md-2 col-6"><div class="card border-0 shadow-sm"><div class="card-body"><small class="text-muted d-block">{% trans "Registered" %}</small><strong>{{ stats.registered }}</strong></div></div></div>
+        <div class="col-md-2 col-6"><div class="card border-0 shadow-sm"><div class="card-body"><small class="text-muted d-block">{% trans "Attended" %}</small><strong>{{ stats.attended }}</strong></div></div></div>
+        <div class="col-md-2 col-6"><div class="card border-0 shadow-sm"><div class="card-body"><small class="text-muted d-block">{% trans "Absent" %}</small><strong>{{ stats.absent }}</strong></div></div></div>
+        <div class="col-md-2 col-6"><div class="card border-0 shadow-sm"><div class="card-body"><small class="text-muted d-block">{% trans "Students" %}</small><strong>{{ stats.students }}</strong></div></div></div>
+        <div class="col-md-2 col-6"><div class="card border-0 shadow-sm"><div class="card-body"><small class="text-muted d-block">{% trans "Employers" %}</small><strong>{{ stats.employers }}</strong></div></div></div>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label" for="role">{% trans "Role" %}</label>
+                    <select class="form-select" id="role" name="role">
+                        <option value="">{% trans "All roles" %}</option>
+                        {% for value, label in role_choices %}
+                        <option value="{{ value }}" {% if request.GET.role == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label" for="attendance">{% trans "Attendance" %}</label>
+                    <select class="form-select" id="attendance" name="attendance">
+                        <option value="">{% trans "All attendance statuses" %}</option>
+                        {% for value, label in attendance_choices %}
+                        <option value="{{ value }}" {% if request.GET.attendance == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary">{% trans "Filter" %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>{% trans "Participant" %}</th>
+                        <th>{% trans "Role" %}</th>
+                        <th>{% trans "Joined" %}</th>
+                        <th>{% trans "Participation" %}</th>
+                        <th>{% trans "Attendance" %}</th>
+                        <th>{% trans "Checked In" %}</th>
+                        <th>{% trans "Pass" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for participation in page_obj %}
+                    <tr>
+                        <td>
+                            <div class="fw-semibold">{{ participation.user.get_full_name|default:participation.user.username }}</div>
+                            <div class="small text-muted">{{ participation.user.email }}</div>
+                        </td>
+                        <td>{{ participation.get_role_display }}</td>
+                        <td>{{ participation.registered_at|date:"M d, Y H:i" }}</td>
+                        <td>
+                            <span class="badge {% if participation.status == 'registered' %}bg-primary{% else %}bg-secondary{% endif %}">
+                                {{ participation.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge {% if participation.effective_attendance_status == 'attended' %}bg-success{% elif participation.effective_attendance_status == 'absent' %}bg-danger{% elif participation.effective_attendance_status == 'cancelled' %}bg-secondary{% else %}bg-warning text-dark{% endif %}">
+                                {{ participation.get_effective_attendance_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if participation.checked_in_at %}
+                                {{ participation.checked_in_at|date:"M d, Y H:i" }}
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'events:participation_pass' participation.pk %}" class="btn btn-sm btn-outline-secondary">
+                                {% trans "Open" %}
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">{% trans "No participants found for the selected filters." %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -9,7 +9,7 @@
         <div class="col-12">
             <h1 class="mb-4">{% trans "My Events" %}</h1>
 
-            <!-- Фильтры -->
+            <!-- Filters -->
             <div class="card mb-4">
                 <div class="card-body">
                     <form method="get" class="row g-3">
@@ -25,6 +25,17 @@
                             </select>
                         </div>
                         <div class="col-md-3">
+                            <label for="attendance" class="form-label">{% trans "Attendance" %}</label>
+                            <select name="attendance" id="attendance" class="form-select">
+                                <option value="">{% trans "All Attendance Statuses" %}</option>
+                                {% for status_value, status_label in attendance_statuses %}
+                                <option value="{{ status_value }}" {% if request.GET.attendance == status_value %}selected{% endif %}>
+                                    {{ status_label }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
                             <label class="form-label">{% trans '&nbsp;' %}</label>
                             <button type="submit" class="btn btn-primary d-block">{% trans "Filter" %}</button>
                         </div>
@@ -32,7 +43,7 @@
                 </div>
             </div>
 
-            <!-- Список мероприятий -->
+            <!-- Event list -->
             <div class="row">
                 {% for registration in page_obj %}
                 <div class="col-md-6 mb-4">
@@ -54,21 +65,27 @@
                                 </small>
                             </div>
                             <div class="mb-3">
-                                <span class="badge bg-{{ registration.get_status_display|lower }}">{{ registration.get_status_display }}</span>
+                                <span class="badge bg-primary">{{ registration.get_status_display }}</span>
+                                <span class="badge {% if registration.effective_attendance_status == 'attended' %}bg-success{% elif registration.effective_attendance_status == 'absent' %}bg-danger{% elif registration.effective_attendance_status == 'cancelled' %}bg-secondary{% else %}bg-warning text-dark{% endif %}">
+                                    {{ registration.get_effective_attendance_status_display }}
+                                </span>
                             </div>
                             <div class="d-flex justify-content-between">
                                 <a href="{% url 'events:event_detail' registration.event.slug %}" class="btn btn-outline-primary btn-sm">
                                     {% trans "View Details" %}
                                 </a>
-                                {% if registration.status == 'registered' %}
-                                <form method="post" action="{% url 'events:cancel_registration' registration.event.slug %}" class="d-inline">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('{% trans 'Are you sure you want to cancel your registration?' %}')">
-                                        {% trans "Cancel Registration" %}
-                                    </button>
-                                </form>
-                                {% endif %}
+                                <a href="{% url 'events:participation_pass' registration.pk %}" class="btn btn-outline-secondary btn-sm">
+                                    {% trans "Event Pass" %}
+                                </a>
                             </div>
+                            {% if registration.can_cancel %}
+                            <form method="post" action="{% url 'events:cancel_registration' registration.event.slug %}" class="d-inline mt-3">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-danger btn-sm w-100" onclick="return confirm('{% trans 'Are you sure you want to cancel your registration?' %}')">
+                                    {% trans "Cancel participation" %}
+                                </button>
+                            </form>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -82,13 +99,13 @@
                 {% endfor %}
             </div>
 
-            <!-- Пагинация -->
+            <!-- Pagination -->
             {% if page_obj.has_other_pages %}
             <nav aria-label="{% trans 'Event pagination' %}" class="mt-4">
                 <ul class="pagination justify-content-center">
                     {% if page_obj.has_previous %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">{% trans "Previous" %}</a>
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.attendance %}&attendance={{ request.GET.attendance }}{% endif %}">{% trans "Previous" %}</a>
                     </li>
                     {% endif %}
 
@@ -97,14 +114,14 @@
                     <li class="page-item active"><span class="page-link">{{ num }}</span></li>
                     {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">{{ num }}</a>
+                        <a class="page-link" href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.attendance %}&attendance={{ request.GET.attendance }}{% endif %}">{{ num }}</a>
                     </li>
                     {% endif %}
                     {% endfor %}
 
                     {% if page_obj.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">{% trans "Next" %}</a>
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.attendance %}&attendance={{ request.GET.attendance }}{% endif %}">{% trans "Next" %}</a>
                     </li>
                     {% endif %}
                 </ul>

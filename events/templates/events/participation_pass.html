@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Event Pass" %} - {{ event.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4 p-lg-5">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-4">
+                        <div>
+                            <span class="badge bg-primary mb-3">{{ participation.get_role_display }}</span>
+                            <h1 class="h3 fw-bold mb-2">{{ event.title }}</h1>
+                            <p class="text-muted mb-4">{{ event.short_description }}</p>
+
+                            <div class="mb-2">
+                                <strong>{% trans "Participant" %}:</strong>
+                                {{ participation.user.get_full_name|default:participation.user.username }}
+                            </div>
+                            <div class="mb-2">
+                                <strong>{% trans "Date" %}:</strong>
+                                {{ event.start_date|date:"F d, Y H:i" }}
+                            </div>
+                            <div class="mb-2">
+                                <strong>{% trans "Location" %}:</strong>
+                                {{ event.location }}
+                            </div>
+                            <div class="mb-2">
+                                <strong>{% trans "Participation status" %}:</strong>
+                                {{ participation.get_status_display }}
+                            </div>
+                            <div class="mb-0">
+                                <strong>{% trans "Attendance status" %}:</strong>
+                                {{ participation.get_effective_attendance_status_display }}
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            {% if participation.status == 'registered' %}
+                            <img
+                                src="data:image/png;base64,{{ qr_image_data }}"
+                                alt="{% trans 'Event QR code' %}"
+                                class="img-fluid border rounded p-2 bg-white"
+                                style="max-width: 260px;"
+                            >
+                            <div class="small text-muted mt-2">
+                                {% trans "Show this QR code during check-in." %}
+                            </div>
+                            <div class="small mt-2">
+                                <a href="{% url 'events:participation_qr_image' participation.pk %}" target="_blank" rel="noopener">
+                                    {% trans "Open QR code in a separate tab" %}
+                                </a>
+                            </div>
+                            {% else %}
+                            <div class="alert alert-secondary mb-0">
+                                {% trans "This event pass is inactive because the registration was cancelled." %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4 flex-wrap">
+                        <a href="{% url 'events:event_detail' event.slug %}" class="btn btn-outline-primary">
+                            {% trans "Back to event" %}
+                        </a>
+                        <a href="{% url 'events:my_events' %}" class="btn btn-outline-secondary">
+                            {% trans "My Events" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -190,6 +190,14 @@
                                 <i class="fas fa-eye"></i>
                                 <span>{{ event.views_count }} {% trans "views" %}</span>
                             </div>
+                            <div class="stat-item">
+                                <i class="fas fa-users"></i>
+                                <span>{% blocktrans with occupied=seats_occupied total=event.max_participants %}Seats occupied: {{ occupied }} / {{ total }}{% endblocktrans %}</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-chair"></i>
+                                <span>{% blocktrans with count=seats_remaining %}Seats left: {{ count }}{% endblocktrans %}</span>
+                            </div>
                             {% if user.is_staff %}
                             <div class="stat-item">
                                 <i class="fas fa-user-shield"></i>
@@ -197,6 +205,67 @@
                             </div>
                             {% endif %}
                         </div>
+                    </div>
+
+                    <div class="sidebar-card">
+                        <h4 class="sidebar-title">{% trans "Participation" %}</h4>
+
+                        {% if user.is_authenticated %}
+                            {% if user_participation and user_participation.status == 'registered' %}
+                            <div class="alert alert-success mb-3">
+                                <div class="fw-semibold">{% trans "You are already participating in this event." %}</div>
+                                <div class="small mt-1">
+                                    {% trans "Attendance status" %}: {{ user_participation.get_effective_attendance_status_display }}
+                                </div>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'events:participation_pass' user_participation.pk %}" class="btn btn-outline-primary">
+                                    <i class="fas fa-id-card me-2"></i>{% trans "View Event Pass" %}
+                                </a>
+                                {% if user_participation.can_cancel %}
+                                <form method="post" action="{% url 'events:cancel_registration' event.slug %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-danger w-100">
+                                        <i class="fas fa-times me-2"></i>{% trans "Cancel participation" %}
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                            {% else %}
+                                {% if participation_error %}
+                                <div class="alert alert-warning mb-3">{{ participation_error }}</div>
+                                {% endif %}
+
+                                <form method="post" action="{% url 'events:join_event' event.slug %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary w-100" {% if not can_participate %}disabled{% endif %}>
+                                        <i class="fas fa-user-plus me-2"></i>{% trans "Participate" %}
+                                    </button>
+                                </form>
+
+                                {% if allowed_employer_categories %}
+                                <div class="small text-muted mt-3">
+                                    <strong>{% trans "Eligible employer categories" %}:</strong>
+                                    {{ allowed_employer_categories|join:", " }}
+                                </div>
+                                {% endif %}
+                            {% endif %}
+                        {% else %}
+                        <div class="alert alert-info mb-0">
+                            {% trans "Log in to register for this event and receive your personal event pass." %}
+                        </div>
+                        {% endif %}
+
+                        {% if is_admin %}
+                        <div class="d-grid gap-2 mt-3">
+                            <a href="{% url 'events:admin_event_participants' event.pk %}" class="btn btn-outline-dark">
+                                <i class="fas fa-list me-2"></i>{% trans "Manage Participants" %}
+                            </a>
+                            <a href="{% url 'events:admin_event_check_in' event.pk %}" class="btn btn-outline-success">
+                                <i class="fas fa-qrcode me-2"></i>{% trans "Open Check-in" %}
+                            </a>
+                        </div>
+                        {% endif %}
                     </div>
 
                     <!-- Tags -->
