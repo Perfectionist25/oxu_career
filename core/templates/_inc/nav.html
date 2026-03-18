@@ -79,13 +79,13 @@
                                 <div class="dropdown">
                                     <button class="site-control-btn site-control-btn--ghost dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         {% if CURRENT_LANG == 'en' %}
-                                            <img width="18" src="{% static 'img/uk.png' %}" alt="{% trans 'EN' %}" class="me-2 rounded-circle">
+                                            <img width="18" src="{% static 'img/uk.png' %}" alt="{% trans 'EN' %}" class="me-2">
                                             <span>EN</span>
                                         {% elif CURRENT_LANG == 'uz' %}
-                                            <img width="18" src="{% static 'img/uzb.png' %}" alt="{% trans 'UZ' %}" class="me-2 rounded-circle">
+                                            <img width="18" src="{% static 'img/uzb.png' %}" alt="{% trans 'UZ' %}" class="me-2">
                                             <span>UZ</span>
                                         {% elif CURRENT_LANG == 'ru' %}
-                                            <img width="18" src="{% static 'img/ru.png' %}" alt="{% trans 'RU' %}" class="me-2 rounded-circle">
+                                            <img width="18" src="{% static 'img/ru.png' %}" alt="{% trans 'RU' %}" class="me-2">
                                             <span>RU</span>
                                         {% endif %}
                                     </button>
@@ -93,21 +93,21 @@
                                     <ul class="dropdown-menu dropdown-menu-end site-dropdown-menu site-language-menu">
                                         <li>
                                             <button type="submit" name="language" value="en" class="dropdown-item site-dropdown-item {% if CURRENT_LANG == 'en' %}active{% endif %}">
-                                                <img width="20" src="{% static 'img/uk.png' %}" alt="{% trans 'EN' %}" class="me-2 rounded-circle">
+                                                <img width="20" src="{% static 'img/uk.png' %}" alt="{% trans 'EN' %}" class="me-2">
                                                 <span class="flex-grow-1">{% trans 'English' %}</span>
                                                 {% if CURRENT_LANG == 'en' %}<i class="fas fa-check ms-2"></i>{% endif %}
                                             </button>
                                         </li>
                                         <li>
                                             <button type="submit" name="language" value="uz" class="dropdown-item site-dropdown-item {% if CURRENT_LANG == 'uz' %}active{% endif %}">
-                                                <img width="20" src="{% static 'img/uzb.png' %}" alt="{% trans 'UZ' %}" class="me-2 rounded-circle">
+                                                <img width="20" src="{% static 'img/uzb.png' %}" alt="{% trans 'UZ' %}" class="me-2">
                                                 <span class="flex-grow-1">{% trans 'Uzbek' %}</span>
                                                 {% if CURRENT_LANG == 'uz' %}<i class="fas fa-check ms-2"></i>{% endif %}
                                             </button>
                                         </li>
                                         <li>
                                             <button type="submit" name="language" value="ru" class="dropdown-item site-dropdown-item {% if CURRENT_LANG == 'ru' %}active{% endif %}">
-                                                <img width="20" src="{% static 'img/ru.png' %}" alt="{% trans 'RU' %}" class="me-2 rounded-circle">
+                                                <img width="20" src="{% static 'img/ru.png' %}" alt="{% trans 'RU' %}" class="me-2">
                                                 <span class="flex-grow-1">{% trans 'Russian' %}</span>
                                                 {% if CURRENT_LANG == 'ru' %}<i class="fas fa-check ms-2"></i>{% endif %}
                                             </button>
