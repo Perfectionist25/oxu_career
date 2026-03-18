@@ -1,18 +1,9 @@
 import io
-from urllib.parse import parse_qs, urlparse
+import re
 
 from django.core.exceptions import ValidationError
 from django.http import Http404
-from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-
-
-def build_attendance_url(request, participation):
-    path = reverse(
-        "events:admin_event_check_in_token",
-        kwargs={"pk": participation.event.pk, "token": participation.qr_token},
-    )
-    return request.build_absolute_uri(path)
 
 
 def generate_qr_png_bytes(payload):
@@ -36,29 +27,26 @@ def extract_token_from_payload(raw_value):
         raise ValidationError(_("QR code payload is empty."))
 
     value = raw_value.strip()
-    parsed = urlparse(value)
-    if parsed.scheme and parsed.netloc:
-        path_bits = [bit for bit in parsed.path.split("/") if bit]
-        if path_bits:
-            candidate = path_bits[-1]
-            if _looks_like_uuid(candidate):
-                return candidate
-        query_params = parse_qs(parsed.query)
-        token_values = query_params.get("token", [])
-        if token_values and _looks_like_uuid(token_values[0]):
-            return token_values[0]
-    if _looks_like_uuid(value):
-        return value
+    if _looks_like_attendance_code(value):
+        return value.upper()
     raise ValidationError(_("Invalid QR code payload."))
 
 
 def get_check_in_participation_or_404(event, token):
     participation = event.participations.select_related("user", "checked_in_by").filter(
-        qr_token=token
+        attendance_code=str(token).strip().upper()
     ).first()
+    if not participation and _looks_like_uuid(token):
+        participation = event.participations.select_related("user", "checked_in_by").filter(
+            qr_token=token
+        ).first()
     if not participation:
         raise Http404(_("Participant not found for this QR code."))
     return participation
+
+
+def _looks_like_attendance_code(value):
+    return bool(re.fullmatch(r"EVT-[A-Z0-9]{10}", str(value).strip().upper()))
 
 
 def _looks_like_uuid(value):

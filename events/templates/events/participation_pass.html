@@ -39,6 +39,9 @@
 
                         <div class="text-center">
                             {% if participation.status == 'registered' %}
+                            {% if qr_generation_error %}
+                            <div class="alert alert-warning mb-3">{{ qr_generation_error }}</div>
+                            {% endif %}
                             <img
                                 src="data:image/png;base64,{{ qr_image_data }}"
                                 alt="{% trans 'Event QR code' %}"
@@ -48,10 +51,12 @@
                             <div class="small text-muted mt-2">
                                 {% trans "Show this QR code during check-in." %}
                             </div>
-                            <div class="small mt-2">
-                                <a href="{% url 'events:participation_qr_image' participation.pk %}" target="_blank" rel="noopener">
-                                    {% trans "Open QR code in a separate tab" %}
-                                </a>
+                            <div class="mt-3 p-3 border rounded bg-light">
+                                <div class="small text-muted text-uppercase mb-1">{% trans "Attendance code" %}</div>
+                                <div class="h5 mb-0 fw-bold user-select-all">{{ attendance_code }}</div>
+                            </div>
+                            <div class="small mt-2 text-muted">
+                                {% trans "If scanning is unavailable, the admin can enter this code manually." %}
                             </div>
                             {% else %}
                             <div class="alert alert-secondary mb-0">

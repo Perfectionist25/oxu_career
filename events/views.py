@@ -18,7 +18,6 @@ from accounts.models import Notification
 from .forms import EventAttendanceScanForm, EventCategoryForm, EventForm
 from .models import Event, EventCategory, EventParticipation
 from .utils import (
-    build_attendance_url,
     extract_token_from_payload,
     generate_qr_png_bytes,
     get_check_in_participation_or_404,
@@ -209,6 +208,7 @@ def join_event(request, slug):
         participation.checked_in_by = None
         participation.role = role
         participation.qr_token = uuid.uuid4()
+        participation.attendance_code = EventParticipation._generate_attendance_code()
         participation.save()
     elif participation:
         messages.info(request, _("You are already registered for this event."))
@@ -271,8 +271,9 @@ def participation_pass(request, pk):
     qr_generation_error = ""
     if participation.status == EventParticipation.STATUS_REGISTERED:
         try:
-            payload = build_attendance_url(request, participation)
-            qr_image_data = base64.b64encode(generate_qr_png_bytes(payload)).decode("ascii")
+            qr_image_data = base64.b64encode(
+                generate_qr_png_bytes(participation.attendance_code)
+            ).decode("ascii")
         except RuntimeError:
             qr_generation_error = _("QR generation is unavailable because the required package is not installed on the server.")
 
@@ -282,6 +283,7 @@ def participation_pass(request, pk):
         "attendance_status": participation.get_effective_attendance_status_display(),
         "qr_image_data": qr_image_data,
         "qr_generation_error": qr_generation_error,
+        "attendance_code": participation.attendance_code,
     }
     return render(request, "events/participation_pass.html", context)
 
@@ -298,8 +300,7 @@ def participation_qr_image(request, pk):
         return redirect("events:event_list")
 
     try:
-        payload = build_attendance_url(request, participation)
-        png_bytes = generate_qr_png_bytes(payload)
+        png_bytes = generate_qr_png_bytes(participation.attendance_code)
     except RuntimeError:
         return HttpResponse(
             _("QR generation is unavailable because the required package is not installed on the server."),
@@ -629,7 +630,25 @@ def admin_event_check_in(request, pk):
         except ValidationError as exc:
             messages.error(request, exc.message)
         else:
-            return redirect("events:admin_event_check_in_token", pk=event.pk, token=token)
+            participation = get_check_in_participation_or_404(event, token)
+            try:
+                participation.mark_attended(checked_in_by=request.user)
+            except ValidationError as exc:
+                messages.error(request, exc.message)
+            else:
+                _notify_event_action(
+                    participation.user,
+                    _("Attendance confirmed"),
+                    _("Your attendance for %(event)s has been confirmed.") % {"event": event.title},
+                    related_url=request.build_absolute_uri(
+                        reverse("events:participation_pass", kwargs={"pk": participation.pk})
+                    ),
+                )
+                messages.success(
+                    request,
+                    _("Attendance confirmed for %(name)s.") % {"name": participation.user.get_full_name()},
+                )
+            return redirect("events:admin_event_check_in", pk=event.pk)
 
     recent_attendees = event.participations.filter(
         attendance_status=EventParticipation.ATTENDANCE_ATTENDED

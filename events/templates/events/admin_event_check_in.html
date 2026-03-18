@@ -8,7 +8,7 @@
     <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
         <div>
             <h1 class="h3 fw-bold mb-1">{{ event.title }}</h1>
-            <p class="text-muted mb-0">{% trans "Scan participant QR codes or paste the attendance link manually." %}</p>
+            <p class="text-muted mb-0">{% trans "Scan participant QR codes or enter the attendance code manually." %}</p>
         </div>
         <div class="d-flex gap-2 flex-wrap">
             <a href="{% url 'events:admin_event_participants' event.pk %}" class="btn btn-outline-primary">
@@ -34,7 +34,7 @@
                         </button>
                     </div>
                     <div class="small text-muted mb-3" id="scanner-status">
-                        {% trans "Use HTTPS or localhost for camera access. After the camera starts, supported browsers will detect QR codes automatically." %}
+                        {% trans "Use HTTPS or localhost for camera access. Check-in stays available until the event end time." %}
                     </div>
 
                     <form method="post" class="row g-3">
@@ -42,6 +42,7 @@
                         <div class="col-12">
                             <label class="form-label" for="{{ form.qr_payload.id_for_label }}">{{ form.qr_payload.label }}</label>
                             {{ form.qr_payload }}
+                            <div class="form-text">{% trans "Example: EVT-ABC1234DEF" %}</div>
                         </div>
                         <div class="col-12">
                             <button type="submit" class="btn btn-success">
@@ -109,8 +110,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             const codes = await detector.detect(video);
             if (codes.length) {
                 isHandling = true;
-                payloadInput.value = codes[0].rawValue;
-                window.location.href = codes[0].rawValue;
+                payloadInput.value = String(codes[0].rawValue || '').trim();
+                statusNode.textContent = "{% trans 'Code detected. Confirming attendance...' %}";
+                payloadInput.form.submit();
                 return;
             }
         } catch (error) {
@@ -134,7 +136,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             stopButton.disabled = false;
 
             if (!supportsDetector) {
-                statusNode.textContent = "{% trans 'Camera is running, but automatic QR recognition is not supported in this browser. Paste the QR link manually below or open this page in Chrome on HTTPS.' %}";
+                statusNode.textContent = "{% trans 'Camera is running, but automatic QR recognition is not supported in this browser. Enter the attendance code manually or open this page in Chrome on HTTPS.' %}";
                 return;
             }
 

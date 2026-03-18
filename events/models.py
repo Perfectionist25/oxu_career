@@ -250,6 +250,9 @@ class Event(models.Model):
     def has_started(self):
         return timezone.now() >= self.start_date
 
+    def check_in_is_open(self):
+        return timezone.now() <= self.end_date
+
     def employer_category_names(self):
         return list(self.allowed_employer_categories.values_list("name", flat=True))
 
@@ -405,6 +408,13 @@ class EventParticipation(models.Model):
         editable=False,
         verbose_name=_("QR Token"),
     )
+    attendance_code = models.CharField(
+        max_length=24,
+        unique=True,
+        editable=False,
+        verbose_name=_("Attendance Code"),
+        help_text=_("Unique code used for QR check-in."),
+    )
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
 
     class Meta:
@@ -420,6 +430,11 @@ class EventParticipation(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.event}"
+
+    def save(self, *args, **kwargs):
+        if not self.attendance_code:
+            self.attendance_code = self._generate_attendance_code()
+        super().save(*args, **kwargs)
 
     def clean(self):
         super().clean()
@@ -465,6 +480,8 @@ class EventParticipation(models.Model):
     def mark_attended(self, checked_in_by=None):
         if self.status != self.STATUS_REGISTERED:
             raise ValidationError(_("This participation is no longer active."))
+        if not self.event.check_in_is_open():
+            raise ValidationError(_("Check-in is closed because the event has ended."))
         if self.attendance_status == self.ATTENDANCE_ATTENDED:
             raise ValidationError(_("QR code already used."))
         self.attendance_status = self.ATTENDANCE_ATTENDED
@@ -478,6 +495,13 @@ class EventParticipation(models.Model):
                 "updated_at",
             ]
         )
+
+    @classmethod
+    def _generate_attendance_code(cls):
+        while True:
+            code = f"EVT-{uuid.uuid4().hex[:10].upper()}"
+            if not cls.objects.filter(attendance_code=code).exists():
+                return code
 
 
 class EventPhoto(models.Model):

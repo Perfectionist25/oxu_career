@@ -341,7 +341,7 @@ class EventAttendanceScanForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
-                "placeholder": _("Scan QR code or paste the attendance link"),
+                "placeholder": _("Scan QR code or enter the attendance code"),
                 "autocomplete": "off",
             }
         ),

@@ -144,3 +144,16 @@ class EventParticipationTests(TestCase):
 
         with self.assertRaisesMessage(ValidationError, "QR code already used."):
             participation.mark_attended(checked_in_by=self.admin)
+
+    def test_check_in_is_blocked_after_event_end(self):
+        participation = EventParticipation.objects.create(
+            event=self.event, user=self.student, role="student"
+        )
+        self.event.start_date = timezone.now() - timedelta(hours=2)
+        self.event.end_date = timezone.now() - timedelta(minutes=1)
+        self.event.save()
+
+        with self.assertRaisesMessage(
+            ValidationError, "Check-in is closed because the event has ended."
+        ):
+            participation.mark_attended(checked_in_by=self.admin)
