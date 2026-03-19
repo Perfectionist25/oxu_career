@@ -715,6 +715,12 @@ class StudentProfile(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
 
+    def get_education_level_display(self):
+        """
+        Keep template compatibility for a free-text education level field.
+        """
+        return (self.education_level or "").strip()
+
     class Meta:
         verbose_name = _("Student Profile")
         verbose_name_plural = _("Student Profiles")
