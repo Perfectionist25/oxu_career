@@ -4,73 +4,590 @@
 {% block title %}{% trans "My Applications" %}{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3 class="mb-0">{% trans "My Applications" %}</h3>
-        <a href="{% url 'jobs:list' %}" class="btn btn-sm btn-outline-primary">
-            {% trans "Browse Jobs" %}
-        </a>
-    </div>
+<div class="applications-page container-fluid py-4">
+    <div class="page-shell">
 
-    <div class="row g-2 mb-3">
-        <div class="col-md-2 col-6"><div class="card card-body py-2"><small>{% trans "Total" %}</small><strong>{{ stats.total }}</strong></div></div>
-        <div class="col-md-2 col-6"><div class="card card-body py-2"><small>{% trans "Applied" %}</small><strong>{{ stats.applied }}</strong></div></div>
-        <div class="col-md-2 col-6"><div class="card card-body py-2"><small>{% trans "Under Review" %}</small><strong>{{ stats.reviewed }}</strong></div></div>
-        <div class="col-md-2 col-6"><div class="card card-body py-2"><small>{% trans "Shortlisted" %}</small><strong>{{ stats.shortlisted }}</strong></div></div>
-        <div class="col-md-2 col-6"><div class="card card-body py-2"><small>{% trans "Interview" %}</small><strong>{{ stats.interview }}</strong></div></div>
-        <div class="col-md-2 col-6"><div class="card card-body py-2"><small>{% trans "Hired" %}</small><strong>{{ stats.hired }}</strong></div></div>
-    </div>
+        <!-- Hero -->
+        <div class="hero-card mb-4">
+            <div class="row g-4 align-items-center">
+                <div class="col-lg-8">
+                    <div class="hero-content">
+                        <span class="hero-badge">
+                            <i class="fas fa-paper-plane me-2"></i>{% trans "Career Tracker" %}
+                        </span>
 
-    <div class="card shadow-sm mb-3">
-        <div class="card-body">
-            <form method="get" class="row g-2 align-items-end">
+                        <h1 class="hero-title mb-2">{% trans "My Applications" %}</h1>
+
+                        <p class="hero-subtitle mb-0">
+                            {% trans "Track your submitted applications and monitor every hiring stage in one place." %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="hero-side-card">
+                        <div class="hero-side-top">
+                            <span>{% trans "Quick Access" %}</span>
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+
+                        <a href="{% url 'jobs:list' %}" class="hero-action-btn">
+                            <i class="fas fa-search me-2"></i>{% trans "Browse Jobs" %}
+                        </a>
+
+                        <div class="hero-mini-note mt-3">
+                            {% trans "Find new vacancies and continue building your career path." %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="row g-3 mb-4">
+            <div class="col-xl-2 col-md-4 col-6">
+                <div class="metric-card metric-dark h-100">
+                    <div class="metric-icon"><i class="fas fa-layer-group"></i></div>
+                    <div class="metric-label">{% trans "Total" %}</div>
+                    <div class="metric-value">{{ stats.total|default:0 }}</div>
+                    <div class="metric-note">{% trans "All applications" %}</div>
+                </div>
+            </div>
+
+            <div class="col-xl-2 col-md-4 col-6">
+                <div class="metric-card metric-primary h-100">
+                    <div class="metric-icon"><i class="fas fa-paper-plane"></i></div>
+                    <div class="metric-label">{% trans "Applied" %}</div>
+                    <div class="metric-value">{{ stats.applied|default:0 }}</div>
+                    <div class="metric-note">{% trans "Recently submitted" %}</div>
+                </div>
+            </div>
+
+            <div class="col-xl-2 col-md-4 col-6">
+                <div class="metric-card metric-info h-100">
+                    <div class="metric-icon"><i class="fas fa-search"></i></div>
+                    <div class="metric-label">{% trans "Under Review" %}</div>
+                    <div class="metric-value">{{ stats.reviewed|default:0 }}</div>
+                    <div class="metric-note">{% trans "Being reviewed" %}</div>
+                </div>
+            </div>
+
+            <div class="col-xl-2 col-md-4 col-6">
+                <div class="metric-card metric-warning h-100">
+                    <div class="metric-icon"><i class="fas fa-star"></i></div>
+                    <div class="metric-label">{% trans "Shortlisted" %}</div>
+                    <div class="metric-value">{{ stats.shortlisted|default:0 }}</div>
+                    <div class="metric-note">{% trans "Top candidates" %}</div>
+                </div>
+            </div>
+
+            <div class="col-xl-2 col-md-4 col-6">
+                <div class="metric-card metric-secondary h-100">
+                    <div class="metric-icon"><i class="fas fa-comments"></i></div>
+                    <div class="metric-label">{% trans "Interview" %}</div>
+                    <div class="metric-value">{{ stats.interview|default:0 }}</div>
+                    <div class="metric-note">{% trans "Interview stage" %}</div>
+                </div>
+            </div>
+
+            <div class="col-xl-2 col-md-4 col-6">
+                <div class="metric-card metric-success h-100">
+                    <div class="metric-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="metric-label">{% trans "Hired" %}</div>
+                    <div class="metric-value">{{ stats.hired|default:0 }}</div>
+                    <div class="metric-note">{% trans "Successful offers" %}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter -->
+        <div class="dashboard-panel mb-4">
+            <div class="panel-header mb-4">
+                <div>
+                    <h4 class="panel-title mb-1">{% trans "Filter Applications" %}</h4>
+                    <p class="panel-subtitle mb-0">{% trans "Select a status to narrow down your applications list" %}</p>
+                </div>
+            </div>
+
+            <form method="get" class="row g-3 align-items-end">
                 <div class="col-md-4">
-                    <label for="status" class="form-label mb-1">{% trans "Status" %}</label>
-                    <select class="form-select form-select-sm" id="status" name="status">
+                    <label for="status" class="form-label filter-label">{% trans "Status" %}</label>
+                    <select class="form-select custom-select" id="status" name="status">
                         <option value="">{% trans "All" %}</option>
                         {% for value, label in status_choices %}
                             <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
                         {% endfor %}
                     </select>
                 </div>
+
                 <div class="col-md-8">
-                    <button type="submit" class="btn btn-sm btn-primary">{% trans "Filter" %}</button>
-                    <a href="{% url 'jobs:my_applications' %}" class="btn btn-sm btn-outline-secondary">{% trans "Reset" %}</a>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="submit" class="btn btn-primary rounded-pill px-4">
+                            <i class="fas fa-filter me-1"></i>{% trans "Filter" %}
+                        </button>
+                        <a href="{% url 'jobs:my_applications' %}" class="btn btn-outline-secondary rounded-pill px-4">
+                            {% trans "Reset" %}
+                        </a>
+                    </div>
                 </div>
             </form>
         </div>
-    </div>
 
-    <div class="card shadow-sm">
-        <div class="list-group list-group-flush">
-            {% for application in applications %}
-                <div class="list-group-item">
-                    <div class="d-flex justify-content-between align-items-start gap-3">
-                        <div>
-                            <h6 class="mb-1">
-                                <a href="{% url 'jobs:job_detail' application.job.pk %}" class="text-decoration-none">
-                                    {{ application.job.title }}
-                                </a>
-                            </h6>
-                            <p class="mb-1 text-muted">{{ application.job.company.name }}</p>
-                            <small class="text-muted">{{ application.created_at|date:"d.m.Y H:i" }}</small>
+        <!-- Applications List -->
+        <div class="dashboard-panel">
+            <div class="panel-header mb-4">
+                <div>
+                    <h4 class="panel-title mb-1">{% trans "Applications List" %}</h4>
+                    <p class="panel-subtitle mb-0">{% trans "All your submitted job applications" %}</p>
+                </div>
+            </div>
+
+            <div class="applications-list">
+                {% for application in applications %}
+                    <div class="application-card">
+                        <div class="application-main">
+                            <div class="application-icon">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+
+                            <div class="application-content">
+                                <h5 class="application-title mb-1">
+                                    <a href="{% url 'jobs:job_detail' application.job.pk %}" class="application-link">
+                                        {{ application.job.title }}
+                                    </a>
+                                </h5>
+
+                                <div class="application-company">
+                                    <i class="fas fa-building me-1"></i>{{ application.job.company.name }}
+                                </div>
+
+                                <div class="application-meta">
+                                    <span>
+                                        <i class="fas fa-clock me-1"></i>{{ application.created_at|date:"d.m.Y H:i" }}
+                                    </span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="text-end">
-                            <span class="badge bg-primary">{{ application.get_status_display }}</span>
-                            <div class="mt-2">
-                                <a href="{% url 'jobs:application_detail' application.pk %}" class="btn btn-sm btn-outline-primary">
+
+                        <div class="application-side">
+                            {% if application.status == 'applied' %}
+                                <span class="status-pill status-primary">{{ application.get_status_display }}</span>
+                            {% elif application.status == 'reviewed' %}
+                                <span class="status-pill status-info">{{ application.get_status_display }}</span>
+                            {% elif application.status == 'shortlisted' %}
+                                <span class="status-pill status-warning">{{ application.get_status_display }}</span>
+                            {% elif application.status == 'interview' %}
+                                <span class="status-pill status-secondary">{{ application.get_status_display }}</span>
+                            {% elif application.status == 'hired' %}
+                                <span class="status-pill status-success">{{ application.get_status_display }}</span>
+                            {% else %}
+                                <span class="status-pill status-dark">{{ application.get_status_display }}</span>
+                            {% endif %}
+
+                            <div class="mt-3">
+                                <a href="{% url 'jobs:application_detail' application.pk %}" class="btn btn-outline-primary rounded-pill px-3 btn-sm">
                                     {% trans "View Details" %}
                                 </a>
                             </div>
                         </div>
                     </div>
-                </div>
-            {% empty %}
-                <div class="list-group-item py-4 text-center text-muted">
-                    {% trans "You haven't applied for any jobs yet." %}
-                </div>
-            {% endfor %}
+                {% empty %}
+                    <div class="empty-state py-5 text-center">
+                        <i class="fas fa-inbox mb-3"></i>
+                        <div class="fw-semibold mb-2">{% trans "You haven't applied for any jobs yet." %}</div>
+                        <div class="text-muted small mb-3">
+                            {% trans "Start exploring vacancies and send your first application." %}
+                        </div>
+                        <a href="{% url 'jobs:list' %}" class="btn btn-primary rounded-pill px-4">
+                            <i class="fas fa-search me-1"></i>{% trans "Browse Jobs" %}
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
+
     </div>
 </div>
+
+<style>
+.applications-page {
+    background:
+        radial-gradient(circle at top left, rgba(59, 130, 246, 0.08), transparent 24%),
+        radial-gradient(circle at top right, rgba(99, 102, 241, 0.08), transparent 20%),
+        linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+    min-height: 100vh;
+}
+
+.page-shell {
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.hero-card,
+.dashboard-panel,
+.metric-card,
+.application-card {
+    border-radius: 24px;
+}
+
+.hero-card {
+    position: relative;
+    overflow: hidden;
+    padding: 2rem;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 45%, #312e81 100%);
+    color: #fff;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.18);
+}
+
+.hero-card::before,
+.hero-card::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(10px);
+    pointer-events: none;
+}
+
+.hero-card::before {
+    width: 240px;
+    height: 240px;
+    background: rgba(59, 130, 246, 0.18);
+    top: -80px;
+    right: -60px;
+}
+
+.hero-card::after {
+    width: 180px;
+    height: 180px;
+    background: rgba(168, 85, 247, 0.16);
+    bottom: -60px;
+    left: -40px;
+}
+
+.hero-content,
+.hero-side-card {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.14);
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.hero-title {
+    font-size: clamp(2rem, 3vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+.hero-subtitle {
+    color: rgba(255,255,255,0.82);
+    font-size: 1rem;
+    max-width: 760px;
+}
+
+.hero-side-card {
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 22px;
+    padding: 1.2rem;
+    backdrop-filter: blur(12px);
+}
+
+.hero-side-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: rgba(255,255,255,0.82);
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.hero-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border-radius: 16px;
+    text-decoration: none;
+    color: #fff;
+    font-weight: 700;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.14);
+    transition: all 0.25s ease;
+}
+
+.hero-action-btn:hover {
+    color: #fff;
+    transform: translateY(-2px);
+    background: rgba(255,255,255,0.16);
+}
+
+.hero-mini-note {
+    color: rgba(255,255,255,0.75);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.metric-card {
+    position: relative;
+    overflow: hidden;
+    padding: 1.3rem;
+    color: #fff;
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.10);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.metric-card:hover,
+.dashboard-panel:hover,
+.application-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.13);
+}
+
+.metric-primary { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+.metric-success { background: linear-gradient(135deg, #22c55e, #15803d); }
+.metric-info { background: linear-gradient(135deg, #06b6d4, #0f766e); }
+.metric-warning { background: linear-gradient(135deg, #f59e0b, #b45309); }
+.metric-secondary { background: linear-gradient(135deg, #8b5cf6, #5b21b6); }
+.metric-dark { background: linear-gradient(135deg, #111827, #020617); }
+
+.metric-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    background: rgba(255,255,255,0.14);
+    font-size: 1.1rem;
+}
+
+.metric-label {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: rgba(255,255,255,0.75);
+    font-weight: 700;
+}
+
+.metric-value {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.15;
+    margin: 0.35rem 0;
+}
+
+.metric-note {
+    color: rgba(255,255,255,0.82);
+    font-size: 0.9rem;
+}
+
+.dashboard-panel {
+    background: rgba(255,255,255,0.82);
+    border: 1px solid rgba(255,255,255,0.7);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
+    padding: 1.5rem;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.panel-title {
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.panel-subtitle {
+    color: #64748b;
+    font-size: 0.92rem;
+}
+
+.filter-label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #334155;
+}
+
+.custom-select {
+    min-height: 46px;
+    border-radius: 14px;
+    border-color: #dbe4f0;
+    box-shadow: none;
+}
+
+.custom-select:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.12);
+}
+
+.applications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.application-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+    padding: 1.25rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.application-main {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    min-width: 0;
+    flex: 1;
+}
+
+.application-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #4f46e5, #1d4ed8);
+    color: #fff;
+    font-size: 1.05rem;
+    flex-shrink: 0;
+}
+
+.application-content {
+    min-width: 0;
+    flex: 1;
+}
+
+.application-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.35;
+}
+
+.application-link {
+    color: #0f172a;
+    text-decoration: none;
+}
+
+.application-link:hover {
+    color: #4338ca;
+}
+
+.application-company {
+    color: #475569;
+    font-weight: 600;
+    margin-bottom: 0.45rem;
+    word-break: break-word;
+}
+
+.application-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    color: #64748b;
+    font-size: 0.88rem;
+}
+
+.application-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    flex-shrink: 0;
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 0.9rem;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.status-primary {
+    background: #eef2ff;
+    color: #4338ca;
+}
+
+.status-info {
+    background: #ecfeff;
+    color: #0f766e;
+}
+
+.status-warning {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.status-secondary {
+    background: #f3e8ff;
+    color: #7e22ce;
+}
+
+.status-success {
+    background: #ecfdf5;
+    color: #15803d;
+}
+
+.status-dark {
+    background: #f1f5f9;
+    color: #334155;
+}
+
+.empty-state {
+    color: #64748b;
+}
+
+.empty-state i {
+    font-size: 1.75rem;
+    color: #94a3b8;
+}
+
+@media (max-width: 991.98px) {
+    .hero-card {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .hero-card,
+    .dashboard-panel,
+    .metric-card,
+    .application-card {
+        border-radius: 18px;
+    }
+
+    .metric-value {
+        font-size: 1.7rem;
+    }
+
+    .application-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .application-side {
+        width: 100%;
+        align-items: flex-start;
+    }
+}
+</style>
 {% endblock %}

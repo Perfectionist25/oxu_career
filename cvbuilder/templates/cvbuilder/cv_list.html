@@ -2,117 +2,198 @@
 {% load static %}
 {% load i18n %}
 
-{% block content %}
-<div class="container py-4">
-    <!-- Header -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h1 class="h3 fw-bold text-dark mb-1">{% trans 'My Resumes' %}</h1>
-                    <p class="text-muted mb-0">{% trans 'Manage all your created resumes' %}</p>
-                </div>
-                <div class="d-flex gap-2">
-                    <a href="{% url 'cvbuilder:cv_stats' %}" class="btn btn-outline-info btn-sm">
-                        <i class="fas fa-chart-bar me-1"></i>{% trans 'Statistics' %}
-                    </a>
-                    <a href="{% url 'cvbuilder:cv_create' %}" class="btn btn-primary btn-sm">
-                        <i class="fas fa-plus me-1"></i>{% trans 'New Resume' %}
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
+{% block title %}{% trans "My Resumes" %}{% endblock %}
 
-    <!-- Status Tabs -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body py-3">
-                    <div class="row align-items-center">
-                        <div class="col-md-8">
-                            <ul class="nav nav-pills" id="statusTabs" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab">
-                                        {% trans 'All' %} <span class="badge bg-light text-dark ms-1">{{ cvs.count }}</span>
-                                    </button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="published-tab" data-bs-toggle="tab" data-bs-target="#published" type="button" role="tab">
-                                        <i class="fas fa-eye me-1"></i>{% trans 'Published' %} 
-                                        <span class="badge bg-success ms-1">{{ published_count }}</span>
-                                    </button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="draft-tab" data-bs-toggle="tab" data-bs-target="#draft" type="button" role="tab">
-                                        <i class="fas fa-edit me-1"></i>{% trans 'Draft' %} 
-                                        <span class="badge bg-warning text-dark ms-1">{{ draft_count }}</span>
-                                    </button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="archived-tab" data-bs-toggle="tab" data-bs-target="#archived" type="button" role="tab">
-                                        <i class="fas fa-archive me-1"></i>{% trans 'Archive' %} 
-                                        <span class="badge bg-secondary ms-1">{{ archived_count }}</span>
-                                    </button>
-                                </li>
-                            </ul>
+{% block content %}
+<div class="resumes-page container-fluid py-4">
+    <div class="page-shell">
+
+        <!-- Hero -->
+        <div class="hero-card mb-4">
+            <div class="row g-4 align-items-center">
+                <div class="col-lg-8">
+                    <div class="hero-content">
+                        <span class="hero-badge">
+                            <i class="fas fa-file-alt me-2"></i>{% trans 'Resume Manager' %}
+                        </span>
+
+                        <h1 class="hero-title mb-2">{% trans 'My Resumes' %}</h1>
+
+                        <p class="hero-subtitle mb-0">
+                            {% trans 'Manage all your created resumes, update their status, and quickly access editing, export, and analytics tools.' %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="hero-side-card">
+                        <div class="hero-side-top">
+                            <span>{% trans 'Quick Actions' %}</span>
+                            <i class="fas fa-bolt"></i>
                         </div>
-                        <div class="col-md-4 text-end">
-                            <small class="text-muted" id="resumeCountText">
-                                {% if cvs %}
-                                    {% blocktrans with total=cvs|length %}Total: {{ total }} resumes{% endblocktrans %}
-                                {% else %}
-                                    {% trans 'No resumes available' %}
-                                {% endif %}
-                            </small>
+
+                        <div class="hero-actions">
+                            <a href="{% url 'cvbuilder:cv_stats' %}" class="hero-action-btn hero-action-outline">
+                                <i class="fas fa-chart-bar me-2"></i>{% trans 'Statistics' %}
+                            </a>
+                            <a href="{% url 'cvbuilder:cv_create' %}" class="hero-action-btn hero-action-solid">
+                                <i class="fas fa-plus me-2"></i>{% trans 'New Resume' %}
+                            </a>
+                        </div>
+
+                        <div class="hero-mini-note mt-3">
+                            {% trans 'Keep your resumes polished and ready for every opportunity.' %}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Search and Filters -->
-    <div class="row mb-4">
-        <div class="col-md-4 mb-2">
-            <div class="input-group input-group-sm">
-                <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-muted"></i></span>
-                <input type="text" class="form-control" id="searchInput" placeholder="{% trans 'Search resumes...' %}">
+        <!-- Metrics -->
+        <div class="row g-3 mb-4">
+            <div class="col-xl-3 col-md-6">
+                <div class="metric-card metric-dark h-100">
+                    <div class="metric-icon"><i class="fas fa-layer-group"></i></div>
+                    <div class="metric-label">{% trans 'Total Resumes' %}</div>
+                    <div class="metric-value">{{ cvs|length }}</div>
+                    <div class="metric-note">{% trans 'All saved resumes' %}</div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6">
+                <div class="metric-card metric-success h-100">
+                    <div class="metric-icon"><i class="fas fa-eye"></i></div>
+                    <div class="metric-label">{% trans 'Published' %}</div>
+                    <div class="metric-value">{{ published_count }}</div>
+                    <div class="metric-note">{% trans 'Visible to employers' %}</div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6">
+                <div class="metric-card metric-warning h-100">
+                    <div class="metric-icon"><i class="fas fa-edit"></i></div>
+                    <div class="metric-label">{% trans 'Draft' %}</div>
+                    <div class="metric-value">{{ draft_count }}</div>
+                    <div class="metric-note">{% trans 'Still being edited' %}</div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6">
+                <div class="metric-card metric-secondary h-100">
+                    <div class="metric-icon"><i class="fas fa-archive"></i></div>
+                    <div class="metric-label">{% trans 'Archive' %}</div>
+                    <div class="metric-value">{{ archived_count }}</div>
+                    <div class="metric-note">{% trans 'Hidden from listings' %}</div>
+                </div>
             </div>
         </div>
-        <div class="col-md-3 mb-2">
-            <select class="form-select form-select-sm" id="templateFilter">
-                <option value="">{% trans 'All templates' %}</option>
-                {% for template in templates %}
-                    <option value="{{ template.id }}">{{ template.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="col-md-3 mb-2">
-            <select class="form-select form-select-sm" id="sortSelect">
-                <option value="newest">{% trans 'Newest first' %}</option>
-                <option value="oldest">{% trans 'Oldest first' %}</option>
-                <option value="name_asc">{% trans 'Name A-Z' %}</option>
-                <option value="name_desc">{% trans 'Name Z-A' %}</option>
-            </select>
-        </div>
-        <div class="col-md-2 mb-2">
-            <button class="btn btn-outline-secondary btn-sm w-100" onclick="resetFilters()">
-                <i class="fas fa-redo me-1"></i>{% trans 'Clear' %}
-            </button>
-        </div>
-    </div>
 
-    <!-- Resumes Table -->
-    <div class="tab-content" id="statusTabContent">
-        <!-- All Resumes -->
-        <div class="tab-pane fade show active" id="all" role="tabpanel">
-            {% if cvs %}
-            <div class="card">
-                <div class="card-body p-0">
+        <!-- Tabs -->
+        <div class="dashboard-panel mb-4">
+            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+                <div>
+                    <h4 class="panel-title mb-1">{% trans 'Resume Categories' %}</h4>
+                    <p class="panel-subtitle mb-0">{% trans 'Switch between all resumes and status-based groups' %}</p>
+                </div>
+
+                <div class="count-chip" id="resumeCountText">
+                    {% if cvs %}
+                        {% blocktrans with total=cvs|length %}Total: {{ total }} resumes{% endblocktrans %}
+                    {% else %}
+                        {% trans 'No resumes available' %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <ul class="nav nav-pills custom-tabs" id="statusTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab">
+                            <span class="text-dark">{% trans 'All' %}</span>
+                            <span class="tab-badge">{{ cvs.count }}</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="published-tab" data-bs-toggle="tab" data-bs-target="#published" type="button" role="tab">
+                            <i class="fas fa-eye me-1 text-dark"></i>
+                            <span class="text-dark">{% trans 'Published' %}</span>
+                            <span class="tab-badge">{{ published_count }}</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="draft-tab" data-bs-toggle="tab" data-bs-target="#draft" type="button" role="tab">
+                            <i class="fas fa-edit me-1 text-dark"></i>
+                            <span class="text-dark">{% trans 'Draft' %}</span>
+                            <span class="tab-badge">{{ draft_count }}</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="archived-tab" data-bs-toggle="tab" data-bs-target="#archived" type="button" role="tab">
+                            <i class="fas fa-archive me-1 text-dark"></i>
+                            <span class="text-dark">{% trans 'Archive' %}</span>
+                            <span class="tab-badge">{{ archived_count }}</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="dashboard-panel mb-4">
+            <div class="panel-header mb-4">
+                <div>
+                    <h4 class="panel-title mb-1">{% trans 'Search and Filters' %}</h4>
+                    <p class="panel-subtitle mb-0">{% trans 'Quickly find resumes by name, email, template, or sorting order' %}</p>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-lg-4">
+                    <label for="searchInput" class="form-label filter-label">{% trans 'Search' %}</label>
+                    <div class="search-input-wrap">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="form-control custom-input ps-5" id="searchInput" placeholder="{% trans 'Search resumes...' %}">
+                    </div>
+                </div>
+
+                <div class="col-lg-3">
+                    <label for="templateFilter" class="form-label filter-label">{% trans 'Template' %}</label>
+                    <select class="form-select custom-select" id="templateFilter">
+                        <option value="">{% trans 'All templates' %}</option>
+                        {% for template in templates %}
+                            <option value="{{ template.id }}">{{ template.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-lg-3">
+                    <label for="sortSelect" class="form-label filter-label">{% trans 'Sort by' %}</label>
+                    <select class="form-select custom-select" id="sortSelect">
+                        <option value="newest">{% trans 'Newest first' %}</option>
+                        <option value="oldest">{% trans 'Oldest first' %}</option>
+                        <option value="name_asc">{% trans 'Name A-Z' %}</option>
+                        <option value="name_desc">{% trans 'Name Z-A' %}</option>
+                    </select>
+                </div>
+
+                <div class="col-lg-2 d-flex align-items-end">
+                    <button class="btn btn-outline-secondary rounded-pill px-4 w-100" onclick="resetFilters()">
+                        <i class="fas fa-rotate-right me-1"></i>{% trans 'Clear' %}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab content -->
+        <div class="tab-content" id="statusTabContent">
+
+            <!-- All -->
+            <div class="tab-pane fade show active" id="all" role="tabpanel">
+                {% if cvs %}
+                <div class="dashboard-panel table-panel">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
+                        <table class="table resumes-table align-middle mb-0">
+                            <thead>
                                 <tr>
                                     <th style="width: 25%">{% trans 'Name and Title' %}</th>
                                     <th style="width: 20%">{% trans 'Contact' %}</th>
@@ -126,29 +207,27 @@
                                 {% for cv in cvs %}
                                 <tr class="resume-item" data-status="{{ cv.status }}" data-template="{{ cv.template.id }}">
                                     <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="flex-shrink-0">
-                                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                                    <i class="fas fa-file-alt text-white"></i>
-                                                </div>
+                                        <div class="resume-main">
+                                            <div class="resume-avatar resume-avatar-primary">
+                                                <i class="fas fa-file-alt"></i>
                                             </div>
-                                            <div class="flex-grow-1 ms-3">
-                                                <h6 class="mb-0 cv-name text-dark">{{ cv.full_name|default:_("Name not specified") }}</h6>
+                                            <div class="resume-meta">
+                                                <h6 class="mb-0 cv-name">{{ cv.full_name|default:_("Name not specified") }}</h6>
                                                 <small class="text-muted">{{ cv.title|default:_("Title not specified") }}</small>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="small">
-                                            <div class="text-dark"><i class="fas fa-envelope text-muted me-1"></i> {{ cv.email|default:"-" }}</div>
-                                            <div class="text-dark"><i class="fas fa-phone text-muted me-1"></i> {{ cv.phone|default:"-" }}</div>
+                                        <div class="contact-stack small">
+                                            <div><i class="fas fa-envelope text-muted me-1"></i>{{ cv.email|default:"-" }}</div>
+                                            <div><i class="fas fa-phone text-muted me-1"></i>{{ cv.phone|default:"-" }}</div>
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="badge bg-light text-dark border">{{ cv.template.name }}</span>
+                                        <span class="template-pill">{{ cv.template.name }}</span>
                                     </td>
                                     <td>
-                                        <span class="badge status-{{ cv.status }}">
+                                        <span class="resume-status-badge status-{{ cv.status }}">
                                             {% if cv.status == 'published' %}
                                                 <i class="fas fa-eye me-1"></i>{% trans 'Published' %}
                                             {% elif cv.status == 'draft' %}
@@ -159,16 +238,16 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <small class="text-dark cv-date" data-date="{{ cv.created_at|date:'c' }}">
+                                        <small class="cv-date muted-text" data-date="{{ cv.created_at|date:'c' }}">
                                             {{ cv.created_at|date:"d.m.Y" }}
                                         </small>
                                     </td>
                                     <td class="text-center">
-                                        <button class="btn btn-sm btn-outline-primary actions-modal-btn" 
+                                        <button class="btn actions-modal-btn"
                                                 data-cv-id="{{ cv.id }}"
                                                 data-cv-name="{{ cv.full_name|default:'Unnamed' }}"
                                                 data-cv-status="{{ cv.status }}">
-                                            <i class="fas fa-cog"></i>
+                                            <i class="fas fa-ellipsis"></i>
                                         </button>
                                     </td>
                                 </tr>
@@ -177,19 +256,17 @@
                         </table>
                     </div>
                 </div>
+                {% else %}
+                    {% include 'cvbuilder/partials/empty_state.html' %}
+                {% endif %}
             </div>
-            {% else %}
-            {% include 'cvbuilder/partials/empty_state.html' %}
-            {% endif %}
-        </div>
 
-        <!-- Published Resumes -->
-        <div class="tab-pane fade" id="published" role="tabpanel">
-            <div class="card">
-                <div class="card-body p-0">
+            <!-- Published -->
+            <div class="tab-pane fade" id="published" role="tabpanel">
+                <div class="dashboard-panel table-panel">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
+                        <table class="table resumes-table align-middle mb-0">
+                            <thead>
                                 <tr>
                                     <th>{% trans 'Name and Title' %}</th>
                                     <th>{% trans 'Contact' %}</th>
@@ -202,50 +279,50 @@
                                 {% for cv in published_cvs %}
                                 <tr class="resume-item" data-status="{{ cv.status }}" data-template="{{ cv.template.id }}">
                                     <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="flex-shrink-0">
-                                                <div class="bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                                    <i class="fas fa-eye text-white"></i>
-                                                </div>
+                                        <div class="resume-main">
+                                            <div class="resume-avatar resume-avatar-success">
+                                                <i class="fas fa-eye"></i>
                                             </div>
-                                            <div class="flex-grow-1 ms-3">
-                                                <h6 class="mb-0 cv-name text-dark">{{ cv.full_name|default:_("Name not specified") }}</h6>
+                                            <div class="resume-meta">
+                                                <h6 class="mb-0 cv-name">{{ cv.full_name|default:_("Name not specified") }}</h6>
                                                 <small class="text-muted">{{ cv.title|default:_("Title not specified") }}</small>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="small">
-                                            <div class="text-dark"><i class="fas fa-envelope text-muted me-1"></i> {{ cv.email|default:"-" }}</div>
-                                            <div class="text-dark"><i class="fas fa-phone text-muted me-1"></i> {{ cv.phone|default:"-" }}</div>
+                                        <div class="contact-stack small">
+                                            <div><i class="fas fa-envelope text-muted me-1"></i>{{ cv.email|default:"-" }}</div>
+                                            <div><i class="fas fa-phone text-muted me-1"></i>{{ cv.phone|default:"-" }}</div>
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="badge bg-light text-dark border">{{ cv.template.name }}</span>
+                                        <span class="template-pill">{{ cv.template.name }}</span>
                                     </td>
                                     <td>
-                                        <small class="text-dark cv-date" data-date="{{ cv.created_at|date:'c' }}">
+                                        <small class="cv-date muted-text" data-date="{{ cv.created_at|date:'c' }}">
                                             {{ cv.created_at|date:"d.m.Y" }}
                                         </small>
                                     </td>
                                     <td class="text-center">
-                                        <button class="btn btn-sm btn-outline-primary actions-modal-btn" 
+                                        <button class="btn actions-modal-btn"
                                                 data-cv-id="{{ cv.id }}"
                                                 data-cv-name="{{ cv.full_name|default:'Unnamed' }}"
                                                 data-cv-status="{{ cv.status }}">
-                                            <i class="fas fa-cog"></i>
+                                            <i class="fas fa-ellipsis"></i>
                                         </button>
                                     </td>
                                 </tr>
                                 {% empty %}
                                 <tr>
-                                    <td colspan="5" class="text-center py-4">
-                                        <i class="fas fa-eye-slash fa-2x text-muted mb-3"></i>
-                                        <h6 class="text-muted">{% trans 'No published resumes' %}</h6>
-                                        <p class="text-muted small">{% trans 'You don\'t have any published resumes yet' %}</p>
-                                        <a href="{% url 'cvbuilder:cv_create' %}" class="btn btn-primary btn-sm">
-                                            <i class="fas fa-plus me-1"></i>{% trans 'Create Resume' %}
-                                        </a>
+                                    <td colspan="5" class="text-center py-5">
+                                        <div class="empty-state">
+                                            <i class="fas fa-eye-slash mb-3"></i>
+                                            <div class="fw-semibold">{% trans 'No published resumes' %}</div>
+                                            <div class="text-muted small mb-3">{% trans "You don't have any published resumes yet" %}</div>
+                                            <a href="{% url 'cvbuilder:cv_create' %}" class="btn btn-primary rounded-pill px-4">
+                                                <i class="fas fa-plus me-1"></i>{% trans 'Create Resume' %}
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -254,15 +331,13 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Draft Resumes -->
-        <div class="tab-pane fade" id="draft" role="tabpanel">
-            <div class="card">
-                <div class="card-body p-0">
+            <!-- Draft -->
+            <div class="tab-pane fade" id="draft" role="tabpanel">
+                <div class="dashboard-panel table-panel">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
+                        <table class="table resumes-table align-middle mb-0">
+                            <thead>
                                 <tr>
                                     <th>{% trans 'Name and Title' %}</th>
                                     <th>{% trans 'Contact' %}</th>
@@ -275,47 +350,47 @@
                                 {% for cv in draft_cvs %}
                                 <tr class="resume-item" data-status="{{ cv.status }}" data-template="{{ cv.template.id }}">
                                     <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="flex-shrink-0">
-                                                <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                                    <i class="fas fa-edit text-dark"></i>
-                                                </div>
+                                        <div class="resume-main">
+                                            <div class="resume-avatar resume-avatar-warning">
+                                                <i class="fas fa-edit"></i>
                                             </div>
-                                            <div class="flex-grow-1 ms-3">
-                                                <h6 class="mb-0 cv-name text-dark">{{ cv.full_name|default:_("Name not specified") }}</h6>
+                                            <div class="resume-meta">
+                                                <h6 class="mb-0 cv-name">{{ cv.full_name|default:_("Name not specified") }}</h6>
                                                 <small class="text-muted">{{ cv.title|default:_("Title not specified") }}</small>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="small">
-                                            <div class="text-dark"><i class="fas fa-envelope text-muted me-1"></i> {{ cv.email|default:"-" }}</div>
-                                            <div class="text-dark"><i class="fas fa-phone text-muted me-1"></i> {{ cv.phone|default:"-" }}</div>
+                                        <div class="contact-stack small">
+                                            <div><i class="fas fa-envelope text-muted me-1"></i>{{ cv.email|default:"-" }}</div>
+                                            <div><i class="fas fa-phone text-muted me-1"></i>{{ cv.phone|default:"-" }}</div>
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="badge bg-light text-dark border">{{ cv.template.name }}</span>
+                                        <span class="template-pill">{{ cv.template.name }}</span>
                                     </td>
                                     <td>
-                                        <small class="text-dark cv-date" data-date="{{ cv.created_at|date:'c' }}">
+                                        <small class="cv-date muted-text" data-date="{{ cv.created_at|date:'c' }}">
                                             {{ cv.created_at|date:"d.m.Y" }}
                                         </small>
                                     </td>
                                     <td class="text-center">
-                                        <button class="btn btn-sm btn-outline-primary actions-modal-btn" 
+                                        <button class="btn actions-modal-btn"
                                                 data-cv-id="{{ cv.id }}"
                                                 data-cv-name="{{ cv.full_name|default:'Unnamed' }}"
                                                 data-cv-status="{{ cv.status }}">
-                                            <i class="fas fa-cog"></i>
+                                            <i class="fas fa-ellipsis"></i>
                                         </button>
                                     </td>
                                 </tr>
                                 {% empty %}
                                 <tr>
-                                    <td colspan="5" class="text-center py-4">
-                                        <i class="fas fa-edit fa-2x text-muted mb-3"></i>
-                                        <h6 class="text-muted">{% trans 'No draft resumes' %}</h6>
-                                        <p class="text-muted small">{% trans 'You don\'t have any draft resumes yet' %}</p>
+                                    <td colspan="5" class="text-center py-5">
+                                        <div class="empty-state">
+                                            <i class="fas fa-edit mb-3"></i>
+                                            <div class="fw-semibold">{% trans 'No draft resumes' %}</div>
+                                            <div class="text-muted small">{% trans "You don't have any draft resumes yet" %}</div>
+                                        </div>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -324,15 +399,13 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Archived Resumes -->
-        <div class="tab-pane fade" id="archived" role="tabpanel">
-            <div class="card">
-                <div class="card-body p-0">
+            <!-- Archived -->
+            <div class="tab-pane fade" id="archived" role="tabpanel">
+                <div class="dashboard-panel table-panel">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
+                        <table class="table resumes-table align-middle mb-0">
+                            <thead>
                                 <tr>
                                     <th>{% trans 'Name and Title' %}</th>
                                     <th>{% trans 'Contact' %}</th>
@@ -345,47 +418,47 @@
                                 {% for cv in archived_cvs %}
                                 <tr class="resume-item" data-status="{{ cv.status }}" data-template="{{ cv.template.id }}">
                                     <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="flex-shrink-0">
-                                                <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                                    <i class="fas fa-archive text-white"></i>
-                                                </div>
+                                        <div class="resume-main">
+                                            <div class="resume-avatar resume-avatar-secondary">
+                                                <i class="fas fa-archive"></i>
                                             </div>
-                                            <div class="flex-grow-1 ms-3">
-                                                <h6 class="mb-0 cv-name text-dark">{{ cv.full_name|default:_("Name not specified") }}</h6>
+                                            <div class="resume-meta">
+                                                <h6 class="mb-0 cv-name">{{ cv.full_name|default:_("Name not specified") }}</h6>
                                                 <small class="text-muted">{{ cv.title|default:_("Title not specified") }}</small>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="small">
-                                            <div class="text-dark"><i class="fas fa-envelope text-muted me-1"></i> {{ cv.email|default:"-" }}</div>
-                                            <div class="text-dark"><i class="fas fa-phone text-muted me-1"></i> {{ cv.phone|default:"-" }}</div>
+                                        <div class="contact-stack small">
+                                            <div><i class="fas fa-envelope text-muted me-1"></i>{{ cv.email|default:"-" }}</div>
+                                            <div><i class="fas fa-phone text-muted me-1"></i>{{ cv.phone|default:"-" }}</div>
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="badge bg-light text-dark border">{{ cv.template.name }}</span>
+                                        <span class="template-pill">{{ cv.template.name }}</span>
                                     </td>
                                     <td>
-                                        <small class="text-dark cv-date" data-date="{{ cv.created_at|date:'c' }}">
+                                        <small class="cv-date muted-text" data-date="{{ cv.created_at|date:'c' }}">
                                             {{ cv.created_at|date:"d.m.Y" }}
                                         </small>
                                     </td>
                                     <td class="text-center">
-                                        <button class="btn btn-sm btn-outline-primary actions-modal-btn" 
+                                        <button class="btn actions-modal-btn"
                                                 data-cv-id="{{ cv.id }}"
                                                 data-cv-name="{{ cv.full_name|default:'Unnamed' }}"
                                                 data-cv-status="{{ cv.status }}">
-                                            <i class="fas fa-cog"></i>
+                                            <i class="fas fa-ellipsis"></i>
                                         </button>
                                     </td>
                                 </tr>
                                 {% empty %}
                                 <tr>
-                                    <td colspan="5" class="text-center py-4">
-                                        <i class="fas fa-archive fa-2x text-muted mb-3"></i>
-                                        <h6 class="text-muted">{% trans 'No archived resumes' %}</h6>
-                                        <p class="text-muted small">{% trans 'You don\'t have any archived resumes yet' %}</p>
+                                    <td colspan="5" class="text-center py-5">
+                                        <div class="empty-state">
+                                            <i class="fas fa-archive mb-3"></i>
+                                            <div class="fw-semibold">{% trans 'No archived resumes' %}</div>
+                                            <div class="text-muted small">{% trans "You don't have any archived resumes yet" %}</div>
+                                        </div>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -395,45 +468,53 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Statistics -->
-    {% if cvs %}
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card bg-light">
-                <div class="card-body py-3">
-                    <div class="row text-center">
-                        <div class="col-md-3 border-end">
-                            <div class="h5 fw-bold text-primary mb-1">{{ cvs|length }}</div>
-                            <small class="text-muted">{% trans 'Total Resumes' %}</small>
-                        </div>
-                        <div class="col-md-3 border-end">
-                            <div class="h5 fw-bold text-success mb-1">{{ published_count }}</div>
-                            <small class="text-muted">{% trans 'Published' %}</small>
-                        </div>
-                        <div class="col-md-3 border-end">
-                            <div class="h5 fw-bold text-warning text-dark mb-1">{{ draft_count }}</div>
-                            <small class="text-muted">{% trans 'Draft' %}</small>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="h5 fw-bold text-secondary mb-1">{{ archived_count }}</div>
-                            <small class="text-muted">{% trans 'Archive' %}</small>
-                        </div>
+        {% if cvs %}
+        <div class="dashboard-panel mt-4">
+            <div class="panel-header mb-4">
+                <div>
+                    <h4 class="panel-title mb-1">{% trans 'Overview' %}</h4>
+                    <p class="panel-subtitle mb-0">{% trans 'A quick summary of your resume portfolio' %}</p>
+                </div>
+            </div>
+
+            <div class="row g-3 text-center">
+                <div class="col-md-3">
+                    <div class="summary-card">
+                        <div class="summary-value text-primary">{{ cvs|length }}</div>
+                        <div class="summary-label">{% trans 'Total Resumes' %}</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="summary-card">
+                        <div class="summary-value text-success">{{ published_count }}</div>
+                        <div class="summary-label">{% trans 'Published' %}</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="summary-card">
+                        <div class="summary-value text-warning">{{ draft_count }}</div>
+                        <div class="summary-label">{% trans 'Draft' %}</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="summary-card">
+                        <div class="summary-value text-secondary">{{ archived_count }}</div>
+                        <div class="summary-label">{% trans 'Archive' %}</div>
                     </div>
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
-    {% endif %}
 </div>
 
 <!-- Status Change Modal -->
 <div class="modal fade" id="statusModal" tabindex="-1">
     <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h6 class="modal-title text-dark">{% trans 'Change Resume Status' %}</h6>
+        <div class="modal-content custom-modal">
+            <div class="modal-header custom-modal-header">
+                <h6 class="modal-title">{% trans 'Change Resume Status' %}</h6>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -441,18 +522,18 @@
                     {% csrf_token %}
                     <input type="hidden" name="cv_id" id="cvId">
                     <div class="mb-3">
-                        <label class="form-label small fw-bold text-dark">{% trans 'Select Status' %}</label>
-                        <select class="form-select form-select-sm" name="status" id="statusSelect">
-                            <option value="draft">{% trans 'Draft - Only you can see' %}</option>
-                            <option value="published">{% trans 'Published - Visible to employers and admins' %}</option>
-                            <option value="archived">{% trans 'Archive - Hidden from everyone' %}</option>
+                        <label class="form-label filter-label">{% trans 'Select Status' %}</label>
+                        <select class="form-select custom-select" name="status" id="statusSelect">
+                            <option value="draft">{% trans 'Draft, only you can see' %}</option>
+                            <option value="published">{% trans 'Published, visible to employers and admins' %}</option>
+                            <option value="archived">{% trans 'Archive, hidden from everyone' %}</option>
                         </select>
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">{% trans 'Cancel' %}</button>
-                <button type="button" class="btn btn-primary btn-sm" id="saveStatusBtn">{% trans 'Save' %}</button>
+            <div class="modal-footer custom-modal-footer">
+                <button type="button" class="btn btn-outline-secondary rounded-pill px-3" data-bs-dismiss="modal">{% trans 'Cancel' %}</button>
+                <button type="button" class="btn btn-primary rounded-pill px-3" id="saveStatusBtn">{% trans 'Save' %}</button>
             </div>
         </div>
     </div>
@@ -461,418 +542,676 @@
 <!-- Actions Modal -->
 <div class="modal fade" id="actionsModal" tabindex="-1">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h6 class="modal-title text-dark">{% trans 'Resume Actions' %}</h6>
+        <div class="modal-content custom-modal">
+            <div class="modal-header custom-modal-header">
+                <h6 class="modal-title">{% trans 'Resume Actions' %}</h6>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <div class="mb-4">
-                    <h6 class="text-dark fw-bold mb-2" id="modalCvName"></h6>
-                    <div class="d-flex align-items-center">
-                        <span class="badge me-2" id="modalCvStatusBadge"></span>
+                <div class="modal-resume-box mb-4">
+                    <h6 class="fw-bold mb-2" id="modalCvName"></h6>
+                    <div class="d-flex align-items-center flex-wrap gap-2">
+                        <span id="modalCvStatusBadge"></span>
                         <small class="text-muted" id="modalCvDate"></small>
                     </div>
                 </div>
-                
-                <div class="row g-2">
+
+                <div class="row g-3">
                     <div class="col-6">
-                        <a href="#" class="btn btn-outline-primary w-100 d-flex flex-column align-items-center p-3 action-btn" data-action="view">
-                            <i class="fas fa-eye fa-2x mb-2"></i>
+                        <a href="#" class="action-btn-grid action-btn-view" data-action="view">
+                            <i class="fas fa-eye"></i>
                             <span>{% trans 'View' %}</span>
                         </a>
                     </div>
                     <div class="col-6">
-                        <a href="#" class="btn btn-outline-secondary w-100 d-flex flex-column align-items-center p-3 action-btn" data-action="edit">
-                            <i class="fas fa-edit fa-2x mb-2"></i>
+                        <a href="#" class="action-btn-grid action-btn-edit" data-action="edit">
+                            <i class="fas fa-edit"></i>
                             <span>{% trans 'Edit' %}</span>
                         </a>
                     </div>
                     <div class="col-6">
-                        <button class="btn btn-outline-warning w-100 d-flex flex-column align-items-center p-3 action-btn" data-action="status">
-                            <i class="fas fa-exchange-alt fa-2x mb-2"></i>
+                        <button class="action-btn-grid action-btn-status" data-action="status" type="button">
+                            <i class="fas fa-exchange-alt"></i>
                             <span>{% trans 'Status' %}</span>
                         </button>
                     </div>
                     <div class="col-6">
-                        <a href="#" class="btn btn-outline-info w-100 d-flex flex-column align-items-center p-3 action-btn" data-action="duplicate">
-                            <i class="fas fa-copy fa-2x mb-2"></i>
+                        <a href="#" class="action-btn-grid action-btn-duplicate" data-action="duplicate">
+                            <i class="fas fa-copy"></i>
                             <span>{% trans 'Duplicate' %}</span>
                         </a>
                     </div>
                     <div class="col-6">
-                        <a href="#" class="btn btn-outline-success w-100 d-flex flex-column align-items-center p-3 action-btn" data-action="download">
-                            <i class="fas fa-download fa-2x mb-2"></i>
+                        <a href="#" class="action-btn-grid action-btn-download" data-action="download">
+                            <i class="fas fa-download"></i>
                             <span>{% trans 'PDF' %}</span>
                         </a>
                     </div>
                     <div class="col-6">
-                        <a href="#" class="btn btn-outline-danger w-100 d-flex flex-column align-items-center p-3 action-btn" data-action="delete">
-                            <i class="fas fa-trash fa-2x mb-2"></i>
+                        <a href="#" class="action-btn-grid action-btn-delete" data-action="delete">
+                            <i class="fas fa-trash"></i>
                             <span>{% trans 'Delete' %}</span>
                         </a>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">{% trans 'Close' %}</button>
+            <div class="modal-footer custom-modal-footer">
+                <button type="button" class="btn btn-outline-secondary rounded-pill px-3" data-bs-dismiss="modal">{% trans 'Close' %}</button>
             </div>
         </div>
     </div>
 </div>
 
 <style>
-/* Улучшение доступности для слабовидящих */
-.container {
-    max-width: 100% !important;
-    padding-left: 1rem;
-    padding-right: 1rem;
+.resumes-page {
+    background:
+        radial-gradient(circle at top left, rgba(59, 130, 246, 0.08), transparent 24%),
+        radial-gradient(circle at top right, rgba(99, 102, 241, 0.08), transparent 20%),
+        linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+    min-height: 100vh;
 }
 
-/* Увеличение контрастности и размеров для доступности */
-.nav-pills .nav-link {
+.page-shell {
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.hero-card,
+.dashboard-panel,
+.metric-card,
+.custom-modal,
+.summary-card {
+    border-radius: 24px;
+}
+
+.hero-card {
+    position: relative;
+    overflow: hidden;
+    padding: 2rem;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 45%, #312e81 100%);
+    color: #fff;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.18);
+}
+
+.hero-card::before,
+.hero-card::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(10px);
+    pointer-events: none;
+}
+
+.hero-card::before {
+    width: 240px;
+    height: 240px;
+    background: rgba(59, 130, 246, 0.18);
+    top: -80px;
+    right: -60px;
+}
+
+.hero-card::after {
+    width: 180px;
+    height: 180px;
+    background: rgba(168, 85, 247, 0.16);
+    bottom: -60px;
+    left: -40px;
+}
+
+.hero-content,
+.hero-side-card {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.14);
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.hero-title {
+    font-size: clamp(2rem, 3vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+.hero-subtitle {
+    color: rgba(255,255,255,0.82);
     font-size: 1rem;
-    padding: 0.75rem 1.25rem;
-    color: #212529 !important; /* Темный текст для лучшего контраста */
-    font-weight: 500;
-    border: 2px solid transparent;
-    background-color: #f8f9fa; /* Светлый фон для неактивных вкладок */
+    max-width: 760px;
 }
 
-.nav-pills .nav-link.active {
-    background-color: #012152;
-    border-color: #012152;
-    color: white !important;
+.hero-side-card {
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 22px;
+    padding: 1.2rem;
+    backdrop-filter: blur(12px);
+}
+
+.hero-side-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: rgba(255,255,255,0.82);
+    margin-bottom: 1rem;
     font-weight: 600;
 }
 
-.nav-pills .nav-link:not(.active):hover {
-    background-color: #e9ecef;
-    border-color: #dee2e6;
-    color: #012152 !important;
+.hero-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
 }
 
-/* Исправление цветов бейджей */
-.badge.bg-light {
-    background-color: #f8f9fa !important;
-    color: #212529 !important;
-    border: 1px solid #dee2e6;
-}
-
-/* Улучшение таблицы для доступности */
-.table th {
-    font-size: 1rem;
+.hero-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border-radius: 16px;
+    text-decoration: none;
     font-weight: 700;
-    border-bottom: 3px solid #dee2e6;
-    color: #212529;
-    background-color: #f8f9fa;
-    padding: 1rem 0.75rem;
+    transition: all 0.25s ease;
 }
 
-.table td {
-    font-size: 1rem;
-    vertical-align: middle;
-    padding: 1rem 0.75rem;
-    color: #212529;
+.hero-action-btn:hover {
+    transform: translateY(-2px);
+}
+
+.hero-action-outline {
+    color: #fff;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.16);
+}
+
+.hero-action-outline:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.14);
+}
+
+.hero-action-solid {
+    color: #0f172a;
+    background: #fff;
+    border: 1px solid rgba(255,255,255,0.24);
+}
+
+.hero-action-solid:hover {
+    color: #0f172a;
+    background: #f8fafc;
+}
+
+.hero-mini-note {
+    color: rgba(255,255,255,0.75);
+    font-size: 0.9rem;
     line-height: 1.5;
 }
 
+.metric-card {
+    position: relative;
+    overflow: hidden;
+    padding: 1.3rem;
+    color: #fff;
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.10);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.metric-card:hover,
+.dashboard-panel:hover,
+.summary-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.13);
+}
+
+.metric-dark { background: linear-gradient(135deg, #111827, #020617); }
+.metric-success { background: linear-gradient(135deg, #22c55e, #15803d); }
+.metric-warning { background: linear-gradient(135deg, #f59e0b, #b45309); }
+.metric-secondary { background: linear-gradient(135deg, #64748b, #334155); }
+
+.metric-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    background: rgba(255,255,255,0.14);
+    font-size: 1.1rem;
+}
+
+.metric-label {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: rgba(255,255,255,0.75);
+    font-weight: 700;
+}
+
+.metric-value {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.15;
+    margin: 0.35rem 0;
+}
+
+.metric-note {
+    color: rgba(255,255,255,0.82);
+    font-size: 0.9rem;
+}
+
+.dashboard-panel {
+    background: rgba(255,255,255,0.82);
+    border: 1px solid rgba(255,255,255,0.72);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
+    padding: 1.5rem;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.panel-title {
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.panel-subtitle {
+    color: #64748b;
+    font-size: 0.92rem;
+}
+
+.count-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 1rem;
+    border-radius: 999px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+    font-size: 0.92rem;
+    font-weight: 600;
+}
+
+.custom-tabs {
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.custom-tabs .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.8rem 1rem;
+    border-radius: 999px;
+    border: 1px solid #dbe4f0;
+    background: #f8fafc;
+    color: #334155;
+    font-weight: 700;
+    transition: all 0.25s ease;
+}
+
+.custom-tabs .nav-link:hover {
+    background: #eef2ff;
+    color: #4338ca;
+    border-color: #c7d2fe;
+}
+
+.custom-tabs .nav-link.active {
+    background: linear-gradient(135deg, #4f46e5, #312e81);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 10px 24px rgba(79, 70, 229, 0.25);
+}
+
+.tab-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 26px;
+    height: 26px;
+    padding: 0 0.5rem;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.16);
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.custom-tabs .nav-link:not(.active) .tab-badge {
+    background: #e2e8f0;
+    color: #334155;
+}
+
+.filter-label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 0.5rem;
+}
+
+.search-input-wrap {
+    position: relative;
+}
+
+.search-icon {
+    position: absolute;
+    top: 50%;
+    left: 1rem;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    z-index: 2;
+}
+
+.custom-input,
+.custom-select {
+    min-height: 48px;
+    border-radius: 16px;
+    border: 1px solid #dbe4f0;
+    background: #fff;
+    box-shadow: none;
+}
+
+.custom-input:focus,
+.custom-select:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 0.22rem rgba(99, 102, 241, 0.12);
+}
+
+.table-panel {
+    padding: 0;
+    overflow: hidden;
+}
+
+.resumes-table thead th {
+    color: #64748b;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+    border-bottom: 1px solid #e2e8f0;
+    background: #f8fafc;
+    padding: 1rem 1rem;
+}
+
+.resumes-table tbody td {
+    padding: 1rem;
+    border-color: #eef2f7;
+    vertical-align: middle;
+}
+
 .resume-item {
-    transition: all 0.3s ease;
-    border-left: 3px solid transparent;
+    transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .resume-item:hover {
-    background-color: #f8f9fa;
-    border-left-color: #012152;
-    transform: translateX(2px);
+    background: #f8fbff;
 }
 
-/* Улучшение статусов для лучшей видимости */
-.status-published { 
-    background-color: #d1fae5 !important; 
-    color: #065f46 !important; 
-    border: 2px solid #10b981;
-    font-weight: 600;
-    font-size: 0.9rem;
-    padding: 0.4rem 0.8rem;
+.resume-main {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    min-width: 0;
 }
 
-.status-draft { 
-    background-color: #fef3c7 !important; 
-    color: #92400e !important; 
-    border: 2px solid #f59e0b;
-    font-weight: 600;
-    font-size: 0.9rem;
-    padding: 0.4rem 0.8rem;
+.resume-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    flex-shrink: 0;
 }
 
-.status-archived { 
-    background-color: #f3f4f6 !important; 
-    color: #374151 !important; 
-    border: 2px solid #6b7280;
-    font-weight: 600;
-    font-size: 0.9rem;
-    padding: 0.4rem 0.8rem;
-}
+.resume-avatar-primary { background: linear-gradient(135deg, #4f46e5, #1d4ed8); }
+.resume-avatar-success { background: linear-gradient(135deg, #22c55e, #15803d); }
+.resume-avatar-warning { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.resume-avatar-secondary { background: linear-gradient(135deg, #64748b, #334155); }
 
-/* Кнопка действий в таблице */
-.actions-modal-btn {
-    padding: 0.5rem 1rem;
-    border: 2px solid #dee2e6;
-    border-radius: 0.375rem;
-    background: white;
-    transition: all 0.2s ease;
-    font-size: 0.9rem;
-}
-
-.actions-modal-btn:hover {
-    background-color: #f8f9fa;
-    border-color: #012152;
-    color: #012152 !important;
-    transform: translateY(-1px);
-}
-
-.actions-modal-btn:focus {
-    outline: 3px solid rgba(1, 33, 82, 0.1);
-    border-color: #012152;
-}
-
-/* Стили для модального окна действий */
-.action-btn {
-    height: 100px;
-    border: 2px solid #dee2e6;
-    border-radius: 0.5rem;
-    transition: all 0.2s ease;
-    text-decoration: none !important;
-    color: #212529 !important;
-}
-
-.action-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    border-color: #012152;
-    background-color: #f8f9fa;
-}
-
-.action-btn[data-action="view"]:hover {
-    border-color: #0d6efd;
-    color: #0d6efd !important;
-}
-
-.action-btn[data-action="edit"]:hover {
-    border-color: #6c757d;
-    color: #6c757d !important;
-}
-
-.action-btn[data-action="status"]:hover {
-    border-color: #ffc107;
-    color: #ffc107 !important;
-}
-
-.action-btn[data-action="duplicate"]:hover {
-    border-color: #0dcaf0;
-    color: #0dcaf0 !important;
-}
-
-.action-btn[data-action="download"]:hover {
-    border-color: #198754;
-    color: #198754 !important;
-}
-
-.action-btn[data-action="delete"]:hover {
-    border-color: #dc3545;
-    color: #dc3545 !important;
-}
-
-.action-btn i {
-    font-size: 1.75rem;
-}
-
-/* Улучшение карточек */
-.card {
-    border: 2px solid #e3e6f0;
-    border-radius: 0.75rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-/* Улучшение форм ввода */
-.input-group-text {
-    background-color: #f8f9fa;
-    border: 2px solid #d1d7dc;
-    font-size: 0.9rem;
-    color: #6c757d;
-}
-
-.form-control, .form-select {
-    border: 2px solid #d1d7dc;
-    font-size: 0.9rem;
-    padding: 0.5rem 0.75rem;
-    color: #212529;
-}
-
-.form-control:focus, .form-select:focus {
-    border-color: #012152;
-    box-shadow: 0 0 0 0.2rem rgba(1, 33, 82, 0.1);
-}
-
-/* Улучшение текста для доступности */
-.text-dark {
-    color: #212529 !important;
-}
-
-.text-muted {
-    color: #6c757d !important;
-}
-
-.cv-name, .small div, .cv-date {
-    color: #212529 !important;
-    line-height: 1.5;
+.resume-meta {
+    min-width: 0;
 }
 
 .cv-name {
+    color: #0f172a !important;
+    font-weight: 700;
+    line-height: 1.25;
+    word-break: break-word;
+}
+
+.contact-stack {
+    color: #334155;
+    line-height: 1.6;
+}
+
+.template-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 0.8rem;
+    border-radius: 999px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #334155;
+    font-size: 0.82rem;
     font-weight: 600;
-    font-size: 1rem;
 }
 
-/* Улучшение кнопок */
-.btn-outline-primary {
-    color: #012152;
-    border-color: #012152;
+.resume-status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    white-space: nowrap;
 }
 
-.btn-outline-primary:hover {
-    background-color: #012152;
-    color: white !important;
+.status-published {
+    background: #ecfdf5;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
 }
 
-.btn-outline-secondary {
-    color: #6c757d;
-    border-color: #6c757d;
+.status-draft {
+    background: #fff7ed;
+    color: #c2410c;
+    border: 1px solid #fed7aa;
 }
 
-.btn-outline-secondary:hover {
-    background-color: #6c757d;
-    color: white !important;
+.status-archived {
+    background: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
 }
 
-/* Улучшение модальных окон */
-.modal-header {
-    border-bottom: 2px solid #e3e6f0;
+.muted-text {
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.actions-modal-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    border: 1px solid #dbe4f0;
+    background: #fff;
+    color: #334155;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.actions-modal-btn:hover {
+    background: #eef2ff;
+    color: #4338ca;
+    border-color: #c7d2fe;
+    transform: translateY(-1px);
+}
+
+.summary-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
     padding: 1.25rem;
-    background-color: #f8f9fa;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-.modal-footer {
-    border-top: 2px solid #e3e6f0;
-    padding: 1.25rem;
-    background-color: #f8f9fa;
+.summary-value {
+    font-size: 1.7rem;
+    font-weight: 800;
+    line-height: 1.1;
 }
 
-.modal-content {
-    border: 2px solid rgba(0,0,0,0.1);
+.summary-label {
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-top: 0.35rem;
 }
 
-/* Focus стили для доступности */
-.btn:focus,
-.actions-modal-btn:focus,
-.form-control:focus,
-.form-select:focus,
-.action-btn:focus {
-    outline: 3px solid rgba(1, 33, 82, 0.3);
-    outline-offset: 2px;
+.empty-state {
+    color: #64748b;
 }
 
-/* Анимации для лучшего UX */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+.empty-state i {
+    font-size: 1.7rem;
+    color: #94a3b8;
 }
 
-.resume-item {
-    animation: fadeIn 0.3s ease;
+.custom-modal {
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
 }
 
-/* Медиа-запросы для мобильных устройств */
-@media (max-width: 768px) {
-    .container {
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
-    }
-    
-    .table-responsive {
-        font-size: 0.9rem;
-    }
-    
-    .action-btn {
-        height: 80px;
-        padding: 1rem !important;
-    }
-    
-    .action-btn i {
-        font-size: 1.5rem;
-    }
-    
-    .nav-pills .nav-link {
-        font-size: 0.9rem;
-        padding: 0.6rem 1rem;
+.custom-modal-header,
+.custom-modal-footer {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+}
+
+.modal-resume-box {
+    padding: 1rem;
+    border-radius: 16px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+.action-btn-grid {
+    width: 100%;
+    min-height: 110px;
+    border-radius: 18px;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.65rem;
+    text-decoration: none;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+.action-btn-grid:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+    color: inherit;
+}
+
+.action-btn-grid i {
+    font-size: 1.5rem;
+}
+
+.action-btn-view:hover { border-color: #93c5fd; color: #2563eb; }
+.action-btn-edit:hover { border-color: #cbd5e1; color: #475569; }
+.action-btn-status:hover { border-color: #fcd34d; color: #d97706; }
+.action-btn-duplicate:hover { border-color: #67e8f9; color: #0891b2; }
+.action-btn-download:hover { border-color: #86efac; color: #15803d; }
+.action-btn-delete:hover { border-color: #fca5a5; color: #dc2626; }
+
+@media (max-width: 991.98px) {
+    .hero-card {
+        padding: 1.5rem;
     }
 }
 
-/* Высококонтрастный режим */
-@media (prefers-contrast: high) {
-    .nav-pills .nav-link.active {
-        background-color: #000;
-        border-color: #000;
+@media (max-width: 767.98px) {
+    .hero-card,
+    .dashboard-panel,
+    .metric-card,
+    .summary-card,
+    .custom-modal {
+        border-radius: 18px;
     }
-    
-    .table th {
-        background-color: #000;
-        color: #fff;
+
+    .metric-value {
+        font-size: 1.7rem;
     }
-    
-    .status-published,
-    .status-draft,
-    .status-archived {
-        border-width: 3px;
+
+    .custom-tabs .nav-link {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .resumes-table {
+        min-width: 900px;
+    }
+
+    .action-btn-grid {
+        min-height: 95px;
     }
 }
 
-/* Уменьшение движения для пользователей с предпочтением reduced motion */
 @media (prefers-reduced-motion: reduce) {
-    .resume-item,
-    .action-btn,
-    .actions-modal-btn {
+    .metric-card,
+    .dashboard-panel,
+    .summary-card,
+    .actions-modal-btn,
+    .action-btn-grid,
+    .hero-action-btn {
         transition: none;
-        transform: none;
     }
 }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Search function
     const searchInput = document.getElementById('searchInput');
     const templateFilter = document.getElementById('templateFilter');
     const sortSelect = document.getElementById('sortSelect');
-    
+
     function filterResumes() {
         const searchTerm = searchInput.value.toLowerCase();
         const templateValue = templateFilter.value;
         const sortValue = sortSelect.value;
-        
+
         const activeTab = document.querySelector('.tab-pane.active');
+        if (!activeTab) return;
+
         const resumes = activeTab.querySelectorAll('.resume-item');
-        
         let visibleCount = 0;
-        
+
         resumes.forEach(item => {
-            const cvName = item.querySelector('.cv-name').textContent.toLowerCase();
-            const cvEmail = item.querySelector('td:nth-child(2)').textContent.toLowerCase();
+            const cvNameEl = item.querySelector('.cv-name');
+            const contactEl = item.querySelector('td:nth-child(2)');
+
+            const cvName = cvNameEl ? cvNameEl.textContent.toLowerCase() : '';
+            const cvContact = contactEl ? contactEl.textContent.toLowerCase() : '';
             const cvTemplate = item.getAttribute('data-template');
-            const matchesSearch = cvName.includes(searchTerm) || cvEmail.includes(searchTerm);
+
+            const matchesSearch = cvName.includes(searchTerm) || cvContact.includes(searchTerm);
             const matchesTemplate = !templateValue || cvTemplate === templateValue;
-            
+
             if (matchesSearch && matchesTemplate) {
                 item.style.display = '';
                 visibleCount++;
@@ -880,31 +1219,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 item.style.display = 'none';
             }
         });
-        
-        // Update text
+
         const countText = document.getElementById('resumeCountText');
         if (visibleCount === 0) {
             countText.textContent = '{% trans "No resumes found" %}';
-            countText.className = 'text-danger';
+            countText.style.color = '#dc2626';
         } else {
             countText.textContent = `{% trans "Found" %}: ${visibleCount} {% trans "resumes" %}`;
-            countText.className = 'text-success';
+            countText.style.color = '#15803d';
         }
-            
-        // Sorting
+
         sortResumes(activeTab, sortValue);
     }
-    
+
     function sortResumes(container, sortBy) {
         const tbody = container.querySelector('tbody');
+        if (!tbody) return;
+
         const resumes = Array.from(tbody.querySelectorAll('.resume-item'));
-        
+
         resumes.sort((a, b) => {
-            const aName = a.querySelector('.cv-name').textContent;
-            const bName = b.querySelector('.cv-name').textContent;
-            const aDate = new Date(a.querySelector('.cv-date').getAttribute('data-date'));
-            const bDate = new Date(b.querySelector('.cv-date').getAttribute('data-date'));
-            
+            const aName = a.querySelector('.cv-name')?.textContent || '';
+            const bName = b.querySelector('.cv-name')?.textContent || '';
+            const aDate = new Date(a.querySelector('.cv-date')?.getAttribute('data-date') || 0);
+            const bDate = new Date(b.querySelector('.cv-date')?.getAttribute('data-date') || 0);
+
             switch(sortBy) {
                 case 'newest':
                     return bDate - aDate;
@@ -918,86 +1257,84 @@ document.addEventListener('DOMContentLoaded', function() {
                     return 0;
             }
         });
-        
+
         resumes.forEach(item => tbody.appendChild(item));
     }
-    
-    // Clear filters
+
     window.resetFilters = function() {
         searchInput.value = '';
         templateFilter.value = '';
         sortSelect.value = 'newest';
         filterResumes();
-        document.getElementById('resumeCountText').className = 'text-muted';
+
+        const countText = document.getElementById('resumeCountText');
+        countText.style.color = '';
     };
-    
+
     searchInput.addEventListener('input', filterResumes);
     templateFilter.addEventListener('change', filterResumes);
     sortSelect.addEventListener('change', filterResumes);
-    
-    // Status change modal
+
     const statusModal = new bootstrap.Modal(document.getElementById('statusModal'));
     const statusForm = document.getElementById('statusForm');
-    
+
     document.getElementById('saveStatusBtn').addEventListener('click', function() {
         statusForm.submit();
     });
-    
-    // Actions modal
+
     const actionsModal = new bootstrap.Modal(document.getElementById('actionsModal'));
-    const actionButtons = document.querySelectorAll('.action-btn');
-    
-    // Обработчики для кнопок действий в таблице
+    const actionButtons = document.querySelectorAll('.action-btn-grid');
+
     document.querySelectorAll('.actions-modal-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const cvId = this.getAttribute('data-cv-id');
             const cvName = this.getAttribute('data-cv-name');
             const cvStatus = this.getAttribute('data-cv-status');
-            
+
             if (!cvId) {
                 console.error('CV ID is missing');
                 return;
             }
-            
-            // Найти строку таблицы для получения дополнительных данных
+
             const row = this.closest('tr');
             const dateElement = row.querySelector('.cv-date');
-            const statusElement = row.querySelector('.badge');
-            
-            // Заполнить модальное окно данными
+            const statusElement = row.querySelector('.resume-status-badge');
+
             document.getElementById('modalCvName').textContent = cvName;
-            document.getElementById('modalCvDate').textContent = dateElement.textContent;
-            document.getElementById('modalCvStatusBadge').innerHTML = statusElement.innerHTML;
-            document.getElementById('modalCvStatusBadge').className = statusElement.className;
-            
-            // Обновить ссылки действий
+            document.getElementById('modalCvDate').textContent = dateElement ? dateElement.textContent.trim() : '';
+
+            const modalStatusBadge = document.getElementById('modalCvStatusBadge');
+            if (statusElement) {
+                modalStatusBadge.innerHTML = statusElement.innerHTML;
+                modalStatusBadge.className = statusElement.className;
+            } else {
+                modalStatusBadge.innerHTML = '';
+                modalStatusBadge.className = '';
+            }
+
             actionButtons.forEach(actionBtn => {
                 const action = actionBtn.getAttribute('data-action');
-                
+
                 if (action === 'status') {
-                    // Для кнопки статуса устанавливаем обработчик
                     actionBtn.onclick = function(e) {
                         e.preventDefault();
                         actionsModal.hide();
-                        
-                        // Настроить форму изменения статуса
+
                         document.getElementById('cvId').value = cvId;
                         document.getElementById('statusSelect').value = cvStatus;
-                        
-                        // Обновить action формы
+
                         const baseUrl = '{% url "cvbuilder:update_cv_status" 0 %}';
                         const newAction = baseUrl.replace('/0/', `/${cvId}/`);
                         statusForm.setAttribute('action', newAction);
-                        
+
                         setTimeout(() => {
                             statusModal.show();
-                        }, 300);
+                        }, 250);
                     };
                 } else {
-                    // Для других действий формируем URL
                     let url = '';
                     let onclickHandler = null;
-                    
+
                     switch(action) {
                         case 'view':
                             url = '{% url "cvbuilder:cv_detail" 0 %}'.replace('0', cvId);
@@ -1021,11 +1358,11 @@ document.addEventListener('DOMContentLoaded', function() {
                             };
                             break;
                     }
-                    
-                    if (url) {
+
+                    if ('href' in actionBtn && url) {
                         actionBtn.href = url;
                     }
-                    
+
                     if (onclickHandler) {
                         actionBtn.onclick = onclickHandler;
                     } else {
@@ -1033,19 +1370,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             });
-            
+
             actionsModal.show();
         });
     });
-    
-    // Process filters when tab changes
+
     document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
         tab.addEventListener('shown.bs.tab', function() {
             setTimeout(filterResumes, 100);
         });
     });
-    
-    // Initial setup
+
     filterResumes();
 });
 </script>
