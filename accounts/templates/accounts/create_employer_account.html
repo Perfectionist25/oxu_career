@@ -54,7 +54,7 @@
                                 
                                 <div class="mb-3">
                                     <label for="{{ user_form.username.id_for_label }}" class="form-label fw-semibold">
-                                        {% trans "Username" %} <span class="text-danger">*</span>
+                                        {% trans "Username" %}{% if user_form.username.field.required %} <span class="text-danger">*</span>{% endif %}
                                     </label>
                                     {{ user_form.username|add_class:"form-control" }}
                                     {% if user_form.username.errors %}
@@ -71,7 +71,7 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="{{ user_form.first_name.id_for_label }}" class="form-label fw-semibold">
-                                                {% trans "First Name" %} <span class="text-danger">*</span>
+                                                {% trans "First Name" %}{% if user_form.first_name.field.required %} <span class="text-danger">*</span>{% endif %}
                                             </label>
                                             {{ user_form.first_name|add_class:"form-control" }}
                                             {% if user_form.first_name.errors %}
@@ -86,7 +86,7 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="{{ user_form.last_name.id_for_label }}" class="form-label fw-semibold">
-                                                {% trans "Last Name" %} <span class="text-danger">*</span>
+                                                {% trans "Last Name" %}{% if user_form.last_name.field.required %} <span class="text-danger">*</span>{% endif %}
                                             </label>
                                             {{ user_form.last_name|add_class:"form-control" }}
                                             {% if user_form.last_name.errors %}
@@ -102,7 +102,7 @@
 
                                 <div class="mb-3">
                                     <label for="{{ user_form.email.id_for_label }}" class="form-label fw-semibold">
-                                        {% trans "Email Address" %} <span class="text-danger">*</span>
+                                        {% trans "Email Address" %}{% if user_form.email.field.required %} <span class="text-danger">*</span>{% endif %}
                                     </label>
                                     {{ user_form.email|add_class:"form-control" }}
                                     {% if user_form.email.errors %}
@@ -117,7 +117,7 @@
 
                                 <div class="mb-3">
                                     <label for="{{ user_form.phone_number.id_for_label }}" class="form-label fw-semibold">
-                                        {% trans "Phone Number" %} <span class="text-danger">*</span>
+                                        {% trans "Phone Number" %}{% if user_form.phone_number.field.required %} <span class="text-danger">*</span>{% endif %}
                                     </label>
                                     {{ user_form.phone_number|add_class:"form-control" }}
                                     {% if user_form.phone_number.errors %}
@@ -134,7 +134,7 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="{{ user_form.password1.id_for_label }}" class="form-label fw-semibold">
-                                                {% trans "Password" %} <span class="text-danger">*</span>
+                                                {% trans "Password" %}{% if user_form.password1.field.required %} <span class="text-danger">*</span>{% endif %}
                                             </label>
                                             {{ user_form.password1|add_class:"form-control" }}
                                             {% if user_form.password1.errors %}
@@ -149,7 +149,7 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="{{ user_form.password2.id_for_label }}" class="form-label fw-semibold">
-                                                {% trans "Confirm Password" %} <span class="text-danger">*</span>
+                                                {% trans "Confirm Password" %}{% if user_form.password2.field.required %} <span class="text-danger">*</span>{% endif %}
                                             </label>
                                             {{ user_form.password2|add_class:"form-control" }}
                                             {% if user_form.password2.errors %}
@@ -172,7 +172,7 @@
 
                                 <div class="mb-3">
                                     <label for="{{ company_form.name.id_for_label }}" class="form-label fw-semibold">
-                                        {% trans "Company Name" %} <span class="text-danger">*</span>
+                                        {% trans "Company Name" %}{% if company_form.name.field.required %} <span class="text-danger">*</span>{% endif %}
                                     </label>
                                     {{ company_form.name|add_class:"form-control" }}
                                     {% if company_form.name.errors %}
@@ -220,7 +220,7 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="{{ company_form.company_type.id_for_label }}" class="form-label fw-semibold">
-                                                {% trans "Company Type" %}
+                                                {% trans "Company Type" %}{% if company_form.company_type.field.required %} <span class="text-danger">*</span>{% endif %}
                                             </label>
                                             {{ company_form.company_type|add_class:"form-control" }}
                                             {% if company_form.company_type.errors %}
@@ -744,7 +744,7 @@
                                 <div class="form-check mb-4">
                                     {{ user_form.terms_accept|add_class:"form-check-input" }}
                                     <label class="form-check-label fw-semibold" for="{{ user_form.terms_accept.id_for_label }}">
-                                        {% trans "I accept the terms and conditions" %} <span class="text-danger">*</span>
+                                        {% trans "I accept the terms and conditions" %}{% if user_form.terms_accept.field.required %} <span class="text-danger">*</span>{% endif %}
                                     </label>
                                     {% if user_form.terms_accept.errors %}
                                     <div class="invalid-feedback d-block">

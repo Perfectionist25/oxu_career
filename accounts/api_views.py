@@ -29,6 +29,7 @@ from accounts.models import (
     StudentProfile,
     EmployerProfile,
     AdminProfile,
+    strip_system_generated_bio,
 )
 from accounts.views import create_user_activity, get_client_ip
 
@@ -223,7 +224,6 @@ def find_or_create_student_user(oauth_user_data: dict) -> tuple:
     phone = _pick(oauth_user_data, "phone_number", "phone")
     first_name = _pick(oauth_user_data, "ism", "given_name", "first_name") or ""
     last_name = _pick(oauth_user_data, "fam", "family_name", "last_name") or ""
-    middle_name = _pick(oauth_user_data, "otasi", "middle_name", "patronymic") or ""
     full_name = _pick(oauth_user_data, "full_name", "name") or ""
     picture = _pick(oauth_user_data, "picture", "avatar", "photo", "image")
 
@@ -323,12 +323,10 @@ def find_or_create_student_user(oauth_user_data: dict) -> tuple:
     if phone and str(user.phone_number or "") != phone:
         user.phone_number = phone
         updates.append("phone_number")
-    if middle_name:
-        middle_tag = f"Middle name: {middle_name}"
-        bio_current = (user.bio or "").strip()
-        if middle_tag not in bio_current:
-            user.bio = f"{bio_current}\n{middle_tag}" if bio_current else middle_tag
-            updates.append("bio")
+    cleaned_bio = strip_system_generated_bio(user.bio)
+    if cleaned_bio != (user.bio or "").strip():
+        user.bio = cleaned_bio
+        updates.append("bio")
     if updates:
         user.save(update_fields=list(set(updates)))
 

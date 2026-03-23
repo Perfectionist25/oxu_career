@@ -2024,7 +2024,13 @@ def user_stats_api(request):
 @user_passes_test(can_manage_employers, login_url="accounts:admin_login")
 def admin_employer_management(request):
     """Manage employers and their accounts"""
-    employers = CustomUser.objects.filter(user_type="employer").select_related('employerprofile')
+    employers = (
+        CustomUser.objects.filter(user_type="employer")
+        .select_related("employer_profile")
+        .prefetch_related("companies_owned")
+        .annotate(company_count=Count("companies_owned", distinct=True))
+        .order_by("-date_joined")
+    )
 
     search_query = request.GET.get('search', '')
     if search_query:
@@ -2032,8 +2038,9 @@ def admin_employer_management(request):
             Q(username__icontains=search_query) |
             Q(email__icontains=search_query) |
             Q(first_name__icontains=search_query) |
-            Q(last_name__icontains=search_query)
-        )
+            Q(last_name__icontains=search_query) |
+            Q(companies_owned__name__icontains=search_query)
+        ).distinct()
 
     paginator = Paginator(employers, 20)
     page_number = request.GET.get('page')

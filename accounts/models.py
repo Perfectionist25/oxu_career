@@ -62,6 +62,23 @@ CITIES = [
 ]
 
 ADMIN_USER_TYPES = ("admin", "international_admin", "main_admin")
+SYSTEM_GENERATED_BIO_PREFIXES = ("middle name:",)
+
+
+def strip_system_generated_bio(value):
+    if not value:
+        return ""
+
+    cleaned_lines = []
+    for raw_line in str(value).splitlines():
+        stripped_line = raw_line.strip()
+        normalized_line = stripped_line.lower()
+        if any(normalized_line.startswith(prefix) for prefix in SYSTEM_GENERATED_BIO_PREFIXES):
+            continue
+        if stripped_line:
+            cleaned_lines.append(stripped_line)
+
+    return "\n".join(cleaned_lines).strip()
 
 class CustomUser(AbstractUser):
     """Custom user model with different roles and extended profile information"""
@@ -253,6 +270,10 @@ class CustomUser(AbstractUser):
 
     def has_admin_permission(self, permission_name):
         return user_has_admin_permission(self, permission_name)
+
+    @property
+    def display_bio(self):
+        return strip_system_generated_bio(self.bio)
 
     @property
     def can_create_resume(self):

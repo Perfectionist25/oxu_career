@@ -16,7 +16,7 @@ from django.utils import timezone
 from django.core.files.base import ContentFile
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from accounts.models import OAuthToken, StudentProfile
+from accounts.models import OAuthToken, StudentProfile, strip_system_generated_bio
 
 
 User = get_user_model()
@@ -173,7 +173,6 @@ def oauth_callback(request):
     full_name = _pick(user_data, "full_name", "name") or ""
     first_name = _pick(user_data, "ism", "first_name", "given_name") or ""
     last_name = _pick(user_data, "fam", "last_name", "family_name") or ""
-    middle_name = _pick(user_data, "otasi", "middle_name", "patronymic") or ""
     oauth_login = _pick(user_data, "login", "preferred_username", "username")
     phone_number = _pick(user_data, "phone_number", "phone", "phoneNumber")
     picture = _pick(user_data, "picture", "avatar", "photo", "image")
@@ -253,12 +252,10 @@ def oauth_callback(request):
             user.user_type = "student"
             updates.append("user_type")
 
-        if middle_name:
-            middle_tag = f"Middle name: {middle_name}"
-            bio_current = (user.bio or "").strip()
-            if middle_tag not in bio_current:
-                user.bio = (f"{bio_current}\n{middle_tag}" if bio_current else middle_tag)
-                updates.append("bio")
+        cleaned_bio = strip_system_generated_bio(user.bio)
+        if cleaned_bio != (user.bio or "").strip():
+            user.bio = cleaned_bio
+            updates.append("bio")
 
         if updates:
             user.save(update_fields=list(set(updates)))

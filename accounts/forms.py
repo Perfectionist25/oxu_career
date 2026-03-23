@@ -391,6 +391,7 @@ class AdminCompanyForm(CompanyForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.fields['short_description'].required = False
         self.fields['legal_name'].widget.attrs.update({'class': 'form-control'})
         self.fields['tax_id'].widget.attrs.update({'class': 'form-control'})
         self.fields['cover_image'].widget.attrs.update({'class': 'form-control'})

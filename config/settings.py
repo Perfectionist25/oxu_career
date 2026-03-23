@@ -96,15 +96,22 @@ CSRF_TRUSTED_ORIGINS = unique(
 
 
 SITE_URL = (os.getenv("SITE_URL") or os.getenv("PUBLIC_SITE_URL") or "").strip().rstrip("/")
+SITE_SCHEME = (os.getenv("SITE_SCHEME", "http").strip().lower() or "http")
 if SITE_URL:
     pass
-elif DEBUG:
-    dev_host = os.getenv("RUNSERVER_PUBLIC_HOST", "").strip() or "localhost"
-    SITE_URL = f"http://{dev_host}:{RUNSERVER_PORT}"
-elif IS_RENDER:
-    SITE_URL = f"https://{RENDER_HOST}"
 else:
-    SITE_URL = "https://career.oxu.uz"
+    configured_site_host = os.getenv("SITE_HOST", "").strip()
+    if configured_site_host:
+        site_host = configured_site_host
+    elif DEBUG:
+        dev_host = os.getenv("RUNSERVER_PUBLIC_HOST", "").strip() or "localhost"
+        site_host = f"{dev_host}:{RUNSERVER_PORT}"
+    elif IS_RENDER:
+        site_host = RENDER_HOST
+    else:
+        site_host = "career.oxu.uz"
+
+    SITE_URL = f"{SITE_SCHEME}://{site_host}"
 
 LOGIN_URL = "/accounts/login/"
 LOGIN_REDIRECT_URL = "/"
@@ -479,7 +486,11 @@ OAUTH_TOKEN_URL = "https://digital.oxu.uz/oauth2/token.asp"
 OAUTH_USERINFO_URL = "https://digital.oxu.uz/oauth2/userinfo.asp"
 OAUTH_CLIENT_ID = os.getenv("OAUTH2_CLIENT_ID")
 OAUTH_CLIENT_SECRET = os.getenv("OAUTH2_CLIENT_SECRET")
-OAUTH_REDIRECT_URI = "https://career.oxu.uz/oauth/callback/"
+OAUTH_REDIRECT_URI = (
+    os.getenv("OAUTH_REDIRECT_URI")
+    or os.getenv("OAUTH2_REDIRECT_URI")
+    or f"{SITE_URL}/oauth/callback/"
+).rstrip("/") + "/"
 OAUTH_SCOPE = "openid profile email phone"
 OAUTH_SUCCESS_REDIRECT = "/"
 
@@ -503,7 +514,7 @@ OAUTH_ALLOWED_UNIVERSITIES = [
 
 # SECURITY
 
-SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", default=not DEBUG)
+SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", default=False)
 SESSION_COOKIE_SECURE = env_bool("SESSION_COOKIE_SECURE", default=False)
 CSRF_COOKIE_SECURE = env_bool("CSRF_COOKIE_SECURE", default=False)
 

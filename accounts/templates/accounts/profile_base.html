@@ -218,10 +218,10 @@
                             {% endif %}
                         </div>
 
-                        {% if profile_user.bio %}
+                        {% if profile_user.display_bio %}
                         <div class="feature-block mt-4">
                             <div class="feature-title">{% trans "Bio" %}</div>
-                            <div class="feature-text">{{ profile_user.bio|linebreaks }}</div>
+                            <div class="feature-text">{{ profile_user.display_bio|linebreaks }}</div>
                         </div>
                         {% endif %}
 

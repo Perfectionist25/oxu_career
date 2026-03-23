@@ -8,7 +8,8 @@ from django.utils import timezone
 from datetime import timedelta
 import logging
 
-from accounts.models import StudentProfile, OAuthToken
+from accounts.api_views import find_or_create_student_user
+from accounts.models import OAuthToken, StudentProfile, strip_system_generated_bio
 from accounts.oauth_backend import UniversityOAuthBackend
 
 User = get_user_model()
@@ -257,6 +258,55 @@ class OAuthViewsTests(TestCase):
         """Set up test fixtures"""
         self.client = Client()
         self.factory = RequestFactory()
+
+
+class OAuthBioCleanupTests(TestCase):
+    def test_strip_system_generated_bio_removes_middle_name_line(self):
+        raw_bio = "Middle name: RUSTAMOVICH\nPython developer\nDjango enthusiast"
+
+        cleaned_bio = strip_system_generated_bio(raw_bio)
+
+        self.assertEqual(cleaned_bio, "Python developer\nDjango enthusiast")
+
+    def test_find_or_create_student_user_does_not_write_middle_name_to_bio(self):
+        oauth_data = {
+            "user_id": "oauth-bio-001",
+            "email": "oauth-bio@example.com",
+            "login": "oauth_bio_user",
+            "ism": "Ali",
+            "fam": "Xaitov",
+            "otasi": "Rustamovich",
+        }
+
+        user, created = find_or_create_student_user(oauth_data)
+
+        self.assertTrue(created)
+        self.assertEqual(user.bio, "")
+
+    def test_find_or_create_student_user_cleans_legacy_middle_name_bio(self):
+        user = User.objects.create_user(
+            username="legacy_oauth_user",
+            email="legacy-oauth@example.com",
+            user_type="student",
+            oauth_uid="legacy-oauth-uid",
+            bio="Middle name: RUSTAMOVICH",
+        )
+        StudentProfile.objects.create(user=user)
+
+        oauth_data = {
+            "user_id": "legacy-oauth-uid",
+            "email": "legacy-oauth@example.com",
+            "login": "legacy_oauth_user",
+            "ism": "Ali",
+            "fam": "Xaitov",
+            "otasi": "Rustamovich",
+        }
+
+        updated_user, created = find_or_create_student_user(oauth_data)
+
+        self.assertFalse(created)
+        self.assertEqual(updated_user.pk, user.pk)
+        self.assertEqual(updated_user.bio, "")
 
     def test_student_oauth_login_redirects(self):
         """Test OAuth login view redirects to provider"""
