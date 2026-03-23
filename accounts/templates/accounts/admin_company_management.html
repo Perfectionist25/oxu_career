@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Company Management" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-4">
+        <div>
+            <h1 class="display-6 fw-bold text-primary mb-2">{% trans "Company Management" %}</h1>
+            <p class="text-muted mb-0">{% trans "Review companies, moderation status and vacancy activity." %}</p>
+        </div>
+        <div class="d-flex gap-2">
+            <span class="badge text-bg-primary fs-6 px-3 py-2">
+                {% trans "Total" %}: {{ total_companies }}
+            </span>
+            <span class="badge text-bg-light fs-6 px-3 py-2 border">
+                {% trans "Shown" %}: {{ page_obj.paginator.count }}
+            </span>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-end">
+                <div class="col-lg-6">
+                    <label for="companies-search" class="form-label fw-semibold">{% trans "Search" %}</label>
+                    <input
+                        type="text"
+                        id="companies-search"
+                        name="q"
+                        class="form-control"
+                        value="{{ search_query }}"
+                        placeholder="{% trans 'Search by company name, owner username or email...' %}"
+                    >
+                </div>
+                <div class="col-md-3 col-lg-2">
+                    <label for="companies-verification" class="form-label fw-semibold">{% trans "Verification" %}</label>
+                    <select id="companies-verification" name="verification" class="form-select">
+                        <option value="all" {% if verification_filter == 'all' %}selected{% endif %}>{% trans "All" %}</option>
+                        <option value="verified" {% if verification_filter == 'verified' %}selected{% endif %}>{% trans "Verified" %}</option>
+                        <option value="pending" {% if verification_filter == 'pending' %}selected{% endif %}>{% trans "Pending" %}</option>
+                    </select>
+                </div>
+                <div class="col-md-3 col-lg-2">
+                    <label for="companies-active" class="form-label fw-semibold">{% trans "Activity" %}</label>
+                    <select id="companies-active" name="active" class="form-select">
+                        <option value="all" {% if active_filter == 'all' %}selected{% endif %}>{% trans "All" %}</option>
+                        <option value="active" {% if active_filter == 'active' %}selected{% endif %}>{% trans "Active" %}</option>
+                        <option value="inactive" {% if active_filter == 'inactive' %}selected{% endif %}>{% trans "Inactive" %}</option>
+                    </select>
+                </div>
+                <div class="col-lg-2 d-grid">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search me-2"></i>{% trans "Apply" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>{% trans "Company" %}</th>
+                            <th>{% trans "Owner" %}</th>
+                            <th>{% trans "Jobs" %}</th>
+                            <th>{% trans "Verification" %}</th>
+                            <th>{% trans "Status" %}</th>
+                            <th>{% trans "Created" %}</th>
+                            <th class="text-end">{% trans "Actions" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in page_obj %}
+                        {% with company=item.company %}
+                        <tr>
+                            <td>
+                                <div class="fw-semibold">{{ company.name }}</div>
+                                <div class="text-muted small">{{ company.company_type|default:"—" }}</div>
+                                {% if company.industry %}
+                                <div class="text-muted small">{{ company.industry }}</div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="fw-semibold">{{ company.owner.get_full_name|default:company.owner.username }}</div>
+                                <div class="text-muted small">@{{ company.owner.username }}</div>
+                                <div class="text-muted small">{{ company.owner.email|default:"—" }}</div>
+                            </td>
+                            <td>
+                                <div class="fw-semibold">{{ item.jobs_count }} {% trans "total" %}</div>
+                                <div class="text-muted small">{{ item.active_jobs }} {% trans "active" %}</div>
+                            </td>
+                            <td>
+                                {% if company.is_verified %}
+                                <span class="badge text-bg-success">{% trans "Verified" %}</span>
+                                {% else %}
+                                <span class="badge text-bg-warning">{% trans "Pending" %}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if company.is_active %}
+                                <span class="badge text-bg-primary">{% trans "Active" %}</span>
+                                {% else %}
+                                <span class="badge text-bg-secondary">{% trans "Inactive" %}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ company.created_at|date:"d.m.Y H:i" }}</td>
+                            <td class="text-end">
+                                <div class="d-inline-flex flex-wrap justify-content-end gap-2">
+                                    {% if can_view_company_details %}
+                                    <a href="{% url 'accounts:company_detail_admin' company.pk %}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye me-1"></i>{% trans "Open" %}
+                                    </a>
+                                    {% endif %}
+
+                                    {% if can_verify_companies %}
+                                    <form method="post" action="{% url 'accounts:toggle_company_verification' company.pk %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm {% if company.is_verified %}btn-outline-warning{% else %}btn-outline-success{% endif %}">
+                                            <i class="fas {% if company.is_verified %}fa-ban{% else %}fa-check{% endif %} me-1"></i>
+                                            {% if company.is_verified %}{% trans "Unverify" %}{% else %}{% trans "Verify" %}{% endif %}
+                                        </button>
+                                    </form>
+                                    {% endif %}
+
+                                    {% if can_change_company_status %}
+                                    <form method="post" action="{% url 'accounts:toggle_company_status' company.pk %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm {% if company.is_active %}btn-outline-danger{% else %}btn-outline-success{% endif %}">
+                                            <i class="fas {% if company.is_active %}fa-pause-circle{% else %}fa-play-circle{% endif %} me-1"></i>
+                                            {% if company.is_active %}{% trans "Deactivate" %}{% else %}{% trans "Activate" %}{% endif %}
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endwith %}
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                {% trans "No companies found for the selected filters." %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% if page_obj.paginator.num_pages > 1 %}
+    <nav aria-label="{% trans 'Company pagination' %}" class="mt-4">
+        <ul class="pagination justify-content-center mb-0">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&q={{ search_query|urlencode }}{% endif %}&verification={{ verification_filter }}&active={{ active_filter }}">
+                    {% trans "Previous" %}
+                </a>
+            </li>
+            {% endif %}
+
+            <li class="page-item disabled">
+                <span class="page-link">
+                    {% blocktrans with current=page_obj.number total=page_obj.paginator.num_pages %}Page {{ current }} of {{ total }}{% endblocktrans %}
+                </span>
+            </li>
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&q={{ search_query|urlencode }}{% endif %}&verification={{ verification_filter }}&active={{ active_filter }}">
+                    {% trans "Next" %}
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

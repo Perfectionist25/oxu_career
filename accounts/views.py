@@ -1594,7 +1594,7 @@ def admin_company_management(request):
     verification_filter = request.GET.get("verification", "all")
     active_filter = request.GET.get("active", "all")
 
-    companies = Company.objects.all()
+    companies = Company.objects.select_related("owner").all()
 
     if search_query:
         companies = companies.filter(
@@ -1631,6 +1631,9 @@ def admin_company_management(request):
         "verification_filter": verification_filter,
         "active_filter": active_filter,
         "total_companies": companies.count(),
+        "can_view_company_details": can_view_company_details(request.user),
+        "can_verify_companies": can_verify_companies(request.user),
+        "can_change_company_status": can_change_company_status(request.user),
     })
 
 
@@ -1697,6 +1700,8 @@ def company_detail_admin(request, pk):
         "total_applications": JobApplication.objects.filter(job__company=company).count(),
         "documents": company.documents.all(),
         "activities": UserActivity.objects.filter(related_company=company).order_by("-created_at")[:20],
+        "can_verify_companies": can_verify_companies(request.user),
+        "can_change_company_status": can_change_company_status(request.user),
     })
 
 
