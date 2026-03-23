@@ -2,26 +2,91 @@
 {% load i18n %}
 {% block content %}
 <div class="container py-5">
-	<h1 class="display-5 fw-bold text-primary mb-4">{% trans "Admin Management" %}</h1>
-	<div class="card shadow-sm mb-4">
-		<div class="card-body">
-			<table class="table table-striped">
-				<thead>
-					<tr>
-						<th>{% trans "User" %}</th>
-						<th>{% trans "Role" %}</th>
-						<th>{% trans "Actions" %}</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>{% trans 'admin' %}</td>
-						<td>{% trans "Main Admin" %}</td>
-						<td><a href="{% url 'accounts:profile_detail' user.id %}" class="btn btn-sm btn-primary">{% trans "Edit" %}</a></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
+    <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-4">
+        <div>
+            <h1 class="display-6 fw-bold text-primary mb-2">{% trans "Admin Management" %}</h1>
+            <p class="text-muted mb-0">{% trans "Manage administrator accounts and review the new international admin role." %}</p>
+        </div>
+        <a href="{% url 'accounts:create_admin_account' %}" class="btn btn-warning">
+            <i class="fas fa-user-plus me-2"></i>{% trans "Create Administrator" %}
+        </a>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="text-muted small text-uppercase mb-2">{% trans "Total Admins" %}</div>
+                    <div class="display-6 fw-bold">{{ total_admins }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="text-muted small text-uppercase mb-2">{% trans "International Admins" %}</div>
+                    <div class="display-6 fw-bold">{{ international_admins_count }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="text-muted small text-uppercase mb-2">{% trans "Main Admins" %}</div>
+                    <div class="display-6 fw-bold">{{ main_admins_count }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>{% trans "User" %}</th>
+                            <th>{% trans "Email" %}</th>
+                            <th>{% trans "Role" %}</th>
+                            <th>{% trans "Joined" %}</th>
+                            <th class="text-end">{% trans "Actions" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for admin_user in admins %}
+                        <tr>
+                            <td>
+                                <div class="fw-semibold">{{ admin_user.get_full_name|default:admin_user.username }}</div>
+                                <div class="text-muted small">@{{ admin_user.username }}</div>
+                            </td>
+                            <td>{{ admin_user.email|default:"—" }}</td>
+                            <td>
+                                {% if admin_user.is_main_admin %}
+                                <span class="badge text-bg-danger">{% trans "Main Admin" %}</span>
+                                {% elif admin_user.is_international_admin %}
+                                <span class="badge text-bg-info">{% trans "International Admin" %}</span>
+                                {% else %}
+                                <span class="badge text-bg-warning">{% trans "Admin" %}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ admin_user.date_joined|date:"d.m.Y H:i" }}</td>
+                            <td class="text-end">
+                                <a href="{% url 'accounts:user_detail' admin_user.id %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye me-1"></i>{% trans "Open" %}
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                {% trans "No administrator accounts found." %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

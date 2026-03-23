@@ -10,6 +10,10 @@ User = get_user_model()
 class Job(models.Model):
     """Stores job vacancy information with multilingual support"""
 
+    JOB_MARKET_CHOICES = [
+        ("uzbekistan", _("Jobs in Uzbekistan")),
+        ("abroad", _("Jobs Abroad")),
+    ]
 
     EMPLOYMENT_TYPE_CHOICES = [
         ("full_time", _("Full Time")),
@@ -82,6 +86,14 @@ class Job(models.Model):
         related_name="jobs",
         verbose_name=_("Company"),
         help_text=_("The company offering this job")
+    )
+
+    job_market = models.CharField(
+        max_length=20,
+        choices=JOB_MARKET_CHOICES,
+        default="uzbekistan",
+        verbose_name=_("Vacancy Geography"),
+        help_text=_("Select whether this vacancy is in Uzbekistan or abroad")
     )
 
 
@@ -334,6 +346,7 @@ class Job(models.Model):
         ordering = ["-created_at"]
         indexes = [
             models.Index(fields=['is_active', 'is_featured']),
+            models.Index(fields=['job_market', 'is_active']),
             models.Index(fields=['employment_type', 'experience_level']),
             models.Index(fields=['region', 'district']),
             models.Index(fields=['industry']),
@@ -386,10 +399,20 @@ class Job(models.Model):
             types.append(_("Office"))
         return ", ".join(types) if types else _("Not specified")
 
+    @property
+    def is_abroad(self):
+        return self.job_market == "abroad"
+
     def location_display(self):
-        if self.district:
-            return f"{self.region}, {self.district}"
-        return self.region
+        parts = []
+
+        if self.job_market == "uzbekistan":
+            parts.extend([self.region, self.district, self.location])
+        else:
+            parts.extend([self.location, self.district, self.region])
+
+        parts = [part for part in parts if part]
+        return ", ".join(parts) if parts else _("Not specified")
 
     def short_requirements(self):
         if len(self.requirements) > 150:
@@ -401,16 +424,20 @@ class Job(models.Model):
         if not user.is_authenticated:
             return False
 
+        if user.is_staff or user.is_superuser:
+            return True
+
 
         if self.created_by and self.created_by.user == user:
             return True
 
 
-        if self.company.owner.user == user:
+        if self.company.owner == user:
             return True
 
+        from accounts.models import user_has_admin_permission
 
-        if user.is_admin or user.is_main_admin:
+        if user_has_admin_permission(user, "can_manage_jobs"):
             return True
 
         return False

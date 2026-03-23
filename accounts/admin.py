@@ -238,24 +238,8 @@ class StudentProfileAdmin(admin.ModelAdmin):
 class AdminProfileAdmin(admin.ModelAdmin):
     """Admin interface for AdminProfile model"""
 
-    list_display = (
-        "user",
-        "can_manage_students",
-        "can_manage_employers",
-        "can_manage_companies",
-        "can_manage_jobs",
-        "can_manage_resumes",
-        "can_view_statistics",
-        "created_at",
-    )
-    list_filter = (
-        "can_manage_students",
-        "can_manage_employers",
-        "can_manage_companies",
-        "can_manage_jobs",
-        "can_manage_resumes",
-        "can_view_statistics",
-    )
+    list_display = ("user", *AdminProfile.PERMISSION_FIELDS, "created_at")
+    list_filter = AdminProfile.PERMISSION_FIELDS
     search_fields = ("user__username", "user__email")
     readonly_fields = ("created_at", "updated_at")
     list_per_page = 20
@@ -268,14 +252,7 @@ class AdminProfileAdmin(admin.ModelAdmin):
         (
             _("Admin Permissions"),
             {
-                "fields": (
-                    "can_manage_students",
-                    "can_manage_employers",
-                    "can_manage_companies",
-                    "can_manage_jobs",
-                    "can_manage_resumes",
-                    "can_view_statistics",
-                )
+                "fields": AdminProfile.PERMISSION_FIELDS
             },
         ),
         (

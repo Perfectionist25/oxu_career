@@ -330,6 +330,66 @@
             text-decoration: underline;
         }
 
+        .system-notifications-section {
+            padding: 18px 0 0;
+        }
+
+        .system-notifications-stack {
+            max-width: 860px;
+        }
+
+        .system-notification {
+            position: relative;
+            border: 1px solid rgba(172, 130, 0, 0.18);
+            border-radius: 18px;
+            background: linear-gradient(135deg, rgba(255, 249, 214, 0.98) 0%, rgba(255, 240, 186, 0.98) 100%);
+            color: #5c4300;
+            padding: 1rem 3.25rem 1rem 1.25rem;
+            margin-bottom: 0;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .system-notification__body {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .system-notification__icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.7);
+            color: #9a6b00;
+            flex-shrink: 0;
+            font-size: 1rem;
+        }
+
+        .system-notification__message {
+            font-size: 0.98rem;
+            line-height: 1.6;
+            word-break: break-word;
+        }
+
+        .system-notification__close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            opacity: 0.65;
+        }
+
+        .system-notification__close:hover {
+            opacity: 1;
+        }
+
+        .system-notification.is-dismissing {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
         /* Дополнительные стили для контента */
         .main-content {
             min-height: calc(100vh - 200px);
@@ -352,6 +412,14 @@
             .nav-link {
                 margin: 5px;
                 text-align: center;
+            }
+
+            .system-notification {
+                padding: 0.95rem 3rem 0.95rem 1rem;
+            }
+
+            .system-notification__body {
+                gap: 0.75rem;
             }
             
             .contact-info a {
@@ -392,8 +460,9 @@
             }
         }
     </style>
+    {% block extra_css %}{% endblock %}
 </head>
-<body class="{% block body_class %}{% endblock %}" style="background-color: #f5f6f7 !important; min-height: 100% !important;">
+<body class="{% block body_class %}{% endblock %}" style="{% block body_style %}background-color: #f5f6f7 !important; min-height: 100% !important;{% endblock %}">
 
 <div class="site-shell">
 

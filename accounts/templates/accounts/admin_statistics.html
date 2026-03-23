@@ -112,6 +112,16 @@
 
                         <div class="progress-stat mb-3">
                             <div class="d-flex justify-content-between small mb-1">
+                                <span>{% trans "International Admins" %}</span>
+                                <strong>{{ users.international_admins }}</strong>
+                            </div>
+                            <div class="progress slim-progress">
+                                <div class="progress-bar bg-primary" style="width: {% widthratio users.international_admins users.total 100 %}%"></div>
+                            </div>
+                        </div>
+
+                        <div class="progress-stat mb-3">
+                            <div class="d-flex justify-content-between small mb-1">
                                 <span>{% trans "Main Admins" %}</span>
                                 <strong>{{ users.main_admins }}</strong>
                             </div>
@@ -304,6 +314,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "{% trans 'Students' %}",
                 "{% trans 'Employers' %}",
                 "{% trans 'Admins' %}",
+                "{% trans 'International Admins' %}",
                 "{% trans 'Main Admins' %}",
                 "{% trans 'Guests' %}",
                 "{% trans 'Other' %}"
@@ -313,6 +324,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     {{ users.students|default:0 }},
                     {{ users.employers|default:0 }},
                     {{ users.admins|default:0 }},
+                    {{ users.international_admins|default:0 }},
                     {{ users.main_admins|default:0 }},
                     {{ users.guests|default:0 }},
                     {{ users.other|default:0 }}
@@ -321,6 +333,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     '#4f46e5',
                     '#22c55e',
                     '#f59e0b',
+                    '#0ea5e9',
                     '#ef4444',
                     '#06b6d4',
                     '#94a3b8'

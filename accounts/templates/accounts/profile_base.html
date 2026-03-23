@@ -112,9 +112,9 @@
                                     <a href="{% url 'accounts:student_profile_update' %}" class="btn btn-light btn-modern w-100">
                                         <i class="fas fa-edit me-2"></i>{% trans "Edit Profile" %}
                                     </a>
-                                {% elif profile_user.is_admin or profile_user.is_main_admin %}
-                                    <a href="{% url 'accounts:admin_management' %}" class="btn btn-light btn-modern w-100">
-                                        <i class="fas fa-edit me-2"></i>{% trans "Edit Profile" %}
+                                {% elif profile_user.is_admin %}
+                                    <a href="{% url 'accounts:admin_dashboard' %}" class="btn btn-light btn-modern w-100">
+                                        <i class="fas fa-gauge-high me-2"></i>{% trans "Admin Dashboard" %}
                                     </a>
                                 {% else %}
                                     <a href="{% url 'accounts:profile_view' %}" class="btn btn-light btn-modern w-100">
@@ -606,15 +606,17 @@
                                     <i class="fas fa-file-alt"></i>
                                     <span>{% trans "Create Resume" %}</span>
                                 </a>
-                            {% elif profile_user.is_admin or profile_user.is_main_admin %}
-                                <a href="{% url 'accounts:admin_management' %}" class="quick-action-btn">
-                                    <i class="fas fa-edit"></i>
-                                    <span>{% trans "Edit Profile" %}</span>
-                                </a>
+                            {% elif profile_user.is_admin %}
                                 <a href="{% url 'accounts:admin_dashboard' %}" class="quick-action-btn">
                                     <i class="fas fa-gauge-high"></i>
                                     <span>{% trans "Admin Dashboard" %}</span>
                                 </a>
+                                {% if profile_user.is_main_admin %}
+                                <a href="{% url 'accounts:admin_management' %}" class="quick-action-btn">
+                                    <i class="fas fa-user-shield"></i>
+                                    <span>{% trans "Manage Admins" %}</span>
+                                </a>
+                                {% endif %}
                             {% else %}
                                 <a href="{% url 'accounts:profile_view' %}" class="quick-action-btn">
                                     <i class="fas fa-edit"></i>

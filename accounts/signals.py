@@ -3,7 +3,14 @@ from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 from django.db import transaction
 from .middleware import BruteForceProtectionMiddleware
-from .models import Company, EmployerProfile, CustomUser, StudentProfile, AdminProfile
+from .models import (
+    ADMIN_USER_TYPES,
+    Company,
+    EmployerProfile,
+    CustomUser,
+    StudentProfile,
+    AdminProfile,
+)
 
 
 @receiver(post_save, sender=CustomUser)
@@ -19,7 +26,7 @@ def create_profile(sender, instance, created, **kwargs):
         with transaction.atomic():
             if instance.user_type == "student":
                 StudentProfile.objects.get_or_create(user=instance)
-            elif instance.user_type in ("admin", "main_admin"):
+            elif instance.user_type in ADMIN_USER_TYPES:
 
                 admin_profile, created_profile = AdminProfile.objects.get_or_create(
                     user=instance

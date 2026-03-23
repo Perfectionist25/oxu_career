@@ -24,8 +24,19 @@ from rest_framework import serializers
 from rest_framework.response import Response
 
 from accounts.models import (
-    CustomUser, StudentProfile, EmployerProfile, AdminProfile,
-    Company, CompanyDocument, UserActivity, Notification, CompanyAdditionalInfo
+    ADMIN_USER_TYPES,
+    CustomUser,
+    StudentProfile,
+    EmployerProfile,
+    AdminProfile,
+    Company,
+    CompanyDocument,
+    UserActivity,
+    Notification,
+    CompanyAdditionalInfo,
+    is_admin_user,
+    is_main_admin_user,
+    user_has_admin_permission,
 )
 
 from jobs.models import Job, JobApplication
@@ -145,26 +156,116 @@ def is_employer(user):
 
 
 def is_admin(user):
-    return user.is_authenticated and getattr(user, "user_type", None) in ["admin", "main_admin"]
+    return is_admin_user(user)
 
 
 def is_main_admin(user):
-    return user.is_authenticated and getattr(user, "user_type", None) == "main_admin"
+    return is_main_admin_user(user)
 
 
 def can_manage_employers(user):
+    return user_has_admin_permission(user, "can_manage_employers")
+
+
+def can_create_employers(user):
+    return user_has_admin_permission(user, "can_create_employers")
+
+
+def can_change_user_status(user):
+    return user_has_admin_permission(user, "can_change_user_status")
+
+
+def can_manage_students(user):
+    return user_has_admin_permission(user, "can_manage_students")
+
+
+def can_manage_companies(user):
+    return user_has_admin_permission(user, "can_manage_companies")
+
+
+def can_view_company_details(user):
+    return user_has_admin_permission(user, "can_view_company_details")
+
+
+def can_verify_companies(user):
+    return user_has_admin_permission(user, "can_verify_companies")
+
+
+def can_change_company_status(user):
+    return user_has_admin_permission(user, "can_change_company_status")
+
+
+def can_manage_jobs(user):
+    return user_has_admin_permission(user, "can_manage_jobs")
+
+
+def can_create_jobs(user):
+    return user_has_admin_permission(user, "can_create_jobs")
+
+
+def can_manage_resumes(user):
+    return user_has_admin_permission(user, "can_manage_resumes")
+
+
+def can_manage_events(user):
+    return user_has_admin_permission(user, "can_manage_events")
+
+
+def can_view_statistics(user):
+    return user_has_admin_permission(user, "can_view_statistics")
+
+
+def managed_user_types_for_admin(user):
+    if not is_admin(user):
+        return set()
+
+    if is_main_admin(user):
+        return set(ADMIN_USER_TYPES) | {"student", "employer"}
+
+    managed_types = set()
+    if can_manage_students(user):
+        managed_types.add("student")
+    if (
+        can_manage_employers(user)
+        or can_create_employers(user)
+        or can_manage_companies(user)
+        or can_view_company_details(user)
+        or can_verify_companies(user)
+        or can_change_company_status(user)
+    ):
+        managed_types.add("employer")
+
+    return managed_types
+
+
+def can_view_managed_user(user, target_user):
+    if not getattr(user, "is_authenticated", False):
+        return False
+
+    if user.id == target_user.id:
+        return True
+
+    if is_main_admin(user):
+        return True
+
     if not is_admin(user):
         return False
 
-    if getattr(user, "is_main_admin", False):
-        return True
+    return target_user.user_type in managed_user_types_for_admin(user)
 
-    admin_profile, _ = AdminProfile.objects.get_or_create(user=user)
-    return admin_profile.can_manage_employers
+
+def can_change_managed_user_status(user, target_user):
+    if not can_change_user_status(user):
+        return False
+
+    if target_user.user_type in ADMIN_USER_TYPES:
+        return False
+
+    return can_view_managed_user(user, target_user)
 
 
 def can_manage_users(user):
-    return is_admin(user)
+    return bool(managed_user_types_for_admin(user) or is_main_admin(user))
 
 
 def create_user_activity(user, activity_type, description="", ip_address=None,
@@ -222,7 +323,7 @@ def home_redirect(request):
             return redirect("accounts:student_dashboard")
         elif user_type == "employer":
             return redirect("accounts:employer_dashboard")
-        elif user_type in ["admin", "main_admin"]:
+        elif user_type in ADMIN_USER_TYPES:
             return redirect("accounts:admin_dashboard")
 
     return redirect("home")
@@ -284,7 +385,7 @@ def employer_login(request):
 def admin_login(request):
     """Admin login page with brute force protection"""
 
-    if request.user.is_authenticated and request.user.user_type in ["admin", "main_admin"]:
+    if request.user.is_authenticated and request.user.user_type in ADMIN_USER_TYPES:
         return redirect("accounts:admin_dashboard")
 
     ip_address = get_client_ip(request)
@@ -429,7 +530,7 @@ def admin_session_management(request):
     now = timezone.now()
 
 
-    admins = CustomUser.objects.filter(user_type__in=["admin", "main_admin"])
+    admins = CustomUser.objects.filter(user_type__in=ADMIN_USER_TYPES)
 
     for session in Session.objects.filter(expire_date__gt=now):
         session_data = session.get_decoded()
@@ -1162,11 +1263,31 @@ def company_statistics(request, pk):
 @user_passes_test(is_admin, login_url="accounts:admin_login")
 def admin_dashboard(request):
     """Admin dashboard"""
-    admin_profile, gettext = AdminProfile.objects.get_or_create(user=request.user)
+    admin_profile, _ = AdminProfile.objects.get_or_create(user=request.user)
     today = timezone.now().date()
+    permissions = {
+        "can_create_admins": request.user.is_main_admin,
+        "can_manage_user_directory": can_manage_users(request.user),
+        "can_manage_employers": can_manage_employers(request.user),
+        "can_create_employers": can_create_employers(request.user),
+        "can_manage_companies": any(
+            (
+                can_manage_companies(request.user),
+                can_view_company_details(request.user),
+                can_verify_companies(request.user),
+                can_change_company_status(request.user),
+            )
+        ),
+        "can_manage_jobs": can_manage_jobs(request.user),
+        "can_create_jobs": can_create_jobs(request.user),
+        "can_manage_resumes": can_manage_resumes(request.user),
+        "can_manage_events": can_manage_events(request.user),
+        "can_view_statistics": can_view_statistics(request.user),
+    }
 
     context = {
         "admin_profile": admin_profile,
+        "permissions": permissions,
         "stats": {
             "total_users": CustomUser.objects.count(),
             "total_students": CustomUser.objects.filter(user_type="student").count(),
@@ -1188,7 +1309,7 @@ def admin_dashboard(request):
 
 
 @login_required
-@user_passes_test(is_admin, login_url="accounts:admin_login")
+@user_passes_test(can_view_statistics, login_url="accounts:admin_login")
 def admin_statistics(request):
     """Extended platform statistics for administrators."""
     now = timezone.now()
@@ -1204,10 +1325,16 @@ def admin_statistics(request):
     users_students = users_qs.filter(user_type="student").count()
     users_employers = users_qs.filter(user_type="employer").count()
     users_admins = users_qs.filter(user_type="admin").count()
+    users_international_admins = users_qs.filter(user_type="international_admin").count()
     users_main_admins = users_qs.filter(user_type="main_admin").count()
     users_guests = users_qs.filter(user_type="guest").count()
     users_other = users_total - (
-        users_students + users_employers + users_admins + users_main_admins + users_guests
+        users_students
+        + users_employers
+        + users_admins
+        + users_international_admins
+        + users_main_admins
+        + users_guests
     )
 
     resources_qs = Resource.objects.all()
@@ -1222,6 +1349,7 @@ def admin_statistics(request):
             "students": users_students,
             "employers": users_employers,
             "admins": users_admins,
+            "international_admins": users_international_admins,
             "main_admins": users_main_admins,
             "guests": users_guests,
             "other": users_other,
@@ -1284,13 +1412,17 @@ def admin_management(request):
         messages.error(request, _("Access denied"))
         return redirect("accounts:admin_dashboard")
 
+    admins = CustomUser.objects.filter(user_type__in=ADMIN_USER_TYPES).order_by("-date_joined")
     return render(request, "accounts/admin_management.html", {
-        "admins": CustomUser.objects.filter(user_type__in=["admin", "main_admin"]),
+        "admins": admins,
+        "total_admins": admins.count(),
+        "international_admins_count": admins.filter(user_type="international_admin").count(),
+        "main_admins_count": admins.filter(user_type="main_admin").count(),
     })
 
 
 @login_required
-@user_passes_test(is_admin, login_url="accounts:admin_login")
+@user_passes_test(can_manage_companies, login_url="accounts:admin_login")
 def admin_company_management(request):
     """Manage companies"""
     search_query = request.GET.get("q", "")
@@ -1338,7 +1470,7 @@ def admin_company_management(request):
 
 
 @login_required
-@user_passes_test(is_admin, login_url="accounts:admin_login")
+@user_passes_test(can_verify_companies, login_url="accounts:admin_login")
 def toggle_company_verification(request, pk):
     """Toggle company verification status"""
     if request.method == "POST":
@@ -1363,7 +1495,7 @@ def toggle_company_verification(request, pk):
 
 
 @login_required
-@user_passes_test(is_admin, login_url="accounts:admin_login")
+@user_passes_test(can_change_company_status, login_url="accounts:admin_login")
 def toggle_company_status(request, pk):
     """Toggle company active status"""
     if request.method == "POST":
@@ -1388,7 +1520,7 @@ def toggle_company_status(request, pk):
 
 
 @login_required
-@user_passes_test(is_admin, login_url="accounts:admin_login")
+@user_passes_test(can_view_company_details, login_url="accounts:admin_login")
 def company_detail_admin(request, pk):
     """View company details (admin version)"""
     company = get_object_or_404(Company, pk=pk)
@@ -1426,31 +1558,30 @@ def create_admin_account(request):
                     email=form.cleaned_data["email"],
                     first_name=form.cleaned_data["first_name"],
                     last_name=form.cleaned_data["last_name"],
-                    user_type="admin",
+                    user_type=form.cleaned_data["user_type"],
                 )
                 user.set_password(form.cleaned_data["password1"])
                 user.save()
-
-
-                import time
-                time.sleep(0.1)
 
 
 
                 admin_profile, created = AdminProfile.objects.update_or_create(
                     user=user,
                     defaults={
-                        "can_manage_students": form.cleaned_data.get("can_manage_students", True),
-                        "can_manage_employers": form.cleaned_data.get("can_manage_employers", True),
-                        "can_manage_companies": form.cleaned_data.get("can_manage_companies", True),
-                        "can_manage_jobs": form.cleaned_data.get("can_manage_jobs", True),
-                        "can_manage_resumes": form.cleaned_data.get("can_manage_resumes", True),
-                        "can_view_statistics": form.cleaned_data.get("can_view_statistics", True),
-                    }
+                        field_name: form.cleaned_data.get(field_name, False)
+                        for field_name in AdminProfile.PERMISSION_FIELDS
+                    },
                 )
 
-                create_user_activity(request.user, "user_create", f"Created admin account: {user.username}")
-                messages.success(request, _("Admin account created successfully!"))
+                create_user_activity(
+                    request.user,
+                    "user_create",
+                    f"Created admin account: {user.username} ({user.get_user_type_display()})",
+                )
+                messages.success(
+                    request,
+                    _("Administrator account created successfully!"),
+                )
                 return redirect("accounts:admin_management")
 
             except Exception as e:
@@ -1710,7 +1841,7 @@ def user_stats_api(request):
             stats["role"] = "employer"
             stats["error"] = "Employer profile not found"
 
-    elif user_type in ["admin", "main_admin"]:
+    elif user_type in ADMIN_USER_TYPES:
         stats.update({
             "role": user_type,
             "full_name": user.get_full_name() or user.username,
@@ -1721,7 +1852,7 @@ def user_stats_api(request):
 
 
 @login_required
-@user_passes_test(is_admin, login_url="accounts:admin_login")
+@user_passes_test(can_manage_employers, login_url="accounts:admin_login")
 def admin_employer_management(request):
     """Manage employers and their accounts"""
     employers = CustomUser.objects.filter(user_type="employer").select_related('employerprofile')
@@ -1747,10 +1878,15 @@ def admin_employer_management(request):
 
 
 @login_required
-@user_passes_test(is_admin, login_url="accounts:admin_login")
+@user_passes_test(can_manage_users, login_url="accounts:admin_login")
 def user_management(request):
     """Manage user accounts"""
-    users = CustomUser.objects.all().order_by("-date_joined")
+    allowed_user_types = managed_user_types_for_admin(request.user)
+    if request.user.is_main_admin:
+        allowed_user_types = set(ADMIN_USER_TYPES) | {"student", "employer"}
+
+    users = CustomUser.objects.filter(user_type__in=allowed_user_types).order_by("-date_joined")
+    total_visible_users = users.count()
 
     # Support both legacy `type` and canonical `user_type` query params.
     user_type_filter = request.GET.get("user_type") or request.GET.get("type", "")
@@ -1761,7 +1897,10 @@ def user_management(request):
     }
     normalized_filter = user_type_mapping.get(user_type_filter, user_type_filter)
     if normalized_filter == "admins":
-        users = users.filter(user_type__in=["admin", "main_admin"])
+        if request.user.is_main_admin:
+            users = users.filter(user_type__in=ADMIN_USER_TYPES)
+        else:
+            users = users.none()
     elif normalized_filter:
         users = users.filter(user_type=normalized_filter)
 
@@ -1782,18 +1921,21 @@ def user_management(request):
         "page_obj": page_obj,
         "search_query": search_query,
         "user_type_filter": normalized_filter,
-        "total_users": CustomUser.objects.count(),
+        "total_users": total_visible_users,
+        "can_view_admin_users": request.user.is_main_admin,
+        "allowed_user_types": sorted(allowed_user_types),
+        "can_change_user_status": can_change_user_status(request.user),
     })
 
 
 @login_required
-@user_passes_test(is_admin, login_url="accounts:admin_login")
+@user_passes_test(can_manage_users, login_url="accounts:admin_login")
 def user_detail(request, user_id):
     """View user details"""
     user = get_object_or_404(CustomUser, id=user_id)
 
 
-    if not (request.user.is_admin or request.user.is_main_admin or request.user.id == user_id):
+    if not can_view_managed_user(request.user, user):
         messages.error(request, _("You don't have permission to view this profile"))
         return redirect("accounts:user_management")
 
@@ -1809,7 +1951,7 @@ def user_detail(request, user_id):
             profile = EmployerProfile.objects.get(user=user)
         except EmployerProfile.DoesNotExist:
             pass
-    elif user.user_type in ["admin", "main_admin"]:
+    elif user.user_type in ADMIN_USER_TYPES:
         try:
             profile = AdminProfile.objects.get(user=user)
         except AdminProfile.DoesNotExist:
@@ -1819,6 +1961,7 @@ def user_detail(request, user_id):
         "profile_user": user,
         "profile": profile,
         "activities": UserActivity.objects.filter(user=user).order_by("-created_at")[:20],
+        "can_toggle_status": can_change_managed_user_status(request.user, user),
     }
 
     if user.user_type == "student":
@@ -1837,11 +1980,16 @@ def user_detail(request, user_id):
 
 
 @login_required
-@user_passes_test(is_admin, login_url="accounts:admin_login")
+@user_passes_test(can_manage_users, login_url="accounts:admin_login")
 def toggle_user_status(request, user_id):
     """Toggle user active/inactive status"""
+    user = get_object_or_404(CustomUser, id=user_id)
+
+    if not can_change_managed_user_status(request.user, user):
+        messages.error(request, _("You don't have permission to change this user's status."))
+        return redirect("accounts:user_detail", user_id=user_id)
+
     if request.method == "POST":
-        user = get_object_or_404(CustomUser, id=user_id)
         user.is_active = not user.is_active
         user.save()
 
@@ -1854,7 +2002,7 @@ def toggle_user_status(request, user_id):
 
 
 @login_required
-@user_passes_test(can_manage_employers, login_url="accounts:admin_login")
+@user_passes_test(can_create_employers, login_url="accounts:admin_login")
 def create_employer_account(request):
     if request.method == 'POST':
         user_form = EmployerRegistrationForm(request.POST, prefix='user')
@@ -1952,7 +2100,7 @@ def dashboard_redirect(request):
         return redirect("accounts:student_dashboard")
     elif user_type == "employer":
         return redirect("accounts:employer_dashboard")
-    elif user_type in ["admin", "main_admin"]:
+    elif user_type in ADMIN_USER_TYPES:
         return redirect("accounts:admin_dashboard")
 
     return redirect("home")
@@ -1986,12 +2134,7 @@ def initial_setup(request):
 
         AdminProfile.objects.create(
             user=admin_user,
-            can_manage_students=True,
-            can_manage_employers=True,
-            can_manage_companies=True,
-            can_manage_jobs=True,
-            can_manage_resumes=True,
-            can_view_statistics=True,
+            **{field_name: True for field_name in AdminProfile.PERMISSION_FIELDS},
         )
 
         login(request, admin_user)

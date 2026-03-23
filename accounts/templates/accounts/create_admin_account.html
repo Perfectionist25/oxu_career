@@ -1,4 +1,3 @@
-{# templates/accounts/create_admin_account.html #}
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
@@ -8,242 +7,413 @@
 {% block content %}
 <div class="container py-5">
   <div class="row justify-content-center">
-    <div class="col-lg-8">
+    <div class="col-xl-10 col-lg-11">
+      <div class="card admin-create-card border-0 shadow-lg">
+        <div class="card-header admin-create-card__header border-0">
+          <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
+            <div>
+              <div class="admin-create-card__eyebrow">
+                <i class="fas fa-user-shield me-2"></i>{% trans "Main Admin Area" %}
+              </div>
+              <h1 class="h3 mb-2 fw-bold">{% trans "Create Administrator" %}</h1>
+              <p class="mb-0 text-muted">
+                {% trans "Choose a role and explicitly switch on only the permissions this administrator really needs." %}
+              </p>
+            </div>
 
-      <div class="card border-0 shadow-lg">
-        <div class="card-header bg-warning text-dark py-3">
-          <div class="d-flex align-items-center">
-            <i class="fas fa-user-shield me-3 fa-lg"></i>
-            <h4 class="mb-0 fw-bold">{% trans "Create New Administrator" %}</h4>
+            <div class="admin-create-card__summary">
+              <div class="summary-stat">
+                <strong>{{ form.permission_sections|length }}</strong>
+                <span>{% trans "Permission blocks" %}</span>
+              </div>
+              <div class="summary-stat">
+                <strong>{{ form.fields|length }}</strong>
+                <span>{% trans "Form fields" %}</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="card-body p-4">
+        <div class="card-body p-4 p-lg-5">
           <form method="post" novalidate>
             {% csrf_token %}
 
-            {# Общие ошибки формы (например, "Passwords don't match") #}
             {% if form.non_field_errors %}
               <div class="alert alert-danger">
                 {{ form.non_field_errors }}
               </div>
             {% endif %}
 
-            <h5 class="fw-bold text-primary mb-3 border-bottom pb-2">
-              <i class="fas fa-id-card me-2"></i>{% trans "Account Info" %}
-            </h5>
+            <section class="mb-5">
+              <div class="section-head mb-3">
+                <h2 class="h5 fw-bold mb-1">
+                  <i class="fas fa-id-card me-2 text-primary"></i>{% trans "Account Information" %}
+                </h2>
+                <p class="text-muted mb-0">{% trans "Basic credentials for the new administrator account." %}</p>
+              </div>
 
-            <div class="row">
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="{{ form.username.id_for_label }}" class="form-label fw-semibold">
-                    {% trans "Username" %} *
-                  </label>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="{{ form.username.id_for_label }}" class="form-label fw-semibold">{% trans "Username" %} *</label>
                   {{ form.username }}
                   {% if form.username.errors %}
                     <div class="invalid-feedback d-block">{{ form.username.errors|striptags }}</div>
                   {% endif %}
                 </div>
-              </div>
 
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold">
-                    {% trans "Email" %} *
-                  </label>
+                <div class="col-md-6">
+                  <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold">{% trans "Email" %} *</label>
                   {{ form.email }}
                   {% if form.email.errors %}
                     <div class="invalid-feedback d-block">{{ form.email.errors|striptags }}</div>
                   {% endif %}
                 </div>
-              </div>
-            </div>
 
-            <div class="row">
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="{{ form.first_name.id_for_label }}" class="form-label fw-semibold">
-                    {% trans "First Name" %} *
-                  </label>
+                <div class="col-md-6">
+                  <label for="{{ form.first_name.id_for_label }}" class="form-label fw-semibold">{% trans "First Name" %} *</label>
                   {{ form.first_name }}
                   {% if form.first_name.errors %}
                     <div class="invalid-feedback d-block">{{ form.first_name.errors|striptags }}</div>
                   {% endif %}
                 </div>
-              </div>
 
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="{{ form.last_name.id_for_label }}" class="form-label fw-semibold">
-                    {% trans "Last Name" %} *
-                  </label>
+                <div class="col-md-6">
+                  <label for="{{ form.last_name.id_for_label }}" class="form-label fw-semibold">{% trans "Last Name" %} *</label>
                   {{ form.last_name }}
                   {% if form.last_name.errors %}
                     <div class="invalid-feedback d-block">{{ form.last_name.errors|striptags }}</div>
                   {% endif %}
                 </div>
-              </div>
-            </div>
 
-            <div class="row">
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="{{ form.password1.id_for_label }}" class="form-label fw-semibold">
-                    {% trans "Password" %} *
-                  </label>
+                <div class="col-md-6">
+                  <label for="{{ form.password1.id_for_label }}" class="form-label fw-semibold">{% trans "Password" %} *</label>
                   {{ form.password1 }}
                   {% if form.password1.errors %}
                     <div class="invalid-feedback d-block">{{ form.password1.errors|striptags }}</div>
                   {% endif %}
                 </div>
-              </div>
 
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="{{ form.password2.id_for_label }}" class="form-label fw-semibold">
-                    {% trans "Confirm Password" %} *
-                  </label>
+                <div class="col-md-6">
+                  <label for="{{ form.password2.id_for_label }}" class="form-label fw-semibold">{% trans "Confirm Password" %} *</label>
                   {{ form.password2 }}
                   {% if form.password2.errors %}
                     <div class="invalid-feedback d-block">{{ form.password2.errors|striptags }}</div>
                   {% endif %}
                 </div>
               </div>
-            </div>
+            </section>
 
-            <div class="mb-3">
-              <label for="{{ form.user_type.id_for_label }}" class="form-label fw-semibold">
-                {% trans "User type" %} *
-              </label>
-              {{ form.user_type }}
-              {% if form.user_type.errors %}
-                <div class="invalid-feedback d-block">{{ form.user_type.errors|striptags }}</div>
-              {% endif %}
-              <div class="form-text">
-                {% trans "Admin: limited rights. Main Admin: full rights." %}
-              </div>
-            </div>
-
-            <div class="row mt-4">
-              <div class="col-12">
-                <h5 class="fw-bold text-primary mb-3 border-bottom pb-2">
-                  <i class="fas fa-key me-2"></i>{% trans "Admin Rights" %}
-                </h5>
+            <section class="mb-5">
+              <div class="section-head mb-3">
+                <h2 class="h5 fw-bold mb-1">
+                  <i class="fas fa-layer-group me-2 text-primary"></i>{% trans "Role" %}
+                </h2>
+                <p class="text-muted mb-0">{% trans "The role affects identity and display. Actual access is controlled by the permission matrix below." %}</p>
               </div>
 
-              <div class="col-md-6">
-                <div class="form-check mb-3">
-                  {{ form.can_manage_students }}
-                  <label class="form-check-label fw-semibold" for="{{ form.can_manage_students.id_for_label }}">
-                    <i class="fas fa-graduation-cap me-2 text-success"></i>
-                    {% trans "Manage Students" %}
-                  </label>
-                  {% if form.can_manage_students.errors %}
-                    <div class="invalid-feedback d-block">{{ form.can_manage_students.errors|striptags }}</div>
+              <div class="row g-3 align-items-stretch">
+                <div class="col-lg-4">
+                  <label for="{{ form.user_type.id_for_label }}" class="form-label fw-semibold">{% trans "Administrator Role" %}</label>
+                  {{ form.user_type }}
+                  {% if form.user_type.errors %}
+                    <div class="invalid-feedback d-block">{{ form.user_type.errors|striptags }}</div>
                   {% endif %}
                 </div>
 
-                <div class="form-check mb-3">
-                  {{ form.can_manage_employers }}
-                  <label class="form-check-label fw-semibold" for="{{ form.can_manage_employers.id_for_label }}">
-                    <i class="fas fa-building me-2 text-info"></i>
-                    {% trans "Manage Employers" %}
-                  </label>
-                  {% if form.can_manage_employers.errors %}
-                    <div class="invalid-feedback d-block">{{ form.can_manage_employers.errors|striptags }}</div>
-                  {% endif %}
-                </div>
-
-                <div class="form-check mb-3">
-                  {{ form.can_manage_companies }}
-                  <label class="form-check-label fw-semibold" for="{{ form.can_manage_companies.id_for_label }}">
-                    <i class="fas fa-city me-2 text-secondary"></i>
-                    {% trans "Manage Companies" %}
-                  </label>
-                  {% if form.can_manage_companies.errors %}
-                    <div class="invalid-feedback d-block">{{ form.can_manage_companies.errors|striptags }}</div>
-                  {% endif %}
+                <div class="col-lg-8">
+                  <div class="role-notes-grid">
+                    <div class="role-note-card">
+                      <div class="role-note-card__title">
+                        <i class="fas fa-user-shield me-2 text-warning"></i>{% trans "Admin" %}
+                      </div>
+                      <p class="mb-0 text-muted small">{% trans "Standard administrator with individually selected permissions." %}</p>
+                    </div>
+                    <div class="role-note-card">
+                      <div class="role-note-card__title">
+                        <i class="fas fa-globe me-2 text-info"></i>{% trans "International Admin" %}
+                      </div>
+                      <p class="mb-0 text-muted small">{% trans "Separate admin role for international operations with its own permission set." %}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
+            </section>
 
-              <div class="col-md-6">
-                <div class="form-check mb-3">
-                  {{ form.can_manage_jobs }}
-                  <label class="form-check-label fw-semibold" for="{{ form.can_manage_jobs.id_for_label }}">
-                    <i class="fas fa-briefcase me-2 text-warning"></i>
-                    {% trans "Manage Jobs" %}
-                  </label>
-                  {% if form.can_manage_jobs.errors %}
-                    <div class="invalid-feedback d-block">{{ form.can_manage_jobs.errors|striptags }}</div>
-                  {% endif %}
-                </div>
-
-                <div class="form-check mb-3">
-                  {{ form.can_manage_resumes }}
-                  <label class="form-check-label fw-semibold" for="{{ form.can_manage_resumes.id_for_label }}">
-                    <i class="fas fa-file-alt me-2 text-muted"></i>
-                    {% trans "Manage Resumes" %}
-                  </label>
-                  {% if form.can_manage_resumes.errors %}
-                    <div class="invalid-feedback d-block">{{ form.can_manage_resumes.errors|striptags }}</div>
-                  {% endif %}
-                </div>
-
-                <div class="form-check mb-3">
-                  {{ form.can_view_statistics }}
-                  <label class="form-check-label fw-semibold" for="{{ form.can_view_statistics.id_for_label }}">
-                    <i class="fas fa-chart-bar me-2 text-primary"></i>
-                    {% trans "View Statistics" %}
-                  </label>
-                  {% if form.can_view_statistics.errors %}
-                    <div class="invalid-feedback d-block">{{ form.can_view_statistics.errors|striptags }}</div>
-                  {% endif %}
-                </div>
-              </div>
-            </div>
-
-            <div class="alert alert-warning mt-4">
-              <div class="d-flex">
-                <i class="fas fa-exclamation-triangle me-3 fa-lg mt-1"></i>
+            <section>
+              <div class="section-head mb-3 d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
                 <div>
-                  <strong>{% trans "Attention!" %}</strong><br>
-                  {% trans "Grant only necessary permissions. For full access use Main Admin." %}
+                  <h2 class="h5 fw-bold mb-1">
+                    <i class="fas fa-key me-2 text-primary"></i>{% trans "Permission Matrix" %}
+                  </h2>
+                  <p class="text-muted mb-0">{% trans "Switch every permission on or off explicitly for this administrator." %}</p>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2">
+                  <button type="button" class="btn btn-outline-success btn-sm" data-permissions-toggle="all">
+                    <i class="fas fa-check-double me-1"></i>{% trans "Select All" %}
+                  </button>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" data-permissions-toggle="none">
+                    <i class="fas fa-ban me-1"></i>{% trans "Clear All" %}
+                  </button>
+                </div>
+              </div>
+
+              <div class="row g-4">
+                {% for section in form.permission_sections %}
+                  <div class="col-lg-4 col-md-6">
+                    <div class="permission-card h-100">
+                      <div class="permission-card__head">
+                        <div class="permission-card__icon">
+                          <i class="{{ section.icon }}"></i>
+                        </div>
+                        <div>
+                          <h3 class="h6 fw-bold mb-1">{{ section.title }}</h3>
+                          <p class="text-muted small mb-0">{% trans "Access rules inside this block are controlled independently." %}</p>
+                        </div>
+                      </div>
+
+                      <div class="permission-card__body">
+                        {% for field in section.fields %}
+                          <label class="permission-toggle">
+                            <span class="form-check form-switch m-0">
+                              {{ field }}
+                            </span>
+                            <span class="permission-toggle__content">
+                              <span class="permission-toggle__label">{{ field.label }}</span>
+                              {% if field.help_text %}
+                                <span class="permission-toggle__hint">{{ field.help_text }}</span>
+                              {% endif %}
+                              {% if field.errors %}
+                                <span class="invalid-feedback d-block">{{ field.errors|striptags }}</span>
+                              {% endif %}
+                            </span>
+                          </label>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </section>
+
+            <div class="alert alert-warning mt-4 mb-0">
+              <div class="d-flex align-items-start gap-3">
+                <i class="fas fa-exclamation-triangle mt-1"></i>
+                <div>
+                  <strong>{% trans "Security recommendation" %}</strong>
+                  <div class="small mt-1">{% trans "Use the minimum required access. If a permission is not needed right now, leave it disabled." %}</div>
                 </div>
               </div>
             </div>
 
-            <div class="d-flex justify-content-between mt-4">
-              <a href="{% url 'accounts:admin_dashboard' %}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left me-2"></i>{% trans "Back" %}
+            <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mt-4">
+              <a href="{% url 'accounts:admin_dashboard' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>{% trans "Back to Dashboard" %}
               </a>
 
               <button type="submit" class="btn btn-warning">
-                <i class="fas fa-user-shield me-2"></i>{% trans "Create Admin" %}
+                <i class="fas fa-user-plus me-2"></i>{% trans "Create Administrator" %}
               </button>
             </div>
-
           </form>
         </div>
       </div>
-
     </div>
   </div>
 </div>
 
 <style>
-  .form-control, .form-select { border-radius: 8px; padding: 10px; }
-  .card { border-radius: 15px; }
-  .form-check-input:checked { background-color: #ffc107; border-color: #ffc107; }
-  .btn { border-radius: 8px; padding: 10px 25px; }
-</style>
+  .admin-create-card {
+    border-radius: 24px;
+    overflow: hidden;
+  }
 
+  .admin-create-card__header {
+    padding: 2rem 2rem 1.5rem;
+    background: linear-gradient(135deg, #fff7d6 0%, #fff1bf 100%);
+  }
+
+  .admin-create-card__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #8a6700;
+    margin-bottom: 0.75rem;
+  }
+
+  .admin-create-card__summary {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .summary-stat {
+    min-width: 120px;
+    padding: 0.9rem 1rem;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.7);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .summary-stat strong {
+    font-size: 1.2rem;
+    line-height: 1;
+    color: #2d3748;
+  }
+
+  .summary-stat span {
+    font-size: 0.82rem;
+    color: #6b7280;
+    margin-top: 0.3rem;
+  }
+
+  .section-head {
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid #eef2f7;
+  }
+
+  .form-control,
+  .form-select {
+    border-radius: 12px;
+    padding: 0.8rem 0.95rem;
+    border-color: #d8dee9;
+  }
+
+  .form-control:focus,
+  .form-select:focus {
+    border-color: #f2b900;
+    box-shadow: 0 0 0 0.2rem rgba(242, 185, 0, 0.15);
+  }
+
+  .role-notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.9rem;
+  }
+
+  .role-note-card {
+    border: 1px solid #eef2f7;
+    border-radius: 16px;
+    padding: 1rem 1.1rem;
+    background: #fbfcfe;
+  }
+
+  .role-note-card__title {
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+
+  .permission-card {
+    border: 1px solid #e8edf5;
+    border-radius: 20px;
+    padding: 1.2rem;
+    background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.05);
+  }
+
+  .permission-card__head {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .permission-card__icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(1, 33, 82, 0.08);
+    color: #012152;
+    flex-shrink: 0;
+  }
+
+  .permission-card__body {
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .permission-toggle {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    padding: 0.9rem 0.95rem;
+    border-radius: 16px;
+    background: #f8fafc;
+    border: 1px solid #edf2f7;
+    cursor: pointer;
+  }
+
+  .permission-toggle__content {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .permission-toggle__label {
+    font-weight: 600;
+    color: #111827;
+  }
+
+  .permission-toggle__hint {
+    color: #6b7280;
+    font-size: 0.82rem;
+    margin-top: 0.2rem;
+    line-height: 1.45;
+  }
+
+  .form-check-input {
+    width: 2.5rem;
+    height: 1.3rem;
+    margin-top: 0.1rem;
+  }
+
+  .form-check-input:checked {
+    background-color: #f2b900;
+    border-color: #f2b900;
+  }
+
+  .btn {
+    border-radius: 12px;
+    padding: 0.8rem 1.25rem;
+  }
+
+  @media (max-width: 767.98px) {
+    .admin-create-card__header {
+      padding: 1.4rem 1.4rem 1.2rem;
+    }
+
+    .permission-card {
+      padding: 1rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block extra_js %}
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-  // Bootstrap "is-invalid" для полей с ошибками
-  const invalidFields = document.querySelectorAll('.invalid-feedback');
-  invalidFields.forEach(msg => {
-    const field = msg.closest('.mb-3, .form-check')?.querySelector('input, select, textarea');
-    if (field) field.classList.add('is-invalid');
+document.addEventListener("DOMContentLoaded", function () {
+  const invalidFields = document.querySelectorAll(".invalid-feedback");
+  invalidFields.forEach(function (message) {
+    const field = message.closest(".col-md-6, .col-md-12, .permission-toggle, .mb-3")?.querySelector("input, select, textarea");
+    if (field) {
+      field.classList.add("is-invalid");
+    }
+  });
+
+  document.querySelectorAll("[data-permissions-toggle]").forEach(function (button) {
+    button.addEventListener("click", function () {
+      const shouldCheck = button.dataset.permissionsToggle === "all";
+      document.querySelectorAll(".permission-card input[type='checkbox']").forEach(function (checkbox) {
+        checkbox.checked = shouldCheck;
+      });
+    });
   });
 });
 </script>

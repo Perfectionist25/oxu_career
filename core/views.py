@@ -4,6 +4,8 @@ from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.utils.translation import gettext as _
+from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
 
 
@@ -13,7 +15,8 @@ from resources.models import Resource
 from accounts.models import Company, CustomUser
 
 from .forms import ContactForm
-from .models import ContactMessage
+from .models import ContactMessage, SystemNotification, UserNotificationDismissal
+from .system_notifications import add_anonymous_dismissed_notification_id
 
 
 logger = logging.getLogger(__name__)
@@ -228,6 +231,30 @@ def welcome_api(request):
     }
 
     return JsonResponse(response_data)
+
+
+@require_POST
+def dismiss_system_notification(request, pk):
+    notification = get_object_or_404(SystemNotification, pk=pk)
+
+    if not notification.is_currently_displayed():
+        return JsonResponse(
+            {
+                "success": False,
+                "error": _("This notification is not currently available."),
+            },
+            status=400,
+        )
+
+    if request.user.is_authenticated:
+        UserNotificationDismissal.objects.get_or_create(
+            user=request.user,
+            notification=notification,
+        )
+    else:
+        add_anonymous_dismissed_notification_id(request, notification.pk)
+
+    return JsonResponse({"success": True, "notification_id": notification.pk})
 
 
 

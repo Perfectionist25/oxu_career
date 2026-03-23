@@ -641,14 +641,16 @@ body {
                                     <span class="status-badge 
                                         {% if profile_user.is_student %}badge-student
                                         {% elif profile_user.is_employer %}badge-employer
-                                        {% elif profile_user.is_admin %}badge-admin
                                         {% elif profile_user.is_main_admin %}badge-main-admin
+                                        {% elif profile_user.is_international_admin %}badge-admin
+                                        {% elif profile_user.is_admin %}badge-admin
                                         {% else %}badge-inactive{% endif %}">
                                         <i class="fas 
                                             {% if profile_user.is_student %}fa-graduation-cap
                                             {% elif profile_user.is_employer %}fa-building
-                                            {% elif profile_user.is_admin %}fa-user-shield
                                             {% elif profile_user.is_main_admin %}fa-crown
+                                            {% elif profile_user.is_international_admin %}fa-globe
+                                            {% elif profile_user.is_admin %}fa-user-shield
                                             {% else %}fa-user{% endif %} me-1"></i>
                                         {{ profile_user.get_user_type_display }}
                                     </span>
@@ -678,7 +680,7 @@ body {
 
                                 <!-- Action Buttons -->
                                 <div class="form-actions d-flex flex-wrap gap-2">
-                                    {% if not profile_user.is_main_admin %}
+                                    {% if can_toggle_status %}
                                     <form method="post" action="{% url 'accounts:toggle_user_status' profile_user.id %}" class="d-inline">
                                         {% csrf_token %}
                                         <button type="submit" class="btn {% if profile_user.is_active %}btn-outline-warning{% else %}btn-outline-success{% endif %}">
@@ -1045,58 +1047,34 @@ body {
                     
                     {% elif profile_user.is_admin and profile %}
                     <div class="row">
+                        {% for section in profile.permission_sections %}
                         <div class="col-md-6 mb-3">
-                            <div class="mb-3">
-                                <small class="text-muted d-block">{% trans "Manage Students" %}</small>
-                                <div class="d-flex align-items-center">
-                                    {% if profile.can_manage_students %}
-                                    <i class="fas fa-check-circle text-success fa-lg me-2"></i>
-                                    <strong class="fs-5 text-success">{% trans "Allowed" %}</strong>
-                                    {% else %}
-                                    <i class="fas fa-times-circle text-danger fa-lg me-2"></i>
-                                    <strong class="fs-5 text-danger">{% trans "Restricted" %}</strong>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <small class="text-muted d-block">{% trans "Manage Employers" %}</small>
-                                <div class="d-flex align-items-center">
-                                    {% if profile.can_manage_employers %}
-                                    <i class="fas fa-check-circle text-success fa-lg me-2"></i>
-                                    <strong class="fs-5 text-success">{% trans "Allowed" %}</strong>
-                                    {% else %}
-                                    <i class="fas fa-times-circle text-danger fa-lg me-2"></i>
-                                    <strong class="fs-5 text-danger">{% trans "Restricted" %}</strong>
-                                    {% endif %}
+                            <div class="card border-0 bg-light h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <i class="{{ section.icon }} text-primary me-2"></i>
+                                        <strong>{{ section.title }}</strong>
+                                    </div>
+
+                                    {% for permission in section.permissions %}
+                                    <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                                        <div>
+                                            <small class="text-muted d-block">{{ permission.label }}</small>
+                                            {% if permission.help_text %}
+                                            <span class="small text-muted">{{ permission.help_text }}</span>
+                                            {% endif %}
+                                        </div>
+                                        {% if permission.granted %}
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle">{% trans "Allowed" %}</span>
+                                        {% else %}
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle">{% trans "Restricted" %}</span>
+                                        {% endif %}
+                                    </div>
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <div class="mb-3">
-                                <small class="text-muted d-block">{% trans "Manage Jobs" %}</small>
-                                <div class="d-flex align-items-center">
-                                    {% if profile.can_manage_jobs %}
-                                    <i class="fas fa-check-circle text-success fa-lg me-2"></i>
-                                    <strong class="fs-5 text-success">{% trans "Allowed" %}</strong>
-                                    {% else %}
-                                    <i class="fas fa-times-circle text-danger fa-lg me-2"></i>
-                                    <strong class="fs-5 text-danger">{% trans "Restricted" %}</strong>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <small class="text-muted d-block">{% trans "View Statistics" %}</small>
-                                <div class="d-flex align-items-center">
-                                    {% if profile.can_view_statistics %}
-                                    <i class="fas fa-check-circle text-success fa-lg me-2"></i>
-                                    <strong class="fs-5 text-success">{% trans "Allowed" %}</strong>
-                                    {% else %}
-                                    <i class="fas fa-times-circle text-danger fa-lg me-2"></i>
-                                    <strong class="fs-5 text-danger">{% trans "Restricted" %}</strong>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
+                        {% endfor %}
                     </div>
                     
                     {% else %}

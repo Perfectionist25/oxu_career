@@ -7,6 +7,11 @@ app_name = "core"
 urlpatterns = [
 
     path("", views.home, name="home"),
+    path(
+        "notifications/<int:pk>/dismiss/",
+        views.dismiss_system_notification,
+        name="dismiss_system_notification",
+    ),
     path("about/", views.about, name="about"),
     path("contact/", views.contact, name="contact"),
     path("contact/success/", views.contact_success, name="contact_success"),

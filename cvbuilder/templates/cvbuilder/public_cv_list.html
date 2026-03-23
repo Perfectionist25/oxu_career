@@ -633,7 +633,7 @@
                                         <i class="fas fa-eye"></i>
                                     </a>
                                     
-                                    {% if user_type in "employer,admin,main_admin" %}
+                                    {% if can_export_published_cvs %}
                                     <a href="{% url 'cvbuilder:cv_export_pdf' cv.id %}" 
                                        class="btn btn-sm btn-outline-danger"
                                        target="_blank"

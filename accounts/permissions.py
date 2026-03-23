@@ -1,5 +1,6 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 from django.contrib.auth import get_user_model
+from accounts.models import ADMIN_USER_TYPES
 
 User = get_user_model()
 
@@ -26,7 +27,7 @@ class IsAdminUser(BasePermission):
         return bool(
             request.user and
             request.user.is_authenticated and
-            request.user.user_type in ['admin', 'main_admin']
+            request.user.user_type in ADMIN_USER_TYPES
         )
 
 

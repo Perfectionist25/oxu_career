@@ -24,7 +24,12 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView
 
-from accounts.models import StudentProfile, EmployerProfile, AdminProfile
+from accounts.models import (
+    ADMIN_USER_TYPES,
+    StudentProfile,
+    EmployerProfile,
+    AdminProfile,
+)
 from accounts.views import create_user_activity, get_client_ip
 
 User = get_user_model()
@@ -589,7 +594,7 @@ def oauth_user_info(request):
         except EmployerProfile.DoesNotExist:
             data["profile"] = None
 
-    elif user.user_type in ["admin", "main_admin"]:
+    elif user.user_type in ADMIN_USER_TYPES:
         try:
             profile = AdminProfile.objects.get(user=user)
             data.update({
@@ -597,9 +602,16 @@ def oauth_user_info(request):
                 "profile": {
                     "can_manage_students": profile.can_manage_students,
                     "can_manage_employers": profile.can_manage_employers,
+                    "can_create_employers": profile.can_create_employers,
+                    "can_change_user_status": profile.can_change_user_status,
                     "can_manage_companies": profile.can_manage_companies,
+                    "can_view_company_details": profile.can_view_company_details,
+                    "can_verify_companies": profile.can_verify_companies,
+                    "can_change_company_status": profile.can_change_company_status,
                     "can_manage_jobs": profile.can_manage_jobs,
+                    "can_create_jobs": profile.can_create_jobs,
                     "can_manage_resumes": profile.can_manage_resumes,
+                    "can_manage_events": profile.can_manage_events,
                     "can_view_statistics": profile.can_view_statistics,
                 }
             })

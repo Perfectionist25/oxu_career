@@ -51,6 +51,8 @@ CITIES = [
     ("Urganch", _("Urganch")),
 ]
 
+ADMIN_USER_TYPES = ("admin", "international_admin", "main_admin")
+
 class CustomUser(AbstractUser):
     """Custom user model with different roles and extended profile information"""
 
@@ -59,6 +61,7 @@ class CustomUser(AbstractUser):
         ("student", _("Student or Graduate")),
         ("employer", _("Employer")),
         ("admin", _("Admin")),
+        ("international_admin", _("International Admin")),
         ("main_admin", _("Main Admin")),
     ]
 
@@ -228,11 +231,18 @@ class CustomUser(AbstractUser):
 
     @property
     def is_admin(self):
-        return self.user_type == "admin" or self.user_type == "main_admin"
+        return self.user_type in ADMIN_USER_TYPES
+
+    @property
+    def is_international_admin(self):
+        return self.user_type == "international_admin"
 
     @property
     def is_main_admin(self):
         return self.user_type == "main_admin"
+
+    def has_admin_permission(self, permission_name):
+        return user_has_admin_permission(self, permission_name)
 
     @property
     def can_create_resume(self):
@@ -250,7 +260,13 @@ class CustomUser(AbstractUser):
     @property
     def can_manage_users(self):
         """Может ли пользователь управлять другими пользователями"""
-        return self.user_type in ["admin", "main_admin"]
+        return self.is_main_admin or any(
+            self.has_admin_permission(permission_name)
+            for permission_name in (
+                "can_manage_students",
+                "can_manage_employers",
+            )
+        )
 
     @property
     def companies(self):
@@ -773,6 +789,55 @@ class StudentProfile(models.Model):
 class AdminProfile(models.Model):
     """Profile for admin users with management permissions"""
 
+    PERMISSION_FIELDS = (
+        "can_manage_students",
+        "can_manage_employers",
+        "can_create_employers",
+        "can_change_user_status",
+        "can_manage_companies",
+        "can_view_company_details",
+        "can_verify_companies",
+        "can_change_company_status",
+        "can_manage_jobs",
+        "can_create_jobs",
+        "can_manage_resumes",
+        "can_manage_events",
+        "can_view_statistics",
+    )
+    PERMISSION_GROUPS = (
+        (
+            _("Users and Employers"),
+            "fas fa-users-cog",
+            (
+                "can_manage_students",
+                "can_manage_employers",
+                "can_create_employers",
+                "can_change_user_status",
+            ),
+        ),
+        (
+            _("Companies and Jobs"),
+            "fas fa-briefcase",
+            (
+                "can_manage_companies",
+                "can_view_company_details",
+                "can_verify_companies",
+                "can_change_company_status",
+                "can_manage_jobs",
+                "can_create_jobs",
+            ),
+        ),
+        (
+            _("Content and Analytics"),
+            "fas fa-chart-line",
+            (
+                "can_manage_resumes",
+                "can_manage_events",
+                "can_view_statistics",
+            ),
+        ),
+    )
+
     user = models.OneToOneField(
         CustomUser,
         on_delete=models.CASCADE,
@@ -792,20 +857,55 @@ class AdminProfile(models.Model):
         verbose_name=_("Manage Employers"),
         help_text=_("Permission to manage employer accounts and profiles")
     )
+    can_create_employers = models.BooleanField(
+        default=True,
+        verbose_name=_("Create Employers"),
+        help_text=_("Permission to create employer accounts")
+    )
+    can_change_user_status = models.BooleanField(
+        default=True,
+        verbose_name=_("Change User Status"),
+        help_text=_("Permission to activate or deactivate managed users")
+    )
     can_manage_companies = models.BooleanField(
         default=True,
         verbose_name=_("Manage Companies"),
         help_text=_("Permission to manage company profiles")
+    )
+    can_view_company_details = models.BooleanField(
+        default=True,
+        verbose_name=_("View Company Details"),
+        help_text=_("Permission to view detailed company data in the admin area")
+    )
+    can_verify_companies = models.BooleanField(
+        default=True,
+        verbose_name=_("Verify Companies"),
+        help_text=_("Permission to verify and unverify companies")
+    )
+    can_change_company_status = models.BooleanField(
+        default=True,
+        verbose_name=_("Change Company Status"),
+        help_text=_("Permission to activate or deactivate companies")
     )
     can_manage_jobs = models.BooleanField(
         default=True,
         verbose_name=_("Manage Jobs"),
         help_text=_("Permission to manage job postings")
     )
+    can_create_jobs = models.BooleanField(
+        default=True,
+        verbose_name=_("Create Jobs"),
+        help_text=_("Permission to create jobs from the admin area")
+    )
     can_manage_resumes = models.BooleanField(
         default=True,
         verbose_name=_("Manage Resumes"),
         help_text=_("Permission to manage resumes and CVs")
+    )
+    can_manage_events = models.BooleanField(
+        default=True,
+        verbose_name=_("Manage Events"),
+        help_text=_("Permission to create, edit and moderate events")
     )
     can_view_statistics = models.BooleanField(
         default=True,
@@ -851,6 +951,60 @@ class AdminProfile(models.Model):
     def __str__(self):
         return f"Admin: {self.user.username}"
 
+    @property
+    def permission_sections(self):
+        sections = []
+        for title, icon, field_names in self.PERMISSION_GROUPS:
+            permissions = []
+            for field_name in field_names:
+                field = self._meta.get_field(field_name)
+                permissions.append(
+                    {
+                        "name": field_name,
+                        "label": field.verbose_name,
+                        "help_text": field.help_text,
+                        "granted": bool(getattr(self, field_name)),
+                    }
+                )
+            sections.append(
+                {
+                    "title": title,
+                    "icon": icon,
+                    "permissions": permissions,
+                }
+            )
+        return sections
+
+
+def is_admin_user(user):
+    return bool(
+        user
+        and getattr(user, "is_authenticated", False)
+        and getattr(user, "user_type", None) in ADMIN_USER_TYPES
+    )
+
+
+def is_main_admin_user(user):
+    return bool(
+        user
+        and getattr(user, "is_authenticated", False)
+        and getattr(user, "user_type", None) == "main_admin"
+    )
+
+
+def user_has_admin_permission(user, permission_name):
+    if not is_admin_user(user):
+        return False
+
+    if is_main_admin_user(user):
+        return True
+
+    try:
+        admin_profile = user.admin_profile
+    except AdminProfile.DoesNotExist:
+        admin_profile, _ = AdminProfile.objects.get_or_create(user=user)
+
+    return bool(getattr(admin_profile, permission_name, False))
 
 
 class HemisAuth(models.Model):
@@ -1161,7 +1315,7 @@ def create_user_profile(sender, instance, created, **kwargs):
             StudentProfile.objects.create(user=instance)
         elif instance.user_type == "employer":
             EmployerProfile.objects.create(user=instance)
-        elif instance.user_type in ["admin", "main_admin"]:
+        elif instance.user_type in ADMIN_USER_TYPES:
             AdminProfile.objects.create(user=instance)
 
 

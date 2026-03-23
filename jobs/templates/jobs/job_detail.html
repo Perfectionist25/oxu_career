@@ -30,8 +30,12 @@
                                     <strong>{{ job.company.name }}</strong>
                                 </div>
                                 <div class="d-flex align-items-center text-muted">
+                                    <i class="fas {% if job.is_abroad %}fa-earth-americas{% else %}fa-location-dot{% endif %} me-2"></i>
+                                    <span>{{ job.get_job_market_display }}</span>
+                                </div>
+                                <div class="d-flex align-items-center text-muted">
                                     <i class="fas fa-map-marker-alt me-2"></i>
-                                    {{ job.location }}
+                                    {{ job.location_display }}
                                 </div>
                                 <div class="d-flex align-items-center text-muted">
                                     <i class="fas fa-clock me-2"></i>
@@ -87,14 +91,16 @@
                                     </a>
                                 {% endif %}
 
-                                {% if user.is_authenticated and job.created_by == user %}
+                                {% if user.is_authenticated and can_edit %}
                                     <div class="btn-group">
                                         <a href="{% url 'jobs:job_edit' job.id %}" class="btn btn-outline-secondary">
                                             <i class="fas fa-edit me-2"></i>{% trans "Edit" %}
                                         </a>
+                                        {% if user.is_employer %}
                                         <a href="{% url 'jobs:employer_applications' %}" class="btn btn-outline-info">
                                             <i class="fas fa-users me-2"></i>{% trans "Applications" %} ({{ job.applications_count }})
                                         </a>
+                                        {% endif %}
                                     </div>
                                 {% endif %}
                             </div>

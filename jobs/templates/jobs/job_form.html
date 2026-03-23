@@ -124,8 +124,37 @@
 
                            
 
-                            <!-- Region - OPTIONAL -->
+                            <!-- Vacancy Geography -->
                             <div class="col-md-6 mb-3">
+                                <label for="{{ form.job_market.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Vacancy Geography" %} *
+                                </label>
+                                <select name="{{ form.job_market.name }}"
+                                        id="{{ form.job_market.id_for_label }}"
+                                        class="form-select {% if form.job_market.errors %}is-invalid{% endif %}"
+                                        required>
+                                    {% for value, label in form.job_market.field.choices %}
+                                        {% if value %}
+                                            <option value="{{ value }}"
+                                                    {% if form.job_market.value == value or not form.job_market.value and value == 'uzbekistan' %}selected{% endif %}>
+                                                {{ label }}
+                                            </option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                                {% if form.job_market.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        {% for error in form.job_market.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">{% trans "Use this to separate vacancies in Uzbekistan from jobs abroad." %}</div>
+                            </div>
+
+                            <!-- Region - OPTIONAL -->
+                            <div class="col-md-6 mb-3" id="jobRegionFieldWrap">
                                 <label for="{{ form.region.id_for_label }}" class="form-label fw-semibold">
                                     {% trans "Region" %}
                                 </label>
@@ -154,7 +183,7 @@
 
                             <!-- District - OPTIONAL -->
                             <div class="col-md-6 mb-3">
-                                <label for="{{ form.district.id_for_label }}" class="form-label fw-semibold">
+                                <label for="{{ form.district.id_for_label }}" class="form-label fw-semibold" id="jobDistrictLabel">
                                     {% trans "District" %}
                                 </label>
                                 <input type="text"
@@ -175,7 +204,7 @@
 
                             <!-- Location - REQUIRED -->
                             <div class="col-md-6 mb-3">
-                                <label for="{{ form.location.id_for_label }}" class="form-label fw-semibold">
+                                <label for="{{ form.location.id_for_label }}" class="form-label fw-semibold" id="jobLocationLabel">
                                     {% trans "Location" %} *
                                 </label>
                                 <input type="text" 
@@ -1013,6 +1042,52 @@ document.addEventListener('DOMContentLoaded', function() {
     if (salaryMinField && salaryMaxField) {
         salaryMinField.addEventListener('blur', validateSalary);
         salaryMaxField.addEventListener('blur', validateSalary);
+    }
+
+    const jobMarketField = document.getElementById('{{ form.job_market.id_for_label }}');
+    const regionFieldWrap = document.getElementById('jobRegionFieldWrap');
+    const regionField = document.getElementById('{{ form.region.id_for_label }}');
+    const districtField = document.getElementById('{{ form.district.id_for_label }}');
+    const districtLabel = document.getElementById('jobDistrictLabel');
+    const locationField = document.getElementById('{{ form.location.id_for_label }}');
+    const locationLabel = document.getElementById('jobLocationLabel');
+
+    function syncJobMarketUI() {
+        if (!jobMarketField) return;
+
+        const isAbroad = jobMarketField.value === 'abroad';
+
+        if (regionFieldWrap) {
+            regionFieldWrap.style.display = isAbroad ? 'none' : '';
+        }
+        if (regionField && isAbroad) {
+            regionField.value = '';
+        }
+        if (districtLabel) {
+            districtLabel.textContent = isAbroad
+                ? '{% trans "City / State" %}'
+                : '{% trans "District" %}';
+        }
+        if (districtField) {
+            districtField.placeholder = isAbroad
+                ? '{% trans "e.g., Berlin or Dubai" %}'
+                : '{% trans "e.g., Mirzo Ulugbek district" %}';
+        }
+        if (locationLabel) {
+            locationLabel.textContent = isAbroad
+                ? '{% trans "Country / Location" %} *'
+                : '{% trans "Location" %} *';
+        }
+        if (locationField) {
+            locationField.placeholder = isAbroad
+                ? '{% trans "e.g., Germany, UAE, Poland" %}'
+                : '{% trans "Full address or city name" %}';
+        }
+    }
+
+    if (jobMarketField) {
+        jobMarketField.addEventListener('change', syncJobMarketUI);
+        syncJobMarketUI();
     }
 
     // Form submission validation

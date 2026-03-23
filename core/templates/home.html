@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
+{% load system_notifications %}
 
 {% block content %}
+{% render_system_notifications %}
 <div class="section py-5" style="padding: 5%;">
   <!-- Hero Section -->
   <section class="text-center mb-5">
@@ -411,4 +413,73 @@
   }
 }
 </style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("click", async function (event) {
+  const dismissButton = event.target.closest("[data-dismiss-system-notification]");
+  if (!dismissButton) {
+    return;
+  }
+
+  const notificationElement = dismissButton.closest("[data-system-notification]");
+  if (!notificationElement || dismissButton.disabled) {
+    return;
+  }
+
+  const dismissUrl = notificationElement.dataset.dismissUrl;
+  if (!dismissUrl) {
+    return;
+  }
+
+  dismissButton.disabled = true;
+
+  try {
+    const response = await fetch(dismissUrl, {
+      method: "POST",
+      credentials: "same-origin",
+      headers: {
+        "X-CSRFToken": getCsrfToken(),
+        "X-Requested-With": "XMLHttpRequest",
+        "Accept": "application/json"
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("Dismiss request failed");
+    }
+
+    notificationElement.classList.add("is-dismissing");
+
+    window.setTimeout(function () {
+      notificationElement.remove();
+
+      const stack = document.querySelector("[data-system-notification-stack]");
+      if (stack && !stack.querySelector("[data-system-notification]")) {
+        const section = document.querySelector("[data-system-notifications-section]");
+        if (section) {
+          section.remove();
+        }
+      }
+    }, 220);
+  } catch (error) {
+    dismissButton.disabled = false;
+    console.error(error);
+  }
+});
+
+function getCsrfToken() {
+  const cookies = document.cookie ? document.cookie.split(";") : [];
+
+  for (const cookie of cookies) {
+    const trimmedCookie = cookie.trim();
+    if (trimmedCookie.startsWith("csrftoken=")) {
+      return decodeURIComponent(trimmedCookie.substring("csrftoken=".length));
+    }
+  }
+
+  return "";
+}
+</script>
 {% endblock %}

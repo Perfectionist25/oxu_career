@@ -28,6 +28,7 @@ class JobAdmin(admin.ModelAdmin):
     list_display = (
         "title",
         "employer_company",
+        "job_market",
         "employment_type",
         "experience_level",
         "location",
@@ -36,6 +37,7 @@ class JobAdmin(admin.ModelAdmin):
         "created_at",
     )
     list_filter = (
+        "job_market",
         "employment_type",
         "experience_level",
         "is_active",
@@ -62,6 +64,7 @@ class JobAdmin(admin.ModelAdmin):
             _("Location & Type"),
             {
                 "fields": (
+                    "job_market",
                     "location",
                     "employment_type",
                     "experience_level",

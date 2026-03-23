@@ -108,6 +108,56 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         el.classList.add("form-control");
     });
+
+    const jobMarketField = document.getElementById('{{ form.job_market.id_for_label }}');
+    const regionField = document.getElementById('{{ form.region.id_for_label }}');
+    const districtField = document.getElementById('{{ form.district.id_for_label }}');
+    const locationField = document.getElementById('{{ form.location.id_for_label }}');
+
+    function syncJobMarketUI() {
+        if (!jobMarketField || !regionField) return;
+
+        const isAbroad = jobMarketField.value === 'abroad';
+        const regionWrapper = regionField.closest('.col-md-6');
+        const regionLabel = document.querySelector(`label[for="${regionField.id}"]`);
+        const districtLabel = districtField ? document.querySelector(`label[for="${districtField.id}"]`) : null;
+        const locationLabel = locationField ? document.querySelector(`label[for="${locationField.id}"]`) : null;
+
+        if (regionWrapper) {
+            regionWrapper.style.display = isAbroad ? 'none' : '';
+        }
+        if (regionField && isAbroad) {
+            regionField.value = '';
+        }
+        if (regionLabel) {
+            regionLabel.textContent = '{% trans "Region" %}';
+        }
+        if (districtLabel) {
+            districtLabel.textContent = isAbroad
+                ? '{% trans "City / State" %}'
+                : '{% trans "District" %}';
+        }
+        if (districtField) {
+            districtField.placeholder = isAbroad
+                ? '{% trans "e.g., Berlin or Dubai" %}'
+                : '{% trans "e.g., Mirzo Ulugbek district" %}';
+        }
+        if (locationLabel) {
+            locationLabel.textContent = isAbroad
+                ? '{% trans "Country / Location" %} *'
+                : '{% trans "Location" %} *';
+        }
+        if (locationField) {
+            locationField.placeholder = isAbroad
+                ? '{% trans "e.g., Germany, UAE, Poland" %}'
+                : '{% trans "Full address or city name" %}';
+        }
+    }
+
+    if (jobMarketField) {
+        jobMarketField.addEventListener('change', syncJobMarketUI);
+        syncJobMarketUI();
+    }
 });
 </script>
 {% endblock %}

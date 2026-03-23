@@ -2,7 +2,7 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from .models import Job, JobApplication, JobAlert
-from accounts.models import Company
+from accounts.models import Company, user_has_admin_permission
 
 
 INDUSTRY_CHOICES = [
@@ -73,7 +73,7 @@ class JobForm(forms.ModelForm):
     class Meta:
         model = Job
         fields = [
-            "title", "short_description", "description", "company", "location",
+            "title", "short_description", "description", "company", "job_market", "location",
             "region", "district", "work_type", "employment_type", "experience_level",
             "education_level", "salary_min", "salary_max", "currency", "hide_salary",
             "salary_negotiable", "bonus_system", "kpi_bonus", "performance_bonus",
@@ -122,7 +122,10 @@ class JobForm(forms.ModelForm):
                     self.fields['company'].help_text = _("Your company")
                 else:
                     self.fields['company'].help_text = _("Select one of your companies")
-            elif self.user.is_admin or self.user.is_main_admin:
+            elif (
+                user_has_admin_permission(self.user, 'can_create_jobs')
+                or user_has_admin_permission(self.user, 'can_manage_jobs')
+            ):
 
                 self.fields['company'].queryset = Company.objects.filter(is_active=True)
                 self.fields['company'].help_text = _("Select a company")
@@ -135,7 +138,7 @@ class JobForm(forms.ModelForm):
             self.fields['company'].required = False
 
 
-        select_fields = ['company', 'work_type', 'employment_type', 'experience_level',
+        select_fields = ['company', 'job_market', 'work_type', 'employment_type', 'experience_level',
                         'education_level', 'currency', 'region', 'industry']
         for field in select_fields:
             if field in self.fields:
@@ -207,8 +210,13 @@ class JobForm(forms.ModelForm):
 
 
         location = cleaned_data.get('location', '')
+        job_market = cleaned_data.get('job_market')
         region = cleaned_data.get('region')
         district = cleaned_data.get('district')
+
+        if job_market == "abroad":
+            cleaned_data['region'] = ""
+            return cleaned_data
 
         if location and not region and not district:
             if 'Tashkent' in location or 'Toshkent' in location:
@@ -252,6 +260,13 @@ class AdminJobForm(JobForm):
 
 class JobSearchForm(forms.Form):
     """Advanced job search form"""
+
+    job_market = forms.ChoiceField(
+        required=False,
+        choices=[("", _("All jobs")), *Job.JOB_MARKET_CHOICES],
+        widget=forms.Select(attrs={"class": "form-select"}),
+        label=_("Vacancy Geography")
+    )
 
     query = forms.CharField(
         required=False,
@@ -568,6 +583,4 @@ class JobAlertForm(forms.ModelForm):
         self.fields['employment_type'].empty_label = _("Any Type")
         self.fields['experience_level'].empty_label = _("Any Level")
         self.fields['frequency'].empty_label = _("Select frequency")
-
-
 

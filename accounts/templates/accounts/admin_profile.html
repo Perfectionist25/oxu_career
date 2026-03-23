@@ -40,6 +40,10 @@
             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" title="{% trans 'Main Admin' %}">
               <i class="fas fa-crown"></i>
             </span>
+          {% elif profile_user.is_international_admin %}
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-info" title="{% trans 'International Admin' %}">
+              <i class="fas fa-globe"></i>
+            </span>
           {% endif %}
         </div>
       </div>
@@ -131,6 +135,9 @@
               {% if profile_user.is_main_admin %}
                 <span class="badge bg-danger">
                   <i class="fas fa-crown me-1"></i>{% trans "Main Admin" %}
+              {% elif profile_user.is_international_admin %}
+                <span class="badge bg-info">
+                  <i class="fas fa-globe me-1"></i>{% trans "International Admin" %}
                 </span>
               {% else %}
                 <span class="badge bg-warning text-dark">
@@ -200,41 +207,28 @@
   <div class="card-body">
     {% if profile %}
       <div class="row">
-        <div class="col-md-6">
-          <div class="mb-3 d-flex align-items-center">
-            <i class="fas {% if profile.can_manage_students %}fa-check text-success{% else %}fa-times text-danger{% endif %} me-2"></i>
-            <span>{% trans "Manage Students" %}</span>
-          </div>
-
-          <div class="mb-3 d-flex align-items-center">
-            <i class="fas {% if profile.can_manage_employers %}fa-check text-success{% else %}fa-times text-danger{% endif %} me-2"></i>
-            <span>{% trans "Manage Employers" %}</span>
-          </div>
-
-          <div class="mb-0 d-flex align-items-center">
-            <i class="fas {% if profile.can_manage_jobs %}fa-check text-success{% else %}fa-times text-danger{% endif %} me-2"></i>
-            <span>{% trans "Manage Jobs" %}</span>
-          </div>
-        </div>
-
-        <div class="col-md-6">
-          <div class="mb-3 d-flex align-items-center">
-            <i class="fas {% if profile.can_manage_resumes %}fa-check text-success{% else %}fa-times text-danger{% endif %} me-2"></i>
-            <span>{% trans "Manage Resumes" %}</span>
-          </div>
-
-          <div class="mb-3 d-flex align-items-center">
-            <i class="fas {% if profile.can_view_statistics %}fa-check text-success{% else %}fa-times text-danger{% endif %} me-2"></i>
-            <span>{% trans "View Statistics" %}</span>
-          </div>
-
-          {% if profile_user.is_main_admin %}
-            <div class="mb-0 d-flex align-items-center">
-              <i class="fas fa-crown text-warning me-2"></i>
-              <span>{% trans "Main Admin Rights" %}</span>
+        {% for section in profile.permission_sections %}
+        <div class="col-md-6 mb-3">
+          <div class="border rounded-3 h-100 p-3 bg-light-subtle">
+            <div class="d-flex align-items-center mb-3">
+              <i class="{{ section.icon }} text-primary me-2"></i>
+              <strong>{{ section.title }}</strong>
             </div>
-          {% endif %}
+
+            {% for permission in section.permissions %}
+            <div class="d-flex align-items-start mb-3">
+              <i class="fas {% if permission.granted %}fa-check text-success{% else %}fa-times text-danger{% endif %} me-2 mt-1"></i>
+              <div>
+                <div>{{ permission.label }}</div>
+                {% if permission.help_text %}
+                <small class="text-muted">{{ permission.help_text }}</small>
+                {% endif %}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
         </div>
+        {% endfor %}
       </div>
     {% else %}
       <p class="text-muted mb-0">{% trans "No permissions data" %}</p>

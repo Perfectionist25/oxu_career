@@ -28,7 +28,8 @@ class AccountCreationTests(TestCase):
 		)
 		self.admin_profile, _ = AdminProfile.objects.get_or_create(user=self.admin)
 		self.admin_profile.can_manage_employers = True
-		self.admin_profile.save(update_fields=["can_manage_employers"])
+		self.admin_profile.can_create_employers = True
+		self.admin_profile.save(update_fields=["can_manage_employers", "can_create_employers"])
 
 	def test_create_admin_account_view_creates_single_profile(self):
 		url = reverse("accounts:create_admin_account")
@@ -39,10 +40,19 @@ class AccountCreationTests(TestCase):
 		 "last_name": "Admin",
 		 "password1": "strongpass123",
 		 "password2": "strongpass123",
+		 "user_type": "admin",
 		 "can_manage_students": True,
 		 "can_manage_employers": True,
+		 "can_create_employers": True,
+		 "can_change_user_status": True,
+		 "can_manage_companies": True,
+		 "can_view_company_details": True,
+		 "can_verify_companies": True,
+		 "can_change_company_status": True,
 		 "can_manage_jobs": True,
+		 "can_create_jobs": True,
 		 "can_manage_resumes": True,
+		 "can_manage_events": True,
 		 "can_view_statistics": True,
 		}
 
@@ -55,6 +65,49 @@ class AccountCreationTests(TestCase):
 
 		profiles = AdminProfile.objects.filter(user=user)
 		self.assertEqual(profiles.count(), 1)
+
+		profile = profiles.first()
+		self.assertTrue(profile.can_create_jobs)
+		self.assertTrue(profile.can_manage_events)
+
+	def test_create_international_admin_with_granular_permissions(self):
+		url = reverse("accounts:create_admin_account")
+		data = {
+		 "username": "intladmin",
+		 "email": "intladmin@example.com",
+		 "first_name": "Intl",
+		 "last_name": "Admin",
+		 "password1": "strongpass123",
+		 "password2": "strongpass123",
+		 "user_type": "international_admin",
+		 "can_manage_employers": True,
+		 "can_create_employers": True,
+		 "can_manage_companies": True,
+		 "can_view_company_details": True,
+		 "can_verify_companies": False,
+		 "can_change_company_status": False,
+		 "can_manage_jobs": True,
+		 "can_create_jobs": False,
+		 "can_manage_resumes": False,
+		 "can_manage_events": True,
+		 "can_view_statistics": False,
+		}
+
+		response = self.client.post(url, data)
+
+		self.assertIn(response.status_code, (302, 301))
+
+		user = CustomUser.objects.get(username="intladmin")
+		profile = AdminProfile.objects.get(user=user)
+
+		self.assertEqual(user.user_type, "international_admin")
+		self.assertTrue(profile.can_manage_employers)
+		self.assertTrue(profile.can_manage_companies)
+		self.assertTrue(profile.can_manage_jobs)
+		self.assertTrue(profile.can_manage_events)
+		self.assertFalse(profile.can_create_jobs)
+		self.assertFalse(profile.can_manage_resumes)
+		self.assertFalse(profile.can_view_statistics)
 
 	def test_create_admin_with_existing_username_shows_error(self):
 
@@ -73,10 +126,19 @@ class AccountCreationTests(TestCase):
 		 "last_name": "Admin",
 		 "password1": "strongpass123",
 		 "password2": "strongpass123",
+		 "user_type": "admin",
 		 "can_manage_students": True,
 		 "can_manage_employers": True,
+		 "can_create_employers": True,
+		 "can_change_user_status": True,
+		 "can_manage_companies": True,
+		 "can_view_company_details": True,
+		 "can_verify_companies": True,
+		 "can_change_company_status": True,
 		 "can_manage_jobs": True,
+		 "can_create_jobs": True,
 		 "can_manage_resumes": True,
+		 "can_manage_events": True,
 		 "can_view_statistics": True,
 		}
 

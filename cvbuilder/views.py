@@ -15,7 +15,7 @@ from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.views.generic import ListView
 
-from accounts.models import StudentProfile
+from accounts.models import StudentProfile, user_has_admin_permission
 
 from .forms import CVForm, EducationForm, ExperienceForm, SkillForm, LanguageForm
 from .models import CV, CVTemplate, Education, Experience, Skill, Language, Project, Certificate
@@ -49,8 +49,13 @@ def can_view_cv(user, cv: CV) -> bool:
 
 
 def can_access_public_list(user) -> bool:
-    user_type = getattr(user, "user_type", None)
-    return user_type in ["employer", "admin", "main_admin"]
+    if not user or not user.is_authenticated:
+        return False
+
+    if getattr(user, "user_type", None) == "employer":
+        return True
+
+    return user_has_admin_permission(user, "can_manage_resumes")
 
 
 def can_export_cv(user, cv: CV) -> bool:
@@ -58,8 +63,13 @@ def can_export_cv(user, cv: CV) -> bool:
     if is_owner(user, cv):
         return True
 
-    user_type = getattr(user, "user_type", None)
-    return cv.status == "published" and user_type in ["employer", "admin", "main_admin"]
+    if cv.status != "published":
+        return False
+
+    if getattr(user, "user_type", None) == "employer":
+        return True
+
+    return user_has_admin_permission(user, "can_manage_resumes")
 
 
 
@@ -508,6 +518,10 @@ def public_cv_list(request):
         "selected_template": template_id_int,
         "sort": sort,
         "user_type": getattr(request.user, "user_type", None),
+        "can_export_published_cvs": (
+            request.user.is_employer
+            or user_has_admin_permission(request.user, "can_manage_resumes")
+        ),
     }
     return render(request, "cvbuilder/public_cv_list.html", context)
 

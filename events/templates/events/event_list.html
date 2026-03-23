@@ -18,7 +18,7 @@
             <a href="{% url 'events:event_calendar' %}" class="btn hero-outline">
                 <i class="fas fa-calendar"></i> {% trans "Calendar" %}
             </a>
-            {% if user.is_staff %}
+            {% if can_manage_events %}
             <a href="{% url 'events:create_event' %}" class="btn primary">
                 <i class="fas fa-plus"></i> {% trans "Create" %}
             </a>
@@ -192,7 +192,7 @@
                     <a href="{% url 'events:event_detail' event.slug %}" class="btn primary">
                         <i class="fas fa-eye"></i> {% trans "View" %}
                     </a>
-                    {% if user.is_admin or user.is_main_admin or user.is_staff %}
+                    {% if can_manage_events %}
                     <a href="{% url 'events:edit_event' event.slug %}" class="btn ghost" title="{% trans 'Edit' %}">
                         <i class="fas fa-edit"></i>
                     </a>

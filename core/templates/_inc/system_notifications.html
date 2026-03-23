@@ -1,0 +1,36 @@
+{% load i18n %}
+
+{% if system_notifications %}
+<section class="system-notifications-section" data-system-notifications-section>
+    <div class="container">
+        <div class="system-notifications-stack mx-auto" data-system-notification-stack>
+            {% for notification in system_notifications %}
+            <article
+                class="system-notification alert alert-warning shadow-sm mb-3"
+                id="system-notification-{{ notification.pk }}"
+                data-system-notification
+                data-dismiss-url="{% url 'core:dismiss_system_notification' notification.pk %}"
+            >
+                <button
+                    type="button"
+                    class="btn-close system-notification__close"
+                    data-dismiss-system-notification
+                    aria-label="{% trans 'Close' %}"
+                ></button>
+
+                <div class="system-notification__body">
+                    <div class="system-notification__icon" aria-hidden="true">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <div class="system-notification__content">
+                        <div class="system-notification__message">
+                            {{ notification.localized_message|linebreaksbr }}
+                        </div>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}

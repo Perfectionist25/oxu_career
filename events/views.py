@@ -13,7 +13,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView
 
-from accounts.models import Notification
+from accounts.models import Notification, user_has_admin_permission
 
 from .forms import EventAttendanceScanForm, EventCategoryForm, EventForm
 from .models import Event, EventCategory, EventParticipation
@@ -24,9 +24,21 @@ from .utils import (
 )
 
 
+def _can_manage_events(user):
+    return bool(
+        user
+        and user.is_authenticated
+        and (
+            user.is_staff
+            or user.is_superuser
+            or user_has_admin_permission(user, "can_manage_events")
+        )
+    )
+
+
 def admin_required(function=None):
     actual_decorator = user_passes_test(
-        lambda u: u.is_active and (u.is_staff or u.is_superuser or u.is_admin or u.is_main_admin),
+        lambda u: u.is_active and _can_manage_events(u),
         login_url="/accounts/admin-login/",
         redirect_field_name=None,
     )
@@ -108,6 +120,7 @@ def event_list(request):
         "selected_category": category_id,
         "selected_type": event_type,
         "total_events": events.count(),
+        "can_manage_events": _can_manage_events(request.user),
     }
     return render(request, "events/event_list.html", context)
 
@@ -140,6 +153,7 @@ class EventCalendarView(ListView):
                     start_date__year=now.year,
                     start_date__month=now.month,
                 ).count(),
+                "can_manage_events": _can_manage_events(self.request.user),
             }
         )
         return context
@@ -167,7 +181,7 @@ def event_detail(request, slug):
 
     context = {
         "event": event,
-        "is_admin": request.user.is_staff or request.user.is_superuser or getattr(request.user, "is_admin", False),
+        "is_admin": _can_manage_events(request.user),
         "user_participation": user_participation,
         "participation_error": participation_error,
         "can_participate": event.can_user_participate(request.user) if request.user.is_authenticated else False,
@@ -261,9 +275,7 @@ def participation_pass(request, pk):
     participation = get_object_or_404(
         EventParticipation.objects.select_related("event", "user"), pk=pk
     )
-    if participation.user != request.user and not (
-        request.user.is_staff or request.user.is_superuser or request.user.is_admin or request.user.is_main_admin
-    ):
+    if participation.user != request.user and not _can_manage_events(request.user):
         messages.error(request, _("Access denied."))
         return redirect("events:event_list")
 
@@ -293,9 +305,7 @@ def participation_qr_image(request, pk):
     participation = get_object_or_404(
         EventParticipation.objects.select_related("event", "user"), pk=pk
     )
-    if participation.user != request.user and not (
-        request.user.is_staff or request.user.is_superuser or request.user.is_admin or request.user.is_main_admin
-    ):
+    if participation.user != request.user and not _can_manage_events(request.user):
         messages.error(request, _("Access denied."))
         return redirect("events:event_list")
 
@@ -784,7 +794,7 @@ def api_events(request):
 
 
 def api_event_stats(request):
-    if not (request.user.is_staff or request.user.is_superuser or request.user.is_admin or request.user.is_main_admin):
+    if not _can_manage_events(request.user):
         return JsonResponse({"error": "Unauthorized"}, status=403)
 
     from django.db.models.functions import TruncMonth

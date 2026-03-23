@@ -64,11 +64,13 @@
                             <span>{% trans "Employers" %}</span>
                         </a>
 
+                        {% if can_view_admin_users %}
                         <a href="?user_type=admins{% if search_query %}&search={{ search_query|urlencode }}{% endif %}"
                            class="filter-pill filter-admin {% if user_type_filter == 'admins' %}active{% endif %}">
                             <i class="fas fa-user-shield"></i>
                             <span>{% trans "Admins" %}</span>
                         </a>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -163,6 +165,11 @@
                                         <i class="fas fa-crown"></i>
                                         {{ user.get_user_type_display }}
                                     </span>
+                                {% elif user.is_international_admin %}
+                                    <span class="role-badge role-admin">
+                                        <i class="fas fa-globe"></i>
+                                        {{ user.get_user_type_display }}
+                                    </span>
                                 {% elif user.is_admin %}
                                     <span class="role-badge role-admin">
                                         <i class="fas fa-user-shield"></i>
@@ -233,7 +240,7 @@
                                         <i class="fas fa-eye"></i>
                                     </a>
 
-                                    {% if not user.is_main_admin %}
+                                    {% if can_change_user_status and not user.is_main_admin %}
                                     <form method="post"
                                           action="{% url 'accounts:toggle_user_status' user.id %}"
                                           class="d-inline">

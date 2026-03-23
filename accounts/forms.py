@@ -140,7 +140,7 @@ class AdminLoginForm(LoginCaptchaMixin, forms.Form):
             self._rotate_captcha_field()
             raise forms.ValidationError(_("Invalid username or password."))
 
-        if user.user_type not in ["admin", "main_admin"]:
+        if user.user_type not in ADMIN_USER_TYPES:
             self._rotate_captcha_field()
             raise forms.ValidationError(_("You are not authorized to access the admin panel."))
 
@@ -587,7 +587,10 @@ class AdminProfileForm(forms.ModelForm):
         label=_("Confirm Password")
     )
     user_type = forms.ChoiceField(
-        choices=[('admin', _('Admin')), ('main_admin', _('Main Admin'))],
+        choices=[
+            ("admin", _("Admin")),
+            ("international_admin", _("International Admin")),
+        ],
         widget=forms.Select(attrs={'class': 'form-select'}),
         initial='admin',
         required=True
@@ -595,22 +598,28 @@ class AdminProfileForm(forms.ModelForm):
 
     class Meta:
         model = AdminProfile
-        fields = [
-            "can_manage_students",
-            "can_manage_employers",
-            "can_manage_companies",
-            "can_manage_jobs",
-            "can_manage_resumes",
-            "can_view_statistics",
-        ]
-        widgets = {
-            'can_manage_students': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'can_manage_employers': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'can_manage_companies': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'can_manage_jobs': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'can_manage_resumes': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'can_view_statistics': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-        }
+        fields = AdminProfile.PERMISSION_FIELDS
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.permission_sections = []
+
+        for field_name in AdminProfile.PERMISSION_FIELDS:
+            self.fields[field_name].required = False
+            self.fields[field_name].widget = forms.CheckboxInput(
+                attrs={"class": "form-check-input"}
+            )
+            if not self.is_bound:
+                self.fields[field_name].initial = False
+
+        for title, icon, field_names in AdminProfile.PERMISSION_GROUPS:
+            self.permission_sections.append(
+                {
+                    "title": title,
+                    "icon": icon,
+                    "fields": [self[field_name] for field_name in field_names],
+                }
+            )
 
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
