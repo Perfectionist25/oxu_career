@@ -11,6 +11,7 @@ from django.views.decorators.http import require_POST
 from django.core.exceptions import ValidationError
 
 from accounts.models import EmployerProfile, Company, user_has_admin_permission
+from accounts.certificates import get_viewable_student_certificates_queryset
 from accounts.views import *
 
 from .forms import *
@@ -987,8 +988,18 @@ def application_detail(request, pk):
     if not (is_owner or is_employer_allowed or request.user.is_staff):
         return JsonResponse({"error": "Ruxsat rad etildi"}, status=403)
 
+    student_certificates = []
+    student_profile = getattr(application.user, "student_profile", None)
+    if student_profile is not None:
+        student_certificates = get_viewable_student_certificates_queryset(
+            request.user,
+            student_profile,
+        )
+
     context = {
         "application": application,
+        "is_employer": is_employer_allowed,
+        "student_certificates": student_certificates,
     }
     return render(request, "jobs/application_detail.html", context)
 

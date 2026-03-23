@@ -5,7 +5,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 from django.utils.html import format_html
 from django.utils import timezone
-from .forms import CaptchaAdminAuthenticationForm
+from .forms import CaptchaAdminAuthenticationForm, StudentCertificateForm
 from .models import *
 
 admin.site.login_form = CaptchaAdminAuthenticationForm
@@ -232,6 +232,87 @@ class StudentProfileAdmin(admin.ModelAdmin):
             {"fields": ("created_at", "updated_at")},
         ),
     )
+
+
+@admin.register(StudentCertificate)
+class StudentCertificateAdmin(admin.ModelAdmin):
+    form = StudentCertificateForm
+    list_display = (
+        "title",
+        "student_user",
+        "issuer",
+        "file_kind",
+        "is_active",
+        "issue_date",
+        "uploaded_at",
+        "file_link",
+    )
+    list_filter = ("is_active", "uploaded_at", "issue_date")
+    search_fields = (
+        "title",
+        "issuer",
+        "description",
+        "student__user__username",
+        "student__user__email",
+        "student__user__first_name",
+        "student__user__last_name",
+    )
+    ordering = ("-uploaded_at",)
+    readonly_fields = (
+        "uploaded_at",
+        "updated_at",
+        "filename",
+        "extension",
+        "file_link",
+    )
+    list_per_page = 20
+    autocomplete_fields = ("student",)
+
+    fieldsets = (
+        (
+            _("Certificate Information"),
+            {
+                "fields": (
+                    "student",
+                    "title",
+                    "file",
+                    "filename",
+                    "extension",
+                    "file_link",
+                    "description",
+                    "issuer",
+                    "issue_date",
+                    "is_active",
+                )
+            },
+        ),
+        (
+            _("Timestamps"),
+            {"fields": ("uploaded_at", "updated_at")},
+        ),
+    )
+
+    @display(description=_("Student"), ordering="student__user__username")
+    def student_user(self, obj):
+        return obj.student.user.get_full_name() or obj.student.user.username
+
+    @display(description=_("File Type"))
+    def file_kind(self, obj):
+        if obj.is_pdf:
+            return _("PDF")
+        if obj.is_image:
+            return _("Image")
+        return (obj.extension or "-").upper()
+
+    @display(description=_("File"))
+    def file_link(self, obj):
+        if not obj.pk or not obj.file:
+            return "-"
+        return format_html(
+            '<a href="{}" target="_blank" rel="noopener">{}</a>',
+            obj.get_file_url(),
+            _("Open file"),
+        )
 
 
 @admin.register(AdminProfile)

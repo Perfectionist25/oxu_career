@@ -157,6 +157,17 @@
     {% endif %}
   </div>
 
+  {% if student_certificates %}
+    <div class="info-card mb-3">
+      <div class="info-title">
+        <i class="fas fa-certificate text-primary me-2"></i>{% trans "Student Certificates" %}
+      </div>
+
+      {% trans "This candidate has not uploaded any certificates yet." as certificates_empty_message %}
+      {% include "accounts/includes/student_certificate_cards.html" with certificates=student_certificates show_management=False empty_message=certificates_empty_message %}
+    </div>
+  {% endif %}
+
   <!-- Internal notes (only employer/admin) -->
   {% if is_employer or request.user.is_staff %}
     <div class="info-card">

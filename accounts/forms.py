@@ -8,6 +8,10 @@ from django.utils import timezone
 import re
 
 from .captcha import ensure_login_captcha, rotate_login_captcha, validate_login_captcha
+from .certificates import (
+    get_student_certificate_max_upload_size,
+    validate_student_certificate_file,
+)
 from .models import *
 
 
@@ -553,6 +557,69 @@ class StudentProfileForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         # Student ID is provided externally and must remain read-only for students.
         self.fields["student_id"].disabled = True
+
+
+class StudentCertificateForm(forms.ModelForm):
+    class Meta:
+        model = StudentCertificate
+        fields = [
+            "title",
+            "file",
+            "issuer",
+            "issue_date",
+            "description",
+            "is_active",
+        ]
+        widgets = {
+            "title": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": _("Certificate title"),
+                }
+            ),
+            "file": forms.FileInput(
+                attrs={
+                    "class": "form-control",
+                    "accept": ".pdf,.jpg,.jpeg,.png,.webp",
+                }
+            ),
+            "issuer": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": _("Issuing organization"),
+                }
+            ),
+            "issue_date": forms.DateInput(
+                attrs={
+                    "class": "form-control",
+                    "type": "date",
+                }
+            ),
+            "description": forms.Textarea(
+                attrs={
+                    "class": "form-control",
+                    "rows": 4,
+                    "placeholder": _("Short certificate description"),
+                }
+            ),
+            "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        max_size_mb = int(get_student_certificate_max_upload_size() / (1024 * 1024))
+        self.fields["file"].help_text = _(
+            "Allowed formats: PDF, JPG, JPEG, PNG, WEBP. Max size: %(size)s MB."
+        ) % {"size": max_size_mb}
+        self.fields["is_active"].help_text = _(
+            "Visible to employers who received your application."
+        )
+
+    def clean_file(self):
+        uploaded_file = self.cleaned_data.get("file")
+        if uploaded_file:
+            validate_student_certificate_file(uploaded_file)
+        return uploaded_file
 
 
 class AdminProfileForm(forms.ModelForm):

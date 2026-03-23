@@ -4,10 +4,12 @@
 {% load i18n %}
 
 {% block title %}{{ profile_user.get_full_name|default:profile_user.username }} - {% trans "User Profile" %}{% endblock %}
+{% block body_class %}admin-user-detail-body{% endblock %}
+{% block body_style %}background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%) !important; min-height: 100% !important;{% endblock %}
 
 {% block extra_css %}
 <style>
-:root {
+.admin-user-detail-page {
     --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
     --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
@@ -21,9 +23,8 @@
 }
 
 /* ===== BASE STYLES ===== */
-body {
+.admin-user-detail-page {
     color: var(--dark-text);
-    background-color: #f9fafb;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -556,36 +557,76 @@ body {
 
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
-    :root {
-        --dark-text: #e2e8f0;
-        --light-text: #a0aec0;
-        --card-bg: #2d3748;
-        --light-bg: #4a5568;
-        --border-color: #4a5568;
+    .admin-user-detail-page {
+        --dark-text: #1f2937;
+        --light-text: #64748b;
+        --card-bg: #ffffff;
+        --light-bg: #f8fafc;
+        --border-color: #e5e7eb;
     }
-    
-    body {
-        background-color: #1a202c;
-    }
-    
-    .stat-card {
-        background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
-    }
-    
-    .contact-icon {
-        background: #4a5568;
-        color: #a0aec0;
-    }
-    
-    .progress {
-        background-color: #4a5568;
-    }
+}
+
+.admin-user-detail-page .card,
+.admin-user-detail-page .card-body,
+.admin-user-detail-page .card-header,
+.admin-user-detail-page .stat-card,
+.admin-user-detail-page .bg-light {
+    color: var(--dark-text);
+}
+
+.admin-user-detail-page .card,
+.admin-user-detail-page .card-header,
+.admin-user-detail-page .card-body,
+.admin-user-detail-page .border,
+.admin-user-detail-page .border-top,
+.admin-user-detail-page .list-group-item,
+.admin-user-detail-page .contact-item:not(:last-child) {
+    border-color: var(--border-color) !important;
+}
+
+.admin-user-detail-page .bg-light,
+.admin-user-detail-page .contact-icon,
+.admin-user-detail-page .text-center.p-3.border.rounded-2,
+.admin-user-detail-page .timeline-item .bg-light.rounded-circle {
+    background-color: #f8fafc !important;
+}
+
+.admin-user-detail-page .text-muted,
+.admin-user-detail-page small.text-muted,
+.admin-user-detail-page .stat-card .text-muted,
+.admin-user-detail-page .card-header .text-muted,
+.admin-user-detail-page .timeline-item small.text-muted,
+.admin-user-detail-page .timeline-item .small.text-muted {
+    color: #64748b !important;
+}
+
+.admin-user-detail-page .card-header h5,
+.admin-user-detail-page .card-header h6,
+.admin-user-detail-page .badge.bg-light.text-dark.border,
+.admin-user-detail-page .profile-details strong,
+.admin-user-detail-page .timeline-item strong {
+    color: var(--dark-text) !important;
+}
+
+.admin-user-detail-page .badge.bg-light.text-dark.border {
+    background-color: #eef2ff !important;
+    border-color: #cbd5e1 !important;
+}
+
+.admin-user-detail-page .avatar-placeholder,
+.admin-user-detail-page .icon-wrapper {
+    color: #ffffff !important;
+}
+
+.admin-user-detail-page .contact-icon i,
+.admin-user-detail-page .timeline-item .bg-light.rounded-circle i {
+    color: #4f46e5 !important;
 }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid py-4">
+<div class="container-fluid py-4 admin-user-detail-page">
     <!-- Header Section -->
     <div class="row mb-4">
         <div class="col-12">

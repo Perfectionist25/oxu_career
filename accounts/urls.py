@@ -64,6 +64,11 @@ urlpatterns = [
 
 
     path("student/profile/update/", views.student_profile_update, name="student_profile_update"),
+    path("student/certificates/", views.student_certificate_list, name="student_certificate_list"),
+    path("student/certificates/upload/", views.student_certificate_create, name="student_certificate_create"),
+    path("student/certificates/<int:pk>/edit/", views.student_certificate_update, name="student_certificate_update"),
+    path("student/certificates/<int:pk>/delete/", views.student_certificate_delete, name="student_certificate_delete"),
+    path("student/certificates/<int:pk>/file/", views.student_certificate_file, name="student_certificate_file"),
     path("employer/profile/update/", views.employer_profile_update, name="employer_profile_update"),
 
 

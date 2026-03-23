@@ -381,6 +381,10 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+PROTECTED_MEDIA_ROOT = BASE_DIR / "protected_media"
+STUDENT_CERTIFICATE_MAX_UPLOAD_SIZE = int(
+    os.getenv("STUDENT_CERTIFICATE_MAX_UPLOAD_SIZE", str(8 * 1024 * 1024))
+)
 
 SERVE_MEDIA_FILES = env_bool("SERVE_MEDIA_FILES", default=True)
 

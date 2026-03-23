@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "My Certificates" %}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .certificate-page {
+    background:
+      radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 25%),
+      linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+    min-height: 100vh;
+  }
+
+  .certificate-shell {
+    max-width: 1320px;
+    margin: 0 auto;
+  }
+
+  .certificate-hero,
+  .certificate-panel {
+    border-radius: 24px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+  }
+
+  .certificate-hero {
+    padding: 2rem;
+    background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+    color: #fff;
+  }
+
+  .certificate-panel {
+    background: rgba(255, 255, 255, 0.96);
+    padding: 1.5rem;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="certificate-page py-4">
+  <div class="container-fluid certificate-shell">
+    <div class="certificate-hero mb-4">
+      <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+        <div>
+          <span class="badge text-bg-light mb-3">{% trans "Student Documents" %}</span>
+          <h1 class="h3 mb-2">{% trans "My Certificates" %}</h1>
+          <p class="mb-0 text-white-50">
+            {% trans "Upload certificates and control which ones employers can see after your application." %}
+          </p>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2">
+          <a href="{% url 'accounts:student_dashboard' %}" class="btn btn-outline-light">
+            <i class="fas fa-arrow-left me-1"></i>{% trans "Back to Dashboard" %}
+          </a>
+          <a href="{% url 'accounts:student_certificate_create' %}" class="btn btn-warning">
+            <i class="fas fa-plus me-1"></i>{% trans "Upload Certificate" %}
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="certificate-panel">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+          <h2 class="h5 mb-1">{% trans "Certificate Library" %}</h2>
+          <p class="text-muted mb-0">
+            {% blocktrans count counter=certificates|length %}
+              You have {{ counter }} uploaded certificate.
+            {% plural %}
+              You have {{ counter }} uploaded certificates.
+            {% endblocktrans %}
+          </p>
+        </div>
+        <span class="badge text-bg-primary">{{ certificates|length }}</span>
+      </div>
+
+      {% trans "You have not uploaded any certificates yet." as empty_message %}
+      {% include "accounts/includes/student_certificate_cards.html" with certificates=certificates show_management=True empty_message=empty_message %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,7 +1,9 @@
 
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 from django.db.models.signals import post_save
@@ -13,6 +15,14 @@ import io
 import uuid
 from PIL import Image, ImageOps
 from django.core.files.base import ContentFile
+
+from .certificates import (
+    CERTIFICATE_IMAGE_EXTENSIONS,
+    StudentCertificateStorage,
+    get_certificate_content_type,
+    student_certificate_upload_to,
+    validate_student_certificate_file,
+)
 
 REGIONS = [
     ("Tashkent", _("Tashkent")),
@@ -783,6 +793,117 @@ class StudentProfile(models.Model):
         self.avatar.save(new_name, ContentFile(buffer.read()), save=False)
 
         super().save(*args, **kwargs)
+
+
+class StudentCertificate(models.Model):
+    student = models.ForeignKey(
+        StudentProfile,
+        on_delete=models.CASCADE,
+        related_name="certificates",
+        verbose_name=_("Student"),
+        help_text=_("Student profile that owns this certificate"),
+    )
+    title = models.CharField(
+        max_length=255,
+        verbose_name=_("Certificate Title"),
+        help_text=_("Certificate name shown to employers"),
+    )
+    file = models.FileField(
+        upload_to=student_certificate_upload_to,
+        storage=StudentCertificateStorage(),
+        validators=[validate_student_certificate_file],
+        verbose_name=_("Certificate File"),
+        help_text=_("Upload a PDF or image certificate"),
+    )
+    description = models.TextField(
+        blank=True,
+        verbose_name=_("Description"),
+        help_text=_("Optional certificate details"),
+    )
+    issuer = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name=_("Issuer"),
+        help_text=_("Organization that issued the certificate"),
+    )
+    issue_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_("Issue Date"),
+        help_text=_("Date when the certificate was issued"),
+    )
+    uploaded_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Uploaded At"),
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Updated At"),
+    )
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name=_("Visible to Employers"),
+        help_text=_("Whether this certificate can be shown to employers"),
+    )
+
+    class Meta:
+        verbose_name = _("Student Certificate")
+        verbose_name_plural = _("Student Certificates")
+        ordering = ["-uploaded_at"]
+        indexes = [
+            models.Index(fields=["student", "is_active"]),
+            models.Index(fields=["-uploaded_at"]),
+        ]
+
+    def __str__(self):
+        return f"{self.title} - {self.student.user.get_full_name()}"
+
+    def clean(self):
+        super().clean()
+
+        if self.issue_date and self.issue_date > timezone.localdate():
+            raise ValidationError({"issue_date": _("Issue date cannot be in the future.")})
+
+        if self.file:
+            validate_student_certificate_file(self.file)
+
+    @property
+    def extension(self):
+        if not self.file:
+            return ""
+        return self.file.name.rsplit(".", 1)[-1].lower()
+
+    @property
+    def filename(self):
+        if not self.file:
+            return ""
+        return self.file.name.rsplit("/", 1)[-1]
+
+    @property
+    def is_pdf(self):
+        return self.extension == "pdf"
+
+    @property
+    def is_image(self):
+        return self.extension in CERTIFICATE_IMAGE_EXTENSIONS
+
+    @property
+    def content_type(self):
+        if not self.file:
+            return "application/octet-stream"
+        return get_certificate_content_type(self.file.name)
+
+    @property
+    def download_filename(self):
+        base_name = slugify(self.title) or "certificate"
+        extension = self.extension or "bin"
+        return f"{base_name}.{extension}"
+
+    def get_file_url(self):
+        return reverse("accounts:student_certificate_file", kwargs={"pk": self.pk})
+
+    def get_download_url(self):
+        return f"{self.get_file_url()}?download=1"
 
 
 

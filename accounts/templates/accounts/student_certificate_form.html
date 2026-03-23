@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .certificate-form-page {
+    background:
+      radial-gradient(circle at top left, rgba(14, 165, 233, 0.08), transparent 24%),
+      linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+    min-height: 100vh;
+  }
+
+  .certificate-form-shell {
+    max-width: 980px;
+    margin: 0 auto;
+  }
+
+  .certificate-form-card {
+    border-radius: 28px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.98);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    box-shadow: 0 22px 48px rgba(15, 23, 42, 0.08);
+  }
+
+  .certificate-form-header {
+    padding: 2rem;
+    background: linear-gradient(135deg, #0f172a 0%, #0f766e 100%);
+    color: #fff;
+  }
+
+  .certificate-form-body {
+    padding: 2rem;
+  }
+
+  .certificate-help {
+    background: rgba(239, 246, 255, 0.8);
+    border: 1px solid rgba(59, 130, 246, 0.18);
+    border-radius: 18px;
+    padding: 1rem 1.1rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="certificate-form-page py-4">
+  <div class="container certificate-form-shell">
+    <div class="certificate-form-card">
+      <div class="certificate-form-header">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+          <div>
+            <span class="badge text-bg-light mb-3">{% trans "Student Certificates" %}</span>
+            <h1 class="h3 mb-2">{{ page_title }}</h1>
+            <p class="mb-0 text-white-50">
+              {% trans "Supported formats: PDF, JPG, JPEG, PNG and WEBP." %}
+            </p>
+          </div>
+          <a href="{% url 'accounts:student_certificate_list' %}" class="btn btn-outline-light">
+            <i class="fas fa-arrow-left me-1"></i>{% trans "Back to Certificates" %}
+          </a>
+        </div>
+      </div>
+
+      <div class="certificate-form-body">
+        <div class="certificate-help mb-4">
+          <div class="fw-semibold mb-1">{% trans "Employer visibility" %}</div>
+          <div class="text-muted">
+            {% trans "Only employers whose vacancies you applied to can view active certificates." %}
+          </div>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" novalidate>
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+              {{ form.non_field_errors }}
+            </div>
+          {% endif %}
+
+          <div class="row g-4">
+            <div class="col-md-8">
+              <label for="{{ form.title.id_for_label }}" class="form-label fw-semibold">{{ form.title.label }}</label>
+              {{ form.title }}
+              {% if form.title.help_text %}<div class="form-text">{{ form.title.help_text }}</div>{% endif %}
+              {% for error in form.title.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+            </div>
+
+            <div class="col-md-4">
+              <label for="{{ form.issue_date.id_for_label }}" class="form-label fw-semibold">{{ form.issue_date.label }}</label>
+              {{ form.issue_date }}
+              {% for error in form.issue_date.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+            </div>
+
+            <div class="col-md-8">
+              <label for="{{ form.file.id_for_label }}" class="form-label fw-semibold">{{ form.file.label }}</label>
+              {{ form.file }}
+              {% if form.file.help_text %}<div class="form-text">{{ form.file.help_text }}</div>{% endif %}
+              {% if is_edit and certificate and certificate.file %}
+                <div class="small text-muted mt-2">
+                  {% trans "Current file" %}: {{ certificate.filename }}
+                </div>
+              {% endif %}
+              {% for error in form.file.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+            </div>
+
+            <div class="col-md-4">
+              <label for="{{ form.issuer.id_for_label }}" class="form-label fw-semibold">{{ form.issuer.label }}</label>
+              {{ form.issuer }}
+              {% for error in form.issuer.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+            </div>
+
+            <div class="col-12">
+              <label for="{{ form.description.id_for_label }}" class="form-label fw-semibold">{{ form.description.label }}</label>
+              {{ form.description }}
+              {% for error in form.description.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+            </div>
+
+            <div class="col-12">
+              <div class="form-check">
+                {{ form.is_active }}
+                <label for="{{ form.is_active.id_for_label }}" class="form-check-label fw-semibold">{{ form.is_active.label }}</label>
+              </div>
+              {% if form.is_active.help_text %}<div class="form-text">{{ form.is_active.help_text }}</div>{% endif %}
+              {% for error in form.is_active.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+            </div>
+          </div>
+
+          <div class="d-flex flex-wrap justify-content-end gap-2 mt-4">
+            <a href="{% url 'accounts:student_certificate_list' %}" class="btn btn-outline-secondary">
+              {% trans "Cancel" %}
+            </a>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save me-1"></i>{{ submit_label }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

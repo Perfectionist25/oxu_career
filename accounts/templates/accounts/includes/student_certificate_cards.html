@@ -1,0 +1,200 @@
+{% load i18n %}
+{% trans "No description provided." as no_description_text %}
+{% trans "Certificates will appear here after upload." as default_empty_message %}
+
+<style>
+  .student-certificate-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  }
+
+  .student-certificate-card {
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 16px 32px rgba(15, 23, 42, 0.06);
+  }
+
+  .student-certificate-preview {
+    background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
+    min-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  }
+
+  .student-certificate-preview img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .student-certificate-pdf {
+    width: 100%;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #b91c1c;
+    text-decoration: none;
+    gap: 0.5rem;
+    padding: 1.5rem;
+  }
+
+  .student-certificate-pdf i {
+    font-size: 2.5rem;
+  }
+
+  .student-certificate-body {
+    padding: 1rem 1rem 1.1rem;
+  }
+
+  .student-certificate-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .student-certificate-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+  }
+
+  .student-certificate-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.9rem;
+    font-size: 0.87rem;
+    color: #64748b;
+    margin-bottom: 0.75rem;
+  }
+
+  .student-certificate-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .student-certificate-description {
+    color: #475569;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    min-height: 2.8rem;
+  }
+
+  .student-certificate-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+  }
+
+  .student-certificate-actions .btn {
+    border-radius: 999px;
+  }
+
+  .student-certificate-empty {
+    border: 1px dashed rgba(148, 163, 184, 0.7);
+    border-radius: 20px;
+    background: rgba(248, 250, 252, 0.9);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    color: #64748b;
+  }
+
+  @media (max-width: 575.98px) {
+    .student-certificate-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+{% if certificates %}
+  <div class="student-certificate-grid">
+    {% for certificate in certificates %}
+      <article class="student-certificate-card">
+        <div class="student-certificate-preview">
+          {% if certificate.is_image %}
+            <a href="{{ certificate.get_file_url }}" target="_blank" rel="noopener" class="w-100">
+              <img src="{{ certificate.get_file_url }}" alt="{{ certificate.title }}">
+            </a>
+          {% else %}
+            <a href="{{ certificate.get_file_url }}" target="_blank" rel="noopener" class="student-certificate-pdf">
+              <i class="fas fa-file-pdf"></i>
+              <span class="badge text-bg-light">PDF</span>
+            </a>
+          {% endif %}
+        </div>
+
+        <div class="student-certificate-body">
+          <div class="student-certificate-top">
+            <div>
+              <h6 class="student-certificate-title">{{ certificate.title }}</h6>
+            </div>
+            {% if show_management %}
+              {% if certificate.is_active %}
+                <span class="badge text-bg-success">{% trans "Visible" %}</span>
+              {% else %}
+                <span class="badge text-bg-secondary">{% trans "Hidden" %}</span>
+              {% endif %}
+            {% endif %}
+          </div>
+
+          <div class="student-certificate-meta">
+            {% if certificate.issuer %}
+              <span><i class="fas fa-building"></i>{{ certificate.issuer }}</span>
+            {% endif %}
+            {% if certificate.issue_date %}
+              <span><i class="fas fa-calendar-day"></i>{{ certificate.issue_date|date:"d.m.Y" }}</span>
+            {% endif %}
+            <span><i class="fas fa-upload"></i>{{ certificate.uploaded_at|date:"d.m.Y" }}</span>
+          </div>
+
+          <div class="student-certificate-description">
+            {{ certificate.description|default:no_description_text|truncatechars:140 }}
+          </div>
+
+          <div class="student-certificate-actions">
+            <a href="{{ certificate.get_file_url }}" class="btn btn-sm btn-outline-primary" target="_blank" rel="noopener">
+              <i class="fas fa-arrow-up-right-from-square me-1"></i>{% trans "Open" %}
+            </a>
+            <a href="{{ certificate.get_download_url }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener">
+              <i class="fas fa-download me-1"></i>{% trans "Download" %}
+            </a>
+
+            {% if show_management %}
+              <a href="{% url 'accounts:student_certificate_update' certificate.pk %}" class="btn btn-sm btn-outline-dark">
+                <i class="fas fa-pen me-1"></i>{% trans "Edit" %}
+              </a>
+              <form method="post" action="{% url 'accounts:student_certificate_delete' certificate.pk %}" class="d-inline">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <button
+                  type="submit"
+                  class="btn btn-sm btn-outline-danger"
+                  onclick="return confirm('{% trans "Delete this certificate?" %}')"
+                >
+                  <i class="fas fa-trash me-1"></i>{% trans "Delete" %}
+                </button>
+              </form>
+            {% endif %}
+          </div>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="student-certificate-empty">
+    <i class="fas fa-certificate fa-2x mb-3"></i>
+    <div class="fw-semibold mb-1">{% trans "No certificates yet" %}</div>
+    <div>{{ empty_message|default:default_empty_message }}</div>
+  </div>
+{% endif %}

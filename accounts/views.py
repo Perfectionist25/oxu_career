@@ -7,9 +7,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.paginator import Paginator
-from django.http import JsonResponse
+from django.core.exceptions import PermissionDenied
+from django.http import FileResponse, Http404, JsonResponse
 from django.db.models import Q, Count, F, Case, When, Value, IntegerField, Sum
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _, gettext
 from django.views.decorators.http import require_http_methods
@@ -27,6 +29,7 @@ from accounts.models import (
     ADMIN_USER_TYPES,
     CustomUser,
     StudentProfile,
+    StudentCertificate,
     EmployerProfile,
     AdminProfile,
     Company,
@@ -38,6 +41,10 @@ from accounts.models import (
     is_main_admin_user,
     user_has_admin_permission,
 )
+from .certificates import (
+    can_user_view_student_certificate,
+    get_viewable_student_certificates_queryset,
+)
 
 from jobs.models import Job, JobApplication
 from cvbuilder.models import CV
@@ -48,7 +55,8 @@ from .forms import (
     UserUpdateForm, StudentProfileForm, EmployerProfileForm,
     AdminProfileForm, CompanyForm, CompanyDocumentForm,
     EmployerRegistrationForm, AdminCompanyForm, AdminEmployerProfileForm,
-    StudentUserReadonlyNameForm, EmployerLoginForm, AdminLoginForm
+    StudentCertificateForm, StudentUserReadonlyNameForm,
+    EmployerLoginForm, AdminLoginForm
 )
 
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -750,6 +758,7 @@ def student_dashboard(request):
     resumes = CV.objects.filter(user=student_profile)
 
     applications = JobApplication.objects.filter(user=request.user)
+    certificates = student_profile.certificates.order_by("-uploaded_at")
 
     recent_event_participations = EventParticipation.objects.filter(
         user=request.user
@@ -764,6 +773,7 @@ def student_dashboard(request):
             "pending_applications": applications.filter(status="applied").count(),
             "accepted_applications": applications.filter(status="hired").count(),
             "profile_views": request.user.profile_views or 0,
+            "certificates_uploaded": certificates.count(),
         },
         "recent_applications": applications.select_related('job', 'job__company').order_by('-created_at')[:5],
         "recommended_jobs": Job.objects.filter(
@@ -776,6 +786,7 @@ def student_dashboard(request):
         "recent_notifications": Notification.objects.filter(user=request.user).order_by("-created_at")[:5],
         "resumes": resumes,
         "recent_event_participations": recent_event_participations,
+        "recent_certificates": certificates[:3],
     }
 
     return render(request, "accounts/student_dashboard.html", context)
@@ -810,6 +821,160 @@ def student_profile_update(request):
         "user_form": user_form,
         "profile_form": profile_form,
     })
+
+
+@login_required
+@user_passes_test(is_student, login_url="accounts:employer_login")
+def student_certificate_list(request):
+    student_profile, _profile_created = StudentProfile.objects.get_or_create(user=request.user)
+    certificates = student_profile.certificates.order_by("-uploaded_at")
+
+    return render(
+        request,
+        "accounts/student_certificate_list.html",
+        {
+            "student_profile": student_profile,
+            "certificates": certificates,
+        },
+    )
+
+
+@login_required
+@user_passes_test(is_student, login_url="accounts:employer_login")
+def student_certificate_create(request):
+    student_profile, _profile_created = StudentProfile.objects.get_or_create(user=request.user)
+
+    if request.method == "POST":
+        form = StudentCertificateForm(request.POST, request.FILES)
+        if form.is_valid():
+            certificate = form.save(commit=False)
+            certificate.student = student_profile
+            certificate.save()
+            create_user_activity(
+                request.user,
+                "certificate_upload",
+                f"Uploaded certificate: {certificate.title}",
+                ip_address=get_client_ip(request),
+            )
+            messages.success(request, _("Certificate uploaded successfully."))
+            return redirect("accounts:student_certificate_list")
+    else:
+        form = StudentCertificateForm()
+
+    return render(
+        request,
+        "accounts/student_certificate_form.html",
+        {
+            "form": form,
+            "student_profile": student_profile,
+            "page_title": _("Upload Certificate"),
+            "submit_label": _("Save Certificate"),
+            "is_edit": False,
+        },
+    )
+
+
+@login_required
+@user_passes_test(is_student, login_url="accounts:employer_login")
+def student_certificate_update(request, pk):
+    student_profile, _profile_created = StudentProfile.objects.get_or_create(user=request.user)
+    certificate = get_object_or_404(
+        StudentCertificate.objects.select_related("student", "student__user"),
+        pk=pk,
+        student__user=request.user,
+    )
+
+    if request.method == "POST":
+        form = StudentCertificateForm(request.POST, request.FILES, instance=certificate)
+        if form.is_valid():
+            certificate = form.save()
+            create_user_activity(
+                request.user,
+                "certificate_update",
+                f"Updated certificate: {certificate.title}",
+                ip_address=get_client_ip(request),
+            )
+            messages.success(request, _("Certificate updated successfully."))
+            return redirect("accounts:student_certificate_list")
+    else:
+        form = StudentCertificateForm(instance=certificate)
+
+    return render(
+        request,
+        "accounts/student_certificate_form.html",
+        {
+            "form": form,
+            "student_profile": student_profile,
+            "certificate": certificate,
+            "page_title": _("Edit Certificate"),
+            "submit_label": _("Update Certificate"),
+            "is_edit": True,
+        },
+    )
+
+
+@login_required
+@user_passes_test(is_student, login_url="accounts:employer_login")
+@require_http_methods(["POST"])
+def student_certificate_delete(request, pk):
+    certificate = get_object_or_404(
+        StudentCertificate.objects.select_related("student", "student__user"),
+        pk=pk,
+        student__user=request.user,
+    )
+    certificate_title = certificate.title
+    certificate.delete()
+
+    create_user_activity(
+        request.user,
+        "certificate_delete",
+        f"Deleted certificate: {certificate_title}",
+        ip_address=get_client_ip(request),
+    )
+    messages.success(request, _("Certificate deleted successfully."))
+
+    next_url = request.POST.get("next")
+    if next_url and url_has_allowed_host_and_scheme(
+        next_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        return redirect(next_url)
+    return redirect("accounts:student_certificate_list")
+
+
+@login_required
+def student_certificate_file(request, pk):
+    certificate = get_object_or_404(
+        StudentCertificate.objects.select_related("student", "student__user"),
+        pk=pk,
+    )
+
+    if not can_user_view_student_certificate(request.user, certificate):
+        raise PermissionDenied
+
+    if not certificate.file:
+        raise Http404(_("Certificate file not found."))
+
+    if not certificate.file.storage.exists(certificate.file.name):
+        raise Http404(_("Certificate file not found."))
+
+    download = request.GET.get("download") in {"1", "true", "yes"}
+
+    try:
+        certificate_handle = certificate.file.open("rb")
+    except FileNotFoundError as exc:
+        raise Http404(_("Certificate file not found.")) from exc
+
+    response = FileResponse(
+        certificate_handle,
+        as_attachment=download,
+        filename=certificate.download_filename,
+        content_type=certificate.content_type,
+    )
+    if not download:
+        response["Content-Disposition"] = f'inline; filename="{certificate.download_filename}"'
+    return response
 
 
 
@@ -1666,12 +1831,16 @@ def profile_view(request, user_id=None):
 
     if user.is_student:
         profile, created = StudentProfile.objects.get_or_create(user=user)
+        profile_certificates = get_viewable_student_certificates_queryset(request.user, profile)
 
         resumes = CV.objects.filter(user=profile, status='published')
         context.update({
             "profile": profile,
             "resumes": resumes,
             "applications_count": JobApplication.objects.filter(user=user).count(),
+            "profile_certificates": profile_certificates[:6],
+            "profile_certificates_count": profile_certificates.count(),
+            "can_manage_certificates": is_own_profile,
         })
         template_name = "accounts/student_profile.html"
     elif user.is_employer:
