@@ -606,6 +606,44 @@ class SavedJob(models.Model):
         return f"{self.user.username} saved {self.job.title}"
 
 
+class ViewedJob(models.Model):
+    """Stores jobs that a student or alumni has already viewed."""
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="viewed_jobs",
+        verbose_name=_("User"),
+        help_text=_("User who viewed the job"),
+    )
+    job = models.ForeignKey(
+        Job,
+        on_delete=models.CASCADE,
+        related_name="viewed_by",
+        verbose_name=_("Job"),
+        help_text=_("The viewed job"),
+    )
+    first_viewed_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("First Viewed At"),
+        help_text=_("When the user first opened this job"),
+    )
+    last_viewed_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Last Viewed At"),
+        help_text=_("When the user most recently opened this job"),
+    )
+
+    class Meta:
+        verbose_name = _("Viewed Job")
+        verbose_name_plural = _("Viewed Jobs")
+        unique_together = ["user", "job"]
+        ordering = ["-last_viewed_at"]
+
+    def __str__(self):
+        return f"{self.user.username} viewed {self.job.title}"
+
+
 class JobAlert(models.Model):
     """Stores job alert subscriptions for email notifications"""
 

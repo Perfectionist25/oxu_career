@@ -1,14 +1,207 @@
 {% extends 'base.html' %}
 {% load i18n %}
+
+{% block title %}{% trans "Saved Jobs" %} - OXU Career{% endblock %}
+
 {% block content %}
-<div class="container py-5">
-	<h1 class="display-5 fw-bold text-primary mb-4">{% trans "Saved Jobs" %}</h1>
-	<div class="card shadow-sm mb-4">
-		<div class="card-body">
-			<ul class="list-group">
-				<li class="list-group-item">{% trans "No saved jobs yet." %}</li>
-			</ul>
-		</div>
-	</div>
+<div class="container py-4 py-lg-5">
+    <div class="saved-jobs-hero card border-0 shadow-sm mb-4">
+        <div class="card-body p-4 p-lg-5">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <div>
+                    <span class="saved-jobs-badge">
+                        <i class="fas fa-bookmark me-2"></i>{% trans "Student shortlist" %}
+                    </span>
+                    <h1 class="display-6 fw-bold text-dark mt-3 mb-2">{% trans "Saved Jobs" %}</h1>
+                    <p class="text-muted mb-0">{% trans "Keep interesting vacancies in one place and come back to them when you are ready to apply." %}</p>
+                </div>
+                <div class="saved-jobs-stats">
+                    <div class="saved-jobs-stat">
+                        <strong>{{ total_saved|default:0 }}</strong>
+                        <span>{% trans "Saved" %}</span>
+                    </div>
+                    <div class="saved-jobs-stat">
+                        <strong>{{ viewed_jobs_count|default:0 }}</strong>
+                        <span>{% trans "Viewed" %}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if saved_jobs %}
+    <div class="row g-4">
+        {% for item in saved_jobs %}
+        <div class="col-lg-6">
+            <div class="card saved-job-card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                        <div>
+                            <div class="d-flex flex-wrap gap-2 mb-2">
+                                <span class="badge bg-light text-primary border border-primary">
+                                    {{ item.job.get_employment_type_display }}
+                                </span>
+                                {% if item.job.is_viewed %}
+                                <span class="badge saved-job-viewed-badge">
+                                    <i class="fas fa-check-circle me-1"></i>{% trans "Viewed" %}
+                                </span>
+                                {% endif %}
+                            </div>
+                            <h2 class="h5 fw-bold mb-1">
+                                <a href="{% url 'jobs:job_detail' item.job.id %}" class="text-decoration-none text-dark">
+                                    {{ item.job.title }}
+                                </a>
+                            </h2>
+                            <div class="text-primary fw-semibold">{{ item.job.company.name }}</div>
+                        </div>
+                        <div class="text-end small text-muted">
+                            <div>{% trans "Saved" %}</div>
+                            <strong>{{ item.created_at|date:"d.m.Y" }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="saved-job-meta text-muted mb-3">
+                        <div>
+                            <i class="fas fa-location-dot me-2 text-primary"></i>{{ item.job.location_display }}
+                        </div>
+                        <div>
+                            <i class="fas fa-money-bill-wave me-2 text-primary"></i>{{ item.job.salary_range }}
+                        </div>
+                    </div>
+
+                    {% if item.job.short_description %}
+                    <p class="text-muted mb-4">{{ item.job.short_description|truncatewords:24 }}</p>
+                    {% endif %}
+
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{% url 'jobs:job_detail' item.job.id %}" class="btn btn-primary">
+                            <i class="fas fa-arrow-up-right-from-square me-2"></i>{% trans "Open Job" %}
+                        </a>
+                        <form method="post" action="{% url 'jobs:unsave_job' item.job.id %}" class="m-0">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                            <button type="submit" class="btn btn-outline-danger">
+                                <i class="fas fa-trash-alt me-2"></i>{% trans "Remove" %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if saved_jobs.has_other_pages %}
+    <nav class="mt-4" aria-label="{% trans 'Saved jobs pagination' %}">
+        <ul class="pagination justify-content-center mb-0">
+            {% if saved_jobs.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ saved_jobs.previous_page_number }}">{% trans "Previous" %}</a>
+            </li>
+            {% endif %}
+
+            {% for page_number in saved_jobs.paginator.page_range %}
+            <li class="page-item {% if saved_jobs.number == page_number %}active{% endif %}">
+                <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+            </li>
+            {% endfor %}
+
+            {% if saved_jobs.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ saved_jobs.next_page_number }}">{% trans "Next" %}</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    {% else %}
+    <div class="card border-0 shadow-sm">
+        <div class="card-body py-5 text-center">
+            <div class="saved-jobs-empty-icon mb-3">
+                <i class="far fa-bookmark"></i>
+            </div>
+            <h2 class="h4 fw-bold mb-2">{% trans "No saved jobs yet" %}</h2>
+            <p class="text-muted mb-4">{% trans "Browse vacancies, save the interesting ones, and they will appear here." %}</p>
+            <a href="{% url 'jobs:list' %}" class="btn btn-primary">
+                <i class="fas fa-search me-2"></i>{% trans "Find Jobs" %}
+            </a>
+        </div>
+    </div>
+    {% endif %}
 </div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.saved-jobs-hero {
+    background: linear-gradient(135deg, rgba(239, 246, 255, 0.98) 0%, rgba(248, 250, 252, 0.98) 100%);
+}
+
+.saved-jobs-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(37, 99, 235, 0.1);
+    color: #1d4ed8;
+    font-weight: 600;
+}
+
+.saved-jobs-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.saved-jobs-stat {
+    min-width: 120px;
+    padding: 1rem 1.1rem;
+    border-radius: 18px;
+    background: #fff;
+    text-align: center;
+    box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.18);
+}
+
+.saved-jobs-stat strong {
+    display: block;
+    font-size: 1.6rem;
+    line-height: 1;
+    color: #0f172a;
+}
+
+.saved-jobs-stat span {
+    display: block;
+    margin-top: 0.35rem;
+    color: #64748b;
+    font-size: 0.88rem;
+}
+
+.saved-job-card {
+    border-radius: 22px;
+}
+
+.saved-job-meta {
+    display: grid;
+    gap: 0.55rem;
+}
+
+.saved-job-viewed-badge {
+    background: rgba(14, 165, 233, 0.14);
+    color: #0369a1;
+    border: 1px solid rgba(14, 165, 233, 0.2);
+}
+
+.saved-jobs-empty-icon {
+    width: 76px;
+    height: 76px;
+    margin: 0 auto;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #eff6ff;
+    color: #2563eb;
+    font-size: 1.8rem;
+}
+</style>
 {% endblock %}

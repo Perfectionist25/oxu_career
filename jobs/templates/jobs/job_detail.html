@@ -51,6 +51,11 @@
                                     <i class="fas fa-balance-scale me-1"></i>{% trans "Hybrid" %}
                                 </span>
                                 {% endif %}
+                                {% if is_viewed %}
+                                <span class="badge badge-viewed">
+                                    <i class="fas fa-check-circle me-1"></i>{% trans "Viewed" %}
+                                </span>
+                                {% endif %}
                             </div>
 
                             <!-- Зарплата -->
@@ -65,7 +70,7 @@
 
                             <!-- Действия -->
                             <div class="d-flex flex-wrap gap-2">
-                                {% if user.is_authenticated and user.is_student %}
+                                {% if user.is_authenticated and is_student_or_alumni %}
                                     {% if has_applied %}
                                         <button class="btn btn-success" disabled>
                                             <i class="fas fa-check me-2"></i>{% trans "Application submitted" %}
@@ -76,15 +81,23 @@
                                         </button>
                                     {% endif %}
                                     
-                                    {% if is_saved %}
-                                        <a href="{% url 'jobs:unsave_job' job.id %}" class="btn btn-outline-danger">
-                                            <i class="fas fa-bookmark me-2"></i>{% trans "Remove from saved" %}
-                                        </a>
-                                    {% else %}
-                                        <a href="{% url 'jobs:save_job' job.id %}" class="btn btn-outline-primary">
-                                            <i class="fas fa-bookmark me-2"></i>{% trans "Save" %}
-                                        </a>
-                                    {% endif %}
+                                    <form method="post"
+                                          action="{% if is_saved %}{% url 'jobs:unsave_job' job.id %}{% else %}{% url 'jobs:save_job' job.id %}{% endif %}"
+                                          class="save-job-detail-form">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                        <button type="submit" class="btn {% if is_saved %}btn-outline-danger{% else %}btn-outline-primary{% endif %}">
+                                            <i class="fas fa-bookmark me-2"></i>
+                                            {% if is_saved %}
+                                                {% trans "Remove from saved" %}
+                                            {% else %}
+                                                {% trans "Save" %}
+                                            {% endif %}
+                                        </button>
+                                    </form>
+                                    <a href="{% url 'jobs:saved_jobs' %}" class="btn btn-outline-secondary">
+                                        <i class="fas fa-layer-group me-2"></i>{% trans "Saved Jobs" %}
+                                    </a>
                                 {% elif not user.is_authenticated %}
                                     <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-primary">
                                         <i class="fas fa-sign-in-alt me-2"></i>{% trans "Log in to apply" %}
@@ -408,7 +421,7 @@
 </div>
 
 <!-- Модальное окно для отклика -->
-{% if user.is_authenticated and user.is_student and not has_applied %}
+{% if user.is_authenticated and is_student_or_alumni and not has_applied %}
 <div class="modal fade" id="applyModal" tabindex="-1" aria-labelledby="applyModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -456,6 +469,16 @@
 
 .job-details .border-bottom:last-child {
     border-bottom: none !important;
+}
+
+.badge-viewed {
+    background: rgba(14, 165, 233, 0.14);
+    color: #0369a1;
+    border: 1px solid rgba(14, 165, 233, 0.2);
+}
+
+.save-job-detail-form {
+    margin: 0;
 }
 
 .card {

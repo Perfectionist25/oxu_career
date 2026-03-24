@@ -143,6 +143,14 @@
                 </div>
 
                 <div class="col-xl-2 col-md-4 col-6">
+                    <a href="{% url 'jobs:saved_jobs' %}" class="action-card action-warning">
+                        <div class="action-icon"><i class="fas fa-bookmark"></i></div>
+                        <div class="action-title">{% trans "Saved Jobs" %}</div>
+                        <div class="action-text">{% trans "Your shortlist of vacancies" %}</div>
+                    </a>
+                </div>
+
+                <div class="col-xl-2 col-md-4 col-6">
                     <a href="{% url 'accounts:student_profile_update' %}" class="action-card action-info">
                         <div class="action-icon"><i class="fas fa-user-edit"></i></div>
                         <div class="action-title">{% trans "Update Profile" %}</div>
@@ -271,6 +279,56 @@
                         <a href="{% url 'accounts:student_profile_update' %}" class="btn btn-outline-primary rounded-pill px-3">
                             <i class="fas fa-edit me-1"></i>{% trans "Edit Profile" %}
                         </a>
+                    </div>
+                </div>
+
+                <div class="dashboard-panel mb-4">
+                    <div class="panel-header mb-3">
+                        <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap w-100">
+                            <div>
+                                <h5 class="panel-title mb-1">{% trans "Saved and Viewed Jobs" %}</h5>
+                                <p class="panel-subtitle mb-0">{% trans "Track interesting vacancies and return to the ones you already explored." %}</p>
+                            </div>
+                            <a href="{% url 'jobs:saved_jobs' %}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                <i class="fas fa-bookmark me-1"></i>{% trans "Open Saved" %}
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="status-list mb-3">
+                        <div class="status-row">
+                            <span>{% trans "Saved Jobs" %}</span>
+                            <strong>{{ stats.saved_jobs|default:0 }}</strong>
+                        </div>
+                        <div class="status-row">
+                            <span>{% trans "Viewed Jobs" %}</span>
+                            <strong>{{ stats.viewed_jobs|default:0 }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="tracked-jobs-list">
+                        {% for viewed in recent_viewed_jobs %}
+                        <a href="{% url 'jobs:job_detail' viewed.job.id %}" class="tracked-job-item">
+                            <div class="tracked-job-main">
+                                <div class="tracked-job-title">{{ viewed.job.title }}</div>
+                                <div class="tracked-job-meta">
+                                    {{ viewed.job.company.name }}
+                                    {% if viewed.job.is_saved %}
+                                        · {% trans "Saved" %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="tracked-job-time">
+                                {{ viewed.last_viewed_at|timesince }} {% trans "ago" %}
+                            </div>
+                        </a>
+                        {% empty %}
+                        <div class="empty-state py-3 text-center">
+                            <i class="fas fa-eye-slash mb-3"></i>
+                            <div class="fw-semibold">{% trans "No viewed jobs yet" %}</div>
+                            <div class="text-muted small">{% trans "Open a vacancy and it will appear here." %}</div>
+                        </div>
+                        {% endfor %}
                     </div>
                 </div>
 
@@ -716,6 +774,39 @@
     color: #94a3b8;
 }
 
+.tracked-jobs-list {
+    display: grid;
+    gap: 0.8rem;
+}
+
+.tracked-job-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.95rem 1rem;
+    border-radius: 16px;
+    background: #f8fafc;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    text-decoration: none;
+}
+
+.tracked-job-item:hover {
+    background: #eff6ff;
+    border-color: rgba(59, 130, 246, 0.2);
+}
+
+.tracked-job-title {
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.tracked-job-meta,
+.tracked-job-time {
+    color: #64748b;
+    font-size: 0.88rem;
+}
+
 @media (max-width: 991.98px) {
     .hero-card {
         padding: 1.5rem;
@@ -752,7 +843,8 @@
 
     .event-item,
     .info-row,
-    .status-row {
+    .status-row,
+    .tracked-job-item {
         flex-direction: column;
         align-items: flex-start;
     }

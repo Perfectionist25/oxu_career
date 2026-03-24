@@ -5,6 +5,7 @@ from django.db.models import Count, Q, Sum
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from datetime import timedelta
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_POST
@@ -16,6 +17,46 @@ from accounts.views import *
 
 from .forms import *
 from .models import *
+
+
+def _is_student_or_alumni(user):
+    return user.is_authenticated and (
+        getattr(user, "is_student", False)
+        or hasattr(user, "student_profile")
+        or hasattr(user, "alumni")
+    )
+
+
+def _attach_job_state(user, jobs):
+    jobs = list(jobs)
+    job_ids = [job.id for job in jobs]
+    saved_job_ids = set()
+    viewed_job_ids = set()
+
+    if _is_student_or_alumni(user) and job_ids:
+        saved_job_ids = set(
+            SavedJob.objects.filter(user=user, job_id__in=job_ids).values_list("job_id", flat=True)
+        )
+        viewed_job_ids = set(
+            ViewedJob.objects.filter(user=user, job_id__in=job_ids).values_list("job_id", flat=True)
+        )
+
+    for job in jobs:
+        job.is_saved = job.id in saved_job_ids
+        job.is_viewed = job.id in viewed_job_ids
+
+    return jobs, saved_job_ids, viewed_job_ids
+
+
+def _get_safe_next_url(request):
+    next_url = request.POST.get("next") or request.GET.get("next")
+    if next_url and url_has_allowed_host_and_scheme(
+        next_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        return next_url
+    return None
 
 @login_required
 def employer_applications(request):
@@ -480,24 +521,33 @@ def my_jobs(request):
 @login_required
 def saved_jobs(request):
     """Saqlangan vakansiyalar"""
-    if not (request.user.is_student or hasattr(request.user, 'alumni')):
+    if not _is_student_or_alumni(request.user):
         messages.error(request, _("Sizda bu sahifani ko'rish huquqi yo'q"))
         return redirect("accounts:home")
 
-    saved_jobs = (
+    saved_jobs_qs = (
         SavedJob.objects.filter(user=request.user)
         .select_related("job", "job__company")
         .order_by("-created_at")
     )
 
 
-    paginator = Paginator(saved_jobs, 12)
+    paginator = Paginator(saved_jobs_qs, 12)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
+    saved_job_items = list(page_obj.object_list)
+    saved_job_ids = [item.job_id for item in saved_job_items]
+    viewed_job_ids = set(
+        ViewedJob.objects.filter(user=request.user, job_id__in=saved_job_ids).values_list("job_id", flat=True)
+    )
+
+    for item in saved_job_items:
+        item.job.is_viewed = item.job_id in viewed_job_ids
 
     context = {
         "saved_jobs": page_obj,
-        "total_saved": saved_jobs.count(),
+        "total_saved": saved_jobs_qs.count(),
+        "viewed_jobs_count": ViewedJob.objects.filter(user=request.user).count(),
     }
 
     return render(request, "jobs/saved_jobs.html", context)
@@ -506,6 +556,7 @@ def saved_jobs(request):
 def job_list(request):
     """Vakansiyalar ro'yxati"""
     form = JobSearchForm(request.GET or None)
+    is_employer_user = getattr(request.user, "is_employer", False)
     is_admin_user = (
         request.user.is_staff
         or request.user.is_superuser
@@ -517,7 +568,7 @@ def job_list(request):
     if is_admin_user:
 
         jobs = Job.objects.all()
-    elif request.user.is_employer:
+    elif is_employer_user:
 
         jobs = Job.objects.all()
     else:
@@ -606,9 +657,12 @@ def job_list(request):
 
 
     featured_jobs = []
-    is_student_or_alumni = hasattr(request.user, 'student_profile') or hasattr(request.user, 'alumni')
+    is_student_or_alumni = _is_student_or_alumni(request.user)
     if is_student_or_alumni or request.user.is_staff:
         featured_jobs = Job.objects.filter(is_active=True, is_featured=True)[:5]
+
+    page_jobs, _saved_job_ids, _viewed_job_ids = _attach_job_state(request.user, page_obj.object_list)
+    page_obj.object_list = page_jobs
 
 
     all_industries = Job.objects.filter(
@@ -641,8 +695,10 @@ def job_list(request):
             "success_stories": JobApplication.objects.filter(status='hired').count(),
         },
         "is_admin": is_admin_user,
-        "is_employer": request.user.is_employer,
+        "is_employer": is_employer_user,
         "is_student": is_student_or_alumni,
+        "saved_jobs_count": SavedJob.objects.filter(user=request.user).count() if is_student_or_alumni else 0,
+        "viewed_jobs_count": ViewedJob.objects.filter(user=request.user).count() if is_student_or_alumni else 0,
         "filters": {
             "query": query,
             "job_market": job_market,
@@ -664,6 +720,7 @@ def job_detail(request, pk):
 
     has_alumni_profile = hasattr(request.user, 'alumni')
     has_student_profile = hasattr(request.user, 'student_profile')
+    is_student_or_alumni = _is_student_or_alumni(request.user)
     is_admin_user = (
         request.user.is_staff
         or request.user.is_superuser
@@ -678,7 +735,7 @@ def job_detail(request, pk):
     elif request.user.is_employer:
 
         job = get_object_or_404(Job, pk=pk)
-    elif has_student_profile or has_alumni_profile:
+    elif is_student_or_alumni:
 
         job = get_object_or_404(Job, pk=pk, is_active=True)
     else:
@@ -690,9 +747,16 @@ def job_detail(request, pk):
 
     if pk not in viewed_jobs:
         job.views_count += 1
-        job.save()
+        job.save(update_fields=["views_count"])
         viewed_jobs.append(pk)
         request.session['viewed_jobs'] = viewed_jobs
+
+    is_viewed = False
+    if is_student_or_alumni:
+        viewed_job, created = ViewedJob.objects.get_or_create(user=request.user, job=job)
+        if not created:
+            ViewedJob.objects.filter(pk=viewed_job.pk).update(last_viewed_at=timezone.now())
+        is_viewed = True
 
 
     has_applied = False
@@ -706,12 +770,12 @@ def job_detail(request, pk):
 
 
     is_saved = False
-    if request.user.is_authenticated:
+    if is_student_or_alumni:
         is_saved = SavedJob.objects.filter(job=job, user=request.user).exists()
 
 
     application_form = None
-    if has_student_profile or has_alumni_profile:
+    if is_student_or_alumni:
         application_form = JobApplicationForm()
 
 
@@ -749,6 +813,8 @@ def job_detail(request, pk):
         "has_applied": has_applied,
         "application": application,
         "is_saved": is_saved,
+        "is_viewed": is_viewed,
+        "is_student_or_alumni": is_student_or_alumni,
         "application_form": application_form,
         "similar_jobs": similar_jobs,
         "can_edit": can_edit,
@@ -827,25 +893,28 @@ def save_job(request, pk):
     """Vakansiyani saqlash"""
     job = get_object_or_404(Job, pk=pk, is_active=True)
 
-    has_student_profile = hasattr(request.user, 'student_profile')
-    has_alumni_profile = hasattr(request.user, 'alumni')
-
-    if not (has_student_profile or has_alumni_profile):
+    if not _is_student_or_alumni(request.user):
         return JsonResponse({"success": False, "error": "Permission denied"})
 
-    saved_job, created = SavedJob.objects.get_or_create(job=job, user=request.user)
+    _saved_job, created = SavedJob.objects.get_or_create(job=job, user=request.user)
+    saved_jobs_count = SavedJob.objects.filter(user=request.user).count()
 
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return JsonResponse({
             "success": True,
             "action": "saved" if created else "already_saved",
-            "saved": True
+            "saved": True,
+            "saved_jobs_count": saved_jobs_count,
         })
 
     if created:
         messages.success(request, _("Vakansiya muvaffaqiyatli saqlandi!"))
     else:
         messages.info(request, _("Vakansiya allaqachon saqlangan."))
+
+    next_url = _get_safe_next_url(request)
+    if next_url:
+        return redirect(next_url)
 
     return redirect("jobs:job_detail", pk=job.pk)
 
@@ -855,22 +924,29 @@ def unsave_job(request, pk):
     """Vakansiyani saqlanganlardan o'chirish"""
     job = get_object_or_404(Job, pk=pk)
 
-    has_student_profile = hasattr(request.user, 'student_profile')
-    has_alumni_profile = hasattr(request.user, 'alumni')
-
-    if not (has_student_profile or has_alumni_profile):
+    if not _is_student_or_alumni(request.user):
         return JsonResponse({"success": False, "error": "Permission denied"})
 
     deleted_count, _ = SavedJob.objects.filter(job=job, user=request.user).delete()
+    saved_jobs_count = SavedJob.objects.filter(user=request.user).count()
 
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return JsonResponse({
             "success": True,
             "action": "unsaved",
-            "saved": False
+            "saved": False,
+            "saved_jobs_count": saved_jobs_count,
         })
 
-    messages.success(request, _("Vakansiya saqlanganlardan o'chirildi."))
+    if deleted_count:
+        messages.success(request, _("Vakansiya saqlanganlardan o'chirildi."))
+    else:
+        messages.info(request, _("Vakansiya saqlanganlarda topilmadi."))
+
+    next_url = _get_safe_next_url(request)
+    if next_url:
+        return redirect(next_url)
+
     return redirect("jobs:job_detail", pk=job.pk)
 
 @login_required

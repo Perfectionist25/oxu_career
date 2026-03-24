@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.core.mail import send_mail
-from django.db.models.signals import pre_save
+from django.db.models.signals import post_delete, pre_save
 from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -8,7 +8,7 @@ from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 
 from accounts.models import Notification
-from .models import Job, JobAlert, JobApplication
+from .models import Job, JobAlert, JobApplication, SavedJob
 
 
 @receiver(post_save, sender=JobApplication)
@@ -163,3 +163,18 @@ def check_job_alerts(sender, instance, created, **kwargs):
 
             alert.last_sent = timezone.now()
             alert.save()
+
+
+def sync_job_favorites_count(job_id):
+    favorites_total = SavedJob.objects.filter(job_id=job_id).count()
+    Job.objects.filter(pk=job_id).update(favorites_count=favorites_total)
+
+
+@receiver(post_save, sender=SavedJob)
+def update_job_favorites_on_save(sender, instance, **kwargs):
+    sync_job_favorites_count(instance.job_id)
+
+
+@receiver(post_delete, sender=SavedJob)
+def update_job_favorites_on_delete(sender, instance, **kwargs):
+    sync_job_favorites_count(instance.job_id)

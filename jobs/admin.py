@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 
 
-from .models import Job, JobApplication, SavedJob, JobAlert
+from .models import Job, JobApplication, SavedJob, ViewedJob, JobAlert
 
 
 class JobInline(admin.TabularInline):
@@ -220,6 +220,19 @@ class SavedJobAdmin(admin.ModelAdmin):
     search_fields = ("user__username", "job__title", "job__company__name")
     raw_id_fields = ["user", "job"]
     readonly_fields = ("created_at",)
+
+    @display(description=_("Job"))
+    def job_with_company(self, obj):
+        return f"{obj.job.title} - {obj.job.company.name}"
+
+
+@admin.register(ViewedJob)
+class ViewedJobAdmin(admin.ModelAdmin):
+    list_display = ("user", "job_with_company", "first_viewed_at", "last_viewed_at")
+    list_filter = ("first_viewed_at", "last_viewed_at")
+    search_fields = ("user__username", "job__title", "job__company__name")
+    raw_id_fields = ["user", "job"]
+    readonly_fields = ("first_viewed_at", "last_viewed_at")
 
     @display(description=_("Job"))
     def job_with_company(self, obj):

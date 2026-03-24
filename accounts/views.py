@@ -46,7 +46,7 @@ from .certificates import (
     get_viewable_student_certificates_queryset,
 )
 
-from jobs.models import Job, JobApplication
+from jobs.models import Job, JobApplication, SavedJob, ViewedJob
 from cvbuilder.models import CV
 from events.models import Event, EventParticipation
 from resources.models import Resource
@@ -758,11 +758,20 @@ def student_dashboard(request):
     resumes = CV.objects.filter(user=student_profile)
 
     applications = JobApplication.objects.filter(user=request.user)
+    saved_jobs = SavedJob.objects.filter(user=request.user).select_related("job", "job__company")
+    viewed_jobs = ViewedJob.objects.filter(user=request.user).select_related("job", "job__company")
     certificates = student_profile.certificates.order_by("-uploaded_at")
 
     recent_event_participations = EventParticipation.objects.filter(
         user=request.user
     ).select_related("event").order_by("-registered_at")[:5]
+    saved_job_ids = set(saved_jobs.values_list("job_id", flat=True))
+    recent_viewed_jobs = list(
+        viewed_jobs.filter(job__is_active=True).order_by("-last_viewed_at")[:5]
+    )
+
+    for item in recent_viewed_jobs:
+        item.job.is_saved = item.job_id in saved_job_ids
 
     context = {
         "student_profile": student_profile,
@@ -774,6 +783,8 @@ def student_dashboard(request):
             "accepted_applications": applications.filter(status="hired").count(),
             "profile_views": request.user.profile_views or 0,
             "certificates_uploaded": certificates.count(),
+            "saved_jobs": saved_jobs.count(),
+            "viewed_jobs": viewed_jobs.count(),
         },
         "recent_applications": applications.select_related('job', 'job__company').order_by('-created_at')[:5],
         "recommended_jobs": Job.objects.filter(
@@ -787,6 +798,7 @@ def student_dashboard(request):
         "resumes": resumes,
         "recent_event_participations": recent_event_participations,
         "recent_certificates": certificates[:3],
+        "recent_viewed_jobs": recent_viewed_jobs,
     }
 
     return render(request, "accounts/student_dashboard.html", context)

@@ -174,13 +174,38 @@
                 </div>
             </div>
         </div>
+
+        {% if is_student %}
+        <div class="student-jobs-toolbar card border-0 shadow-sm mb-4">
+            <div class="card-body p-3 p-md-4">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                    <div>
+                        <h3 class="h5 fw-bold text-dark mb-1">{% trans "Student job tracker" %}</h3>
+                        <p class="text-muted mb-0">{% trans "Keep interesting vacancies in saved jobs and quickly spot what you have already viewed." %}</p>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{% url 'jobs:saved_jobs' %}" class="tracker-pill tracker-pill-primary">
+                            <i class="fas fa-bookmark"></i>
+                            <span class="tracker-pill__label">{% trans "Saved Jobs" %}</span>
+                            <span class="tracker-pill__count" data-saved-count>{{ saved_jobs_count|default:0 }}</span>
+                        </a>
+                        <span class="tracker-pill tracker-pill-muted">
+                            <i class="fas fa-eye"></i>
+                            <span class="tracker-pill__label">{% trans "Viewed Jobs" %}</span>
+                            <span class="tracker-pill__count">{{ viewed_jobs_count|default:0 }}</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
         </form>
 
         {% if jobs %}
         <!-- Jobs Grid - 3 per row (BIGGER CARDS WITH FULL CONTENT) -->
         <div class="row g-3 g-md-4" id="jobsContainer">
             {% for job in jobs %}
-            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 job-item"
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 job-item {% if job.is_viewed %}is-viewed{% endif %}"
                  data-title="{{ job.title|lower }}"
                  data-market="{{ job.job_market }}"
                  data-company="{{ job.company.name|lower }}"
@@ -191,7 +216,7 @@
                  data-work-type="{{ job.work_type|default:'' }}"
                  data-created="{{ job.created_at|date:'Y-m-d' }}"
                  data-deadline="{{ job.expires_at|date:'Y-m-d' }}">
-                <div class="card border-0 shadow-sm h-100 job-card d-flex flex-column">
+                <div class="card border-0 shadow-sm h-100 job-card d-flex flex-column {% if job.is_viewed %}job-card--viewed{% endif %}">
                     <!-- Card Header -->
                     <div class="card-header bg-white border-0 pt-4 pb-3 px-4">
                         <div class="d-flex align-items-start">
@@ -214,15 +239,22 @@
                                 <p class="text-primary mb-2">{{ job.company.name }}</p>
                                 
                                 <!-- Time and Urgent Badge -->
-                                <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
                                     <small class="text-muted">
                                         <i class="fas fa-clock me-1"></i>{{ job.created_at|timesince }}
                                     </small>
-                                    {% if job.is_urgent %}
-                                    <span class="badge bg-danger">
-                                        <i class="fas fa-bolt me-1"></i>{% trans "Urgent" %}
-                                    </span>
-                                    {% endif %}
+                                    <div class="d-flex align-items-center flex-wrap justify-content-end gap-2">
+                                        {% if job.is_viewed %}
+                                        <span class="badge badge-viewed">
+                                            <i class="fas fa-check-circle me-1"></i>{% trans "Viewed" %}
+                                        </span>
+                                        {% endif %}
+                                        {% if job.is_urgent %}
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-bolt me-1"></i>{% trans "Urgent" %}
+                                        </span>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -348,9 +380,28 @@
                     <div class="card-footer bg-white border-0 pt-3 pb-4 px-4">
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="d-flex gap-2">
-                                <button class="btn btn-outline-primary" data-job-id="{{ job.id }}" onclick="toggleBookmark(this.dataset.jobId)" title="{% trans 'Bookmark' %}">
+                                {% if is_student %}
+                                <form method="post"
+                                      action="{% if job.is_saved %}{% url 'jobs:unsave_job' job.id %}{% else %}{% url 'jobs:save_job' job.id %}{% endif %}"
+                                      class="job-save-form"
+                                      data-job-id="{{ job.id }}"
+                                      data-save-url="{% url 'jobs:save_job' job.id %}"
+                                      data-unsave-url="{% url 'jobs:unsave_job' job.id %}"
+                                      data-saved="{% if job.is_saved %}true{% else %}false{% endif %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                    <button class="btn {% if job.is_saved %}btn-outline-warning{% else %}btn-outline-primary{% endif %} job-save-button"
+                                            type="submit"
+                                            title="{% trans 'Bookmark' %}">
+                                        <i class="{% if job.is_saved %}fas text-warning{% else %}far{% endif %} fa-bookmark me-1"></i>
+                                        <span class="job-save-label">{% if job.is_saved %}{% trans "Saved" %}{% else %}{% trans "Save" %}{% endif %}</span>
+                                    </button>
+                                </form>
+                                {% elif not user.is_authenticated %}
+                                <a href="{% url 'accounts:login' %}?next={{ request.get_full_path|urlencode }}" class="btn btn-outline-primary" title="{% trans 'Log in to save' %}">
                                     <i class="far fa-bookmark me-1"></i>{% trans "Save" %}
-                                </button>
+                                </a>
+                                {% endif %}
                                 <button class="btn btn-outline-primary" data-job-id="{{ job.id }}" onclick="shareJob(this.dataset.jobId)" title="{% trans 'Share' %}">
                                     <i class="fas fa-share-alt me-1"></i>{% trans "Share" %}
                                 </button>
@@ -489,6 +540,55 @@
     box-shadow: 0 10px 20px rgba(26, 86, 219, 0.18);
 }
 
+.student-jobs-toolbar {
+    background: linear-gradient(135deg, rgba(239, 246, 255, 0.96) 0%, rgba(248, 250, 252, 0.96) 100%);
+    border: 1px solid rgba(59, 130, 246, 0.12);
+}
+
+.tracker-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    border-radius: 999px;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.tracker-pill i {
+    font-size: 0.95rem;
+}
+
+.tracker-pill-primary {
+    background: linear-gradient(135deg, #012152 0%, #1d4ed8 100%);
+    color: #fff;
+}
+
+.tracker-pill-primary:hover {
+    color: #fff;
+}
+
+.tracker-pill-muted {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+.tracker-pill__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    height: 2rem;
+    padding: 0 0.55rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
+    font-size: 0.92rem;
+}
+
+.tracker-pill-muted .tracker-pill__count {
+    background: rgba(15, 23, 42, 0.08);
+}
+
 .text-white-80 {
     color: rgba(255, 255, 255, 0.8) !important;
 }
@@ -507,6 +607,22 @@
     transform: translateY(-5px);
     box-shadow: 0 15px 30px rgba(1, 33, 82, 0.15) !important;
     border-color: #3b82f6;
+}
+
+.job-card--viewed {
+    border-color: rgba(148, 163, 184, 0.35);
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.job-item.is-viewed .line-clamp-2,
+.job-item.is-viewed .text-primary {
+    color: #334155 !important;
+}
+
+.badge-viewed {
+    background: rgba(14, 165, 233, 0.14);
+    color: #0369a1;
+    border: 1px solid rgba(14, 165, 233, 0.2);
 }
 
 /* Card header */
@@ -548,6 +664,16 @@
     border-radius: 8px;
     font-weight: 500;
     padding: 0.5rem 1rem;
+}
+
+.btn-outline-warning {
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+}
+
+.job-save-form {
+    margin: 0;
 }
 
 .filter-action-btn {
@@ -794,41 +920,27 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    window.toggleBookmark = function(jobId) {
-        const button = document.querySelector(`button[data-job-id="${jobId}"]`);
-        if (!button) return;
-        const icon = button.querySelector('i');
-        if (!icon) return;
-        
-        // Toggle bookmark state
-        icon.classList.toggle('far');
-        icon.classList.toggle('fas');
-        icon.classList.toggle('text-warning');
-        
-        // Show notification
-        const isBookmarked = icon.classList.contains('fas');
-        const message = isBookmarked ? 
-            '{% trans "Job added to bookmarks!" %}' : 
-            '{% trans "Job removed from bookmarks!" %}';
-        
-        showNotification(message, isBookmarked ? 'success' : 'info');
-        
-        // Save to localStorage
-        saveBookmark(jobId, isBookmarked);
-    };
+    function updateSavedCounters(count) {
+        if (typeof count !== 'number') return;
+        document.querySelectorAll('[data-saved-count]').forEach((counter) => {
+            counter.textContent = count;
+        });
+    }
 
-    function saveBookmark(jobId, isBookmarked) {
-        let bookmarks = JSON.parse(localStorage.getItem('jobBookmarks') || '[]');
-        
-        if (isBookmarked) {
-            if (!bookmarks.includes(jobId)) {
-                bookmarks.push(jobId);
-            }
-        } else {
-            bookmarks = bookmarks.filter(id => id !== jobId);
-        }
-        
-        localStorage.setItem('jobBookmarks', JSON.stringify(bookmarks));
+    function updateSaveButton(form, saved) {
+        form.dataset.saved = saved ? 'true' : 'false';
+        form.action = saved ? form.dataset.unsaveUrl : form.dataset.saveUrl;
+
+        const button = form.querySelector('.job-save-button');
+        const icon = form.querySelector('i');
+        const label = form.querySelector('.job-save-label');
+
+        if (!button || !icon || !label) return;
+
+        button.classList.toggle('btn-outline-primary', !saved);
+        button.classList.toggle('btn-outline-warning', saved);
+        icon.className = `${saved ? 'fas text-warning' : 'far'} fa-bookmark me-1`;
+        label.textContent = saved ? '{% trans "Saved" %}' : '{% trans "Save" %}';
     }
 
     function showNotification(message, type = 'info') {
@@ -863,21 +975,55 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 3000);
     }
 
-    // Load bookmarks from localStorage and update UI
-    function loadBookmarks() {
-        const bookmarks = JSON.parse(localStorage.getItem('jobBookmarks') || '[]');
-        bookmarks.forEach(jobId => {
-            const button = document.querySelector(`button[data-job-id="${jobId}"]`);
-            if (button) {
-                const icon = button.querySelector('i');
-                icon.classList.remove('far');
-                icon.classList.add('fas', 'text-warning');
+    document.querySelectorAll('.job-save-form').forEach((form) => {
+        updateSaveButton(form, form.dataset.saved === 'true');
+
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const button = form.querySelector('.job-save-button');
+            const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]')?.value;
+            const shouldSave = form.dataset.saved !== 'true';
+            const actionUrl = shouldSave ? form.dataset.saveUrl : form.dataset.unsaveUrl;
+
+            if (!button || !csrfToken || !actionUrl) {
+                form.submit();
+                return;
+            }
+
+            button.disabled = true;
+
+            try {
+                const response = await fetch(actionUrl, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: new FormData(form),
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    throw new Error(data.error || 'Request failed');
+                }
+
+                updateSaveButton(form, Boolean(data.saved));
+                updateSavedCounters(data.saved_jobs_count);
+                showNotification(
+                    data.saved
+                        ? '{% trans "Job added to saved jobs!" %}'
+                        : '{% trans "Job removed from saved jobs!" %}',
+                    data.saved ? 'success' : 'info'
+                );
+            } catch (error) {
+                form.submit();
+            } finally {
+                button.disabled = false;
             }
         });
-    }
-
-    // Initialize
-    loadBookmarks();
+    });
 });
 </script>
 {% endblock %}
