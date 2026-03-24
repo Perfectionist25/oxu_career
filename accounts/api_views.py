@@ -31,6 +31,11 @@ from accounts.models import (
     AdminProfile,
     strip_system_generated_bio,
 )
+from accounts.oauth_utils import (
+    clear_oauth_redirect_uri,
+    get_oauth_redirect_uri,
+    remember_oauth_redirect_uri,
+)
 from accounts.views import create_user_activity, get_client_ip
 
 User = get_user_model()
@@ -109,13 +114,13 @@ def _save_user_avatar(user, picture):
 
 
 
-def get_oauth_config():
+def get_oauth_config(request=None):
     """Get OAuth configuration from settings"""
     return {
         'client_id': getattr(settings, 'OAUTH2_CLIENT_ID', ''),
         'client_secret': getattr(settings, 'OAUTH2_CLIENT_SECRET', ''),
         'base_url': getattr(settings, 'OAUTH2_BASE_URL', ''),
-        'redirect_uri': getattr(settings, 'OAUTH2_REDIRECT_URI', ''),
+        'redirect_uri': get_oauth_redirect_uri(request),
         'authorize_url': getattr(settings, 'OAUTH2_AUTHORIZE_URL', ''),
         'token_url': getattr(settings, 'OAUTH2_TOKEN_URL', ''),
         'userinfo_url': getattr(settings, 'OAUTH2_USERINFO_URL', ''),
@@ -125,13 +130,14 @@ def get_oauth_config():
 
 def build_oauth_authorize_url(request):
     """Build OAuth authorization URL with state parameter"""
-    config = get_oauth_config()
+    config = get_oauth_config(request=request)
 
     # Generate state parameter for CSRF protection
     import secrets
     state = secrets.token_urlsafe(32)
     request.session['oauth_state'] = state
     request.session['oauth_redirect'] = request.GET.get('next', reverse('accounts:student_dashboard'))
+    remember_oauth_redirect_uri(request)
 
 
     params = {
@@ -153,11 +159,11 @@ def build_oauth_authorize_url(request):
 
 
 
-def exchange_code_for_token(code: str) -> dict:
+def exchange_code_for_token(code: str, request=None) -> dict:
     """
     Exchange authorization code for access token
     """
-    config = get_oauth_config()
+    config = get_oauth_config(request=request)
 
     try:
         token_url = config["token_url"]
@@ -423,13 +429,15 @@ def oauth_callback(request):
 
 
         try:
-            token_data = exchange_code_for_token(code)
+            token_data = exchange_code_for_token(code, request=request)
         except Exception as e:
             logger.error(f"Token exchange error: {str(e)}")
             return Response(
                 {"error": "OAuth token service unavailable"},
                 status=status.HTTP_503_SERVICE_UNAVAILABLE
             )
+        finally:
+            clear_oauth_redirect_uri(request)
 
         access_token = token_data.get("access_token")
         if not access_token:

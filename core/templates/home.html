@@ -213,7 +213,7 @@
             {% trans "View All" %} <i class="fas fa-arrow-right ms-2"></i>
         </a>
         {% else %}
-        <a href="{{ OAUTH_AUTHORIZE_URL }}?response_type=code&client_id={{ OAUTH_CLIENT_ID }}&redirect_uri={{ OAUTH_REDIRECT_URI }}&scope=read profile&state=student_login" class="btn btn-outline-primary">
+        <a href="{% url 'accounts:oauth_login' %}" class="btn btn-outline-primary">
             {% trans "View All" %} <i class="fas fa-arrow-right ms-2"></i>
         </a>
         {% endif %}

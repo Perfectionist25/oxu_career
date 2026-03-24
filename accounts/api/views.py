@@ -17,6 +17,7 @@ from django.core.files.base import ContentFile
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from accounts.models import OAuthToken, StudentProfile, strip_system_generated_bio
+from accounts.oauth_utils import clear_oauth_redirect_uri, get_oauth_redirect_uri
 
 
 User = get_user_model()
@@ -128,6 +129,8 @@ def oauth_callback(request):
         return HttpResponseBadRequest("Invalid state")
     request.session.pop("oauth_state", None)
     next_url = request.session.pop("oauth_next", settings.OAUTH_SUCCESS_REDIRECT)
+    redirect_uri = get_oauth_redirect_uri(request)
+    clear_oauth_redirect_uri(request)
 
 
     token_response = requests.post(
@@ -137,7 +140,7 @@ def oauth_callback(request):
             "code": code,
             "client_id": settings.OAUTH_CLIENT_ID,
             "client_secret": settings.OAUTH_CLIENT_SECRET,
-            "redirect_uri": settings.OAUTH_REDIRECT_URI,
+            "redirect_uri": redirect_uri,
         },
         timeout=10,
     )

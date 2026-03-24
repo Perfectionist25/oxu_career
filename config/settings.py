@@ -96,7 +96,8 @@ CSRF_TRUSTED_ORIGINS = unique(
 
 
 SITE_URL = (os.getenv("SITE_URL") or os.getenv("PUBLIC_SITE_URL") or "").strip().rstrip("/")
-SITE_SCHEME = (os.getenv("SITE_SCHEME", "http").strip().lower() or "http")
+default_site_scheme = "http" if DEBUG else "https"
+SITE_SCHEME = (os.getenv("SITE_SCHEME", default_site_scheme).strip().lower() or default_site_scheme)
 if SITE_URL:
     pass
 else:

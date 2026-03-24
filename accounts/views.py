@@ -45,6 +45,7 @@ from .certificates import (
     can_user_view_student_certificate,
     get_viewable_student_certificates_queryset,
 )
+from .oauth_utils import remember_oauth_redirect_uri
 
 from jobs.models import Job, JobApplication, SavedJob, ViewedJob
 from cvbuilder.models import CV
@@ -73,11 +74,12 @@ def oauth_login(request):
     request.session["oauth_state"] = state
     request.session["oauth_next"] = request.GET.get("next", settings.OAUTH_SUCCESS_REDIRECT)
     request.session.set_expiry(getattr(settings, "OAUTH_STATE_TTL", 600))
+    redirect_uri = remember_oauth_redirect_uri(request)
 
     params = {
         "response_type": "code",
         "client_id": settings.OAUTH_CLIENT_ID,
-        "redirect_uri": settings.OAUTH_REDIRECT_URI,
+        "redirect_uri": redirect_uri,
         "scope": settings.OAUTH_SCOPE,
         "state": state,
     }
