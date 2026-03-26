@@ -4,8 +4,7 @@
 
 {% block content %}
 <div class="container-fluid px-0">
-    <!-- Hero Section with Background -->
-    <div class="bg-gradient-primary py-4 py-md-5" style="background: linear-gradient(135deg, #012152 0%, #1a56db 100%);">
+    <div class="bg-gradient-primary py-4 py-md-5">
         <div class="container">
             <div class="row">
                 <div class="col-12 text-center">
@@ -16,193 +15,198 @@
         </div>
     </div>
 
-    <!-- Main Content -->
     <div class="container-fluid px-3 px-lg-4 py-3 py-md-4">
         <form method="get" id="jobFilterForm">
-        <input type="hidden" name="job_market" id="jobMarketInput" value="{{ filters.job_market }}">
-        <!-- Search and Filters -->
-        <div class="card border-0 shadow-lg mb-4">
-            <div class="card-body p-3 p-md-4">
-                <div class="job-market-switch mb-3">
-                    <button type="button"
-                            class="job-market-pill {% if not filters.job_market %}is-active{% endif %}"
-                            data-job-market="">
-                        {% trans "All Jobs" %}
-                    </button>
-                    <button type="button"
-                            class="job-market-pill {% if filters.job_market == 'uzbekistan' %}is-active{% endif %}"
-                            data-job-market="uzbekistan">
-                        {% trans "Jobs in Uzbekistan" %}
-                    </button>
-                    <button type="button"
-                            class="job-market-pill {% if filters.job_market == 'abroad' %}is-active{% endif %}"
-                            data-job-market="abroad">
-                        {% trans "Jobs Abroad" %}
-                    </button>
-                </div>
+            <input type="hidden" name="job_market" id="jobMarketInput" value="{{ filters.job_market }}">
 
-                <div class="row g-2">
-                    <!-- Search Input -->
-                    <div class="col-xl-4 col-lg-6 col-md-12">
-                        <div class="input-group input-group-lg">
-                            <span class="input-group-text bg-white border-end-0 ps-3">
-                                <i class="fas fa-search text-primary"></i>
-                            </span>
-                            <input type="text"
-                                   class="form-control border-start-0 ps-2"
-                                   name="query"
-                                   id="searchInput"
-                                   value="{{ filters.query }}"
-                                   placeholder="{% trans 'Position, company or keywords...' %}">
-                        </div>
+            <div class="card border-0 shadow-lg mb-4 filter-shell">
+                <div class="card-body p-3 p-md-4">
+                    <div class="job-market-switch mb-3">
+                        <button type="button"
+                                class="job-market-pill {% if not filters.job_market %}is-active{% endif %}"
+                                data-job-market="">
+                            {% trans "All Jobs" %}
+                        </button>
+                        <button type="button"
+                                class="job-market-pill {% if filters.job_market == 'uzbekistan' %}is-active{% endif %}"
+                                data-job-market="uzbekistan">
+                            {% trans "Jobs in Uzbekistan" %}
+                        </button>
+                        <button type="button"
+                                class="job-market-pill {% if filters.job_market == 'abroad' %}is-active{% endif %}"
+                                data-job-market="abroad">
+                            {% trans "Jobs Abroad" %}
+                        </button>
                     </div>
-                    
-                    <!-- Filters -->
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-                        <select class="form-select form-select-lg" id="typeFilter" name="employment_type">
-                            <option value="">{% trans "All job types" %}</option>
-                            {% for value, label in employment_types %}
-                            <option value="{{ value }}" {% if filters.employment_type == value %}selected{% endif %}>{{ label }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-                        <select class="form-select form-select-lg" id="categoryFilter" name="industry">
-                            <option value="">{% trans "All industries" %}</option>
-                            {% for industry in industries %}
-                            <option value="{{ industry }}" {% if filters.industry == industry %}selected{% endif %}>{{ industry }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-                        <select class="form-select form-select-lg" id="experienceFilter" name="experience_level">
-                            <option value="">{% trans "Experience" %}</option>
-                            {% for value, label in experience_levels %}
-                            <option value="{{ value }}" {% if filters.experience_level == value %}selected{% endif %}>{{ label }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    
-                    <!-- Action Buttons -->
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-                        <div class="d-flex gap-2 h-100 align-items-stretch">
-                            <button class="btn btn-primary w-100 filter-action-btn" type="submit">
-                                <i class="fas fa-search me-1"></i>{% trans "Search" %}
-                            </button>
-                            <button class="btn btn-outline-primary w-100 filter-action-btn" type="button" data-bs-toggle="collapse" data-bs-target="#advancedFilters">
-                                <i class="fas fa-sliders-h me-1"></i>{% trans "Advanced" %}
-                            </button>
-                            <a class="btn btn-outline-secondary w-100 filter-action-btn" href="{% url 'jobs:list' %}">
-                                <i class="fas fa-redo me-1"></i>{% trans "Clear" %}
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Advanced Filters -->
-                <div class="collapse mt-3 pt-3 border-top" id="advancedFilters">
+
                     <div class="row g-2">
-                        <div class="col-xl-3 col-lg-4 col-md-6">
-                            <label class="form-label fw-semibold mb-1">{% trans "Work type" %}</label>
-                            <div class="d-flex flex-wrap gap-2">
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input work-type-filter" type="checkbox" value="remote" id="remoteWork" name="work_type" {% if 'remote' in filters.work_types %}checked{% endif %}>
-                                    <label class="form-check-label small" for="remoteWork">
-                                        <i class="fas fa-laptop-house me-1"></i>{% trans "Remote" %}
-                                    </label>
+                        <div class="col-xl-4 col-lg-6 col-md-12">
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text bg-white border-end-0 ps-3">
+                                    <i class="fas fa-search text-primary"></i>
+                                </span>
+                                <input type="text"
+                                       class="form-control border-start-0 ps-2"
+                                       name="query"
+                                       id="searchInput"
+                                       value="{{ filters.query }}"
+                                       placeholder="{% trans 'Position, company or keywords...' %}">
+                            </div>
+                        </div>
+
+                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                            <select class="form-select form-select-lg" id="typeFilter" name="employment_type">
+                                <option value="">{% trans "All job types" %}</option>
+                                {% for value, label in employment_types %}
+                                    <option value="{{ value }}" {% if filters.employment_type == value %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                            <select class="form-select form-select-lg" id="categoryFilter" name="industry">
+                                <option value="">{% trans "All industries" %}</option>
+                                {% for industry in industries %}
+                                    <option value="{{ industry }}" {% if filters.industry == industry %}selected{% endif %}>{{ industry }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                            <select class="form-select form-select-lg" id="experienceFilter" name="experience_level">
+                                <option value="">{% trans "Experience" %}</option>
+                                {% for value, label in experience_levels %}
+                                    <option value="{{ value }}" {% if filters.experience_level == value %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                            <div class="d-flex gap-2 h-100 align-items-stretch">
+                                <button class="btn btn-primary w-100 filter-action-btn" type="submit">
+                                    <i class="fas fa-search me-1"></i>{% trans "Search" %}
+                                </button>
+                                <button class="btn btn-outline-primary w-100 filter-action-btn"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#advancedFilters">
+                                    <i class="fas fa-sliders-h me-1"></i>{% trans "Advanced" %}
+                                </button>
+                                <a class="btn btn-outline-secondary w-100 filter-action-btn" href="{% url 'jobs:list' %}">
+                                    <i class="fas fa-redo me-1"></i>{% trans "Clear" %}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="collapse mt-3 pt-3 border-top" id="advancedFilters">
+                        <div class="row g-2">
+                            <div class="col-xl-3 col-lg-4 col-md-6">
+                                <label class="form-label fw-semibold mb-1">{% trans "Work type" %}</label>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input work-type-filter"
+                                               type="checkbox"
+                                               value="remote"
+                                               id="remoteWork"
+                                               name="work_type"
+                                               {% if 'remote' in filters.work_types %}checked{% endif %}>
+                                        <label class="form-check-label small" for="remoteWork">
+                                            <i class="fas fa-laptop-house me-1"></i>{% trans "Remote" %}
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input work-type-filter"
+                                               type="checkbox"
+                                               value="hybrid"
+                                               id="hybridWork"
+                                               name="work_type"
+                                               {% if 'hybrid' in filters.work_types %}checked{% endif %}>
+                                        <label class="form-check-label small" for="hybridWork">
+                                            <i class="fas fa-home-office me-1"></i>{% trans "Hybrid" %}
+                                        </label>
+                                    </div>
                                 </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input work-type-filter" type="checkbox" value="hybrid" id="hybridWork" name="work_type" {% if 'hybrid' in filters.work_types %}checked{% endif %}>
-                                    <label class="form-check-label small" for="hybridWork">
-                                        <i class="fas fa-home-office me-1"></i>{% trans "Hybrid" %}
-                                    </label>
+                            </div>
+
+                            <div class="col-xl-3 col-lg-4 col-md-6">
+                                <label class="form-label fw-semibold mb-1">{% trans "Salary range" %}</label>
+                                <select class="form-select" id="salaryFilter" name="salary_range">
+                                    <option value="">{% trans "Any salary" %}</option>
+                                    <option value="0-3000000" {% if filters.salary_range == '0-3000000' %}selected{% endif %}>{% trans 'Up to 3,000,000 UZS' %}</option>
+                                    <option value="3000000-6000000" {% if filters.salary_range == '3000000-6000000' %}selected{% endif %}>{% trans '3-6 million UZS' %}</option>
+                                    <option value="6000000-10000000" {% if filters.salary_range == '6000000-10000000' %}selected{% endif %}>{% trans '6-10 million UZS' %}</option>
+                                    <option value="10000000+" {% if filters.salary_range == '10000000+' %}selected{% endif %}>{% trans 'Over 10 million UZS' %}</option>
+                                </select>
+                            </div>
+
+                            <div class="col-xl-3 col-lg-4 col-md-6">
+                                <label class="form-label fw-semibold mb-1">{% trans "Date posted" %}</label>
+                                <select class="form-select" id="dateFilter" name="date_posted">
+                                    <option value="">{% trans "Any time" %}</option>
+                                    <option value="today" {% if filters.date_posted == 'today' %}selected{% endif %}>{% trans "Today" %}</option>
+                                    <option value="week" {% if filters.date_posted == 'week' %}selected{% endif %}>{% trans "Last 7 days" %}</option>
+                                    <option value="month" {% if filters.date_posted == 'month' %}selected{% endif %}>{% trans "Last 30 days" %}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-0 mt-3">
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                                <div>
+                                    <h2 class="fw-bold text-dark mb-1">{% trans "Found jobs" %}</h2>
+                                    <p class="text-muted mb-0" id="resultsCount">
+                                        {% if jobs %}
+                                            <strong>{{ jobs.paginator.count }}</strong> {% trans "jobs found" %}
+                                        {% else %}
+                                            {% trans "No jobs found" %}
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="text-muted small">{% trans "Sort by:" %}</span>
+                                    <select class="form-select w-auto" id="sortSelect" name="sort">
+                                        <option value="newest" {% if filters.sort == 'newest' or not filters.sort %}selected{% endif %}>{% trans "Newest" %}</option>
+                                        <option value="relevant" {% if filters.sort == 'relevant' %}selected{% endif %}>{% trans "Relevance" %}</option>
+                                        <option value="salary" {% if filters.sort == 'salary' %}selected{% endif %}>{% trans "Salary" %}</option>
+                                        <option value="deadline" {% if filters.sort == 'deadline' %}selected{% endif %}>{% trans "Deadline" %}</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="col-xl-3 col-lg-4 col-md-6">
-                            <label class="form-label fw-semibold mb-1">{% trans "Salary range" %}</label>
-                            <select class="form-select" id="salaryFilter" name="salary_range">
-                                <option value="">{% trans "Any salary" %}</option>
-                                <option value="0-3000000" {% if filters.salary_range == '0-3000000' %}selected{% endif %}>{% trans 'Up to 3,000,000 UZS' %}</option>
-                                <option value="3000000-6000000" {% if filters.salary_range == '3000000-6000000' %}selected{% endif %}>{% trans '3-6 million UZS' %}</option>
-                                <option value="6000000-10000000" {% if filters.salary_range == '6000000-10000000' %}selected{% endif %}>{% trans '6-10 million UZS' %}</option>
-                                <option value="10000000+" {% if filters.salary_range == '10000000+' %}selected{% endif %}>{% trans 'Over 10 million UZS' %}</option>
-                            </select>
-                        </div>
-                        
-                        <div class="col-xl-3 col-lg-4 col-md-6">
-                            <label class="form-label fw-semibold mb-1">{% trans "Date posted" %}</label>
-                            <select class="form-select" id="dateFilter" name="date_posted">
-                                <option value="">{% trans "Any time" %}</option>
-                                <option value="today" {% if filters.date_posted == 'today' %}selected{% endif %}>{% trans "Today" %}</option>
-                                <option value="week" {% if filters.date_posted == 'week' %}selected{% endif %}>{% trans "Last 7 days" %}</option>
-                                <option value="month" {% if filters.date_posted == 'month' %}selected{% endif %}>{% trans "Last 30 days" %}</option>
-                            </select>
-                        </div>
-                        
                     </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Results Header -->
-        <div class="row mb-3">
-            <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h2 class="fw-bold text-dark mb-1">{% trans "Found jobs" %}</h2>
-                        <p class="text-muted mb-0" id="resultsCount">
-                            {% if jobs %}
-                                <strong>{{ jobs.paginator.count }}</strong> {% trans "jobs found" %}
-                            {% else %}
-                                {% trans "No jobs found" %}
-                            {% endif %}
-                        </p>
+                    {% if is_student %}
+                    <div class="student-jobs-toolbar card border-0 shadow-sm mt-4 mb-0">
+                        <div class="card-body p-3 p-md-4">
+                            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                                <div>
+                                    <h3 class="h5 fw-bold text-dark mb-1">{% trans "Student job tracker" %}</h3>
+                                    <p class="text-muted mb-0">{% trans "Keep interesting vacancies in saved jobs and quickly spot what you have already viewed." %}</p>
+                                </div>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <a href="{% url 'jobs:saved_jobs' %}" class="tracker-pill tracker-pill-primary">
+                                        <i class="fas fa-bookmark"></i>
+                                        <span class="tracker-pill__label">{% trans "Saved Jobs" %}</span>
+                                        <span class="tracker-pill__count" data-saved-count>{{ saved_jobs_count|default:0 }}</span>
+                                    </a>
+                                    <span class="tracker-pill tracker-pill-muted">
+                                        <i class="fas fa-eye"></i>
+                                        <span class="tracker-pill__label">{% trans "Viewed Jobs" %}</span>
+                                        <span class="tracker-pill__count">{{ viewed_jobs_count|default:0 }}</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="text-muted small">{% trans "Sort by:" %}</span>
-                        <select class="form-select w-auto" id="sortSelect" name="sort">
-                            <option value="newest" {% if filters.sort == 'newest' or not filters.sort %}selected{% endif %}>{% trans "Newest" %}</option>
-                            <option value="relevant">{% trans "Relevance" %}</option>
-                            <option value="salary" {% if filters.sort == 'salary' %}selected{% endif %}>{% trans "Salary" %}</option>
-                            <option value="deadline" {% if filters.sort == 'deadline' %}selected{% endif %}>{% trans "Deadline" %}</option>
-                        </select>
-                    </div>
+                    {% endif %}
                 </div>
             </div>
-        </div>
-
-        {% if is_student %}
-        <div class="student-jobs-toolbar card border-0 shadow-sm mb-4">
-            <div class="card-body p-3 p-md-4">
-                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-                    <div>
-                        <h3 class="h5 fw-bold text-dark mb-1">{% trans "Student job tracker" %}</h3>
-                        <p class="text-muted mb-0">{% trans "Keep interesting vacancies in saved jobs and quickly spot what you have already viewed." %}</p>
-                    </div>
-                    <div class="d-flex flex-wrap gap-2">
-                        <a href="{% url 'jobs:saved_jobs' %}" class="tracker-pill tracker-pill-primary">
-                            <i class="fas fa-bookmark"></i>
-                            <span class="tracker-pill__label">{% trans "Saved Jobs" %}</span>
-                            <span class="tracker-pill__count" data-saved-count>{{ saved_jobs_count|default:0 }}</span>
-                        </a>
-                        <span class="tracker-pill tracker-pill-muted">
-                            <i class="fas fa-eye"></i>
-                            <span class="tracker-pill__label">{% trans "Viewed Jobs" %}</span>
-                            <span class="tracker-pill__count">{{ viewed_jobs_count|default:0 }}</span>
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
         </form>
 
         {% if jobs %}
-        <!-- Jobs Grid - 3 per row (BIGGER CARDS WITH FULL CONTENT) -->
         <div class="row g-3 g-md-4" id="jobsContainer">
             {% for job in jobs %}
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 job-item {% if job.is_viewed %}is-viewed{% endif %}"
@@ -216,171 +220,161 @@
                  data-work-type="{{ job.work_type|default:'' }}"
                  data-created="{{ job.created_at|date:'Y-m-d' }}"
                  data-deadline="{{ job.expires_at|date:'Y-m-d' }}">
-                <div class="card border-0 shadow-sm h-100 job-card d-flex flex-column {% if job.is_viewed %}job-card--viewed{% endif %}">
-                    <!-- Card Header -->
-                    <div class="card-header bg-white border-0 pt-4 pb-3 px-4">
-                        <div class="d-flex align-items-start">
-                            <!-- Company Logo -->
-                            <div class="flex-shrink-0 me-3">
+
+                <article class="job-card job-card-modern {% if job.is_viewed %}job-card--viewed{% endif %}">
+                    <div class="job-card__top-line"></div>
+
+                    <div class="job-card__header">
+                        <div class="job-card__company-wrap">
+                            <div class="job-card__logo-box">
                                 {% if job.company.logo %}
-                                    <img src="{{ job.company.logo.url }}" alt="{{ job.company.name }}" 
-                                         class="rounded-circle" width="56" height="56" style="object-fit: cover;">
+                                    <img src="{{ job.company.logo.url }}" alt="{{ job.company.name }}" class="job-card__logo">
                                 {% else %}
-                                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" 
-                                         style="width: 56px; height: 56px;">
-                                        <i class="fas fa-building text-white fa-lg"></i>
+                                    <div class="job-card__logo job-card__logo--placeholder">
+                                        <i class="fas fa-building"></i>
                                     </div>
                                 {% endif %}
                             </div>
-                            
-                            <!-- Job Title and Company -->
-                            <div class="flex-grow-1">
-                                <h5 class="fw-bold text-dark mb-1 line-clamp-2">{{ job.title }}</h5>
-                                <p class="text-primary mb-2">{{ job.company.name }}</p>
-                                
-                                <!-- Time and Urgent Badge -->
-                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
-                                    <small class="text-muted">
-                                        <i class="fas fa-clock me-1"></i>{{ job.created_at|timesince }}
-                                    </small>
-                                    <div class="d-flex align-items-center flex-wrap justify-content-end gap-2">
-                                        {% if job.is_viewed %}
-                                        <span class="badge badge-viewed">
-                                            <i class="fas fa-check-circle me-1"></i>{% trans "Viewed" %}
+
+                            <div class="job-card__headline">
+                                <div class="job-card__company-row">
+                                    <span class="job-card__company">{{ job.company.name }}</span>
+
+                                    {% if job.is_featured %}
+                                        <span class="job-pill job-pill--featured">
+                                            <i class="fas fa-star"></i> {% trans "Featured" %}
                                         </span>
-                                        {% endif %}
-                                        {% if job.is_urgent %}
-                                        <span class="badge bg-danger">
-                                            <i class="fas fa-bolt me-1"></i>{% trans "Urgent" %}
+                                    {% endif %}
+
+                                    {% if job.is_urgent %}
+                                        <span class="job-pill job-pill--urgent">
+                                            <i class="fas fa-bolt"></i> {% trans "Urgent" %}
                                         </span>
-                                        {% endif %}
-                                    </div>
+                                    {% endif %}
+
+                                    {% if job.is_viewed %}
+                                        <span class="job-pill job-pill--viewed">
+                                            <i class="fas fa-check-circle"></i> {% trans "Viewed" %}
+                                        </span>
+                                    {% endif %}
                                 </div>
+
+                                <h3 class="job-card__title line-clamp-2">{{ job.title }}</h3>
+
+                                <div class="job-card__submeta">
+                                    <span>
+                                        <i class="fas fa-clock"></i>
+                                        {{ job.created_at|timesince }}
+                                    </span>
+                                    <span>
+                                        <i class="fas fa-briefcase"></i>
+                                        {{ job.get_experience_level_display|default:_("Experience not specified") }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="job-card__salary-box">
+                            <div class="job-card__salary-label">{% trans "Salary" %}</div>
+                            <div class="job-card__salary-value">
+                                {% if job.salary_min or job.salary_max %}
+                                    {% if job.hide_salary %}
+                                        {% trans "Negotiable salary" %}
+                                    {% else %}
+                                        {% if job.salary_min and job.salary_max %}
+                                            {{ job.salary_min|floatformat:0 }} - {{ job.salary_max|floatformat:0 }} {{ job.get_currency_display }}
+                                        {% elif job.salary_min %}
+                                            {{ job.salary_min|floatformat:0 }}+ {{ job.get_currency_display }}
+                                        {% elif job.salary_max %}
+                                            {% trans "Up to" %} {{ job.salary_max|floatformat:0 }} {{ job.get_currency_display }}
+                                        {% endif %}
+                                        {% if job.salary_negotiable %}
+                                            <span class="job-card__salary-note-inline">({% trans "negotiable" %})</span>
+                                        {% endif %}
+                                    {% endif %}
+                                {% else %}
+                                    <span class="text-muted">{% trans "Not specified" %}</span>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Card Body - Takes available space -->
-                    <div class="card-body px-4 pt-0 pb-3 flex-grow-1">
-                        <!-- Job Type Badges -->
-                        <div class="d-flex flex-wrap gap-2 mb-3">
-                            {% if job.employment_type %}
-                            <span class="badge bg-primary">
-                                <i class="fas fa-briefcase me-1"></i>{{ job.get_employment_type_display }}
-                            </span>
-                            {% endif %}
 
-                            <span class="badge {% if job.is_abroad %}bg-dark{% else %}bg-light text-dark border{% endif %}">
-                                <i class="fas {% if job.is_abroad %}fa-earth-americas{% else %}fa-location-dot{% endif %} me-1"></i>
-                                {{ job.get_job_market_display }}
+                    <div class="job-card__badges">
+                        {% if job.employment_type %}
+                            <span class="job-pill job-pill--primary">
+                                <i class="fas fa-briefcase"></i>
+                                {{ job.get_employment_type_display }}
                             </span>
-                            
-                            {% if job.work_type == "remote" %}
-                            <span class="badge bg-warning text-dark">
-                                <i class="fas fa-laptop-house me-1"></i>{% trans "Remote" %}
-                            </span>
-                            {% endif %}
+                        {% endif %}
 
-                            {% if job.work_type == "hybrid" %}
-                            <span class="badge bg-info text-dark">
-                                <i class="fas fa-home-office me-1"></i>{% trans "Hybrid" %}
-                            </span>
-                            {% endif %}
-                            
-                            {% if job.is_featured %}
-                            <span class="badge bg-success">
-                                <i class="fas fa-star me-1"></i>{% trans "Featured" %}
-                            </span>
-                            {% endif %}
-                        </div>
+                        <span class="job-pill {% if job.is_abroad %}job-pill--dark{% else %}job-pill--light{% endif %}">
+                            <i class="fas {% if job.is_abroad %}fa-earth-americas{% else %}fa-location-dot{% endif %}"></i>
+                            {{ job.get_job_market_display }}
+                        </span>
 
-                        <!-- Job Details Grid -->
-                        <div class="row g-3 mb-4">
-                            <!-- Location -->
-                            <div class="col-12">
-                                <div class="d-flex align-items-center text-muted mb-2">
-                                    <i class="fas fa-map-marker-alt me-3 text-primary" style="min-width: 20px;"></i>
-                                    <span class="text-truncate">
-                                        {{ job.location_display }}
-                                    </span>
+                        {% if job.work_type == "remote" %}
+                            <span class="job-pill job-pill--warning">
+                                <i class="fas fa-laptop-house"></i>
+                                {% trans "Remote" %}
+                            </span>
+                        {% endif %}
+
+                        {% if job.work_type == "hybrid" %}
+                            <span class="job-pill job-pill--info">
+                                <i class="fas fa-home-office"></i>
+                                {% trans "Hybrid" %}
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="job-card__body">
+                        <div class="job-card__info-grid">
+                            <div class="job-info">
+                                <div class="job-info__icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div class="job-info__content">
+                                    <div class="job-info__label">{% trans "Location" %}</div>
+                                    <div class="job-info__value">{{ job.location_display }}</div>
                                 </div>
                             </div>
-                            
-                            <!-- Experience -->
-                            <div class="col-12">
-                                <div class="d-flex align-items-center text-muted mb-2">
-                                    <i class="fas fa-briefcase me-3 text-primary" style="min-width: 20px;"></i>
-                                    <span>{{ job.get_experience_level_display|default:_("Experience not specified") }}</span>
+
+                            <div class="job-info">
+                                <div class="job-info__icon">
+                                    <i class="fas fa-calendar-times"></i>
                                 </div>
-                            </div>
-                            
-                            <!-- Salary -->
-                            {% if job.salary_min or job.salary_max %}
-                            <div class="col-12">
-                                <div class="d-flex align-items-center text-success fw-bold mb-2">
-                                    <i class="fas fa-money-bill-wave me-3 text-primary" style="min-width: 20px;"></i>
-                                    <span>
-                                        {% if job.hide_salary %}
-                                            {% trans "Negotiable salary" %}
-                                        {% else %}
-                                            {% if job.salary_min and job.salary_max %}
-                                                {{ job.salary_min|floatformat:0 }} - {{ job.salary_max|floatformat:0 }} {{ job.get_currency_display }}
-                                            {% elif job.salary_min %}
-                                                {{ job.salary_min|floatformat:0 }}+ {{ job.get_currency_display }}
-                                            {% elif job.salary_max %}
-                                                Up to {{ job.salary_max|floatformat:0 }} {{ job.get_currency_display }}
-                                            {% endif %}
-                                            {% if job.salary_negotiable %}({% trans "negotiable" %}){% endif %}
-                                        {% endif %}
-                                    </span>
-                                </div>
-                            </div>
-                            {% endif %}
-                            
-                            <!-- Deadline -->
-                            <div class="col-12">
-                                <div class="d-flex align-items-center text-muted mb-3">
-                                    <i class="fas fa-calendar-times me-3 text-primary" style="min-width: 20px;"></i>
-                                    <span>
-                                        <strong>{% trans "Deadline:" %}</strong>
+                                <div class="job-info__content">
+                                    <div class="job-info__label">{% trans "Deadline" %}</div>
+                                    <div class="job-info__value">
                                         {% if job.expires_at %}
                                             {{ job.expires_at|date:"d.m.Y" }}
                                         {% else %}
                                             {% trans "Not specified" %}
                                         {% endif %}
-                                    </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Short Description -->
                         {% if job.short_description %}
-                        <div class="mb-4">
-                            <p class="text-muted mb-2">{{ job.short_description|truncatewords:25 }}</p>
-                        </div>
+                            <div class="job-card__description">
+                                {{ job.short_description|truncatewords:24 }}
+                            </div>
                         {% endif %}
 
-                        <!-- Skills Preview -->
                         {% if job.skills_required %}
-                        <div class="mb-4">
-                            <h6 class="fw-semibold text-dark mb-2">{% trans "Required Skills:" %}</h6>
-                            <div class="d-flex flex-wrap gap-2">
-                                {% for skill in job.skills_required|slice:":6" %}
-                                <span class="badge bg-light text-dark border py-2 px-3">{{ skill }}</span>
-                                {% endfor %}
-                                {% if job.skills_required|length > 6 %}
-                                <span class="badge bg-light text-dark border py-2 px-3">+{{ job.skills_required|length|add:"-6" }}</span>
-                                {% endif %}
+                            <div class="job-card__skills">
+                                <div class="job-card__skills-title">{% trans "Required Skills:" %}</div>
+                                <div class="job-card__skills-list">
+                                    <span class="job-skill">{{ job.skills_required }}</span>
+                                </div>
                             </div>
-                        </div>
                         {% endif %}
                     </div>
-                    
-                    <!-- Card Footer -->
-                    <div class="card-footer bg-white border-0 pt-3 pb-4 px-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-flex gap-2">
-                                {% if is_student %}
+
+                    <div class="job-card__footer">
+                        <div class="job-card__left-actions">
+                            {% if is_student %}
                                 <form method="post"
                                       action="{% if job.is_saved %}{% url 'jobs:unsave_job' job.id %}{% else %}{% url 'jobs:save_job' job.id %}{% endif %}"
                                       class="job-save-form"
@@ -390,67 +384,73 @@
                                       data-saved="{% if job.is_saved %}true{% else %}false{% endif %}">
                                     {% csrf_token %}
                                     <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                                    <button class="btn {% if job.is_saved %}btn-outline-warning{% else %}btn-outline-primary{% endif %} job-save-button"
+                                    <button class="btn {% if job.is_saved %}btn-outline-warning{% else %}btn-outline-primary{% endif %} job-save-button job-action-btn"
                                             type="submit"
                                             title="{% trans 'Bookmark' %}">
                                         <i class="{% if job.is_saved %}fas text-warning{% else %}far{% endif %} fa-bookmark me-1"></i>
                                         <span class="job-save-label">{% if job.is_saved %}{% trans "Saved" %}{% else %}{% trans "Save" %}{% endif %}</span>
                                     </button>
                                 </form>
-                                {% elif not user.is_authenticated %}
-                                <a href="{% url 'accounts:login' %}?next={{ request.get_full_path|urlencode }}" class="btn btn-outline-primary" title="{% trans 'Log in to save' %}">
+                            {% elif not user.is_authenticated %}
+                                <a href="{% url 'accounts:login' %}?next={{ request.get_full_path|urlencode }}"
+                                   class="btn btn-outline-primary job-action-btn"
+                                   title="{% trans 'Log in to save' %}">
                                     <i class="far fa-bookmark me-1"></i>{% trans "Save" %}
                                 </a>
-                                {% endif %}
-                                <button class="btn btn-outline-primary" data-job-id="{{ job.id }}" onclick="shareJob(this.dataset.jobId)" title="{% trans 'Share' %}">
-                                    <i class="fas fa-share-alt me-1"></i>{% trans "Share" %}
-                                </button>
-                            </div>
-                            <a href="{% url 'jobs:job_detail' job.id %}" class="btn btn-primary px-4">
-                                {% trans "View Details" %} <i class="fas fa-arrow-right ms-2"></i>
-                            </a>
+                            {% endif %}
+
+                            <button class="btn btn-outline-primary job-action-btn"
+                                    data-job-id="{{ job.id }}"
+                                    onclick="shareJob(this.dataset.jobId)"
+                                    title="{% trans 'Share' %}">
+                                <i class="fas fa-share-alt me-1"></i>{% trans "Share" %}
+                            </button>
                         </div>
+
+                        <a href="{% url 'jobs:job_detail' job.id %}" class="btn btn-primary job-card__cta">
+                            {% trans "View Details" %}
+                            <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
                     </div>
-                </div>
+                </article>
             </div>
             {% endfor %}
         </div>
 
-        <!-- Pagination -->
         {% if jobs.has_other_pages %}
         <div class="d-flex justify-content-center mt-5">
             <nav aria-label="{% trans 'Job pagination' %}">
                 <ul class="pagination">
                     {% if jobs.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ jobs.previous_page_number }}{% if query_string %}&{{ query_string }}{% endif %}" aria-label="{% trans 'Previous' %}">
-                            <i class="fas fa-chevron-left"></i>
-                        </a>
-                    </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ jobs.previous_page_number }}{% if query_string %}&{{ query_string }}{% endif %}" aria-label="{% trans 'Previous' %}">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        </li>
                     {% else %}
-                    <li class="page-item disabled">
-                        <span class="page-link"><i class="fas fa-chevron-left"></i></span>
-                    </li>
+                        <li class="page-item disabled">
+                            <span class="page-link"><i class="fas fa-chevron-left"></i></span>
+                        </li>
                     {% endif %}
 
                     {% for i in jobs.paginator.page_range %}
                         {% if jobs.number == i %}
-                        <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                            <li class="page-item active"><span class="page-link">{{ i }}</span></li>
                         {% else %}
-                        <li class="page-item"><a class="page-link" href="?page={{ i }}{% if query_string %}&{{ query_string }}{% endif %}">{{ i }}</a></li>
+                            <li class="page-item"><a class="page-link" href="?page={{ i }}{% if query_string %}&{{ query_string }}{% endif %}">{{ i }}</a></li>
                         {% endif %}
                     {% endfor %}
 
                     {% if jobs.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ jobs.next_page_number }}{% if query_string %}&{{ query_string }}{% endif %}" aria-label="{% trans 'Next' %}">
-                            <i class="fas fa-chevron-right"></i>
-                        </a>
-                    </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ jobs.next_page_number }}{% if query_string %}&{{ query_string }}{% endif %}" aria-label="{% trans 'Next' %}">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
                     {% else %}
-                    <li class="page-item disabled">
-                        <span class="page-link"><i class="fas fa-chevron-right"></i></span>
-                    </li>
+                        <li class="page-item disabled">
+                            <span class="page-link"><i class="fas fa-chevron-right"></i></span>
+                        </li>
                     {% endif %}
                 </ul>
             </nav>
@@ -458,14 +458,13 @@
         {% endif %}
 
         {% else %}
-        <!-- Empty State -->
         <div class="text-center py-5">
             <div class="mb-4">
                 <i class="fas fa-briefcase fa-5x text-muted mb-4"></i>
                 <h3 class="text-muted mb-3">{% trans "No jobs found" %}</h3>
                 <p class="text-muted mb-4">{% trans "Try changing your search criteria or wait for new jobs to be posted" %}</p>
             </div>
-            <div class="d-flex justify-content-center gap-3">
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
                 <a class="btn btn-primary btn-lg" href="{% url 'jobs:list' %}">
                     <i class="fas fa-redo me-2"></i>{% trans "Clear filters" %}
                 </a>
@@ -476,7 +475,6 @@
         </div>
         {% endif %}
 
-        <!-- Quick Stats -->
         {% if stats %}
         <div class="row mt-5 pt-5 border-top">
             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 text-center mb-4">
@@ -501,15 +499,22 @@
 </div>
 
 <style>
-/* Full width container */
 .container-fluid {
     padding-left: 0;
     padding-right: 0;
 }
 
-/* Hero section */
 .bg-gradient-primary {
     background: linear-gradient(135deg, #012152 0%, #1a56db 100%) !important;
+}
+
+.text-white-80 {
+    color: rgba(255, 255, 255, 0.82) !important;
+}
+
+.filter-shell {
+    border-radius: 24px;
+    overflow: hidden;
 }
 
 .job-market-switch {
@@ -524,7 +529,7 @@
     color: #1e3a8a;
     border-radius: 999px;
     padding: 0.6rem 1rem;
-    font-weight: 600;
+    font-weight: 700;
     transition: all 0.2s ease;
 }
 
@@ -543,6 +548,7 @@
 .student-jobs-toolbar {
     background: linear-gradient(135deg, rgba(239, 246, 255, 0.96) 0%, rgba(248, 250, 252, 0.96) 100%);
     border: 1px solid rgba(59, 130, 246, 0.12);
+    border-radius: 20px;
 }
 
 .tracker-pill {
@@ -551,7 +557,7 @@
     gap: 0.6rem;
     border-radius: 999px;
     padding: 0.75rem 1rem;
-    font-weight: 600;
+    font-weight: 700;
     text-decoration: none;
 }
 
@@ -589,300 +595,459 @@
     background: rgba(15, 23, 42, 0.08);
 }
 
-.text-white-80 {
-    color: rgba(255, 255, 255, 0.8) !important;
-}
-
-/* LARGER Job cards with full content */
-.job-card {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.form-select,
+.form-control {
     border-radius: 12px;
-    border: 1px solid #e5e7eb;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+    border: 1px solid #d1d5db;
+    transition: all 0.3s ease;
 }
 
-.job-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(1, 33, 82, 0.15) !important;
+.form-select:focus,
+.form-control:focus {
     border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.job-card--viewed {
-    border-color: rgba(148, 163, 184, 0.35);
-    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+.filter-action-btn {
+    padding: 0.45rem 0.75rem;
+    font-size: 0.875rem;
+    border-radius: 12px;
+    white-space: nowrap;
 }
 
-.job-item.is-viewed .line-clamp-2,
-.job-item.is-viewed .text-primary {
-    color: #334155 !important;
-}
-
-.badge-viewed {
-    background: rgba(14, 165, 233, 0.14);
-    color: #0369a1;
-    border: 1px solid rgba(14, 165, 233, 0.2);
-}
-
-/* Card header */
-.card-header {
-    border-bottom: 1px solid #e5e7eb;
-}
-
-/* Card body takes available space */
-.card-body.flex-grow-1 {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-}
-
-/* Badges */
-.badge {
-    font-size: 0.85rem;
-    font-weight: 500;
-    padding: 0.5rem 0.85rem;
-    border-radius: 8px;
-}
-
-/* Primary button */
 .btn-primary {
     background: linear-gradient(135deg, #012152 0%, #1a56db 100%);
     border: none;
-    border-radius: 8px;
-    font-weight: 500;
-    padding: 0.5rem 1.25rem;
+    border-radius: 12px;
+    font-weight: 700;
+    padding: 0.65rem 1.2rem;
     transition: all 0.3s ease;
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(1, 33, 82, 0.2);
+    box-shadow: 0 10px 20px rgba(1, 33, 82, 0.2);
 }
 
-.btn-outline-primary {
-    border-radius: 8px;
-    font-weight: 500;
-    padding: 0.5rem 1rem;
+.btn-outline-primary,
+.btn-outline-warning,
+.btn-outline-secondary {
+    border-radius: 12px;
+    font-weight: 700;
 }
 
-.btn-outline-warning {
-    border-radius: 8px;
-    font-weight: 500;
-    padding: 0.5rem 1rem;
+.job-card-modern {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-radius: 24px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease;
+}
+
+.job-card-modern:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 24px 48px rgba(15, 23, 42, 0.15);
+    border-color: rgba(37, 99, 235, 0.25);
+}
+
+.job-card--viewed {
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    border-color: rgba(148, 163, 184, 0.28);
+}
+
+.job-card__top-line {
+    height: 5px;
+    background: linear-gradient(90deg, #012152 0%, #1a56db 55%, #38bdf8 100%);
+}
+
+.job-card__header {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.35rem 1.35rem 1rem;
+}
+
+.job-card__company-wrap {
+    display: flex;
+    gap: 1rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.job-card__logo-box {
+    flex-shrink: 0;
+}
+
+.job-card__logo {
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    object-fit: cover;
+    background: #eef2ff;
+    border: 1px solid rgba(59, 130, 246, 0.12);
+}
+
+.job-card__logo--placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1d4ed8;
+    font-size: 1.15rem;
+    background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
+}
+
+.job-card__headline {
+    min-width: 0;
+    flex: 1;
+}
+
+.job-card__company-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .45rem;
+    align-items: center;
+    margin-bottom: .4rem;
+}
+
+.job-card__company {
+    font-size: .92rem;
+    font-weight: 800;
+    color: #1d4ed8;
+}
+
+.job-card__title {
+    margin: 0 0 .55rem;
+    font-size: 1.08rem;
+    line-height: 1.35;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.job-card__submeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .85rem;
+    font-size: .85rem;
+    color: #64748b;
+}
+
+.job-card__submeta span {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+}
+
+.job-card__salary-box {
+    min-width: 170px;
+    max-width: 220px;
+    padding: .95rem 1rem;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(1, 33, 82, 0.04) 0%, rgba(26, 86, 219, 0.08) 100%);
+    border: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+.job-card__salary-label {
+    font-size: .78rem;
+    font-weight: 800;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin-bottom: .35rem;
+}
+
+.job-card__salary-value {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.35;
+}
+
+.job-card__salary-note-inline {
+    color: #0f766e;
+    font-size: .82rem;
+}
+
+.job-card__badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .55rem;
+    padding: 0 1.35rem 1rem;
+}
+
+.job-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    border-radius: 999px;
+    padding: .48rem .8rem;
+    font-size: .78rem;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.job-pill--primary {
+    background: linear-gradient(135deg, #012152 0%, #1a56db 100%);
+    color: #fff;
+}
+
+.job-pill--light {
+    background: #f8fafc;
+    color: #0f172a;
+    border: 1px solid #e2e8f0;
+}
+
+.job-pill--dark {
+    background: #0f172a;
+    color: #fff;
+}
+
+.job-pill--warning {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.job-pill--info {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.job-pill--featured {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.job-pill--urgent {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.job-pill--viewed {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+.job-card__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 0 1.35rem 1.1rem;
+}
+
+.job-card__info-grid {
+    display: grid;
+    gap: .8rem;
+    margin-bottom: 1rem;
+}
+
+.job-info {
+    display: flex;
+    align-items: flex-start;
+    gap: .75rem;
+    padding: .85rem .9rem;
+    border-radius: 16px;
+    background: rgba(248, 250, 252, 0.9);
+    border: 1px solid #e2e8f0;
+}
+
+.job-info__icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #dbeafe;
+    color: #1d4ed8;
+    flex-shrink: 0;
+}
+
+.job-info__label {
+    font-size: .74rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #64748b;
+    font-weight: 800;
+    margin-bottom: .2rem;
+}
+
+.job-info__value {
+    font-size: .92rem;
+    color: #0f172a;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.job-card__description {
+    color: #475569;
+    font-size: .94rem;
+    line-height: 1.65;
+    margin-bottom: 1rem;
+}
+
+.job-card__skills-title {
+    font-size: .8rem;
+    font-weight: 800;
+    color: #334155;
+    margin-bottom: .55rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.job-card__skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.job-skill {
+    display: inline-flex;
+    align-items: center;
+    padding: .55rem .85rem;
+    border-radius: 999px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #334155;
+    font-size: .82rem;
+    font-weight: 700;
+}
+
+.job-card__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.35rem 1.35rem;
+    border-top: 1px solid rgba(226, 232, 240, 0.8);
+    background: rgba(255, 255, 255, 0.78);
+}
+
+.job-card__left-actions {
+    display: flex;
+    gap: .65rem;
+    flex-wrap: wrap;
 }
 
 .job-save-form {
     margin: 0;
 }
 
-.filter-action-btn {
-    padding: 0.45rem 0.75rem;
-    font-size: 0.875rem;
-    border-radius: 8px;
+.job-action-btn {
+    border-radius: 12px;
+    font-weight: 700;
+    padding: .62rem 1rem;
+}
+
+.job-card__cta {
+    border-radius: 14px;
+    font-weight: 700;
+    padding: .72rem 1.2rem;
     white-space: nowrap;
 }
 
-/* Form controls */
-.form-select, .form-control {
-    border-radius: 8px;
-    border: 1px solid #d1d5db;
-    transition: all 0.3s ease;
-}
-
-.form-select:focus, .form-control:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-/* Grid spacing */
-.row.g-3 > [class*='col-'] {
-    padding-left: 12px;
-    padding-right: 12px;
-}
-
-.row.g-4 > [class*='col-'] {
-    padding-left: 16px;
-    padding-right: 16px;
-}
-
-/* Text utilities */
 .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
 }
 
-.text-truncate {
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+#jobsContainer .job-item {
+    display: flex;
 }
 
-/* Initially show all job items */
-.job-item {
-    display: block !important;
+#jobsContainer .job-item .job-card-modern {
+    flex: 1;
+    width: 100%;
 }
 
-/* Skills badges */
-.bg-light {
-    background-color: #f8f9fa !important;
-    border: 1px solid #dee2e6;
+.pagination .page-link {
+    border-radius: 12px;
+    margin: 0 4px;
+    border: none;
+    color: #1d4ed8;
+    font-weight: 700;
+    box-shadow: 0 3px 8px rgba(15, 23, 42, 0.06);
 }
 
-/* Card content spacing */
-.card-body > * {
-    margin-bottom: 1rem;
-}
-
-.card-body > *:last-child {
-    margin-bottom: 0;
-}
-
-/* Responsive adjustments */
-@media (max-width: 1200px) {
-    .col-xl-4 {
-        flex: 0 0 33.333333%;
-        max-width: 33.333333%;
-    }
-    .job-card {
-        min-height: 450px;
-    }
+.pagination .page-item.active .page-link {
+    background: linear-gradient(135deg, #012152 0%, #1a56db 100%);
+    color: #fff;
 }
 
 @media (max-width: 992px) {
-    .col-lg-4 {
-        flex: 0 0 50%;
-        max-width: 50%;
+    .job-card__header {
+        flex-direction: column;
     }
-    .job-card {
-        min-height: 420px;
-    }
-    .card-header, .card-body, .card-footer {
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
+
+    .job-card__salary-box {
+        min-width: 100%;
+        max-width: 100%;
     }
 }
 
 @media (max-width: 768px) {
-    .col-md-6 {
-        flex: 0 0 100%;
-        max-width: 100%;
-    }
-    .job-card {
-        min-height: auto;
-    }
-    
     .container-fluid.px-3 {
         padding-left: 12px !important;
         padding-right: 12px !important;
     }
-    
-    .btn-lg {
-        padding: 0.5rem 0.75rem;
-        font-size: 0.85rem;
-    }
-    
-    /* Stack buttons on mobile */
-    .card-footer .d-flex {
+
+    .job-card__footer {
         flex-direction: column;
-        gap: 1rem;
+        align-items: stretch;
     }
-    
-    .card-footer .btn {
+
+    .job-card__left-actions {
+        width: 100%;
+    }
+
+    .job-card__left-actions .btn,
+    .job-card__cta {
         width: 100%;
         justify-content: center;
     }
 }
 
 @media (max-width: 576px) {
-    .col-sm-12 {
-        flex: 0 0 100%;
-        max-width: 100%;
+    .job-card__header,
+    .job-card__badges,
+    .job-card__body,
+    .job-card__footer {
+        padding-left: 1rem;
+        padding-right: 1rem;
     }
-    
-    .job-card {
-        min-height: auto;
+
+    .job-card__company-wrap {
+        gap: .8rem;
     }
-    
-    .card-header {
-        padding-top: 1.5rem !important;
-        padding-bottom: 1rem !important;
+
+    .job-card__logo {
+        width: 54px;
+        height: 54px;
+        border-radius: 15px;
     }
-    
-    .card-body {
-        padding: 1rem !important;
+
+    .job-card__title {
+        font-size: 1rem;
     }
-    
-    .card-footer {
-        padding: 1rem !important;
+
+    .job-pill {
+        font-size: .73rem;
+        padding: .45rem .7rem;
     }
-    
+
     .display-5 {
         font-size: 2rem !important;
     }
-    
+
     .lead {
         font-size: 1rem !important;
     }
-    
-    /* Adjust logo size for mobile */
-    .card-header img,
-    .card-header .rounded-circle {
-        width: 48px !important;
-        height: 48px !important;
-    }
-}
-
-/* Small screen optimizations */
-@media (max-width: 480px) {
-    .container-fluid.px-3 {
-        padding-left: 8px !important;
-        padding-right: 8px !important;
-    }
-    
-    .row.g-3 > [class*='col-'] {
-        padding-left: 6px !important;
-        padding-right: 6px !important;
-    }
-    
-    .card-header, .card-body, .card-footer {
-        padding-left: 0.75rem !important;
-        padding-right: 0.75rem !important;
-    }
-    
-    .badge {
-        font-size: 0.75rem !important;
-        padding: 0.4rem 0.6rem !important;
-    }
-}
-
-/* Ensure cards fill height evenly */
-#jobsContainer .job-item {
-    display: flex;
-}
-
-#jobsContainer .job-item .job-card {
-    flex: 1;
-    width: 100%;
-}
-
-/* Improve text readability */
-.card-body {
-    line-height: 1.5;
-}
-
-.card-body .text-muted {
-    color: #6c757d !important;
-    font-size: 0.95rem;
-}
-
-/* Spacing between sections */
-.mb-4 {
-    margin-bottom: 1.5rem !important;
 }
 </style>
 
@@ -891,6 +1056,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const jobFilterForm = document.getElementById('jobFilterForm');
     const jobMarketInput = document.getElementById('jobMarketInput');
     const jobMarketButtons = document.querySelectorAll('[data-job-market]');
+    const sortSelect = document.getElementById('sortSelect');
 
     jobMarketButtons.forEach((button) => {
         button.addEventListener('click', function() {
@@ -900,23 +1066,31 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    if (sortSelect && jobFilterForm) {
+        sortSelect.addEventListener('change', function() {
+            jobFilterForm.submit();
+        });
+    }
+
     window.subscribeToNotifications = function() {
         showNotification('{% trans "Notification subscription feature will be implemented soon!" %}', 'info');
     };
 
     window.shareJob = function(jobId) {
         const jobUrl = `${window.location.origin}/jobs/${jobId}/`;
-        
+
         if (navigator.share) {
             navigator.share({
                 title: '{% trans "Check out this job opportunity!" %}',
                 text: '{% trans "I found this job that might interest you" %}',
                 url: jobUrl,
             });
-        } else {
+        } else if (navigator.clipboard) {
             navigator.clipboard.writeText(jobUrl).then(() => {
                 showNotification('{% trans "Link copied to clipboard!" %}', 'success');
             });
+        } else {
+            showNotification(jobUrl, 'info');
         }
     };
 
@@ -944,7 +1118,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showNotification(message, type = 'info') {
-        // Create notification element
         const notification = document.createElement('div');
         notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
         notification.style.cssText = `
@@ -955,7 +1128,9 @@ document.addEventListener('DOMContentLoaded', function() {
             min-width: 250px;
             max-width: 350px;
             font-size: 0.85rem;
-            padding: 0.5rem 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 14px;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.15);
         `;
         notification.innerHTML = `
             <div class="d-flex align-items-center">
@@ -964,10 +1139,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" style="padding: 0.5rem;"></button>
             </div>
         `;
-        
+
         document.body.appendChild(notification);
-        
-        // Auto remove after 3 seconds
+
         setTimeout(() => {
             if (notification.parentNode) {
                 notification.remove();
@@ -1011,6 +1185,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 updateSaveButton(form, Boolean(data.saved));
                 updateSavedCounters(data.saved_jobs_count);
+
                 showNotification(
                     data.saved
                         ? '{% trans "Job added to saved jobs!" %}'
