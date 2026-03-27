@@ -5,88 +5,102 @@
 {% block title %}{{ job.title }} - {{ job.company.name }} - OXU Career{% endblock %}
 
 {% block content %}
-<div class="container-fluid py-4">
-    <div class="row">
-        <!-- Основной контент -->
+<div class="container-fluid py-4 job-detail-page">
+    <div class="row g-4">
+        <!-- Main content -->
         <div class="col-lg-8">
-            <!-- Хлебные крошки -->
-            <nav aria-label="{% trans 'breadcrumb' %}" class="mb-4">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{% url 'jobs:list' %}">{% trans "Jobs" %}</a></li>
-                    <li class="breadcrumb-item active">{{ job.title }}</li>
+            <!-- Breadcrumb -->
+            <nav aria-label="{% trans 'breadcrumb' %}" class="mb-3 mb-lg-4">
+                <ol class="breadcrumb job-breadcrumb mb-0">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'jobs:list' %}" class="text-decoration-none">
+                            {% trans "Jobs" %}
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ job.title }}</li>
                 </ol>
             </nav>
 
-            <!-- Заголовок вакансии -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-body">
-                    <div class="row align-items-start">
+            <!-- Hero block -->
+            <div class="card border-0 shadow-sm overflow-hidden mb-4 job-hero-card">
+                <div class="job-hero-bg"></div>
+                <div class="card-body position-relative p-4 p-xl-5">
+                    <div class="row g-4 align-items-start">
                         <div class="col-md-8">
-                            <h1 class="h2 fw-bold text-primary mb-3">{{ job.title }}</h1>
-                            
-                            <div class="d-flex flex-wrap gap-3 mb-3">
-                                <div class="d-flex align-items-center text-muted">
-                                    <i class="fas fa-building me-2"></i>
-                                    <strong>{{ job.company.name }}</strong>
+                            <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+                                {% if is_viewed %}
+                                    <span class="badge badge-viewed">
+                                        <i class="fas fa-check-circle me-1"></i>{% trans "Viewed" %}
+                                    </span>
+                                {% endif %}
+
+                                {% if job.remote_work %}
+                                    <span class="badge bg-success-subtle text-success-emphasis border border-success-subtle">
+                                        <i class="fas fa-laptop-house me-1"></i>{% trans "Remote work" %}
+                                    </span>
+                                {% endif %}
+
+                                {% if job.hybrid_work %}
+                                    <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle">
+                                        <i class="fas fa-balance-scale me-1"></i>{% trans "Hybrid" %}
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            <h1 class="display-6 fw-bold mb-3 text-primary-emphasis job-title">
+                                {{ job.title }}
+                            </h1>
+
+                            <div class="d-flex flex-wrap gap-3 gap-lg-4 text-muted small mb-3 mb-lg-4">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-building me-2 text-primary"></i>
+                                    <strong class="text-dark">{{ job.company.name }}</strong>
                                 </div>
-                                <div class="d-flex align-items-center text-muted">
-                                    <i class="fas {% if job.is_abroad %}fa-earth-americas{% else %}fa-location-dot{% endif %} me-2"></i>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas {% if job.is_abroad %}fa-earth-americas{% else %}fa-location-dot{% endif %} me-2 text-primary"></i>
                                     <span>{{ job.get_job_market_display }}</span>
                                 </div>
-                                <div class="d-flex align-items-center text-muted">
-                                    <i class="fas fa-map-marker-alt me-2"></i>
-                                    {{ job.location_display }}
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-map-marker-alt me-2 text-primary"></i>
+                                    <span>{{ job.location_display }}</span>
                                 </div>
-                                <div class="d-flex align-items-center text-muted">
-                                    <i class="fas fa-clock me-2"></i>
-                                    {{ job.get_employment_type_display }}
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-clock me-2 text-primary"></i>
+                                    <span>{{ job.get_employment_type_display }}</span>
                                 </div>
-                                {% if job.remote_work %}
-                                <span class="badge bg-success">
-                                    <i class="fas fa-laptop-house me-1"></i>{% trans "Remote work" %}
-                                </span>
-                                {% endif %}
-                                {% if job.hybrid_work %}
-                                <span class="badge bg-info">
-                                    <i class="fas fa-balance-scale me-1"></i>{% trans "Hybrid" %}
-                                </span>
-                                {% endif %}
-                                {% if is_viewed %}
-                                <span class="badge badge-viewed">
-                                    <i class="fas fa-check-circle me-1"></i>{% trans "Viewed" %}
-                                </span>
-                                {% endif %}
                             </div>
 
-                            <!-- Зарплата -->
                             <div class="mb-4">
-                                <h5 class="text-success fw-bold">
-                                    {{ job.salary_range }}
+                                <div class="d-flex flex-wrap align-items-center gap-2">
+                                    <h4 class="mb-0 text-success fw-bold">
+                                        {{ job.salary_range }}
+                                    </h4>
                                     {% if job.salary_negotiable %}
-                                        <span class="badge bg-warning text-dark ms-2">{% trans "Negotiable" %}</span>
+                                        <span class="badge bg-warning text-dark">
+                                            {% trans "Negotiable" %}
+                                        </span>
                                     {% endif %}
-                                </h5>
+                                </div>
                             </div>
 
-                            <!-- Действия -->
-                            <div class="d-flex flex-wrap gap-2">
+                            <div class="d-flex flex-wrap gap-2 gap-lg-3">
                                 {% if user.is_authenticated and is_student_or_alumni %}
                                     {% if has_applied %}
-                                        <button class="btn btn-success" disabled>
+                                        <button class="btn btn-success btn-lg" disabled>
                                             <i class="fas fa-check me-2"></i>{% trans "Application submitted" %}
                                         </button>
                                     {% else %}
-                                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#applyModal">
+                                        <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#applyModal">
                                             <i class="fas fa-paper-plane me-2"></i>{% trans "Apply" %}
                                         </button>
                                     {% endif %}
-                                    
+
                                     <form method="post"
                                           action="{% if is_saved %}{% url 'jobs:unsave_job' job.id %}{% else %}{% url 'jobs:save_job' job.id %}{% endif %}"
                                           class="save-job-detail-form">
                                         {% csrf_token %}
                                         <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                                        <button type="submit" class="btn {% if is_saved %}btn-outline-danger{% else %}btn-outline-primary{% endif %}">
+                                        <button type="submit" class="btn btn-lg {% if is_saved %}btn-outline-danger{% else %}btn-outline-primary{% endif %}">
                                             <i class="fas fa-bookmark me-2"></i>
                                             {% if is_saved %}
                                                 {% trans "Remove from saved" %}
@@ -95,49 +109,64 @@
                                             {% endif %}
                                         </button>
                                     </form>
-                                    <a href="{% url 'jobs:saved_jobs' %}" class="btn btn-outline-secondary">
+
+                                    <a href="{% url 'jobs:saved_jobs' %}" class="btn btn-lg btn-outline-secondary">
                                         <i class="fas fa-layer-group me-2"></i>{% trans "Saved Jobs" %}
                                     </a>
                                 {% elif not user.is_authenticated %}
-                                    <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-primary">
+                                    <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-primary btn-lg">
                                         <i class="fas fa-sign-in-alt me-2"></i>{% trans "Log in to apply" %}
                                     </a>
                                 {% endif %}
 
                                 {% if user.is_authenticated and can_edit %}
                                     <div class="btn-group">
-                                        <a href="{% url 'jobs:job_edit' job.id %}" class="btn btn-outline-secondary">
+                                        <a href="{% url 'jobs:job_edit' job.id %}" class="btn btn-outline-secondary btn-lg">
                                             <i class="fas fa-edit me-2"></i>{% trans "Edit" %}
                                         </a>
                                         {% if user.is_employer %}
-                                        <a href="{% url 'jobs:employer_applications' %}" class="btn btn-outline-info">
-                                            <i class="fas fa-users me-2"></i>{% trans "Applications" %} ({{ job.applications_count }})
-                                        </a>
+                                            <a href="{% url 'jobs:employer_applications' %}" class="btn btn-outline-info btn-lg">
+                                                <i class="fas fa-users me-2"></i>{% trans "Applications" %} ({{ job.applications_count }})
+                                            </a>
                                         {% endif %}
                                     </div>
                                 {% endif %}
                             </div>
                         </div>
-                        
-                        <div class="col-md-4 text-center">
-                            {% if job.company.logo %}
-                                <img src="{{ job.company.logo.url }}" alt="{{ job.company.name }}" 
-                                     class="img-fluid rounded mb-3" style="max-height: 120px;">
-                            {% else %}
-                                <div class="bg-light rounded d-flex align-items-center justify-content-center mb-3" 
-                                     style="height: 120px;">
-                                    <i class="fas fa-building text-muted fa-3x"></i>
-                                </div>
-                            {% endif %}
-                            
-                            <div class="text-muted small">
-                                <div class="mb-1">
-                                    <i class="fas fa-eye me-1"></i>
-                                    {{ job.views_count }} {% trans "views" %}
-                                </div>
-                                <div>
-                                    <i class="fas fa-users me-1"></i>
-                                    {{ job.applications_count }} {% trans "applications" %}
+
+                        <div class="col-md-4">
+                            <div class="card border-0 shadow-sm h-100 company-mini-card">
+                                <div class="card-body text-center p-4">
+                                    <div class="company-logo-wrap mx-auto mb-3">
+                                        {% if job.company.logo %}
+                                            <img src="{{ job.company.logo.url }}"
+                                                 alt="{{ job.company.name }}"
+                                                 class="img-fluid rounded-4 company-logo-img">
+                                        {% else %}
+                                            <div class="company-logo-placeholder rounded-4 d-flex align-items-center justify-content-center">
+                                                <i class="fas fa-building text-muted fa-3x"></i>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+
+                                    <h5 class="mb-2">{{ job.company.name }}</h5>
+
+                                    {% if job.company.is_verified %}
+                                        <span class="badge bg-success mb-3">
+                                            <i class="fas fa-check-circle me-1"></i>{% trans "Verified" %}
+                                        </span>
+                                    {% endif %}
+
+                                    <div class="job-stats mt-3">
+                                        <div class="job-stat-item">
+                                            <i class="fas fa-eye me-2 text-primary"></i>
+                                            <span>{{ job.views_count }} {% trans "views" %}</span>
+                                        </div>
+                                        <div class="job-stat-item">
+                                            <i class="fas fa-users me-2 text-primary"></i>
+                                            <span>{{ job.applications_count }} {% trans "applications" %}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -145,57 +174,72 @@
                 </div>
             </div>
 
-            <!-- Описание вакансии -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">
-                        <i class="fas fa-file-alt me-2 text-primary"></i>
-                        {% trans "About the job" %}
-                    </h5>
+            <!-- About the job -->
+            <div class="card border-0 shadow-sm mb-4 section-card">
+                <div class="card-header bg-white border-0 pb-0">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-file-alt text-primary"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-1">{% trans "About the job" %}</h5>
+                            <p class="text-muted small mb-0">{% trans "Overview and details of the vacancy" %}</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body pt-3">
                     <div class="mb-4">
-                        <h6 class="text-primary">{% trans "Short description" %}</h6>
-                        <p class="lead">{{ job.short_description }}</p>
+                        <h6 class="text-primary fw-semibold mb-2">{% trans "Short description" %}</h6>
+                        <p class="lead mb-0 job-lead">{{ job.short_description }}</p>
                     </div>
 
-                    <div class="mb-4">
-                        <h6 class="text-primary">{% trans "Detailed description" %}</h6>
-                        <div class="job-description">
+                    <div>
+                        <h6 class="text-primary fw-semibold mb-2">{% trans "Detailed description" %}</h6>
+                        <div class="job-rich-text job-description">
                             {{ job.description|linebreaks }}
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Обязанности и требования -->
-            <div class="row">
-                <div class="col-md-6 mb-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-header bg-light">
-                            <h6 class="mb-0">
-                                <i class="fas fa-tasks me-2 text-primary"></i>
-                                {% trans "Main responsibilities" %}
-                            </h6>
+            <!-- Responsibilities and requirements -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm h-100 section-card">
+                        <div class="card-header bg-white border-0 pb-0">
+                            <div class="section-header">
+                                <div class="section-icon">
+                                    <i class="fas fa-tasks text-primary"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">{% trans "Main responsibilities" %}</h6>
+                                    <p class="text-muted small mb-0">{% trans "What the role includes" %}</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <div class="job-responsibilities">
+                        <div class="card-body pt-3">
+                            <div class="job-rich-text job-responsibilities">
                                 {{ job.responsibilities|linebreaks }}
                             </div>
                         </div>
                     </div>
                 </div>
-                
-                <div class="col-md-6 mb-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-header bg-light">
-                            <h6 class="mb-0">
-                                <i class="fas fa-graduation-cap me-2 text-primary"></i>
-                                {% trans "Requirements" %}
-                            </h6>
+
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm h-100 section-card">
+                        <div class="card-header bg-white border-0 pb-0">
+                            <div class="section-header">
+                                <div class="section-icon">
+                                    <i class="fas fa-graduation-cap text-primary"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">{% trans "Requirements" %}</h6>
+                                    <p class="text-muted small mb-0">{% trans "What the candidate should know" %}</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <div class="job-requirements">
+                        <div class="card-body pt-3">
+                            <div class="job-rich-text job-requirements">
                                 {{ job.requirements|linebreaks }}
                             </div>
                         </div>
@@ -203,73 +247,141 @@
                 </div>
             </div>
 
-            <!-- Навыки -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">
-                        <i class="fas fa-code me-2 text-primary"></i>
-                        {% trans "Skills" %}
-                    </h5>
+            <!-- Skills -->
+            <div class="card border-0 shadow-sm mb-4 section-card">
+                <div class="card-header bg-white border-0 pb-0">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-code text-primary"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-1">{% trans "Skills" %}</h5>
+                            <p class="text-muted small mb-0">{% trans "Required and preferred skills for this role" %}</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div class="row">
+                <div class="card-body pt-3">
+                    <div class="row g-4">
                         <div class="col-md-6">
-                            <h6 class="text-primary">{% trans "Required skills" %}</h6>
+                            <h6 class="text-primary fw-semibold mb-3">{% trans "Required skills" %}</h6>
                             <div class="skills-tags">
                                 {% for skill in job.skills_required.split %}
-                                    <span class="badge bg-primary me-2 mb-2">{{ skill.strip }}</span>
+                                    <span class="badge skill-badge bg-primary-subtle text-primary-emphasis border border-primary-subtle mb-2 me-2">
+                                        {{ skill.strip }}
+                                    </span>
                                 {% endfor %}
                             </div>
                         </div>
+
                         {% if job.preferred_skills %}
-                        <div class="col-md-6">
-                            <h6 class="text-primary">{% trans "Preferred skills" %}</h6>
-                            <div class="skills-tags">
-                                {% for skill in job.preferred_skills.split %}
-                                    <span class="badge bg-secondary me-2 mb-2">{{ skill.strip }}</span>
-                                {% endfor %}
+                            <div class="col-md-6">
+                                <h6 class="text-primary fw-semibold mb-3">{% trans "Preferred skills" %}</h6>
+                                <div class="skills-tags">
+                                    {% for skill in job.preferred_skills.split %}
+                                        <span class="badge skill-badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle mb-2 me-2">
+                                            {{ skill.strip }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
                             </div>
-                        </div>
                         {% endif %}
                     </div>
                 </div>
             </div>
 
-            <!-- Преимущества -->
+            <!-- Benefits -->
             {% if job.benefits %}
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">
-                        <i class="fas fa-gift me-2 text-primary"></i>
-                        {% trans "Working conditions and benefits" %}
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="job-benefits">
-                        {{ job.benefits|linebreaks }}
+                <div class="card border-0 shadow-sm mb-4 section-card">
+                    <div class="card-header bg-white border-0 pb-0">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-gift text-primary"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">{% trans "Working conditions and benefits" %}</h5>
+                                <p class="text-muted small mb-0">{% trans "Perks, bonuses and workplace conditions" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pt-3">
+                        <div class="job-rich-text job-benefits">
+                            {{ job.benefits|linebreaks }}
+                        </div>
                     </div>
                 </div>
-            </div>
+            {% endif %}
+
+            <!-- Similar jobs -->
+            {% if similar_jobs %}
+                <div class="card border-0 shadow-sm mb-4 section-card">
+                    <div class="card-header bg-white border-0 pb-0">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-random text-primary"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">{% trans "Similar jobs" %}</h5>
+                                <p class="text-muted small mb-0">{% trans "Other vacancies that may interest you" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pt-3">
+                        <div class="row g-3">
+                            {% for similar_job in similar_jobs %}
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="card h-100 border job-similar-card">
+                                        <div class="card-body">
+                                            <h6 class="card-title mb-2">
+                                                <a href="{% url 'jobs:job_detail' similar_job.id %}" class="text-decoration-none stretched-link">
+                                                    {{ similar_job.title }}
+                                                </a>
+                                            </h6>
+
+                                            <p class="card-text small text-muted mb-3">
+                                                {{ similar_job.company.name }}
+                                            </p>
+
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="badge bg-primary-subtle text-primary-emphasis">
+                                                    {{ similar_job.get_employment_type_display }}
+                                                </span>
+                                                <small class="text-muted">{{ similar_job.created_at|timesince }}</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
             {% endif %}
         </div>
 
-        <!-- Боковая панель -->
+        <!-- Sidebar -->
         <div class="col-lg-4">
-            <!-- Информация о компании -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-light">
-                    <h6 class="mb-0">
-                        <i class="fas fa-building me-2 text-primary"></i>
-                        {% trans "About the company" %}
-                    </h6>
+            <!-- Company info -->
+            <div class="card border-0 shadow-sm mb-4 section-card sidebar-card">
+                <div class="card-header bg-white border-0 pb-0">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-building text-primary"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">{% trans "About the company" %}</h6>
+                            <p class="text-muted small mb-0">{% trans "Employer details and profile" %}</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body pt-3">
                     <div class="text-center mb-3">
                         {% if job.company.logo %}
-                            <img src="{{ job.company.logo.url }}" alt="{{ job.company.name }}" 
-                                 class="img-fluid rounded mb-3" style="max-height: 80px;">
+                            <img src="{{ job.company.logo.url }}"
+                                 alt="{{ job.company.name }}"
+                                 class="img-fluid rounded-4 mb-3 company-sidebar-logo">
                         {% endif %}
+
                         <h5 class="mb-2">{{ job.company.name }}</h5>
+
                         {% if job.company.is_verified %}
                             <span class="badge bg-success mb-3">
                                 <i class="fas fa-check-circle me-1"></i>{% trans "Verified" %}
@@ -278,28 +390,30 @@
                     </div>
 
                     {% if job.company.description %}
-                        <p class="small">{{ job.company.description|truncatewords:30 }}</p>
+                        <p class="small text-muted mb-3">
+                            {{ job.company.description|truncatewords:30 }}
+                        </p>
                     {% endif %}
 
                     <div class="company-info small">
                         {% if job.company.industry %}
-                            <div class="d-flex justify-content-between py-1 border-bottom">
+                            <div class="info-row">
                                 <span class="text-muted">{% trans "Industry" %}:</span>
-                                <span>{{ job.company.industry }}</span>
+                                <span class="fw-semibold">{{ job.company.industry }}</span>
                             </div>
                         {% endif %}
-                        
+
                         {% if job.company.company_size %}
-                            <div class="d-flex justify-content-between py-1 border-bottom">
+                            <div class="info-row">
                                 <span class="text-muted">{% trans "Company size" %}:</span>
-                                <span>{{ job.company.get_company_size_display }}</span>
+                                <span class="fw-semibold">{{ job.company.get_company_size_display }}</span>
                             </div>
                         {% endif %}
-                        
+
                         {% if job.company.address %}
-                            <div class="d-flex justify-content-between py-1 border-bottom">
+                            <div class="info-row">
                                 <span class="text-muted">{% trans "Address" %}:</span>
-                                <span>{{ job.company.address }}</span>
+                                <span class="fw-semibold">{{ job.company.address }}</span>
                             </div>
                         {% endif %}
                     </div>
@@ -312,34 +426,43 @@
                 </div>
             </div>
 
-            <!-- Детали вакансии -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-light">
-                    <h6 class="mb-0">
-                        <i class="fas fa-info-circle me-2 text-primary"></i>
-                        {% trans "Job details" %}
-                    </h6>
+            <!-- Job details -->
+            <div class="card border-0 shadow-sm mb-4 section-card">
+                <div class="card-header bg-white border-0 pb-0">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-info-circle text-primary"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">{% trans "Job details" %}</h6>
+                            <p class="text-muted small mb-0">{% trans "Core vacancy information" %}</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body pt-3">
                     <div class="job-details small">
-                        <div class="d-flex justify-content-between py-2 border-bottom">
+                        <div class="info-row">
                             <span class="text-muted">{% trans "Experience level" %}:</span>
                             <span class="fw-semibold">{{ job.get_experience_level_display }}</span>
                         </div>
-                        <div class="d-flex justify-content-between py-2 border-bottom">
+
+                        <div class="info-row">
                             <span class="text-muted">{% trans "Education level" %}:</span>
                             <span class="fw-semibold">{{ job.get_education_level_display }}</span>
                         </div>
-                        <div class="d-flex justify-content-between py-2 border-bottom">
+
+                        <div class="info-row">
                             <span class="text-muted">{% trans "Employment type" %}:</span>
                             <span class="fw-semibold">{{ job.get_employment_type_display }}</span>
                         </div>
-                        <div class="d-flex justify-content-between py-2 border-bottom">
+
+                        <div class="info-row">
                             <span class="text-muted">{% trans "Created date" %}:</span>
                             <span class="fw-semibold">{{ job.created_at|date:"d.m.Y" }}</span>
                         </div>
+
                         {% if job.expires_at %}
-                            <div class="d-flex justify-content-between py-2">
+                            <div class="info-row">
                                 <span class="text-muted">{% trans "Deadline" %}:</span>
                                 <span class="fw-semibold text-danger">{{ job.expires_at|date:"d.m.Y" }}</span>
                             </div>
@@ -348,30 +471,37 @@
                 </div>
             </div>
 
-            <!-- Контактная информация -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-light">
-                    <h6 class="mb-0">
-                        <i class="fas fa-envelope me-2 text-primary"></i>
-                        {% trans "Contact information" %}
-                    </h6>
+            <!-- Contact info -->
+            <div class="card border-0 shadow-sm section-card">
+                <div class="card-header bg-white border-0 pb-0">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-envelope text-primary"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">{% trans "Contact information" %}</h6>
+                            <p class="text-muted small mb-0">{% trans "How to reach the employer" %}</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body pt-3">
                     <div class="contact-info small">
                         <div class="mb-2">
                             <i class="fas fa-envelope me-2 text-muted"></i>
-                            <a class="text-dark" href="mailto:{{ job.contact_email }}">{{ job.contact_email }}</a>
+                            <a class="text-dark text-decoration-none" href="mailto:{{ job.contact_email }}">{{ job.contact_email }}</a>
                         </div>
+
                         {% if job.contact_person %}
                             <div class="mb-2">
                                 <i class="fas fa-user me-2 text-muted"></i>
                                 {{ job.contact_person }}
                             </div>
                         {% endif %}
+
                         {% if job.application_url %}
                             <div class="mt-3">
-                                <a href="{{ job.application_url }}" target="_blank" class="btn btn-outline-primary text-dark btn-sm w-100">
-                                    <i class="fas text-dark fa-external-link-alt me-2"></i>{% trans "Application link" %}
+                                <a href="{{ job.application_url }}" target="_blank" class="btn btn-outline-primary btn-sm w-100">
+                                    <i class="fas fa-external-link-alt me-2"></i>{% trans "Application link" %}
                                 </a>
                             </div>
                         {% endif %}
@@ -380,69 +510,39 @@
             </div>
         </div>
     </div>
-
-    <!-- Похожие вакансии -->
-    {% if similar_jobs %}
-    <div class="row mt-5">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">
-                        <i class="fas fa-random me-2 text-primary"></i>
-                        {% trans "Similar jobs" %}
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        {% for similar_job in similar_jobs %}
-                        <div class="col-md-6 col-lg-4 mb-3">
-                            <div class="card h-100 border">
-                                <div class="card-body">
-                                    <h6 class="card-title">
-                                        <a href="{% url 'jobs:job_detail' similar_job.id %}" class="text-decoration-none">
-                                            {{ similar_job.title }}
-                                        </a>
-                                    </h6>
-                                    <p class="card-text small text-muted mb-2">{{ similar_job.company.name }}</p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="badge bg-primary">{{ similar_job.get_employment_type_display }}</span>
-                                        <small class="text-muted">{{ similar_job.created_at|timesince }}</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
 </div>
 
-<!-- Модальное окно для отклика -->
+<!-- Apply modal -->
 {% if user.is_authenticated and is_student_or_alumni and not has_applied %}
 <div class="modal fade" id="applyModal" tabindex="-1" aria-labelledby="applyModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
             <div class="modal-header">
                 <h5 class="modal-title" id="applyModalLabel">
-                    <i class="fas fa-paper-plane me-2"></i>{% trans "Apply" %}
+                    <i class="fas fa-paper-plane me-2 text-primary"></i>{% trans "Apply" %}
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
             </div>
+
             <form method="post" action="{% url 'jobs:apply_for_job' job.id %}">
                 {% csrf_token %}
                 <div class="modal-body">
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>
-                        {% trans "You are about to apply for" %} <strong>{{ job.title }}</strong> {% trans "position" %}
+                    <div class="alert alert-info d-flex align-items-start gap-2 mb-4">
+                        <i class="fas fa-circle-info mt-1"></i>
+                        <div>
+                            {% trans "You are about to apply for" %} <strong>{{ job.title }}</strong> {% trans "position" %}
+                        </div>
                     </div>
-                    
-                    {{ application_form.as_p }}
+
+                    <div class="application-form-wrap">
+                        {{ application_form.as_p }}
+                    </div>
                 </div>
+
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+                        {% trans "Cancel" %}
+                    </button>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-paper-plane me-2"></i>{% trans "Apply" %}
                     </button>
@@ -454,76 +554,249 @@
 {% endif %}
 
 <style>
-.job-description, .job-responsibilities, .job-requirements, .job-benefits {
-    line-height: 1.6;
-}
+    .job-detail-page {
+        --card-radius: 1.1rem;
+    }
 
-.skills-tags .badge {
-    font-size: 0.8rem;
-    padding: 0.5rem 0.75rem;
-}
+    .job-breadcrumb {
+        background: transparent;
+        padding: 0;
+        font-size: 0.95rem;
+    }
 
-.company-info .border-bottom:last-child {
-    border-bottom: none !important;
-}
+    .job-hero-card,
+    .section-card {
+        border-radius: var(--card-radius);
+    }
 
-.job-details .border-bottom:last-child {
-    border-bottom: none !important;
-}
+    .job-hero-card {
+        position: relative;
+        background: linear-gradient(180deg, rgba(13, 110, 253, 0.04), rgba(13, 110, 253, 0.01));
+    }
 
-.badge-viewed {
-    background: rgba(14, 165, 233, 0.14);
-    color: #0369a1;
-    border: 1px solid rgba(14, 165, 233, 0.2);
-}
+    .job-hero-bg {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+            radial-gradient(circle at top right, rgba(13, 110, 253, 0.12), transparent 36%),
+            radial-gradient(circle at bottom left, rgba(25, 135, 84, 0.08), transparent 30%);
+    }
 
-.save-job-detail-form {
-    margin: 0;
-}
+    .job-title {
+        letter-spacing: -0.03em;
+        line-height: 1.05;
+    }
 
-.card {
-    border-radius: 0.75rem;
-}
+    .company-mini-card {
+        border-radius: 1rem;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+    }
 
-.breadcrumb {
-    background: transparent;
-    padding: 0;
-}
+    .company-logo-wrap {
+        width: 100%;
+        max-width: 160px;
+    }
 
-.lead {
-    font-size: 1.1rem;
-    color: #495057;
-}
+    .company-logo-img {
+        max-height: 120px;
+        object-fit: contain;
+    }
+
+    .company-logo-placeholder {
+        height: 120px;
+        background: #f8f9fa;
+        border: 1px dashed #dee2e6;
+    }
+
+    .company-sidebar-logo {
+        max-height: 92px;
+        object-fit: contain;
+    }
+
+    .job-stats {
+        display: grid;
+        gap: 0.65rem;
+        text-align: left;
+    }
+
+    .job-stat-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+        padding: 0.65rem 0.9rem;
+        border-radius: 0.9rem;
+        background: #f8f9fa;
+        color: #495057;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.9rem;
+    }
+
+    .section-icon {
+        width: 2.6rem;
+        height: 2.6rem;
+        border-radius: 0.95rem;
+        background: rgba(13, 110, 253, 0.09);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+    }
+
+    .section-icon i {
+        font-size: 1rem;
+    }
+
+    .job-lead {
+        color: #495057;
+        font-size: 1.05rem;
+        line-height: 1.7;
+    }
+
+    .job-rich-text {
+        color: #343a40;
+        line-height: 1.75;
+        font-size: 0.98rem;
+    }
+
+    .job-rich-text p:last-child {
+        margin-bottom: 0;
+    }
+
+    .job-rich-text ul,
+    .job-rich-text ol {
+        padding-left: 1.2rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .skills-tags {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .skill-badge {
+        font-size: 0.82rem;
+        padding: 0.55rem 0.8rem;
+        border-radius: 999px;
+        font-weight: 600;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .skill-badge:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 0.25rem 0.85rem rgba(0, 0, 0, 0.06);
+    }
+
+    .company-info,
+    .job-details {
+        display: grid;
+        gap: 0.75rem;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.7rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .company-info .info-row:last-child,
+    .job-details .info-row:last-child {
+        border-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .job-similar-card {
+        border-radius: 1rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        overflow: hidden;
+    }
+
+    .job-similar-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.08);
+        border-color: rgba(13, 110, 253, 0.22) !important;
+    }
+
+    .badge-viewed {
+        background: rgba(14, 165, 233, 0.14);
+        color: #0369a1;
+        border: 1px solid rgba(14, 165, 233, 0.18);
+    }
+
+    .save-job-detail-form {
+        margin: 0;
+    }
+
+    .sidebar-card {
+        top: 1rem;
+    }
+
+    .application-form-wrap p {
+        margin-bottom: 1rem;
+    }
+
+    .application-form-wrap label {
+        font-weight: 600;
+        margin-bottom: 0.35rem;
+    }
+
+    .application-form-wrap input,
+    .application-form-wrap select,
+    .application-form-wrap textarea {
+        width: 100%;
+        border-radius: 0.85rem;
+        border: 1px solid #dfe3e8;
+        padding: 0.72rem 0.9rem;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .application-form-wrap input:focus,
+    .application-form-wrap select:focus,
+    .application-form-wrap textarea:focus {
+        outline: 0;
+        border-color: rgba(13, 110, 253, 0.55);
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.08);
+    }
+
+    .application-form-wrap ul.errorlist {
+        color: #dc3545;
+        margin: 0.35rem 0 0;
+        padding-left: 1.2rem;
+    }
+
+    @media (max-width: 991.98px) {
+        .sidebar-card {
+            position: static !important;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Handle application form
-    const applyModal = document.getElementById('applyModal');
-    if (applyModal) {
-        applyModal.addEventListener('shown.bs.modal', function () {
-            // Additional logic when modal opens
-        });
-    }
-
-    // Skill badges hover effect
     const skillBadges = document.querySelectorAll('.skills-tags .badge');
-    skillBadges.forEach(badge => {
+    skillBadges.forEach(function(badge) {
         badge.addEventListener('mouseenter', function() {
-            this.style.transform = 'scale(1.05)';
-            this.style.transition = 'transform 0.2s ease';
+            this.style.transform = 'translateY(-1px) scale(1.03)';
+            this.style.transition = 'transform 0.2s ease, box-shadow 0.2s ease';
         });
 
         badge.addEventListener('mouseleave', function() {
-            this.style.transform = 'scale(1)';
+            this.style.transform = 'translateY(0) scale(1)';
         });
     });
 
-    // Smooth scroll to sections
     const sectionLinks = document.querySelectorAll('a[href^="#"]');
-    sectionLinks.forEach(link => {
+    sectionLinks.forEach(function(link) {
         link.addEventListener('click', function(e) {
             e.preventDefault();
             const targetId = this.getAttribute('href');
@@ -539,3 +812,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 {% endblock %}
+```
