@@ -192,195 +192,224 @@
             </div>
         </div>
 
-        <!-- Main content -->
-        <div class="row g-4 align-items-start">
-            <!-- Left side -->
-            <div class="col-lg-8">
-                <div class="dashboard-panel">
-                    <div class="panel-header d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
-                        <div>
-                            <h5 class="panel-title mb-1">{% trans "My Events" %}</h5>
-                            <p class="panel-subtitle mb-0">{% trans "Events you have already joined" %}</p>
+        <!-- TABS SECTION (replaces carousel) -->
+        <div class="dashboard-tabs-container mt-4">
+            <ul class="nav nav-tabs custom-tabs" id="studentDashboardTabs" role="tablist" >
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="events-tab" data-bs-toggle="tab" data-bs-target="#events" type="button" role="tab" aria-controls="events" aria-selected="true">
+                        <h2 class="action-title fs-2 text-dark">{% trans "My Events" %}</h2>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">
+                        <h2 class="action-title fs-2 text-dark">{% trans "Profile Information" %}</h2>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="jobs-tab" data-bs-toggle="tab" data-bs-target="#jobs" type="button" role="tab" aria-controls="jobs" aria-selected="false">
+                        <h2 class="action-title fs-2 text-dark">{% trans "Saved & Viewed Jobs" %}</h2>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="certificates-tab" data-bs-toggle="tab" data-bs-target="#certificates" type="button" role="tab" aria-controls="certificates" aria-selected="false">
+                        <h2 class="action-title fs-2 text-dark">{% trans "Certificates" %}</h2>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="status-tab" data-bs-toggle="tab" data-bs-target="#status" type="button" role="tab" aria-controls="status" aria-selected="false">
+                        <h2 class="action-title fs-2 text-dark">{% trans "Student Status" %}</h2>
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <!-- Tab 1: My Events -->
+                <div class="tab-pane fade show active" id="events" role="tabpanel" aria-labelledby="events-tab">
+                    <div class="dashboard-panel h-100">
+                        <div class="panel-header d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+                            <div>
+                                <h5 class="panel-title mb-1">{% trans "My Events" %}</h5>
+                                <p class="panel-subtitle mb-0">{% trans "Events you have already joined" %}</p>
+                            </div>
+                            <a href="{% url 'events:my_events' %}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                {% trans "View All" %}
+                            </a>
                         </div>
-                        <a href="{% url 'events:my_events' %}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
-                            {% trans "View All" %}
-                        </a>
-                    </div>
-
-                    <div class="event-list">
-                        {% for participation in recent_event_participations %}
-                            <div class="event-item">
-                                <div class="event-item-main">
-                                    <div class="event-icon">
-                                        <i class="fas fa-calendar-check"></i>
-                                    </div>
-                                    <div class="event-content">
-                                        <div class="event-title">{{ participation.event.title }}</div>
-                                        <div class="event-meta">
-                                            {{ participation.event.start_date|date:"M d, Y H:i" }}
-                                            {% if participation.event.location %}
-                                                · {{ participation.event.location }}
-                                            {% endif %}
+                        <div class="event-list">
+                            {% for participation in recent_event_participations %}
+                                <div class="event-item">
+                                    <div class="event-item-main">
+                                        <div class="event-icon">
+                                            <i class="fas fa-calendar-check"></i>
+                                        </div>
+                                        <div class="event-content">
+                                            <div class="event-title">{{ participation.event.title }}</div>
+                                            <div class="event-meta">
+                                                {{ participation.event.start_date|date:"M d, Y H:i" }}
+                                                {% if participation.event.location %}
+                                                    · {{ participation.event.location }}
+                                                {% endif %}
+                                            </div>
                                         </div>
                                     </div>
+                                    <a href="{% url 'events:participation_pass' participation.pk %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                                        {% trans "Pass" %}
+                                    </a>
                                 </div>
+                            {% empty %}
+                                <div class="empty-state py-4 text-center">
+                                    <i class="fas fa-calendar-times mb-3"></i>
+                                    <div class="fw-semibold">{% trans "No joined events yet" %}</div>
+                                    <div class="text-muted small">{% trans "Your registered events will appear here." %}</div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
 
-                                <a href="{% url 'events:participation_pass' participation.pk %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
-                                    {% trans "Pass" %}
+                <!-- Tab 2: Profile Information -->
+                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <div class="dashboard-panel h-100">
+                        <div class="panel-header mb-3">
+                            <h5 class="panel-title mb-1">{% trans "Profile Information" %}</h5>
+                            <p class="panel-subtitle mb-0">{% trans "Your academic and career details" %}</p>
+                        </div>
+                        <div class="info-list">
+                            <div class="info-row">
+                                <span>{% trans "Faculty" %}</span>
+                                <strong>{{ student_profile.faculty|default:"-" }}</strong>
+                            </div>
+                            <div class="info-row">
+                                <span>{% trans "Specialty" %}</span>
+                                <strong>{{ student_profile.specialty|default:"-" }}</strong>
+                            </div>
+                            <div class="info-row">
+                                <span>{% trans "Education Level" %}</span>
+                                <strong>{{ student_profile.get_education_level_display|default:"-" }}</strong>
+                            </div>
+                            <div class="info-row">
+                                <span>{% trans "Desired Position" %}</span>
+                                <strong>{{ student_profile.desired_position|default:"-" }}</strong>
+                            </div>
+                            <div class="info-row">
+                                <span>{% trans "Work Type" %}</span>
+                                <strong>{{ student_profile.get_work_type_display|default:"-" }}</strong>
+                            </div>
+                            <div class="info-row">
+                                <span>{% trans "Graduation Year" %}</span>
+                                <strong>{{ student_profile.graduation_year|default:"-" }}</strong>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <a href="{% url 'accounts:student_profile_update' %}" class="btn btn-outline-primary rounded-pill px-3">
+                                <i class="fas fa-edit me-1"></i>{% trans "Edit Profile" %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Saved and Viewed Jobs -->
+                <div class="tab-pane fade" id="jobs" role="tabpanel" aria-labelledby="jobs-tab">
+                    <div class="dashboard-panel h-100">
+                        <div class="panel-header mb-3">
+                            <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap w-100">
+                                <div>
+                                    <h5 class="panel-title mb-1">{% trans "Saved and Viewed Jobs" %}</h5>
+                                    <p class="panel-subtitle mb-0">{% trans "Track interesting vacancies and return to the ones you already explored." %}</p>
+                                </div>
+                                <a href="{% url 'jobs:saved_jobs' %}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                    <i class="fas fa-bookmark me-1"></i>{% trans "Open Saved" %}
                                 </a>
                             </div>
-                        {% empty %}
-                            <div class="empty-state py-4 text-center">
-                                <i class="fas fa-calendar-times mb-3"></i>
-                                <div class="fw-semibold">{% trans "No joined events yet" %}</div>
-                                <div class="text-muted small">{% trans "Your registered events will appear here." %}</div>
+                        </div>
+                        <div class="status-list mb-3">
+                            <div class="status-row">
+                                <span>{% trans "Saved Jobs" %}</span>
+                                <strong>{{ stats.saved_jobs|default:0 }}</strong>
                             </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right side -->
-            <div class="col-lg-4">
-                <div class="dashboard-panel mb-4">
-                    <div class="panel-header mb-3">
-                        <h5 class="panel-title mb-1">{% trans "Profile Information" %}</h5>
-                        <p class="panel-subtitle mb-0">{% trans "Your academic and career details" %}</p>
-                    </div>
-
-                    <div class="info-list">
-                        <div class="info-row">
-                            <span>{% trans "Faculty" %}</span>
-                            <strong>{{ student_profile.faculty|default:"-" }}</strong>
-                        </div>
-                        <div class="info-row">
-                            <span>{% trans "Specialty" %}</span>
-                            <strong>{{ student_profile.specialty|default:"-" }}</strong>
-                        </div>
-                        <div class="info-row">
-                            <span>{% trans "Education Level" %}</span>
-                            <strong>{{ student_profile.get_education_level_display|default:"-" }}</strong>
-                        </div>
-                        <div class="info-row">
-                            <span>{% trans "Desired Position" %}</span>
-                            <strong>{{ student_profile.desired_position|default:"-" }}</strong>
-                        </div>
-                        <div class="info-row">
-                            <span>{% trans "Work Type" %}</span>
-                            <strong>{{ student_profile.get_work_type_display|default:"-" }}</strong>
-                        </div>
-                        <div class="info-row">
-                            <span>{% trans "Graduation Year" %}</span>
-                            <strong>{{ student_profile.graduation_year|default:"-" }}</strong>
-                        </div>
-                    </div>
-
-                    <div class="mt-3">
-                        <a href="{% url 'accounts:student_profile_update' %}" class="btn btn-outline-primary rounded-pill px-3">
-                            <i class="fas fa-edit me-1"></i>{% trans "Edit Profile" %}
-                        </a>
-                    </div>
-                </div>
-
-                <div class="dashboard-panel mb-4">
-                    <div class="panel-header mb-3">
-                        <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap w-100">
-                            <div>
-                                <h5 class="panel-title mb-1">{% trans "Saved and Viewed Jobs" %}</h5>
-                                <p class="panel-subtitle mb-0">{% trans "Track interesting vacancies and return to the ones you already explored." %}</p>
+                            <div class="status-row">
+                                <span>{% trans "Viewed Jobs" %}</span>
+                                <strong>{{ stats.viewed_jobs|default:0 }}</strong>
                             </div>
-                            <a href="{% url 'jobs:saved_jobs' %}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
-                                <i class="fas fa-bookmark me-1"></i>{% trans "Open Saved" %}
-                            </a>
                         </div>
-                    </div>
-
-                    <div class="status-list mb-3">
-                        <div class="status-row">
-                            <span>{% trans "Saved Jobs" %}</span>
-                            <strong>{{ stats.saved_jobs|default:0 }}</strong>
-                        </div>
-                        <div class="status-row">
-                            <span>{% trans "Viewed Jobs" %}</span>
-                            <strong>{{ stats.viewed_jobs|default:0 }}</strong>
-                        </div>
-                    </div>
-
-                    <div class="tracked-jobs-list">
-                        {% for viewed in recent_viewed_jobs %}
-                        <a href="{% url 'jobs:job_detail' viewed.job.id %}" class="tracked-job-item">
-                            <div class="tracked-job-main">
-                                <div class="tracked-job-title">{{ viewed.job.title }}</div>
-                                <div class="tracked-job-meta">
-                                    {{ viewed.job.company.name }}
-                                    {% if viewed.job.is_saved %}
-                                        · {% trans "Saved" %}
-                                    {% endif %}
+                        <div class="tracked-jobs-list">
+                            {% for viewed in recent_viewed_jobs %}
+                            <a href="{% url 'jobs:job_detail' viewed.job.id %}" class="tracked-job-item">
+                                <div class="tracked-job-main">
+                                    <div class="tracked-job-title">{{ viewed.job.title }}</div>
+                                    <div class="tracked-job-meta">
+                                        {{ viewed.job.company.name }}
+                                        {% if viewed.job.is_saved %}
+                                            · {% trans "Saved" %}
+                                        {% endif %}
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="tracked-job-time">
-                                {{ viewed.last_viewed_at|timesince }} {% trans "ago" %}
-                            </div>
-                        </a>
-                        {% empty %}
-                        <div class="empty-state py-3 text-center">
-                            <i class="fas fa-eye-slash mb-3"></i>
-                            <div class="fw-semibold">{% trans "No viewed jobs yet" %}</div>
-                            <div class="text-muted small">{% trans "Open a vacancy and it will appear here." %}</div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <div class="dashboard-panel">
-                    <div class="panel-header mb-3">
-                        <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap w-100">
-                            <div>
-                                <h5 class="panel-title mb-1">{% trans "Certificates" %}</h5>
-                                <p class="panel-subtitle mb-0">{% trans "Documents employers can review after your application" %}</p>
-                            </div>
-                            <a href="{% url 'accounts:student_certificate_create' %}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
-                                <i class="fas fa-plus me-1"></i>{% trans "Upload" %}
+                                <div class="tracked-job-time">
+                                    {{ viewed.last_viewed_at|timesince }} {% trans "ago" %}
+                                </div>
                             </a>
+                            {% empty %}
+                            <div class="empty-state py-3 text-center">
+                                <i class="fas fa-eye-slash mb-3"></i>
+                                <div class="fw-semibold">{% trans "No viewed jobs yet" %}</div>
+                                <div class="text-muted small">{% trans "Open a vacancy and it will appear here." %}</div>
+                            </div>
+                            {% endfor %}
                         </div>
                     </div>
-
-                    {% trans "Upload certificates to strengthen your applications." as certificates_empty_message %}
-                    {% include "accounts/includes/student_certificate_cards.html" with certificates=recent_certificates show_management=True empty_message=certificates_empty_message %}
                 </div>
 
-                <div class="dashboard-panel mt-4">
-                    <div class="panel-header mb-3">
-                        <h5 class="panel-title mb-1">{% trans "Student Status" %}</h5>
-                        <p class="panel-subtitle mb-0">{% trans "Basic profile summary" %}</p>
+                <!-- Tab 4: Certificates -->
+                <div class="tab-pane fade" id="certificates" role="tabpanel" aria-labelledby="certificates-tab">
+                    <div class="dashboard-panel h-100">
+                        <div class="panel-header mb-3">
+                            <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap w-100">
+                                <div>
+                                    <h5 class="panel-title mb-1">{% trans "Certificates" %}</h5>
+                                    <p class="panel-subtitle mb-0">{% trans "Documents employers can review after your application" %}</p>
+                                </div>
+                                <a href="{% url 'accounts:student_certificate_create' %}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                    <i class="fas fa-plus me-1"></i>{% trans "Upload" %}
+                                </a>
+                            </div>
+                        </div>
+                        {% trans "Upload certificates to strengthen your applications." as certificates_empty_message %}
+                        {% include "accounts/includes/student_certificate_cards.html" with certificates=recent_certificates show_management=True empty_message=certificates_empty_message %}
                     </div>
+                </div>
 
-                    <div class="status-list">
-                        <div class="status-row">
-                            <span>{% trans "Resumes" %}</span>
-                            <strong>{{ stats.resumes_created|default:0 }}</strong>
+                <!-- Tab 5: Student Status -->
+                <div class="tab-pane fade" id="status" role="tabpanel" aria-labelledby="status-tab">
+                    <div class="dashboard-panel h-100">
+                        <div class="panel-header mb-3">
+                            <h5 class="panel-title mb-1">{% trans "Student Status" %}</h5>
+                            <p class="panel-subtitle mb-0">{% trans "Basic profile summary" %}</p>
                         </div>
-                        <div class="status-row">
-                            <span>{% trans "Applications" %}</span>
-                            <strong>{{ stats.jobs_applied|default:0 }}</strong>
+                        <div class="status-list">
+                            <div class="status-row">
+                                <span>{% trans "Resumes" %}</span>
+                                <strong>{{ stats.resumes_created|default:0 }}</strong>
+                            </div>
+                            <div class="status-row">
+                                <span>{% trans "Applications" %}</span>
+                                <strong>{{ stats.jobs_applied|default:0 }}</strong>
+                            </div>
+                            <div class="status-row">
+                                <span>{% trans "Profile Views" %}</span>
+                                <strong>{{ stats.profile_views|default:0 }}</strong>
+                            </div>
+                            <div class="status-row">
+                                <span>{% trans "Certificates" %}</span>
+                                <strong>{{ stats.certificates_uploaded|default:0 }}</strong>
+                            </div>
+                            <div class="status-row">
+                                <span>{% trans "Account Since" %}</span>
+                                <strong>{{ user.date_joined|date:"d.m.Y" }}</strong>
+                            </div>
                         </div>
-                        <div class="status-row">
-                            <span>{% trans "Profile Views" %}</span>
-                            <strong>{{ stats.profile_views|default:0 }}</strong>
+                        <div class="status-footer mt-3">
+                            <span class="status-indicator"></span>
+                            <span>{% trans "Profile active" %}</span>
                         </div>
-                        <div class="status-row">
-                            <span>{% trans "Certificates" %}</span>
-                            <strong>{{ stats.certificates_uploaded|default:0 }}</strong>
-                        </div>
-                        <div class="status-row">
-                            <span>{% trans "Account Since" %}</span>
-                            <strong>{{ user.date_joined|date:"d.m.Y" }}</strong>
-                        </div>
-                    </div>
-
-                    <div class="status-footer mt-3">
-                        <span class="status-indicator"></span>
-                        <span>{% trans "Profile active" %}</span>
                     </div>
                 </div>
             </div>
@@ -807,17 +836,61 @@
     font-size: 0.88rem;
 }
 
-@media (max-width: 991.98px) {
+/* Tab styling */
+.dashboard-tabs-container {
+    margin-top: 1rem;
+}
+
+.custom-tabs {
+    border-bottom: 2px solid #e2e8f0;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.custom-tabs .nav-link {
+    background: transparent;
+    border: none;
+    color: #475569;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 40px;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.custom-tabs .nav-link:hover {
+    color: #3b82f6;
+    background: rgba(59, 130, 246, 0.05);
+}
+
+.custom-tabs .nav-link.active {
+    color: #3b82f6;
+    background: #eff6ff;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.custom-tabs .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #3b82f6;
+    border-radius: 2px;
+}
+
+.tab-content .dashboard-panel {
+    border-radius: 20px;
+    background: rgba(255,255,255,0.92);
+}
+
+@media (max-width: 767.98px) {
     .hero-card {
         padding: 1.5rem;
     }
 
-    .hero-side-stats {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 767.98px) {
     .hero-meta {
         flex-direction: column;
     }
@@ -852,6 +925,11 @@
     .info-row strong,
     .status-row strong {
         text-align: left;
+    }
+
+    .custom-tabs .nav-link {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
     }
 }
 </style>
