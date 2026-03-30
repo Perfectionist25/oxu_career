@@ -18,10 +18,12 @@
                 <div class="col-md-8">
                     <div class="d-flex flex-wrap gap-2 mb-3">
                         <span class="badge bg-primary">{{ resource.category.name }}</span>
+                        {% if request.user.is_staff %}
                         <span class="badge bg-{{ resource.is_published|yesno:'success,warning' }}">
                             <i class="fas fa-{{ resource.is_published|yesno:'eye,eye-slash' }} me-1"></i>
                             {{ resource.is_published|yesno:"Published,Unpublished" }}
                         </span>
+                        {% endif %}
                     </div>
                     
                     <h1 class="h2 mb-3 text-dark">{{ resource.title }}</h1>
@@ -217,6 +219,7 @@
             </div>
             {% endif %}
 
+            {% comment %}
             <!-- Share Card -->
             <div class="card shadow-sm">
                 <div class="card-header bg-light">
@@ -250,6 +253,7 @@
                     </div>
                 </div>
             </div>
+            {% endcomment %}
         </div>
     </div>
 
