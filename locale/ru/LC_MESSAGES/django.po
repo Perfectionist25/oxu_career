@@ -3,16 +3,15 @@
 # Этот файл распространяется на условиях той же лицензии, что и пакет PACKAGE.
 # ПЕРВЫЙ АВТОР <EMAIL@ADDRESS>, ГОД.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-26 17:38+0500\n"
-"PO-Revision-Date: ГОД-МЕС-ДЕНЬ ЧАС:МИН+ЗОНА\n"
-"Last-Translator: ПОЛНОЕ ИМЯ <EMAIL@ADDRESS>\n"
-"Language-Team: ЯЗЫК <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2026-03-30 12:03+0500\n"
+"PO-Revision-Date: 2026-03-30 12:30+0500\n"
+"Last-Translator: OpenAI Codex\n"
+"Language-Team: Russian\n"
+"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -40,6 +39,7 @@ msgstr "Личная информация"
 #: employers/models.py:401 employers/models.py:538
 #: employers/templates/employers/manage_jobs.html:12 events/forms.py:226
 #: events/models.py:159 events/templates/events/admin_event_form.html:778
+#: events/templates/events/admin_event_list.html:134
 #: events/templates/events/create_event.html:1201
 #: events/templates/events/my_events.html:17 jobs/admin.py:95 jobs/admin.py:155
 #: jobs/models.py:524 jobs/templates/jobs/applications.html:139
@@ -217,67 +217,56 @@ msgid "Token Information"
 msgstr "Информация заметки"
 
 #: accounts/admin.py:490
-#, fuzzy
-#| msgid "Company Status"
 msgid "Token Status"
-msgstr "Статус компании"
+msgstr "Статус токена"
 
 #: accounts/captcha.py:17 accounts/captcha.py:22 accounts/captcha.py:28
 #: accounts/captcha.py:41 accounts/forms.py:28
-#, fuzzy
-#| msgid "Security Message"
 msgid "Security question"
-msgstr "Сообщение безопасности"
+msgstr "Контрольный вопрос"
 
 #: accounts/captcha.py:23
 #, python-format
 msgid "What is %(a)s + %(b)s?"
-msgstr ""
+msgstr "Сколько будет %(a)s + %(b)s?"
 
 #: accounts/certificates.py:95
 msgid "Upload a valid PDF file."
-msgstr ""
+msgstr "Загрузите корректный PDF-файл."
 
 #: accounts/certificates.py:106
-#, fuzzy
-#| msgid "Error loading information"
 msgid "Upload a valid image file."
-msgstr "Ошибка при загрузке информации"
+msgstr "Загрузите корректный файл изображения."
 
 #: accounts/certificates.py:119
 #, python-format
 msgid "Unsupported file format. Allowed formats: %(formats)s."
-msgstr ""
+msgstr "Неподдерживаемый формат файла. Разрешенные форматы: %(formats)s."
 
 #: accounts/certificates.py:126
-#, fuzzy, python-format
-#| msgid "Profile picture size should not exceed 2MB"
+#, python-format
 msgid "File size must not exceed %(size)s MB."
-msgstr "Размер фотографии профиля не должен превышать 2MB"
+msgstr "Размер файла не должен превышать %(size)s МБ."
 
 #: accounts/certificates.py:135
 msgid "Unsupported file content type."
-msgstr ""
+msgstr "Неподдерживаемый тип содержимого файла."
 
 #: accounts/forms.py:21 accounts/forms.py:158
-#, fuzzy
-#| msgid "Your password"
 msgid "Enter the answer"
-msgstr "Ваш пароль"
+msgstr "Введите ответ"
 
 #: accounts/forms.py:32
 msgid "Please solve the security question."
-msgstr ""
+msgstr "Пожалуйста, решите контрольный вопрос."
 
 #: accounts/forms.py:33
-#, fuzzy
-#| msgid "Please enter a valid YouTube URL"
 msgid "Enter a valid number."
-msgstr "Пожалуйста, введите действительный URL YouTube"
+msgstr "Введите корректное число."
 
 #: accounts/forms.py:60
 msgid "Incorrect answer to the security question."
-msgstr ""
+msgstr "Неверный ответ на контрольный вопрос."
 
 #: accounts/forms.py:67
 msgid "Login or Email"
@@ -306,52 +295,44 @@ msgstr "Ваш пароль"
 
 #: accounts/forms.py:99
 msgid "Invalid credentials or you are not authorized as an employer."
-msgstr ""
+msgstr "Неверные учетные данные или у вас нет прав работодателя."
 
 #: accounts/forms.py:113
-#, fuzzy
-#| msgid "Name, surname or username"
 msgid "Enter your username"
-msgstr "Имя, фамилия или имя пользователя"
+msgstr "Введите имя пользователя"
 
 #: accounts/forms.py:124
-#, fuzzy
-#| msgid "Your password"
 msgid "Enter your password"
-msgstr "Ваш пароль"
+msgstr "Введите пароль"
 
 #: accounts/forms.py:129
 msgid "Remember me"
-msgstr ""
+msgstr "Запомнить меня"
 
 #: accounts/forms.py:140
-#, fuzzy
-#| msgid "Please enter a valid YouTube URL"
 msgid "Please enter your username and password."
-msgstr "Пожалуйста, введите действительный URL YouTube"
+msgstr "Пожалуйста, введите имя пользователя и пароль."
 
 #: accounts/forms.py:145
-#, fuzzy
-#| msgid "Your password"
 msgid "Invalid username or password."
-msgstr "Ваш пароль"
+msgstr "Неверное имя пользователя или пароль."
 
 #: accounts/forms.py:149
 msgid "You are not authorized to access the admin panel."
-msgstr ""
+msgstr "У вас нет прав для доступа к панели администратора."
 
 #: accounts/forms.py:181
 #: accounts/templates/accounts/create_employer_account.html:115
 msgid "Required. Enter a valid email address."
-msgstr ""
+msgstr "Обязательно. Введите корректный адрес электронной почты."
 
 #: accounts/forms.py:192
 msgid "A user with this email already exists."
-msgstr ""
+msgstr "Пользователь с таким email уже существует."
 
 #: accounts/forms.py:198
 msgid "A user with this username already exists."
-msgstr ""
+msgstr "Пользователь с таким именем уже существует."
 
 #: accounts/forms.py:206
 #: accounts/templates/accounts/create_employer_account.html:747
@@ -379,93 +360,71 @@ msgstr "Номер телефона"
 
 #: accounts/forms.py:214
 #: accounts/templates/accounts/create_employer_account.html:130
-#, fuzzy
-#| msgid "User's phone number with country code"
 msgid "Phone number with country code (e.g., +998901234567)"
-msgstr "Номер телефона пользователя с кодом страны"
+msgstr "Номер телефона с кодом страны (например, +998901234567)"
 
 #: accounts/forms.py:236
-#, fuzzy
-#| msgid "User's phone number with country code"
 msgid "Enter a valid phone number with country code."
-msgstr "Номер телефона пользователя с кодом страны"
+msgstr "Введите корректный номер телефона с кодом страны."
 
 #: accounts/forms.py:270 accounts/forms.py:470
-#, fuzzy
-#| msgid "Company name"
 msgid "Company name..."
-msgstr "Название компании"
+msgstr "Название компании..."
 
 #: accounts/forms.py:274
 #: accounts/templates/accounts/create_employer_account.html:233
 msgid "LLC, Corporation, Startup, etc."
-msgstr ""
+msgstr "ООО, корпорация, стартап и т. д."
 
 #: accounts/forms.py:282
-#, fuzzy
-#| msgid "Detailed job description..."
 msgid "Detailed company description..."
-msgstr "Подробное описание вакансии..."
+msgstr "Подробное описание компании..."
 
 #: accounts/forms.py:287
-#, fuzzy
-#| msgid "Company description and activities..."
 msgid "Brief company description for listings..."
-msgstr "Описание компании и деятельности..."
+msgstr "Краткое описание компании для списка..."
 
 #: accounts/forms.py:325
 #: accounts/templates/accounts/create_employer_account.html:267
 msgid "Technology, Education, Finance, etc."
-msgstr ""
+msgstr "Технологии, образование, финансы и т. д."
 
 #: accounts/forms.py:329
 msgid "tech, startup, education, etc."
-msgstr ""
+msgstr "технологии, стартап, образование и т. д."
 
 #: accounts/forms.py:339
-#, fuzzy
-#| msgid "Company description and activities..."
 msgid "Company mission and values..."
-msgstr "Описание компании и деятельности..."
+msgstr "Миссия и ценности компании..."
 
 #: accounts/forms.py:346 accounts/forms.py:480 jobs/forms.py:28
-#, fuzzy
-#| msgid "Select rating"
 msgid "Select region..."
-msgstr "Выберите оценку"
+msgstr "Выберите регион..."
 
 #: accounts/forms.py:347 accounts/forms.py:481
-#, fuzzy
-#| msgid "Select company"
 msgid "Select city..."
-msgstr "Выбрать компанию"
+msgstr "Выберите город..."
 
 #: accounts/forms.py:366
 msgid "A company with this name already exists"
-msgstr ""
+msgstr "Компания с таким названием уже существует"
 
 #: accounts/forms.py:373
-#, fuzzy
-#| msgid "Please enter a valid YouTube URL"
 msgid "Please enter a valid year"
-msgstr "Пожалуйста, введите действительный URL YouTube"
+msgstr "Пожалуйста, введите корректный год"
 
 #: accounts/forms.py:407
 #: accounts/templates/accounts/create_employer_account.html:695
-#, fuzzy
-#| msgid "Notification"
 msgid "Verification Document"
-msgstr "Уведомление"
+msgstr "Документ для верификации"
 
 #: accounts/forms.py:411
 #: accounts/templates/accounts/create_employer_account.html:705
 msgid "Document proving employment/ownership"
-msgstr ""
+msgstr "Документ, подтверждающий трудоустройство или право собственности"
 
 #: accounts/forms.py:416
 #: accounts/templates/accounts/create_employer_account.html:727
-#, fuzzy
-#| msgid "Receive email notifications"
 msgid "Receive Company Notifications"
 msgstr "Получать email уведомления"
 
@@ -476,48 +435,34 @@ msgstr "Отдел"
 
 #: accounts/forms.py:425
 #: accounts/templates/accounts/create_employer_account.html:673
-#, fuzzy
-#| msgid "Department"
 msgid "Department or division"
-msgstr "Отдел"
+msgstr "Отдел или подразделение"
 
 #: accounts/forms.py:439 accounts/models.py:566
 #: accounts/templates/accounts/create_employer_account.html:657
-#, fuzzy
-#| msgid "Current job title or position"
 msgid "Current professional position"
-msgstr "Текущая должность или позиция"
+msgstr "Текущая профессиональная должность"
 
 #: accounts/forms.py:444 accounts/models.py:573
 #: accounts/templates/accounts/create_employer_account.html:689
-#, fuzzy
-#| msgid "Professional skills and competencies"
 msgid "Professional background and experience"
-msgstr "Профессиональные навыки и компетенции"
+msgstr "Профессиональный опыт и бэкграунд"
 
 #: accounts/forms.py:471
-#, fuzzy
-#| msgid "Company Description"
 msgid "Company description..."
-msgstr "Описание компании"
+msgstr "Описание компании..."
 
 #: accounts/forms.py:472
-#, fuzzy
-#| msgid "Industry"
 msgid "Industry..."
-msgstr "Отрасль"
+msgstr "Отрасль..."
 
 #: accounts/forms.py:497
-#, fuzzy
-#| msgid "Detailed job description"
 msgid "Document title or description"
-msgstr "Подробное описание вакансии"
+msgstr "Название или описание документа"
 
 #: accounts/forms.py:527 accounts/models.py:680 cvbuilder/models.py:496
-#, fuzzy
-#| msgid "Academic faculty or department"
 msgid "Faculty or department"
-msgstr "Академический факультет или отделение"
+msgstr "Факультет или кафедра"
 
 #: accounts/forms.py:531 accounts/models.py:687
 msgid "Field of study or specialization"
@@ -525,7 +470,7 @@ msgstr "Область изучения или специализация"
 
 #: accounts/forms.py:535 accounts/models.py:694
 msgid "Bachelor, Master, PhD, etc."
-msgstr ""
+msgstr "Бакалавр, магистр, PhD и т. д."
 
 #: accounts/forms.py:540 accounts/models.py:717
 #: jobs/templates/jobs/application_detail.html:64
@@ -533,39 +478,29 @@ msgid "Expected salary"
 msgstr "Ожидаемая зарплата"
 
 #: accounts/forms.py:545
-#, fuzzy
-#| msgid "Share your experience..."
 msgid "About yourself, skills, experience..."
-msgstr "Поделитесь вашим опытом..."
+msgstr "О себе, навыках, опыте..."
 
 #: accounts/forms.py:578
-#, fuzzy
-#| msgid "Notification"
 msgid "Certificate title"
-msgstr "Уведомление"
+msgstr "Название сертификата"
 
 #: accounts/forms.py:590
-#, fuzzy
-#| msgid "Organization"
 msgid "Issuing organization"
-msgstr "Организация"
+msgstr "Выдавшая организация"
 
 #: accounts/forms.py:603
-#, fuzzy
-#| msgid "Short description"
 msgid "Short certificate description"
-msgstr "Краткое описание"
+msgstr "Краткое описание сертификата"
 
 #: accounts/forms.py:613
 #, python-format
 msgid "Allowed formats: PDF, JPG, JPEG, PNG, WEBP. Max size: %(size)s MB."
-msgstr ""
+msgstr "Допустимые форматы: PDF, JPG, JPEG, PNG, WEBP. Макс. размер: %(size)s МБ."
 
 #: accounts/forms.py:616
-#, fuzzy
-#| msgid "Whether employer has read this application"
 msgid "Visible to employers who received your application."
-msgstr "Прочитал ли работодатель этот отклик"
+msgstr "Видно работодателям, получившим ваш отклик."
 
 #: accounts/forms.py:655
 #: accounts/templates/accounts/create_admin_account.html:97
@@ -589,39 +524,33 @@ msgstr "Администратор"
 #: accounts/templates/accounts/admin_profile.html:44
 #: accounts/templates/accounts/admin_profile.html:140
 #: accounts/templates/accounts/create_admin_account.html:133
-#, fuzzy
-#| msgid "International Relations"
 msgid "International Admin"
-msgstr "Международные отношения"
+msgstr "Международный администратор"
 
 #: accounts/forms.py:696 accounts/forms.py:783
 msgid "Passwords don't match"
-msgstr ""
+msgstr "Пароли не совпадают"
 
 #: accounts/forms.py:702
 msgid "This username already exists"
-msgstr ""
+msgstr "Это имя пользователя уже существует"
 
 #: accounts/forms.py:708
 msgid "This email already exists"
-msgstr ""
+msgstr "Этот email уже существует"
 
 #: accounts/forms.py:717 accounts/forms.py:808 accounts/models.py:98
 #: accounts/templates/accounts/student_profile_update.html:29
-#, fuzzy
-#| msgid "Full Name"
 msgid "Full name"
 msgstr "Полное имя"
 
 #: accounts/forms.py:757 accounts/forms.py:830
 msgid "This email is already in use by another user."
-msgstr ""
+msgstr "Этот email уже используется другим пользователем."
 
 #: accounts/forms.py:765
-#, fuzzy
-#| msgid "New Password"
 msgid "Current Password"
-msgstr "Новый пароль"
+msgstr "Текущий пароль"
 
 #: accounts/forms.py:769 accounts/templates/accounts/password_change.html:24
 msgid "New Password"
@@ -633,73 +562,69 @@ msgstr "Подтвердите новый пароль"
 
 #: accounts/models.py:28 accounts/models.py:47 cvbuilder/models.py:15
 msgid "Tashkent"
-msgstr ""
+msgstr "Ташкент"
 
 #: accounts/models.py:29 accounts/models.py:48 cvbuilder/models.py:16
 msgid "Samarkand"
-msgstr ""
+msgstr "Самарканд"
 
 #: accounts/models.py:30 accounts/models.py:49 cvbuilder/models.py:17
 #: jobs/forms.py:31
-#, fuzzy
-#| msgid "In Bukhara"
 msgid "Bukhara"
-msgstr "В Бухаре"
+msgstr "Бухара"
 
 #: accounts/models.py:31 accounts/models.py:50 cvbuilder/models.py:18
 #: jobs/forms.py:32
 msgid "Fergana"
-msgstr ""
+msgstr "Фергана"
 
 #: accounts/models.py:32 accounts/models.py:51 cvbuilder/models.py:19
 #: jobs/forms.py:30
 msgid "Andijan"
-msgstr ""
+msgstr "Андижан"
 
 #: accounts/models.py:33 accounts/models.py:52 cvbuilder/models.py:20
 #: jobs/forms.py:35
-#, fuzzy
-#| msgid "Tasdiqlangan"
 msgid "Namangan"
-msgstr "Подтвержденный"
+msgstr "Наманган"
 
 #: accounts/models.py:34 accounts/models.py:53 cvbuilder/models.py:21
 #: jobs/forms.py:34
 msgid "Khorezm"
-msgstr ""
+msgstr "Хорезм"
 
 #: accounts/models.py:35 accounts/models.py:54 cvbuilder/models.py:22
 msgid "Kashkadarya"
-msgstr ""
+msgstr "Кашкадарья"
 
 #: accounts/models.py:36 accounts/models.py:55 cvbuilder/models.py:23
 msgid "Surkhandarya"
-msgstr ""
+msgstr "Сурхандарья"
 
 #: accounts/models.py:37 accounts/models.py:56 cvbuilder/models.py:24
 #: jobs/forms.py:33
 msgid "Jizzakh"
-msgstr ""
+msgstr "Джизак"
 
 #: accounts/models.py:38 accounts/models.py:57 cvbuilder/models.py:25
 msgid "Sirdarya"
-msgstr ""
+msgstr "Сырдарья"
 
 #: accounts/models.py:39 accounts/models.py:58 cvbuilder/models.py:26
 msgid "Navoi"
-msgstr ""
+msgstr "Навои"
 
 #: accounts/models.py:40 accounts/models.py:59 cvbuilder/models.py:27
 msgid "Gulistan"
-msgstr ""
+msgstr "Гулистан"
 
 #: accounts/models.py:41 accounts/models.py:60 cvbuilder/models.py:28
 msgid "Qarshi"
-msgstr ""
+msgstr "Карши"
 
 #: accounts/models.py:42 accounts/models.py:61 cvbuilder/models.py:29
 msgid "Urganch"
-msgstr ""
+msgstr "Ургенч"
 
 #: accounts/models.py:46 accounts/templates/accounts/admin_statistics.html:145
 #: accounts/templates/accounts/admin_statistics.html:320
@@ -733,17 +658,15 @@ msgstr "Главный администратор"
 
 #: accounts/models.py:99
 msgid "Full name received from OAuth (read-only)"
-msgstr ""
+msgstr "Полное имя, полученное из OAuth (только для чтения)"
 
 #: accounts/models.py:104
-#, fuzzy
-#| msgid "Full name of the speaker"
 msgid "Full name locked"
-msgstr "Полное имя спикера"
+msgstr "Полное имя заблокировано"
 
 #: accounts/models.py:105
 msgid "If True, full_name cannot be changed"
-msgstr ""
+msgstr "Если установлено, full_name нельзя изменить"
 
 #: accounts/models.py:113 accounts/templates/accounts/profile_base.html:161
 msgid "User Type"
@@ -815,7 +738,7 @@ msgstr "Город проживания"
 #: cvbuilder/templates/cvbuilder/cv_create.html:149 employers/forms.py:103
 #: employers/templates/employers/company_detail.html:118
 #: employers/templates/employers/detail.html:146
-#: jobs/templates/jobs/job_detail.html:301
+#: jobs/templates/jobs/job_detail.html:415
 msgid "Address"
 msgstr "Адрес"
 
@@ -856,7 +779,8 @@ msgstr "Имя пользователя или ссылка Telegram"
 #: accounts/templates/accounts/user_detail.html:909
 #: accounts/templates/accounts/user_management.html:213
 #: jobs/templates/jobs/company_list.html:87
-#: jobs/templates/jobs/job_detail.html:275
+#: jobs/templates/jobs/job_detail.html:156
+#: jobs/templates/jobs/job_detail.html:387
 msgid "Verified"
 msgstr "Подтверждено"
 
@@ -879,7 +803,7 @@ msgstr "Активен ли этот аккаунт работодателя"
 #: accounts/templates/accounts/employer_profile.html:248
 #: accounts/templates/accounts/profile_base.html:451
 #: accounts/templates/accounts/student_dashboard.html:112
-#: accounts/templates/accounts/student_dashboard.html:368
+#: accounts/templates/accounts/student_dashboard.html:397
 msgid "Profile Views"
 msgstr "Просмотры профиля"
 
@@ -1176,7 +1100,7 @@ msgstr "URL профиля Instagram"
 #: employers/models.py:60 jobs/forms.py:62 jobs/forms.py:296 jobs/forms.py:541
 #: jobs/forms.py:574 jobs/models.py:339 jobs/models.py:686
 #: jobs/templates/jobs/company_list.html:34
-#: jobs/templates/jobs/job_detail.html:287
+#: jobs/templates/jobs/job_detail.html:401
 msgid "Industry"
 msgstr "Отрасль"
 
@@ -1498,7 +1422,7 @@ msgstr "URL-дружественный идентификатор"
 #: accounts/models.py:679
 #: accounts/templates/accounts/employer_profile_update.html:220
 #: accounts/templates/accounts/student_dashboard.html:63
-#: accounts/templates/accounts/student_dashboard.html:253
+#: accounts/templates/accounts/student_dashboard.html:278
 #: accounts/templates/accounts/student_profile.html:24
 #: accounts/templates/accounts/student_profile_update.html:102
 #: accounts/templates/accounts/user_detail.html:947
@@ -1508,14 +1432,14 @@ msgid "Faculty"
 msgstr "Факультет"
 
 #: accounts/models.py:686 accounts/templates/accounts/student_dashboard.html:67
-#: accounts/templates/accounts/student_dashboard.html:257
+#: accounts/templates/accounts/student_dashboard.html:282
 #: accounts/templates/accounts/student_profile.html:29
 #: accounts/templates/accounts/student_profile_update.html:112
 msgid "Specialty"
 msgstr "Специальность"
 
 #: accounts/models.py:693 accounts/templates/accounts/student_dashboard.html:37
-#: accounts/templates/accounts/student_dashboard.html:261
+#: accounts/templates/accounts/student_dashboard.html:286
 #: accounts/templates/accounts/student_profile.html:38
 #: accounts/templates/accounts/student_profile_update.html:124
 #: accounts/templates/accounts/user_detail.html:967 cvbuilder/models.py:481
@@ -1524,7 +1448,7 @@ msgid "Education Level"
 msgstr "Уровень образования"
 
 #: accounts/models.py:700 accounts/templates/accounts/student_dashboard.html:44
-#: accounts/templates/accounts/student_dashboard.html:273
+#: accounts/templates/accounts/student_dashboard.html:298
 #: accounts/templates/accounts/student_profile.html:43
 #: accounts/templates/accounts/student_profile_update.html:136
 #: accounts/templates/accounts/user_detail.html:804
@@ -1541,7 +1465,7 @@ msgid "Year of graduation or expected graduation"
 msgstr "Год выпуска или завершения"
 
 #: accounts/models.py:707 accounts/templates/accounts/student_dashboard.html:71
-#: accounts/templates/accounts/student_dashboard.html:265
+#: accounts/templates/accounts/student_dashboard.html:290
 #: accounts/templates/accounts/student_profile.html:76
 #: accounts/templates/accounts/student_profile_update.html:148
 #: accounts/templates/accounts/user_detail.html:1006 cvbuilder/forms.py:133
@@ -1581,7 +1505,7 @@ msgid "Remote"
 msgstr "Удалённо"
 
 #: accounts/models.py:731 accounts/templates/accounts/student_dashboard.html:75
-#: accounts/templates/accounts/student_dashboard.html:269
+#: accounts/templates/accounts/student_dashboard.html:294
 #: accounts/templates/accounts/student_profile.html:48
 #: accounts/templates/accounts/student_profile_update.html:160
 #: jobs/forms.py:324 jobs/models.py:134 jobs/templates/jobs/job_form.html:230
@@ -2500,7 +2424,7 @@ msgstr "Фильтр"
 #: accounts/templates/accounts/user_management.html:99
 #: alumni/templates/alumni/alumni_list.html:84
 #: cvbuilder/templates/cvbuilder/cv_list.html:181
-#: events/templates/events/admin_event_list.html:107
+#: events/templates/events/admin_event_list.html:117
 #: jobs/templates/jobs/company_list.html:55
 #: jobs/templates/jobs/job_list.html:96
 msgid "Clear"
@@ -2665,11 +2589,11 @@ msgstr "активных вакансий"
 #: accounts/templates/accounts/employer_stats.html:420
 #: accounts/templates/accounts/employer_stats.html:702
 #: accounts/templates/accounts/notifications.html:61
-#: accounts/templates/accounts/student_dashboard.html:364
+#: accounts/templates/accounts/student_dashboard.html:393
 #: core/templates/core/admin_stats.html:10
 #: employers/templates/employers/company_detail.html:225
 #: employers/templates/employers/employer_dashboard.html:67
-#: jobs/templates/jobs/job_detail.html:114
+#: jobs/templates/jobs/job_detail.html:129
 #: jobs/templates/jobs/job_settings.html:99 jobs/templates/jobs/my_jobs.html:42
 #: jobs/templates/jobs/my_jobs.html:233 jobs/templates/jobs/my_jobs.html:347
 #: jobs/templates/jobs/my_jobs.html:805
@@ -2754,7 +2678,7 @@ msgid "Review companies, moderation status and vacancy activity."
 msgstr ""
 
 #: accounts/templates/accounts/admin_company_management.html:15
-#: events/templates/events/admin_event_list.html:33
+#: events/templates/events/admin_event_list.html:32
 #: events/templates/events/admin_event_participants.html:24
 #: jobs/templates/jobs/applications.html:29
 #: jobs/templates/jobs/my_applications.html:51
@@ -2776,7 +2700,7 @@ msgstr "Не явился"
 #: cvbuilder/templates/cvbuilder/cv_list.html:152
 #: cvbuilder/templates/cvbuilder/public_cv_list.html:312
 #: cvbuilder/templates/cvbuilder/public_cv_list.html:413 events/forms.py:356
-#: events/templates/events/admin_event_list.html:104
+#: events/templates/events/admin_event_list.html:114
 #: events/templates/events/event_list.html:85 jobs/forms.py:277
 #: jobs/templates/jobs/applications.html:119
 #: jobs/templates/jobs/company_list.html:45
@@ -2824,9 +2748,9 @@ msgid "Activity"
 msgstr "Активность"
 
 #: accounts/templates/accounts/admin_company_management.html:55
-#: jobs/templates/jobs/job_detail.html:80
-#: jobs/templates/jobs/job_detail.html:430
-#: jobs/templates/jobs/job_detail.html:447
+#: jobs/templates/jobs/job_detail.html:94
+#: jobs/templates/jobs/job_detail.html:522
+#: jobs/templates/jobs/job_detail.html:547
 msgid "Apply"
 msgstr "Откликнуться"
 
@@ -2843,7 +2767,7 @@ msgstr "Откликнуться"
 #: core/templates/_inc/nav.html:370 core/templates/_inc/nav.html:408
 #: core/templates/core/admin_stats.html:9 employers/models.py:312
 #: employers/templates/employers/list.html:153 jobs/apps.py:8
-#: jobs/models.py:345 jobs/templates/jobs/job_detail.html:15
+#: jobs/models.py:345 jobs/templates/jobs/job_detail.html:17
 msgid "Jobs"
 msgstr "Вакансии"
 
@@ -2859,6 +2783,7 @@ msgstr "Вакансии"
 #: cvbuilder/templates/cvbuilder/cv_list.html:414
 #: employers/templates/employers/manage_jobs.html:13
 #: events/templates/events/admin_category_list.html:23
+#: events/templates/events/admin_event_list.html:135
 #: jobs/templates/jobs/applications.html:143
 #: jobs/templates/jobs/my_jobs.html:371 jobs/templates/jobs/my_jobs.html:576
 msgid "Actions"
@@ -2931,7 +2856,7 @@ msgstr "Информация о компании"
 #: accounts/templates/accounts/admin_employer_management.html:135
 #: accounts/templates/accounts/notifications.html:133
 #: cvbuilder/templates/cvbuilder/public_cv_list.html:676
-#: events/templates/events/admin_event_list.html:221
+#: events/templates/events/admin_event_list.html:265
 #: events/templates/events/event_list.html:211
 #: events/templates/events/my_events.html:108
 #: jobs/templates/jobs/job_list.html:426 jobs/templates/jobs/saved_jobs.html:99
@@ -2950,7 +2875,7 @@ msgstr ""
 #: accounts/templates/accounts/admin_employer_management.html:149
 #: accounts/templates/accounts/notifications.html:146
 #: cvbuilder/templates/cvbuilder/public_cv_list.html:697
-#: events/templates/events/admin_event_list.html:241
+#: events/templates/events/admin_event_list.html:287
 #: events/templates/events/event_list.html:227
 #: events/templates/events/my_events.html:124
 #: jobs/templates/jobs/job_list.html:446
@@ -3018,7 +2943,7 @@ msgstr "Работодатели"
 #: accounts/templates/accounts/admin_dashboard.html:132
 #: accounts/templates/accounts/admin_dashboard.html:234
 #: accounts/templates/accounts/profile_base.html:468
-#: accounts/templates/accounts/student_dashboard.html:360
+#: accounts/templates/accounts/student_dashboard.html:389
 #: cvbuilder/models.py:307
 msgid "Resumes"
 msgstr "Резюме"
@@ -3172,7 +3097,7 @@ msgstr ""
 #: accounts/templates/accounts/admin_dashboard.html:274
 #: accounts/templates/accounts/employer_dashboard.html:730
 #: accounts/templates/accounts/employer_dashboard.html:821
-#: accounts/templates/accounts/student_dashboard.html:206
+#: accounts/templates/accounts/student_dashboard.html:234
 #: core/templates/_inc/nav.html:203 core/templates/home.html:213
 #: core/templates/home.html:217
 msgid "View All"
@@ -3191,7 +3116,7 @@ msgstr "IP"
 #: accounts/templates/accounts/employer_stats.html:387
 #: accounts/templates/accounts/profile_base.html:59
 #: accounts/templates/accounts/student_dashboard.html:32
-#: accounts/templates/accounts/student_dashboard.html:322
+#: accounts/templates/accounts/student_dashboard.html:347
 #: accounts/templates/accounts/user_detail.html:877
 #: accounts/templates/accounts/user_detail.html:1161
 #: accounts/templates/accounts/user_management.html:228
@@ -3391,7 +3316,7 @@ msgstr "Панель администратора"
 #: jobs/templates/jobs/application_detail.html:212
 #: jobs/templates/jobs/applications.html:290
 #: jobs/templates/jobs/applications.html:308
-#: jobs/templates/jobs/job_detail.html:432 jobs/templates/jobs/my_jobs.html:739
+#: jobs/templates/jobs/job_detail.html:524 jobs/templates/jobs/my_jobs.html:739
 #: jobs/templates/jobs/my_jobs.html:822 jobs/templates/jobs/my_jobs.html:837
 #: jobs/templates/jobs/my_jobs.html:907 jobs/templates/jobs/my_jobs.html:914
 msgid "Close"
@@ -3635,7 +3560,7 @@ msgstr "Статус системы"
 
 #: accounts/templates/accounts/admin_statistics.html:13
 #: jobs/templates/jobs/application_detail.html:55
-#: resources/templates/resources/resource_detail.html:37
+#: resources/templates/resources/resource_detail.html:39
 #: resources/templates/resources/unpublished_resources.html:177
 msgid "Updated"
 msgstr "Обновлено"
@@ -3674,7 +3599,7 @@ msgstr "Ресурсы"
 #: cvbuilder/templates/cvbuilder/cv_stats.html:58
 #: cvbuilder/templates/cvbuilder/cv_stats.html:210 employers/models.py:635
 #: events/models.py:87 events/templates/events/admin_event_list.html:42
-#: events/templates/events/admin_event_list.html:153
+#: events/templates/events/admin_event_list.html:177
 #: events/templates/events/manage_events.html:34
 #: events/templates/events/manage_events.html:80 resources/models.py:72
 msgid "Published"
@@ -3748,8 +3673,8 @@ msgstr ""
 #: cvbuilder/templates/cvbuilder/cv_list.html:497
 #: cvbuilder/templates/cvbuilder/cv_stats.html:76
 #: cvbuilder/templates/cvbuilder/cv_stats.html:218 events/models.py:86
-#: events/templates/events/admin_event_list.html:51
-#: events/templates/events/admin_event_list.html:155
+#: events/templates/events/admin_event_list.html:52
+#: events/templates/events/admin_event_list.html:179
 #: events/templates/events/manage_events.html:31
 #: events/templates/events/manage_events.html:84
 #: jobs/templates/jobs/my_jobs.html:194 jobs/templates/jobs/my_jobs.html:428
@@ -3759,16 +3684,16 @@ msgstr "Черновик"
 #: accounts/templates/accounts/admin_statistics.html:183
 #: accounts/templates/accounts/admin_statistics.html:368
 #: employers/models.py:498 events/models.py:88 events/models.py:348
-#: events/models.py:467 events/templates/events/admin_event_list.html:60
-#: events/templates/events/admin_event_list.html:157 events/views.py:610
+#: events/models.py:467 events/templates/events/admin_event_list.html:62
+#: events/templates/events/admin_event_list.html:181 events/views.py:610
 msgid "Cancelled"
 msgstr "Отменено"
 
 #: accounts/templates/accounts/admin_statistics.html:189
 #: accounts/templates/accounts/admin_statistics.html:369 core/models.py:13
 #: employers/models.py:497 events/models.py:89
-#: events/templates/events/admin_event_list.html:69
-#: events/templates/events/admin_event_list.html:159
+#: events/templates/events/admin_event_list.html:72
+#: events/templates/events/admin_event_list.html:183
 msgid "Completed"
 msgstr "Завершено"
 
@@ -3887,7 +3812,7 @@ msgstr ""
 #: events/templates/events/event_delete.html:19
 #: jobs/templates/jobs/company_form.html:23
 #: jobs/templates/jobs/job_confirm_delete.html:42
-#: jobs/templates/jobs/job_detail.html:445
+#: jobs/templates/jobs/job_detail.html:544
 #: jobs/templates/jobs/job_form.html:904
 #: jobs/templates/jobs/job_settings.html:131
 #: jobs/templates/jobs/my_jobs.html:889
@@ -3919,10 +3844,10 @@ msgstr "Компания"
 #: events/templates/events/admin_category_delete.html:17
 #: events/templates/events/admin_category_list.html:36
 #: events/templates/events/admin_event_delete.html:17
-#: events/templates/events/admin_event_list.html:190
+#: events/templates/events/admin_event_list.html:233
 #: events/templates/events/detail.html:41
 #: events/templates/events/event_delete.html:17
-#: resources/templates/resources/resource_detail.html:213
+#: resources/templates/resources/resource_detail.html:215
 #: resources/templates/resources/resource_form.html:273
 #: resources/templates/resources/unpublished_resources.html:142
 msgid "Delete"
@@ -4037,15 +3962,15 @@ msgstr "О компании"
 #: employers/templates/employers/employer_dashboard.html:163
 #: employers/templates/employers/manage_jobs.html:20
 #: events/templates/events/admin_category_list.html:35
-#: events/templates/events/admin_event_list.html:172
+#: events/templates/events/admin_event_list.html:205
 #: events/templates/events/detail.html:38
 #: events/templates/events/event_list.html:196
 #: events/templates/events/manage_events.html:118
-#: jobs/templates/jobs/job_detail.html:110
+#: jobs/templates/jobs/job_detail.html:125
 #: jobs/templates/jobs/job_settings.html:22
 #: jobs/templates/jobs/my_jobs.html:462
 #: resources/templates/resources/resource_confirm_delete.html:159
-#: resources/templates/resources/resource_detail.html:198
+#: resources/templates/resources/resource_detail.html:200
 #: resources/templates/resources/unpublished_resources.html:133
 #: resources/templates/resources/unpublished_resources.html:197
 msgid "Edit"
@@ -4170,8 +4095,9 @@ msgstr "Социальные сети"
 #: cvbuilder/templates/cvbuilder/cv_list.html:536
 #: employers/templates/employers/detail.html:318
 #: events/templates/events/admin_category_form.html:25
-#: jobs/templates/jobs/job_detail.html:94 jobs/templates/jobs/job_list.html:391
-#: jobs/templates/jobs/job_list.html:398 jobs/templates/jobs/job_list.html:1117
+#: jobs/templates/jobs/job_detail.html:108
+#: jobs/templates/jobs/job_list.html:391 jobs/templates/jobs/job_list.html:398
+#: jobs/templates/jobs/job_list.html:1117
 msgid "Save"
 msgstr "Сохранить"
 
@@ -4253,7 +4179,7 @@ msgstr ""
 #: employers/templates/employers/employer_dashboard.html:158
 #: events/templates/events/admin_event_form.html:716
 #: events/templates/events/admin_event_form.html:742
-#: events/templates/events/admin_event_list.html:166
+#: events/templates/events/admin_event_list.html:193
 #: events/templates/events/event_list.html:193
 #: events/templates/events/manage_events.html:114
 #: jobs/templates/jobs/applications.html:230
@@ -4550,10 +4476,8 @@ msgid "Employer Dashboard"
 msgstr "Панель работодателя"
 
 #: accounts/templates/accounts/employer_dashboard.html:432
-#, fuzzy
-#| msgid "Employers Created"
 msgid "Employer Workspace"
-msgstr "Созданные работодатели"
+msgstr "Рабочее пространство работодателя"
 
 #: accounts/templates/accounts/employer_dashboard.html:446
 #: accounts/templates/accounts/student_dashboard.html:24
@@ -4571,16 +4495,26 @@ msgid_plural ""
 "                                You manage %(total)s companies.\n"
 "                                "
 msgstr[0] ""
+"\n"
+"                                Вы управляете %(total)s компанией.\n"
+"                                "
 msgstr[1] ""
+"\n"
+"                                Вы управляете %(total)s компаниями.\n"
+"                                "
 msgstr[2] ""
+"\n"
+"                                Вы управляете %(total)s компаниями.\n"
+"                                "
 msgstr[3] ""
+"\n"
+"                                Вы управляете %(total)s компаниями.\n"
+"                                "
 
 #: accounts/templates/accounts/employer_dashboard.html:459
 #: accounts/templates/accounts/user_detail.html:889
-#, fuzzy
-#| msgid "Application Status"
 msgid "Account Status"
-msgstr "Статус отклика"
+msgstr "Статус аккаунта"
 
 #: accounts/templates/accounts/employer_dashboard.html:464
 msgid "Unverified"
@@ -4593,10 +4527,8 @@ msgstr "Не подтверждено"
 #: accounts/templates/accounts/employer_stats.html:364
 #: employers/templates/employers/employer_dashboard.html:80
 #: employers/templates/employers/employer_dashboard.html:249
-#, fuzzy
-#| msgid "Company"
 msgid "Add Company"
-msgstr "Компания"
+msgstr "Добавить компанию"
 
 #: accounts/templates/accounts/employer_dashboard.html:474
 #: accounts/templates/accounts/employer_dashboard.html:678
@@ -4608,39 +4540,29 @@ msgid "My Jobs"
 msgstr "Мои вакансии"
 
 #: accounts/templates/accounts/employer_dashboard.html:492
-#, fuzzy
-#| msgid "Active Today"
 msgid "Active Company"
-msgstr "Активны сегодня"
+msgstr "Активная компания"
 
 #: accounts/templates/accounts/employer_dashboard.html:531
-#, fuzzy
-#| msgid "Partner companies"
 msgid "Manage All Companies"
-msgstr "Компании-партнеры"
+msgstr "Управлять всеми компаниями"
 
 #: accounts/templates/accounts/employer_dashboard.html:542
 #: accounts/templates/accounts/student_profile.html:164
-#, fuzzy
-#| msgid "Manager"
 msgid "Manage"
-msgstr "Менеджер"
+msgstr "Управлять"
 
 #: accounts/templates/accounts/employer_dashboard.html:560
-#, fuzzy
-#| msgid "Active Jobs"
 msgid "Active Jobs in"
 msgstr "Активные вакансии"
 
 #: accounts/templates/accounts/employer_dashboard.html:562
 msgid "Active Jobs (All Companies)"
-msgstr ""
+msgstr "Активные вакансии (все компании)"
 
 #: accounts/templates/accounts/employer_dashboard.html:580
-#, fuzzy
-#| msgid "Application link"
 msgid "Applications in"
-msgstr "Ссылка для отклика"
+msgstr "Отклики"
 
 #: accounts/templates/accounts/employer_dashboard.html:582
 #: accounts/templates/accounts/employer_dashboard.html:914
@@ -4651,8 +4573,6 @@ msgid "Total Applications"
 msgstr "Всего откликов"
 
 #: accounts/templates/accounts/employer_dashboard.html:600
-#, fuzzy
-#| msgid "Views"
 msgid "Views of"
 msgstr "Просмотры"
 
@@ -4665,26 +4585,20 @@ msgid "Quick Actions"
 msgstr "Быстрые действия"
 
 #: accounts/templates/accounts/employer_dashboard.html:637
-#, fuzzy
-#| msgid "Whether the company profile is active"
 msgid "Create a new company profile and start hiring."
-msgstr "Активен ли профиль компании"
+msgstr "Создайте профиль компании и начните нанимать сотрудников."
 
 #: accounts/templates/accounts/employer_dashboard.html:647
-#, fuzzy
-#| msgid "Post Job"
 msgid "Post New Job"
-msgstr "Опубликовать вакансию"
+msgstr "Опубликовать новую вакансию"
 
 #: accounts/templates/accounts/employer_dashboard.html:648
-#, fuzzy
-#| msgid "Publish vacancy immediately"
 msgid "Publish a vacancy and attract new candidates."
-msgstr "Опубликовать вакансию немедленно"
+msgstr "Опубликуйте вакансию и привлеките новых кандидатов."
 
 #: accounts/templates/accounts/employer_dashboard.html:659
 msgid "Review and manage candidate submissions."
-msgstr ""
+msgstr "Просматривайте и управляйте откликами кандидатов."
 
 #: accounts/templates/accounts/employer_dashboard.html:668
 msgid "Search Students"
@@ -4692,27 +4606,23 @@ msgstr "Поиск студентов"
 
 #: accounts/templates/accounts/employer_dashboard.html:669
 msgid "Browse public CVs and find the right talent."
-msgstr ""
+msgstr "Просматривайте публичные резюме и находите подходящих кандидатов."
 
 #: accounts/templates/accounts/employer_dashboard.html:679
-#, fuzzy
-#| msgid "View and manage all events"
 msgid "View and manage all your published vacancies."
-msgstr "Просматривайте и управляйте всеми событиями"
+msgstr "Просматривайте и управляйте всеми опубликованными вакансиями."
 
 #: accounts/templates/accounts/employer_dashboard.html:689
 msgid "Switch between companies and update details."
-msgstr ""
+msgstr "Переключайтесь между компаниями и обновляйте данные."
 
 #: accounts/templates/accounts/employer_dashboard.html:699
 msgid "Track updates, alerts, and system activity."
-msgstr ""
+msgstr "Отслеживайте обновления, оповещения и активность системы."
 
 #: accounts/templates/accounts/employer_dashboard.html:710
-#, fuzzy
-#| msgid "Create New Administrator"
 msgid "Open the administrative control panel."
-msgstr "Создать нового администратора"
+msgstr "Откройте административную панель управления."
 
 #: accounts/templates/accounts/employer_dashboard.html:766
 #: accounts/templates/accounts/employer_stats.html:338
@@ -4722,13 +4632,11 @@ msgstr "Создать нового администратора"
 #: employers/templates/employers/employer_dashboard.html:92
 #: jobs/templates/jobs/my_jobs.html:281
 msgid "jobs"
-msgstr ""
+msgstr "вакансий"
 
 #: accounts/templates/accounts/employer_dashboard.html:770
-#, fuzzy
-#| msgid "selected"
 msgid "Selected"
-msgstr "выбрано"
+msgstr "Выбрано"
 
 #: accounts/templates/accounts/employer_dashboard.html:772
 #: cvbuilder/templates/cvbuilder/home.html:145
@@ -4736,33 +4644,29 @@ msgstr "выбрано"
 #: cvbuilder/templates/cvbuilder/home.html:171
 #: cvbuilder/templates/cvbuilder/template_selector.html:108
 #: employers/templates/employers/form.html:219
-#, fuzzy
-#| msgid "selected"
 msgid "Select"
-msgstr "выбрано"
+msgstr "Выбрать"
 
 #: accounts/templates/accounts/employer_dashboard.html:787
 #: accounts/templates/accounts/employer_stats.html:355
-#, fuzzy
-#| msgid "About Companies"
 msgid "View All Companies"
-msgstr "О компаниях"
+msgstr "Все компании"
 
 #: accounts/templates/accounts/employer_dashboard.html:798
 msgid ""
 "Create your first company to start posting jobs and managing your business."
 msgstr ""
+"Создайте первую компанию, чтобы публиковать вакансии и управлять бизнесом."
 
 #: accounts/templates/accounts/employer_dashboard.html:801
-#, fuzzy
-#| msgid "Create Company"
 msgid "Create Your First Company"
-msgstr "Создать компанию"
+msgstr "Создайте первую компанию"
 
 #: accounts/templates/accounts/employer_dashboard.html:820
 #: accounts/templates/accounts/profile_base.html:644
 #: accounts/templates/accounts/profile_base.html:659
-#: accounts/templates/accounts/student_dashboard.html:202
+#: accounts/templates/accounts/student_dashboard.html:200
+#: accounts/templates/accounts/student_dashboard.html:230
 #: events/templates/events/my_events.html:4
 #: events/templates/events/my_events.html:10
 #: events/templates/events/participation_pass.html:74
@@ -4770,18 +4674,14 @@ msgid "My Events"
 msgstr "Мои события"
 
 #: accounts/templates/accounts/employer_dashboard.html:837
-#: accounts/templates/accounts/student_dashboard.html:229
+#: accounts/templates/accounts/student_dashboard.html:255
 #: events/templates/events/admin_event_participants.html:71
-#, fuzzy
-#| msgid "Password"
 msgid "Pass"
-msgstr "Пароль"
+msgstr "Пропуск"
 
 #: accounts/templates/accounts/employer_dashboard.html:846
-#, fuzzy
-#| msgid "You haven't created any events yet."
 msgid "You have not joined any events yet."
-msgstr "Вы еще не создали ни одного события."
+msgstr "Вы еще не присоединились ни к одному мероприятию."
 
 #: accounts/templates/accounts/employer_dashboard.html:854
 #: employers/templates/employers/employer_dashboard.html:127
@@ -5013,7 +4913,8 @@ msgid "email@example.com"
 msgstr "ваш.email@example.com"
 
 #: accounts/templates/accounts/employer_profile_update.html:116
-#: accounts/templates/accounts/student_dashboard.html:247
+#: accounts/templates/accounts/student_dashboard.html:205
+#: accounts/templates/accounts/student_dashboard.html:273
 msgid "Profile Information"
 msgstr "Информация профиля"
 
@@ -5361,7 +5262,7 @@ msgstr "Мои отклики"
 
 #: accounts/templates/accounts/employer_stats.html:656
 #: jobs/templates/jobs/my_jobs.html:1341
-#: resources/templates/resources/resource_detail.html:93
+#: resources/templates/resources/resource_detail.html:95
 msgid "Loading..."
 msgstr "Загрузка..."
 
@@ -5510,7 +5411,7 @@ msgstr "Профиль"
 
 #: accounts/templates/accounts/profile_base.html:48
 #: events/templates/events/detail.html:191
-#: jobs/templates/jobs/job_detail.html:136
+#: jobs/templates/jobs/job_detail.html:163
 msgid "views"
 msgstr "просмотры"
 
@@ -5544,7 +5445,7 @@ msgstr "Контактная информация"
 #: accounts/templates/accounts/profile_base.html:582
 #: accounts/templates/accounts/profile_base.html:603
 #: accounts/templates/accounts/profile_base.html:623
-#: accounts/templates/accounts/student_dashboard.html:280
+#: accounts/templates/accounts/student_dashboard.html:304
 #: accounts/templates/accounts/student_profile.html:231
 #: employers/templates/employers/employer_dashboard.html:30
 #: employers/templates/employers/employer_dashboard.html:267
@@ -5769,16 +5670,12 @@ msgid "You have not uploaded any certificates yet."
 msgstr "Вы еще не создали ни одного события."
 
 #: accounts/templates/accounts/student_dashboard.html:6
-#, fuzzy
-#| msgid "Student Profile"
 msgid "Student Cabinet"
-msgstr "Профиль студента"
+msgstr "Кабинет студента"
 
 #: accounts/templates/accounts/student_dashboard.html:18
-#, fuzzy
-#| msgid "Student Search"
 msgid "Student Space"
-msgstr "Поиск студентов"
+msgstr "Пространство студента"
 
 #: accounts/templates/accounts/student_dashboard.html:21
 #: core/templates/_inc/nav.html:228
@@ -5792,23 +5689,19 @@ msgstr "Созданные резюме"
 
 #: accounts/templates/accounts/student_dashboard.html:92
 msgid "Your CVs prepared in the system"
-msgstr ""
+msgstr "Ваши резюме, подготовленные в системе"
 
 #: accounts/templates/accounts/student_dashboard.html:103
-#, fuzzy
-#| msgid "Application Details"
 msgid "Applications sent to vacancies"
-msgstr "Детали отклика"
+msgstr "Отклики, отправленные на вакансии"
 
 #: accounts/templates/accounts/student_dashboard.html:114
-#, fuzzy
-#| msgid "Number of times profile was viewed"
 msgid "How many times your profile was viewed"
-msgstr "Количество просмотров профиля"
+msgstr "Сколько раз просматривали ваш профиль"
 
 #: accounts/templates/accounts/student_dashboard.html:124
 msgid "Fast access to your main student tools"
-msgstr ""
+msgstr "Быстрый доступ к основным инструментам студента"
 
 #: accounts/templates/accounts/student_dashboard.html:132
 #: cvbuilder/templates/cvbuilder/cv_list.html:40
@@ -5817,10 +5710,8 @@ msgid "New Resume"
 msgstr "Новое резюме"
 
 #: accounts/templates/accounts/student_dashboard.html:133
-#, fuzzy
-#| msgid "Create Job"
 msgid "Create a new CV"
-msgstr "Создать вакансию"
+msgstr "Создать новое CV"
 
 #: accounts/templates/accounts/student_dashboard.html:140
 #: jobs/templates/jobs/my_jobs.html:53 jobs/templates/jobs/my_jobs.html:719
@@ -5828,108 +5719,97 @@ msgid "Job Search"
 msgstr "Поиск работы"
 
 #: accounts/templates/accounts/student_dashboard.html:141
-#, fuzzy
-#| msgid "%(n)s vacancies"
 msgid "Browse available vacancies"
-msgstr "%(n)s вакансий"
+msgstr "Просмотреть доступные вакансии"
 
 #: accounts/templates/accounts/student_dashboard.html:148
-#: accounts/templates/accounts/student_dashboard.html:300 jobs/models.py:601
-#: jobs/templates/jobs/job_detail.html:99 jobs/templates/jobs/job_list.html:192
-#: jobs/templates/jobs/saved_jobs.html:4 jobs/templates/jobs/saved_jobs.html:15
+#: accounts/templates/accounts/student_dashboard.html:326 jobs/models.py:601
+#: jobs/templates/jobs/job_detail.html:114
+#: jobs/templates/jobs/job_list.html:192 jobs/templates/jobs/saved_jobs.html:4
+#: jobs/templates/jobs/saved_jobs.html:15
 msgid "Saved Jobs"
 msgstr "Сохраненные вакансии"
 
 #: accounts/templates/accounts/student_dashboard.html:149
-#, fuzzy
-#| msgid "Partner companies"
 msgid "Your shortlist of vacancies"
-msgstr "Компании-партнеры"
+msgstr "Ваш список избранных вакансий"
 
 #: accounts/templates/accounts/student_dashboard.html:157
 msgid "Edit your student data"
-msgstr ""
+msgstr "Изменить данные студента"
 
 #: accounts/templates/accounts/student_dashboard.html:164
-#: accounts/templates/accounts/student_dashboard.html:339
-#: accounts/templates/accounts/student_dashboard.html:372
+#: accounts/templates/accounts/student_dashboard.html:215
+#: accounts/templates/accounts/student_dashboard.html:367
+#: accounts/templates/accounts/student_dashboard.html:401
 #: accounts/templates/accounts/student_profile.html:160
 #: accounts/templates/accounts/student_profile.html:179
 #: accounts/templates/accounts/student_profile.html:214 cvbuilder/models.py:619
-#, fuzzy
-#| msgid "Notification"
 msgid "Certificates"
-msgstr "Уведомление"
+msgstr "Сертификаты"
 
 #: accounts/templates/accounts/student_dashboard.html:165
-#, fuzzy
-#| msgid "Partner companies"
 msgid "Manage your certificates"
-msgstr "Компании-партнеры"
+msgstr "Управляйте своими сертификатами"
 
 #: accounts/templates/accounts/student_dashboard.html:173
-#, fuzzy
-#| msgid "Link to event materials"
 msgid "Open learning materials"
-msgstr "Ссылка на материалы события"
+msgstr "Открыть учебные материалы"
 
 #: accounts/templates/accounts/student_dashboard.html:181
-#, fuzzy
-#| msgid "Upcoming Events"
 msgid "See upcoming events"
-msgstr "Предстоящие события"
+msgstr "Посмотреть предстоящие мероприятия"
 
 #: accounts/templates/accounts/student_dashboard.html:189
-#, fuzzy
-#| msgid "When status was last updated"
 msgid "Check your latest updates"
-msgstr "Когда статус был последний раз обновлен"
+msgstr "Проверить последние обновления"
 
-#: accounts/templates/accounts/student_dashboard.html:203
+#: accounts/templates/accounts/student_dashboard.html:210
+msgid "Saved & Viewed Jobs"
+msgstr "Сохраненные и просмотренные вакансии"
+
+#: accounts/templates/accounts/student_dashboard.html:220
+#: accounts/templates/accounts/student_dashboard.html:384
+msgid "Student Status"
+msgstr "Статус студента"
+
+#: accounts/templates/accounts/student_dashboard.html:231
 msgid "Events you have already joined"
-msgstr ""
+msgstr "Мероприятия, к которым вы уже присоединились"
 
-#: accounts/templates/accounts/student_dashboard.html:235
-#, fuzzy
-#| msgid "No upcoming events available"
+#: accounts/templates/accounts/student_dashboard.html:261
 msgid "No joined events yet"
-msgstr "Предстоящих событий нет"
+msgstr "Вы пока не присоединились ни к одному мероприятию"
 
-#: accounts/templates/accounts/student_dashboard.html:236
-#, fuzzy
-#| msgid "When people register for this event, they will appear here."
+#: accounts/templates/accounts/student_dashboard.html:262
 msgid "Your registered events will appear here."
-msgstr "Когда люди регистрируются на это событие, они появятся здесь."
+msgstr "Здесь появятся мероприятия, на которые вы зарегистрировались."
 
-#: accounts/templates/accounts/student_dashboard.html:248
+#: accounts/templates/accounts/student_dashboard.html:274
 msgid "Your academic and career details"
-msgstr ""
+msgstr "Ваши учебные и карьерные данные"
 
-#: accounts/templates/accounts/student_dashboard.html:289
-#, fuzzy
-#| msgid "Date and Time"
+#: accounts/templates/accounts/student_dashboard.html:316
 msgid "Saved and Viewed Jobs"
-msgstr "Дата и время"
+msgstr "Сохраненные и просмотренные вакансии"
 
-#: accounts/templates/accounts/student_dashboard.html:290
+#: accounts/templates/accounts/student_dashboard.html:317
 msgid ""
 "Track interesting vacancies and return to the ones you already explored."
 msgstr ""
+"Отслеживайте интересные вакансии и возвращайтесь к тем, которые уже "
+"просматривали."
 
-#: accounts/templates/accounts/student_dashboard.html:293
-#, fuzzy
-#| msgid "My Saved"
+#: accounts/templates/accounts/student_dashboard.html:320
 msgid "Open Saved"
-msgstr "Мои сохраненные"
+msgstr "Открыть сохраненные"
 
-#: accounts/templates/accounts/student_dashboard.html:304 jobs/models.py:639
+#: accounts/templates/accounts/student_dashboard.html:330 jobs/models.py:639
 #: jobs/templates/jobs/job_list.html:197
-#, fuzzy
-#| msgid "View Job"
 msgid "Viewed Jobs"
-msgstr "Просмотр вакансии"
+msgstr "Просмотренные вакансии"
 
-#: accounts/templates/accounts/student_dashboard.html:317
+#: accounts/templates/accounts/student_dashboard.html:342
 #: jobs/templates/jobs/application_detail.html:412
 #: jobs/templates/jobs/job_list.html:391 jobs/templates/jobs/job_list.html:1117
 #: jobs/templates/jobs/my_jobs.html:56 jobs/templates/jobs/saved_jobs.html:21
@@ -5937,58 +5817,38 @@ msgstr "Просмотр вакансии"
 msgid "Saved"
 msgstr "Сохраненные"
 
-#: accounts/templates/accounts/student_dashboard.html:328
-#, fuzzy
-#| msgid "No saved jobs yet."
+#: accounts/templates/accounts/student_dashboard.html:353
 msgid "No viewed jobs yet"
-msgstr "Пока нет сохраненных вакансий."
-
-#: accounts/templates/accounts/student_dashboard.html:329
-#, fuzzy
-#| msgid "Resource description will appear here..."
-msgid "Open a vacancy and it will appear here."
-msgstr "Описание ресурса появится здесь..."
-
-#: accounts/templates/accounts/student_dashboard.html:340
-#, fuzzy
-#| msgid "Whether employer has read this application"
-msgid "Documents employers can review after your application"
-msgstr "Прочитал ли работодатель этот отклик"
-
-#: accounts/templates/accounts/student_dashboard.html:343
-#: accounts/templates/accounts/student_profile.html:182
-#, fuzzy
-#| msgid "Uploaded By"
-msgid "Upload"
-msgstr "Загружено"
-
-#: accounts/templates/accounts/student_dashboard.html:348
-msgid "Upload certificates to strengthen your applications."
-msgstr ""
+msgstr "Пока нет просмотренных вакансий"
 
 #: accounts/templates/accounts/student_dashboard.html:354
-#, fuzzy
-#| msgid "Payment Status"
-msgid "Student Status"
-msgstr "Статус оплаты"
+msgid "Open a vacancy and it will appear here."
+msgstr "Откройте вакансию, и она появится здесь."
 
-#: accounts/templates/accounts/student_dashboard.html:355
-#, fuzzy
-#| msgid "Professional Skills"
+#: accounts/templates/accounts/student_dashboard.html:368
+msgid "Documents employers can review after your application"
+msgstr "Документы, которые работодатели могут просмотреть после вашего отклика"
+
+#: accounts/templates/accounts/student_dashboard.html:371
+#: accounts/templates/accounts/student_profile.html:182
+msgid "Upload"
+msgstr "Загрузить"
+
+#: accounts/templates/accounts/student_dashboard.html:375
+msgid "Upload certificates to strengthen your applications."
+msgstr "Загрузите сертификаты, чтобы усилить свои отклики."
+
+#: accounts/templates/accounts/student_dashboard.html:385
 msgid "Basic profile summary"
-msgstr "Профессиональные навыки"
+msgstr "Краткая сводка профиля"
 
-#: accounts/templates/accounts/student_dashboard.html:376
-#, fuzzy
-#| msgid "Contact Info"
+#: accounts/templates/accounts/student_dashboard.html:405
 msgid "Account Since"
-msgstr "Контактная информация"
+msgstr "Аккаунт с"
 
-#: accounts/templates/accounts/student_dashboard.html:383
-#, fuzzy
-#| msgid "Profile Update"
+#: accounts/templates/accounts/student_dashboard.html:411
 msgid "Profile active"
-msgstr "Обновление профиля"
+msgstr "Профиль активен"
 
 #: accounts/templates/accounts/student_profile.html:10
 msgid "Education Information"
@@ -6000,24 +5860,18 @@ msgstr "Карьерные предпочтения"
 
 #: accounts/templates/accounts/student_profile.html:127
 #: cvbuilder/templates/cv_render/classic.html:138
-#, fuzzy
-#| msgid "LinkedIn"
 msgid "LinkedIn:"
-msgstr "LinkedIn"
+msgstr "LinkedIn:"
 
 #: accounts/templates/accounts/student_profile.html:140
 #: cvbuilder/templates/cv_render/classic.html:141
-#, fuzzy
-#| msgid "GitHub"
 msgid "GitHub:"
-msgstr "GitHub"
+msgstr "GitHub:"
 
 #: accounts/templates/accounts/student_profile.html:170
 #: accounts/templates/accounts/student_profile.html:187
-#, fuzzy
-#| msgid "No active jobs yet"
 msgid "No certificates uploaded yet."
-msgstr "Активных вакансий пока нет"
+msgstr "Пока сертификаты не загружены."
 
 #: accounts/templates/accounts/student_profile.html:209
 msgid "Applied Jobs"
@@ -6025,35 +5879,27 @@ msgstr "Отклики на вакансии"
 
 #: accounts/templates/accounts/student_profile_update.html:5
 #: accounts/templates/accounts/student_profile_update.html:13
-#, fuzzy
-#| msgid "Student Profile"
 msgid "Update Student Profile"
-msgstr "Профиль студента"
+msgstr "Обновить профиль студента"
 
 #: accounts/templates/accounts/student_profile_update.html:33
 #: accounts/templates/accounts/student_profile_update.html:71
 msgid "This field is provided by OAuth and cannot be changed."
-msgstr ""
+msgstr "Это поле заполняется через OAuth и не может быть изменено."
 
 #: accounts/templates/accounts/student_profile_update.html:87
-#, fuzzy
-#| msgid "Payment Status"
 msgid "Current avatar:"
-msgstr "Статус оплаты"
+msgstr "Текущий аватар:"
 
 #: accounts/templates/accounts/student_profile_update.html:91
-#, fuzzy
-#| msgid "Payment Status"
 msgid "Current avatar"
-msgstr "Статус оплаты"
+msgstr "Текущий аватар"
 
 #: accounts/templates/accounts/student_profile_update.html:225
 #: events/templates/events/admin_event_form.html:801
 #: jobs/templates/jobs/my_jobs.html:892
-#, fuzzy
-#| msgid "Status Changed"
 msgid "Save Changes"
-msgstr "Статус изменен"
+msgstr "Сохранить изменения"
 
 #: accounts/templates/accounts/student_search.html:6
 msgid "Student Search"
@@ -6813,10 +6659,10 @@ msgstr "Название навыка или компетенции"
 
 #: alumni/models.py:30 cvbuilder/models.py:660 events/forms.py:213
 #: events/forms.py:370 events/models.py:107
-#: events/templates/events/admin_event_list.html:122
+#: events/templates/events/admin_event_list.html:132
 #: events/templates/events/event_list.html:94 resources/forms.py:50
 #: resources/models.py:49 resources/templates/resources/list.html:70
-#: resources/templates/resources/resource_detail.html:163
+#: resources/templates/resources/resource_detail.html:165
 #: resources/templates/resources/resource_form.html:75
 #: resources/templates/resources/resource_form.html:225
 msgid "Category"
@@ -6849,7 +6695,7 @@ msgstr "Навык"
 #: cvbuilder/templates/cvbuilder/cv_stats.html:133
 #: cvbuilder/templates/cvbuilder/preview.html:112
 #: cvbuilder/templates/cvbuilder/public_cv_list.html:596 jobs/admin.py:89
-#: jobs/templates/jobs/job_detail.html:211
+#: jobs/templates/jobs/job_detail.html:258
 msgid "Skills"
 msgstr "Навыки"
 
@@ -6890,7 +6736,7 @@ msgid "Economics"
 msgstr "Экономика"
 
 #: alumni/templates/alumni/alumni_list.html:27
-#: resources/templates/resources/resource_detail.html:191
+#: resources/templates/resources/resource_detail.html:193
 msgid "Management"
 msgstr "Менеджмент"
 
@@ -7010,7 +6856,7 @@ msgid "Career Journey"
 msgstr "Карьерные ресурсы"
 
 #: alumni/templates/alumni/detail.html:116
-#: resources/templates/resources/resource_detail.html:155
+#: resources/templates/resources/resource_detail.html:157
 msgid "Quick Information"
 msgstr "Краткая информация"
 
@@ -7906,154 +7752,124 @@ msgid "UZS"
 msgstr "UZS"
 
 #: cvbuilder/forms.py:136 cvbuilder/forms.py:428
-#, fuzzy
-#| msgid "Professional Skills"
 msgid "Short professional summary..."
-msgstr "Профессиональные навыки"
+msgstr "Краткое профессиональное резюме..."
 
 #: cvbuilder/forms.py:137
 msgid "B"
-msgstr ""
+msgstr "B"
 
 #: cvbuilder/forms.py:138
 msgid "https://linkedin.com/in/..."
-msgstr ""
+msgstr "https://linkedin.com/in/..."
 
 #: cvbuilder/forms.py:139
 msgid "https://github.com/..."
-msgstr ""
+msgstr "https://github.com/..."
 
 #: cvbuilder/forms.py:140
 msgid "https://..."
-msgstr ""
+msgstr "https://..."
 
 #: cvbuilder/forms.py:169
 msgid "Birth date cannot be in the future."
-msgstr ""
+msgstr "Дата рождения не может быть в будущем."
 
 #: cvbuilder/forms.py:178
 msgid "Please specify license category (e.g., B)."
-msgstr ""
+msgstr "Укажите категорию прав (например, B)."
 
 #: cvbuilder/forms.py:222 cvbuilder/models.py:361
-#, fuzzy
-#| msgid "Organization"
 msgid "Company/Organization"
-msgstr "Организация"
+msgstr "Компания/организация"
 
 #: cvbuilder/forms.py:224
 msgid "City, Country"
 msgstr "Город, Страна"
 
 #: cvbuilder/forms.py:225
-#, fuzzy
-#| msgid "AWS, Docker, PostgreSQL, ..."
 msgid "Django, PostgreSQL, Docker..."
-msgstr "AWS, Docker, PostgreSQL, ..."
+msgstr "Django, PostgreSQL, Docker..."
 
 #: cvbuilder/forms.py:238
 msgid "Start date cannot be in the future."
-msgstr ""
+msgstr "Дата начала не может быть в будущем."
 
 #: cvbuilder/forms.py:243
-#, fuzzy
-#| msgid "End date must be after start date."
 msgid "End date must be empty for current position."
-msgstr "Дата окончания должна быть после даты начала."
+msgstr "Для текущей должности дата окончания должна быть пустой."
 
 #: cvbuilder/forms.py:247
-#, fuzzy
-#| msgid "Please select at least one resource"
 msgid "Please set an end date or mark as current."
-msgstr "Пожалуйста, выберите хотя бы один ресурс"
+msgstr "Укажите дату окончания или отметьте, что это текущее место."
 
 #: cvbuilder/forms.py:249
-#, fuzzy
-#| msgid "End date must be after start date."
 msgid "End date cannot be earlier than start date."
-msgstr "Дата окончания должна быть после даты начала."
+msgstr "Дата окончания не может быть раньше даты начала."
 
 #: cvbuilder/forms.py:291
-#, fuzzy
-#| msgid "University"
 msgid "University/College"
-msgstr "Университет"
+msgstr "Университет/колледж"
 
 #: cvbuilder/forms.py:292
 msgid "Bachelor / Master / Diploma"
-msgstr ""
+msgstr "Бакалавр / магистр / диплом"
 
 #: cvbuilder/forms.py:293
-#, fuzzy
-#| msgid "Specialty"
 msgid "Major / Specialty"
-msgstr "Специальность"
+msgstr "Направление / специальность"
 
 #: cvbuilder/forms.py:310
 msgid "Start year looks invalid."
-msgstr ""
+msgstr "Год начала выглядит некорректным."
 
 #: cvbuilder/forms.py:314
-#, fuzzy
-#| msgid "Graduation Year"
 msgid "Graduation year looks invalid."
-msgstr "Год выпуска"
+msgstr "Год выпуска выглядит некорректным."
 
 #: cvbuilder/forms.py:316
-#, fuzzy
-#| msgid "Registration deadline cannot be after event start date."
 msgid "Graduation year cannot be earlier than start year."
-msgstr "Крайний срок регистрации не может быть после даты начала события."
+msgstr "Год выпуска не может быть раньше года начала."
 
 #: cvbuilder/forms.py:340
-#, fuzzy
-#| msgid "Skill Name"
 msgid "Skill name"
 msgstr "Название навыка"
 
 #: cvbuilder/forms.py:341
 msgid "technical / soft / language"
-msgstr ""
+msgstr "технический / soft / язык"
 
 #: cvbuilder/forms.py:343
-#, fuzzy
-#| msgid "Detailed description"
 msgid "Optional, year"
-msgstr "Подробное описание"
+msgstr "Необязательно, год"
 
 #: cvbuilder/forms.py:354
-#, fuzzy
-#| msgid "Last update to the note"
 msgid "Last used cannot be in the future."
-msgstr "Последнее обновление заметки"
+msgstr "Последняя дата использования не может быть в будущем."
 
 #: cvbuilder/forms.py:376
 msgid "English / Russian / Uzbek"
-msgstr ""
+msgstr "Английский / русский / узбекский"
 
 #: cvbuilder/forms.py:377
 msgid "IELTS 7.0, TOEFL 95..."
-msgstr ""
+msgstr "IELTS 7.0, TOEFL 95..."
 
 #: cvbuilder/forms.py:389
 msgid "Remove score if you have no certificate."
-msgstr ""
+msgstr "Уберите балл, если у вас нет сертификата."
 
 #: cvbuilder/forms.py:404
 msgid "Skills (comma separated)"
-msgstr ""
+msgstr "Навыки (через запятую)"
 
 #: cvbuilder/forms.py:424 cvbuilder/models.py:81
-#, fuzzy
-#| msgid "My Resumes"
 msgid "My Resume"
-msgstr "Мои резюме"
+msgstr "Моё резюме"
 
 #: cvbuilder/forms.py:429
-#, fuzzy
-#| msgid "Python, Django, JavaScript, ..."
 msgid "Python, Django, PostgreSQL, Docker"
-msgstr "Python, Django, JavaScript, ..."
+msgstr "Python, Django, PostgreSQL, Docker"
 
 #: cvbuilder/models.py:38 cvbuilder/templates/cvbuilder/cv_create.html:396
 #: cvbuilder/templates/cvbuilder/cv_create.html:464
@@ -8063,27 +7879,27 @@ msgstr "В архиве"
 
 #: cvbuilder/models.py:42
 msgid "Single"
-msgstr ""
+msgstr "Не в браке"
 
 #: cvbuilder/models.py:43
 msgid "Married"
-msgstr ""
+msgstr "В браке"
 
 #: cvbuilder/models.py:44
 msgid "Divorced"
-msgstr ""
+msgstr "В разводе"
 
 #: cvbuilder/models.py:45
 msgid "Widowed"
-msgstr ""
+msgstr "Вдовец / вдова"
 
 #: cvbuilder/models.py:49
 msgid "Male"
-msgstr ""
+msgstr "Мужской"
 
 #: cvbuilder/models.py:50
 msgid "Female"
-msgstr ""
+msgstr "Женский"
 
 #: cvbuilder/models.py:54
 msgid "Full-time"
@@ -8107,7 +7923,7 @@ msgstr "Пользователь, владеющий этим CV"
 
 #: cvbuilder/models.py:76
 msgid "CV ID"
-msgstr ""
+msgstr "ID резюме"
 
 #: cvbuilder/models.py:80 cvbuilder/templates/cvbuilder/cv_create.html:56
 msgid "Resume Title"
@@ -8131,10 +7947,8 @@ msgid "Template"
 msgstr "Шаблон"
 
 #: cvbuilder/models.py:92
-#, fuzzy
-#| msgid "CV template used for this resume"
 msgid "Template used for rendering the CV"
-msgstr "Шаблон CV, используемый для этого резюме"
+msgstr "Шаблон, используемый для отображения CV"
 
 #: cvbuilder/models.py:100
 msgid "Current status of the resume"
@@ -8151,37 +7965,27 @@ msgstr "Фотография"
 
 #: cvbuilder/models.py:116
 msgid "Professional photo (recommended size: 3x4 cm)"
-msgstr ""
+msgstr "Профессиональное фото (рекомендуемый размер: 3x4 см)"
 
 #: cvbuilder/models.py:123
-#, fuzzy
-#| msgid "Date of Birth"
 msgid "Date of birth (DD.MM.YYYY)"
-msgstr "Дата рождения"
+msgstr "Дата рождения (ДД.ММ.ГГГГ)"
 
 #: cvbuilder/models.py:131 cvbuilder/templates/cvbuilder/cv_create.html:246
-#, fuzzy
-#| msgid "Sender"
 msgid "Gender"
-msgstr "Отправитель"
+msgstr "Пол"
 
 #: cvbuilder/models.py:139 cvbuilder/templates/cvbuilder/cv_create.html:256
-#, fuzzy
-#| msgid "Updated date"
 msgid "Marital Status"
-msgstr "Дата обновления"
+msgstr "Семейное положение"
 
 #: cvbuilder/models.py:145 cvbuilder/templates/cvbuilder/cv_create.html:268
-#, fuzzy
-#| msgid "Vocational"
 msgid "Nationality"
-msgstr "Профессиональное"
+msgstr "Национальность"
 
 #: cvbuilder/models.py:146
-#, fuzzy
-#| msgid "Internship"
 msgid "Citizenship"
-msgstr "Стажировка"
+msgstr "Гражданство"
 
 #: cvbuilder/models.py:152
 msgid "Professional email address"
@@ -8189,41 +7993,31 @@ msgstr "Профессиональный email адрес"
 
 #: cvbuilder/models.py:158
 msgid "Contact phone number in format: +998 XX XXX XX XX"
-msgstr ""
+msgstr "Контактный телефон в формате: +998 XX XXX XX XX"
 
 #: cvbuilder/models.py:165 cvbuilder/templates/cvbuilder/cv_create.html:113
-#, fuzzy
-#| msgid "Secondary Education"
 msgid "Secondary Phone"
-msgstr "Среднее образование"
+msgstr "Дополнительный телефон"
 
 #: cvbuilder/models.py:166
-#, fuzzy
-#| msgid "Additional Features"
 msgid "Additional contact number"
-msgstr "Дополнительные функции"
+msgstr "Дополнительный контактный номер"
 
 #: cvbuilder/models.py:173
-#, fuzzy
-#| msgid "e.g., Tashkent, Samarkand, Remote"
 msgid "Region of Uzbekistan (e.g., Tashkent, Samarkand)"
-msgstr "например, Ташкент, Самарканд, Удаленно"
+msgstr "Регион Узбекистана (например, Ташкент, Самарканд)"
 
 #: cvbuilder/models.py:183 cvbuilder/templates/cvbuilder/cv_edit.html:124
 msgid "Full Address"
 msgstr "Полный адрес"
 
 #: cvbuilder/models.py:184
-#, fuzzy
-#| msgid "Contact email address"
 msgid "Complete residential address"
-msgstr "Контактный email адрес"
+msgstr "Полный адрес проживания"
 
 #: cvbuilder/models.py:191
-#, fuzzy
-#| msgid "Job position being applied for"
 msgid "Position you are applying for"
-msgstr "Вакансия, на которую откликнулись"
+msgstr "Должность, на которую вы претендуете"
 
 #: cvbuilder/models.py:198 cvbuilder/models.py:375
 #: cvbuilder/templates/cvbuilder/cv_create.html:171 employers/models.py:212
@@ -10134,8 +9928,7 @@ msgstr ""
 #: cvbuilder/templates/cvbuilder/preview.html:265
 #: employers/templates/employers/detail.html:64
 #: jobs/templates/jobs/job_list.html:405 jobs/templates/jobs/job_list.html:406
-#: resources/templates/resources/resource_detail.html:46
-#: resources/templates/resources/resource_detail.html:225
+#: resources/templates/resources/resource_detail.html:48
 msgid "Share"
 msgstr "Поделиться"
 
@@ -10908,7 +10701,7 @@ msgid "Detailed description of the job and company"
 msgstr "Подробное описание вакансии и компании"
 
 #: employers/models.py:196 jobs/models.py:212
-#: jobs/templates/jobs/job_detail.html:194
+#: jobs/templates/jobs/job_detail.html:236
 #: jobs/templates/jobs/job_form.html:493
 msgid "Requirements"
 msgstr "Требования"
@@ -11402,7 +11195,7 @@ msgstr "Телефон компании"
 #: employers/templates/employers/company_detail.html:147
 #: employers/templates/employers/employer_dashboard.html:93
 #: employers/templates/employers/employer_dashboard.html:144
-#: jobs/templates/jobs/job_detail.html:140
+#: jobs/templates/jobs/job_detail.html:167
 msgid "applications"
 msgstr "откликов"
 
@@ -11461,7 +11254,7 @@ msgid "employees"
 msgstr "1-10 сотрудников"
 
 #: employers/templates/employers/detail.html:79
-#: jobs/templates/jobs/job_detail.html:263
+#: jobs/templates/jobs/job_detail.html:370
 msgid "About the company"
 msgstr "О компании"
 
@@ -12070,7 +11863,7 @@ msgstr ""
 msgid "Search events..."
 msgstr "Поиск событий..."
 
-#: events/forms.py:371 events/templates/events/admin_event_list.html:94
+#: events/forms.py:371 events/templates/events/admin_event_list.html:103
 #: events/templates/events/event_list.html:47
 msgid "All Categories"
 msgstr "Все категории"
@@ -12285,7 +12078,7 @@ msgid "Number of times the event was viewed"
 msgstr "Количество просмотров события"
 
 #: events/models.py:190 events/models.py:360 events/models.py:514
-#: events/templates/events/admin_event_list.html:121
+#: events/templates/events/admin_event_list.html:131
 msgid "Event"
 msgstr "Событие"
 
@@ -12647,33 +12440,25 @@ msgstr "Редактировать информацию"
 
 #: events/templates/events/admin_event_form.html:545
 #: events/templates/events/event_calendar.html:21
-#, fuzzy
-#| msgid "Back to Resources List"
 msgid "Back to List"
-msgstr "Назад к списку ресурсов"
+msgstr "Назад к списку"
 
 #: events/templates/events/admin_event_form.html:557
 #: events/templates/events/create_event.html:1020
-#, fuzzy
-#| msgid "Please correct the following errors:"
 msgid "Please correct the following errors"
-msgstr "Исправьте следующие ошибки:"
+msgstr "Пожалуйста, исправьте следующие ошибки"
 
 #: events/templates/events/admin_event_form.html:593
 #: events/templates/events/admin_event_form.html:618
 #: events/templates/events/create_event.html:1051
 #: events/templates/events/create_event.html:1076
-#, fuzzy
-#| msgid "Enter resource title (maximum 200 characters)"
 msgid "Maximum 200 characters"
-msgstr "Введите название ресурса (максимум 200 символов)"
+msgstr "Максимум 200 символов"
 
 #: events/templates/events/admin_event_form.html:629
 #: events/templates/events/create_event.html:1087
-#, fuzzy
-#| msgid "Maximum number of participants allowed"
 msgid "Maximum number of participants allowed for the event"
-msgstr "Максимальное количество разрешенных участников"
+msgstr "Максимально допустимое количество участников мероприятия"
 
 #: events/templates/events/admin_event_form.html:675
 msgid "Date and Time"
@@ -12681,161 +12466,123 @@ msgstr "Дата и время"
 
 #: events/templates/events/admin_event_form.html:700
 #: events/templates/events/create_event.html:1153
-#, fuzzy
-#| msgid "Image"
 msgid "Images"
-msgstr "Изображение"
+msgstr "Изображения"
 
 #: events/templates/events/admin_event_form.html:709
 msgid "Recommended size: 1200x400px"
-msgstr ""
+msgstr "Рекомендуемый размер: 1200x400 px"
 
 #: events/templates/events/admin_event_form.html:712
-#, fuzzy
-#| msgid "Current image"
 msgid "Current Banner:"
-msgstr "Текущее изображение"
+msgstr "Текущий баннер:"
 
 #: events/templates/events/admin_event_form.html:713
-#, fuzzy
-#| msgid "Current image"
 msgid "Current banner"
-msgstr "Текущее изображение"
+msgstr "Текущий баннер"
 
 #: events/templates/events/admin_event_form.html:718
 #: events/templates/events/admin_event_form.html:744
-#, fuzzy
-#| msgid "Upload image"
 msgid "Upload new image to replace"
-msgstr "Загрузить изображение"
+msgstr "Загрузите новое изображение для замены"
 
 #: events/templates/events/admin_event_form.html:726
-#, fuzzy
-#| msgid "Message Preview"
 msgid "New Banner Preview"
-msgstr "Предпросмотр сообщения"
+msgstr "Предпросмотр нового баннера"
 
 #: events/templates/events/admin_event_form.html:735
 msgid "Recommended size: 400x300px"
-msgstr ""
+msgstr "Рекомендуемый размер: 400x300 px"
 
 #: events/templates/events/admin_event_form.html:738
-#, fuzzy
-#| msgid "Thumbnail"
 msgid "Current Thumbnail:"
-msgstr "Миниатюра"
+msgstr "Текущая миниатюра:"
 
 #: events/templates/events/admin_event_form.html:739
-#, fuzzy
-#| msgid "Current image"
 msgid "Current thumbnail"
-msgstr "Текущее изображение"
+msgstr "Текущая миниатюра"
 
 #: events/templates/events/admin_event_form.html:752
-#, fuzzy
-#| msgid "Thumbnail"
 msgid "New Thumbnail Preview"
-msgstr "Миниатюра"
+msgstr "Предпросмотр новой миниатюры"
 
 #: events/templates/events/admin_event_form.html:769
 #: events/templates/events/create_event.html:1193
-#, fuzzy
-#| msgid "technology, workshop, networking"
 msgid "Separate tags with commas (e.g., technology, workshop, networking)"
-msgstr "технологии, воркшоп, нетворкинг"
+msgstr "Разделяйте теги запятыми (например, technology, workshop, networking)"
 
 #: events/templates/events/admin_event_form.html:788
 msgid "Draft: visible only to you | Published: visible to everyone"
-msgstr ""
+msgstr "Черновик: видно только вам | Опубликовано: видно всем"
 
 #: events/templates/events/admin_event_form.html:815
-#, fuzzy
-#| msgid "Preview"
 msgid "Event Preview"
-msgstr "Предпросмотр"
+msgstr "Предпросмотр события"
 
 #: events/templates/events/admin_event_form.html:820
-#, fuzzy
-#| msgid "Payment Status"
 msgid "Current Status:"
-msgstr "Статус оплаты"
+msgstr "Текущий статус:"
 
 #: events/templates/events/admin_event_form.html:830
-#, fuzzy
-#| msgid "Last Updated"
 msgid "Last Updated:"
-msgstr "Последнее обновление"
+msgstr "Последнее обновление:"
 
 #: events/templates/events/admin_event_form.html:834
 msgid "Views:"
 msgstr "Просмотры:"
 
 #: events/templates/events/admin_event_form.html:838
-#, fuzzy
-#| msgid "Quick Actions"
 msgid "Quick Actions:"
-msgstr "Быстрые действия"
+msgstr "Быстрые действия:"
 
 #: events/templates/events/admin_event_form.html:841
-#, fuzzy
-#| msgid "View Events"
 msgid "View Live"
-msgstr "Просмотреть события"
+msgstr "Открыть опубликованную страницу"
 
 #: events/templates/events/admin_event_form.html:845
-#: events/templates/events/admin_event_list.html:178
+#: events/templates/events/admin_event_list.html:214
 #: events/templates/events/manage_events.html:134
 #: resources/templates/resources/resource_confirm_delete.html:154
 msgid "Unpublish"
 msgstr "Снять с публикации"
 
 #: events/templates/events/admin_event_form.html:849
-#: events/templates/events/admin_event_list.html:185
+#: events/templates/events/admin_event_list.html:224
 #: events/templates/events/manage_events.html:127
 #: resources/templates/resources/resource_confirm_delete.html:149
-#: resources/templates/resources/resource_detail.html:208
+#: resources/templates/resources/resource_detail.html:210
 #: resources/templates/resources/unpublished_resources.html:130
 #: resources/templates/resources/unpublished_resources.html:193
 msgid "Publish"
 msgstr "Опубликовать"
 
 #: events/templates/events/admin_event_form.html:861
-#, fuzzy
-#| msgid "Waiting List"
 msgid "Editing Tips"
-msgstr "Лист ожидания"
+msgstr "Подсказки по редактированию"
 
 #: events/templates/events/admin_event_form.html:868
-#, fuzzy
-#| msgid "Description:"
 msgid "Title & Description:"
-msgstr "Описание:"
+msgstr "Заголовок и описание:"
 
 #: events/templates/events/admin_event_form.html:868
 msgid "Keep them clear, concise and informative"
-msgstr ""
+msgstr "Делайте их понятными, краткими и информативными"
 
 #: events/templates/events/admin_event_form.html:872
-#, fuzzy
-#| msgid "Date:"
 msgid "Dates:"
-msgstr "Дата:"
+msgstr "Даты:"
 
 #: events/templates/events/admin_event_form.html:872
-#, fuzzy
-#| msgid "Event end date and time"
 msgid "Always double-check start and end times"
-msgstr "Дата и время окончания события"
+msgstr "Всегда перепроверяйте время начала и окончания"
 
 #: events/templates/events/admin_event_form.html:876
-#, fuzzy
-#| msgid "Image:"
 msgid "Images:"
-msgstr "Изображение:"
+msgstr "Изображения:"
 
 #: events/templates/events/admin_event_form.html:876
 msgid "High-quality visuals improve engagement significantly"
-msgstr ""
+msgstr "Качественные изображения заметно повышают вовлеченность"
 
 #: events/templates/events/admin_event_form.html:880
 msgid "Tags:"
@@ -12843,25 +12590,25 @@ msgstr "Теги:"
 
 #: events/templates/events/admin_event_form.html:880
 msgid "Use relevant keywords for better discoverability"
-msgstr ""
+msgstr "Используйте релевантные ключевые слова для лучшей находимости"
 
 #: events/templates/events/admin_event_form.html:884
 msgid "Auto-Save:"
-msgstr ""
+msgstr "Автосохранение:"
 
 #: events/templates/events/admin_event_form.html:884
 msgid "Your changes are saved automatically every 30 seconds"
-msgstr ""
+msgstr "Изменения автоматически сохраняются каждые 30 секунд"
 
 #: events/templates/events/admin_event_list.html:5
 msgid "Admin - Events"
 msgstr "Админ - События"
 
-#: events/templates/events/admin_event_list.html:14
+#: events/templates/events/admin_event_list.html:15
 msgid "Events Management"
 msgstr "Управление событиями"
 
-#: events/templates/events/admin_event_list.html:15
+#: events/templates/events/admin_event_list.html:16
 msgid "View and manage all events"
 msgstr "Просматривайте и управляйте всеми событиями"
 
@@ -12869,36 +12616,54 @@ msgstr "Просматривайте и управляйте всеми собы
 msgid "New Event"
 msgstr "Новое событие"
 
-#: events/templates/events/admin_event_list.html:80
+#: events/templates/events/admin_event_list.html:86
 msgid "Search..."
 msgstr "Поиск..."
 
-#: events/templates/events/admin_event_list.html:84
+#: events/templates/events/admin_event_list.html:92
 #: events/templates/events/my_events.html:19
 msgid "All Statuses"
 msgstr "Все статусы"
 
-#: events/templates/events/admin_event_list.html:123
+#: events/templates/events/admin_event_list.html:133
 msgid "Start"
 msgstr "Начало"
 
-#: events/templates/events/admin_event_list.html:169
+#: events/templates/events/admin_event_list.html:199
 msgid "Participants"
 msgstr "Участники"
 
-#: events/templates/events/admin_event_list.html:200
+#: events/templates/events/admin_event_list.html:215
+#, fuzzy
+#| msgid "Are you sure you want to delete this event?"
+msgid "Are you sure you want to unpublish this event?"
+msgstr "Вы уверены, что хотите удалить это событие?"
+
+#: events/templates/events/admin_event_list.html:225
+#, fuzzy
+#| msgid "Are you sure you want to delete this event?"
+msgid "Are you sure you want to publish this event?"
+msgstr "Вы уверены, что хотите удалить это событие?"
+
+#: events/templates/events/admin_event_list.html:234
+#: events/templates/events/detail.html:40
+#: events/templates/events/event_delete.html:12
+msgid "Are you sure you want to delete this event?"
+msgstr "Вы уверены, что хотите удалить это событие?"
+
+#: events/templates/events/admin_event_list.html:244
 msgid "No Events Found"
 msgstr "События не найдены"
 
-#: events/templates/events/admin_event_list.html:201
+#: events/templates/events/admin_event_list.html:245
 msgid "No events match your search criteria."
 msgstr "Ни одно событие не соответствует вашим критериям поиска."
 
-#: events/templates/events/admin_event_list.html:203
+#: events/templates/events/admin_event_list.html:247
 msgid "Create First Event"
 msgstr "Создать первое событие"
 
-#: events/templates/events/admin_event_list.html:216
+#: events/templates/events/admin_event_list.html:260
 #: events/templates/events/my_events.html:104
 #, fuzzy
 #| msgid "Event Registration"
@@ -13163,11 +12928,6 @@ msgstr ""
 #| msgid "Event end date and time"
 msgid "Double-check dates and times before publishing"
 msgstr "Дата и время окончания события"
-
-#: events/templates/events/detail.html:40
-#: events/templates/events/event_delete.html:12
-msgid "Are you sure you want to delete this event?"
-msgstr "Вы уверены, что хотите удалить это событие?"
 
 #: events/templates/events/detail.html:56
 #, fuzzy
@@ -13789,162 +13549,128 @@ msgid "%(count)d alerts deactivated"
 msgstr "%(count)d оповещений деактивировано"
 
 #: jobs/forms.py:9
-#, fuzzy
-#| msgid "Industry"
 msgid "Select Industry"
-msgstr "Отрасль"
+msgstr "Выберите отрасль"
 
 #: jobs/forms.py:10
-#, fuzzy
-#| msgid "Technology"
 msgid "IT/Technology"
-msgstr "Технологии"
+msgstr "IT / технологии"
 
 #: jobs/forms.py:11
-#, fuzzy
-#| msgid "Finance & Banking"
 msgid "Finance/Banking"
-msgstr "Финансы & Банковское дело"
+msgstr "Финансы / банковское дело"
 
 #: jobs/forms.py:12
-#, fuzzy
-#| msgid "Healthcare"
 msgid "Healthcare/Medical"
-msgstr "Здравоохранение"
+msgstr "Здравоохранение / медицина"
 
 #: jobs/forms.py:13
-#, fuzzy
-#| msgid "Education"
 msgid "Education/Training"
-msgstr "Образование"
+msgstr "Образование / обучение"
 
 #: jobs/forms.py:14
 msgid "Marketing/Advertising"
-msgstr ""
+msgstr "Маркетинг / реклама"
 
 #: jobs/forms.py:15
-#, fuzzy
-#| msgid "Retail"
 msgid "Sales/Retail"
-msgstr "Розничная торговля"
+msgstr "Продажи / розничная торговля"
 
 #: jobs/forms.py:16
-#, fuzzy
-#| msgid "Manufacturing"
 msgid "Manufacturing/Engineering"
-msgstr "Производство"
+msgstr "Производство / инженерия"
 
 #: jobs/forms.py:17
-#, fuzzy
-#| msgid "Construction"
 msgid "Construction/Real Estate"
-msgstr "Строительство"
+msgstr "Строительство / недвижимость"
 
 #: jobs/forms.py:18
 msgid "Hospitality/Tourism"
-msgstr ""
+msgstr "Гостиничный бизнес / туризм"
 
 #: jobs/forms.py:19
 msgid "Transportation/Logistics"
-msgstr ""
+msgstr "Транспорт / логистика"
 
 #: jobs/forms.py:20
 msgid "Government/Public Sector"
-msgstr ""
+msgstr "Государственный / общественный сектор"
 
 #: jobs/forms.py:21
 msgid "Non-profit/NGO"
-msgstr ""
+msgstr "НКО / NGO"
 
 #: jobs/forms.py:22
-#, fuzzy
-#| msgid "Media Content"
 msgid "Media/Entertainment"
-msgstr "Медиа контент"
+msgstr "Медиа / развлечения"
 
 #: jobs/forms.py:23
 msgid "Agriculture/Farming"
-msgstr ""
+msgstr "Сельское хозяйство / фермерство"
 
 #: jobs/forms.py:29
 msgid "Republic of Karakalpakstan"
-msgstr ""
+msgstr "Республика Каракалпакстан"
 
 #: jobs/forms.py:36
 msgid "Navoiy"
-msgstr ""
+msgstr "Навоий"
 
 #: jobs/forms.py:37
 msgid "Qashqadaryo"
-msgstr ""
+msgstr "Кашкадарья"
 
 #: jobs/forms.py:38
 msgid "Samarqand"
-msgstr ""
+msgstr "Самарканд"
 
 #: jobs/forms.py:39
 msgid "Sirdaryo"
-msgstr ""
+msgstr "Сырдарья"
 
 #: jobs/forms.py:40
-#, fuzzy
-#| msgid "Secondary Education"
 msgid "Surxondaryo"
-msgstr "Среднее образование"
+msgstr "Сурхандарья"
 
 #: jobs/forms.py:41
-#, fuzzy
-#| msgid "Tashkent, Uzbekistan"
 msgid "Tashkent Region"
-msgstr "Ташкент, Узбекистан"
+msgstr "Ташкентская область"
 
 #: jobs/forms.py:42
-#, fuzzy
-#| msgid "Tashkent, Uzbekistan"
 msgid "Tashkent City"
-msgstr "Ташкент, Узбекистан"
+msgstr "Город Ташкент"
 
 #: jobs/forms.py:63
 msgid "Select the industry that best describes this job"
-msgstr ""
+msgstr "Выберите отрасль, которая лучше всего описывает эту вакансию"
 
 #: jobs/forms.py:70
 msgid "Select the region in Uzbekistan"
-msgstr ""
+msgstr "Выберите регион Узбекистана"
 
 #: jobs/forms.py:122
-#, fuzzy
-#| msgid "About Company"
 msgid "Your company"
-msgstr "О компании"
+msgstr "Ваша компания"
 
 #: jobs/forms.py:124
-#, fuzzy
-#| msgid "Partner companies"
 msgid "Select one of your companies"
-msgstr "Компании-партнеры"
+msgstr "Выберите одну из ваших компаний"
 
 #: jobs/forms.py:131 jobs/templates/jobs/job_form.html:98
-#, fuzzy
-#| msgid "Select company"
 msgid "Select a company"
-msgstr "Выбрать компанию"
+msgstr "Выберите компанию"
 
 #: jobs/forms.py:149
-#, fuzzy
-#| msgid "Please select a template"
 msgid "Please select..."
-msgstr "Пожалуйста, выберите шаблон"
+msgstr "Пожалуйста, выберите..."
 
 #: jobs/forms.py:165 jobs/templates/jobs/job_form.html:77
 msgid "e.g., Senior Software Engineer"
 msgstr "например, Старший разработчик программного обеспечения"
 
 #: jobs/forms.py:166
-#, fuzzy
-#| msgid "Brief summary of the job (max 300 characters)"
 msgid "Brief summary (max 300 characters)"
-msgstr "Краткое описание вакансии (максимум 300 символов)"
+msgstr "Краткое описание (максимум 300 символов)"
 
 #: jobs/forms.py:167 jobs/templates/jobs/job_form.html:536
 msgid "Python, Django, JavaScript, React, ..."
@@ -13955,44 +13681,36 @@ msgid "AWS, Docker, PostgreSQL, ..."
 msgstr "AWS, Docker, PostgreSQL, ..."
 
 #: jobs/forms.py:169
-#, fuzzy
-#| msgid "Headquarters location"
 msgid "Full address or location"
-msgstr "Местоположение штаб-квартиры"
+msgstr "Полный адрес или местоположение"
 
 #: jobs/forms.py:170 jobs/templates/jobs/job_form.html:755
 msgid "email@company.com"
 msgstr "email@company.com"
 
 #: jobs/forms.py:192 jobs/forms.py:387
-#, fuzzy
-#| msgid "Maximum salary must be greater than minimum salary"
 msgid "Maximum salary should be greater than minimum salary."
-msgstr "Максимальная зарплата должна быть больше минимальной"
+msgstr "Максимальная зарплата должна быть больше минимальной."
 
 #: jobs/forms.py:201
-#, fuzzy
-#| msgid "You can view all saved jobs in your profile."
 msgid "You can only create jobs for your own companies."
-msgstr "Вы можете просмотреть все сохраненные вакансии в своем профиле."
+msgstr "Вы можете создавать вакансии только для своих компаний."
 
 #: jobs/forms.py:209
 msgid "You don't have any companies. Please create a company first."
-msgstr ""
+msgstr "У вас нет компаний. Сначала создайте компанию."
 
 #: jobs/forms.py:257
 msgid "Select a company to publish this vacancy on its behalf"
-msgstr ""
+msgstr "Выберите компанию, от имени которой будет опубликована эта вакансия"
 
 #: jobs/forms.py:266
-#, fuzzy
-#| msgid "All Jobs"
 msgid "All jobs"
 msgstr "Все вакансии"
 
 #: jobs/forms.py:268 jobs/models.py:95 jobs/templates/jobs/job_form.html:130
 msgid "Vacancy Geography"
-msgstr ""
+msgstr "География вакансии"
 
 #: jobs/forms.py:284
 msgid "City, region, or district..."
@@ -14000,25 +13718,19 @@ msgstr "Город, область или район..."
 
 #: jobs/forms.py:294
 msgid "e.g., IT, Finance, Healthcare..."
-msgstr ""
+msgstr "например, IT, финансы, здравоохранение..."
 
 #: jobs/forms.py:332
-#, fuzzy
-#| msgid "Minimum salary"
 msgid "Min salary"
-msgstr "Минимальная зарплата"
+msgstr "Мин. зарплата"
 
 #: jobs/forms.py:343
-#, fuzzy
-#| msgid "Maximum salary"
 msgid "Max salary"
-msgstr "Максимальная зарплата"
+msgstr "Макс. зарплата"
 
 #: jobs/forms.py:360
-#, fuzzy
-#| msgid "Featured Job"
 msgid "Featured Jobs Only"
-msgstr "Рекомендуемая вакансия"
+msgstr "Только рекомендованные вакансии"
 
 #: jobs/forms.py:366
 msgid "Urgent Hiring Only"
@@ -14037,40 +13749,28 @@ msgid "You must agree to the terms and conditions to apply."
 msgstr "Вы должны согласиться с условиями применения."
 
 #: jobs/forms.py:414
-#, fuzzy
-#| msgid "Why you are suitable for this position..."
 msgid "Explain why you're a good fit for this position..."
-msgstr "Почему вы подходите для этой должности..."
+msgstr "Объясните, почему вы хорошо подходите для этой позиции..."
 
 #: jobs/forms.py:421
-#, fuzzy
-#| msgid "Expected salary range"
 msgid "Your expected salary (optional)"
-msgstr "Ожидаемый диапазон зарплаты"
+msgstr "Ожидаемая зарплата (необязательно)"
 
 #: jobs/forms.py:431
-#, fuzzy
-#| msgid "Days required for notice period"
 msgid "Days required before starting (optional)"
-msgstr "Дни, необходимые для периода уведомления"
+msgstr "Сколько дней нужно до начала работы (необязательно)"
 
 #: jobs/forms.py:436
-#, fuzzy
-#| msgid "Save Resume"
 msgid "Select Resume"
-msgstr "Сохранить резюме"
+msgstr "Выберите резюме"
 
 #: jobs/forms.py:439
-#, fuzzy
-#| msgid "Start Date"
 msgid "Available Start Date"
-msgstr "Дата начала"
+msgstr "Доступная дата начала"
 
 #: jobs/forms.py:440
-#, fuzzy
-#| msgid "Notice Period"
 msgid "Notice Period (days)"
-msgstr "Период уведомления"
+msgstr "Период уведомления (дни)"
 
 #: jobs/forms.py:444
 msgid "Customize your cover letter for this specific job application."
@@ -14087,32 +13787,24 @@ msgid "How many days notice you need to give your current employer."
 msgstr "За сколько дней вы должны уведомить своего нынешнего работодателя."
 
 #: jobs/forms.py:478
-#, fuzzy
-#| msgid "Expected salary range"
 msgid "Expected salary cannot be negative."
-msgstr "Ожидаемый диапазон зарплаты"
+msgstr "Ожидаемая зарплата не может быть отрицательной."
 
 #: jobs/forms.py:484
 msgid "Notice period should be between 0 and 90 days."
 msgstr "Срок уведомления должен составлять от 0 до 90 дней."
 
 #: jobs/forms.py:510
-#, fuzzy
-#| msgid "Updated date"
 msgid "Update Status"
-msgstr "Дата обновления"
+msgstr "Обновить статус"
 
 #: jobs/forms.py:518
-#, fuzzy
-#| msgid "Add notes about the candidate..."
 msgid "Add notes about this application..."
-msgstr "Добавьте заметки о кандидате..."
+msgstr "Добавьте заметки об этом отклике..."
 
 #: jobs/forms.py:520 jobs/templates/jobs/application_detail.html:175
-#, fuzzy
-#| msgid "Candidate Notes"
 msgid "Internal Notes"
-msgstr "Заметки о кандидатах"
+msgstr "Внутренние заметки"
 
 #: jobs/forms.py:527
 #, fuzzy
@@ -14220,7 +13912,7 @@ msgstr "USD"
 msgid "EUR"
 msgstr "EUR"
 
-#: jobs/models.py:61 jobs/models.py:397 jobs/templates/jobs/job_detail.html:51
+#: jobs/models.py:61 jobs/models.py:397 jobs/templates/jobs/job_detail.html:45
 #: jobs/templates/jobs/job_list.html:126 jobs/templates/jobs/job_list.html:325
 #: jobs/templates/jobs/my_jobs.html:393
 msgid "Hybrid"
@@ -14458,11 +14150,11 @@ msgstr ""
 msgid "Salary is negotiable"
 msgstr "Зарплата обсуждается"
 
-#: jobs/models.py:373 jobs/templates/jobs/job_detail.html:66
+#: jobs/models.py:373 jobs/templates/jobs/job_detail.html:80
 msgid "Negotiable"
 msgstr "Договорная"
 
-#: jobs/models.py:395 jobs/templates/jobs/job_detail.html:46
+#: jobs/models.py:395 jobs/templates/jobs/job_detail.html:39
 msgid "Remote work"
 msgstr "Удаленная работа"
 
@@ -14997,7 +14689,7 @@ msgstr ""
 "Это действие нельзя отменить. Все отклики и данные, связанные с этой "
 "вакансией, будут полностью удалены."
 
-#: jobs/templates/jobs/job_detail.html:56 jobs/templates/jobs/job_list.html:257
+#: jobs/templates/jobs/job_detail.html:33 jobs/templates/jobs/job_list.html:257
 #: jobs/templates/jobs/saved_jobs.html:25
 #: jobs/templates/jobs/saved_jobs.html:46
 #, fuzzy
@@ -15005,96 +14697,144 @@ msgstr ""
 msgid "Viewed"
 msgstr "Просмотр"
 
-#: jobs/templates/jobs/job_detail.html:76
+#: jobs/templates/jobs/job_detail.html:90
 msgid "Application submitted"
 msgstr "Отклик отправлен"
 
-#: jobs/templates/jobs/job_detail.html:92
+#: jobs/templates/jobs/job_detail.html:106
 msgid "Remove from saved"
 msgstr "Удалить из сохраненных"
 
-#: jobs/templates/jobs/job_detail.html:103
+#: jobs/templates/jobs/job_detail.html:118
 msgid "Log in to apply"
 msgstr "Войдите, чтобы откликнуться"
 
-#: jobs/templates/jobs/job_detail.html:153
+#: jobs/templates/jobs/job_detail.html:185
 msgid "About the job"
 msgstr "О вакансии"
 
-#: jobs/templates/jobs/job_detail.html:158
+#: jobs/templates/jobs/job_detail.html:186
+#, fuzzy
+#| msgid "Negative aspects of the company"
+msgid "Overview and details of the vacancy"
+msgstr "Отрицательные аспекты компании"
+
+#: jobs/templates/jobs/job_detail.html:192
 msgid "Short description"
 msgstr "Краткое описание"
 
-#: jobs/templates/jobs/job_detail.html:163
+#: jobs/templates/jobs/job_detail.html:197
 msgid "Detailed description"
 msgstr "Подробное описание"
 
-#: jobs/templates/jobs/job_detail.html:178
+#: jobs/templates/jobs/job_detail.html:215
 msgid "Main responsibilities"
 msgstr "Основные обязанности"
 
-#: jobs/templates/jobs/job_detail.html:217
+#: jobs/templates/jobs/job_detail.html:216
+msgid "What the role includes"
+msgstr ""
+
+#: jobs/templates/jobs/job_detail.html:237
+#, fuzzy
+#| msgid "How the candidate found this job"
+msgid "What the candidate should know"
+msgstr "Как кандидат нашел эту вакансию"
+
+#: jobs/templates/jobs/job_detail.html:259
+#, fuzzy
+#| msgid "List required and preferred skills clearly"
+msgid "Required and preferred skills for this role"
+msgstr "Четко перечислите необходимые и желательные навыки"
+
+#: jobs/templates/jobs/job_detail.html:266
 msgid "Required skills"
 msgstr "Необходимые навыки"
 
-#: jobs/templates/jobs/job_detail.html:226
+#: jobs/templates/jobs/job_detail.html:278
 msgid "Preferred skills"
 msgstr "Желательные навыки"
 
-#: jobs/templates/jobs/job_detail.html:244
+#: jobs/templates/jobs/job_detail.html:301
 msgid "Working conditions and benefits"
 msgstr "Условия работы и льготы"
 
-#: jobs/templates/jobs/job_detail.html:294
+#: jobs/templates/jobs/job_detail.html:302
+msgid "Perks, bonuses and workplace conditions"
+msgstr ""
+
+#: jobs/templates/jobs/job_detail.html:323
+msgid "Similar jobs"
+msgstr "Похожие вакансии"
+
+#: jobs/templates/jobs/job_detail.html:324
+msgid "Other vacancies that may interest you"
+msgstr ""
+
+#: jobs/templates/jobs/job_detail.html:371
+#, fuzzy
+#| msgid "Employer Profile"
+msgid "Employer details and profile"
+msgstr "Профиль работодателя"
+
+#: jobs/templates/jobs/job_detail.html:408
 msgid "Company size"
 msgstr "Размер компании"
 
-#: jobs/templates/jobs/job_detail.html:309
+#: jobs/templates/jobs/job_detail.html:423
 msgid "Company page"
 msgstr "Страница компании"
 
-#: jobs/templates/jobs/job_detail.html:320
+#: jobs/templates/jobs/job_detail.html:437
 msgid "Job details"
 msgstr "Детали вакансии"
 
-#: jobs/templates/jobs/job_detail.html:326
+#: jobs/templates/jobs/job_detail.html:438
+#, fuzzy
+#| msgid "Contact information"
+msgid "Core vacancy information"
+msgstr "Контактная информация"
+
+#: jobs/templates/jobs/job_detail.html:445
 msgid "Experience level"
 msgstr "Уровень опыта"
 
-#: jobs/templates/jobs/job_detail.html:330
+#: jobs/templates/jobs/job_detail.html:450
 msgid "Education level"
 msgstr "Уровень образования"
 
-#: jobs/templates/jobs/job_detail.html:334
+#: jobs/templates/jobs/job_detail.html:455
 msgid "Employment type"
 msgstr "Тип занятости"
 
-#: jobs/templates/jobs/job_detail.html:338
+#: jobs/templates/jobs/job_detail.html:460
 msgid "Created date"
 msgstr "Дата создания"
 
-#: jobs/templates/jobs/job_detail.html:343
+#: jobs/templates/jobs/job_detail.html:466
 #: jobs/templates/jobs/job_list.html:174 jobs/templates/jobs/job_list.html:347
 msgid "Deadline"
 msgstr "Срок подачи"
 
-#: jobs/templates/jobs/job_detail.html:356
+#: jobs/templates/jobs/job_detail.html:482
 msgid "Contact information"
 msgstr "Контактная информация"
 
-#: jobs/templates/jobs/job_detail.html:374
+#: jobs/templates/jobs/job_detail.html:483
+#, fuzzy
+#| msgid "Created Employers"
+msgid "How to reach the employer"
+msgstr "Созданные работодатели"
+
+#: jobs/templates/jobs/job_detail.html:504
 msgid "Application link"
 msgstr "Ссылка для отклика"
 
-#: jobs/templates/jobs/job_detail.html:392
-msgid "Similar jobs"
-msgstr "Похожие вакансии"
-
-#: jobs/templates/jobs/job_detail.html:439
+#: jobs/templates/jobs/job_detail.html:533
 msgid "You are about to apply for"
 msgstr "Вы собираетесь откликнуться на"
 
-#: jobs/templates/jobs/job_detail.html:439
+#: jobs/templates/jobs/job_detail.html:533
 msgid "position"
 msgstr "должность"
 
@@ -15464,7 +15204,7 @@ msgid "I found this job that might interest you"
 msgstr ""
 
 #: jobs/templates/jobs/job_list.html:1090
-#: resources/templates/resources/resource_detail.html:445
+#: resources/templates/resources/resource_detail.html:450
 #, fuzzy
 #| msgid "Job link copied to clipboard!"
 msgid "Link copied to clipboard!"
@@ -16294,7 +16034,7 @@ msgid "Add new resource"
 msgstr "Добавить новый ресурс"
 
 #: resources/templates/resources/list.html:225
-#: resources/templates/resources/resource_detail.html:307
+#: resources/templates/resources/resource_detail.html:312
 msgid "Unpublished resources"
 msgstr "Неопубликованные ресурсы"
 
@@ -16315,12 +16055,12 @@ msgid "Being deleted"
 msgstr ""
 
 #: resources/templates/resources/resource_confirm_delete.html:44
-#: resources/templates/resources/resource_detail.html:170
+#: resources/templates/resources/resource_detail.html:172
 msgid "Added date"
 msgstr "Дата добавления"
 
 #: resources/templates/resources/resource_confirm_delete.html:52
-#: resources/templates/resources/resource_detail.html:177
+#: resources/templates/resources/resource_detail.html:179
 msgid "Updated date"
 msgstr "Дата обновления"
 
@@ -16394,78 +16134,62 @@ msgstr "Вы подтверждаете удаление"
 msgid "Other options"
 msgstr "Фильтровать отклики"
 
-#: resources/templates/resources/resource_detail.html:32
-#: resources/templates/resources/resource_detail.html:286
+#: resources/templates/resources/resource_detail.html:34
+#: resources/templates/resources/resource_detail.html:291
 #: resources/templates/resources/unpublished_resources.html:173
 msgid "Added"
 msgstr "Добавлено"
 
-#: resources/templates/resources/resource_detail.html:70
+#: resources/templates/resources/resource_detail.html:72
 msgid "About Resource"
 msgstr "О ресурсе"
 
-#: resources/templates/resources/resource_detail.html:84
+#: resources/templates/resources/resource_detail.html:86
 msgid "Video Material"
 msgstr "Видео материал"
 
-#: resources/templates/resources/resource_detail.html:95
+#: resources/templates/resources/resource_detail.html:97
 msgid "Video is loading..."
 msgstr "Видео загружается..."
 
-#: resources/templates/resources/resource_detail.html:104
+#: resources/templates/resources/resource_detail.html:106
 msgid "Open on YouTube"
 msgstr "Открыть на YouTube"
 
-#: resources/templates/resources/resource_detail.html:115
+#: resources/templates/resources/resource_detail.html:117
 msgid "Video is available on YouTube platform"
 msgstr "Видео доступно на платформе YouTube"
 
-#: resources/templates/resources/resource_detail.html:120
-#: resources/templates/resources/resource_detail.html:517
+#: resources/templates/resources/resource_detail.html:122
+#: resources/templates/resources/resource_detail.html:522
 msgid "Watch on YouTube"
 msgstr "Смотреть на YouTube"
 
-#: resources/templates/resources/resource_detail.html:125
+#: resources/templates/resources/resource_detail.html:127
 msgid "Video will open in a new window"
 msgstr "Видео откроется в новом окне"
 
-#: resources/templates/resources/resource_detail.html:134
+#: resources/templates/resources/resource_detail.html:136
 msgid "Video embedding is not possible or restricted."
 msgstr "Встраивание видео невозможно или ограничено."
 
-#: resources/templates/resources/resource_detail.html:136
+#: resources/templates/resources/resource_detail.html:138
 msgid "YouTube video link not checked."
 msgstr "Ссылка на видео YouTube не проверена."
 
-#: resources/templates/resources/resource_detail.html:203
+#: resources/templates/resources/resource_detail.html:205
 msgid "Hide"
 msgstr "Скрыть"
 
-#: resources/templates/resources/resource_detail.html:231
-msgid "Share on Facebook"
-msgstr "Поделиться на Facebook"
-
-#: resources/templates/resources/resource_detail.html:236
-msgid "Share on Twitter"
-msgstr "Поделиться на Twitter"
-
-#: resources/templates/resources/resource_detail.html:241
-msgid "Share on Telegram"
-msgstr "Поделиться в Telegram"
-
-#: resources/templates/resources/resource_detail.html:246
-msgid "Share on WhatsApp"
-msgstr "Поделиться в WhatsApp"
-
-#: resources/templates/resources/resource_detail.html:260
+#: resources/templates/resources/resource_detail.html:265
 msgid "Similar Resources"
 msgstr "Похожие ресурсы"
 
-#: resources/templates/resources/resource_detail.html:261
+#: resources/templates/resources/resource_detail.html:266
 msgid "Other useful materials in this category"
 msgstr "Другие полезные материалы в этой категории"
 
-#: resources/templates/resources/resource_detail.html:301
+#: resources/templates/resources/resource_detail.html:306
 msgid "Back to All Resources"
 msgstr "Назад ко всем ресурсам"
 
@@ -16732,6 +16456,18 @@ msgstr "Ваш пароль"
 #| msgid "Log In"
 msgid "Log in"
 msgstr "Войти"
+
+#~ msgid "Share on Facebook"
+#~ msgstr "Поделиться на Facebook"
+
+#~ msgid "Share on Twitter"
+#~ msgstr "Поделиться на Twitter"
+
+#~ msgid "Share on Telegram"
+#~ msgstr "Поделиться в Telegram"
+
+#~ msgid "Share on WhatsApp"
+#~ msgstr "Поделиться в WhatsApp"
 
 #, fuzzy
 #~| msgid "Admin"

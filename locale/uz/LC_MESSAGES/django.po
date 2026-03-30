@@ -3,16 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-26 17:38+0500\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2026-03-30 12:04+0500\n"
+"PO-Revision-Date: 2026-03-30 12:30+0500\n"
+"Last-Translator: OpenAI Codex\n"
+"Language-Team: Uzbek\n"
+"Language: uz\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -38,6 +37,7 @@ msgstr "Shaxsiy ma'lumot"
 #: employers/models.py:401 employers/models.py:538
 #: employers/templates/employers/manage_jobs.html:12 events/forms.py:226
 #: events/models.py:159 events/templates/events/admin_event_form.html:778
+#: events/templates/events/admin_event_list.html:134
 #: events/templates/events/create_event.html:1201
 #: events/templates/events/my_events.html:17 jobs/admin.py:95 jobs/admin.py:155
 #: jobs/models.py:524 jobs/templates/jobs/applications.html:139
@@ -215,67 +215,56 @@ msgid "Token Information"
 msgstr "Eslatma ma'lumoti"
 
 #: accounts/admin.py:490
-#, fuzzy
-#| msgid "Company Status"
 msgid "Token Status"
-msgstr "Kompaniya holati"
+msgstr "Token holati"
 
 #: accounts/captcha.py:17 accounts/captcha.py:22 accounts/captcha.py:28
 #: accounts/captcha.py:41 accounts/forms.py:28
-#, fuzzy
-#| msgid "Security Message"
 msgid "Security question"
-msgstr "Xavfsizlik xabari"
+msgstr "Xavfsizlik savoli"
 
 #: accounts/captcha.py:23
 #, python-format
 msgid "What is %(a)s + %(b)s?"
-msgstr ""
+msgstr "%(a)s + %(b)s nechaga teng?"
 
 #: accounts/certificates.py:95
 msgid "Upload a valid PDF file."
-msgstr ""
+msgstr "Yaroqli PDF faylni yuklang."
 
 #: accounts/certificates.py:106
-#, fuzzy
-#| msgid "Error loading information"
 msgid "Upload a valid image file."
-msgstr "Ma'lumot yuklashda xatolik"
+msgstr "Yaroqli rasm faylini yuklang."
 
 #: accounts/certificates.py:119
 #, python-format
 msgid "Unsupported file format. Allowed formats: %(formats)s."
-msgstr ""
+msgstr "Qo'llab-quvvatlanmaydigan fayl formati. Ruxsat etilgan formatlar: %(formats)s."
 
 #: accounts/certificates.py:126
-#, fuzzy, python-format
-#| msgid "Profile picture size should not exceed 2MB"
+#, python-format
 msgid "File size must not exceed %(size)s MB."
-msgstr "Profil rasmi hajmi 2MB dan oshmasligi kerak"
+msgstr "Fayl hajmi %(size)s MB dan oshmasligi kerak."
 
 #: accounts/certificates.py:135
 msgid "Unsupported file content type."
-msgstr ""
+msgstr "Qo'llab-quvvatlanmaydigan fayl kontent turi."
 
 #: accounts/forms.py:21 accounts/forms.py:158
-#, fuzzy
-#| msgid "Your password"
 msgid "Enter the answer"
-msgstr "Parolingiz"
+msgstr "Javobni kiriting"
 
 #: accounts/forms.py:32
 msgid "Please solve the security question."
-msgstr ""
+msgstr "Iltimos, xavfsizlik savolini yeching."
 
 #: accounts/forms.py:33
-#, fuzzy
-#| msgid "Please enter a valid YouTube URL"
 msgid "Enter a valid number."
-msgstr "Iltimos, to'g'ri YouTube URL manzilini kiriting"
+msgstr "Yaroqli son kiriting."
 
 #: accounts/forms.py:60
 msgid "Incorrect answer to the security question."
-msgstr ""
+msgstr "Xavfsizlik savoliga noto'g'ri javob berildi."
 
 #: accounts/forms.py:67
 msgid "Login or Email"
@@ -304,52 +293,44 @@ msgstr "Parolingiz"
 
 #: accounts/forms.py:99
 msgid "Invalid credentials or you are not authorized as an employer."
-msgstr ""
+msgstr "Login ma'lumotlari noto'g'ri yoki siz ish beruvchi sifatida ruxsatga ega emassiz."
 
 #: accounts/forms.py:113
-#, fuzzy
-#| msgid "Name, surname or username"
 msgid "Enter your username"
-msgstr "Ism, familiya yoki foydalanuvchi nomi"
+msgstr "Foydalanuvchi nomingizni kiriting"
 
 #: accounts/forms.py:124
-#, fuzzy
-#| msgid "Your password"
 msgid "Enter your password"
-msgstr "Parolingiz"
+msgstr "Parolingizni kiriting"
 
 #: accounts/forms.py:129
 msgid "Remember me"
-msgstr ""
+msgstr "Meni eslab qolish"
 
 #: accounts/forms.py:140
-#, fuzzy
-#| msgid "Please enter a valid YouTube URL"
 msgid "Please enter your username and password."
-msgstr "Iltimos, to'g'ri YouTube URL manzilini kiriting"
+msgstr "Iltimos, foydalanuvchi nomi va parolni kiriting."
 
 #: accounts/forms.py:145
-#, fuzzy
-#| msgid "Your password"
 msgid "Invalid username or password."
-msgstr "Parolingiz"
+msgstr "Foydalanuvchi nomi yoki parol noto'g'ri."
 
 #: accounts/forms.py:149
 msgid "You are not authorized to access the admin panel."
-msgstr ""
+msgstr "Sizga admin paneliga kirish uchun ruxsat berilmagan."
 
 #: accounts/forms.py:181
 #: accounts/templates/accounts/create_employer_account.html:115
 msgid "Required. Enter a valid email address."
-msgstr ""
+msgstr "Majburiy maydon. Yaroqli email manzilini kiriting."
 
 #: accounts/forms.py:192
 msgid "A user with this email already exists."
-msgstr ""
+msgstr "Bunday email bilan foydalanuvchi allaqachon mavjud."
 
 #: accounts/forms.py:198
 msgid "A user with this username already exists."
-msgstr ""
+msgstr "Bunday foydalanuvchi nomi allaqachon mavjud."
 
 #: accounts/forms.py:206
 #: accounts/templates/accounts/create_employer_account.html:747
@@ -377,93 +358,71 @@ msgstr "Telefon raqami"
 
 #: accounts/forms.py:214
 #: accounts/templates/accounts/create_employer_account.html:130
-#, fuzzy
-#| msgid "User's phone number with country code"
 msgid "Phone number with country code (e.g., +998901234567)"
-msgstr "Foydalanuvchi telefon raqami (davlat kodi bilan)"
+msgstr "Telefon raqami mamlakat kodi bilan (masalan, +998901234567)"
 
 #: accounts/forms.py:236
-#, fuzzy
-#| msgid "User's phone number with country code"
 msgid "Enter a valid phone number with country code."
-msgstr "Foydalanuvchi telefon raqami (davlat kodi bilan)"
+msgstr "Mamlakat kodi bilan yaroqli telefon raqamini kiriting."
 
 #: accounts/forms.py:270 accounts/forms.py:470
-#, fuzzy
-#| msgid "Company name"
 msgid "Company name..."
-msgstr "Kompaniya nomi"
+msgstr "Kompaniya nomi..."
 
 #: accounts/forms.py:274
 #: accounts/templates/accounts/create_employer_account.html:233
 msgid "LLC, Corporation, Startup, etc."
-msgstr ""
+msgstr "MChJ, korporatsiya, startap va hokazo."
 
 #: accounts/forms.py:282
-#, fuzzy
-#| msgid "Detailed job description..."
 msgid "Detailed company description..."
-msgstr "Batafsil ish tavsifi..."
+msgstr "Kompaniya haqida batafsil tavsif..."
 
 #: accounts/forms.py:287
-#, fuzzy
-#| msgid "Company description and activities..."
 msgid "Brief company description for listings..."
-msgstr "Kompaniya tavsifi va faoliyati..."
+msgstr "Ro'yxatlar uchun qisqacha kompaniya tavsifi..."
 
 #: accounts/forms.py:325
 #: accounts/templates/accounts/create_employer_account.html:267
 msgid "Technology, Education, Finance, etc."
-msgstr ""
+msgstr "Texnologiya, ta'lim, moliya va hokazo."
 
 #: accounts/forms.py:329
 msgid "tech, startup, education, etc."
-msgstr ""
+msgstr "texnologiya, startap, ta'lim va hokazo."
 
 #: accounts/forms.py:339
-#, fuzzy
-#| msgid "Company description and activities..."
 msgid "Company mission and values..."
-msgstr "Kompaniya tavsifi va faoliyati..."
+msgstr "Kompaniyaning missiyasi va qadriyatlari..."
 
 #: accounts/forms.py:346 accounts/forms.py:480 jobs/forms.py:28
-#, fuzzy
-#| msgid "Select rating"
 msgid "Select region..."
-msgstr "Reytingni tanlang"
+msgstr "Hududni tanlang..."
 
 #: accounts/forms.py:347 accounts/forms.py:481
-#, fuzzy
-#| msgid "Select company"
 msgid "Select city..."
-msgstr "Kompaniyani tanlang"
+msgstr "Shaharni tanlang..."
 
 #: accounts/forms.py:366
 msgid "A company with this name already exists"
-msgstr ""
+msgstr "Bunday nomdagi kompaniya allaqachon mavjud"
 
 #: accounts/forms.py:373
-#, fuzzy
-#| msgid "Please enter a valid YouTube URL"
 msgid "Please enter a valid year"
-msgstr "Iltimos, to'g'ri YouTube URL manzilini kiriting"
+msgstr "Iltimos, yaroqli yil kiriting"
 
 #: accounts/forms.py:407
 #: accounts/templates/accounts/create_employer_account.html:695
-#, fuzzy
-#| msgid "Notification"
 msgid "Verification Document"
-msgstr "Bildirishnoma"
+msgstr "Tasdiqlovchi hujjat"
 
 #: accounts/forms.py:411
 #: accounts/templates/accounts/create_employer_account.html:705
 msgid "Document proving employment/ownership"
-msgstr ""
+msgstr "Ishga aloqadorlik yoki mulk egaligini tasdiqlovchi hujjat"
 
 #: accounts/forms.py:416
 #: accounts/templates/accounts/create_employer_account.html:727
-#, fuzzy
-#| msgid "Receive email notifications"
 msgid "Receive Company Notifications"
 msgstr "Email bildirishnomalarini olish"
 
@@ -474,48 +433,34 @@ msgstr "Bo'lim"
 
 #: accounts/forms.py:425
 #: accounts/templates/accounts/create_employer_account.html:673
-#, fuzzy
-#| msgid "Department"
 msgid "Department or division"
-msgstr "Bo'lim"
+msgstr "Bo'lim yoki sektor"
 
 #: accounts/forms.py:439 accounts/models.py:566
 #: accounts/templates/accounts/create_employer_account.html:657
-#, fuzzy
-#| msgid "Current job title or position"
 msgid "Current professional position"
-msgstr "Joriy ish unvoni yoki lavozimi"
+msgstr "Joriy kasbiy lavozim"
 
 #: accounts/forms.py:444 accounts/models.py:573
 #: accounts/templates/accounts/create_employer_account.html:689
-#, fuzzy
-#| msgid "Professional skills and competencies"
 msgid "Professional background and experience"
-msgstr "Kasbiy ko'nikma va kompetensiyalar"
+msgstr "Kasbiy tajriba va faoliyat tarixi"
 
 #: accounts/forms.py:471
-#, fuzzy
-#| msgid "Company Description"
 msgid "Company description..."
-msgstr "Kompaniya tavsifi"
+msgstr "Kompaniya tavsifi..."
 
 #: accounts/forms.py:472
-#, fuzzy
-#| msgid "Industry"
 msgid "Industry..."
-msgstr "Sanoat"
+msgstr "Soha..."
 
 #: accounts/forms.py:497
-#, fuzzy
-#| msgid "Detailed job description"
 msgid "Document title or description"
-msgstr "Batafsil ish tavsifi"
+msgstr "Hujjat nomi yoki tavsifi"
 
 #: accounts/forms.py:527 accounts/models.py:680 cvbuilder/models.py:496
-#, fuzzy
-#| msgid "Academic faculty or department"
 msgid "Faculty or department"
-msgstr "Akademik fakultet yoki kafedra"
+msgstr "Fakultet yoki kafedra"
 
 #: accounts/forms.py:531 accounts/models.py:687
 msgid "Field of study or specialization"
@@ -523,7 +468,7 @@ msgstr "O'qish yo'nalishi yoki mutaxassislik"
 
 #: accounts/forms.py:535 accounts/models.py:694
 msgid "Bachelor, Master, PhD, etc."
-msgstr ""
+msgstr "Bakalavr, magistr, PhD va hokazo."
 
 #: accounts/forms.py:540 accounts/models.py:717
 #: jobs/templates/jobs/application_detail.html:64
@@ -531,39 +476,29 @@ msgid "Expected salary"
 msgstr "Kutilayotgan maosh"
 
 #: accounts/forms.py:545
-#, fuzzy
-#| msgid "Share your experience..."
 msgid "About yourself, skills, experience..."
-msgstr "Tajribangizni baham ko'ring..."
+msgstr "O'zingiz, ko'nikmalaringiz, tajribangiz haqida..."
 
 #: accounts/forms.py:578
-#, fuzzy
-#| msgid "Notification"
 msgid "Certificate title"
-msgstr "Bildirishnoma"
+msgstr "Sertifikat nomi"
 
 #: accounts/forms.py:590
-#, fuzzy
-#| msgid "Organization"
 msgid "Issuing organization"
-msgstr "Tashkilot"
+msgstr "Beruvchi tashkilot"
 
 #: accounts/forms.py:603
-#, fuzzy
-#| msgid "Short description"
 msgid "Short certificate description"
-msgstr "Qisqa tavsif"
+msgstr "Sertifikatning qisqa tavsifi"
 
 #: accounts/forms.py:613
 #, python-format
 msgid "Allowed formats: PDF, JPG, JPEG, PNG, WEBP. Max size: %(size)s MB."
-msgstr ""
+msgstr "Ruxsat etilgan formatlar: PDF, JPG, JPEG, PNG, WEBP. Maks. hajm: %(size)s MB."
 
 #: accounts/forms.py:616
-#, fuzzy
-#| msgid "Whether employer has read this application"
 msgid "Visible to employers who received your application."
-msgstr "Ish beruvchi ushbu arizani o'qiganmi"
+msgstr "Arizangizni olgan ish beruvchilarga ko'rinadi."
 
 #: accounts/forms.py:655
 #: accounts/templates/accounts/create_admin_account.html:97
@@ -587,39 +522,33 @@ msgstr "Admin"
 #: accounts/templates/accounts/admin_profile.html:44
 #: accounts/templates/accounts/admin_profile.html:140
 #: accounts/templates/accounts/create_admin_account.html:133
-#, fuzzy
-#| msgid "International Relations"
 msgid "International Admin"
-msgstr "Xalqaro munosabatlar"
+msgstr "Xalqaro administrator"
 
 #: accounts/forms.py:696 accounts/forms.py:783
 msgid "Passwords don't match"
-msgstr ""
+msgstr "Parollar mos kelmadi"
 
 #: accounts/forms.py:702
 msgid "This username already exists"
-msgstr ""
+msgstr "Bu foydalanuvchi nomi allaqachon mavjud"
 
 #: accounts/forms.py:708
 msgid "This email already exists"
-msgstr ""
+msgstr "Bu email allaqachon mavjud"
 
 #: accounts/forms.py:717 accounts/forms.py:808 accounts/models.py:98
 #: accounts/templates/accounts/student_profile_update.html:29
-#, fuzzy
-#| msgid "Full Name"
 msgid "Full name"
 msgstr "To'liq ism"
 
 #: accounts/forms.py:757 accounts/forms.py:830
 msgid "This email is already in use by another user."
-msgstr ""
+msgstr "Bu email boshqa foydalanuvchi tomonidan allaqachon ishlatilmoqda."
 
 #: accounts/forms.py:765
-#, fuzzy
-#| msgid "New Password"
 msgid "Current Password"
-msgstr "Yangi parol"
+msgstr "Joriy parol"
 
 #: accounts/forms.py:769 accounts/templates/accounts/password_change.html:24
 msgid "New Password"
@@ -631,73 +560,69 @@ msgstr "Yangi parolni tasdiqlash"
 
 #: accounts/models.py:28 accounts/models.py:47 cvbuilder/models.py:15
 msgid "Tashkent"
-msgstr ""
+msgstr "Toshkent"
 
 #: accounts/models.py:29 accounts/models.py:48 cvbuilder/models.py:16
 msgid "Samarkand"
-msgstr ""
+msgstr "Samarqand"
 
 #: accounts/models.py:30 accounts/models.py:49 cvbuilder/models.py:17
 #: jobs/forms.py:31
-#, fuzzy
-#| msgid "In Bukhara"
 msgid "Bukhara"
-msgstr "Buxoroda"
+msgstr "Buxoro"
 
 #: accounts/models.py:31 accounts/models.py:50 cvbuilder/models.py:18
 #: jobs/forms.py:32
 msgid "Fergana"
-msgstr ""
+msgstr "Farg'ona"
 
 #: accounts/models.py:32 accounts/models.py:51 cvbuilder/models.py:19
 #: jobs/forms.py:30
 msgid "Andijan"
-msgstr ""
+msgstr "Andijon"
 
 #: accounts/models.py:33 accounts/models.py:52 cvbuilder/models.py:20
 #: jobs/forms.py:35
-#, fuzzy
-#| msgid "Tasdiqlangan"
 msgid "Namangan"
-msgstr "Tasdiqlangan"
+msgstr "Namangan"
 
 #: accounts/models.py:34 accounts/models.py:53 cvbuilder/models.py:21
 #: jobs/forms.py:34
 msgid "Khorezm"
-msgstr ""
+msgstr "Xorazm"
 
 #: accounts/models.py:35 accounts/models.py:54 cvbuilder/models.py:22
 msgid "Kashkadarya"
-msgstr ""
+msgstr "Qashqadaryo"
 
 #: accounts/models.py:36 accounts/models.py:55 cvbuilder/models.py:23
 msgid "Surkhandarya"
-msgstr ""
+msgstr "Surxondaryo"
 
 #: accounts/models.py:37 accounts/models.py:56 cvbuilder/models.py:24
 #: jobs/forms.py:33
 msgid "Jizzakh"
-msgstr ""
+msgstr "Jizzax"
 
 #: accounts/models.py:38 accounts/models.py:57 cvbuilder/models.py:25
 msgid "Sirdarya"
-msgstr ""
+msgstr "Sirdaryo"
 
 #: accounts/models.py:39 accounts/models.py:58 cvbuilder/models.py:26
 msgid "Navoi"
-msgstr ""
+msgstr "Navoiy"
 
 #: accounts/models.py:40 accounts/models.py:59 cvbuilder/models.py:27
 msgid "Gulistan"
-msgstr ""
+msgstr "Guliston"
 
 #: accounts/models.py:41 accounts/models.py:60 cvbuilder/models.py:28
 msgid "Qarshi"
-msgstr ""
+msgstr "Qarshi"
 
 #: accounts/models.py:42 accounts/models.py:61 cvbuilder/models.py:29
 msgid "Urganch"
-msgstr ""
+msgstr "Urganch"
 
 #: accounts/models.py:46 accounts/templates/accounts/admin_statistics.html:145
 #: accounts/templates/accounts/admin_statistics.html:320
@@ -731,17 +656,15 @@ msgstr "Bosh admin"
 
 #: accounts/models.py:99
 msgid "Full name received from OAuth (read-only)"
-msgstr ""
+msgstr "OAuth orqali olingan to'liq ism (faqat o'qish uchun)"
 
 #: accounts/models.py:104
-#, fuzzy
-#| msgid "Full name of the speaker"
 msgid "Full name locked"
-msgstr "Ma'ruzachining to'liq ismi"
+msgstr "To'liq ism bloklangan"
 
 #: accounts/models.py:105
 msgid "If True, full_name cannot be changed"
-msgstr ""
+msgstr "Agar belgilansa, full_name ni o'zgartirib bo'lmaydi"
 
 #: accounts/models.py:113 accounts/templates/accounts/profile_base.html:161
 msgid "User Type"
@@ -812,7 +735,7 @@ msgstr "Yashash shahri"
 #: cvbuilder/templates/cvbuilder/cv_create.html:149 employers/forms.py:103
 #: employers/templates/employers/company_detail.html:118
 #: employers/templates/employers/detail.html:146
-#: jobs/templates/jobs/job_detail.html:301
+#: jobs/templates/jobs/job_detail.html:415
 msgid "Address"
 msgstr "Manzil"
 
@@ -853,7 +776,8 @@ msgstr "Telegram foydalanuvchi nomi yoki havolasi"
 #: accounts/templates/accounts/user_detail.html:909
 #: accounts/templates/accounts/user_management.html:213
 #: jobs/templates/jobs/company_list.html:87
-#: jobs/templates/jobs/job_detail.html:275
+#: jobs/templates/jobs/job_detail.html:156
+#: jobs/templates/jobs/job_detail.html:387
 msgid "Verified"
 msgstr "Tasdiqlangan"
 
@@ -876,7 +800,7 @@ msgstr "Ushbu ish beruvchi hisobi faol yoki yo'q"
 #: accounts/templates/accounts/employer_profile.html:248
 #: accounts/templates/accounts/profile_base.html:451
 #: accounts/templates/accounts/student_dashboard.html:112
-#: accounts/templates/accounts/student_dashboard.html:368
+#: accounts/templates/accounts/student_dashboard.html:397
 msgid "Profile Views"
 msgstr "Profil ko'rishlar"
 
@@ -1173,7 +1097,7 @@ msgstr "Instagram profil URL manzili"
 #: employers/models.py:60 jobs/forms.py:62 jobs/forms.py:296 jobs/forms.py:541
 #: jobs/forms.py:574 jobs/models.py:339 jobs/models.py:686
 #: jobs/templates/jobs/company_list.html:34
-#: jobs/templates/jobs/job_detail.html:287
+#: jobs/templates/jobs/job_detail.html:401
 msgid "Industry"
 msgstr "Sanoat"
 
@@ -1495,7 +1419,7 @@ msgstr "URL-uchun mos identifikator"
 #: accounts/models.py:679
 #: accounts/templates/accounts/employer_profile_update.html:220
 #: accounts/templates/accounts/student_dashboard.html:63
-#: accounts/templates/accounts/student_dashboard.html:253
+#: accounts/templates/accounts/student_dashboard.html:278
 #: accounts/templates/accounts/student_profile.html:24
 #: accounts/templates/accounts/student_profile_update.html:102
 #: accounts/templates/accounts/user_detail.html:947
@@ -1505,14 +1429,14 @@ msgid "Faculty"
 msgstr "Fakultet"
 
 #: accounts/models.py:686 accounts/templates/accounts/student_dashboard.html:67
-#: accounts/templates/accounts/student_dashboard.html:257
+#: accounts/templates/accounts/student_dashboard.html:282
 #: accounts/templates/accounts/student_profile.html:29
 #: accounts/templates/accounts/student_profile_update.html:112
 msgid "Specialty"
 msgstr "Mutaxassislik"
 
 #: accounts/models.py:693 accounts/templates/accounts/student_dashboard.html:37
-#: accounts/templates/accounts/student_dashboard.html:261
+#: accounts/templates/accounts/student_dashboard.html:286
 #: accounts/templates/accounts/student_profile.html:38
 #: accounts/templates/accounts/student_profile_update.html:124
 #: accounts/templates/accounts/user_detail.html:967 cvbuilder/models.py:481
@@ -1521,7 +1445,7 @@ msgid "Education Level"
 msgstr "Ta'lim darajasi"
 
 #: accounts/models.py:700 accounts/templates/accounts/student_dashboard.html:44
-#: accounts/templates/accounts/student_dashboard.html:273
+#: accounts/templates/accounts/student_dashboard.html:298
 #: accounts/templates/accounts/student_profile.html:43
 #: accounts/templates/accounts/student_profile_update.html:136
 #: accounts/templates/accounts/user_detail.html:804
@@ -1538,7 +1462,7 @@ msgid "Year of graduation or expected graduation"
 msgstr "Bitirish yoki tugatish yili"
 
 #: accounts/models.py:707 accounts/templates/accounts/student_dashboard.html:71
-#: accounts/templates/accounts/student_dashboard.html:265
+#: accounts/templates/accounts/student_dashboard.html:290
 #: accounts/templates/accounts/student_profile.html:76
 #: accounts/templates/accounts/student_profile_update.html:148
 #: accounts/templates/accounts/user_detail.html:1006 cvbuilder/forms.py:133
@@ -1578,7 +1502,7 @@ msgid "Remote"
 msgstr "Masofadan"
 
 #: accounts/models.py:731 accounts/templates/accounts/student_dashboard.html:75
-#: accounts/templates/accounts/student_dashboard.html:269
+#: accounts/templates/accounts/student_dashboard.html:294
 #: accounts/templates/accounts/student_profile.html:48
 #: accounts/templates/accounts/student_profile_update.html:160
 #: jobs/forms.py:324 jobs/models.py:134 jobs/templates/jobs/job_form.html:230
@@ -2497,7 +2421,7 @@ msgstr "Filtrlash"
 #: accounts/templates/accounts/user_management.html:99
 #: alumni/templates/alumni/alumni_list.html:84
 #: cvbuilder/templates/cvbuilder/cv_list.html:181
-#: events/templates/events/admin_event_list.html:107
+#: events/templates/events/admin_event_list.html:117
 #: jobs/templates/jobs/company_list.html:55
 #: jobs/templates/jobs/job_list.html:96
 msgid "Clear"
@@ -2662,11 +2586,11 @@ msgstr "faol vakansiyalar"
 #: accounts/templates/accounts/employer_stats.html:420
 #: accounts/templates/accounts/employer_stats.html:702
 #: accounts/templates/accounts/notifications.html:61
-#: accounts/templates/accounts/student_dashboard.html:364
+#: accounts/templates/accounts/student_dashboard.html:393
 #: core/templates/core/admin_stats.html:10
 #: employers/templates/employers/company_detail.html:225
 #: employers/templates/employers/employer_dashboard.html:67
-#: jobs/templates/jobs/job_detail.html:114
+#: jobs/templates/jobs/job_detail.html:129
 #: jobs/templates/jobs/job_settings.html:99 jobs/templates/jobs/my_jobs.html:42
 #: jobs/templates/jobs/my_jobs.html:233 jobs/templates/jobs/my_jobs.html:347
 #: jobs/templates/jobs/my_jobs.html:805
@@ -2751,7 +2675,7 @@ msgid "Review companies, moderation status and vacancy activity."
 msgstr ""
 
 #: accounts/templates/accounts/admin_company_management.html:15
-#: events/templates/events/admin_event_list.html:33
+#: events/templates/events/admin_event_list.html:32
 #: events/templates/events/admin_event_participants.html:24
 #: jobs/templates/jobs/applications.html:29
 #: jobs/templates/jobs/my_applications.html:51
@@ -2773,7 +2697,7 @@ msgstr "Kelmadi"
 #: cvbuilder/templates/cvbuilder/cv_list.html:152
 #: cvbuilder/templates/cvbuilder/public_cv_list.html:312
 #: cvbuilder/templates/cvbuilder/public_cv_list.html:413 events/forms.py:356
-#: events/templates/events/admin_event_list.html:104
+#: events/templates/events/admin_event_list.html:114
 #: events/templates/events/event_list.html:85 jobs/forms.py:277
 #: jobs/templates/jobs/applications.html:119
 #: jobs/templates/jobs/company_list.html:45
@@ -2821,9 +2745,9 @@ msgid "Activity"
 msgstr "Faollik"
 
 #: accounts/templates/accounts/admin_company_management.html:55
-#: jobs/templates/jobs/job_detail.html:80
-#: jobs/templates/jobs/job_detail.html:430
-#: jobs/templates/jobs/job_detail.html:447
+#: jobs/templates/jobs/job_detail.html:94
+#: jobs/templates/jobs/job_detail.html:522
+#: jobs/templates/jobs/job_detail.html:547
 msgid "Apply"
 msgstr "Ariza topshirish"
 
@@ -2840,7 +2764,7 @@ msgstr "Ariza topshirish"
 #: core/templates/_inc/nav.html:370 core/templates/_inc/nav.html:408
 #: core/templates/core/admin_stats.html:9 employers/models.py:312
 #: employers/templates/employers/list.html:153 jobs/apps.py:8
-#: jobs/models.py:345 jobs/templates/jobs/job_detail.html:15
+#: jobs/models.py:345 jobs/templates/jobs/job_detail.html:17
 msgid "Jobs"
 msgstr "Ishlar"
 
@@ -2856,6 +2780,7 @@ msgstr "Ishlar"
 #: cvbuilder/templates/cvbuilder/cv_list.html:414
 #: employers/templates/employers/manage_jobs.html:13
 #: events/templates/events/admin_category_list.html:23
+#: events/templates/events/admin_event_list.html:135
 #: jobs/templates/jobs/applications.html:143
 #: jobs/templates/jobs/my_jobs.html:371 jobs/templates/jobs/my_jobs.html:576
 msgid "Actions"
@@ -2928,7 +2853,7 @@ msgstr "Kompaniya ma'lumoti"
 #: accounts/templates/accounts/admin_employer_management.html:135
 #: accounts/templates/accounts/notifications.html:133
 #: cvbuilder/templates/cvbuilder/public_cv_list.html:676
-#: events/templates/events/admin_event_list.html:221
+#: events/templates/events/admin_event_list.html:265
 #: events/templates/events/event_list.html:211
 #: events/templates/events/my_events.html:108
 #: jobs/templates/jobs/job_list.html:426 jobs/templates/jobs/saved_jobs.html:99
@@ -2947,7 +2872,7 @@ msgstr ""
 #: accounts/templates/accounts/admin_employer_management.html:149
 #: accounts/templates/accounts/notifications.html:146
 #: cvbuilder/templates/cvbuilder/public_cv_list.html:697
-#: events/templates/events/admin_event_list.html:241
+#: events/templates/events/admin_event_list.html:287
 #: events/templates/events/event_list.html:227
 #: events/templates/events/my_events.html:124
 #: jobs/templates/jobs/job_list.html:446
@@ -3015,7 +2940,7 @@ msgstr "Ish beruvchilar"
 #: accounts/templates/accounts/admin_dashboard.html:132
 #: accounts/templates/accounts/admin_dashboard.html:234
 #: accounts/templates/accounts/profile_base.html:468
-#: accounts/templates/accounts/student_dashboard.html:360
+#: accounts/templates/accounts/student_dashboard.html:389
 #: cvbuilder/models.py:307
 msgid "Resumes"
 msgstr "Rezyumelar"
@@ -3169,7 +3094,7 @@ msgstr ""
 #: accounts/templates/accounts/admin_dashboard.html:274
 #: accounts/templates/accounts/employer_dashboard.html:730
 #: accounts/templates/accounts/employer_dashboard.html:821
-#: accounts/templates/accounts/student_dashboard.html:206
+#: accounts/templates/accounts/student_dashboard.html:234
 #: core/templates/_inc/nav.html:203 core/templates/home.html:213
 #: core/templates/home.html:217
 msgid "View All"
@@ -3188,7 +3113,7 @@ msgstr "IP"
 #: accounts/templates/accounts/employer_stats.html:387
 #: accounts/templates/accounts/profile_base.html:59
 #: accounts/templates/accounts/student_dashboard.html:32
-#: accounts/templates/accounts/student_dashboard.html:322
+#: accounts/templates/accounts/student_dashboard.html:347
 #: accounts/templates/accounts/user_detail.html:877
 #: accounts/templates/accounts/user_detail.html:1161
 #: accounts/templates/accounts/user_management.html:228
@@ -3388,7 +3313,7 @@ msgstr "Admin paneli"
 #: jobs/templates/jobs/application_detail.html:212
 #: jobs/templates/jobs/applications.html:290
 #: jobs/templates/jobs/applications.html:308
-#: jobs/templates/jobs/job_detail.html:432 jobs/templates/jobs/my_jobs.html:739
+#: jobs/templates/jobs/job_detail.html:524 jobs/templates/jobs/my_jobs.html:739
 #: jobs/templates/jobs/my_jobs.html:822 jobs/templates/jobs/my_jobs.html:837
 #: jobs/templates/jobs/my_jobs.html:907 jobs/templates/jobs/my_jobs.html:914
 msgid "Close"
@@ -3632,7 +3557,7 @@ msgstr "Tizim holati"
 
 #: accounts/templates/accounts/admin_statistics.html:13
 #: jobs/templates/jobs/application_detail.html:55
-#: resources/templates/resources/resource_detail.html:37
+#: resources/templates/resources/resource_detail.html:39
 #: resources/templates/resources/unpublished_resources.html:177
 msgid "Updated"
 msgstr "Yangilangan"
@@ -3671,7 +3596,7 @@ msgstr "Resurslar"
 #: cvbuilder/templates/cvbuilder/cv_stats.html:58
 #: cvbuilder/templates/cvbuilder/cv_stats.html:210 employers/models.py:635
 #: events/models.py:87 events/templates/events/admin_event_list.html:42
-#: events/templates/events/admin_event_list.html:153
+#: events/templates/events/admin_event_list.html:177
 #: events/templates/events/manage_events.html:34
 #: events/templates/events/manage_events.html:80 resources/models.py:72
 msgid "Published"
@@ -3745,8 +3670,8 @@ msgstr ""
 #: cvbuilder/templates/cvbuilder/cv_list.html:497
 #: cvbuilder/templates/cvbuilder/cv_stats.html:76
 #: cvbuilder/templates/cvbuilder/cv_stats.html:218 events/models.py:86
-#: events/templates/events/admin_event_list.html:51
-#: events/templates/events/admin_event_list.html:155
+#: events/templates/events/admin_event_list.html:52
+#: events/templates/events/admin_event_list.html:179
 #: events/templates/events/manage_events.html:31
 #: events/templates/events/manage_events.html:84
 #: jobs/templates/jobs/my_jobs.html:194 jobs/templates/jobs/my_jobs.html:428
@@ -3756,16 +3681,16 @@ msgstr "Qoralama"
 #: accounts/templates/accounts/admin_statistics.html:183
 #: accounts/templates/accounts/admin_statistics.html:368
 #: employers/models.py:498 events/models.py:88 events/models.py:348
-#: events/models.py:467 events/templates/events/admin_event_list.html:60
-#: events/templates/events/admin_event_list.html:157 events/views.py:610
+#: events/models.py:467 events/templates/events/admin_event_list.html:62
+#: events/templates/events/admin_event_list.html:181 events/views.py:610
 msgid "Cancelled"
 msgstr "Bekor qilingan"
 
 #: accounts/templates/accounts/admin_statistics.html:189
 #: accounts/templates/accounts/admin_statistics.html:369 core/models.py:13
 #: employers/models.py:497 events/models.py:89
-#: events/templates/events/admin_event_list.html:69
-#: events/templates/events/admin_event_list.html:159
+#: events/templates/events/admin_event_list.html:72
+#: events/templates/events/admin_event_list.html:183
 msgid "Completed"
 msgstr "Yakunlangan"
 
@@ -3885,7 +3810,7 @@ msgstr ""
 #: events/templates/events/event_delete.html:19
 #: jobs/templates/jobs/company_form.html:23
 #: jobs/templates/jobs/job_confirm_delete.html:42
-#: jobs/templates/jobs/job_detail.html:445
+#: jobs/templates/jobs/job_detail.html:544
 #: jobs/templates/jobs/job_form.html:904
 #: jobs/templates/jobs/job_settings.html:131
 #: jobs/templates/jobs/my_jobs.html:889
@@ -3917,10 +3842,10 @@ msgstr "Kompaniya"
 #: events/templates/events/admin_category_delete.html:17
 #: events/templates/events/admin_category_list.html:36
 #: events/templates/events/admin_event_delete.html:17
-#: events/templates/events/admin_event_list.html:190
+#: events/templates/events/admin_event_list.html:233
 #: events/templates/events/detail.html:41
 #: events/templates/events/event_delete.html:17
-#: resources/templates/resources/resource_detail.html:213
+#: resources/templates/resources/resource_detail.html:215
 #: resources/templates/resources/resource_form.html:273
 #: resources/templates/resources/unpublished_resources.html:142
 msgid "Delete"
@@ -4035,15 +3960,15 @@ msgstr "Kompaniya haqida"
 #: employers/templates/employers/employer_dashboard.html:163
 #: employers/templates/employers/manage_jobs.html:20
 #: events/templates/events/admin_category_list.html:35
-#: events/templates/events/admin_event_list.html:172
+#: events/templates/events/admin_event_list.html:205
 #: events/templates/events/detail.html:38
 #: events/templates/events/event_list.html:196
 #: events/templates/events/manage_events.html:118
-#: jobs/templates/jobs/job_detail.html:110
+#: jobs/templates/jobs/job_detail.html:125
 #: jobs/templates/jobs/job_settings.html:22
 #: jobs/templates/jobs/my_jobs.html:462
 #: resources/templates/resources/resource_confirm_delete.html:159
-#: resources/templates/resources/resource_detail.html:198
+#: resources/templates/resources/resource_detail.html:200
 #: resources/templates/resources/unpublished_resources.html:133
 #: resources/templates/resources/unpublished_resources.html:197
 msgid "Edit"
@@ -4168,8 +4093,9 @@ msgstr "Ijtimoiy tarmoqlar"
 #: cvbuilder/templates/cvbuilder/cv_list.html:536
 #: employers/templates/employers/detail.html:318
 #: events/templates/events/admin_category_form.html:25
-#: jobs/templates/jobs/job_detail.html:94 jobs/templates/jobs/job_list.html:391
-#: jobs/templates/jobs/job_list.html:398 jobs/templates/jobs/job_list.html:1117
+#: jobs/templates/jobs/job_detail.html:108
+#: jobs/templates/jobs/job_list.html:391 jobs/templates/jobs/job_list.html:398
+#: jobs/templates/jobs/job_list.html:1117
 msgid "Save"
 msgstr "Saqlash"
 
@@ -4251,7 +4177,7 @@ msgstr ""
 #: employers/templates/employers/employer_dashboard.html:158
 #: events/templates/events/admin_event_form.html:716
 #: events/templates/events/admin_event_form.html:742
-#: events/templates/events/admin_event_list.html:166
+#: events/templates/events/admin_event_list.html:193
 #: events/templates/events/event_list.html:193
 #: events/templates/events/manage_events.html:114
 #: jobs/templates/jobs/applications.html:230
@@ -4548,10 +4474,8 @@ msgid "Employer Dashboard"
 msgstr "Ish beruvchi boshqaruv paneli"
 
 #: accounts/templates/accounts/employer_dashboard.html:432
-#, fuzzy
-#| msgid "Employers Created"
 msgid "Employer Workspace"
-msgstr "Yaratilgan ish beruvchilar"
+msgstr "Ish beruvchi ish maydoni"
 
 #: accounts/templates/accounts/employer_dashboard.html:446
 #: accounts/templates/accounts/student_dashboard.html:24
@@ -4569,13 +4493,14 @@ msgid_plural ""
 "                                You manage %(total)s companies.\n"
 "                                "
 msgstr[0] ""
+"\n"
+"                                Siz %(total)s ta kompaniyani boshqarasiz.\n"
+"                                "
 
 #: accounts/templates/accounts/employer_dashboard.html:459
 #: accounts/templates/accounts/user_detail.html:889
-#, fuzzy
-#| msgid "Application Status"
 msgid "Account Status"
-msgstr "Ariza holati"
+msgstr "Hisob holati"
 
 #: accounts/templates/accounts/employer_dashboard.html:464
 msgid "Unverified"
@@ -4588,10 +4513,8 @@ msgstr "Tasdiqlanmagan"
 #: accounts/templates/accounts/employer_stats.html:364
 #: employers/templates/employers/employer_dashboard.html:80
 #: employers/templates/employers/employer_dashboard.html:249
-#, fuzzy
-#| msgid "Company"
 msgid "Add Company"
-msgstr "Kompaniya"
+msgstr "Kompaniya qo'shish"
 
 #: accounts/templates/accounts/employer_dashboard.html:474
 #: accounts/templates/accounts/employer_dashboard.html:678
@@ -4603,39 +4526,29 @@ msgid "My Jobs"
 msgstr "Mening ishlarim"
 
 #: accounts/templates/accounts/employer_dashboard.html:492
-#, fuzzy
-#| msgid "Active Today"
 msgid "Active Company"
-msgstr "Bugun faol"
+msgstr "Faol kompaniya"
 
 #: accounts/templates/accounts/employer_dashboard.html:531
-#, fuzzy
-#| msgid "Partner companies"
 msgid "Manage All Companies"
-msgstr "Hamkor kompaniyalar"
+msgstr "Barcha kompaniyalarni boshqarish"
 
 #: accounts/templates/accounts/employer_dashboard.html:542
 #: accounts/templates/accounts/student_profile.html:164
-#, fuzzy
-#| msgid "Manager"
 msgid "Manage"
-msgstr "Menejer"
+msgstr "Boshqarish"
 
 #: accounts/templates/accounts/employer_dashboard.html:560
-#, fuzzy
-#| msgid "Active Jobs"
 msgid "Active Jobs in"
-msgstr "Faol ishlar"
+msgstr "Faol vakansiyalar"
 
 #: accounts/templates/accounts/employer_dashboard.html:562
 msgid "Active Jobs (All Companies)"
-msgstr ""
+msgstr "Faol vakansiyalar (barcha kompaniyalar)"
 
 #: accounts/templates/accounts/employer_dashboard.html:580
-#, fuzzy
-#| msgid "Application link"
 msgid "Applications in"
-msgstr "Ariza havolasi"
+msgstr "Arizalar"
 
 #: accounts/templates/accounts/employer_dashboard.html:582
 #: accounts/templates/accounts/employer_dashboard.html:914
@@ -4646,8 +4559,6 @@ msgid "Total Applications"
 msgstr "Jami arizalar"
 
 #: accounts/templates/accounts/employer_dashboard.html:600
-#, fuzzy
-#| msgid "Views"
 msgid "Views of"
 msgstr "Ko'rishlar"
 
@@ -4660,26 +4571,20 @@ msgid "Quick Actions"
 msgstr "Tezkor harakatlar"
 
 #: accounts/templates/accounts/employer_dashboard.html:637
-#, fuzzy
-#| msgid "Whether the company profile is active"
 msgid "Create a new company profile and start hiring."
-msgstr "Kompaniya profili faol yoki yo'q"
+msgstr "Yangi kompaniya profilini yarating va ishga qabul qilishni boshlang."
 
 #: accounts/templates/accounts/employer_dashboard.html:647
-#, fuzzy
-#| msgid "Post Job"
 msgid "Post New Job"
-msgstr "Ish joylash"
+msgstr "Yangi vakansiya joylash"
 
 #: accounts/templates/accounts/employer_dashboard.html:648
-#, fuzzy
-#| msgid "Publish vacancy immediately"
 msgid "Publish a vacancy and attract new candidates."
-msgstr "Vakansiyani darhol nashr qilish"
+msgstr "Vakansiya e'lon qilib, yangi nomzodlarni jalb qiling."
 
 #: accounts/templates/accounts/employer_dashboard.html:659
 msgid "Review and manage candidate submissions."
-msgstr ""
+msgstr "Nomzodlar arizalarini ko'rib chiqing va boshqaring."
 
 #: accounts/templates/accounts/employer_dashboard.html:668
 msgid "Search Students"
@@ -4687,27 +4592,23 @@ msgstr "Talabalarni qidirish"
 
 #: accounts/templates/accounts/employer_dashboard.html:669
 msgid "Browse public CVs and find the right talent."
-msgstr ""
+msgstr "Ochiq rezyumelarni ko'rib chiqing va mos iste'dodlarni toping."
 
 #: accounts/templates/accounts/employer_dashboard.html:679
-#, fuzzy
-#| msgid "View and manage all events"
 msgid "View and manage all your published vacancies."
-msgstr "Barcha tadbirlarni ko'rish va boshqarish"
+msgstr "Barcha e'lon qilingan vakansiyalaringizni ko'ring va boshqaring."
 
 #: accounts/templates/accounts/employer_dashboard.html:689
 msgid "Switch between companies and update details."
-msgstr ""
+msgstr "Kompaniyalar o'rtasida o'tib, ma'lumotlarni yangilang."
 
 #: accounts/templates/accounts/employer_dashboard.html:699
 msgid "Track updates, alerts, and system activity."
-msgstr ""
+msgstr "Yangilanishlar, ogohlantirishlar va tizim faolligini kuzating."
 
 #: accounts/templates/accounts/employer_dashboard.html:710
-#, fuzzy
-#| msgid "Create New Administrator"
 msgid "Open the administrative control panel."
-msgstr "Yangi administrator yaratish"
+msgstr "Ma'muriy boshqaruv panelini oching."
 
 #: accounts/templates/accounts/employer_dashboard.html:766
 #: accounts/templates/accounts/employer_stats.html:338
@@ -4717,13 +4618,11 @@ msgstr "Yangi administrator yaratish"
 #: employers/templates/employers/employer_dashboard.html:92
 #: jobs/templates/jobs/my_jobs.html:281
 msgid "jobs"
-msgstr ""
+msgstr "vakansiya"
 
 #: accounts/templates/accounts/employer_dashboard.html:770
-#, fuzzy
-#| msgid "selected"
 msgid "Selected"
-msgstr "tanlangan"
+msgstr "Tanlangan"
 
 #: accounts/templates/accounts/employer_dashboard.html:772
 #: cvbuilder/templates/cvbuilder/home.html:145
@@ -4731,33 +4630,30 @@ msgstr "tanlangan"
 #: cvbuilder/templates/cvbuilder/home.html:171
 #: cvbuilder/templates/cvbuilder/template_selector.html:108
 #: employers/templates/employers/form.html:219
-#, fuzzy
-#| msgid "selected"
 msgid "Select"
-msgstr "tanlangan"
+msgstr "Tanlash"
 
 #: accounts/templates/accounts/employer_dashboard.html:787
 #: accounts/templates/accounts/employer_stats.html:355
-#, fuzzy
-#| msgid "About Companies"
 msgid "View All Companies"
-msgstr "Kompaniyalar haqida"
+msgstr "Barcha kompaniyalarni ko'rish"
 
 #: accounts/templates/accounts/employer_dashboard.html:798
 msgid ""
 "Create your first company to start posting jobs and managing your business."
 msgstr ""
+"Vakansiya joylash va biznesingizni boshqarishni boshlash uchun birinchi "
+"kompaniyangizni yarating."
 
 #: accounts/templates/accounts/employer_dashboard.html:801
-#, fuzzy
-#| msgid "Create Company"
 msgid "Create Your First Company"
-msgstr "Kompaniya yaratish"
+msgstr "Birinchi kompaniyangizni yarating"
 
 #: accounts/templates/accounts/employer_dashboard.html:820
 #: accounts/templates/accounts/profile_base.html:644
 #: accounts/templates/accounts/profile_base.html:659
-#: accounts/templates/accounts/student_dashboard.html:202
+#: accounts/templates/accounts/student_dashboard.html:200
+#: accounts/templates/accounts/student_dashboard.html:230
 #: events/templates/events/my_events.html:4
 #: events/templates/events/my_events.html:10
 #: events/templates/events/participation_pass.html:74
@@ -4765,18 +4661,14 @@ msgid "My Events"
 msgstr "Mening tadbirlarim"
 
 #: accounts/templates/accounts/employer_dashboard.html:837
-#: accounts/templates/accounts/student_dashboard.html:229
+#: accounts/templates/accounts/student_dashboard.html:255
 #: events/templates/events/admin_event_participants.html:71
-#, fuzzy
-#| msgid "Password"
 msgid "Pass"
-msgstr "Parol"
+msgstr "Ruxsatnoma"
 
 #: accounts/templates/accounts/employer_dashboard.html:846
-#, fuzzy
-#| msgid "You haven't created any events yet."
 msgid "You have not joined any events yet."
-msgstr "Siz hali hech qanday tadbir yaratmagansiz."
+msgstr "Siz hali hech bir tadbirga qo'shilmagansiz."
 
 #: accounts/templates/accounts/employer_dashboard.html:854
 #: employers/templates/employers/employer_dashboard.html:127
@@ -5008,7 +4900,8 @@ msgid "email@example.com"
 msgstr "sizning.email@example.com"
 
 #: accounts/templates/accounts/employer_profile_update.html:116
-#: accounts/templates/accounts/student_dashboard.html:247
+#: accounts/templates/accounts/student_dashboard.html:205
+#: accounts/templates/accounts/student_dashboard.html:273
 msgid "Profile Information"
 msgstr "Profil ma'lumoti"
 
@@ -5356,7 +5249,7 @@ msgstr "Mening arizalarim"
 
 #: accounts/templates/accounts/employer_stats.html:656
 #: jobs/templates/jobs/my_jobs.html:1341
-#: resources/templates/resources/resource_detail.html:93
+#: resources/templates/resources/resource_detail.html:95
 msgid "Loading..."
 msgstr "Yuklanmoqda..."
 
@@ -5505,7 +5398,7 @@ msgstr "Profil"
 
 #: accounts/templates/accounts/profile_base.html:48
 #: events/templates/events/detail.html:191
-#: jobs/templates/jobs/job_detail.html:136
+#: jobs/templates/jobs/job_detail.html:163
 msgid "views"
 msgstr "ko'rishlar"
 
@@ -5539,7 +5432,7 @@ msgstr "Aloqa ma'lumoti"
 #: accounts/templates/accounts/profile_base.html:582
 #: accounts/templates/accounts/profile_base.html:603
 #: accounts/templates/accounts/profile_base.html:623
-#: accounts/templates/accounts/student_dashboard.html:280
+#: accounts/templates/accounts/student_dashboard.html:304
 #: accounts/templates/accounts/student_profile.html:231
 #: employers/templates/employers/employer_dashboard.html:30
 #: employers/templates/employers/employer_dashboard.html:267
@@ -5761,16 +5654,12 @@ msgid "You have not uploaded any certificates yet."
 msgstr "Siz hali hech qanday tadbir yaratmagansiz."
 
 #: accounts/templates/accounts/student_dashboard.html:6
-#, fuzzy
-#| msgid "Student Profile"
 msgid "Student Cabinet"
-msgstr "Talaba profili"
+msgstr "Talaba kabineti"
 
 #: accounts/templates/accounts/student_dashboard.html:18
-#, fuzzy
-#| msgid "Student Search"
 msgid "Student Space"
-msgstr "Talaba qidirish"
+msgstr "Talaba makoni"
 
 #: accounts/templates/accounts/student_dashboard.html:21
 #: core/templates/_inc/nav.html:228
@@ -5784,23 +5673,19 @@ msgstr "Yaratilgan rezyumelar"
 
 #: accounts/templates/accounts/student_dashboard.html:92
 msgid "Your CVs prepared in the system"
-msgstr ""
+msgstr "Tizimda tayyorlangan rezyumelaringiz"
 
 #: accounts/templates/accounts/student_dashboard.html:103
-#, fuzzy
-#| msgid "Application Details"
 msgid "Applications sent to vacancies"
-msgstr "Ariza tafsilotlari"
+msgstr "Vakansiyalarga yuborilgan arizalar"
 
 #: accounts/templates/accounts/student_dashboard.html:114
-#, fuzzy
-#| msgid "Number of times profile was viewed"
 msgid "How many times your profile was viewed"
-msgstr "Profil necha marta ko'rilgani"
+msgstr "Profilingiz necha marta ko'rilgani"
 
 #: accounts/templates/accounts/student_dashboard.html:124
 msgid "Fast access to your main student tools"
-msgstr ""
+msgstr "Asosiy talaba vositalaringizga tezkor kirish"
 
 #: accounts/templates/accounts/student_dashboard.html:132
 #: cvbuilder/templates/cvbuilder/cv_list.html:40
@@ -5809,10 +5694,8 @@ msgid "New Resume"
 msgstr "Yangi rezyume"
 
 #: accounts/templates/accounts/student_dashboard.html:133
-#, fuzzy
-#| msgid "Create Job"
 msgid "Create a new CV"
-msgstr "Vakansiya yaratish"
+msgstr "Yangi CV yaratish"
 
 #: accounts/templates/accounts/student_dashboard.html:140
 #: jobs/templates/jobs/my_jobs.html:53 jobs/templates/jobs/my_jobs.html:719
@@ -5820,109 +5703,98 @@ msgid "Job Search"
 msgstr "Ish qidirish"
 
 #: accounts/templates/accounts/student_dashboard.html:141
-#, fuzzy
-#| msgid "%(n)s vacancies"
 msgid "Browse available vacancies"
-msgstr "%(n)s ta vakansiya"
+msgstr "Mavjud vakansiyalarni ko'rish"
 
 #: accounts/templates/accounts/student_dashboard.html:148
-#: accounts/templates/accounts/student_dashboard.html:300 jobs/models.py:601
-#: jobs/templates/jobs/job_detail.html:99 jobs/templates/jobs/job_list.html:192
-#: jobs/templates/jobs/saved_jobs.html:4 jobs/templates/jobs/saved_jobs.html:15
+#: accounts/templates/accounts/student_dashboard.html:326 jobs/models.py:601
+#: jobs/templates/jobs/job_detail.html:114
+#: jobs/templates/jobs/job_list.html:192 jobs/templates/jobs/saved_jobs.html:4
+#: jobs/templates/jobs/saved_jobs.html:15
 msgid "Saved Jobs"
 msgstr "Saqlangan ishlar"
 
 #: accounts/templates/accounts/student_dashboard.html:149
-#, fuzzy
-#| msgid "Partner companies"
 msgid "Your shortlist of vacancies"
-msgstr "Hamkor kompaniyalar"
+msgstr "Tanlangan vakansiyalar ro'yxati"
 
 #: accounts/templates/accounts/student_dashboard.html:157
 msgid "Edit your student data"
-msgstr ""
+msgstr "Talaba ma'lumotlaringizni tahrirlash"
 
 #: accounts/templates/accounts/student_dashboard.html:164
-#: accounts/templates/accounts/student_dashboard.html:339
-#: accounts/templates/accounts/student_dashboard.html:372
+#: accounts/templates/accounts/student_dashboard.html:215
+#: accounts/templates/accounts/student_dashboard.html:367
+#: accounts/templates/accounts/student_dashboard.html:401
 #: accounts/templates/accounts/student_profile.html:160
 #: accounts/templates/accounts/student_profile.html:179
 #: accounts/templates/accounts/student_profile.html:214 cvbuilder/models.py:619
-#, fuzzy
-#| msgid "Notification"
 msgid "Certificates"
-msgstr "Bildirishnoma"
+msgstr "Sertifikatlar"
 
 #: accounts/templates/accounts/student_dashboard.html:165
-#, fuzzy
-#| msgid "Partner companies"
 msgid "Manage your certificates"
-msgstr "Hamkor kompaniyalar"
+msgstr "Sertifikatlaringizni boshqaring"
 
 #: accounts/templates/accounts/student_dashboard.html:173
-#, fuzzy
-#| msgid "Link to event materials"
 msgid "Open learning materials"
-msgstr "Tadbir materiallariga havola"
+msgstr "O'quv materiallarini ochish"
 
 #: accounts/templates/accounts/student_dashboard.html:181
-#, fuzzy
-#| msgid "Upcoming Events"
 msgid "See upcoming events"
-msgstr "Kutilayotgan tadbirlar"
+msgstr "Kutilayotgan tadbirlarni ko'rish"
 
 #: accounts/templates/accounts/student_dashboard.html:189
-#, fuzzy
-#| msgid "When status was last updated"
 msgid "Check your latest updates"
-msgstr "Holat qachon so'nggi yangilangan"
+msgstr "So'nggi yangilanishlaringizni tekshirish"
 
-#: accounts/templates/accounts/student_dashboard.html:203
+#: accounts/templates/accounts/student_dashboard.html:210
+msgid "Saved & Viewed Jobs"
+msgstr "Saqlangan va ko'rilgan ishlar"
+
+#: accounts/templates/accounts/student_dashboard.html:220
+#: accounts/templates/accounts/student_dashboard.html:384
+msgid "Student Status"
+msgstr "Talaba holati"
+
+#: accounts/templates/accounts/student_dashboard.html:231
 msgid "Events you have already joined"
-msgstr ""
+msgstr "Siz allaqachon qo'shilgan tadbirlar"
 
-#: accounts/templates/accounts/student_dashboard.html:235
-#, fuzzy
-#| msgid "No upcoming events available"
+#: accounts/templates/accounts/student_dashboard.html:261
 msgid "No joined events yet"
-msgstr "Hozircha kutilayotgan tadbirlar yo'q"
+msgstr "Siz hali hech bir tadbirga qo'shilmagansiz"
 
-#: accounts/templates/accounts/student_dashboard.html:236
-#, fuzzy
-#| msgid "When people register for this event, they will appear here."
+#: accounts/templates/accounts/student_dashboard.html:262
 msgid "Your registered events will appear here."
 msgstr ""
-"Odamlar ushbu tadbirga ro'yxatdan o'tganda, ular shu yerda paydo bo'ladi."
+"Ro'yxatdan o'tgan tadbirlaringiz shu yerda ko'rinadi."
 
-#: accounts/templates/accounts/student_dashboard.html:248
+#: accounts/templates/accounts/student_dashboard.html:274
 msgid "Your academic and career details"
-msgstr ""
+msgstr "Akademik va karyera ma'lumotlaringiz"
 
-#: accounts/templates/accounts/student_dashboard.html:289
-#, fuzzy
-#| msgid "Date and Time"
+#: accounts/templates/accounts/student_dashboard.html:316
 msgid "Saved and Viewed Jobs"
-msgstr "Sana va Vaqt"
+msgstr "Saqlangan va ko'rilgan ishlar"
 
-#: accounts/templates/accounts/student_dashboard.html:290
+#: accounts/templates/accounts/student_dashboard.html:317
 msgid ""
 "Track interesting vacancies and return to the ones you already explored."
 msgstr ""
+"Qiziqarli vakansiyalarni kuzatib boring va allaqachon ko'rganlaringizga "
+"qayting."
 
-#: accounts/templates/accounts/student_dashboard.html:293
-#, fuzzy
-#| msgid "My Saved"
+#: accounts/templates/accounts/student_dashboard.html:320
 msgid "Open Saved"
-msgstr "Mening saqlanganlarim"
+msgstr "Saqlanganlarni ochish"
 
-#: accounts/templates/accounts/student_dashboard.html:304 jobs/models.py:639
+#: accounts/templates/accounts/student_dashboard.html:330 jobs/models.py:639
 #: jobs/templates/jobs/job_list.html:197
-#, fuzzy
-#| msgid "View Job"
 msgid "Viewed Jobs"
-msgstr "Ishni ko'rish"
+msgstr "Ko'rilgan ishlar"
 
-#: accounts/templates/accounts/student_dashboard.html:317
+#: accounts/templates/accounts/student_dashboard.html:342
 #: jobs/templates/jobs/application_detail.html:412
 #: jobs/templates/jobs/job_list.html:391 jobs/templates/jobs/job_list.html:1117
 #: jobs/templates/jobs/my_jobs.html:56 jobs/templates/jobs/saved_jobs.html:21
@@ -5930,58 +5802,38 @@ msgstr "Ishni ko'rish"
 msgid "Saved"
 msgstr "Saqlangan"
 
-#: accounts/templates/accounts/student_dashboard.html:328
-#, fuzzy
-#| msgid "No saved jobs yet."
+#: accounts/templates/accounts/student_dashboard.html:353
 msgid "No viewed jobs yet"
-msgstr "Hali saqlangan ish o'rinlari yo'q."
-
-#: accounts/templates/accounts/student_dashboard.html:329
-#, fuzzy
-#| msgid "Resource description will appear here..."
-msgid "Open a vacancy and it will appear here."
-msgstr "Resurs tavsifi shu yerda paydo bo'ladi..."
-
-#: accounts/templates/accounts/student_dashboard.html:340
-#, fuzzy
-#| msgid "Whether employer has read this application"
-msgid "Documents employers can review after your application"
-msgstr "Ish beruvchi ushbu arizani o'qiganmi"
-
-#: accounts/templates/accounts/student_dashboard.html:343
-#: accounts/templates/accounts/student_profile.html:182
-#, fuzzy
-#| msgid "Uploaded By"
-msgid "Upload"
-msgstr "Yuklagan"
-
-#: accounts/templates/accounts/student_dashboard.html:348
-msgid "Upload certificates to strengthen your applications."
-msgstr ""
+msgstr "Hali ko'rilgan ishlar yo'q"
 
 #: accounts/templates/accounts/student_dashboard.html:354
-#, fuzzy
-#| msgid "Payment Status"
-msgid "Student Status"
-msgstr "To'lov holati"
+msgid "Open a vacancy and it will appear here."
+msgstr "Vakansiyani oching va u shu yerda paydo bo'ladi."
 
-#: accounts/templates/accounts/student_dashboard.html:355
-#, fuzzy
-#| msgid "Professional Skills"
+#: accounts/templates/accounts/student_dashboard.html:368
+msgid "Documents employers can review after your application"
+msgstr "Ariza topshirganingizdan so'ng ish beruvchilar ko'rishi mumkin bo'lgan hujjatlar"
+
+#: accounts/templates/accounts/student_dashboard.html:371
+#: accounts/templates/accounts/student_profile.html:182
+msgid "Upload"
+msgstr "Yuklash"
+
+#: accounts/templates/accounts/student_dashboard.html:375
+msgid "Upload certificates to strengthen your applications."
+msgstr "Arizalaringizni kuchaytirish uchun sertifikatlarni yuklang."
+
+#: accounts/templates/accounts/student_dashboard.html:385
 msgid "Basic profile summary"
-msgstr "Kasbiy ko'nikmalar"
+msgstr "Profilning qisqa xulosasi"
 
-#: accounts/templates/accounts/student_dashboard.html:376
-#, fuzzy
-#| msgid "Contact Info"
+#: accounts/templates/accounts/student_dashboard.html:405
 msgid "Account Since"
-msgstr "Aloqa ma'lumoti"
+msgstr "Hisob ochilgan sana"
 
-#: accounts/templates/accounts/student_dashboard.html:383
-#, fuzzy
-#| msgid "Profile Update"
+#: accounts/templates/accounts/student_dashboard.html:411
 msgid "Profile active"
-msgstr "Profil yangilash"
+msgstr "Profil faol"
 
 #: accounts/templates/accounts/student_profile.html:10
 msgid "Education Information"
@@ -5993,24 +5845,18 @@ msgstr "Karyera imtiyozlari"
 
 #: accounts/templates/accounts/student_profile.html:127
 #: cvbuilder/templates/cv_render/classic.html:138
-#, fuzzy
-#| msgid "LinkedIn"
 msgid "LinkedIn:"
-msgstr "LinkedIn"
+msgstr "LinkedIn:"
 
 #: accounts/templates/accounts/student_profile.html:140
 #: cvbuilder/templates/cv_render/classic.html:141
-#, fuzzy
-#| msgid "GitHub"
 msgid "GitHub:"
-msgstr "GitHub"
+msgstr "GitHub:"
 
 #: accounts/templates/accounts/student_profile.html:170
 #: accounts/templates/accounts/student_profile.html:187
-#, fuzzy
-#| msgid "No active jobs yet"
 msgid "No certificates uploaded yet."
-msgstr "Hali faol ishlar yo'q"
+msgstr "Hali sertifikatlar yuklanmagan."
 
 #: accounts/templates/accounts/student_profile.html:209
 msgid "Applied Jobs"
@@ -6018,35 +5864,27 @@ msgstr "Ariza berilgan ishlar"
 
 #: accounts/templates/accounts/student_profile_update.html:5
 #: accounts/templates/accounts/student_profile_update.html:13
-#, fuzzy
-#| msgid "Student Profile"
 msgid "Update Student Profile"
-msgstr "Talaba profili"
+msgstr "Talaba profilini yangilash"
 
 #: accounts/templates/accounts/student_profile_update.html:33
 #: accounts/templates/accounts/student_profile_update.html:71
 msgid "This field is provided by OAuth and cannot be changed."
-msgstr ""
+msgstr "Bu maydon OAuth orqali beriladi va uni o'zgartirib bo'lmaydi."
 
 #: accounts/templates/accounts/student_profile_update.html:87
-#, fuzzy
-#| msgid "Payment Status"
 msgid "Current avatar:"
-msgstr "To'lov holati"
+msgstr "Joriy avatar:"
 
 #: accounts/templates/accounts/student_profile_update.html:91
-#, fuzzy
-#| msgid "Payment Status"
 msgid "Current avatar"
-msgstr "To'lov holati"
+msgstr "Joriy avatar"
 
 #: accounts/templates/accounts/student_profile_update.html:225
 #: events/templates/events/admin_event_form.html:801
 #: jobs/templates/jobs/my_jobs.html:892
-#, fuzzy
-#| msgid "Status Changed"
 msgid "Save Changes"
-msgstr "Holat o'zgartirildi"
+msgstr "O'zgarishlarni saqlash"
 
 #: accounts/templates/accounts/student_search.html:6
 msgid "Student Search"
@@ -6806,10 +6644,10 @@ msgstr "Ko'nikma yoki kompetensiya nomi"
 
 #: alumni/models.py:30 cvbuilder/models.py:660 events/forms.py:213
 #: events/forms.py:370 events/models.py:107
-#: events/templates/events/admin_event_list.html:122
+#: events/templates/events/admin_event_list.html:132
 #: events/templates/events/event_list.html:94 resources/forms.py:50
 #: resources/models.py:49 resources/templates/resources/list.html:70
-#: resources/templates/resources/resource_detail.html:163
+#: resources/templates/resources/resource_detail.html:165
 #: resources/templates/resources/resource_form.html:75
 #: resources/templates/resources/resource_form.html:225
 msgid "Category"
@@ -6842,7 +6680,7 @@ msgstr "Ko'nikma"
 #: cvbuilder/templates/cvbuilder/cv_stats.html:133
 #: cvbuilder/templates/cvbuilder/preview.html:112
 #: cvbuilder/templates/cvbuilder/public_cv_list.html:596 jobs/admin.py:89
-#: jobs/templates/jobs/job_detail.html:211
+#: jobs/templates/jobs/job_detail.html:258
 msgid "Skills"
 msgstr "Ko'nikmalar"
 
@@ -6883,7 +6721,7 @@ msgid "Economics"
 msgstr "Iqtisod"
 
 #: alumni/templates/alumni/alumni_list.html:27
-#: resources/templates/resources/resource_detail.html:191
+#: resources/templates/resources/resource_detail.html:193
 msgid "Management"
 msgstr "Menejment"
 
@@ -7005,7 +6843,7 @@ msgid "Career Journey"
 msgstr "Karyera resurslari"
 
 #: alumni/templates/alumni/detail.html:116
-#: resources/templates/resources/resource_detail.html:155
+#: resources/templates/resources/resource_detail.html:157
 msgid "Quick Information"
 msgstr "Tez ma'lumot"
 
@@ -7999,54 +7837,44 @@ msgstr ""
 "emas."
 
 #: cvbuilder/forms.py:340
-#, fuzzy
-#| msgid "Skill Name"
 msgid "Skill name"
 msgstr "Ko'nikma nomi"
 
 #: cvbuilder/forms.py:341
 msgid "technical / soft / language"
-msgstr ""
+msgstr "texnik / soft / til"
 
 #: cvbuilder/forms.py:343
-#, fuzzy
-#| msgid "Detailed description"
 msgid "Optional, year"
-msgstr "Batafsil tavsif"
+msgstr "Ixtiyoriy, yil"
 
 #: cvbuilder/forms.py:354
-#, fuzzy
-#| msgid "Last update to the note"
 msgid "Last used cannot be in the future."
-msgstr "Eslatmaning so'nggi yangilanishi"
+msgstr "Oxirgi foydalanilgan sana kelajakda bo'lishi mumkin emas."
 
 #: cvbuilder/forms.py:376
 msgid "English / Russian / Uzbek"
-msgstr ""
+msgstr "Ingliz / rus / o'zbek"
 
 #: cvbuilder/forms.py:377
 msgid "IELTS 7.0, TOEFL 95..."
-msgstr ""
+msgstr "IELTS 7.0, TOEFL 95..."
 
 #: cvbuilder/forms.py:389
 msgid "Remove score if you have no certificate."
-msgstr ""
+msgstr "Agar sizda sertifikat bo'lmasa, balni olib tashlang."
 
 #: cvbuilder/forms.py:404
 msgid "Skills (comma separated)"
-msgstr ""
+msgstr "Ko'nikmalar (vergul bilan)"
 
 #: cvbuilder/forms.py:424 cvbuilder/models.py:81
-#, fuzzy
-#| msgid "My Resumes"
 msgid "My Resume"
-msgstr "Mening rezyumelarim"
+msgstr "Mening rezyumem"
 
 #: cvbuilder/forms.py:429
-#, fuzzy
-#| msgid "Python, Django, JavaScript, ..."
 msgid "Python, Django, PostgreSQL, Docker"
-msgstr "Python, Django, JavaScript, ..."
+msgstr "Python, Django, PostgreSQL, Docker"
 
 #: cvbuilder/models.py:38 cvbuilder/templates/cvbuilder/cv_create.html:396
 #: cvbuilder/templates/cvbuilder/cv_create.html:464
@@ -8056,27 +7884,27 @@ msgstr "Arxivlangan"
 
 #: cvbuilder/models.py:42
 msgid "Single"
-msgstr ""
+msgstr "Turmush qurmagan"
 
 #: cvbuilder/models.py:43
 msgid "Married"
-msgstr ""
+msgstr "Turmush qurgan"
 
 #: cvbuilder/models.py:44
 msgid "Divorced"
-msgstr ""
+msgstr "Ajrashgan"
 
 #: cvbuilder/models.py:45
 msgid "Widowed"
-msgstr ""
+msgstr "Beva"
 
 #: cvbuilder/models.py:49
 msgid "Male"
-msgstr ""
+msgstr "Erkak"
 
 #: cvbuilder/models.py:50
 msgid "Female"
-msgstr ""
+msgstr "Ayol"
 
 #: cvbuilder/models.py:54
 msgid "Full-time"
@@ -8100,7 +7928,7 @@ msgstr "Ushbu CV egasi foydalanuvchi"
 
 #: cvbuilder/models.py:76
 msgid "CV ID"
-msgstr ""
+msgstr "CV ID"
 
 #: cvbuilder/models.py:80 cvbuilder/templates/cvbuilder/cv_create.html:56
 msgid "Resume Title"
@@ -8124,10 +7952,8 @@ msgid "Template"
 msgstr "Shablon"
 
 #: cvbuilder/models.py:92
-#, fuzzy
-#| msgid "CV template used for this resume"
 msgid "Template used for rendering the CV"
-msgstr "Ushbu rezyume uchun ishlatilgan CV shablon"
+msgstr "CV ni ko'rsatish uchun ishlatiladigan shablon"
 
 #: cvbuilder/models.py:100
 msgid "Current status of the resume"
@@ -8144,37 +7970,27 @@ msgstr "Foto"
 
 #: cvbuilder/models.py:116
 msgid "Professional photo (recommended size: 3x4 cm)"
-msgstr ""
+msgstr "Professional foto (tavsiya etilgan o'lcham: 3x4 sm)"
 
 #: cvbuilder/models.py:123
-#, fuzzy
-#| msgid "Date of Birth"
 msgid "Date of birth (DD.MM.YYYY)"
-msgstr "Tug'ilgan sana"
+msgstr "Tug'ilgan sana (DD.MM.YYYY)"
 
 #: cvbuilder/models.py:131 cvbuilder/templates/cvbuilder/cv_create.html:246
-#, fuzzy
-#| msgid "Sender"
 msgid "Gender"
-msgstr "Yuboruvchi"
+msgstr "Jins"
 
 #: cvbuilder/models.py:139 cvbuilder/templates/cvbuilder/cv_create.html:256
-#, fuzzy
-#| msgid "Updated date"
 msgid "Marital Status"
-msgstr "Yangilangan sana"
+msgstr "Oilaviy holat"
 
 #: cvbuilder/models.py:145 cvbuilder/templates/cvbuilder/cv_create.html:268
-#, fuzzy
-#| msgid "Vocational"
 msgid "Nationality"
-msgstr "Kasb-hunar"
+msgstr "Millati"
 
 #: cvbuilder/models.py:146
-#, fuzzy
-#| msgid "Internship"
 msgid "Citizenship"
-msgstr "Stajirovka"
+msgstr "Fuqaroligi"
 
 #: cvbuilder/models.py:152
 msgid "Professional email address"
@@ -8182,41 +7998,31 @@ msgstr "Kasbiy email manzili"
 
 #: cvbuilder/models.py:158
 msgid "Contact phone number in format: +998 XX XXX XX XX"
-msgstr ""
+msgstr "Aloqa telefon raqami formati: +998 XX XXX XX XX"
 
 #: cvbuilder/models.py:165 cvbuilder/templates/cvbuilder/cv_create.html:113
-#, fuzzy
-#| msgid "Secondary Education"
 msgid "Secondary Phone"
-msgstr "O'rta ta'lim"
+msgstr "Qo'shimcha telefon"
 
 #: cvbuilder/models.py:166
-#, fuzzy
-#| msgid "Additional Features"
 msgid "Additional contact number"
-msgstr "Qo'shimcha imkoniyatlar"
+msgstr "Qo'shimcha aloqa raqami"
 
 #: cvbuilder/models.py:173
-#, fuzzy
-#| msgid "e.g., Tashkent, Samarkand, Remote"
 msgid "Region of Uzbekistan (e.g., Tashkent, Samarkand)"
-msgstr "masalan, Toshkent, Samarqand, Masofaviy"
+msgstr "O'zbekiston hududi (masalan, Toshkent, Samarqand)"
 
 #: cvbuilder/models.py:183 cvbuilder/templates/cvbuilder/cv_edit.html:124
 msgid "Full Address"
 msgstr "To'liq manzil"
 
 #: cvbuilder/models.py:184
-#, fuzzy
-#| msgid "Contact email address"
 msgid "Complete residential address"
-msgstr "Aloqa email manzili"
+msgstr "To'liq yashash manzili"
 
 #: cvbuilder/models.py:191
-#, fuzzy
-#| msgid "Job position being applied for"
 msgid "Position you are applying for"
-msgstr "Ariza berilayotgan ish lavozimi"
+msgstr "Ariza topshirayotgan lavozim"
 
 #: cvbuilder/models.py:198 cvbuilder/models.py:375
 #: cvbuilder/templates/cvbuilder/cv_create.html:171 employers/models.py:212
@@ -8230,10 +8036,8 @@ msgid "Salary Expectation"
 msgstr "Maosh kutilishi"
 
 #: cvbuilder/models.py:205
-#, fuzzy
-#| msgid "Expected salary"
 msgid "Expected salary in UZS"
-msgstr "Kutilayotgan maosh"
+msgstr "UZS dagi kutilayotgan maosh"
 
 #: cvbuilder/models.py:211 cvbuilder/templates/cvbuilder/cv_create.html:197
 #: employers/models.py:253 jobs/forms.py:354 jobs/models.py:179
@@ -8243,64 +8047,54 @@ msgstr "Valyuta"
 
 #: cvbuilder/models.py:212
 msgid "Currency code (UZS, USD, EUR)"
-msgstr ""
+msgstr "Valyuta kodi (UZS, USD, EUR)"
 
 #: cvbuilder/models.py:217 cvbuilder/templates/cvbuilder/form.html:116
 #: cvbuilder/templates/cvbuilder/preview.html:78
-#, fuzzy
-#| msgid "Professional Skills"
 msgid "Professional Summary"
-msgstr "Kasbiy ko'nikmalar"
+msgstr "Kasbiy xulosa"
 
 #: cvbuilder/models.py:218
-#, fuzzy
-#| msgid "Professional summary or objective"
 msgid "Brief professional summary and career objectives"
-msgstr "Kasbiy xulosa yoki maqsad"
+msgstr "Qisqacha kasbiy xulosa va karyera maqsadlari"
 
 #: cvbuilder/models.py:248 cvbuilder/templates/cvbuilder/cv_create.html:285
 #: cvbuilder/templates/cvbuilder/cv_detail.html:368
 msgid "Driver's License"
-msgstr ""
+msgstr "Haydovchilik guvohnomasi"
 
 #: cvbuilder/models.py:249
 msgid "Do you have a driver's license?"
-msgstr ""
+msgstr "Sizda haydovchilik guvohnomasi bormi?"
 
 #: cvbuilder/models.py:256 cvbuilder/templates/cvbuilder/cv_create.html:296
-#, fuzzy
-#| msgid "Event Category"
 msgid "License Category"
-msgstr "Tadbir kategoriyasi"
+msgstr "Guvohnoma toifasi"
 
 #: cvbuilder/models.py:257
 msgid "Driver's license category (e.g., B, C)"
-msgstr ""
+msgstr "Haydovchilik guvohnomasi toifasi (masalan, B, C)"
 
 #: cvbuilder/models.py:263 cvbuilder/templates/cvbuilder/cv_create.html:307
 #: cvbuilder/templates/cvbuilder/cv_detail.html:379
 msgid "Military Service"
-msgstr ""
+msgstr "Harbiy xizmat"
 
 #: cvbuilder/models.py:264
 msgid "Information about military service (for male candidates)"
-msgstr ""
+msgstr "Harbiy xizmat haqidagi ma'lumot (erkak nomzodlar uchun)"
 
 #: cvbuilder/models.py:271
-#, fuzzy
-#| msgid "LinkedIn profile URL"
 msgid "LinkedIn Profile"
-msgstr "LinkedIn profil URL manzili"
+msgstr "LinkedIn profili"
 
 #: cvbuilder/models.py:277
-#, fuzzy
-#| msgid "GitHub profile URL"
 msgid "GitHub Profile"
-msgstr "GitHub profil URL manzili"
+msgstr "GitHub profili"
 
 #: cvbuilder/models.py:283
 msgid "Portfolio Website"
-msgstr ""
+msgstr "Portfolio sayti"
 
 #: cvbuilder/models.py:290
 msgid "When the CV was created"
@@ -8311,10 +8105,8 @@ msgid "Last update to the CV"
 msgstr "CVning so'nggi yangilanishi"
 
 #: cvbuilder/models.py:302
-#, fuzzy
-#| msgid "Published"
 msgid "Published Date"
-msgstr "Nashr etilgan"
+msgstr "Nashr sanasi"
 
 #: cvbuilder/models.py:306 employers/models.py:380 jobs/models.py:490
 msgid "Resume"
@@ -10128,8 +9920,7 @@ msgstr ""
 #: cvbuilder/templates/cvbuilder/preview.html:265
 #: employers/templates/employers/detail.html:64
 #: jobs/templates/jobs/job_list.html:405 jobs/templates/jobs/job_list.html:406
-#: resources/templates/resources/resource_detail.html:46
-#: resources/templates/resources/resource_detail.html:225
+#: resources/templates/resources/resource_detail.html:48
 msgid "Share"
 msgstr "Ulashish"
 
@@ -10902,7 +10693,7 @@ msgid "Detailed description of the job and company"
 msgstr "Ish va kompaniyaning batafsil tavsifi"
 
 #: employers/models.py:196 jobs/models.py:212
-#: jobs/templates/jobs/job_detail.html:194
+#: jobs/templates/jobs/job_detail.html:236
 #: jobs/templates/jobs/job_form.html:493
 msgid "Requirements"
 msgstr "Talablar"
@@ -11396,7 +11187,7 @@ msgstr "Kompaniya telefoni"
 #: employers/templates/employers/company_detail.html:147
 #: employers/templates/employers/employer_dashboard.html:93
 #: employers/templates/employers/employer_dashboard.html:144
-#: jobs/templates/jobs/job_detail.html:140
+#: jobs/templates/jobs/job_detail.html:167
 msgid "applications"
 msgstr "arizalar"
 
@@ -11455,7 +11246,7 @@ msgid "employees"
 msgstr "1-10 xodim"
 
 #: employers/templates/employers/detail.html:79
-#: jobs/templates/jobs/job_detail.html:263
+#: jobs/templates/jobs/job_detail.html:370
 msgid "About the company"
 msgstr "Kompaniya haqida"
 
@@ -12065,7 +11856,7 @@ msgstr ""
 msgid "Search events..."
 msgstr "Tadbirlarni qidirish..."
 
-#: events/forms.py:371 events/templates/events/admin_event_list.html:94
+#: events/forms.py:371 events/templates/events/admin_event_list.html:103
 #: events/templates/events/event_list.html:47
 msgid "All Categories"
 msgstr "Barcha kategoriyalar"
@@ -12280,7 +12071,7 @@ msgid "Number of times the event was viewed"
 msgstr "Tadbir necha marta ko'rilgani"
 
 #: events/models.py:190 events/models.py:360 events/models.py:514
-#: events/templates/events/admin_event_list.html:121
+#: events/templates/events/admin_event_list.html:131
 msgid "Event"
 msgstr "Tadbir"
 
@@ -12643,33 +12434,25 @@ msgstr "Ma'lumotni tahrirlash"
 
 #: events/templates/events/admin_event_form.html:545
 #: events/templates/events/event_calendar.html:21
-#, fuzzy
-#| msgid "Back to Resources List"
 msgid "Back to List"
-msgstr "Resurslar ro'yxatiga qaytish"
+msgstr "Ro'yxatga qaytish"
 
 #: events/templates/events/admin_event_form.html:557
 #: events/templates/events/create_event.html:1020
-#, fuzzy
-#| msgid "Please correct the following errors:"
 msgid "Please correct the following errors"
-msgstr "Quyidagi xatolarni to'g'rilang:"
+msgstr "Iltimos, quyidagi xatolarni to'g'rilang"
 
 #: events/templates/events/admin_event_form.html:593
 #: events/templates/events/admin_event_form.html:618
 #: events/templates/events/create_event.html:1051
 #: events/templates/events/create_event.html:1076
-#, fuzzy
-#| msgid "Enter resource title (maximum 200 characters)"
 msgid "Maximum 200 characters"
-msgstr "Resurs sarlavhasini kiriting (maksimum 200 belgi)"
+msgstr "Maksimum 200 belgi"
 
 #: events/templates/events/admin_event_form.html:629
 #: events/templates/events/create_event.html:1087
-#, fuzzy
-#| msgid "Maximum number of participants allowed"
 msgid "Maximum number of participants allowed for the event"
-msgstr "Ruxsat etilgan maksimal ishtirokchilar soni"
+msgstr "Tadbir uchun ruxsat etilgan maksimal ishtirokchilar soni"
 
 #: events/templates/events/admin_event_form.html:675
 msgid "Date and Time"
@@ -12677,161 +12460,123 @@ msgstr "Sana va Vaqt"
 
 #: events/templates/events/admin_event_form.html:700
 #: events/templates/events/create_event.html:1153
-#, fuzzy
-#| msgid "Image"
 msgid "Images"
-msgstr "Rasm"
+msgstr "Rasmlar"
 
 #: events/templates/events/admin_event_form.html:709
 msgid "Recommended size: 1200x400px"
-msgstr ""
+msgstr "Tavsiya etilgan o'lcham: 1200x400px"
 
 #: events/templates/events/admin_event_form.html:712
-#, fuzzy
-#| msgid "Current image"
 msgid "Current Banner:"
-msgstr "Joriy rasm"
+msgstr "Joriy banner:"
 
 #: events/templates/events/admin_event_form.html:713
-#, fuzzy
-#| msgid "Current image"
 msgid "Current banner"
-msgstr "Joriy rasm"
+msgstr "Joriy banner"
 
 #: events/templates/events/admin_event_form.html:718
 #: events/templates/events/admin_event_form.html:744
-#, fuzzy
-#| msgid "Upload image"
 msgid "Upload new image to replace"
-msgstr "Rasm yuklash"
+msgstr "Almashtirish uchun yangi rasm yuklang"
 
 #: events/templates/events/admin_event_form.html:726
-#, fuzzy
-#| msgid "Message Preview"
 msgid "New Banner Preview"
-msgstr "Xabar ko'rib chiqish"
+msgstr "Yangi bannerni oldindan ko'rish"
 
 #: events/templates/events/admin_event_form.html:735
 msgid "Recommended size: 400x300px"
-msgstr ""
+msgstr "Tavsiya etilgan o'lcham: 400x300px"
 
 #: events/templates/events/admin_event_form.html:738
-#, fuzzy
-#| msgid "Thumbnail"
 msgid "Current Thumbnail:"
-msgstr "Kichik rasm"
+msgstr "Joriy miniatyura:"
 
 #: events/templates/events/admin_event_form.html:739
-#, fuzzy
-#| msgid "Current image"
 msgid "Current thumbnail"
-msgstr "Joriy rasm"
+msgstr "Joriy miniatyura"
 
 #: events/templates/events/admin_event_form.html:752
-#, fuzzy
-#| msgid "Thumbnail"
 msgid "New Thumbnail Preview"
-msgstr "Kichik rasm"
+msgstr "Yangi miniatyurani oldindan ko'rish"
 
 #: events/templates/events/admin_event_form.html:769
 #: events/templates/events/create_event.html:1193
-#, fuzzy
-#| msgid "technology, workshop, networking"
 msgid "Separate tags with commas (e.g., technology, workshop, networking)"
-msgstr "texnologiya, workshop, tarmoq"
+msgstr "Teglarni vergul bilan ajrating (masalan, technology, workshop, networking)"
 
 #: events/templates/events/admin_event_form.html:788
 msgid "Draft: visible only to you | Published: visible to everyone"
-msgstr ""
+msgstr "Qoralama: faqat sizga ko'rinadi | Nashr etilgan: hammaga ko'rinadi"
 
 #: events/templates/events/admin_event_form.html:815
-#, fuzzy
-#| msgid "Preview"
 msgid "Event Preview"
-msgstr "Oldindan ko'rish"
+msgstr "Tadbirni oldindan ko'rish"
 
 #: events/templates/events/admin_event_form.html:820
-#, fuzzy
-#| msgid "Payment Status"
 msgid "Current Status:"
-msgstr "To'lov holati"
+msgstr "Joriy holat:"
 
 #: events/templates/events/admin_event_form.html:830
-#, fuzzy
-#| msgid "Last Updated"
 msgid "Last Updated:"
-msgstr "So'nggi yangilangan"
+msgstr "So'nggi yangilanish:"
 
 #: events/templates/events/admin_event_form.html:834
 msgid "Views:"
 msgstr "Ko'rishlar:"
 
 #: events/templates/events/admin_event_form.html:838
-#, fuzzy
-#| msgid "Quick Actions"
 msgid "Quick Actions:"
-msgstr "Tezkor harakatlar"
+msgstr "Tezkor harakatlar:"
 
 #: events/templates/events/admin_event_form.html:841
-#, fuzzy
-#| msgid "View Events"
 msgid "View Live"
-msgstr "Tadbirni ko'rish"
+msgstr "Jonli ko'rish"
 
 #: events/templates/events/admin_event_form.html:845
-#: events/templates/events/admin_event_list.html:178
+#: events/templates/events/admin_event_list.html:214
 #: events/templates/events/manage_events.html:134
 #: resources/templates/resources/resource_confirm_delete.html:154
 msgid "Unpublish"
 msgstr "Nashrdan olib tashlash"
 
 #: events/templates/events/admin_event_form.html:849
-#: events/templates/events/admin_event_list.html:185
+#: events/templates/events/admin_event_list.html:224
 #: events/templates/events/manage_events.html:127
 #: resources/templates/resources/resource_confirm_delete.html:149
-#: resources/templates/resources/resource_detail.html:208
+#: resources/templates/resources/resource_detail.html:210
 #: resources/templates/resources/unpublished_resources.html:130
 #: resources/templates/resources/unpublished_resources.html:193
 msgid "Publish"
 msgstr "Nashr etish"
 
 #: events/templates/events/admin_event_form.html:861
-#, fuzzy
-#| msgid "Waiting List"
 msgid "Editing Tips"
-msgstr "Kutish ro'yxati"
+msgstr "Tahrirlash bo'yicha maslahatlar"
 
 #: events/templates/events/admin_event_form.html:868
-#, fuzzy
-#| msgid "Description:"
 msgid "Title & Description:"
-msgstr "Tavsif:"
+msgstr "Sarlavha va tavsif:"
 
 #: events/templates/events/admin_event_form.html:868
 msgid "Keep them clear, concise and informative"
-msgstr ""
+msgstr "Ularni aniq, qisqa va mazmunli qiling"
 
 #: events/templates/events/admin_event_form.html:872
-#, fuzzy
-#| msgid "Date:"
 msgid "Dates:"
-msgstr "Sana:"
+msgstr "Sanalar:"
 
 #: events/templates/events/admin_event_form.html:872
-#, fuzzy
-#| msgid "Event end date and time"
 msgid "Always double-check start and end times"
-msgstr "Tadbir tugash sanasi va vaqti"
+msgstr "Har doim boshlanish va tugash vaqtlarini qayta tekshiring"
 
 #: events/templates/events/admin_event_form.html:876
-#, fuzzy
-#| msgid "Image:"
 msgid "Images:"
-msgstr "Rasm:"
+msgstr "Rasmlar:"
 
 #: events/templates/events/admin_event_form.html:876
 msgid "High-quality visuals improve engagement significantly"
-msgstr ""
+msgstr "Sifatli vizuallar qiziqishni sezilarli oshiradi"
 
 #: events/templates/events/admin_event_form.html:880
 msgid "Tags:"
@@ -12839,25 +12584,25 @@ msgstr "Teglar:"
 
 #: events/templates/events/admin_event_form.html:880
 msgid "Use relevant keywords for better discoverability"
-msgstr ""
+msgstr "Tadbirni oson topishlari uchun mos kalit so'zlardan foydalaning"
 
 #: events/templates/events/admin_event_form.html:884
 msgid "Auto-Save:"
-msgstr ""
+msgstr "Avtosaqlash:"
 
 #: events/templates/events/admin_event_form.html:884
 msgid "Your changes are saved automatically every 30 seconds"
-msgstr ""
+msgstr "O'zgarishlaringiz har 30 soniyada avtomatik saqlanadi"
 
 #: events/templates/events/admin_event_list.html:5
 msgid "Admin - Events"
 msgstr "Admin - Tadbirlar"
 
-#: events/templates/events/admin_event_list.html:14
+#: events/templates/events/admin_event_list.html:15
 msgid "Events Management"
 msgstr "Tadbirlar boshqaruvi"
 
-#: events/templates/events/admin_event_list.html:15
+#: events/templates/events/admin_event_list.html:16
 msgid "View and manage all events"
 msgstr "Barcha tadbirlarni ko'rish va boshqarish"
 
@@ -12865,36 +12610,54 @@ msgstr "Barcha tadbirlarni ko'rish va boshqarish"
 msgid "New Event"
 msgstr "Yangi tadbir"
 
-#: events/templates/events/admin_event_list.html:80
+#: events/templates/events/admin_event_list.html:86
 msgid "Search..."
 msgstr "Qidirish..."
 
-#: events/templates/events/admin_event_list.html:84
+#: events/templates/events/admin_event_list.html:92
 #: events/templates/events/my_events.html:19
 msgid "All Statuses"
 msgstr "Barcha holatlar"
 
-#: events/templates/events/admin_event_list.html:123
+#: events/templates/events/admin_event_list.html:133
 msgid "Start"
 msgstr "Boshlanish"
 
-#: events/templates/events/admin_event_list.html:169
+#: events/templates/events/admin_event_list.html:199
 msgid "Participants"
 msgstr "Ishtirokchilar"
 
-#: events/templates/events/admin_event_list.html:200
+#: events/templates/events/admin_event_list.html:215
+#, fuzzy
+#| msgid "Are you sure you want to delete this event?"
+msgid "Are you sure you want to unpublish this event?"
+msgstr "Ushbu tadbirni o'chirishni istaysizmi?"
+
+#: events/templates/events/admin_event_list.html:225
+#, fuzzy
+#| msgid "Are you sure you want to delete this event?"
+msgid "Are you sure you want to publish this event?"
+msgstr "Ushbu tadbirni o'chirishni istaysizmi?"
+
+#: events/templates/events/admin_event_list.html:234
+#: events/templates/events/detail.html:40
+#: events/templates/events/event_delete.html:12
+msgid "Are you sure you want to delete this event?"
+msgstr "Ushbu tadbirni o'chirishni istaysizmi?"
+
+#: events/templates/events/admin_event_list.html:244
 msgid "No Events Found"
 msgstr "Tadbirlar topilmadi"
 
-#: events/templates/events/admin_event_list.html:201
+#: events/templates/events/admin_event_list.html:245
 msgid "No events match your search criteria."
 msgstr "Hech qanday tadbir sizning qidiruv mezonlaringizga mos kelmadi."
 
-#: events/templates/events/admin_event_list.html:203
+#: events/templates/events/admin_event_list.html:247
 msgid "Create First Event"
 msgstr "Birinchi tadbirni yaratish"
 
-#: events/templates/events/admin_event_list.html:216
+#: events/templates/events/admin_event_list.html:260
 #: events/templates/events/my_events.html:104
 #, fuzzy
 #| msgid "Event Registration"
@@ -13160,11 +12923,6 @@ msgstr ""
 #| msgid "Event end date and time"
 msgid "Double-check dates and times before publishing"
 msgstr "Tadbir tugash sanasi va vaqti"
-
-#: events/templates/events/detail.html:40
-#: events/templates/events/event_delete.html:12
-msgid "Are you sure you want to delete this event?"
-msgstr "Ushbu tadbirni o'chirishni istaysizmi?"
 
 #: events/templates/events/detail.html:56
 #, fuzzy
@@ -13788,162 +13546,128 @@ msgid "%(count)d alerts deactivated"
 msgstr "%(count)d ta ogohlantirish faolsizlantirildi"
 
 #: jobs/forms.py:9
-#, fuzzy
-#| msgid "Industry"
 msgid "Select Industry"
-msgstr "Sanoat"
+msgstr "Sohani tanlang"
 
 #: jobs/forms.py:10
-#, fuzzy
-#| msgid "Technology"
 msgid "IT/Technology"
-msgstr "Texnologiya"
+msgstr "IT / texnologiya"
 
 #: jobs/forms.py:11
-#, fuzzy
-#| msgid "Finance & Banking"
 msgid "Finance/Banking"
-msgstr "Moliya & Bank ishi"
+msgstr "Moliya / bank ishi"
 
 #: jobs/forms.py:12
-#, fuzzy
-#| msgid "Healthcare"
 msgid "Healthcare/Medical"
-msgstr "Sog'liqni saqlash"
+msgstr "Sog'liqni saqlash / tibbiyot"
 
 #: jobs/forms.py:13
-#, fuzzy
-#| msgid "Education"
 msgid "Education/Training"
-msgstr "Ta'lim"
+msgstr "Ta'lim / trening"
 
 #: jobs/forms.py:14
 msgid "Marketing/Advertising"
-msgstr ""
+msgstr "Marketing / reklama"
 
 #: jobs/forms.py:15
-#, fuzzy
-#| msgid "Retail"
 msgid "Sales/Retail"
-msgstr "Chakana savdo"
+msgstr "Savdo / retail"
 
 #: jobs/forms.py:16
-#, fuzzy
-#| msgid "Manufacturing"
 msgid "Manufacturing/Engineering"
-msgstr "Ishlab chiqarish"
+msgstr "Ishlab chiqarish / muhandislik"
 
 #: jobs/forms.py:17
-#, fuzzy
-#| msgid "Construction"
 msgid "Construction/Real Estate"
-msgstr "Qurilish"
+msgstr "Qurilish / ko'chmas mulk"
 
 #: jobs/forms.py:18
 msgid "Hospitality/Tourism"
-msgstr ""
+msgstr "Mehmondo'stlik / turizm"
 
 #: jobs/forms.py:19
 msgid "Transportation/Logistics"
-msgstr ""
+msgstr "Transport / logistika"
 
 #: jobs/forms.py:20
 msgid "Government/Public Sector"
-msgstr ""
+msgstr "Davlat / jamoat sektori"
 
 #: jobs/forms.py:21
 msgid "Non-profit/NGO"
-msgstr ""
+msgstr "NNT / NGO"
 
 #: jobs/forms.py:22
-#, fuzzy
-#| msgid "Media Content"
 msgid "Media/Entertainment"
-msgstr "Media kontent"
+msgstr "Media / ko'ngilochar"
 
 #: jobs/forms.py:23
 msgid "Agriculture/Farming"
-msgstr ""
+msgstr "Qishloq xo'jaligi / fermerlik"
 
 #: jobs/forms.py:29
 msgid "Republic of Karakalpakstan"
-msgstr ""
+msgstr "Qoraqalpog'iston Respublikasi"
 
 #: jobs/forms.py:36
 msgid "Navoiy"
-msgstr ""
+msgstr "Navoiy"
 
 #: jobs/forms.py:37
 msgid "Qashqadaryo"
-msgstr ""
+msgstr "Qashqadaryo"
 
 #: jobs/forms.py:38
 msgid "Samarqand"
-msgstr ""
+msgstr "Samarqand"
 
 #: jobs/forms.py:39
 msgid "Sirdaryo"
-msgstr ""
+msgstr "Sirdaryo"
 
 #: jobs/forms.py:40
-#, fuzzy
-#| msgid "Secondary Education"
 msgid "Surxondaryo"
-msgstr "O'rta ta'lim"
+msgstr "Surxondaryo"
 
 #: jobs/forms.py:41
-#, fuzzy
-#| msgid "Tashkent, Uzbekistan"
 msgid "Tashkent Region"
-msgstr "Toshkent, O'zbekiston"
+msgstr "Toshkent viloyati"
 
 #: jobs/forms.py:42
-#, fuzzy
-#| msgid "Tashkent, Uzbekistan"
 msgid "Tashkent City"
-msgstr "Toshkent, O'zbekiston"
+msgstr "Toshkent shahri"
 
 #: jobs/forms.py:63
 msgid "Select the industry that best describes this job"
-msgstr ""
+msgstr "Ushbu vakansiyani eng yaxshi ifodalovchi sohani tanlang"
 
 #: jobs/forms.py:70
 msgid "Select the region in Uzbekistan"
-msgstr ""
+msgstr "O'zbekistondagi hududni tanlang"
 
 #: jobs/forms.py:122
-#, fuzzy
-#| msgid "About Company"
 msgid "Your company"
-msgstr "Kompaniya haqida"
+msgstr "Sizning kompaniyangiz"
 
 #: jobs/forms.py:124
-#, fuzzy
-#| msgid "Partner companies"
 msgid "Select one of your companies"
-msgstr "Hamkor kompaniyalar"
+msgstr "Kompaniyalaringizdan birini tanlang"
 
 #: jobs/forms.py:131 jobs/templates/jobs/job_form.html:98
-#, fuzzy
-#| msgid "Select company"
 msgid "Select a company"
 msgstr "Kompaniyani tanlang"
 
 #: jobs/forms.py:149
-#, fuzzy
-#| msgid "Please select a template"
 msgid "Please select..."
-msgstr "Iltimos, shablon tanlang"
+msgstr "Iltimos, tanlang..."
 
 #: jobs/forms.py:165 jobs/templates/jobs/job_form.html:77
 msgid "e.g., Senior Software Engineer"
 msgstr "masalan, Katta Dastur Muhandisi"
 
 #: jobs/forms.py:166
-#, fuzzy
-#| msgid "Brief summary of the job (max 300 characters)"
 msgid "Brief summary (max 300 characters)"
-msgstr "Ishning qisqa mazmuni (maksimum 300 belgi)"
+msgstr "Qisqa xulosa (maksimum 300 belgi)"
 
 #: jobs/forms.py:167 jobs/templates/jobs/job_form.html:536
 msgid "Python, Django, JavaScript, React, ..."
@@ -13954,44 +13678,36 @@ msgid "AWS, Docker, PostgreSQL, ..."
 msgstr "AWS, Docker, PostgreSQL, ..."
 
 #: jobs/forms.py:169
-#, fuzzy
-#| msgid "Headquarters location"
 msgid "Full address or location"
-msgstr "Bosh qarorgoh joylashuvi"
+msgstr "To'liq manzil yoki joylashuv"
 
 #: jobs/forms.py:170 jobs/templates/jobs/job_form.html:755
 msgid "email@company.com"
 msgstr "email@company.com"
 
 #: jobs/forms.py:192 jobs/forms.py:387
-#, fuzzy
-#| msgid "Maximum salary must be greater than minimum salary"
 msgid "Maximum salary should be greater than minimum salary."
-msgstr "Maksimal maosh minimal maoshdan katta bo'lishi kerak"
+msgstr "Maksimal maosh minimal maoshdan katta bo'lishi kerak."
 
 #: jobs/forms.py:201
-#, fuzzy
-#| msgid "You can view all saved jobs in your profile."
 msgid "You can only create jobs for your own companies."
-msgstr "Barcha saqlangan ish o'rinlarini profilingizda ko'rishingiz mumkin."
+msgstr "Siz faqat o'zingizning kompaniyalaringiz uchun vakansiya yarata olasiz."
 
 #: jobs/forms.py:209
 msgid "You don't have any companies. Please create a company first."
-msgstr ""
+msgstr "Sizda kompaniya yo'q. Avval kompaniya yarating."
 
 #: jobs/forms.py:257
 msgid "Select a company to publish this vacancy on its behalf"
-msgstr ""
+msgstr "Ushbu vakansiyani uning nomidan e'lon qilish uchun kompaniyani tanlang"
 
 #: jobs/forms.py:266
-#, fuzzy
-#| msgid "All Jobs"
 msgid "All jobs"
-msgstr "Barcha ish o'rinlari"
+msgstr "Barcha vakansiyalar"
 
 #: jobs/forms.py:268 jobs/models.py:95 jobs/templates/jobs/job_form.html:130
 msgid "Vacancy Geography"
-msgstr ""
+msgstr "Vakansiya geografiyasi"
 
 #: jobs/forms.py:284
 msgid "City, region, or district..."
@@ -13999,25 +13715,19 @@ msgstr "Shahar, mintaqa yoki tuman ..."
 
 #: jobs/forms.py:294
 msgid "e.g., IT, Finance, Healthcare..."
-msgstr ""
+msgstr "masalan, IT, moliya, sog'liqni saqlash..."
 
 #: jobs/forms.py:332
-#, fuzzy
-#| msgid "Minimum salary"
 msgid "Min salary"
-msgstr "Minimal maosh"
+msgstr "Min. maosh"
 
 #: jobs/forms.py:343
-#, fuzzy
-#| msgid "Maximum salary"
 msgid "Max salary"
-msgstr "Maksimal maosh"
+msgstr "Maks. maosh"
 
 #: jobs/forms.py:360
-#, fuzzy
-#| msgid "Featured Job"
 msgid "Featured Jobs Only"
-msgstr "Taqdim etilgan ish"
+msgstr "Faqat tavsiya etilgan ishlar"
 
 #: jobs/forms.py:366
 msgid "Urgent Hiring Only"
@@ -14036,40 +13746,28 @@ msgid "You must agree to the terms and conditions to apply."
 msgstr "Siz qo'llash shartlariga rozi bo'lishingiz kerak."
 
 #: jobs/forms.py:414
-#, fuzzy
-#| msgid "Why you are suitable for this position..."
 msgid "Explain why you're a good fit for this position..."
-msgstr "Nima uchun siz ushbu lavozimga mos kelasiz..."
+msgstr "Nima uchun ushbu lavozimga mos ekaningizni tushuntiring..."
 
 #: jobs/forms.py:421
-#, fuzzy
-#| msgid "Expected salary range"
 msgid "Your expected salary (optional)"
-msgstr "Kutilayotgan maosh diapazoni"
+msgstr "Kutilayotgan maosh (ixtiyoriy)"
 
 #: jobs/forms.py:431
-#, fuzzy
-#| msgid "Days required for notice period"
 msgid "Days required before starting (optional)"
-msgstr "Xabar berish muddati uchun talab qilinadigan kunlar"
+msgstr "Ish boshlashdan oldin kerak bo'ladigan kunlar (ixtiyoriy)"
 
 #: jobs/forms.py:436
-#, fuzzy
-#| msgid "Save Resume"
 msgid "Select Resume"
-msgstr "Rezyumeni saqlash"
+msgstr "Rezyumeni tanlang"
 
 #: jobs/forms.py:439
-#, fuzzy
-#| msgid "Start Date"
 msgid "Available Start Date"
-msgstr "Boshlanish sanasi"
+msgstr "Ishni boshlash mumkin bo'lgan sana"
 
 #: jobs/forms.py:440
-#, fuzzy
-#| msgid "Notice Period"
 msgid "Notice Period (days)"
-msgstr "Xabar berish muddati"
+msgstr "Ogohlantirish muddati (kun)"
 
 #: jobs/forms.py:444
 msgid "Customize your cover letter for this specific job application."
@@ -14084,32 +13782,24 @@ msgid "How many days notice you need to give your current employer."
 msgstr "Hozirgi ish beruvchingizga necha kunlik xabar berishingiz kerak."
 
 #: jobs/forms.py:478
-#, fuzzy
-#| msgid "Expected salary range"
 msgid "Expected salary cannot be negative."
-msgstr "Kutilayotgan maosh diapazoni"
+msgstr "Kutilayotgan maosh manfiy bo'lishi mumkin emas."
 
 #: jobs/forms.py:484
 msgid "Notice period should be between 0 and 90 days."
 msgstr "Eslatma muddati 0 dan 90 kungacha bo'lishi kerak."
 
 #: jobs/forms.py:510
-#, fuzzy
-#| msgid "Updated date"
 msgid "Update Status"
-msgstr "Yangilangan sana"
+msgstr "Holatni yangilash"
 
 #: jobs/forms.py:518
-#, fuzzy
-#| msgid "Add notes about the candidate..."
 msgid "Add notes about this application..."
-msgstr "Nomzod haqida eslatmalar qo'shing..."
+msgstr "Ushbu ariza haqida izoh qo'shing..."
 
 #: jobs/forms.py:520 jobs/templates/jobs/application_detail.html:175
-#, fuzzy
-#| msgid "Candidate Notes"
 msgid "Internal Notes"
-msgstr "Nomzod eslatmalari"
+msgstr "Ichki izohlar"
 
 #: jobs/forms.py:527
 #, fuzzy
@@ -14217,7 +13907,7 @@ msgstr "USD"
 msgid "EUR"
 msgstr "EUR"
 
-#: jobs/models.py:61 jobs/models.py:397 jobs/templates/jobs/job_detail.html:51
+#: jobs/models.py:61 jobs/models.py:397 jobs/templates/jobs/job_detail.html:45
 #: jobs/templates/jobs/job_list.html:126 jobs/templates/jobs/job_list.html:325
 #: jobs/templates/jobs/my_jobs.html:393
 msgid "Hybrid"
@@ -14455,11 +14145,11 @@ msgstr ""
 msgid "Salary is negotiable"
 msgstr "Maosh kelishiladi"
 
-#: jobs/models.py:373 jobs/templates/jobs/job_detail.html:66
+#: jobs/models.py:373 jobs/templates/jobs/job_detail.html:80
 msgid "Negotiable"
 msgstr "Kelishilgan"
 
-#: jobs/models.py:395 jobs/templates/jobs/job_detail.html:46
+#: jobs/models.py:395 jobs/templates/jobs/job_detail.html:39
 msgid "Remote work"
 msgstr "Masofaviy ish"
 
@@ -14995,7 +14685,7 @@ msgstr ""
 "Bu harakatni bekor qilib bo'lmaydi. Ushbu vakansiya bilan bog'liq barcha "
 "arizalar va ma'lumotlar butunlay o'chiriladi."
 
-#: jobs/templates/jobs/job_detail.html:56 jobs/templates/jobs/job_list.html:257
+#: jobs/templates/jobs/job_detail.html:33 jobs/templates/jobs/job_list.html:257
 #: jobs/templates/jobs/saved_jobs.html:25
 #: jobs/templates/jobs/saved_jobs.html:46
 #, fuzzy
@@ -15003,96 +14693,144 @@ msgstr ""
 msgid "Viewed"
 msgstr "Ko'rish"
 
-#: jobs/templates/jobs/job_detail.html:76
+#: jobs/templates/jobs/job_detail.html:90
 msgid "Application submitted"
 msgstr "Ariza topshirildi"
 
-#: jobs/templates/jobs/job_detail.html:92
+#: jobs/templates/jobs/job_detail.html:106
 msgid "Remove from saved"
 msgstr "Saqlanganlardan olib tashlash"
 
-#: jobs/templates/jobs/job_detail.html:103
+#: jobs/templates/jobs/job_detail.html:118
 msgid "Log in to apply"
 msgstr "Ariza topshirish uchun tizimga kiring"
 
-#: jobs/templates/jobs/job_detail.html:153
+#: jobs/templates/jobs/job_detail.html:185
 msgid "About the job"
 msgstr "Ish haqida"
 
-#: jobs/templates/jobs/job_detail.html:158
+#: jobs/templates/jobs/job_detail.html:186
+#, fuzzy
+#| msgid "Negative aspects of the company"
+msgid "Overview and details of the vacancy"
+msgstr "Kompaniyaning salbiy tomonlari"
+
+#: jobs/templates/jobs/job_detail.html:192
 msgid "Short description"
 msgstr "Qisqa tavsif"
 
-#: jobs/templates/jobs/job_detail.html:163
+#: jobs/templates/jobs/job_detail.html:197
 msgid "Detailed description"
 msgstr "Batafsil tavsif"
 
-#: jobs/templates/jobs/job_detail.html:178
+#: jobs/templates/jobs/job_detail.html:215
 msgid "Main responsibilities"
 msgstr "Asosiy majburiyatlar"
 
-#: jobs/templates/jobs/job_detail.html:217
+#: jobs/templates/jobs/job_detail.html:216
+msgid "What the role includes"
+msgstr ""
+
+#: jobs/templates/jobs/job_detail.html:237
+#, fuzzy
+#| msgid "How the candidate found this job"
+msgid "What the candidate should know"
+msgstr "Nomzod ushbu ishni qanday topgan"
+
+#: jobs/templates/jobs/job_detail.html:259
+#, fuzzy
+#| msgid "List required and preferred skills clearly"
+msgid "Required and preferred skills for this role"
+msgstr "Talab qilinadigan va afzal ko'riladigan ko'nikmalarni aniq ro'yxatlang"
+
+#: jobs/templates/jobs/job_detail.html:266
 msgid "Required skills"
 msgstr "Talab qilinadigan ko'nikmalar"
 
-#: jobs/templates/jobs/job_detail.html:226
+#: jobs/templates/jobs/job_detail.html:278
 msgid "Preferred skills"
 msgstr "Afzal ko'riladigan ko'nikmalar"
 
-#: jobs/templates/jobs/job_detail.html:244
+#: jobs/templates/jobs/job_detail.html:301
 msgid "Working conditions and benefits"
 msgstr "Ish sharoitlari va imtiyozlar"
 
-#: jobs/templates/jobs/job_detail.html:294
+#: jobs/templates/jobs/job_detail.html:302
+msgid "Perks, bonuses and workplace conditions"
+msgstr ""
+
+#: jobs/templates/jobs/job_detail.html:323
+msgid "Similar jobs"
+msgstr "O'xshash ish o'rinlari"
+
+#: jobs/templates/jobs/job_detail.html:324
+msgid "Other vacancies that may interest you"
+msgstr ""
+
+#: jobs/templates/jobs/job_detail.html:371
+#, fuzzy
+#| msgid "Employer Profile"
+msgid "Employer details and profile"
+msgstr "Ish beruvchi profili"
+
+#: jobs/templates/jobs/job_detail.html:408
 msgid "Company size"
 msgstr "Kompaniya hajmi"
 
-#: jobs/templates/jobs/job_detail.html:309
+#: jobs/templates/jobs/job_detail.html:423
 msgid "Company page"
 msgstr "Kompaniya sahifasi"
 
-#: jobs/templates/jobs/job_detail.html:320
+#: jobs/templates/jobs/job_detail.html:437
 msgid "Job details"
 msgstr "Ish tafsilotlari"
 
-#: jobs/templates/jobs/job_detail.html:326
+#: jobs/templates/jobs/job_detail.html:438
+#, fuzzy
+#| msgid "Contact information"
+msgid "Core vacancy information"
+msgstr "Kontakt ma'lumoti"
+
+#: jobs/templates/jobs/job_detail.html:445
 msgid "Experience level"
 msgstr "Tajriba darajasi"
 
-#: jobs/templates/jobs/job_detail.html:330
+#: jobs/templates/jobs/job_detail.html:450
 msgid "Education level"
 msgstr "Ta'lim darajasi"
 
-#: jobs/templates/jobs/job_detail.html:334
+#: jobs/templates/jobs/job_detail.html:455
 msgid "Employment type"
 msgstr "Ish turi"
 
-#: jobs/templates/jobs/job_detail.html:338
+#: jobs/templates/jobs/job_detail.html:460
 msgid "Created date"
 msgstr "Yaratilgan sana"
 
-#: jobs/templates/jobs/job_detail.html:343
+#: jobs/templates/jobs/job_detail.html:466
 #: jobs/templates/jobs/job_list.html:174 jobs/templates/jobs/job_list.html:347
 msgid "Deadline"
 msgstr "Muddati"
 
-#: jobs/templates/jobs/job_detail.html:356
+#: jobs/templates/jobs/job_detail.html:482
 msgid "Contact information"
 msgstr "Kontakt ma'lumoti"
 
-#: jobs/templates/jobs/job_detail.html:374
+#: jobs/templates/jobs/job_detail.html:483
+#, fuzzy
+#| msgid "Created Employers"
+msgid "How to reach the employer"
+msgstr "Yaratilgan ish beruvchilar"
+
+#: jobs/templates/jobs/job_detail.html:504
 msgid "Application link"
 msgstr "Ariza havolasi"
 
-#: jobs/templates/jobs/job_detail.html:392
-msgid "Similar jobs"
-msgstr "O'xshash ish o'rinlari"
-
-#: jobs/templates/jobs/job_detail.html:439
+#: jobs/templates/jobs/job_detail.html:533
 msgid "You are about to apply for"
 msgstr "Siz ariza topshirmoqchisiz"
 
-#: jobs/templates/jobs/job_detail.html:439
+#: jobs/templates/jobs/job_detail.html:533
 msgid "position"
 msgstr "lavozim"
 
@@ -15468,7 +15206,7 @@ msgid "I found this job that might interest you"
 msgstr ""
 
 #: jobs/templates/jobs/job_list.html:1090
-#: resources/templates/resources/resource_detail.html:445
+#: resources/templates/resources/resource_detail.html:450
 #, fuzzy
 #| msgid "Job link copied to clipboard!"
 msgid "Link copied to clipboard!"
@@ -16297,7 +16035,7 @@ msgid "Add new resource"
 msgstr "Yangi resurs qo'shish"
 
 #: resources/templates/resources/list.html:225
-#: resources/templates/resources/resource_detail.html:307
+#: resources/templates/resources/resource_detail.html:312
 msgid "Unpublished resources"
 msgstr "Nashr qilinmagan resurslar"
 
@@ -16318,12 +16056,12 @@ msgid "Being deleted"
 msgstr ""
 
 #: resources/templates/resources/resource_confirm_delete.html:44
-#: resources/templates/resources/resource_detail.html:170
+#: resources/templates/resources/resource_detail.html:172
 msgid "Added date"
 msgstr "Qo'shilgan sana"
 
 #: resources/templates/resources/resource_confirm_delete.html:52
-#: resources/templates/resources/resource_detail.html:177
+#: resources/templates/resources/resource_detail.html:179
 msgid "Updated date"
 msgstr "Yangilangan sana"
 
@@ -16399,78 +16137,62 @@ msgstr "O'chirishni tasdiqlaysizmi"
 msgid "Other options"
 msgstr "Arizalarni filtrlash"
 
-#: resources/templates/resources/resource_detail.html:32
-#: resources/templates/resources/resource_detail.html:286
+#: resources/templates/resources/resource_detail.html:34
+#: resources/templates/resources/resource_detail.html:291
 #: resources/templates/resources/unpublished_resources.html:173
 msgid "Added"
 msgstr "Qo'shilgan"
 
-#: resources/templates/resources/resource_detail.html:70
+#: resources/templates/resources/resource_detail.html:72
 msgid "About Resource"
 msgstr "Resurs haqida"
 
-#: resources/templates/resources/resource_detail.html:84
+#: resources/templates/resources/resource_detail.html:86
 msgid "Video Material"
 msgstr "Video material"
 
-#: resources/templates/resources/resource_detail.html:95
+#: resources/templates/resources/resource_detail.html:97
 msgid "Video is loading..."
 msgstr "Video yuklanmoqda..."
 
-#: resources/templates/resources/resource_detail.html:104
+#: resources/templates/resources/resource_detail.html:106
 msgid "Open on YouTube"
 msgstr "YouTube-da ochish"
 
-#: resources/templates/resources/resource_detail.html:115
+#: resources/templates/resources/resource_detail.html:117
 msgid "Video is available on YouTube platform"
 msgstr "Video YouTube platformasida mavjud"
 
-#: resources/templates/resources/resource_detail.html:120
-#: resources/templates/resources/resource_detail.html:517
+#: resources/templates/resources/resource_detail.html:122
+#: resources/templates/resources/resource_detail.html:522
 msgid "Watch on YouTube"
 msgstr "YouTube-da tomosha qilish"
 
-#: resources/templates/resources/resource_detail.html:125
+#: resources/templates/resources/resource_detail.html:127
 msgid "Video will open in a new window"
 msgstr "Video yangi oynada ochiladi"
 
-#: resources/templates/resources/resource_detail.html:134
+#: resources/templates/resources/resource_detail.html:136
 msgid "Video embedding is not possible or restricted."
 msgstr "Videoni o'rnatish imkonsiz yoki cheklangan."
 
-#: resources/templates/resources/resource_detail.html:136
+#: resources/templates/resources/resource_detail.html:138
 msgid "YouTube video link not checked."
 msgstr "YouTube video havolasi tekshirilmagan."
 
-#: resources/templates/resources/resource_detail.html:203
+#: resources/templates/resources/resource_detail.html:205
 msgid "Hide"
 msgstr "Yashirish"
 
-#: resources/templates/resources/resource_detail.html:231
-msgid "Share on Facebook"
-msgstr "Facebook-da ulashish"
-
-#: resources/templates/resources/resource_detail.html:236
-msgid "Share on Twitter"
-msgstr "Twitter-da ulashish"
-
-#: resources/templates/resources/resource_detail.html:241
-msgid "Share on Telegram"
-msgstr "Telegram-da ulashish"
-
-#: resources/templates/resources/resource_detail.html:246
-msgid "Share on WhatsApp"
-msgstr "WhatsApp-da ulashish"
-
-#: resources/templates/resources/resource_detail.html:260
+#: resources/templates/resources/resource_detail.html:265
 msgid "Similar Resources"
 msgstr "O'xshash resurslar"
 
-#: resources/templates/resources/resource_detail.html:261
+#: resources/templates/resources/resource_detail.html:266
 msgid "Other useful materials in this category"
 msgstr "Ushbu toifadagi boshqa foydali materiallar"
 
-#: resources/templates/resources/resource_detail.html:301
+#: resources/templates/resources/resource_detail.html:306
 msgid "Back to All Resources"
 msgstr "Barcha resurslarga qaytish"
 
@@ -16737,6 +16459,18 @@ msgstr "Parolingiz"
 #| msgid "Log In"
 msgid "Log in"
 msgstr "Kirish"
+
+#~ msgid "Share on Facebook"
+#~ msgstr "Facebook-da ulashish"
+
+#~ msgid "Share on Twitter"
+#~ msgstr "Twitter-da ulashish"
+
+#~ msgid "Share on Telegram"
+#~ msgstr "Telegram-da ulashish"
+
+#~ msgid "Share on WhatsApp"
+#~ msgstr "WhatsApp-da ulashish"
 
 #, fuzzy
 #~| msgid "Admin"
