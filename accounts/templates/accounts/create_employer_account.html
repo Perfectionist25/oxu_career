@@ -20,14 +20,11 @@
                 </div>
                 <div class="card-body p-4">
                     <!-- Общие ошибки формы -->
-                    {% if form.non_field_errors or user_form.non_field_errors or company_form.non_field_errors or profile_form.non_field_errors %}
+                    {% if user_form.non_field_errors or company_form.non_field_errors or profile_form.non_field_errors %}
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <i class="fas fa-exclamation-triangle me-2"></i>
                         <strong>{% trans "Please correct the errors below:" %}</strong>
                         <ul class="mb-0 mt-2">
-                            {% for error in form.non_field_errors %}
-                            <li>{{ error }}</li>
-                            {% endfor %}
                             {% for error in user_form.non_field_errors %}
                             <li>{{ error }}</li>
                             {% endfor %}
@@ -44,6 +41,13 @@
 
                     <form method="post" enctype="multipart/form-data" novalidate id="employerForm">
                         {% csrf_token %}
+
+                        <div id="formAlertSlot"></div>
+
+                        <div class="form-legend mb-4">
+                            <span class="required-indicator" aria-hidden="true">*</span>
+                            <span>{% trans "Fields marked with this symbol are required." %}</span>
+                        </div>
                         
                         <div class="row">
                             <!-- User Basic Information -->
@@ -779,10 +783,15 @@
 
 <style>
 .form-control, .form-select {
-    border-radius: 8px;
-    padding: 10px;
-    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    padding: 0.8rem 0.9rem;
+    border: 1px solid #ccd6e0;
     transition: all 0.3s ease;
+    background: #fff;
+}
+
+.form-control:hover, .form-select:hover {
+    border-color: #90b6df;
 }
 
 .form-control:focus, .form-select:focus {
@@ -792,21 +801,73 @@
 
 .form-control.is-invalid, .form-select.is-invalid {
     border-color: #dc3545;
+    background-color: #fff7f7;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right calc(0.375em + 0.1875rem) center;
     background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.12);
 }
 
 .card {
-    border-radius: 15px;
+    border-radius: 22px;
     overflow: hidden;
 }
 
 .form-label {
-    color: #333;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    color: #17324d;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+    letter-spacing: 0.01em;
+}
+
+.form-check-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: #17324d;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+.required-indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.35rem;
+    height: 1.35rem;
+    padding: 0 0.35rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #ff5a5f 0%, #d6336c 100%);
+    color: #fff !important;
+    font-size: 0.78rem;
+    font-weight: 800;
+    line-height: 1;
+    box-shadow: 0 10px 20px rgba(214, 51, 108, 0.18);
+}
+
+.form-legend {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.9rem 1rem;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(77, 171, 247, 0.08), rgba(32, 201, 151, 0.08));
+    border: 1px solid rgba(77, 171, 247, 0.16);
+    color: #23415f;
     font-weight: 600;
-    margin-bottom: 0.5rem;
+}
+
+.card-body h5.fw-bold.text-primary {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: #0f5fa8 !important;
+    letter-spacing: 0.01em;
 }
 
 .btn {
@@ -833,12 +894,29 @@
 
 .invalid-feedback {
     color: #dc3545;
-    font-size: 0.875em;
-    margin-top: 0.25rem;
+    font-size: 0.9rem;
+    margin-top: 0.55rem;
+    padding: 0.65rem 0.8rem;
+    border-radius: 12px;
+    border: 1px solid #f1b5bc;
+    background: #fff4f5;
 }
 
-.text-danger {
-    color: #dc3545 !important;
+.form-label .text-danger,
+.form-check-label .text-danger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.35rem;
+    height: 1.35rem;
+    padding: 0 0.35rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #ff5a5f 0%, #d6336c 100%);
+    color: #fff !important;
+    font-size: 0.78rem;
+    font-weight: 800;
+    line-height: 1;
+    box-shadow: 0 10px 20px rgba(214, 51, 108, 0.18);
 }
 
 .alert {
@@ -855,15 +933,21 @@
 }
 
 .form-text {
-    color: #6c757d;
-    font-size: 0.875em;
-    margin-top: 0.25rem;
+    color: #5e6b7a;
+    font-size: 0.88rem;
+    margin-top: 0.45rem;
+    line-height: 1.45;
 }
 
 .form-check-input {
     width: 1.2em;
     height: 1.2em;
     margin-top: 0.2em;
+}
+
+.form-check-input.is-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.12);
 }
 
 .form-check-label {
@@ -889,153 +973,250 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Добавляем класс is-invalid к полям с ошибками при загрузке страницы
-    const errorFields = document.querySelectorAll('.invalid-feedback');
-    errorFields.forEach(errorDiv => {
-        let field = errorDiv.previousElementSibling;
-        
-        // Для чекбоксов может быть label между ними
-        if (field && field.tagName === 'LABEL') {
-            field = field.previousElementSibling;
-        }
-        
-        if (field && (field.tagName === 'INPUT' || field.tagName === 'SELECT' || field.tagName === 'TEXTAREA')) {
-            field.classList.add('is-invalid');
-        }
-    });
-
-    // Валидация формы перед отправкой
     const form = document.getElementById('employerForm');
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            let hasErrors = false;
-            const requiredFields = form.querySelectorAll('[required]');
-            
-            requiredFields.forEach(field => {
-                if (field.type === 'checkbox') {
-                    if (!field.checked) {
-                        hasErrors = true;
-                        field.classList.add('is-invalid');
-                        
-                        // Создаем сообщение об ошибке если его нет
-                        let errorDiv = field.parentNode.querySelector('.invalid-feedback');
-                        if (!errorDiv) {
-                            errorDiv = document.createElement('div');
-                            errorDiv.className = 'invalid-feedback d-block';
-                            errorDiv.innerHTML = '<i class="fas fa-exclamation-circle me-1"></i>{% trans "You must accept the terms and conditions." %}';
-                            field.parentNode.appendChild(errorDiv);
-                        }
-                    } else {
-                        field.classList.remove('is-invalid');
-                        const errorDiv = field.parentNode.querySelector('.invalid-feedback');
-                        if (errorDiv && errorDiv.textContent.includes('{% trans "You must accept the terms and conditions." %}')) {
-                            errorDiv.remove();
-                        }
-                    }
-                } else if (!field.value.trim()) {
-                    hasErrors = true;
-                    field.classList.add('is-invalid');
-                    
-                    // Создаем сообщение об ошибке если его нет
-                    let nextSibling = field.nextElementSibling;
-                    let hasExistingError = false;
-                    
-                    // Проверяем есть ли уже ошибка
-                    while (nextSibling) {
-                        if (nextSibling.classList && nextSibling.classList.contains('invalid-feedback')) {
-                            hasExistingError = true;
-                            break;
-                        }
-                        nextSibling = nextSibling.nextElementSibling;
-                    }
-                    
-                    if (!hasExistingError) {
-                        const errorDiv = document.createElement('div');
-                        errorDiv.className = 'invalid-feedback d-block';
-                        errorDiv.innerHTML = '<i class="fas fa-exclamation-circle me-1"></i>{% trans "This field is required." %}';
-                        field.parentNode.insertBefore(errorDiv, field.nextSibling);
-                    }
-                } else {
-                    field.classList.remove('is-invalid');
-                    const errorDiv = field.parentNode.querySelector('.invalid-feedback');
-                    if (errorDiv && errorDiv.textContent.includes('{% trans "This field is required." %}')) {
-                        errorDiv.remove();
-                    }
-                }
-            });
+    if (!form) {
+        return;
+    }
 
-            // Проверка паролей
-            const password1 = document.querySelector('#{{ user_form.password1.id_for_label }}');
-            const password2 = document.querySelector('#{{ user_form.password2.id_for_label }}');
-            
-            if (password1 && password2 && password1.value && password2.value) {
-                if (password1.value !== password2.value) {
-                    hasErrors = true;
-                    if (!password2.nextElementSibling || !password2.nextElementSibling.classList.contains('invalid-feedback')) {
-                        const errorDiv = document.createElement('div');
-                        errorDiv.className = 'invalid-feedback d-block';
-                        errorDiv.innerHTML = '<i class="fas fa-exclamation-circle me-1"></i>{% trans "Passwords do not match." %}';
-                        password2.parentNode.insertBefore(errorDiv, password2.nextSibling);
-                    }
-                    password2.classList.add('is-invalid');
-                }
-            }
+    const formAlertSlot = document.getElementById('formAlertSlot');
+    const requiredMessage = "{% trans 'This field is required.' %}";
+    const termsMessage = "{% trans 'You must accept the terms and conditions.' %}";
+    const passwordMismatchMessage = "{% trans 'Passwords do not match.' %}";
+    const password1 = document.getElementById('{{ user_form.password1.id_for_label }}');
+    const password2 = document.getElementById('{{ user_form.password2.id_for_label }}');
 
-            if (hasErrors) {
-                e.preventDefault();
-                // Прокручиваем к первому полю с ошибкой
-                const firstError = form.querySelector('.is-invalid');
-                if (firstError) {
-                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    firstError.focus();
-                }
-                
-                // Показываем общее уведомление
-                const alertDiv = document.createElement('div');
-                alertDiv.className = 'alert alert-danger alert-dismissible fade show mt-3';
-                alertDiv.innerHTML = `
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    <strong>{% trans "Please correct the errors below:" %}</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Close' %}"></button>
-                `;
-                
-                const existingAlert = form.querySelector('.alert-danger');
-                if (!existingAlert) {
-                    form.insertBefore(alertDiv, form.firstChild);
-                }
+    function getFieldWrapper(field) {
+        return field.closest('.mb-3, .form-check') || field.parentElement;
+    }
+
+    function getFieldLabel(field) {
+        if (!field.id) {
+            return null;
+        }
+        return form.querySelector(`label[for="${field.id}"]`);
+    }
+
+    function hasAnyError(field) {
+        const wrapper = getFieldWrapper(field);
+        return Boolean(wrapper && wrapper.querySelector('.invalid-feedback'));
+    }
+
+    function setInvalidState(field, isInvalid) {
+        if (!field) {
+            return;
+        }
+        if (isInvalid) {
+            field.classList.add('is-invalid');
+            field.setAttribute('aria-invalid', 'true');
+            return;
+        }
+
+        if (!hasAnyError(field)) {
+            field.classList.remove('is-invalid');
+            field.removeAttribute('aria-invalid');
+        }
+    }
+
+    function getDynamicError(field, errorType) {
+        const wrapper = getFieldWrapper(field);
+        if (!wrapper) {
+            return null;
+        }
+        return wrapper.querySelector(`.invalid-feedback[data-dynamic-error="${errorType}"]`);
+    }
+
+    function clearDynamicError(field, errorType) {
+        const errorNode = getDynamicError(field, errorType);
+        if (errorNode) {
+            errorNode.remove();
+        }
+        setInvalidState(field, false);
+    }
+
+    function showDynamicError(field, errorType, message) {
+        const wrapper = getFieldWrapper(field);
+        if (!wrapper) {
+            return;
+        }
+
+        if (!getDynamicError(field, errorType)) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'invalid-feedback d-block';
+            errorDiv.dataset.dynamicError = errorType;
+            errorDiv.innerHTML = `<i class="fas fa-exclamation-circle me-1"></i>${message}`;
+
+            const helpText = wrapper.querySelector('.form-text');
+            if (helpText) {
+                wrapper.insertBefore(errorDiv, helpText);
+            } else {
+                wrapper.appendChild(errorDiv);
             }
+        }
+
+        setInvalidState(field, true);
+    }
+
+    function fieldHasValue(field) {
+        if (field.type === 'checkbox') {
+            return field.checked;
+        }
+
+        if (field.type === 'file') {
+            return Boolean(field.files && field.files.length);
+        }
+
+        return Boolean(field.value && field.value.trim());
+    }
+
+    function decorateRequiredFields() {
+        form.querySelectorAll('.mb-3, .form-check').forEach(wrapper => {
+            wrapper.classList.add('field-shell');
         });
 
-        // Убираем ошибку при вводе
-        form.addEventListener('input', function(e) {
-            if (e.target.classList.contains('is-invalid')) {
-                if (e.target.value.trim()) {
-                    e.target.classList.remove('is-invalid');
-                    const errorDiv = e.target.parentNode.querySelector('.invalid-feedback');
-                    if (errorDiv && errorDiv.textContent.includes('{% trans "This field is required." %}')) {
-                        errorDiv.remove();
-                    }
-                }
-            }
-        });
+        form.querySelectorAll('[required]').forEach(field => {
+            const wrapper = getFieldWrapper(field);
+            const label = getFieldLabel(field);
 
-        // Для чекбоксов
-        const checkboxes = form.querySelectorAll('input[type="checkbox"]');
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                if (this.checked) {
-                    this.classList.remove('is-invalid');
-                    const errorDiv = this.parentNode.querySelector('.invalid-feedback');
-                    if (errorDiv && errorDiv.textContent.includes('{% trans "You must accept the terms and conditions." %}')) {
-                        errorDiv.remove();
-                    }
-                }
-            });
+            if (wrapper) {
+                wrapper.classList.add('field-required');
+            }
+
+            if (!label) {
+                return;
+            }
+
+            label.classList.add('label-required');
+
+            let marker = label.querySelector('.required-indicator, .text-danger');
+            if (!marker) {
+                marker = document.createElement('span');
+                marker.textContent = '*';
+                label.appendChild(marker);
+            }
+
+            marker.classList.add('required-indicator');
+            marker.setAttribute('aria-hidden', 'true');
+
+            if (!label.querySelector('[data-required-text]')) {
+                const srText = document.createElement('span');
+                srText.className = 'visually-hidden';
+                srText.dataset.requiredText = 'true';
+                srText.textContent = "{% trans 'Required' %}";
+                label.appendChild(srText);
+            }
         });
     }
 
-    // Прокручиваем к первой ошибке при загрузке страницы
-    const firstErrorOnLoad = document.querySelector('.invalid-feedback');
+    function validateRequiredField(field) {
+        const message = field.type === 'checkbox' ? termsMessage : requiredMessage;
+
+        if (!fieldHasValue(field)) {
+            showDynamicError(field, 'required', message);
+            return false;
+        }
+
+        clearDynamicError(field, 'required');
+        return true;
+    }
+
+    function validatePasswords() {
+        if (!password1 || !password2) {
+            return true;
+        }
+
+        if (password1.value && password2.value && password1.value !== password2.value) {
+            showDynamicError(password2, 'password-mismatch', passwordMismatchMessage);
+            return false;
+        }
+
+        clearDynamicError(password2, 'password-mismatch');
+        return true;
+    }
+
+    function showClientAlert() {
+        if (!formAlertSlot || formAlertSlot.querySelector('.alert-danger')) {
+            return;
+        }
+
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-danger alert-dismissible fade show mb-4';
+        alertDiv.innerHTML = `
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>{% trans "Please correct the errors below:" %}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Close' %}"></button>
+        `;
+        formAlertSlot.appendChild(alertDiv);
+    }
+
+    function clearClientAlert() {
+        if (!formAlertSlot || form.querySelector('.invalid-feedback[data-dynamic-error]')) {
+            return;
+        }
+
+        const alert = formAlertSlot.querySelector('.alert-danger');
+        if (alert) {
+            alert.remove();
+        }
+    }
+
+    function resolveFieldErrors(field) {
+        if (field.required && fieldHasValue(field)) {
+            clearDynamicError(field, 'required');
+        }
+
+        if ((field === password1 || field === password2) && password1 && password2) {
+            validatePasswords();
+        }
+
+        clearClientAlert();
+    }
+
+    decorateRequiredFields();
+
+    form.querySelectorAll('.invalid-feedback').forEach(errorDiv => {
+        const wrapper = errorDiv.closest('.mb-3, .form-check');
+        const field = wrapper ? wrapper.querySelector('input, select, textarea') : null;
+        if (field) {
+            setInvalidState(field, true);
+        }
+    });
+
+    form.addEventListener('submit', function(e) {
+        let hasErrors = false;
+
+        form.querySelectorAll('[required]').forEach(field => {
+            if (!validateRequiredField(field)) {
+                hasErrors = true;
+            }
+        });
+
+        if (!validatePasswords()) {
+            hasErrors = true;
+        }
+
+        if (hasErrors) {
+            e.preventDefault();
+            showClientAlert();
+
+            const firstError = form.querySelector('.is-invalid');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstError.focus();
+            }
+        }
+    });
+
+    form.querySelectorAll('input, select, textarea').forEach(field => {
+        field.addEventListener('input', function() {
+            resolveFieldErrors(field);
+        });
+
+        field.addEventListener('change', function() {
+            resolveFieldErrors(field);
+        });
+    });
+
+    const firstErrorOnLoad = form.querySelector('.is-invalid');
     if (firstErrorOnLoad) {
         setTimeout(() => {
             firstErrorOnLoad.scrollIntoView({ behavior: 'smooth', block: 'center' });
