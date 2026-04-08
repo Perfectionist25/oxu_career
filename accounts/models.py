@@ -663,8 +663,7 @@ class StudentProfile(models.Model):
 
     avatar = models.ImageField(
         upload_to='student_avatars/%Y/%m/%d/',
-        blank=True, null=True,
-        default='static/default_avatar.png'
+        blank=True, null=True
     )
 
     student_id = models.CharField(
