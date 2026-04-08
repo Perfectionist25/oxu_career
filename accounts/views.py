@@ -826,7 +826,7 @@ def student_profile_update(request):
 
             create_user_activity(request.user, "profile_update", "Student profile updated")
             messages.success(request, _("Profile updated successfully!"))
-            return redirect("accounts:student_dashboard")
+            return redirect("accounts:student_profile_update")
     else:
         user_form = StudentUserReadonlyNameForm(instance=request.user)
         profile_form = StudentProfileForm(instance=student_profile)
