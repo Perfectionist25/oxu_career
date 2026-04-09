@@ -80,7 +80,8 @@ class JobForm(forms.ModelForm):
             "requirements", "responsibilities", "benefits", "skills_required",
             "preferred_skills", "language_requirements", "contact_email",
             "contact_phone", "contact_person", "application_url", "work_schedule",
-            "probation_period", "expires_at", "industry"
+            "probation_period", "expires_at", "industry",
+            "candidate_type", "gender_requirement"
         ]
 
 
@@ -139,15 +140,12 @@ class JobForm(forms.ModelForm):
 
 
         select_fields = ['company', 'job_market', 'work_type', 'employment_type', 'experience_level',
-                        'education_level', 'currency', 'region', 'industry']
+                        'education_level', 'currency', 'region', 'industry', 'candidate_type', 'gender_requirement']
         for field in select_fields:
             if field in self.fields:
-                if field == 'industry':
-
-                    self.fields[field].widget.attrs['class'] = 'form-select'
-                elif field != 'company' and hasattr(self.fields[field], 'empty_label'):
+                self.fields[field].widget.attrs['class'] = 'form-select'
+                if field != 'company' and hasattr(self.fields[field], 'empty_label'):
                     self.fields[field].empty_label = _("Please select...")
-                    self.fields[field].widget.attrs['class'] = 'form-select'
                 # Make required select fields more obvious
                 if field in ['work_type', 'employment_type', 'experience_level', 'education_level']:
                     self.fields[field].widget.attrs['required'] = 'required'
@@ -471,6 +469,14 @@ class JobApplicationForm(forms.ModelForm):
         # Make cover letter and CV required
         self.fields['cover_letter'].required = True
         self.fields['cv'].required = True
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if self.job and self.user:
+            allowed, error = self.job.can_user_apply(self.user)
+            if not allowed:
+                raise forms.ValidationError(error)
+        return cleaned_data
 
     def clean_expected_salary(self):
         expected_salary = self.cleaned_data.get('expected_salary')

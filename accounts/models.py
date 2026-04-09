@@ -128,6 +128,33 @@ class CustomUser(AbstractUser):
         help_text=_("User's date of birth")
     )
 
+    GENDER_CHOICES = [
+        ("male", _("Male")),
+        ("female", _("Female")),
+    ]
+
+    gender = models.CharField(
+        max_length=10,
+        choices=GENDER_CHOICES,
+        blank=True,
+        null=True,
+        verbose_name=_("Gender"),
+        help_text=_("Gender provided by OAuth or entered in profile")
+    )
+
+    oauth_data_locked = models.BooleanField(
+        default=False,
+        verbose_name=_("OAuth Data Locked"),
+        help_text=_("When enabled, OAuth-provided profile data cannot be changed by the user")
+    )
+
+    oauth_payload = models.JSONField(
+        blank=True,
+        null=True,
+        verbose_name=_("OAuth Payload"),
+        help_text=_("Raw OAuth provider data stored for auditing and synchronization")
+    )
+
 
     bio = models.TextField(
         max_length=500,
@@ -671,6 +698,19 @@ class StudentProfile(models.Model):
         blank=True,
         verbose_name=_("Student ID"),
         help_text=_("University student identifier"),
+    )
+
+    STATUS_CHOICES = [
+        ("student", _("Student")),
+        ("graduate", _("Graduate")),
+    ]
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="student",
+        verbose_name=_("Student Status"),
+        help_text=_("Academic status of the user, either current student or graduate"),
     )
 
     faculty = models.CharField(

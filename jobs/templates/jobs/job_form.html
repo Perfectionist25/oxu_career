@@ -311,6 +311,62 @@
                                 {% endif %}
                             </div>
 
+                            <!-- Candidate Type -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.candidate_type.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Candidate Type" %}
+                                </label>
+                                <select name="{{ form.candidate_type.name }}"
+                                        id="{{ form.candidate_type.id_for_label }}"
+                                        class="form-select {% if form.candidate_type.errors %}is-invalid{% endif %}">
+                                    <option value="">{% trans "Select candidate type" %}</option>
+                                    {% for value, label in form.candidate_type.field.choices %}
+                                        {% if value %}
+                                            <option value="{{ value }}"
+                                                    {% if form.candidate_type.value == value %}selected{% endif %}>
+                                                {{ label }}
+                                            </option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                                {% if form.candidate_type.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        {% for error in form.candidate_type.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Gender Requirement -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.gender_requirement.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Gender Requirement" %}
+                                </label>
+                                <select name="{{ form.gender_requirement.name }}"
+                                        id="{{ form.gender_requirement.id_for_label }}"
+                                        class="form-select {% if form.gender_requirement.errors %}is-invalid{% endif %}">
+                                    <option value="">{% trans "Select gender requirement" %}</option>
+                                    {% for value, label in form.gender_requirement.field.choices %}
+                                        {% if value %}
+                                            <option value="{{ value }}"
+                                                    {% if form.gender_requirement.value == value %}selected{% endif %}>
+                                                {{ label }}
+                                            </option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                                {% if form.gender_requirement.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        {% for error in form.gender_requirement.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
                             <!-- Short Description -->
                             <div class="col-12 mb-3">
                                 <label for="{{ form.short_description.id_for_label }}" class="form-label fw-semibold">

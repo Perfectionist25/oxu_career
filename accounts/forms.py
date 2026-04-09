@@ -559,6 +559,18 @@ class StudentProfileForm(forms.ModelForm):
         # Student ID is provided externally and must remain read-only for students.
         self.fields["student_id"].disabled = True
 
+        if self.instance and hasattr(self.instance, "user") and self.instance.user.oauth_data_locked:
+            locked_fields = [
+                "student_id",
+                "faculty",
+                "specialty",
+                "education_level",
+                "graduation_year",
+            ]
+            for field_name in locked_fields:
+                if field_name in self.fields:
+                    self.fields[field_name].disabled = True
+
 
 class StudentCertificateForm(forms.ModelForm):
     class Meta:
@@ -823,6 +835,9 @@ class StudentUserReadonlyNameForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         self.fields["full_name"].initial = getattr(self.instance, "full_name", "") or self.instance.get_full_name()
+
+        if self.instance and getattr(self.instance, "oauth_data_locked", False):
+            self.fields["phone_number"].disabled = True
 
     def clean_email(self):
         email = self.cleaned_data.get("email")

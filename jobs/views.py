@@ -844,6 +844,10 @@ def apply_for_job(request, pk):
 
     job = get_object_or_404(Job, pk=pk, is_active=True)
 
+    allowed, error = job.can_user_apply(request.user)
+    if not allowed:
+        messages.error(request, error)
+        return redirect("jobs:job_detail", pk=job.pk)
 
     if JobApplication.objects.filter(job=job, user=request.user).exists():
         messages.warning(request, _("Siz ushbu vakansiyaga allaqachon ariza topshirgansiz."))

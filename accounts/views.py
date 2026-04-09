@@ -620,6 +620,24 @@ def admin_login_history(request):
 
 def hemis_login(request):
     """Student login via external OAuth microservice"""
+    def normalize_gender(value):
+        if value is None:
+            return None
+        normalized = str(value).strip().lower()
+        if normalized in {"female", "f", "1", "true", "qw" , "qiz"}:
+            return "female"
+        if normalized in {"male", "m", "0", "false", "erkak"}:
+            return "male"
+        return None
+
+    def normalize_status(value):
+        if value is None:
+            return "student"
+        normalized = str(value).strip().lower()
+        if normalized in {"1", "true", "yes", "bitiruvchi", "graduate", "graduated", "alumni"}:
+            return "graduate"
+        return "student"
+
     if request.method == "POST":
         username = request.POST.get("username", "").strip()
         password = request.POST.get("password", "")
@@ -632,7 +650,7 @@ def hemis_login(request):
             url = settings.OAUTH_MICROSERVICE_URL.rstrip('/') + '/authenticate/'
             headers = {'Authorization': f"Bearer {settings.OAUTH_SERVICE_TOKEN}"} if settings.OAUTH_SERVICE_TOKEN else {}
             resp = requests.post(url, json={"username": username, "password": password},
-                               headers=headers, timeout=10)
+                                 headers=headers, timeout=10)
             resp.raise_for_status()
             data = resp.json()
         except Exception:
@@ -654,39 +672,77 @@ def hemis_login(request):
         full_name = (
             user_data.get("full_name")
             or user_data.get("fio")
+            or f"{user_data.get('ism', '')} {user_data.get('fam', '')}".strip()
             or f"{user_data.get('first_name', '')} {user_data.get('last_name', '')}".strip()
         )
 
         first_name = ""
         last_name = ""
-
         if full_name:
             parts = full_name.split()
             first_name = parts[0]
             last_name = " ".join(parts[1:]) if len(parts) > 1 else ""
 
+        oauth_uid = user_data.get("user_id") or user_data.get("login") or username
+        raw_username = user_data.get("login") or f"hemis_{oauth_uid}"
+        local_username = raw_username
+        counter = 1
+        while CustomUser.objects.filter(username=local_username).exclude(oauth_uid=oauth_uid).exists():
+            local_username = f"{raw_username}_{counter}"
+            counter += 1
+
+        email = user_data.get("email", "") or ""
+        gender = normalize_gender(user_data.get("jinsi") or user_data.get("gender"))
+        student_status = normalize_status(user_data.get("bitiruvchi") or user_data.get("status"))
+
         user, created = CustomUser.objects.update_or_create(
-            username=local_username,
+            oauth_uid=str(oauth_uid),
             defaults={
+                "username": local_username,
                 "email": email,
                 "first_name": first_name,
                 "last_name": last_name,
+                "full_name": full_name,
+                "full_name_locked": True,
                 "user_type": "student",
                 "is_active": True,
                 "oauth_provider": "hemis",
+                "oauth_data_locked": True,
+                "oauth_payload": user_data,
+                "gender": gender,
+                "phone_number": user_data.get("phone_number") or None,
             },
         )
 
         student_profile, _profile_created = StudentProfile.objects.get_or_create(user=user)
+        student_profile.status = student_status
 
-        for field in ["faculty", "specialty", "graduation_year", "phone", "bio", "gpa"]:
-            if field in user_data:
-                setattr(student_profile, field, user_data[field])
+        if user_data.get("fakultet"):
+            student_profile.faculty = user_data.get("fakultet")
+        elif user_data.get("faculty"):
+            student_profile.faculty = user_data.get("faculty")
+
+        if user_data.get("yunalish_nomi"):
+            student_profile.specialty = user_data.get("yunalish_nomi")
+        elif user_data.get("specialty"):
+            student_profile.specialty = user_data.get("specialty")
+
+        if user_data.get("graduation_year"):
+            try:
+                student_profile.graduation_year = int(user_data.get("graduation_year"))
+            except (TypeError, ValueError):
+                pass
+
+        if user_data.get("student_id"):
+            student_profile.student_id = user_data.get("student_id")
+        elif user_data.get("login"):
+            student_profile.student_id = user_data.get("login")
+
         student_profile.save()
 
         login(request, user)
         create_user_activity(user, "login", "Student logged in via OAuth",
-                           get_client_ip(request), request.META.get("HTTP_USER_AGENT", ""))
+                             get_client_ip(request), request.META.get("HTTP_USER_AGENT", ""))
         messages.success(request, _("Logged in successfully"))
         return redirect("accounts:student_dashboard")
 
