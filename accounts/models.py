@@ -376,14 +376,6 @@ class CustomUser(AbstractUser):
         help_text=_("Resume/CV file"),
     )
 
-    # Skills and experience
-    skills = models.ManyToManyField(
-        "alumni.Skill",
-        blank=True,
-        verbose_name=_("Skills"),
-        help_text=_("Professional skills"),
-    )
-
     expertise_areas = models.TextField(
         blank=True,
         verbose_name=_("Expertise Areas"),
