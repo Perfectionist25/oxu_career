@@ -1,0 +1,26 @@
+{
+    "yaml.schemas": {
+        "file:///c%3A/Users/ali20/.vscode/extensions/continue.continue-1.2.11-win32-x64/config-yaml-schema.json": [
+            ".continue/**/*.yaml"
+        ],
+        "file:///c%3A/Users/ali20/.vscode/extensions/continue.continue-1.2.14-win32-x64/config-yaml-schema.json": [
+            ".continue/**/*.yaml"
+        ],
+        "file:///c%3A/Users/ali20/.vscode/extensions/continue.continue-1.2.16-win32-x64/config-yaml-schema.json": [
+            ".continue/**/*.yaml"
+        ],
+        "file:///c%3A/Users/ali20/.vscode/extensions/continue.continue-1.2.17-win32-x64/config-yaml-schema.json": [
+            ".continue/**/*.yaml"
+        ],
+        "file:///c%3A/Users/ali20/.vscode/extensions/continue.continue-1.2.18-win32-x64/config-yaml-schema.json": [
+            ".continue/**/*.yaml"
+        ],
+        "file:///c%3A/Users/ali20/.vscode/extensions/continue.continue-1.2.22-win32-x64/config-yaml-schema.json": [
+            ".continue/**/*.yaml"
+        ],
+        "file:///home/perfy/.vscode/extensions/continue.continue-1.2.22-linux-x64/config-yaml-schema.json": [
+            ".continue/**/*.yaml",
+            "file:///home/perfy/.continue/config.yaml"
+        ]
+    }
+}

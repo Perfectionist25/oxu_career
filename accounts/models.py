@@ -1,5 +1,4 @@
-
-from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
@@ -15,6 +14,7 @@ import io
 import uuid
 from PIL import Image, ImageOps
 from django.core.files.base import ContentFile
+from django.conf import settings
 
 from .certificates import (
     CERTIFICATE_IMAGE_EXTENSIONS,
@@ -80,6 +80,7 @@ def strip_system_generated_bio(value):
 
     return "\n".join(cleaned_lines).strip()
 
+
 class CustomUser(AbstractUser):
     """Custom user model with different roles and extended profile information"""
 
@@ -106,7 +107,6 @@ class CustomUser(AbstractUser):
         help_text=_("If True, full_name cannot be changed")
     )
 
-
     user_type = models.CharField(
         max_length=20,
         choices=USER_TYPE_CHOICES,
@@ -114,7 +114,6 @@ class CustomUser(AbstractUser):
         verbose_name=_("User Type"),
         help_text=_("Type of user account (guest, student, employer, admin)")
     )
-
 
     phone_number = PhoneNumberField(
         blank=True,
@@ -423,13 +422,13 @@ class CustomUser(AbstractUser):
         help_text=_("Whether to show contact information"),
     )
 
-
     bio = models.TextField(
         max_length=500,
         blank=True,
         verbose_name=_("Bio"),
         help_text=_("Short biography or description")
     )
+
     avatar = models.ImageField(
         upload_to="avatars/%Y/%m/%d/",
         null=True,
@@ -437,7 +436,6 @@ class CustomUser(AbstractUser):
         verbose_name=_("Avatar"),
         help_text=_("Profile picture")
     )
-
 
     city = models.CharField(
         max_length=100,
@@ -452,14 +450,6 @@ class CustomUser(AbstractUser):
         help_text=_("Full address")
     )
 
-
-    telegram = models.URLField(
-        blank=True,
-        verbose_name=_("Telegram"),
-        help_text=_("Telegram username or link")
-    )
-
-
     is_verified = models.BooleanField(
         default=False,
         verbose_name=_("Verified"),
@@ -470,7 +460,6 @@ class CustomUser(AbstractUser):
         verbose_name=_("Active Employer"),
         help_text=_("Whether this employer account is active")
     )
-
 
     profile_views = models.PositiveIntegerField(
         default=0,
@@ -485,10 +474,10 @@ class CustomUser(AbstractUser):
     )
 
     oauth_provider = models.CharField(
-    max_length=50,
-    blank=True,
-    null=True,
-    verbose_name=_("OAuth Provider")
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_("OAuth Provider")
     )
 
     oauth_uid = models.CharField(
@@ -512,6 +501,7 @@ class CustomUser(AbstractUser):
         auto_now=True,
         verbose_name=_("Updated At")
     )
+
     class Meta:
         verbose_name = _("User")
         verbose_name_plural = _("Users")
@@ -521,8 +511,10 @@ class CustomUser(AbstractUser):
         return f"{self.username} ({self.get_user_type_display()})"
 
     def get_full_name(self):
-        full_name = f"{self.first_name} {self.last_name}"
-        return full_name.strip() or self.username
+        if self.full_name:
+            return self.full_name.strip()
+        full_name = f"{self.first_name} {self.last_name}".strip()
+        return full_name or self.username
 
     def get_absolute_url(self):
         return reverse("accounts:profile_detail", kwargs={"pk": self.pk})
@@ -530,14 +522,6 @@ class CustomUser(AbstractUser):
     @property
     def unread_notifications_count(self):
         return self.notification_set.filter(is_read=False).count()
-
-    def get_full_name(self):
-
-        if self.full_name:
-            return self.full_name.strip()
-        full_name = f"{self.first_name} {self.last_name}".strip()
-        return full_name or self.username
-
 
     @property
     def is_guest(self):
@@ -586,10 +570,7 @@ class CustomUser(AbstractUser):
     @property
     def can_create_jobs(self):
         """Может ли пользователь создавать вакансии"""
-        return (
-            self.user_type in ["employer"]
-            and self.is_active_employer
-        )
+        return self.user_type in ["employer"] and self.is_active_employer
 
     @property
     def can_manage_users(self):
@@ -607,7 +588,6 @@ class CustomUser(AbstractUser):
         return self.companies_owned.all() if self.is_employer else Company.objects.none()
 
 
-
 class Company(models.Model):
     """Model representing a company that can be owned by employers"""
 
@@ -620,13 +600,11 @@ class Company(models.Model):
         ("1000+", _("1000+ employees")),
     ]
 
-
     name = models.CharField(
         max_length=255,
         verbose_name=_("Company Name"),
         help_text=_("Official company name")
     )
-
 
     company_type = models.CharField(
         max_length=50,
@@ -641,7 +619,6 @@ class Company(models.Model):
         help_text=_("Number of employees in the company")
     )
 
-
     description = models.TextField(
         blank=True,
         verbose_name=_("Company Description"),
@@ -654,7 +631,6 @@ class Company(models.Model):
         help_text=_("Brief company description for listings")
     )
 
-
     logo = models.ImageField(
         upload_to="company_logos/%Y/%m/%d/",
         null=True,
@@ -662,7 +638,6 @@ class Company(models.Model):
         verbose_name=_("Company Logo"),
         help_text=_("Company logo image")
     )
-
 
     email = models.EmailField(
         blank=True,
@@ -680,7 +655,6 @@ class Company(models.Model):
         verbose_name=_("Company Website"),
         help_text=_("Official company website")
     )
-
 
     region = models.CharField(
         max_length=100,
@@ -702,7 +676,6 @@ class Company(models.Model):
         verbose_name=_("Address"),
         help_text=_("Full company address")
     )
-
 
     linkedin = models.URLField(
         blank=True,
@@ -729,7 +702,6 @@ class Company(models.Model):
         help_text=_("Company Instagram profile URL")
     )
 
-
     industry = models.CharField(
         max_length=150,
         blank=True,
@@ -743,7 +715,6 @@ class Company(models.Model):
         help_text=_("Comma-separated tags for searching")
     )
 
-
     founded_year = models.IntegerField(
         null=True,
         blank=True,
@@ -756,8 +727,6 @@ class Company(models.Model):
         help_text=_("Company mission and values")
     )
 
-
-
     owner = models.ForeignKey(
         CustomUser,
         on_delete=models.SET_NULL,
@@ -767,7 +736,6 @@ class Company(models.Model):
         verbose_name=_("Owner"),
         help_text=_("Primary owner/administrator of the company")
     )
-
 
     is_verified = models.BooleanField(
         default=False,
@@ -779,7 +747,6 @@ class Company(models.Model):
         verbose_name=_("Active"),
         help_text=_("Whether the company is active and visible")
     )
-
 
     total_jobs = models.PositiveIntegerField(
         default=0,
@@ -801,7 +768,6 @@ class Company(models.Model):
         verbose_name=_("Applicants Count"),
         help_text=_("Total number of job applicants")
     )
-
 
     created_at = models.DateTimeField(
         auto_now_add=True,
@@ -863,7 +829,6 @@ class EmployerProfile(models.Model):
         help_text=_("Associated user account")
     )
 
-
     job_title = models.CharField(
         max_length=100,
         blank=True,
@@ -871,13 +836,11 @@ class EmployerProfile(models.Model):
         help_text=_("Current professional position")
     )
 
-
     professional_bio = models.TextField(
         blank=True,
         verbose_name=_("Professional Bio"),
         help_text=_("Professional background and experience")
     )
-
 
     preferred_contact_method = models.CharField(
         max_length=20,
@@ -891,14 +854,12 @@ class EmployerProfile(models.Model):
         help_text=_("Preferred way to be contacted")
     )
 
-
     phone_number = models.CharField(
         max_length=20,
         blank=True,
         verbose_name=_("Phone Number"),
         help_text=_("Employer contact phone number")
     )
-
 
     primary_company_id = models.ForeignKey(
         "Company",
@@ -909,7 +870,6 @@ class EmployerProfile(models.Model):
         verbose_name=_("Primary Company"),
         help_text=_("Primary company for this employer")
     )
-
 
     total_jobs_posted = models.PositiveIntegerField(
         default=0,
@@ -958,6 +918,7 @@ class EmployerProfile(models.Model):
 
 class StudentProfile(models.Model):
     """Profile for student/graduate users with educational and career information"""
+
     user = models.OneToOneField(
         CustomUser,
         on_delete=models.CASCADE,
@@ -1094,42 +1055,39 @@ class StudentProfile(models.Model):
         return f"{self.user.get_full_name()} - {self.specialty or ''}"
 
     def get_absolute_url(self):
-        return reverse("accounts:profile_detail", kwargs={"user_id": self.student.pk})
+        return reverse("accounts:profile_detail", kwargs={"user_id": self.user.pk})
 
     def save(self, *args, **kwargs):
+        # Обработка аватара, если он есть
+        if self.avatar and hasattr(self.avatar, 'file') and self.avatar:
+            try:
+                self.avatar.open('rb')
+                img = Image.open(self.avatar)
+                img = ImageOps.exif_transpose(img)
 
-        if not self.avatar:
-            return super().save(*args, **kwargs)
+                if img.mode not in ("RGB", "RGBA"):
+                    img = img.convert("RGB")
 
+                target_size = (512, 512)
+                img = ImageOps.fit(img, target_size, method=Image.LANCZOS, centering=(0.5, 0.5))
 
-        self.avatar.open()
-        img = Image.open(self.avatar)
+                buffer = io.BytesIO()
+                save_kwargs = {"format": "WEBP", "quality": 75, "method": 6}
+                if img.mode == "RGBA":
+                    save_kwargs["lossless"] = False
 
+                img.save(buffer, **save_kwargs)
+                buffer.seek(0)
 
-        img = ImageOps.exif_transpose(img)
+                new_name = f"{uuid.uuid4().hex}.webp"
+                self.avatar.save(new_name, ContentFile(buffer.read()), save=False)
+            except Exception as e:
+                # Логирование ошибки, но сохранение продолжается без обработки аватара
+                import logging
+                logging.getLogger(__name__).error(f"Error processing avatar: {e}")
 
+        super().save(*args, **kwargs)
 
-        if img.mode not in ("RGB", "RGBA"):
-            img = img.convert("RGB")
-
-
-        target_size = (512, 512)
-        img = ImageOps.fit(img, target_size, method=Image.LANCZOS, centering=(0.5, 0.5))
-
-
-        buffer = io.BytesIO()
-        save_kwargs = {"format": "WEBP", "quality": 75, "method": 6}
-
-
-        if img.mode == "RGBA":
-            save_kwargs["lossless"] = False
-
-        img.save(buffer, **save_kwargs)
-        buffer.seek(0)
-
-
-        new_name = f"{uuid.uuid4().hex}.webp"
-        self.avatar.save(new_name, ContentFile(buffer.read()), save=False)
 
 class StudentCertificate(models.Model):
     student = models.ForeignKey(
@@ -1194,14 +1152,13 @@ class StudentCertificate(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.title} - {self.student.user.get_full_name()}"
+        student_name = self.student.get_full_name() if self.student else _("Deleted user")
+        return f"{self.title} - {student_name}"
 
     def clean(self):
         super().clean()
-
         if self.issue_date and self.issue_date > timezone.localdate():
             raise ValidationError({"issue_date": _("Issue date cannot be in the future.")})
-
         if self.file:
             validate_student_certificate_file(self.file)
 
@@ -1242,7 +1199,6 @@ class StudentCertificate(models.Model):
 
     def get_download_url(self):
         return f"{self.get_file_url()}?download=1"
-
 
 
 class AdminProfile(models.Model):
@@ -1304,7 +1260,6 @@ class AdminProfile(models.Model):
         verbose_name=_("User"),
         help_text=_("Associated user account")
     )
-
 
     can_manage_students = models.BooleanField(
         default=True,
@@ -1371,7 +1326,6 @@ class AdminProfile(models.Model):
         verbose_name=_("View Statistics"),
         help_text=_("Permission to view system statistics and analytics")
     )
-
 
     employers_created = models.PositiveIntegerField(
         default=0,
@@ -1523,7 +1477,6 @@ class HemisAuth(models.Model):
 
     def is_token_valid(self):
         """Check if the access token is still valid"""
-        from django.utils import timezone
         return timezone.now() < self.token_expires
 
 
@@ -1765,7 +1718,6 @@ class CompanyDocument(models.Model):
         return f"{self.title} - {self.company.name}"
 
 
-
 @receiver(post_save, sender=CustomUser)
 def create_user_profile(sender, instance, created, **kwargs):
     """Create corresponding profile when user is created"""
@@ -1793,19 +1745,12 @@ def create_user_activity_on_signup(sender, instance, created, **kwargs):
 def update_employer_stats(sender, instance, created, **kwargs):
     """Update employer statistics when company is created/updated"""
     try:
-
         employer_profile = instance.owner.employer_profile
-
-
-        employer_profile.total_companies = instance.owner.companies_owned.filter(is_active=True).count()
-
-
+        # Обновляем количество созданных вакансий (поле существует)
         from jobs.models import Job
         employer_profile.total_jobs_posted = Job.objects.filter(company__owner=instance.owner).count()
-
         employer_profile.save()
     except (EmployerProfile.DoesNotExist, AttributeError):
-
         pass
 
 
@@ -1815,8 +1760,6 @@ def activate_employer_user(sender, instance, created, **kwargs):
     if created:
         instance.user.is_active_employer = True
         instance.user.save()
-
-
 
 
 class OAuthToken(models.Model):
@@ -1890,7 +1833,8 @@ class OAuthToken(models.Model):
 
     def is_expired(self):
         """Проверка истечения срока действия токена."""
-        from django.utils import timezone
+        if self.expires_at is None:
+            return True
         return timezone.now() >= self.expires_at
 
     def refresh_access_token(self):
@@ -1904,8 +1848,6 @@ class OAuthToken(models.Model):
             return False
 
         try:
-            from django.conf import settings
-
             oauth_config = settings.OAUTH_PROVIDER
 
             payload = {
@@ -1924,7 +1866,6 @@ class OAuthToken(models.Model):
 
             token_data = response.json()
 
-
             self.access_token = token_data.get('access_token')
             if 'refresh_token' in token_data:
                 self.refresh_token = token_data['refresh_token']
@@ -1939,8 +1880,6 @@ class OAuthToken(models.Model):
             logger = logging.getLogger(__name__)
             logger.error(f"Error refreshing token: {str(e)}")
             return False
-
-
 
 
 class CompanyAdditionalInfo(models.Model):
@@ -1991,7 +1930,7 @@ class CompanyAdditionalInfo(models.Model):
 
     class Meta:
         verbose_name = _("Company Additional Information")
-        verbose_name_plural = _("Company Additional Informations")
+        verbose_name_plural = _("Companies Additional Information")
 
     def __str__(self):
         return f"Additional info for {self.company.name}"
