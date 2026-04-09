@@ -62,7 +62,9 @@ class CV(models.Model):
 
     user = models.ForeignKey(
         StudentProfile,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         verbose_name=_("User"),
         help_text=_("User who owns this CV"),
         related_name="cvs"
@@ -350,7 +352,9 @@ class Experience(models.Model):
 
     cv = models.ForeignKey(
         CV,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="experiences",
         verbose_name=_("CV"),
         help_text=_("CV this experience belongs to")
@@ -458,7 +462,9 @@ class Education(models.Model):
 
     cv = models.ForeignKey(
         CV,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="educations",
         verbose_name=_("CV")
     )
@@ -554,7 +560,9 @@ class Certificate(models.Model):
 
     cv = models.ForeignKey(
         CV,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="certificates",
         verbose_name=_("CV")
     )
@@ -643,7 +651,9 @@ class Skill(models.Model):
 
     cv = models.ForeignKey(
         CV,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="skills",
         verbose_name=_("CV")
     )
@@ -720,7 +730,9 @@ class Language(models.Model):
 
     cv = models.ForeignKey(
         CV,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="languages",
         verbose_name=_("CV"),
         help_text=_("CV this language belongs to")
@@ -775,7 +787,9 @@ class Project(models.Model):
 
     cv = models.ForeignKey(
         CV,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="projects",
         verbose_name=_("CV")
     )
@@ -840,7 +854,9 @@ class Reference(models.Model):
 
     cv = models.ForeignKey(
         CV,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="references",
         verbose_name=_("CV")
     )

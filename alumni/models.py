@@ -68,7 +68,7 @@ class Alumni(models.Model):
     ]
 
     user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="alumni_profile"
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="alumni_profile"
     )
     name = models.CharField(max_length=255, blank=True)
     email = models.EmailField(blank=True)
@@ -112,10 +112,10 @@ class Alumni(models.Model):
 
 class Connection(models.Model):
     from_user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name="connections_from", on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL, related_name="connections_from", on_delete=models.SET_NULL, null=True, blank=True
     )
     to_user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name="connections_to", on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL, related_name="connections_to", on_delete=models.SET_NULL, null=True, blank=True
     )
     message = models.TextField(blank=True)
     created_at = models.DateTimeField(default=timezone.now)
@@ -123,10 +123,10 @@ class Connection(models.Model):
 
 class Mentorship(models.Model):
     mentor = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name="mentorships_as_mentor", on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL, related_name="mentorships_as_mentor", on_delete=models.SET_NULL, null=True, blank=True
     )
     mentee = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name="mentorships_as_mentee", on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL, related_name="mentorships_as_mentee", on_delete=models.SET_NULL, null=True, blank=True
     )
     message = models.TextField(blank=True)
     expected_duration = models.CharField(max_length=100, blank=True)
@@ -140,10 +140,10 @@ class Message(models.Model):
     subject = models.CharField(max_length=255, blank=True)
     body = models.TextField(blank=True)
     sender = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name="sent_messages", on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL, related_name="sent_messages", on_delete=models.SET_NULL, null=True, blank=True
     )
     recipient = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name="received_messages", on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL, related_name="received_messages", on_delete=models.SET_NULL, null=True, blank=True
     )
     created_at = models.DateTimeField(default=timezone.now)
 

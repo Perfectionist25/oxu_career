@@ -82,7 +82,9 @@ class Job(models.Model):
 
     company = models.ForeignKey(
         "accounts.Company",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="jobs",
         verbose_name=_("Company"),
         help_text=_("The company offering this job")
@@ -99,7 +101,7 @@ class Job(models.Model):
 
     created_by = models.ForeignKey(
         EmployerProfile,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
         verbose_name=_("Created By"),
@@ -527,7 +529,9 @@ class JobApplication(models.Model):
     )
     user = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         verbose_name=_("Candidate"),
         help_text=_("The user applying for the job"),
         related_name="job_applications"
@@ -630,7 +634,9 @@ class SavedJob(models.Model):
 
     user = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="saved_jobs",
         verbose_name=_("User"),
         help_text=_("User who saved the job")
@@ -663,7 +669,9 @@ class ViewedJob(models.Model):
 
     user = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="viewed_jobs",
         verbose_name=_("User"),
         help_text=_("User who viewed the job"),
@@ -707,7 +715,9 @@ class JobAlert(models.Model):
 
     user = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="job_alert_subscriptions",
         verbose_name=_("User"),
         help_text=_("User who created the alert")
@@ -796,14 +806,18 @@ class ApplicationNote(models.Model):
     """Заметки к заявкам на вакансии для работодателей"""
     application = models.ForeignKey(
         JobApplication,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="notes",
         verbose_name=_("Job Application"),
         help_text=_("The job application this note is attached to")
     )
     author = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         verbose_name=_("Author"),
         help_text=_("User who created the note"),
         related_name="application_notes"

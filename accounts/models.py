@@ -155,6 +155,48 @@ class CustomUser(AbstractUser):
         help_text=_("Raw OAuth provider data stored for auditing and synchronization")
     )
 
+    oauth_university = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name=_("OAuth University"),
+        help_text=_("University from OAuth provider")
+    )
+
+    oauth_degree = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_("OAuth Degree"),
+        help_text=_("Degree from OAuth provider")
+    )
+
+    oauth_specialization = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name=_("OAuth Specialization"),
+        help_text=_("Specialization from OAuth provider")
+    )
+
+    oauth_gpa = models.FloatField(
+        null=True,
+        blank=True,
+        verbose_name=_("OAuth GPA"),
+        help_text=_("GPA from OAuth provider")
+    )
+
+    oauth_enrollment_year = models.IntegerField(
+        null=True,
+        blank=True,
+        verbose_name=_("OAuth Enrollment Year"),
+        help_text=_("Year of enrollment from OAuth provider")
+    )
+
+    oauth_last_synced = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_("OAuth Last Synced"),
+        help_text=_("Last time OAuth data was synchronized")
+    )
+
 
     bio = models.TextField(
         max_length=500,
@@ -484,7 +526,9 @@ class Company(models.Model):
 
     owner = models.ForeignKey(
         CustomUser,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="companies_owned",
         verbose_name=_("Owner"),
         help_text=_("Primary owner/administrator of the company")
@@ -859,7 +903,9 @@ class StudentProfile(models.Model):
 class StudentCertificate(models.Model):
     student = models.ForeignKey(
         StudentProfile,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="certificates",
         verbose_name=_("Student"),
         help_text=_("Student profile that owns this certificate"),

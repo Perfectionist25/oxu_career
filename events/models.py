@@ -355,13 +355,17 @@ class EventParticipation(models.Model):
 
     event = models.ForeignKey(
         Event,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="participations",
         verbose_name=_("Event"),
     )
     user = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="event_participations",
         verbose_name=_("User"),
     )
@@ -509,7 +513,9 @@ class EventPhoto(models.Model):
 
     event = models.ForeignKey(
         Event,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="photos",
         verbose_name=_("Event"),
         help_text=_("The event this photo belongs to"),
@@ -527,7 +533,9 @@ class EventPhoto(models.Model):
     )
     uploaded_by = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         verbose_name=_("Uploaded By"),
         help_text=_("User who uploaded this photo"),
     )

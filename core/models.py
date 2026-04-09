@@ -131,13 +131,17 @@ class SystemNotification(models.Model):
 class UserNotificationDismissal(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="system_notification_dismissals",
         verbose_name=_("User"),
     )
     notification = models.ForeignKey(
         SystemNotification,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="dismissals",
         verbose_name=_("Notification"),
     )

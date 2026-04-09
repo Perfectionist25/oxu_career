@@ -695,6 +695,27 @@ def hemis_login(request):
         gender = normalize_gender(user_data.get("jinsi") or user_data.get("gender"))
         student_status = normalize_status(user_data.get("bitiruvchi") or user_data.get("status"))
 
+        # Extract OAuth data for immutable fields
+        oauth_university = user_data.get("university") or user_data.get("universitetining_nomi") or ""
+        oauth_degree = user_data.get("degree") or user_data.get("darajasi") or ""
+        oauth_specialization = user_data.get("specialty") or user_data.get("yunalish_nomi") or ""
+        
+        oauth_gpa = None
+        gpa_value = user_data.get("gpa") or user_data.get("o'rtacha") or user_data.get("ortacha")
+        if gpa_value:
+            try:
+                oauth_gpa = float(gpa_value)
+            except (TypeError, ValueError):
+                pass
+        
+        oauth_enrollment_year = None
+        enrollment_value = user_data.get("enrollment_year") or user_data.get("yilga_qabul_qilingan")
+        if enrollment_value:
+            try:
+                oauth_enrollment_year = int(enrollment_value)
+            except (TypeError, ValueError):
+                pass
+
         user, created = CustomUser.objects.update_or_create(
             oauth_uid=str(oauth_uid),
             defaults={
@@ -709,6 +730,12 @@ def hemis_login(request):
                 "oauth_provider": "hemis",
                 "oauth_data_locked": True,
                 "oauth_payload": user_data,
+                "oauth_university": oauth_university,
+                "oauth_degree": oauth_degree,
+                "oauth_specialization": oauth_specialization,
+                "oauth_gpa": oauth_gpa,
+                "oauth_enrollment_year": oauth_enrollment_year,
+                "oauth_last_synced": timezone.now(),
                 "gender": gender,
                 "phone_number": user_data.get("phone_number") or None,
             },
