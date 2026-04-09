@@ -184,13 +184,13 @@ def can_user_view_student_certificate(user, certificate):
     return can_employer_view_student_certificates(user, certificate.student.user)
 
 
-def get_viewable_student_certificates_queryset(user, student_profile):
-    queryset = student_profile.certificates.order_by("-uploaded_at")
+def get_viewable_student_certificates_queryset(user, student_user):
+    queryset = student_user.certificates.order_by("-uploaded_at")
 
     if not getattr(user, "is_authenticated", False):
         return queryset.none()
 
-    if student_profile.user_id == user.id:
+    if student_user.id == user.id:
         return queryset
 
     if getattr(user, "is_staff", False) or getattr(user, "is_superuser", False):
@@ -199,7 +199,7 @@ def get_viewable_student_certificates_queryset(user, student_profile):
     if getattr(user, "is_admin", False):
         return queryset
 
-    if can_employer_view_student_certificates(user, student_profile.user):
+    if can_employer_view_student_certificates(user, student_user):
         return queryset.filter(is_active=True)
 
     return queryset.none()

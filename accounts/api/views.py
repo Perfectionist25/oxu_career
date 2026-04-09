@@ -263,10 +263,9 @@ def oauth_callback(request):
         if updates:
             user.save(update_fields=list(set(updates)))
 
-        student_profile, _ = StudentProfile.objects.get_or_create(user=user)
-        if oauth_uid and not student_profile.student_id:
-            student_profile.student_id = str(oauth_uid)
-            student_profile.save(update_fields=["student_id", "updated_at"])
+        if oauth_uid and not getattr(user, 'student_id', None):
+            user.student_id = str(oauth_uid)
+            user.save(update_fields=["student_id", "updated_at"])
 
 
         oauth_token, _ = OAuthToken.objects.get_or_create(user=user)

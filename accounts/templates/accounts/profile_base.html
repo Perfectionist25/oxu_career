@@ -14,19 +14,9 @@
                 <div class="col-lg-8">
                     <div class="d-flex flex-column flex-md-row align-items-md-center gap-4">
                         <div class="profile-avatar-wrap">
-                            {% if profile_user.avatar %}
-                                <img src="{{ profile_user.avatar.url }}"
-                                     alt="{{ profile_user.get_full_name }}"
-                                     class="profile-avatar">
-                            {% elif profile_user.is_student and profile_user.student_profile.avatar %}
-                                <img src="{{ profile_user.student_profile.avatar.url }}"
-                                     alt="{{ profile_user.get_full_name }}"
-                                     class="profile-avatar">
-                            {% else %}
-                                <div class="profile-avatar placeholder-avatar">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                            {% endif %}
+                            <div class="profile-avatar placeholder-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
                         </div>
 
                         <div class="profile-hero-content">
@@ -273,8 +263,8 @@
                         </div>
                         {% endif %}
 
-                        {% if profile_user.is_student and profile_user.student_profile %}
-                        {% with student=profile_user.student_profile %}
+                        {% if profile_user.is_student %}
+                        {% with student=profile_user %}
                         <div class="feature-block mt-3">
                             <div class="feature-title">{% trans "Education" %}</div>
                             <div class="feature-text">
@@ -463,14 +453,14 @@
                             </div>
                             {% endif %}
 
-                            {% if profile_user.is_student and profile_user.student_profile %}
+                            {% if profile_user.is_student %}
                             <div class="stat-row">
                                 <span>{% trans "Resumes" %}</span>
-                                <strong>{{ profile_user.student_profile.resumes_created }}</strong>
+                                <strong>{{ profile_user.resumes_created }}</strong>
                             </div>
                             <div class="stat-row">
                                 <span>{% trans "Jobs Applied" %}</span>
-                                <strong>{{ profile_user.student_profile.jobs_applied }}</strong>
+                                <strong>{{ profile_user.jobs_applied }}</strong>
                             </div>
                             {% endif %}
 

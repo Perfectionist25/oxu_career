@@ -36,14 +36,14 @@
                             <div class="hero-meta-item">
                                 <span class="meta-label">{% trans "Education Level" %}</span>
                                 <span class="meta-value">
-                                    {{ student_profile.get_education_level_display|default:"-" }}
+                                    {{ user.get_education_level_display|default:"-" }}
                                 </span>
                             </div>
 
                             <div class="hero-meta-item">
                                 <span class="meta-label">{% trans "Graduation Year" %}</span>
                                 <span class="meta-value">
-                                    {{ student_profile.graduation_year|default:"-" }}
+                                    {{ user.graduation_year|default:"-" }}
                                 </span>
                             </div>
                         </div>
@@ -59,19 +59,19 @@
 
                         <div class="hero-side-stats">
                             <div class="hero-mini-stat">
-                                <strong>{{ student_profile.faculty|default:"-" }}</strong>
+                                <strong>{{ user.faculty|default:"-" }}</strong>
                                 <span>{% trans "Faculty" %}</span>
                             </div>
                             <div class="hero-mini-stat">
-                                <strong>{{ student_profile.specialty|default:"-" }}</strong>
+                                <strong>{{ user.specialty|default:"-" }}</strong>
                                 <span>{% trans "Specialty" %}</span>
                             </div>
                             <div class="hero-mini-stat">
-                                <strong>{{ student_profile.desired_position|default:"-" }}</strong>
+                                <strong>{{ user.desired_position|default:"-" }}</strong>
                                 <span>{% trans "Desired Position" %}</span>
                             </div>
                             <div class="hero-mini-stat">
-                                <strong>{{ student_profile.get_work_type_display|default:"-" }}</strong>
+                                <strong>{{ user.get_work_type_display|default:"-" }}</strong>
                                 <span>{% trans "Work Type" %}</span>
                             </div>
                         </div>
@@ -276,23 +276,23 @@
                         <div class="info-list">
                             <div class="info-row">
                                 <span>{% trans "Faculty" %}</span>
-                                <strong>{{ student_profile.faculty|default:"-" }}</strong>
+                                <strong>{{ user.faculty|default:"-" }}</strong>
                             </div>
                             <div class="info-row">
                                 <span>{% trans "Specialty" %}</span>
-                                <strong>{{ student_profile.specialty|default:"-" }}</strong>
+                                <strong>{{ user.specialty|default:"-" }}</strong>
                             </div>
                             <div class="info-row">
                                 <span>{% trans "Education Level" %}</span>
-                                <strong>{{ student_profile.get_education_level_display|default:"-" }}</strong>
+                                <strong>{{ user.get_education_level_display|default:"-" }}</strong>
                             </div>
                             <div class="info-row">
                                 <span>{% trans "Desired Position" %}</span>
-                                <strong>{{ student_profile.desired_position|default:"-" }}</strong>
+                                <strong>{{ user.desired_position|default:"-" }}</strong>
                             </div>
                             <div class="info-row">
                                 <span>{% trans "Work Type" %}</span>
-                                <strong>{{ student_profile.get_work_type_display|default:"-" }}</strong>
+                                <strong>{{ user.get_work_type_display|default:"-" }}</strong>
                             </div>
                             <div class="info-row">
                                 <span>{% trans "Graduation Year" %}</span>

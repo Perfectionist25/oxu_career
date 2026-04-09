@@ -501,12 +501,11 @@ class CompanyDocumentForm(forms.ModelForm):
 
 
 class StudentProfileForm(forms.ModelForm):
-    """Форма профиля студента"""
+    """Форма профиля студента/выпускника"""
     class Meta:
-        model = StudentProfile
+        model = CustomUser
         fields = [
             "student_id",
-            "avatar",
             "faculty",
             "specialty",
             "education_level",
@@ -521,7 +520,6 @@ class StudentProfileForm(forms.ModelForm):
         ]
         widgets = {
             'student_id': forms.TextInput(attrs={'class': 'form-control'}),
-            'avatar': forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': 'image/*'}),
             'faculty': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': _('Faculty or department')
@@ -559,7 +557,7 @@ class StudentProfileForm(forms.ModelForm):
         # Student ID is provided externally and must remain read-only for students.
         self.fields["student_id"].disabled = True
 
-        if self.instance and hasattr(self.instance, "user") and self.instance.user.oauth_data_locked:
+        if self.instance and self.instance.oauth_data_locked:
             locked_fields = [
                 "student_id",
                 "faculty",

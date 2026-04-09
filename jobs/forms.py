@@ -42,6 +42,11 @@ REGION_CHOICES = [
     ("Tashkent City", _("Tashkent City")),
 ]
 
+USER_TYPE_CHOICES = [
+    ("student", _("Students")),
+    ("alumni", _("Alumni")),
+]
+
 
 class JobForm(forms.ModelForm):
     """Form for creating/editing jobs with comprehensive validation"""
@@ -75,7 +80,7 @@ class JobForm(forms.ModelForm):
         fields = [
             "title", "short_description", "description", "company", "job_market", "location",
             "region", "district", "work_type", "employment_type", "experience_level",
-            "education_level", "salary_min", "salary_max", "currency", "hide_salary",
+            "education_level", "target_user_types", "salary_min", "salary_max", "currency", "hide_salary",
             "salary_negotiable", "bonus_system", "kpi_bonus", "performance_bonus",
             "requirements", "responsibilities", "benefits", "skills_required",
             "preferred_skills", "language_requirements", "contact_email",
@@ -133,10 +138,15 @@ class JobForm(forms.ModelForm):
             else:
 
                 self.fields['company'].widget = forms.HiddenInput()
-                self.fields['company'].required = False
-        else:
-            self.fields['company'].widget = forms.HiddenInput()
-            self.fields['company'].required = False
+
+        # Set up target_user_types field
+        self.fields['target_user_types'] = forms.MultipleChoiceField(
+            choices=USER_TYPE_CHOICES,
+            required=False,
+            widget=forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
+            label=_("Target Audience"),
+            help_text=_("Select which user types can apply for this job. Leave empty for all types.")
+        )
 
 
         select_fields = ['company', 'job_market', 'work_type', 'employment_type', 'experience_level',
@@ -453,17 +463,10 @@ class JobApplicationForm(forms.ModelForm):
         if self.user:
             from cvbuilder.models import CV
 
-            student_profile = getattr(self.user, "student_profile", None)
-
-            if student_profile:
-
-                self.fields["cv"].queryset = CV.objects.filter(
-                    user=student_profile,
-                    status="published",
-                )
-            else:
-
-                self.fields["cv"].queryset = CV.objects.none()
+            self.fields["cv"].queryset = CV.objects.filter(
+                user=self.user,
+                status="published",
+            )
 
 
         # Make cover letter and CV required

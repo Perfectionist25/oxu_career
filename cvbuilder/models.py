@@ -7,7 +7,7 @@ import uuid
 from django.core.exceptions import ValidationError
 
 
-from accounts.models import StudentProfile
+from accounts.models import CustomUser
 
 User = get_user_model()
 
@@ -61,7 +61,7 @@ class CV(models.Model):
 
 
     user = models.ForeignKey(
-        StudentProfile,
+        CustomUser,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,

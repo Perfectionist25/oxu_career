@@ -20,11 +20,7 @@ from .models import *
 
 
 def _is_student_or_alumni(user):
-    return user.is_authenticated and (
-        getattr(user, "is_student", False)
-        or hasattr(user, "student_profile")
-        or hasattr(user, "alumni")
-    )
+    return user.is_authenticated and user.user_type in ["student", "alumni"]
 
 
 def _attach_job_state(user, jobs):
@@ -469,7 +465,7 @@ def my_jobs(request):
             'employer_profile': employer_profile,
         })
 
-    elif request.user.is_student or hasattr(request.user, 'alumni'):
+    elif _is_student_or_alumni(request.user):
 
         applications = JobApplication.objects.filter(
             user=request.user
@@ -718,8 +714,8 @@ def job_list(request):
 def job_detail(request, pk):
     """Vakansiya batafsil sahifasi"""
 
-    has_alumni_profile = hasattr(request.user, 'alumni')
-    has_student_profile = hasattr(request.user, 'student_profile')
+    has_alumni_profile = request.user.user_type == "alumni"
+    has_student_profile = request.user.user_type == "student"
     is_student_or_alumni = _is_student_or_alumni(request.user)
     is_admin_user = (
         request.user.is_staff
@@ -835,8 +831,8 @@ def apply_for_job(request, pk):
     from django.utils import timezone
 
 
-    has_student_profile = hasattr(request.user, 'student_profile')
-    has_alumni_profile = hasattr(request.user, 'alumni')
+    has_student_profile = request.user.user_type == "student"
+    has_alumni_profile = request.user.user_type == "alumni"
 
     if not (has_student_profile or has_alumni_profile):
         messages.error(request, _("Faqat talabalar va bitiruvchilar ariza topshira oladi."))
@@ -1028,8 +1024,8 @@ def get_user_cvs(request):
     """Foydalanuvchi rezyumelarini olish (AJAX)"""
     from cvbuilder.models import CV
 
-    has_student_profile = hasattr(request.user, 'student_profile')
-    has_alumni_profile = hasattr(request.user, 'alumni')
+    has_student_profile = request.user.user_type == "student"
+    has_alumni_profile = request.user.user_type == "alumni"
 
     if not (has_student_profile or has_alumni_profile):
         return JsonResponse({"error": "Permission denied"}, status=403)
@@ -1069,7 +1065,7 @@ def application_detail(request, pk):
         return JsonResponse({"error": "Ruxsat rad etildi"}, status=403)
 
     student_certificates = []
-    student_profile = getattr(application.user, "student_profile", None)
+    student_profile = application.user
     if student_profile is not None:
         student_certificates = get_viewable_student_certificates_queryset(
             request.user,

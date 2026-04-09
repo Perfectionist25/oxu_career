@@ -106,10 +106,6 @@ class Alumni(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return self.name or str(self.user)
-
-
 class Connection(models.Model):
     from_user = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name="connections_from", on_delete=models.SET_NULL, null=True, blank=True

@@ -303,11 +303,10 @@ def find_or_create_student_user(oauth_user_data: dict) -> tuple:
             }
 
             if any(profile_fields.values()):
-                student_profile = StudentProfile.objects.get(user=user)
                 for field, value in profile_fields.items():
-                    if value and hasattr(student_profile, field):
-                        setattr(student_profile, field, value)
-                student_profile.save()
+                    if value and hasattr(user, field):
+                        setattr(user, field, value)
+                user.save()
 
             created = True
             logger.info(f"Created new student user: {user.username}")
@@ -337,10 +336,9 @@ def find_or_create_student_user(oauth_user_data: dict) -> tuple:
         user.save(update_fields=list(set(updates)))
 
     if external_id:
-        student_profile, _ = StudentProfile.objects.get_or_create(user=user)
-        if not student_profile.student_id:
-            student_profile.student_id = str(external_id)
-            student_profile.save(update_fields=["student_id", "updated_at"])
+        if not getattr(user, 'student_id', None):
+            user.student_id = str(external_id)
+            user.save(update_fields=["student_id", "updated_at"])
 
     if picture:
         _save_user_avatar(user, picture)

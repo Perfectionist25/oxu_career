@@ -156,6 +156,12 @@ class Job(models.Model):
         verbose_name=_("Education Level"),
         help_text=_("Required education level")
     )
+    target_user_types = models.JSONField(
+        default=list,
+        blank=True,
+        verbose_name=_("Target User Types"),
+        help_text=_("User types this job is targeted for (e.g., ['student', 'alumni'])")
+    )
 
 
     salary_min = models.DecimalField(
@@ -441,18 +447,30 @@ class Job(models.Model):
         else:
             parts.extend([self.location, self.district, self.region])
 
-        parts = [part for part in parts if part]
-        return ", ".join(parts) if parts else _("Not specified")
+    def get_candidate_type_display_map(self):
+        return {
+            "student": _("Students"),
+            "alumni": _("Alumni"),
+            "employer": _("Employers"),
+            "admin": _("Admins"),
+        }
 
     def can_user_apply(self, user):
         """Return a tuple (allowed, error_message) for a user applying to this job."""
         if not user or not user.is_authenticated:
             return False, _("You must be logged in to apply.")
 
-        is_student = hasattr(user, "student_profile") and user.student_profile.status == "student"
-        is_graduate = hasattr(user, "alumni_profile") or (
-            hasattr(user, "student_profile") and user.student_profile.status == "graduate"
-        )
+        # Check target user types if specified
+        if self.target_user_types:
+            if user.user_type not in self.target_user_types:
+                user_type_display = dict(self.get_candidate_type_display_map()).get(user.user_type, user.user_type)
+                return False, _("This vacancy is open only to {types}.").format(
+                    types=", ".join([dict(self.get_candidate_type_display_map()).get(t, t) for t in self.target_user_types])
+                )
+
+        # Legacy candidate_type check
+        is_student = user.user_type == "student"
+        is_graduate = user.user_type == "alumni"
 
         if self.candidate_type == "students" and not is_student:
             return False, _("This vacancy is open only to current students.")

@@ -28,7 +28,6 @@ from rest_framework.response import Response
 from accounts.models import (
     ADMIN_USER_TYPES,
     CustomUser,
-    StudentProfile,
     StudentCertificate,
     EmployerProfile,
     AdminProfile,
@@ -159,6 +158,10 @@ class CustomTokenObtainView(TokenObtainPairView):
 
 def is_student(user):
     return user.is_authenticated and getattr(user, "user_type", None) == "student"
+
+
+def is_student_or_alumni(user):
+    return user.is_authenticated and getattr(user, "user_type", None) in ["student", "alumni"]
 
 
 def is_employer(user):
@@ -693,7 +696,17 @@ def hemis_login(request):
 
         email = user_data.get("email", "") or ""
         gender = normalize_gender(user_data.get("jinsi") or user_data.get("gender"))
-        student_status = normalize_status(user_data.get("bitiruvchi") or user_data.get("status"))
+        
+        # Set user_type based on bitiruvchi: 0 = student, 1 = alumni
+        bitiruvchi_value = user_data.get("bitiruvchi")
+        if bitiruvchi_value is not None:
+            try:
+                bitiruvchi_int = int(bitiruvchi_value)
+                user_type = "alumni" if bitiruvchi_int == 1 else "student"
+            except (TypeError, ValueError):
+                user_type = "student"
+        else:
+            user_type = "student"
 
         # Extract OAuth data for immutable fields
         oauth_university = user_data.get("university") or user_data.get("universitetining_nomi") or ""
@@ -725,7 +738,7 @@ def hemis_login(request):
                 "last_name": last_name,
                 "full_name": full_name,
                 "full_name_locked": True,
-                "user_type": "student",
+                "user_type": user_type,
                 "is_active": True,
                 "oauth_provider": "hemis",
                 "oauth_data_locked": True,
@@ -738,34 +751,20 @@ def hemis_login(request):
                 "oauth_last_synced": timezone.now(),
                 "gender": gender,
                 "phone_number": user_data.get("phone_number") or None,
+                # Profile fields
+                "faculty": user_data.get("fakultet") or user_data.get("faculty") or "",
+                "specialty": user_data.get("yunalish_nomi") or user_data.get("specialty") or "",
+                "student_id": user_data.get("student_id") or user_data.get("login") or "",
             },
         )
 
-        student_profile, _profile_created = StudentProfile.objects.get_or_create(user=user)
-        student_profile.status = student_status
-
-        if user_data.get("fakultet"):
-            student_profile.faculty = user_data.get("fakultet")
-        elif user_data.get("faculty"):
-            student_profile.faculty = user_data.get("faculty")
-
-        if user_data.get("yunalish_nomi"):
-            student_profile.specialty = user_data.get("yunalish_nomi")
-        elif user_data.get("specialty"):
-            student_profile.specialty = user_data.get("specialty")
-
+        # Update graduation_year if provided
         if user_data.get("graduation_year"):
             try:
-                student_profile.graduation_year = int(user_data.get("graduation_year"))
+                user.graduation_year = int(user_data.get("graduation_year"))
+                user.save(update_fields=['graduation_year'])
             except (TypeError, ValueError):
                 pass
-
-        if user_data.get("student_id"):
-            student_profile.student_id = user_data.get("student_id")
-        elif user_data.get("login"):
-            student_profile.student_id = user_data.get("login")
-
-        student_profile.save()
 
         login(request, user)
         create_user_activity(user, "login", "Student logged in via OAuth",
@@ -833,19 +832,16 @@ def logout_view(request):
 
 
 @login_required
-@user_passes_test(is_student, login_url="accounts:employer_login")
+@user_passes_test(is_student_or_alumni, login_url="accounts:employer_login")
 def student_dashboard(request):
     """Student dashboard"""
 
-    student_profile, created = StudentProfile.objects.get_or_create(user=request.user)
-
-
-    resumes = CV.objects.filter(user=student_profile)
+    resumes = CV.objects.filter(user=request.user)
 
     applications = JobApplication.objects.filter(user=request.user)
     saved_jobs = SavedJob.objects.filter(user=request.user).select_related("job", "job__company")
     viewed_jobs = ViewedJob.objects.filter(user=request.user).select_related("job", "job__company")
-    certificates = student_profile.certificates.order_by("-uploaded_at")
+    certificates = request.user.certificates.order_by("-uploaded_at")
 
     recent_event_participations = EventParticipation.objects.filter(
         user=request.user
@@ -859,7 +855,6 @@ def student_dashboard(request):
         item.job.is_saved = item.job_id in saved_job_ids
 
     context = {
-        "student_profile": student_profile,
         "stats": {
             "resumes_created": resumes.count(),
             "active_resumes": resumes.filter(status='published').count(),
@@ -875,8 +870,8 @@ def student_dashboard(request):
         "recommended_jobs": Job.objects.filter(
             is_active=True, expires_at__gte=timezone.now()
         ).filter(
-            Q(title__icontains=student_profile.specialty) | Q(description__icontains=student_profile.specialty)
-        )[:5] if student_profile.specialty else Job.objects.none(),
+            Q(title__icontains=request.user.specialty) | Q(description__icontains=request.user.specialty)
+        )[:5] if request.user.specialty else Job.objects.none(),
         "recent_activity": UserActivity.objects.filter(user=request.user).order_by('-created_at')[:10],
         "recent_activities": UserActivity.objects.filter(user=request.user).order_by('-created_at')[:10],
         "recent_notifications": Notification.objects.filter(user=request.user).order_by("-created_at")[:5],
@@ -890,29 +885,25 @@ def student_dashboard(request):
 
 
 @login_required
-@user_passes_test(is_student, login_url="accounts:employer_login")
 def student_profile_update(request):
     """Update student profile"""
-    student_profile, _profile_created = StudentProfile.objects.get_or_create(user=request.user)
+    if request.user.user_type not in ["student", "alumni"]:
+        return redirect("accounts:login")
 
     if request.method == "POST":
         user_form = StudentUserReadonlyNameForm(request.POST, instance=request.user)
-        profile_form = StudentProfileForm(request.POST, request.FILES, instance=student_profile)
+        profile_form = StudentProfileForm(request.POST, request.FILES, instance=request.user)
 
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
-            updated_profile = profile_form.save()
-
-
-            request.user.avatar = updated_profile.avatar
-            request.user.save(update_fields=["avatar", "updated_at"])
+            profile_form.save()
 
             create_user_activity(request.user, "profile_update", "Student profile updated")
             messages.success(request, _("Profile updated successfully!"))
             return redirect("accounts:student_profile_update")
     else:
         user_form = StudentUserReadonlyNameForm(instance=request.user)
-        profile_form = StudentProfileForm(instance=student_profile)
+        profile_form = StudentProfileForm(instance=request.user)
 
     return render(request, "accounts/student_profile_update.html", {
         "user_form": user_form,
@@ -921,31 +912,27 @@ def student_profile_update(request):
 
 
 @login_required
-@user_passes_test(is_student, login_url="accounts:employer_login")
+@user_passes_test(is_student_or_alumni, login_url="accounts:employer_login")
 def student_certificate_list(request):
-    student_profile, _profile_created = StudentProfile.objects.get_or_create(user=request.user)
-    certificates = student_profile.certificates.order_by("-uploaded_at")
+    certificates = request.user.certificates.order_by("-uploaded_at")
 
     return render(
         request,
         "accounts/student_certificate_list.html",
         {
-            "student_profile": student_profile,
             "certificates": certificates,
         },
     )
 
 
 @login_required
-@user_passes_test(is_student, login_url="accounts:employer_login")
+@user_passes_test(is_student_or_alumni, login_url="accounts:employer_login")
 def student_certificate_create(request):
-    student_profile, _profile_created = StudentProfile.objects.get_or_create(user=request.user)
-
     if request.method == "POST":
         form = StudentCertificateForm(request.POST, request.FILES)
         if form.is_valid():
             certificate = form.save(commit=False)
-            certificate.student = student_profile
+            certificate.student = request.user
             certificate.save()
             create_user_activity(
                 request.user,
@@ -963,7 +950,6 @@ def student_certificate_create(request):
         "accounts/student_certificate_form.html",
         {
             "form": form,
-            "student_profile": student_profile,
             "page_title": _("Upload Certificate"),
             "submit_label": _("Save Certificate"),
             "is_edit": False,
@@ -972,13 +958,12 @@ def student_certificate_create(request):
 
 
 @login_required
-@user_passes_test(is_student, login_url="accounts:employer_login")
+@user_passes_test(is_student_or_alumni, login_url="accounts:employer_login")
 def student_certificate_update(request, pk):
-    student_profile, _profile_created = StudentProfile.objects.get_or_create(user=request.user)
     certificate = get_object_or_404(
-        StudentCertificate.objects.select_related("student", "student__user"),
+        StudentCertificate.objects.select_related("student"),
         pk=pk,
-        student__user=request.user,
+        student=request.user,
     )
 
     if request.method == "POST":
@@ -1001,7 +986,6 @@ def student_certificate_update(request, pk):
         "accounts/student_certificate_form.html",
         {
             "form": form,
-            "student_profile": student_profile,
             "certificate": certificate,
             "page_title": _("Edit Certificate"),
             "submit_label": _("Update Certificate"),
@@ -1011,13 +995,13 @@ def student_certificate_update(request, pk):
 
 
 @login_required
-@user_passes_test(is_student, login_url="accounts:employer_login")
+@user_passes_test(is_student_or_alumni, login_url="accounts:employer_login")
 @require_http_methods(["POST"])
 def student_certificate_delete(request, pk):
     certificate = get_object_or_404(
-        StudentCertificate.objects.select_related("student", "student__user"),
+        StudentCertificate.objects.select_related("student"),
         pk=pk,
-        student__user=request.user,
+        student=request.user,
     )
     certificate_title = certificate.title
     certificate.delete()
@@ -1931,13 +1915,11 @@ def profile_view(request, user_id=None):
         "event_participations": EventParticipation.objects.filter(user=user).select_related("event").order_by("-registered_at")[:6],
     }
 
-    if user.is_student:
-        profile, created = StudentProfile.objects.get_or_create(user=user)
-        profile_certificates = get_viewable_student_certificates_queryset(request.user, profile)
+    if user.is_student_or_alumni:
+        profile_certificates = get_viewable_student_certificates_queryset(request.user, user)
 
-        resumes = CV.objects.filter(user=profile, status='published')
+        resumes = CV.objects.filter(user=user, status='published')
         context.update({
-            "profile": profile,
             "resumes": resumes,
             "applications_count": JobApplication.objects.filter(user=user).count(),
             "profile_certificates": profile_certificates[:6],
@@ -2082,20 +2064,15 @@ def user_stats_api(request):
     }
 
 
-    if user_type == "student":
-        try:
-            profile = StudentProfile.objects.get(user=user)
-            stats.update({
-                "role": "student",
-                "full_name": profile.full_name if hasattr(profile, 'full_name') else user.get_full_name(),
-                "phone_number": str(profile.phone_number) if hasattr(profile, 'phone_number') else None,
-                "university": getattr(profile, 'university', None),
-                "applications_count": JobApplication.objects.filter(user=user).count(),
-                "cv_count": CV.objects.filter(user=user).count(),
-            })
-        except StudentProfile.DoesNotExist:
-            stats["role"] = "student"
-            stats["error"] = "Student profile not found"
+    if user_type in ["student", "alumni"]:
+        stats.update({
+            "role": user_type,
+            "full_name": user.get_full_name(),
+            "phone_number": str(user.phone_number) if user.phone_number else None,
+            "university": getattr(user, 'university', None),
+            "applications_count": JobApplication.objects.filter(user=user).count(),
+            "cv_count": CV.objects.filter(user=user).count(),
+        })
 
     elif user_type == "employer":
         try:
@@ -2219,11 +2196,8 @@ def user_detail(request, user_id):
 
 
     profile = None
-    if user.user_type == "student":
-        try:
-            profile = StudentProfile.objects.get(user=user)
-        except StudentProfile.DoesNotExist:
-            pass
+    if user.user_type in ["student", "alumni"]:
+        profile = user
     elif user.user_type == "employer":
         try:
             profile = EmployerProfile.objects.get(user=user)
@@ -2242,11 +2216,10 @@ def user_detail(request, user_id):
         "can_toggle_status": can_change_managed_user_status(request.user, user),
     }
 
-    if user.user_type == "student":
-        student_profile = StudentProfile.objects.filter(user=user).first()
+    if user.user_type in ["student", "alumni"]:
         context.update({
             "applications": JobApplication.objects.filter(user=user).count(),
-            "cvs": CV.objects.filter(user=student_profile).count() if student_profile else 0,
+            "cvs": CV.objects.filter(user=user).count(),
         })
     elif user.user_type == "employer":
         context.update({

@@ -26,7 +26,7 @@ def home(request):
     """Главная страница"""
 
     stats = {
-        "alumni_count": CustomUser.objects.filter(user_type='student').count(),
+        "alumni_count": CustomUser.objects.filter(user_type__in=['student', 'alumni']).count(),
         "jobs_count": Job.objects.filter(is_active=True).count(),
         "companies_count": Company.objects.filter(is_active=True).count(),
         "resources_count": Resource.objects.filter(is_published=True).count(),

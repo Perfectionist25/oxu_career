@@ -199,25 +199,22 @@ class UniversityOAuthBackend(BaseBackend):
                 user.save()
 
 
-            student_profile, _ = StudentProfile.objects.get_or_create(user=user)
-
-
             if 'university' in user_data:
-                student_profile.university = user_data['university']
+                user.university = user_data['university']
             if 'specialty' in user_data:
-                student_profile.specialty = user_data['specialty']
+                user.specialty = user_data['specialty']
             if 'graduation_year' in user_data:
                 try:
-                    student_profile.graduation_year = int(user_data['graduation_year'])
+                    user.graduation_year = int(user_data['graduation_year'])
                 except (ValueError, TypeError):
                     pass
             if 'phone' in user_data:
                 try:
-                    student_profile.phone_number = user_data['phone']
+                    user.phone_number = user_data['phone']
                 except:
                     pass
 
-            student_profile.save()
+            user.save()
 
             action = "created" if created else "updated"
             logger.info(f"User {username} {action} via OAuth")

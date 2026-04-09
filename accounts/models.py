@@ -85,7 +85,8 @@ class CustomUser(AbstractUser):
 
     USER_TYPE_CHOICES = [
         ("guest", _("Guest")),
-        ("student", _("Student or Graduate")),
+        ("student", _("Student")),
+        ("alumni", _("Alumni")),
         ("employer", _("Employer")),
         ("admin", _("Admin")),
         ("international_admin", _("International Admin")),
@@ -195,6 +196,231 @@ class CustomUser(AbstractUser):
         blank=True,
         verbose_name=_("OAuth Last Synced"),
         help_text=_("Last time OAuth data was synchronized")
+    )
+
+    # Student/Alumni Profile Fields
+    student_id = models.CharField(
+        max_length=50,
+        blank=True,
+        verbose_name=_("Student ID"),
+        help_text=_("University student identifier"),
+    )
+
+    STATUS_CHOICES = [
+        ("student", _("Student")),
+        ("graduate", _("Graduate")),
+    ]
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="student",
+        verbose_name=_("Status"),
+        help_text=_("Academic status of the user, either current student or graduate"),
+    )
+
+    faculty = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name=_("Faculty"),
+        help_text=_("Faculty or department"),
+    )
+
+    specialty = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name=_("Specialty"),
+        help_text=_("Field of study or specialization"),
+    )
+
+    education_level = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_("Education Level"),
+        help_text=_("Bachelor, Master, PhD, etc."),
+    )
+
+    graduation_year = models.IntegerField(
+        null=True,
+        blank=True,
+        verbose_name=_("Graduation Year"),
+        help_text=_("Year of graduation or expected graduation"),
+    )
+
+    desired_position = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name=_("Desired Position"),
+        help_text=_("Position the student is seeking"),
+    )
+
+    desired_salary = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        verbose_name=_("Desired Salary"),
+        help_text=_("Expected salary"),
+    )
+
+    WORK_TYPE_CHOICES = [
+        ("full_time", _("Full Time")),
+        ("part_time", _("Part Time")),
+        ("internship", _("Internship")),
+        ("remote", _("Remote")),
+    ]
+
+    work_type = models.CharField(
+        max_length=50,
+        choices=WORK_TYPE_CHOICES,
+        blank=True,
+        verbose_name=_("Work Type"),
+        help_text=_("Preferred work arrangement"),
+    )
+
+    # Alumni specific fields
+    degree = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_("Degree"),
+        help_text=_("Academic degree"),
+    )
+
+    current_position = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name=_("Current Position"),
+        help_text=_("Current job position"),
+    )
+
+    company = models.ForeignKey(
+        "accounts.Company",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        verbose_name=_("Company"),
+        help_text=_("Current company"),
+    )
+
+    profession = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name=_("Profession"),
+        help_text=_("Professional field"),
+    )
+
+    industry = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name=_("Industry"),
+        help_text=_("Industry sector"),
+    )
+
+    # Social media fields (shared)
+    linkedin = models.URLField(
+        blank=True,
+        verbose_name=_("LinkedIn"),
+        help_text=_("LinkedIn profile URL"),
+    )
+
+    github = models.URLField(
+        blank=True,
+        verbose_name=_("GitHub"),
+        help_text=_("GitHub profile URL"),
+    )
+
+    telegram = models.CharField(
+        max_length=64,
+        blank=True,
+        verbose_name=_("Telegram"),
+        help_text=_("Telegram username"),
+    )
+
+    website = models.URLField(
+        blank=True,
+        verbose_name=_("Website"),
+        help_text=_("Personal or portfolio website"),
+    )
+
+    twitter = models.URLField(
+        blank=True,
+        verbose_name=_("Twitter"),
+        help_text=_("Twitter profile URL"),
+    )
+
+    facebook = models.URLField(
+        blank=True,
+        verbose_name=_("Facebook"),
+        help_text=_("Facebook profile URL"),
+    )
+
+    instagram = models.URLField(
+        blank=True,
+        verbose_name=_("Instagram"),
+        help_text=_("Instagram profile URL"),
+    )
+
+    # Files
+    photo = models.ImageField(
+        upload_to="alumni_photos/",
+        null=True,
+        blank=True,
+        verbose_name=_("Photo"),
+        help_text=_("Profile photo"),
+    )
+
+    resume = models.FileField(
+        upload_to="resumes/",
+        null=True,
+        blank=True,
+        verbose_name=_("Resume"),
+        help_text=_("Resume/CV file"),
+    )
+
+    # Skills and experience
+    skills = models.ManyToManyField(
+        "alumni.Skill",
+        blank=True,
+        verbose_name=_("Skills"),
+        help_text=_("Professional skills"),
+    )
+
+    expertise_areas = models.TextField(
+        blank=True,
+        verbose_name=_("Expertise Areas"),
+        help_text=_("Areas of expertise"),
+    )
+
+    years_of_experience = models.IntegerField(
+        null=True,
+        blank=True,
+        verbose_name=_("Years of Experience"),
+        help_text=_("Years of professional experience"),
+    )
+
+    is_open_to_opportunities = models.BooleanField(
+        default=False,
+        verbose_name=_("Open to Opportunities"),
+        help_text=_("Whether open to new opportunities"),
+    )
+
+    # Alumni visibility settings
+    is_mentor = models.BooleanField(
+        default=False,
+        verbose_name=_("Is Mentor"),
+        help_text=_("Whether this user is available as a mentor"),
+    )
+
+    is_visible = models.BooleanField(
+        default=True,
+        verbose_name=_("Is Visible"),
+        help_text=_("Whether profile is visible to others"),
+    )
+
+    show_contact_info = models.BooleanField(
+        default=False,
+        verbose_name=_("Show Contact Info"),
+        help_text=_("Whether to show contact information"),
     )
 
 
@@ -322,6 +548,14 @@ class CustomUser(AbstractUser):
         return self.user_type == "student"
 
     @property
+    def is_alumni(self):
+        return self.user_type == "alumni"
+
+    @property
+    def is_student_or_alumni(self):
+        return self.user_type in ["student", "alumni"]
+
+    @property
     def is_employer(self):
         return self.user_type == "employer"
 
@@ -347,7 +581,7 @@ class CustomUser(AbstractUser):
     @property
     def can_create_resume(self):
         """Может ли пользователь создавать резюме"""
-        return self.user_type in ["student"]
+        return self.user_type in ["student", "alumni"]
 
     @property
     def can_create_jobs(self):
@@ -860,7 +1094,7 @@ class StudentProfile(models.Model):
         return f"{self.user.get_full_name()} - {self.specialty or ''}"
 
     def get_absolute_url(self):
-        return reverse("accounts:student_profile", kwargs={"pk": self.pk})
+        return reverse("accounts:profile_detail", kwargs={"user_id": self.student.pk})
 
     def save(self, *args, **kwargs):
 
@@ -897,12 +1131,9 @@ class StudentProfile(models.Model):
         new_name = f"{uuid.uuid4().hex}.webp"
         self.avatar.save(new_name, ContentFile(buffer.read()), save=False)
 
-        super().save(*args, **kwargs)
-
-
 class StudentCertificate(models.Model):
     student = models.ForeignKey(
-        StudentProfile,
+        CustomUser,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
