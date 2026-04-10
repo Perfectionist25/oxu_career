@@ -506,6 +506,10 @@ class CustomUser(AbstractUser):
         return self.user_type == "alumni"
 
     @property
+    def is_student_or_alumni(self):
+        return self.user_type in {"student", "alumni"}
+
+    @property
     def is_employer(self):
         return self.user_type == "employer"
 
