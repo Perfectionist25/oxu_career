@@ -85,7 +85,7 @@ class StudentSessionTimeoutMiddleware(MiddlewareMixin):
             return None
 
         now_ts = int(timezone.now().timestamp())
-        last_activity = request.session.get("student_last_activity_ts")
+        last_activity = request.session.get("oauth_last_activity_ts")
 
         if last_activity is not None and (now_ts - int(last_activity)) > timeout_seconds:
             logout(request)
@@ -110,7 +110,7 @@ class StudentSessionTimeoutMiddleware(MiddlewareMixin):
         # Do not treat background API/AJAX polling as user activity.
         is_ajax = request.headers.get("x-requested-with") == "XMLHttpRequest"
         if not is_ajax and not path.startswith("/api/"):
-            request.session["student_last_activity_ts"] = now_ts
+            request.session["oauth_last_activity_ts"] = now_ts
 
         return None
 

@@ -92,7 +92,8 @@ class CustomUser(AbstractUser):
     user_type = models.CharField(
         max_length=20,
         choices=USER_TYPE_CHOICES,
-        default="guest",
+        default="student",
+        db_index=True,
         verbose_name=_("User Type"),
         help_text=_("Type of user account (guest, student, employer, admin)")
     )
@@ -896,6 +897,54 @@ class StudentProfile(models.Model):
         blank=True,
         verbose_name=_("Student ID"),
         help_text=_("University student identifier"),
+    )
+
+    university = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name=_("University"),
+        help_text=_("University name received from OAuth provider"),
+    )
+
+    phone_number = PhoneNumberField(
+        blank=True,
+        null=True,
+        verbose_name=_("Phone Number"),
+        help_text=_("Phone number received from OAuth provider"),
+    )
+
+    gpa = models.FloatField(
+        null=True,
+        blank=True,
+        verbose_name=_("GPA"),
+        help_text=_("Grade point average received from OAuth provider"),
+    )
+
+    skills = models.TextField(
+        blank=True,
+        verbose_name=_("Skills"),
+        help_text=_("Skills or competencies received from OAuth provider"),
+    )
+
+    course_year = models.CharField(
+        max_length=20,
+        blank=True,
+        verbose_name=_("Course Year"),
+        help_text=_("Academic course/year received from OAuth provider"),
+    )
+
+    specialty_code = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_("Specialty Code"),
+        help_text=_("Specialty code received from OAuth provider"),
+    )
+
+    father_name = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name=_("Father's Name"),
+        help_text=_("Father's name received from OAuth provider"),
     )
 
     STATUS_CHOICES = [

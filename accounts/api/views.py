@@ -35,8 +35,21 @@ def _pick(data, *keys):
     return None
 
 
+def _normalize_gender(value):
+    if not isinstance(value, str):
+        return None
+    normalized = value.strip().lower()
+    if normalized in {"male", "m", "erkak", "man"}:
+        return "male"
+    if normalized in {"female", "f", "ayol", "woman"}:
+        return "female"
+    return None
+
+
 def _get_user_type_from_bitiruvchi(user_data):
     bitiruvchi = _pick(user_data, "bitiruvchi", "bitiruvchi_flag", "is_graduate")
+    if isinstance(bitiruvchi, bool):
+        return "alumni" if bitiruvchi else "student"
     if str(bitiruvchi).strip() == "1":
         return "alumni"
     return "student"
@@ -212,6 +225,10 @@ def oauth_callback(request):
             user = User.objects.create(
                 email=email if email else "",
                 username=username,
+                first_name=first_name,
+                last_name=last_name,
+                full_name=full_name,
+                full_name_locked=bool(full_name),
                 is_active=True,
                 user_type=user_type,
                 oauth_provider=provider_name,
@@ -248,6 +265,11 @@ def oauth_callback(request):
             user.phone_number = phone_number
             updates.append("phone_number")
 
+        gender = _normalize_gender(_pick(user_data, "jinsi", "gender"))
+        if gender and getattr(user, "gender", None) != gender:
+            user.gender = gender
+            updates.append("gender")
+
         if hasattr(user, "full_name") and hasattr(user, "full_name_locked"):
             if full_name and user.full_name != full_name:
                 user.full_name = full_name
@@ -258,10 +280,11 @@ def oauth_callback(request):
             user.user_type = user_type
             updates.append("user_type")
 
-        cleaned_bio = strip_system_generated_bio(user.bio)
-        if cleaned_bio != (user.bio or "").strip():
-            user.bio = cleaned_bio
-            updates.append("bio")
+        if cleaned_bio := getattr(user, 'bio', None):
+            if isinstance(cleaned_bio, str):
+                if cleaned_bio.strip() != cleaned_bio:
+                    user.bio = cleaned_bio.strip()
+                    updates.append("bio")
 
         if updates:
             user.save(update_fields=list(set(updates)))
@@ -269,6 +292,40 @@ def oauth_callback(request):
         if oauth_uid and not getattr(user, 'student_id', None):
             user.student_id = str(oauth_uid)
             user.save(update_fields=["student_id", "updated_at"])
+
+        profile, _ = StudentProfile.objects.get_or_create(user=user)
+        profile_updates = []
+        profile_fields = {
+            'university': _pick(user_data, 'fakultet', 'university', 'oauth_university'),
+            'faculty': _pick(user_data, 'fakultet', 'faculty'),
+            'specialty': _pick(user_data, 'yonalish_nomi', 'specialty', 'program'),
+            'specialty_code': _pick(user_data, 'yonalish_shifri'),
+            'graduation_year': _pick(user_data, 'graduation_year'),
+            'course_year': _pick(user_data, 'kurs'),
+            'phone_number': _pick(user_data, 'phone_number', 'phone'),
+            'father_name': _pick(user_data, 'otasi'),
+            'skills': _pick(user_data, 'skills'),
+        }
+
+        if user_type == 'alumni':
+            profile_fields['status'] = 'graduate'
+        elif profile.status not in {'student', 'graduate'}:
+            profile_fields['status'] = 'student'
+
+        for field, value in profile_fields.items():
+            if value is None or not hasattr(profile, field):
+                continue
+            if field == 'graduation_year':
+                try:
+                    value = int(value)
+                except (TypeError, ValueError):
+                    continue
+            if getattr(profile, field) != value:
+                setattr(profile, field, value)
+                profile_updates.append(field)
+
+        if profile_updates:
+            profile.save(update_fields=profile_updates)
 
         oauth_token, _ = OAuthToken.objects.get_or_create(user=user)
         oauth_token.access_token = access_token
@@ -294,9 +351,9 @@ def oauth_callback(request):
     request.session["oauth_provider"] = provider_name
     request.session["oauth_access_token"] = access_token
     request.session["oauth_refresh_token"] = refresh_token
-    request.session["student_access_jwt"] = access_jwt
-    request.session["student_refresh_jwt"] = refresh_jwt
-    request.session["student_last_activity_ts"] = int(timezone.now().timestamp())
+    request.session["oauth_access_jwt"] = access_jwt
+    request.session["oauth_refresh_jwt"] = refresh_jwt
+    request.session["oauth_last_activity_ts"] = int(timezone.now().timestamp())
 
     session_age = min(
         int(getattr(settings, "OAUTH_STUDENT_SESSION_AGE", settings.SESSION_COOKIE_AGE)),

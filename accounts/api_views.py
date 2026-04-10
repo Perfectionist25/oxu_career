@@ -29,6 +29,7 @@ from accounts.models import (
     StudentProfile,
     EmployerProfile,
     AdminProfile,
+    strip_system_generated_bio,
 )
 from accounts.oauth_utils import (
     clear_oauth_redirect_uri,
@@ -51,6 +52,26 @@ def _pick(data, *keys):
         if value != "":
             return value
     return None
+
+
+def _normalize_gender(value):
+    if not isinstance(value, str):
+        return None
+    normalized = value.strip().lower()
+    if normalized in {"male", "m", "erkak", "man"}:
+        return "male"
+    if normalized in {"female", "f", "ayol", "woman"}:
+        return "female"
+    return None
+
+
+def _get_user_type_from_bitiruvchi(user_data):
+    bitiruvchi = _pick(user_data, "bitiruvchi", "bitiruvchi_flag", "is_graduate")
+    if isinstance(bitiruvchi, bool):
+        return "alumni" if bitiruvchi else "student"
+    if str(bitiruvchi).strip() == "1":
+        return "alumni"
+    return "student"
 
 
 def _guess_ext(content_type=None, source_url=None):
@@ -231,46 +252,27 @@ def find_or_create_student_user(oauth_user_data: dict) -> tuple:
     last_name = _pick(oauth_user_data, "fam", "family_name", "last_name") or ""
     full_name = _pick(oauth_user_data, "full_name", "name") or ""
     picture = _pick(oauth_user_data, "picture", "avatar", "photo", "image")
+    gender = _normalize_gender(_pick(oauth_user_data, "jinsi", "gender"))
+    user_type = _get_user_type_from_bitiruvchi(oauth_user_data)
 
     if not external_id:
         raise ValueError("No external ID in OAuth response")
 
-
     user = None
     created = False
 
-    try:
-        user = User.objects.get(oauth_uid=external_id, user_type="student")
-        logger.info(f"Found existing student user: {user.username}")
-    except User.DoesNotExist:
-
-        if email:
-            try:
-                user = User.objects.get(email=email, user_type="student")
-
-                user.oauth_uid = external_id
-                user.oauth_provider = "oxu"
-                user.save(update_fields=["oauth_uid", "oauth_provider", "updated_at"])
-                logger.info(f"Updated existing student user with OAuth ID: {user.username}")
-            except User.DoesNotExist:
-                pass
-            except User.MultipleObjectsReturned:
-
-                pass
-
+    if oauth_user_data:
+        user = User.objects.filter(oauth_uid=external_id).first()
+    if not user and email:
+        user = User.objects.filter(email=email).first()
 
     if not user:
-
         if not username or User.objects.filter(username=username).exists():
             import uuid
             username = f"student_{str(external_id)[:8]}_{uuid.uuid4().hex[:6]}"
 
-
         if email and User.objects.filter(email=email).exists():
-
             email = f"{email.split('@')[0]}+{external_id[:4]}@{email.split('@')[1]}"
-
-
 
         with transaction.atomic():
             user = User.objects.create(
@@ -278,35 +280,43 @@ def find_or_create_student_user(oauth_user_data: dict) -> tuple:
                 email=email if email else "",
                 first_name=first_name,
                 last_name=last_name,
+                full_name=full_name,
+                full_name_locked=bool(full_name),
                 phone_number=phone,
+                gender=gender,
                 oauth_uid=external_id,
                 oauth_provider="oxu",
-                user_type="student",
+                user_type=user_type,
                 is_active=True,
                 is_verified=True,
             )
-
-
             user.set_unusable_password()
             user.save()
-
-
-            StudentProfile.objects.create(user=user)
-
-
+            profile = StudentProfile.objects.create(user=user)
             profile_fields = {
-                'university': oauth_user_data.get('university'),
-                'faculty': oauth_user_data.get('faculty'),
-                'specialty': oauth_user_data.get('specialty'),
-                'graduation_year': oauth_user_data.get('graduation_year'),
+                'university': _pick(oauth_user_data, 'fakultet', 'university', 'oauth_university'),
+                'faculty': _pick(oauth_user_data, 'fakultet', 'faculty'),
+                'specialty': _pick(oauth_user_data, 'yonalish_nomi', 'specialty', 'program'),
+                'specialty_code': _pick(oauth_user_data, 'yonalish_shifri'),
+                'graduation_year': _pick(oauth_user_data, 'graduation_year'),
+                'course_year': _pick(oauth_user_data, 'kurs'),
+                'phone_number': _pick(oauth_user_data, 'phone_number', 'phone'),
+                'father_name': _pick(oauth_user_data, 'otasi'),
+                'skills': _pick(oauth_user_data, 'skills'),
             }
-
+            if user_type == 'alumni':
+                profile_fields['status'] = 'graduate'
             if any(profile_fields.values()):
                 for field, value in profile_fields.items():
-                    if value and hasattr(user, field):
-                        setattr(user, field, value)
-                user.save()
-
+                    if value is None or not hasattr(profile, field):
+                        continue
+                    if field == 'graduation_year':
+                        try:
+                            value = int(value)
+                        except (TypeError, ValueError):
+                            continue
+                    setattr(profile, field, value)
+                profile.save()
             created = True
             logger.info(f"Created new student user: {user.username}")
 
@@ -327,17 +337,58 @@ def find_or_create_student_user(oauth_user_data: dict) -> tuple:
     if phone and str(user.phone_number or "") != phone:
         user.phone_number = phone
         updates.append("phone_number")
-    cleaned_bio = strip_system_generated_bio(user.bio)
-    if cleaned_bio != (user.bio or "").strip():
-        user.bio = cleaned_bio
-        updates.append("bio")
+    if gender and getattr(user, "gender", None) != gender:
+        user.gender = gender
+        updates.append("gender")
+    if user.user_type != user_type:
+        user.user_type = user_type
+        updates.append("user_type")
+    if not getattr(user, 'oauth_provider', None):
+        user.oauth_provider = "oxu"
+        updates.append("oauth_provider")
+    if cleaned_bio := getattr(user, 'bio', None):
+        if isinstance(cleaned_bio, str):
+            cleaned = cleaned_bio.strip()
+            if cleaned != cleaned_bio:
+                user.bio = cleaned
+                updates.append("bio")
     if updates:
         user.save(update_fields=list(set(updates)))
 
-    if external_id:
-        if not getattr(user, 'student_id', None):
-            user.student_id = str(external_id)
-            user.save(update_fields=["student_id", "updated_at"])
+    if external_id and not getattr(user, 'student_id', None):
+        user.student_id = str(external_id)
+        user.save(update_fields=["student_id", "updated_at"])
+
+    profile, _ = StudentProfile.objects.get_or_create(user=user)
+    profile_updates = []
+    profile_fields = {
+        'university': _pick(oauth_user_data, 'fakultet', 'university', 'oauth_university'),
+        'faculty': _pick(oauth_user_data, 'fakultet', 'faculty'),
+        'specialty': _pick(oauth_user_data, 'yonalish_nomi', 'specialty', 'program'),
+        'specialty_code': _pick(oauth_user_data, 'yonalish_shifri'),
+        'graduation_year': _pick(oauth_user_data, 'graduation_year'),
+        'course_year': _pick(oauth_user_data, 'kurs'),
+        'phone_number': _pick(oauth_user_data, 'phone_number', 'phone'),
+        'father_name': _pick(oauth_user_data, 'otasi'),
+        'skills': _pick(oauth_user_data, 'skills'),
+    }
+    if user_type == 'alumni':
+        profile_fields['status'] = 'graduate'
+    elif profile.status not in {'student', 'graduate'}:
+        profile_fields['status'] = 'student'
+    for field, value in profile_fields.items():
+        if value is None or not hasattr(profile, field):
+            continue
+        if field == 'graduation_year':
+            try:
+                value = int(value)
+            except (TypeError, ValueError):
+                continue
+        if getattr(profile, field) != value:
+            setattr(profile, field, value)
+            profile_updates.append(field)
+    if profile_updates:
+        profile.save(update_fields=profile_updates)
 
     if picture:
         _save_user_avatar(user, picture)
@@ -486,7 +537,7 @@ def oauth_callback(request):
             create_user_activity(
                 user,
                 "login",
-                "Student logged in via OAuth",
+                f"{user.user_type.title()} logged in via OAuth",
                 ip_address,
                 user_agent
             )
@@ -512,7 +563,7 @@ def oauth_callback(request):
         }
 
 
-        if user.is_student:
+        if user.user_type in {"student", "alumni"}:
             try:
                 profile = StudentProfile.objects.get(user=user)
                 response_data['user']['profile'] = {
@@ -520,7 +571,13 @@ def oauth_callback(request):
                     'university': profile.university,
                     'faculty': profile.faculty,
                     'specialty': profile.specialty,
+                    'specialty_code': profile.specialty_code,
                     'graduation_year': profile.graduation_year,
+                    'course_year': profile.course_year,
+                    'father_name': profile.father_name,
+                    'gpa': profile.gpa,
+                    'skills': profile.skills,
+                    'status': profile.status,
                 }
             except StudentProfile.DoesNotExist:
                 pass
@@ -564,20 +621,24 @@ def oauth_user_info(request):
     }
 
 
-    if user.user_type == "student":
+    if user.user_type in {"student", "alumni"}:
         try:
             profile = StudentProfile.objects.get(user=user)
             data.update({
-                "role": "student",
+                "role": user.user_type,
                 "profile": {
                     "phone_number": profile.phone_number,
                     "university": profile.university,
                     "faculty": profile.faculty,
                     "specialty": profile.specialty,
+                    "specialty_code": profile.specialty_code,
                     "graduation_year": profile.graduation_year,
+                    "course_year": profile.course_year,
+                    "father_name": profile.father_name,
                     "gpa": profile.gpa,
                     "bio": profile.bio,
                     "skills": profile.skills,
+                    "status": profile.status,
                 }
             })
         except StudentProfile.DoesNotExist:
