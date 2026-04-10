@@ -29,7 +29,6 @@ from accounts.models import (
     StudentProfile,
     EmployerProfile,
     AdminProfile,
-    strip_system_generated_bio,
 )
 from accounts.oauth_utils import (
     clear_oauth_redirect_uri,

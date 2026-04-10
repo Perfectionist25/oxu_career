@@ -16,7 +16,7 @@ from django.utils import timezone
 from django.core.files.base import ContentFile
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from accounts.models import OAuthToken, StudentProfile, strip_system_generated_bio
+from accounts.models import OAuthToken, StudentProfile
 from accounts.oauth_utils import clear_oauth_redirect_uri, get_oauth_redirect_uri
 
 
