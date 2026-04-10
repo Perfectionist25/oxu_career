@@ -33,7 +33,7 @@ from accounts.models import (
 from accounts.oauth_utils import (
     clear_oauth_redirect_uri,
     get_oauth_redirect_uri,
-    remember_oauth_redirect_uri,
+    remember_oauth_redirect_uri
 )
 from accounts.views import create_user_activity, get_client_ip
 
