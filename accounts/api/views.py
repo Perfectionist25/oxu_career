@@ -35,6 +35,13 @@ def _pick(data, *keys):
     return None
 
 
+def _get_user_type_from_bitiruvchi(user_data):
+    bitiruvchi = _pick(user_data, "bitiruvchi", "bitiruvchi_flag", "is_graduate")
+    if str(bitiruvchi).strip() == "1":
+        return "alumni"
+    return "student"
+
+
 def _guess_ext(content_type=None, source_url=None):
     if content_type:
         ct = content_type.lower()
@@ -132,7 +139,6 @@ def oauth_callback(request):
     redirect_uri = get_oauth_redirect_uri(request)
     clear_oauth_redirect_uri(request)
 
-
     token_response = requests.post(
         settings.OAUTH_TOKEN_URL,
         data={
@@ -157,7 +163,6 @@ def oauth_callback(request):
     if not access_token:
         return HttpResponseBadRequest("No access token")
 
-
     user_response = requests.get(
         settings.OAUTH_USERINFO_URL,
         headers={"Authorization": f"Bearer {access_token}"},
@@ -168,7 +173,7 @@ def oauth_callback(request):
         return HttpResponseBadRequest("Failed to fetch user info")
 
     user_data = user_response.json()
-
+    user_type = _get_user_type_from_bitiruvchi(user_data)
 
     email_raw = _pick(user_data, "email")
     email = email_raw.lower() if isinstance(email_raw, str) else ""
@@ -187,7 +192,6 @@ def oauth_callback(request):
         return HttpResponseBadRequest("No email or uid from OAuth provider")
 
     provider_name = getattr(settings, "OAUTH_PROVIDER_NAME", "oxu")
-
 
     with transaction.atomic():
         user = None
@@ -209,7 +213,7 @@ def oauth_callback(request):
                 email=email if email else "",
                 username=username,
                 is_active=True,
-                user_type="student",
+                user_type=user_type,
                 oauth_provider=provider_name,
                 oauth_uid=oauth_uid or None,
             )
@@ -250,9 +254,8 @@ def oauth_callback(request):
                 user.full_name_locked = True
                 updates += ["full_name", "full_name_locked"]
 
-
-        if getattr(user, "user_type", None) != "student":
-            user.user_type = "student"
+        if getattr(user, "user_type", None) != user_type:
+            user.user_type = user_type
             updates.append("user_type")
 
         cleaned_bio = strip_system_generated_bio(user.bio)
@@ -267,7 +270,6 @@ def oauth_callback(request):
             user.student_id = str(oauth_uid)
             user.save(update_fields=["student_id", "updated_at"])
 
-
         oauth_token, _ = OAuthToken.objects.get_or_create(user=user)
         oauth_token.access_token = access_token
         oauth_token.refresh_token = refresh_token
@@ -280,9 +282,8 @@ def oauth_callback(request):
         if picture:
             _save_avatar_from_picture(user, picture)
 
-
     refresh = RefreshToken.for_user(user)
-    refresh["user_type"] = "student"
+    refresh["user_type"] = user_type
     refresh["oauth_provider"] = provider_name
     access_jwt = str(refresh.access_token)
     refresh_jwt = str(refresh)
@@ -308,7 +309,7 @@ def oauth_callback(request):
         create_user_activity(
             user,
             "login",
-            "Student logged in via OAuth",
+            f"{user_type.title()} logged in via OAuth",
             get_client_ip(request),
             request.META.get("HTTP_USER_AGENT", ""),
         )

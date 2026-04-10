@@ -62,27 +62,9 @@ CITIES = [
 ]
 
 ADMIN_USER_TYPES = ("admin", "international_admin", "main_admin")
-SYSTEM_GENERATED_BIO_PREFIXES = ("middle name:",)
-
-
-def strip_system_generated_bio(value):
-    if not value:
-        return ""
-
-    cleaned_lines = []
-    for raw_line in str(value).splitlines():
-        stripped_line = raw_line.strip()
-        normalized_line = stripped_line.lower()
-        if any(normalized_line.startswith(prefix) for prefix in SYSTEM_GENERATED_BIO_PREFIXES):
-            continue
-        if stripped_line:
-            cleaned_lines.append(stripped_line)
-
-    return "\n".join(cleaned_lines).strip()
 
 
 class CustomUser(AbstractUser):
-    """Custom user model with different roles and extended profile information"""
 
     USER_TYPE_CHOICES = [
         ("guest", _("Guest")),
@@ -197,7 +179,6 @@ class CustomUser(AbstractUser):
         help_text=_("Last time OAuth data was synchronized")
     )
 
-    # Student/Alumni Profile Fields
     student_id = models.CharField(
         max_length=50,
         blank=True,
@@ -277,7 +258,6 @@ class CustomUser(AbstractUser):
         help_text=_("Preferred work arrangement"),
     )
 
-    # Alumni specific fields
     degree = models.CharField(
         max_length=100,
         blank=True,
@@ -315,7 +295,6 @@ class CustomUser(AbstractUser):
         help_text=_("Industry sector"),
     )
 
-    # Social media fields (shared)
     linkedin = models.URLField(
         blank=True,
         verbose_name=_("LinkedIn"),
@@ -359,7 +338,6 @@ class CustomUser(AbstractUser):
         help_text=_("Instagram profile URL"),
     )
 
-    # Files
     photo = models.ImageField(
         upload_to="alumni_photos/",
         null=True,
@@ -395,7 +373,6 @@ class CustomUser(AbstractUser):
         help_text=_("Whether open to new opportunities"),
     )
 
-    # Alumni visibility settings
     is_mentor = models.BooleanField(
         default=False,
         verbose_name=_("Is Mentor"),
@@ -528,20 +505,16 @@ class CustomUser(AbstractUser):
         return self.user_type == "alumni"
 
     @property
-    def is_student_or_alumni(self):
-        return self.user_type in ["student", "alumni"]
-
-    @property
     def is_employer(self):
         return self.user_type == "employer"
 
     @property
-    def is_admin(self):
-        return self.user_type in ADMIN_USER_TYPES
-
-    @property
     def is_international_admin(self):
         return self.user_type == "international_admin"
+    
+    @property
+    def is_admin(self):
+        return self.user_type == "admin"
 
     @property
     def is_main_admin(self):
@@ -551,22 +524,15 @@ class CustomUser(AbstractUser):
         return user_has_admin_permission(self, permission_name)
 
     @property
-    def display_bio(self):
-        return strip_system_generated_bio(self.bio)
-
-    @property
     def can_create_resume(self):
-        """Может ли пользователь создавать резюме"""
         return self.user_type in ["student", "alumni"]
 
     @property
     def can_create_jobs(self):
-        """Может ли пользователь создавать вакансии"""
         return self.user_type in ["employer"] and self.is_active_employer
 
     @property
     def can_manage_users(self):
-        """Может ли пользователь управлять другими пользователями"""
         return self.is_main_admin or any(
             self.has_admin_permission(permission_name)
             for permission_name in (
@@ -633,6 +599,7 @@ class Company(models.Model):
 
     email = models.EmailField(
         blank=True,
+        null=True,
         verbose_name=_("Company Email"),
         help_text=_("Primary company email address")
     )
