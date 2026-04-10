@@ -280,12 +280,6 @@ def oauth_callback(request):
             user.user_type = user_type
             updates.append("user_type")
 
-        if cleaned_bio := getattr(user, 'bio', None):
-            if isinstance(cleaned_bio, str):
-                if cleaned_bio.strip() != cleaned_bio:
-                    user.bio = cleaned_bio.strip()
-                    updates.append("bio")
-
         if updates:
             user.save(update_fields=list(set(updates)))
 

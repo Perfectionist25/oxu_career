@@ -29,7 +29,6 @@ from accounts.models import (
     StudentProfile,
     EmployerProfile,
     AdminProfile,
-    strip_system_generated_bio,
 )
 from accounts.oauth_utils import (
     clear_oauth_redirect_uri,
@@ -346,12 +345,6 @@ def find_or_create_student_user(oauth_user_data: dict) -> tuple:
     if not getattr(user, 'oauth_provider', None):
         user.oauth_provider = "oxu"
         updates.append("oauth_provider")
-    if cleaned_bio := getattr(user, 'bio', None):
-        if isinstance(cleaned_bio, str):
-            cleaned = cleaned_bio.strip()
-            if cleaned != cleaned_bio:
-                user.bio = cleaned
-                updates.append("bio")
     if updates:
         user.save(update_fields=list(set(updates)))
 
