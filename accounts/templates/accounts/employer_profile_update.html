@@ -257,7 +257,7 @@
 
                         <!-- Form Actions -->
                         <div class="d-flex justify-content-between align-items-center pt-4 border-top">
-                            <a href="{% if request.user.user_type == 'student' %}{% url 'accounts:student_dashboard' %}{% elif request.user.user_type == 'employer' %}{% url 'accounts:employer_dashboard' %}{% else %}{% url 'accounts:admin_dashboard' %}{% endif %}" 
+                            <a href="{% if request.user.user_type == 'student' or request.user.user_type == 'alumni' %}{% url 'accounts:student_dashboard' %}{% elif request.user.user_type == 'employer' %}{% url 'accounts:employer_dashboard' %}{% else %}{% url 'accounts:admin_dashboard' %}{% endif %}" 
                                class="btn btn-outline-secondary">
                                 <i class="fas fa-arrow-left me-2"></i>{% trans "Go Back" %}
                             </a>

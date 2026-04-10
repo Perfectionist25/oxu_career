@@ -680,14 +680,14 @@
                                 <!-- Status Badges -->
                                 <div class="status-badges d-flex flex-wrap gap-2 mb-3">
                                     <span class="status-badge 
-                                        {% if profile_user.is_student %}badge-student
+                                        {% if profile_user.is_student or profile_user.is_alumni %}badge-student
                                         {% elif profile_user.is_employer %}badge-employer
                                         {% elif profile_user.is_main_admin %}badge-main-admin
                                         {% elif profile_user.is_international_admin %}badge-admin
                                         {% elif profile_user.is_admin %}badge-admin
                                         {% else %}badge-inactive{% endif %}">
                                         <i class="fas 
-                                            {% if profile_user.is_student %}fa-graduation-cap
+                                            {% if profile_user.is_student or profile_user.is_alumni %}fa-graduation-cap
                                             {% elif profile_user.is_employer %}fa-building
                                             {% elif profile_user.is_main_admin %}fa-crown
                                             {% elif profile_user.is_international_admin %}fa-globe
@@ -744,7 +744,7 @@
     </div>
 
     <!-- Stats Cards -->
-    {% if profile_user.is_employer or profile_user.is_student %}
+    {% if profile_user.is_employer or profile_user.is_student or profile_user.is_alumni %}
     <div class="row mb-4 stats-grid">
         {% if profile_user.is_employer and profile %}
         <div class="col-md-3 col-sm-6 mb-3">
@@ -773,7 +773,7 @@
         </div>
         {% endif %}
         
-        {% if profile_user.is_student and profile %}
+        {% if (profile_user.is_student or profile_user.is_alumni) and profile %}
         <div class="col-md-3 col-sm-6 mb-3">
             <div class="stat-card card-hover">
                 <div class="icon-wrapper bg-success-gradient">
@@ -940,7 +940,7 @@
                     </div>
                 </div>
                 <div class="card-body profile-details">
-                    {% if profile_user.is_student and profile %}
+                    {% if (profile_user.is_student or profile_user.is_alumni) and profile %}
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <div class="mb-3">

@@ -332,7 +332,7 @@ def home_redirect(request):
     if request.user.is_authenticated:
         user_type = getattr(request.user, "user_type", None)
 
-        if user_type == "student":
+        if user_type in ["student", "alumni"]:
             return redirect("accounts:student_dashboard")
         elif user_type == "employer":
             return redirect("accounts:employer_dashboard")
@@ -2347,7 +2347,7 @@ def dashboard_redirect(request):
 
     user_type = getattr(request.user, "user_type", None)
 
-    if user_type == "student":
+    if user_type in ["student", "alumni"]:
         return redirect("accounts:student_dashboard")
     elif user_type == "employer":
         return redirect("accounts:employer_dashboard")

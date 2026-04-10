@@ -98,7 +98,7 @@
                                     <a href="{% url 'accounts:employer_profile_update' %}" class="btn btn-light btn-modern w-100">
                                         <i class="fas fa-edit me-2"></i>{% trans "Edit Profile" %}
                                     </a>
-                                {% elif profile_user.user_type == 'student' %}
+                                {% elif profile_user.is_student or profile_user.is_alumni %}
                                     <a href="{% url 'accounts:student_profile_update' %}" class="btn btn-light btn-modern w-100">
                                         <i class="fas fa-edit me-2"></i>{% trans "Edit Profile" %}
                                     </a>
@@ -263,7 +263,7 @@
                         </div>
                         {% endif %}
 
-                        {% if profile_user.is_student %}
+                        {% if profile_user.is_student or profile_user.is_alumni %}
                         {% with student=profile_user %}
                         <div class="feature-block mt-3">
                             <div class="feature-title">{% trans "Education" %}</div>
@@ -453,7 +453,7 @@
                             </div>
                             {% endif %}
 
-                            {% if profile_user.is_student %}
+                            {% if profile_user.is_student or profile_user.is_alumni %}
                             <div class="stat-row">
                                 <span>{% trans "Resumes" %}</span>
                                 <strong>{{ profile_user.resumes_created }}</strong>
@@ -587,7 +587,7 @@
                                     <span>{% trans "Create Company" %}</span>
                                 </a>
                                 {% endif %}
-                            {% elif profile_user.user_type == 'student' %}
+                            {% elif profile_user.is_student or profile_user.is_alumni %}
                                 <a href="{% url 'accounts:student_profile_update' %}" class="quick-action-btn">
                                     <i class="fas fa-edit"></i>
                                     <span>{% trans "Edit Profile" %}</span>
@@ -624,7 +624,7 @@
                                 <span>{% trans "Notifications" %}</span>
                             </a>
 
-                            {% if profile_user.user_type == 'student' %}
+                            {% if profile_user.is_student or profile_user.is_alumni %}
                             <a href="{% url 'jobs:my_applications' %}" class="quick-action-btn">
                                 <i class="fas fa-clipboard-list"></i>
                                 <span>{% trans "My Applications" %}</span>

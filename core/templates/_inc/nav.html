@@ -221,7 +221,7 @@
                                     </button>
 
                                     <ul class="dropdown-menu dropdown-menu-end site-dropdown-menu">
-                                        {% if user.is_student %}
+                                        {% if user.is_student or user.is_alumni %}
                                         <li>
                                             <a class="dropdown-item site-dropdown-item" href="{% url 'accounts:student_dashboard' %}">
                                                 <i class="fas fa-tachometer-alt me-2"></i>
@@ -363,7 +363,7 @@
                     </a>
                 </li>
 
-                {% if user.is_student %}
+                {% if user.is_student or user.is_alumni %}
                 <li>
                     <a class="site-sidebar__link" href="{% url 'jobs:list' %}">
                         <i class="fas fa-briefcase"></i>

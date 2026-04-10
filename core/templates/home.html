@@ -12,12 +12,12 @@
       <div class="col-lg-8">
         <div class="display-5 h4 fw-bold text-primary mb-4">{% trans "Welcome to OXU Career Center" %}</div>
         <p class="lead mb-4 h6">{% trans "Build your future with us. We help you find your dream job and develop your professional skills." %}</p>
-        {% if user.is_student or user.is_staff %}
+        {% if user.is_student or user.is_alumni or user.is_staff %}
         <div class="d-flex justify-content-center flex-wrap gap-3 hero-actions">
           <a href="{% url 'jobs:list' %}" class="btn btn-primary btn-lg px-4 py-3">
             <i class="fas fa-briefcase me-2"></i>{% trans "Find Jobs" %}
           </a>
-          {% if user.is_student %}
+          {% if user.is_student or user.is_alumni %}
           <a href="{% url 'cvbuilder:cv_create' %}" class="btn btn-outline-primary btn-lg px-4 py-3">
             <i class="fas fa-file-alt me-2"></i>{% trans "Create Resume" %}
           </a>
@@ -208,7 +208,7 @@
 <section class="mb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div class="fw-bold text-dark h5">{% trans "Latest Jobs" %}</div>
-        {% if user.is_authenticated and user.is_student or user.is_authenticated and user.is_staff %}
+        {% if user.is_authenticated and (user.is_student or user.is_alumni) or user.is_authenticated and user.is_staff %}
         <a href="{% url 'jobs:list' %}" class="btn btn-outline-primary">
             {% trans "View All" %} <i class="fas fa-arrow-right ms-2"></i>
         </a>
@@ -219,7 +219,7 @@
         {% endif %}
     </div>
     
-    {% if user.is_authenticated and user.is_student or user.is_authenticated and user.is_main_admin or user.is_authenticated and user.is_admin %}
+    {% if user.is_authenticated and (user.is_student or user.is_alumni) or user.is_authenticated and user.is_main_admin or user.is_authenticated and user.is_admin %}
     <div class="row g-3">
         {% for job in latest_jobs|slice:":6" %}
         <div class="col-lg-4 col-md-6">
