@@ -1031,6 +1031,9 @@ def student_certificate_file(request, pk):
         pk=pk,
     )
 
+    if not certificate.student:
+        raise Http404(_("Certificate owner not found."))
+
     if not can_user_view_student_certificate(request.user, certificate):
         raise PermissionDenied
 

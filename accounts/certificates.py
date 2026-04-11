@@ -170,6 +170,9 @@ def can_user_view_student_certificate(user, certificate):
     if not getattr(user, "is_authenticated", False):
         return False
 
+    if not certificate.student:
+        return False
+
     if certificate.student.id == user.id:
         return True
 
