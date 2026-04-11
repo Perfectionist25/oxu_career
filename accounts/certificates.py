@@ -53,8 +53,9 @@ def student_certificate_upload_to(instance, filename):
     extension = Path(filename).suffix.lower().lstrip(".")
     safe_extension = extension if extension in CERTIFICATE_ALLOWED_EXTENSIONS else "bin"
     timestamp = timezone.now()
+    student_pk = getattr(instance.student, "pk", None) or getattr(instance.student, "id", None)
     return (
-        f"student_certificates/student_{instance.student.user_id}/"
+        f"student_certificates/student_{student_pk}/"
         f"{timestamp:%Y/%m}/{uuid.uuid4().hex}.{safe_extension}"
     )
 
@@ -169,7 +170,7 @@ def can_user_view_student_certificate(user, certificate):
     if not getattr(user, "is_authenticated", False):
         return False
 
-    if certificate.student.user_id == user.id:
+    if certificate.student.id == user.id:
         return True
 
     if getattr(user, "is_staff", False) or getattr(user, "is_superuser", False):
