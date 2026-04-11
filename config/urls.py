@@ -39,4 +39,7 @@ if getattr(settings, "SERVE_MEDIA_FILES", False) and settings.MEDIA_URL.startswi
 if settings.SERVE_MEDIA_FILES:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-
+if getattr(settings, "SERVE_PROTECTED_MEDIA_FILES", False) and settings.MEDIA_URL.startswith("/"):
+    urlpatterns += static(
+        settings.MEDIA_URL, document_root=getattr(settings, "PROTECTED_MEDIA_ROOT")
+    )
