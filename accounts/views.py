@@ -2138,7 +2138,7 @@ def user_management(request):
     """Manage user accounts"""
     allowed_user_types = managed_user_types_for_admin(request.user)
     if request.user.is_main_admin:
-        allowed_user_types = set(ADMIN_USER_TYPES) | {"student", "employer"}
+        allowed_user_types = set(ADMIN_USER_TYPES) | {"student", "alumni", "employer"}
 
     users = CustomUser.objects.filter(user_type__in=allowed_user_types).order_by("-date_joined")
     total_visible_users = users.count()
@@ -2148,6 +2148,7 @@ def user_management(request):
     user_type_mapping = {
         "all": "",
         "students": "student",
+        "alumni": "alumni",
         "employers": "employer",
     }
     normalized_filter = user_type_mapping.get(user_type_filter, user_type_filter)
