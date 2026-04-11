@@ -506,6 +506,8 @@ class StudentProfileForm(forms.ModelForm):
         model = CustomUser
         fields = [
             "student_id",
+            "avatar",
+            "email",
             "gender",
             "faculty",
             "specialty",
