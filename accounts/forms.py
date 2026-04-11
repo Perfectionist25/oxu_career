@@ -499,7 +499,7 @@ class CompanyDocumentForm(forms.ModelForm):
             'file': forms.FileInput(attrs={'class': 'form-control'}),
         }
 
-
+# jkladfjlaskdjf
 class StudentProfileForm(forms.ModelForm):
     """Форма профиля студента/выпускника"""
     class Meta:
