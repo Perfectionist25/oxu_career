@@ -1,7 +1,8 @@
 import uuid
+import json
 import requests
 from datetime import timedelta
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 from pathlib import Path
 import base64
 
@@ -134,16 +135,41 @@ def oauth_user_info(request):
     })
 
 
+def _parse_json_or_form_urlencoded(response):
+    try:
+        data = response.json()
+        if isinstance(data, dict):
+            return data
+    except ValueError:
+        pass
+
+    try:
+        parsed = parse_qs(response.text or "")
+        return {k: v[0] if len(v) == 1 else v for k, v in parsed.items()}
+    except Exception:
+        return {}
+
+
 def oauth_callback(request):
-    error = request.GET.get("error")
+    data = {**request.GET.dict()}
+    if request.method == "POST":
+        data.update(request.POST.dict())
+        try:
+            body_data = json.loads(request.body.decode("utf-8") or "{}")
+            if isinstance(body_data, dict):
+                data.update(body_data)
+        except Exception:
+            pass
+
+    error = data.get("error")
     if error:
         return HttpResponseBadRequest(f"OAuth error: {error}")
 
-    code = request.GET.get("code")
+    code = data.get("code")
     if not code:
         return HttpResponseBadRequest("No code provided")
 
-    state = request.GET.get("state")
+    state = data.get("state")
     session_state = request.session.get("oauth_state")
     if not state or not session_state or state != session_state:
         return HttpResponseBadRequest("Invalid state")
@@ -167,12 +193,15 @@ def oauth_callback(request):
     if token_response.status_code != 200:
         return HttpResponseBadRequest("Failed to get access token")
 
-    token_data = token_response.json()
-    access_token = token_data.get("access_token")
-    refresh_token = token_data.get("refresh_token")
-    token_type = token_data.get("token_type", "Bearer")
-    expires_in = int(token_data.get("expires_in") or 3600)
-    scope = token_data.get("scope")
+    token_data = _parse_json_or_form_urlencoded(token_response)
+    if not token_data:
+        return HttpResponseBadRequest("Failed to parse access token response")
+
+    access_token = _pick(token_data, "access_token", "accessToken", "token")
+    refresh_token = _pick(token_data, "refresh_token", "refreshToken")
+    token_type = _pick(token_data, "token_type", "tokenType") or "Bearer"
+    expires_in = int(_pick(token_data, "expires_in", "expiresIn") or 3600)
+    scope = _pick(token_data, "scope")
     if not access_token:
         return HttpResponseBadRequest("No access token")
 
@@ -185,7 +214,10 @@ def oauth_callback(request):
     if user_response.status_code != 200:
         return HttpResponseBadRequest("Failed to fetch user info")
 
-    user_data = user_response.json()
+    user_data = _parse_json_or_form_urlencoded(user_response)
+    if not user_data:
+        return HttpResponseBadRequest("Failed to parse user info response")
+
     user_type = _get_user_type_from_bitiruvchi(user_data)
 
     email_raw = _pick(user_data, "email")

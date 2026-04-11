@@ -695,7 +695,6 @@ class Company(models.Model):
         CustomUser,
         on_delete=models.SET_NULL,
         null=True,
-        blank=True,
         related_name="companies_owned",
         verbose_name=_("Owner"),
         help_text=_("Primary owner/administrator of the company")
@@ -753,7 +752,7 @@ class Company(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.name} (Owner: {self.owner.username})"
+        return f"{self.name} (Owner: {self.owner.username if self.owner else 'None'})"
 
     def get_absolute_url(self):
         return reverse("accounts:company_detail", kwargs={"pk": self.pk})
