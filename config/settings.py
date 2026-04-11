@@ -377,8 +377,6 @@ CKEDITOR_5_ALLOW_ALL_FILE_TYPES = False
 CKEDITOR_5_UPLOAD_FILE_TYPES = ["jpeg", "jpg", "png", "gif", "bmp", "webp", "svg"]
 
 
-
-
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
