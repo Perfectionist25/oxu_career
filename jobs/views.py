@@ -841,7 +841,7 @@ def apply_for_job(request, pk):
 
 
     if job.expires_at and job.expires_at < timezone.now():
-        messages.error(request, _("Ushbu vakansiyaning muddati tugagan."))
+        messages.error(request, _("This vacancy has expired."))
         return redirect("jobs:job_detail", pk=job.pk)
 
     if request.method == "POST":
@@ -858,11 +858,11 @@ def apply_for_job(request, pk):
                     job.save()
 
                 messages.success(
-                    request, _("Arizangiz muvaffaqiyatli yuborildi!")
+                    request, _("Your application has been sent successfully!")
                 )
                 return redirect("jobs:job_detail", pk=job.pk)
             except Exception as e:
-                messages.error(request, f"Xatolik yuz berdi: {str(e)}")
+                messages.error(request, f"An error occurred: {str(e)}")
         else:
 
             for field, errors in form.errors.items():
@@ -898,9 +898,9 @@ def save_job(request, pk):
         })
 
     if created:
-        messages.success(request, _("Vakansiya muvaffaqiyatli saqlandi!"))
+        messages.success(request, _("Vacancy saved successfully!"))
     else:
-        messages.info(request, _("Vakansiya allaqachon saqlangan."))
+        messages.info(request, _("The vacancy has already been saved."))
 
     next_url = _get_safe_next_url(request)
     if next_url:
