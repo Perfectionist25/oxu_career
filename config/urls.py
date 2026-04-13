@@ -21,6 +21,8 @@ urlpatterns = [
     path("oauth/login/", oauth_login, name="oauth_login"),
     path("oauth/callback/", oauth_callback, name="oauth_callback"),
     path("admin/stats/", core_views.admin_stats, name="admin_stats"),
+    path("flower/", core_views.proxy_flower, name="flower_proxy"),
+    path("flower/<path:path>/", core_views.proxy_flower, name="flower_proxy_path"),
     path('api/accounts/', include(('accounts.api.urls','accounts_api'), namespace='accounts_api')),
 ]
 

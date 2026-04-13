@@ -1,19 +1,21 @@
+import io
+import os
+import uuid
+import logging
+
+from datetime import timedelta
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from django.utils import timezone
-from datetime import timedelta
-import requests
-import io
-import uuid
 from PIL import Image, ImageOps
-from django.core.files.base import ContentFile
 from django.conf import settings
 
 from .certificates import (
@@ -1069,35 +1071,36 @@ class StudentProfile(models.Model):
         return reverse("accounts:profile_detail", kwargs={"user_id": self.user.pk})
 
     def save(self, *args, **kwargs):
-        # Обработка аватара, если он есть
-        if self.avatar and hasattr(self.avatar, 'file') and self.avatar:
-            try:
-                self.avatar.open('rb')
-                img = Image.open(self.avatar)
-                img = ImageOps.exif_transpose(img)
+        queue_avatar_compression = False
+        previous_avatar_name = None
 
-                if img.mode not in ("RGB", "RGBA"):
-                    img = img.convert("RGB")
+        if self.pk:
+            previous_avatar_name = CustomUser.objects.filter(pk=self.pk).values_list("avatar", flat=True).first()
 
-                target_size = (512, 512)
-                img = ImageOps.fit(img, target_size, method=Image.LANCZOS, centering=(0.5, 0.5))
-
-                buffer = io.BytesIO()
-                save_kwargs = {"format": "WEBP", "quality": 75, "method": 6}
-                if img.mode == "RGBA":
-                    save_kwargs["lossless"] = False
-
-                img.save(buffer, **save_kwargs)
-                buffer.seek(0)
-
-                new_name = f"{uuid.uuid4().hex}.webp"
-                self.avatar.save(new_name, ContentFile(buffer.read()), save=False)
-            except Exception as e:
-                # Логирование ошибки, но сохранение продолжается без обработки аватара
-                import logging
-                logging.getLogger(__name__).error(f"Error processing avatar: {e}")
+        if self.avatar and self.avatar.name and not self.avatar.name.lower().endswith(".webp"):
+            if self.avatar.name != previous_avatar_name:
+                queue_avatar_compression = True
 
         super().save(*args, **kwargs)
+
+        if queue_avatar_compression and self.avatar:
+            try:
+                from .tasks import compress_avatar_task
+
+                compress_avatar_task.apply_async(
+                    args=[self.pk],
+                    countdown=int(os.getenv("AVATAR_COMPRESSION_DELAY_SECONDS", "5")),
+                )
+                logging.getLogger(__name__).info(
+                    "Scheduled avatar compression task for user %s",
+                    self.pk,
+                )
+            except Exception as e:
+                logging.getLogger(__name__).error(
+                    "Failed to schedule avatar compression task for user %s: %s",
+                    self.pk,
+                    e,
+                )
 
 
 class StudentCertificate(models.Model):

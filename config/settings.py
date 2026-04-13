@@ -154,6 +154,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "explorer",
+    "django_celery_beat",
 
 
     "accounts",
@@ -392,6 +393,22 @@ PROTECTED_MEDIA_ROOT = BASE_DIR / "protected_media"
 STUDENT_CERTIFICATE_MAX_UPLOAD_SIZE = int(
     os.getenv("STUDENT_CERTIFICATE_MAX_UPLOAD_SIZE", str(8 * 1024 * 1024))
 )
+
+REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", REDIS_URL)
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", REDIS_URL)
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_ENABLE_UTC = True
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 300
+
+FLOWER_BASIC_AUTH = os.getenv("FLOWER_BASIC_AUTH", "admin:change-me")
+FLOWER_ADDRESS = os.getenv("FLOWER_ADDRESS", "127.0.0.1")
+FLOWER_PORT = os.getenv("FLOWER_PORT", "5555")
 
 SERVE_MEDIA_FILES = env_bool("SERVE_MEDIA_FILES", default=True)
 SERVE_PROTECTED_MEDIA_FILES = env_bool("SERVE_PROTECTED_MEDIA_FILES", default=True)
@@ -634,9 +651,11 @@ LOGGING = {
     "handlers": {
         "console": {"class": "logging.StreamHandler", "formatter": "simple"},
         "file": {
-            "class": "logging.FileHandler",
+            "class": "logging.handlers.RotatingFileHandler",
             "filename": str(BASE_DIR / "logs/django.log"),
             "formatter": "verbose",
+            "maxBytes": 52428800,
+            "backupCount": 5,
         },
     },
     "loggers": {
@@ -645,15 +664,30 @@ LOGGING = {
             "level": os.getenv("DJANGO_LOG_LEVEL", "INFO"),
             "propagate": True,
         },
+        "django.request": {
+            "handlers": ["console", "file"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+        "celery": {
+            "handlers": ["console", "file"],
+            "level": "INFO",
+            "propagate": False,
+        },
         "accounts": {
             "handlers": ["console", "file"],
             "level": "DEBUG" if DEBUG else "INFO",
             "propagate": False,
         },
     },
+    "root": {
+        "handlers": ["console", "file"],
+        "level": os.getenv("DJANGO_LOG_LEVEL", "INFO"),
+    },
 }
 
 try:
     (BASE_DIR / "logs").mkdir(parents=True, exist_ok=True)
+    os.chmod(BASE_DIR / "logs", 0o700)
 except Exception as e:
     print(f"Could not create logs directory: {e}")
