@@ -110,3 +110,9 @@ class StudentJobTrackingTests(TestCase):
 
         self.job.refresh_from_db()
         self.assertEqual(self.job.favorites_count, 0)
+
+    def test_unsave_job_redirects_back_to_saved_jobs_when_no_next(self):
+        SavedJob.objects.create(user=self.student, job=self.job)
+        response = self.client.post(reverse("jobs:unsave_job", args=[self.job.pk]))
+
+        self.assertRedirects(response, reverse("jobs:saved_jobs"))
