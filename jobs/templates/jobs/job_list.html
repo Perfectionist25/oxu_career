@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
+{% load media_extras %}
 
 {% block content %}
 <div class="container-fluid px-0">
@@ -228,7 +229,7 @@
                         <div class="job-card__company-wrap">
                             <div class="job-card__logo-box">
                                 {% if job.company.logo %}
-                                    <img src="{{ job.company.logo.url }}" alt="{{ job.company.name }}" class="job-card__logo">
+                                    <img src="{{ job.company.logo|optimized_media:'120x120' }}" alt="{{ job.company.name }}" class="job-card__logo" loading="lazy" decoding="async">
                                 {% else %}
                                     <div class="job-card__logo job-card__logo--placeholder">
                                         <i class="fas fa-building"></i>

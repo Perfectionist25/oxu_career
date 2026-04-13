@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load i18n %}
 {% load static %}
+{% load media_extras %}
 
 {% block content %}
 <div class="full-width-container">
@@ -118,7 +119,7 @@
                         <div class="resource-image-container-fullwidth">
                             {% if resource.image %}
                             <div class="resource-image-fullwidth">
-                                <img src="{{ resource.image.url }}" alt="{{ resource.title }}" loading="lazy">
+                                <img src="{{ resource.image|optimized_media:'640x360' }}" alt="{{ resource.title }}" loading="lazy" decoding="async">
                             </div>
                             {% else %}
                             <div class="resource-image-placeholder-fullwidth">

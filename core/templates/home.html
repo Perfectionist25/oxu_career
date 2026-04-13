@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
+{% load media_extras %}
 {% load system_notifications %}
 
 {% block content %}
@@ -172,7 +173,7 @@
       <div class="col-lg-4 col-md-6">
         <div class="card h-100 resource-preview-card">
           {% if resource.image %}
-          <img src="{{ resource.image.url }}" class="card-img-top" alt="{{ resource.title }}" style="height: 160px; object-fit: cover;">
+          <img src="{{ resource.image|optimized_media:'360x240' }}" class="card-img-top" alt="{{ resource.title }}" style="height: 160px; object-fit: cover;" loading="lazy" decoding="async">
           {% else %}
           <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 160px;">
             <i class="fas fa-file-alt fa-3x text-muted"></i>
@@ -271,7 +272,7 @@
       <div class="col-lg-4 col-md-6">
         <div class="card h-100 event-preview-card">
           {% if event.thumbnail %}
-          <img src="{{ event.thumbnail.url }}" class="card-img-top" alt="{{ event.title }}" style="height: 160px; object-fit: cover;">
+          <img src="{{ event.thumbnail|optimized_media:'420x260' }}" class="card-img-top" alt="{{ event.title }}" style="height: 160px; object-fit: cover;" loading="lazy" decoding="async">
           {% endif %}
           <div class="card-body">
             <h6 class="card-title fw-bold">{{ event.title }}</h6>

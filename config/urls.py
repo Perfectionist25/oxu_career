@@ -28,16 +28,6 @@ urlpatterns += [
     path('ckeditor5/', include('django_ckeditor_5.urls')),
 ]
 
-if getattr(settings, "OAUTH2_PROVIDER_ENABLED", False):
-    urlpatterns += [
-        path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
-    ]
-
-if getattr(settings, "SERVE_MEDIA_FILES", False) and settings.MEDIA_URL.startswith("/"):
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-if getattr(settings, "SERVE_PROTECTED_MEDIA_FILES", False) and getattr(settings, "PROTECTED_MEDIA_URL", "").startswith("/"):
-    urlpatterns += static(
-        settings.PROTECTED_MEDIA_URL,
-        document_root=getattr(settings, "PROTECTED_MEDIA_ROOT"),
-    )
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.PROTECTED_MEDIA_URL, document_root=settings.PROTECTED_MEDIA_ROOT)
