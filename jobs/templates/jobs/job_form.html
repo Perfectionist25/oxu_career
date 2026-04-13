@@ -5,12 +5,12 @@
 {% block title %}{% if form.instance.pk %}{% trans "Edit Job" %}{% else %}{% trans "Create Job" %}{% endif %} - OXU Career{% endblock %}
 
 {% block content %}
-<div class="container py-5">
+<div class="container-fluid px-3 py-5">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-primary text-white py-3">
-                    <div class="d-flex justify-content-between align-items-center">
+        <div class="col-12">
+            <div class="card job-form-card shadow-sm border-0">
+                <div class="card-header text-white py-3">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
                         <h4 class="mb-0">
                             <i class="fas fa-briefcase me-2"></i>
                             {% if form.instance.pk %}
@@ -202,6 +202,34 @@
                                 {% endif %}
                             </div>
 
+                            <!-- Industry -->
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.industry.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Industry" %}
+                                </label>
+                                <select name="{{ form.industry.name }}"
+                                        id="{{ form.industry.id_for_label }}"
+                                        class="form-select {% if form.industry.errors %}is-invalid{% endif %}">
+                                    <option value="">{% trans "Select Industry" %}</option>
+                                    {% for value, label in form.industry.field.choices %}
+                                        {% if value %}
+                                            <option value="{{ value }}"
+                                                    {% if form.industry.value == value %}selected{% endif %}>
+                                                {{ label }}
+                                            </option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                                {% if form.industry.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        {% for error in form.industry.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
                             <!-- Location - REQUIRED -->
                             <div class="col-md-6 mb-3">
                                 <label for="{{ form.location.id_for_label }}" class="form-label fw-semibold" id="jobLocationLabel">
@@ -333,6 +361,31 @@
                                     <div class="invalid-feedback d-block">
                                         <i class="fas fa-exclamation-circle me-2"></i>
                                         {% for error in form.candidate_type.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Target Audience -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.target_user_types.id_for_label }}" class="form-label fw-semibold">
+                                    {{ form.target_user_types.label }}
+                                </label>
+                                <select name="{{ form.target_user_types.name }}"
+                                        id="{{ form.target_user_types.id_for_label }}"
+                                        class="form-select {% if form.target_user_types.errors %}is-invalid{% endif %}">
+                                    {% for value, label in form.target_user_types.field.choices %}
+                                        <option value="{{ value }}" {% if form.target_user_types.value == value %}selected{% endif %}>
+                                            {{ label }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <div class="form-text">{{ form.target_user_types.help_text }}</div>
+                                {% if form.target_user_types.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        {% for error in form.target_user_types.errors %}
                                             {{ error }}
                                         {% endfor %}
                                     </div>
@@ -1243,21 +1296,35 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 .form-control, .form-select {
-    border-radius: 0.5rem;
+    border-radius: 0.75rem;
     border: 1px solid #dee2e6;
-    padding: 0.75rem 1rem;
+    padding: 0.85rem 1rem;
     transition: all 0.2s ease-in-out;
+    background: #fff;
+    display: inline-block;
+    width: auto;
+    min-width: 180px;
+    max-width: 100%;
+}
+
+.form-control:not(textarea), .form-select {
+    width: auto;
+}
+
+textarea.form-control {
+    display: block;
+    width: 100%;
 }
 
 .form-control:focus, .form-select:focus {
     border-color: #0d6efd;
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
     transform: translateY(-1px);
 }
 
 .form-control.is-invalid, .form-select.is-invalid {
     border-color: #dc3545;
-    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.15);
 }
 
 .form-check-input:checked {
@@ -1273,6 +1340,31 @@ document.addEventListener('DOMContentLoaded', function() {
     border-color: #dc3545;
 }
 
+.job-form-card {
+    border-radius: 1.5rem;
+    overflow: hidden;
+}
+
+.job-form-card .card-header {
+    background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+}
+
+.job-form-card .card-body {
+    background: #f8f9ff;
+}
+
+.job-form-card .card-header h4 {
+    color: #fff;
+}
+
+.job-form-card .card-header .btn-light {
+    background-color: rgba(255, 255, 255, 0.92);
+}
+
+.job-form-card .alert {
+    border-radius: 1rem;
+}
+
 .card {
     border-radius: 1rem;
     transition: transform 0.2s ease-in-out;
@@ -1283,8 +1375,8 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 .btn {
-    border-radius: 0.5rem;
-    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    padding: 0.75rem 1.25rem;
     font-weight: 500;
     transition: all 0.2s ease-in-out;
 }
@@ -1314,7 +1406,37 @@ document.addEventListener('DOMContentLoaded', function() {
     font-weight: 600;
 }
 
-/* Responsive adjustments */
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.form-check-inline {
+    flex: 1 1 220px;
+    min-width: 220px;
+    border: 1px solid #dee2e6;
+    border-radius: 0.9rem;
+    padding: 0.85rem 1rem;
+    background: #fff;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.form-check-inline .form-check-input {
+    margin-top: 0.2rem;
+}
+
+.input-group-text {
+    background: #eef2ff;
+    border-right: 0;
+    color: #0d6efd;
+}
+
+.input-icon-group .form-control,
+.input-icon-group .form-select {
+    border-left: 0;
+}
+
 @media (max-width: 768px) {
     .card-body {
         padding: 1.5rem !important;
@@ -1331,6 +1453,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     .d-flex.gap-3 .btn {
         width: 100%;
+    }
+
+    .form-check-inline {
+        min-width: 100%;
     }
 }
 </style>

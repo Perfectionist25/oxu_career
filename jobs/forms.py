@@ -107,8 +107,6 @@ class JobForm(forms.ModelForm):
             if field in self.fields:
                 self.fields[field].required = True
 
-                self.fields[field].label = f"{self.fields[field].label} *"
-
 
         if self.user and self.user.is_authenticated:
             if self.user.is_employer:
@@ -139,18 +137,33 @@ class JobForm(forms.ModelForm):
 
                 self.fields['company'].widget = forms.HiddenInput()
 
-        # Set up target_user_types field
-        self.fields['target_user_types'] = forms.MultipleChoiceField(
-            choices=USER_TYPE_CHOICES,
+        # Set up target_user_types field as a single choice selector
+        self.fields['target_user_types'] = forms.ChoiceField(
+            choices=[
+                ('', _('Select target audience...')),
+                ('all', _('Students and Alumni')),
+                ('student', _('Students')),
+                ('alumni', _('Alumni')),
+            ],
             required=False,
-            widget=forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
+            widget=forms.Select(attrs={'class': 'form-select'}),
             label=_("Target Audience"),
-            help_text=_("Select which user types can apply for this job. Leave empty for all types.")
+            help_text=_("Choose who can apply for this job.")
         )
 
+        if self.instance and self.instance.pk:
+            target_types = set(self.instance.target_user_types or [])
+            if target_types == {"student", "alumni"} or not target_types:
+                self.fields['target_user_types'].initial = 'all'
+            elif target_types == {"student"}:
+                self.fields['target_user_types'].initial = 'student'
+            elif target_types == {"alumni"}:
+                self.fields['target_user_types'].initial = 'alumni'
+            else:
+                self.fields['target_user_types'].initial = 'all'
 
         select_fields = ['company', 'job_market', 'work_type', 'employment_type', 'experience_level',
-                        'education_level', 'currency', 'region', 'industry', 'candidate_type', 'gender_requirement']
+                        'education_level', 'currency', 'region', 'industry', 'candidate_type', 'gender_requirement', 'target_user_types']
         for field in select_fields:
             if field in self.fields:
                 self.fields[field].widget.attrs['class'] = 'form-select'
@@ -231,6 +244,14 @@ class JobForm(forms.ModelForm):
                 cleaned_data['region'] = 'Tashkent'
             elif 'Samarkand' in location or 'Samarqand' in location:
                 cleaned_data['region'] = 'Samarkand'
+
+        audience = cleaned_data.get('target_user_types')
+        if audience == 'student':
+            cleaned_data['target_user_types'] = ['student']
+        elif audience == 'alumni':
+            cleaned_data['target_user_types'] = ['alumni']
+        else:
+            cleaned_data['target_user_types'] = ['student', 'alumni']
 
         return cleaned_data
 
