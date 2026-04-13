@@ -91,27 +91,115 @@
               </div>
             </div>
             <div class="mb-3">
-              <label for="{{ profile_form.avatar.id_for_label }}" class="form-label">
-                {% trans "Avatar" %}
-              </label>
-              {{ profile_form.avatar }}
+              <label class="form-label d-block">{% trans "Avatar" %}</label>
+              <div class="avatar-picker mb-2">
+                <label for="{{ profile_form.avatar.id_for_label }}" class="avatar-picker-box">
+                  {% if profile_form.instance.avatar %}
+                    <img
+                      id="avatarPreview"
+                      src="{{ profile_form.instance.avatar.url }}"
+                      alt="{% trans 'Current avatar' %}"
+                      class="avatar-picker-image"
+                    >
+                  {% else %}
+                    <div id="avatarPreview" class="avatar-picker-placeholder">
+                      <i class="fas fa-camera fa-2x"></i>
+                      <div>{% trans "Upload photo" %}</div>
+                    </div>
+                  {% endif %}
+                  {{ profile_form.avatar }}
+                </label>
+              </div>
               {% if profile_form.avatar.errors %}
                 <div class="text-danger small mt-1">{{ profile_form.avatar.errors }}</div>
               {% endif %}
-              {% if profile_form.instance.avatar %}
-                <div class="small text-muted mt-2">
-                  {% trans "Current avatar:" %}
-                </div>
-                <img
-                  src="{{ profile_form.instance.avatar.url }}"
-                  alt="{% trans 'Current avatar' %}"
-                  class="rounded-circle mt-1"
-                  width="72"
-                  height="72"
-                  style="object-fit: cover;"
-                >
-              {% endif %}
             </div>
+            <style>
+              .avatar-picker {
+                width: 30vh;
+                height: 30vh;
+                max-width: 30vh;
+                max-height: 30vh;
+                position: relative;
+              }
+
+              .avatar-picker-box {
+                display: block;
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                overflow: hidden;
+                border: 2px dashed rgba(0, 123, 255, 0.45);
+                background: rgba(0, 123, 255, 0.05);
+                cursor: pointer;
+                position: relative;
+                transition: border-color .2s ease, background .2s ease;
+              }
+
+              .avatar-picker-box:hover {
+                border-color: rgba(0, 123, 255, 0.8);
+                background: rgba(0, 123, 255, 0.1);
+              }
+
+              .avatar-picker-box input[type="file"] {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                cursor: pointer;
+              }
+
+              .avatar-picker-image,
+              .avatar-picker-placeholder {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                color: #0d6efd;
+                background: rgba(255, 255, 255, 0.85);
+              }
+
+              .avatar-picker-image {
+                object-fit: cover;
+                width: 100%;
+                height: 100%;
+              }
+
+              .avatar-picker-placeholder {
+                flex-direction: column;
+                font-weight: 600;
+                font-size: 0.95rem;
+                gap: 0.5rem;
+              }
+            </style>
+            <script>
+              document.addEventListener('DOMContentLoaded', function () {
+                var avatarInput = document.getElementById('{{ profile_form.avatar.id_for_label }}');
+                var avatarPreview = document.getElementById('avatarPreview');
+
+                if (avatarInput && avatarPreview) {
+                  avatarInput.addEventListener('change', function (event) {
+                    var file = event.target.files[0];
+                    if (!file) {
+                      return;
+                    }
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                      if (avatarPreview.tagName.toLowerCase() === 'img') {
+                        avatarPreview.src = e.target.result;
+                      } else {
+                        avatarPreview.innerHTML = '<img src="' + e.target.result + '" class="avatar-picker-image" alt="Preview">';
+                      }
+                    };
+                    reader.readAsDataURL(file);
+                  });
+                }
+              });
+            </script>
             
             <div class="mb-3">
               <label for="{{ profile_form.faculty.id_for_label }}" class="form-label">

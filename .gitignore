@@ -23,3 +23,6 @@ logs/
 
 # DB
 db.sqlite3
+
+# RUN
+run_all_processes.sh

@@ -14,9 +14,9 @@
                 <div class="col-lg-8">
                     <div class="d-flex flex-column flex-md-row align-items-md-center gap-4">
                         <div class="profile-avatar-wrap">
-                            <div class="profile-avatar placeholder-avatar" style="width: 35vh; height: 30vh;">
+                            <div class="profile-avatar placeholder-avatar" style="width: 75%; height: 75%;">
                                 {% if profile_user.avatar %}
-                                    <img src="{{ profile_user.avatar.url }}" alt="Not found" class="profile-avatar-img" style="border-radius: 50%; width: 100%; height: 100%;">
+                                    <img src="{{ profile_user.avatar.url }}" alt="Not found" class="profile-avatar-img" style="border-radius: 100%; width: 100%; height: 100%;">
                                 {% else %}
                                     <i class="fas fa-user"></i>
                                 {% endif %}

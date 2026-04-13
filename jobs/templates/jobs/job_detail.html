@@ -419,9 +419,45 @@
                     </div>
 
                     <div class="mt-3">
-                        <a href="{% url 'jobs:apply_for_job' job.id %}" class="btn btn-outline-primary btn-sm w-100">
+                        <button type="button" class="btn btn-outline-primary btn-sm w-100" data-bs-toggle="modal" data-bs-target="#companyInfoModal">
                             <i class="fas fa-eye me-2"></i>{% trans "Company page" %}
-                        </a>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="companyInfoModal" tabindex="-1" aria-labelledby="companyInfoModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content border-0 shadow">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="companyInfoModalLabel">{{ job.company.name }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row g-3">
+                                <div class="col-md-4 text-center">
+                                    {% if job.company.logo %}
+                                        <img src="{{ job.company.logo.url }}" alt="{{ job.company.name }}" class="img-fluid rounded-4 mb-3">
+                                    {% endif %}
+                                    {% if job.company.is_verified %}
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check-circle me-1"></i>{% trans "Verified" %}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-8">
+                                    <p class="mb-2"><strong>{% trans "Industry" %}:</strong> {{ job.company.industry|default:"—" }}</p>
+                                    <p class="mb-2"><strong>{% trans "Company size" %}:</strong> {{ job.company.get_company_size_display|default:"—" }}</p>
+                                    <p class="mb-2"><strong>{% trans "Address" %}:</strong> {{ job.company.address|default:"—" }}</p>
+                                    {% if job.company.description %}
+                                        <p class="mt-3">{{ job.company.description }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Close" %}</button>
+                        </div>
                     </div>
                 </div>
             </div>
