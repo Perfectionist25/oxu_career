@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.db import transaction
 from django.db.models import Count, Q, Sum
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -129,11 +130,7 @@ def employer_applications(request):
 @login_required
 def job_create(request):
     """Yangi vakansiya yaratish"""
-    is_admin_user = (
-        request.user.is_staff
-        or request.user.is_superuser
-        or user_has_admin_permission(request.user, "can_create_jobs")
-    )
+    is_admin_user = user_has_admin_permission(request.user, "can_create_jobs")
 
     if not (request.user.is_employer or is_admin_user):
         messages.error(request, _("Faqat ish beruvchilar yoki adminlar vakansiya yarata oladi."))
@@ -253,11 +250,7 @@ def job_edit(request, pk):
     job = get_object_or_404(Job, pk=pk)
 
     employer_profile = None
-    is_job_admin = (
-        request.user.is_staff
-        or request.user.is_superuser
-        or user_has_admin_permission(request.user, "can_manage_jobs")
-    )
+    is_job_admin = user_has_admin_permission(request.user, "can_manage_jobs")
 
     if request.user.is_employer:
         try:
@@ -327,11 +320,7 @@ def job_delete(request, pk):
     """Vakansiyani o'chirish"""
     job = get_object_or_404(Job, pk=pk)
 
-    is_job_admin = (
-        request.user.is_staff
-        or request.user.is_superuser
-        or user_has_admin_permission(request.user, "can_manage_jobs")
-    )
+    is_job_admin = user_has_admin_permission(request.user, "can_manage_jobs")
 
     if request.user.is_employer:
         try:
@@ -559,9 +548,7 @@ def job_list(request):
     form = JobSearchForm(request.GET or None)
     is_employer_user = getattr(request.user, "is_employer", False)
     is_admin_user = (
-        request.user.is_staff
-        or request.user.is_superuser
-        or user_has_admin_permission(request.user, "can_manage_jobs")
+        user_has_admin_permission(request.user, "can_manage_jobs")
         or user_has_admin_permission(request.user, "can_create_jobs")
     )
 
@@ -796,9 +783,7 @@ def job_detail(request, pk):
 
     can_edit = False
     if request.user.is_authenticated:
-        if request.user.is_staff or request.user.is_superuser:
-            can_edit = True
-        elif user_has_admin_permission(request.user, "can_manage_jobs"):
+        if user_has_admin_permission(request.user, "can_manage_jobs"):
             can_edit = True
         elif request.user.is_employer:
 
@@ -863,14 +848,14 @@ def apply_for_job(request, pk):
         form = JobApplicationForm(request.POST, user=request.user, job=job)
         if form.is_valid():
             try:
-                application = form.save(commit=False)
-                application.job = job
-                application.user = request.user
-                application.save()
+                with transaction.atomic():
+                    application = form.save(commit=False)
+                    application.job = job
+                    application.user = request.user
+                    application.save()
 
-
-                job.applications_count += 1
-                job.save()
+                    job.applications_count += 1
+                    job.save()
 
                 messages.success(
                     request, _("Arizangiz muvaffaqiyatli yuborildi!")
@@ -942,11 +927,6 @@ def unsave_job(request, pk):
             "saved": False,
             "saved_jobs_count": saved_jobs_count,
         })
-
-    if deleted_count:
-        messages.success(request, _("Vakansiya saqlanganlardan o'chirildi."))
-    else:
-        messages.info(request, _("Vakansiya saqlanganlarda topilmadi."))
 
     next_url = _get_safe_next_url(request, default=reverse("jobs:saved_jobs"))
     if next_url:
@@ -1122,7 +1102,7 @@ def job_settings(request, pk):
 
 
     can_edit = False
-    if request.user.is_staff:
+    if user_has_admin_permission(request.user, "can_manage_jobs"):
         can_edit = True
     elif request.user.is_employer:
         try:
@@ -1150,15 +1130,11 @@ def update_job_settings(request, pk):
 
 
     can_edit = False
-    if request.user.is_staff:
+    if user_has_admin_permission(request.user, "can_manage_jobs"):
         can_edit = True
     elif request.user.is_employer:
         try:
             employer_profile = EmployerProfile.objects.get(user=request.user)
-            user_companies = Company.objects.filter(owner=request.user, is_active=True)
-            can_edit = job.company in user_companies
-        except EmployerProfile.DoesNotExist:
-            can_edit = False
             user_companies = Company.objects.filter(owner=request.user, is_active=True)
             can_edit = job.company in user_companies
         except EmployerProfile.DoesNotExist:

@@ -1375,7 +1375,10 @@ class CompanyUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def test_func(self):
         company = self.get_object()
-        return company.owner == self.request.user
+        return (
+            company.owner == self.request.user
+            or user_has_admin_permission(self.request.user, "can_manage_companies")
+        )
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -1396,7 +1399,10 @@ class CompanyDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         company = self.get_object()
-        return company.owner == self.request.user
+        return (
+            company.owner == self.request.user
+            or user_has_admin_permission(self.request.user, "can_manage_companies")
+        )
 
     def post(self, request, *args, **kwargs):
         """Handle POST request for deletion"""

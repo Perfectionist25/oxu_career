@@ -1,4 +1,5 @@
 from datetime import timedelta
+from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
@@ -6,7 +7,8 @@ from django.urls import reverse
 from django.utils import timezone
 
 from accounts.models import Company
-from .models import Job, SavedJob, ViewedJob
+from cvbuilder.models import CV, CVTemplate
+from .models import Job, JobApplication, SavedJob, ViewedJob
 
 
 User = get_user_model()
@@ -52,6 +54,25 @@ class StudentJobTrackingTests(TestCase):
             expires_at=timezone.now() + timedelta(days=10),
             is_active=True,
         )
+
+        self.cv_template = CVTemplate.objects.create(
+            name="Default",
+            thumbnail="",
+            template_file="default.html",
+            is_active=True,
+        )
+        self.cv = CV.objects.create(
+            user=self.student,
+            title="Student CV",
+            template=self.cv_template,
+            status="published",
+            full_name="Student Test",
+            email="student@example.com",
+            phone="1234567890",
+            location="Tashkent",
+            summary="Student CV summary",
+        )
+
         self.client.force_login(self.student)
 
     def test_job_detail_persists_viewed_job_for_student(self):
@@ -116,3 +137,23 @@ class StudentJobTrackingTests(TestCase):
         response = self.client.post(reverse("jobs:unsave_job", args=[self.job.pk]))
 
         self.assertRedirects(response, reverse("jobs:saved_jobs"))
+
+    @patch("jobs.signals.render_to_string")
+    def test_job_application_rolls_back_when_confirmation_email_fails(self, mock_render_to_string):
+        mock_render_to_string.side_effect = Exception("Template render failed")
+
+        response = self.client.post(
+            reverse("jobs:apply_for_job", args=[self.job.pk]),
+            {
+                "cv": self.cv.pk,
+                "cover_letter": "I am interested in this role.",
+                "expected_salary": "1000",
+                "available_from": "2026-05-01",
+                "notice_period": "14",
+                "agree_to_terms": "on",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(JobApplication.objects.filter(job=self.job, user=self.student).exists())
+        self.assertContains(response, "Xatolik yuz berdi")
