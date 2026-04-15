@@ -1027,7 +1027,7 @@ def student_certificate_delete(request, pk):
 @login_required
 def student_certificate_file(request, pk):
     certificate = get_object_or_404(
-        StudentCertificate.objects.select_related("student", "student__user"),
+        StudentCertificate.objects.select_related("student"),
         pk=pk,
     )
 
