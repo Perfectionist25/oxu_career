@@ -1,0 +1,11 @@
+Hello {{ user.get_full_name|default:user.username }},
+
+Thank you for applying for the position "{{ job.title }}" at {{ job.company.name }}.
+
+We have received your application and will review it shortly.
+
+Cover Letter:
+{{ application.cover_letter }}
+
+Best regards,
+The {{ job.company.name }} team
