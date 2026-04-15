@@ -21,8 +21,6 @@ urlpatterns = [
     path("oauth/login/", oauth_login, name="oauth_login"),
     path("oauth/callback/", oauth_callback, name="oauth_callback"),
     path("admin/stats/", core_views.admin_stats, name="admin_stats"),
-    path("flower/", core_views.proxy_flower, name="flower_proxy"),
-    path("flower/<path:path>/", core_views.proxy_flower, name="flower_proxy_path"),
     path('api/accounts/', include(('accounts.api.urls','accounts_api'), namespace='accounts_api')),
 ]
 
@@ -30,6 +28,10 @@ urlpatterns += [
     path('ckeditor5/', include('django_ckeditor_5.urls')),
 ]
 
+protected_media_url = settings.PROTECTED_MEDIA_URL.strip("/")
+urlpatterns += [
+    path(f"{protected_media_url}/<path:path>/", core_views.protected_media, name="protected_media"),
+]
+
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-urlpatterns += static(settings.PROTECTED_MEDIA_URL, document_root=settings.PROTECTED_MEDIA_ROOT)

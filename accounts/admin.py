@@ -11,8 +11,6 @@ admin.site.login_form = CaptchaAdminAuthenticationForm
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
-    """Admin interface for CustomUser model with role-based management"""
-
     list_display = (
         "username",
         "email",
@@ -66,8 +64,6 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
-    """Admin interface for Company model"""
-
     list_display = (
         "name",
         "owner",

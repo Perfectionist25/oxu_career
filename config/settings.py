@@ -406,10 +406,6 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 300
 
-FLOWER_BASIC_AUTH = os.getenv("FLOWER_BASIC_AUTH", "admin:change-me")
-FLOWER_ADDRESS = os.getenv("FLOWER_ADDRESS", "127.0.0.1")
-FLOWER_PORT = os.getenv("FLOWER_PORT", "5555")
-
 SERVE_MEDIA_FILES = env_bool("SERVE_MEDIA_FILES", default=True)
 SERVE_PROTECTED_MEDIA_FILES = env_bool("SERVE_PROTECTED_MEDIA_FILES", default=True)
 

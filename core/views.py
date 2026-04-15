@@ -1,10 +1,8 @@
 import logging
-from urllib.parse import urljoin
-
-import requests
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import JsonResponse, HttpResponseServerError, StreamingHttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -12,6 +10,7 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
+from django.views.static import serve
 
 
 from events.models import Event
@@ -71,6 +70,12 @@ def home(request):
         "resources_admin_stats": resources_admin_stats,
     }
     return render(request, "home.html", context)
+
+
+@login_required(login_url="accounts:login")
+def protected_media(request, path):
+    """Serve protected media only for authenticated users."""
+    return serve(request, path, document_root=settings.PROTECTED_MEDIA_ROOT)
 
 
 def about(request):
@@ -421,62 +426,3 @@ def admin_stats(request):
     return render(request, "core/admin_stats.html", context)
 
 
-@staff_member_required(login_url="accounts:login")
-def proxy_flower(request, path=""):
-    """Proxy Flower traffic through Django and require staff access."""
-    flower_address = getattr(settings, "FLOWER_ADDRESS", None)
-    flower_port = getattr(settings, "FLOWER_PORT", None)
-    if not flower_address or not flower_port:
-        return HttpResponseServerError("Flower proxy is not configured.")
-
-    path = path.lstrip("/")
-    target_url = urljoin(f"http://{flower_address}:{flower_port}/", path)
-
-    request_headers = {
-        key: value
-        for key, value in request.headers.items()
-        if key.lower() not in {
-            "host",
-            "content-length",
-            "connection",
-            "accept-encoding",
-        }
-    }
-
-    try:
-        response = requests.request(
-            method=request.method,
-            url=target_url,
-            headers=request_headers,
-            params=request.GET,
-            data=request.body,
-            stream=True,
-            timeout=30,
-        )
-    except requests.RequestException:
-        logger.exception("Flower proxy request failed for %s", target_url)
-        return HttpResponseServerError("Ошибка прокси Flower.")
-
-    excluded_headers = {
-        "content-encoding",
-        "transfer-encoding",
-        "connection",
-        "keep-alive",
-        "proxy-authenticate",
-        "proxy-authorization",
-        "te",
-        "trailers",
-        "upgrade",
-    }
-
-    django_response = StreamingHttpResponse(
-        response.iter_content(chunk_size=8192),
-        status=response.status_code,
-        content_type=response.headers.get("Content-Type", "application/octet-stream"),
-    )
-
-    for header, value in response.headers.items():
-        if header.lower() not in excluded_headers:
-            django_response[header] = value
-
-    return django_response
