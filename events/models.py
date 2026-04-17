@@ -131,6 +131,26 @@ class Event(models.Model):
         verbose_name=_("Maximum Participants"),
         help_text=_("Maximum number of participants allowed for this event"),
     )
+    allow_students = models.BooleanField(
+        default=True,
+        verbose_name=_("Allow Students"),
+        help_text=_("Allow students to register for this event"),
+    )
+    allow_alumni = models.BooleanField(
+        default=True,
+        verbose_name=_("Allow Alumni"),
+        help_text=_("Allow alumni to register for this event"),
+    )
+    allow_employers = models.BooleanField(
+        default=True,
+        verbose_name=_("Allow Employers"),
+        help_text=_("Allow employers to register for this event"),
+    )
+    allow_admins = models.BooleanField(
+        default=True,
+        verbose_name=_("Allow Admins"),
+        help_text=_("Allow admin users to register for this event"),
+    )
     allowed_employer_categories = models.ManyToManyField(
         EventEmployerCategory,
         blank=True,
@@ -308,8 +328,17 @@ class Event(models.Model):
     def get_participation_error(self, user):
         if not user or not user.is_authenticated:
             return _("Please log in to participate in this event.")
-        if not (user.is_student or user.is_employer or user.is_admin or user.is_main_admin):
+        if not (user.is_student or user.is_alumni or user.is_employer or user.is_admin or user.is_main_admin):
             return _("Your account is not eligible to register for events.")
+
+        if user.is_student and not self.allow_students:
+            return _("Students are not allowed to register for this event.")
+        if user.is_alumni and not self.allow_alumni:
+            return _("Alumni are not allowed to register for this event.")
+        if user.is_employer and not self.allow_employers:
+            return _("Employers are not allowed to register for this event.")
+        if (user.is_admin or user.is_main_admin) and not self.allow_admins:
+            return _("Admin users are not allowed to register for this event.")
 
         participation = self.get_user_participation(user)
         if participation and participation.status == EventParticipation.STATUS_REGISTERED:

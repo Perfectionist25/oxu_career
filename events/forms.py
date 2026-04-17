@@ -124,6 +124,10 @@ class EventForm(forms.ModelForm):
             "end_date",
             "location",
             "max_participants",
+            "allow_students",
+            "allow_alumni",
+            "allow_employers",
+            "allow_admins",
             "allowed_employer_categories",
             "banner_image",
             "thumbnail",
@@ -182,6 +186,18 @@ class EventForm(forms.ModelForm):
                     "style": "padding: 10px;"
                 }
             ),
+            "allow_students": forms.CheckboxInput(
+                attrs={"class": "form-check-input"}
+            ),
+            "allow_alumni": forms.CheckboxInput(
+                attrs={"class": "form-check-input"}
+            ),
+            "allow_employers": forms.CheckboxInput(
+                attrs={"class": "form-check-input"}
+            ),
+            "allow_admins": forms.CheckboxInput(
+                attrs={"class": "form-check-input"}
+            ),
             "allowed_employer_categories": forms.SelectMultiple(
                 attrs={
                     "class": "form-select form-control",
@@ -229,6 +245,10 @@ class EventForm(forms.ModelForm):
             "short_description": _("Brief summary that appears in listings"),
             "description": _("Full event details with formatting"),
             "max_participants": _("Maximum number of people who can register"),
+            "allow_students": _("Allow students to register for this event"),
+            "allow_alumni": _("Allow alumni to register for this event"),
+            "allow_employers": _("Allow employers to register for this event"),
+            "allow_admins": _("Allow admin users to register for this event"),
             "allowed_employer_categories": _(
                 "Optional restriction for employer participation by business category"
             ),
