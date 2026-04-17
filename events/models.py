@@ -292,6 +292,8 @@ class Event(models.Model):
     def get_registration_role(self, user):
         if user.is_student:
             return EventParticipation.ROLE_STUDENT
+        if user.is_alumni:
+            return EventParticipation.ROLE_ALUMNI
         if user.is_employer:
             return EventParticipation.ROLE_EMPLOYER
         if user.is_admin or user.is_main_admin or user.is_staff:
@@ -328,6 +330,7 @@ class EventParticipation(models.Model):
     """Participation record for a user and event."""
 
     ROLE_STUDENT = "student"
+    ROLE_ALUMNI = "alumni"
     ROLE_EMPLOYER = "employer"
     ROLE_ADMIN = "admin"
 
