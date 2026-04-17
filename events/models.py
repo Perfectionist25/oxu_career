@@ -343,6 +343,7 @@ class EventParticipation(models.Model):
 
     ROLE_CHOICES = [
         (ROLE_STUDENT, _("Student")),
+        (ROLE_ALUMNI, _("Alumni")),
         (ROLE_EMPLOYER, _("Employer")),
         (ROLE_ADMIN, _("Admin")),
     ]
