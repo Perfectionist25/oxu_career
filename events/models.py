@@ -316,7 +316,7 @@ class Event(models.Model):
             return EventParticipation.ROLE_ALUMNI
         if user.is_employer:
             return EventParticipation.ROLE_EMPLOYER
-        if user.is_admin or user.is_main_admin or user.is_staff:
+        if user.is_admin or user.is_international_admin or user.is_main_admin or user.is_staff:
             return EventParticipation.ROLE_ADMIN
         return ""
 
@@ -328,7 +328,7 @@ class Event(models.Model):
     def get_participation_error(self, user):
         if not user or not user.is_authenticated:
             return _("Please log in to participate in this event.")
-        if not (user.is_student or user.is_alumni or user.is_employer or user.is_admin or user.is_main_admin):
+        if not (user.is_student or user.is_alumni or user.is_employer or user.is_admin or user.is_international_admin or user.is_main_admin):
             return _("Your account is not eligible to register for events.")
 
         if user.is_student and not self.allow_students:
@@ -337,7 +337,7 @@ class Event(models.Model):
             return _("Alumni are not allowed to register for this event.")
         if user.is_employer and not self.allow_employers:
             return _("Employers are not allowed to register for this event.")
-        if (user.is_admin or user.is_main_admin) and not self.allow_admins:
+        if (user.is_admin or user.is_international_admin or user.is_main_admin) and not self.allow_admins:
             return _("Admin users are not allowed to register for this event.")
 
         participation = self.get_user_participation(user)

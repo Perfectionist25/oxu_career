@@ -106,7 +106,7 @@
                                     <a href="{% url 'accounts:student_profile_update' %}" class="btn btn-light btn-modern w-100">
                                         <i class="fas fa-edit me-2"></i>{% trans "Edit Profile" %}
                                     </a>
-                                {% elif profile_user.is_admin %}
+                                {% elif profile_user.is_admin or profile_user.is_international_admin %}
                                     <a href="{% url 'accounts:admin_dashboard' %}" class="btn btn-light btn-modern w-100">
                                         <i class="fas fa-gauge-high me-2"></i>{% trans "Admin Dashboard" %}
                                     </a>
@@ -468,7 +468,7 @@
                             </div>
                             {% endif %}
 
-                            {% if profile_user.is_admin and profile_user.admin_profile %}
+                            {% if profile_user.is_admin or profile_user.is_international_admin and profile_user.admin_profile %}
                             <div class="stat-row">
                                 <span>{% trans "Students Managed" %}</span>
                                 <strong>{{ profile_user.admin_profile.students_managed }}</strong>
@@ -600,7 +600,7 @@
                                     <i class="fas fa-file-alt"></i>
                                     <span>{% trans "Create Resume" %}</span>
                                 </a>
-                            {% elif profile_user.is_admin %}
+                            {% elif profile_user.is_admin or profile_user.is_international_admin %}
                                 <a href="{% url 'accounts:admin_dashboard' %}" class="quick-action-btn">
                                     <i class="fas fa-gauge-high"></i>
                                     <span>{% trans "Admin Dashboard" %}</span>
