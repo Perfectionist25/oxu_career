@@ -23,6 +23,7 @@ logs/
 
 # DB
 db.sqlite3
+dump.rdb
 
 # RUN
 run_all_processes.sh
