@@ -1578,6 +1578,7 @@ def admin_statistics(request):
     users_qs = CustomUser.objects.all()
     users_total = users_qs.count()
     users_students = users_qs.filter(user_type="student").count()
+    users_alumni = users_qs.filter(user_type="alumni").count()
     users_employers = users_qs.filter(user_type="employer").count()
     users_admins = users_qs.filter(user_type="admin").count()
     users_international_admins = users_qs.filter(user_type="international_admin").count()
@@ -1585,6 +1586,7 @@ def admin_statistics(request):
     users_guests = users_qs.filter(user_type="guest").count()
     users_other = users_total - (
         users_students
+        + users_alumni
         + users_employers
         + users_admins
         + users_international_admins
@@ -1602,6 +1604,7 @@ def admin_statistics(request):
         "users": {
             "total": users_total,
             "students": users_students,
+            "alumni": users_alumni,
             "employers": users_employers,
             "admins": users_admins,
             "international_admins": users_international_admins,
