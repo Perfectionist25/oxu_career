@@ -1,0 +1,24 @@
+/* Custom Jazzmin styling for the top-menu "Site" button */
+.navbar-nav .nav-link[href="/"] {
+    background: #f59e0b;
+    color: #0f172a !important;
+    border-radius: 0.65rem;
+    padding: 0.45rem 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    box-shadow: 0 10px 22px rgba(245, 158, 11, 0.24);
+    margin-left: 0.75rem;
+    transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+.navbar-nav .nav-link[href="/"]:hover,
+.navbar-nav .nav-link[href="/"]:focus {
+    background: #fbbf24;
+    color: #0f172a !important;
+    transform: translateY(-1px);
+}
+.navbar-nav .nav-link[href="/"]::before {
+    content: "\f0ac";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    margin-right: 0.45rem;
+}

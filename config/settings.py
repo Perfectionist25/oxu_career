@@ -577,6 +577,7 @@ JAZZMIN_SETTINGS = {
         {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
         {"name": "Site", "url": "/", "new_window": True},
     ],
+    "custom_css": "css/admin_jazzmin_custom.css",
     "show_sidebar": True,
     "navigation_expanded": True,
     "hide_apps": [],
