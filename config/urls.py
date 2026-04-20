@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.urls import include, path
 from accounts.api.views import oauth_callback
 from accounts.views import oauth_login
+from config.settings import PROTECTED_MEDIA_URL
 from core import views as core_views
 
 urlpatterns = [
@@ -28,7 +29,7 @@ urlpatterns += [
     path('ckeditor5/', include('django_ckeditor_5.urls')),
 ]
 
-protected_media_url = settings.PROTECTED_MEDIA_URL.strip("/")
+protected_media_url = PROTECTED_MEDIA_URL.strip("/")
 urlpatterns += [
     path(f"{protected_media_url}/<path:path>/", core_views.protected_media, name="protected_media"),
 ]

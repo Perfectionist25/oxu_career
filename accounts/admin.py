@@ -116,8 +116,6 @@ class CompanyAdmin(admin.ModelAdmin):
 
 @admin.register(CompanyDocument)
 class CompanyDocumentAdmin(admin.ModelAdmin):
-    """Admin interface for CompanyDocument model"""
-
     list_display = (
         "title",
         "company",
@@ -169,8 +167,6 @@ class CompanyDocumentAdmin(admin.ModelAdmin):
 
 @admin.register(EmployerProfile)
 class EmployerProfileAdmin(admin.ModelAdmin):
-    """Admin interface for EmployerProfile with personal information"""
-
     list_display = (
         "user",
         "created_at",
@@ -201,8 +197,6 @@ class EmployerProfileAdmin(admin.ModelAdmin):
 
 @admin.register(StudentProfile)
 class StudentProfileAdmin(admin.ModelAdmin):
-    """Admin interface for StudentProfile with educational information"""
-
     list_display = (
         "user",
         "faculty",
@@ -312,8 +306,6 @@ class StudentCertificateAdmin(admin.ModelAdmin):
 
 @admin.register(AdminProfile)
 class AdminProfileAdmin(admin.ModelAdmin):
-    """Admin interface for AdminProfile model"""
-
     list_display = ("user", *AdminProfile.PERMISSION_FIELDS, "created_at")
     list_filter = AdminProfile.PERMISSION_FIELDS
     search_fields = ("user__username", "user__email")
@@ -340,8 +332,6 @@ class AdminProfileAdmin(admin.ModelAdmin):
 
 @admin.register(HemisAuth)
 class HemisAuthAdmin(admin.ModelAdmin):
-    """Admin interface for HemisAuth model"""
-
     list_display = ("user", "hemis_user_id", "last_sync", "created_at")
     list_filter = ("last_sync", "created_at")
     search_fields = ("user__username", "user__email", "hemis_user_id")
@@ -366,8 +356,6 @@ class HemisAuthAdmin(admin.ModelAdmin):
 
 @admin.register(UserActivity)
 class UserActivityAdmin(admin.ModelAdmin):
-    """Admin interface for UserActivity model"""
-
     list_display = (
         "user",
         "activity_type",
@@ -399,8 +387,6 @@ class UserActivityAdmin(admin.ModelAdmin):
 
 @admin.register(Notification)
 class NotificationAdmin(admin.ModelAdmin):
-    """Admin interface for Notification model"""
-
     list_display = (
         "user",
         "notification_type",
@@ -435,8 +421,6 @@ class NotificationAdmin(admin.ModelAdmin):
 
 @admin.register(OAuthToken)
 class OAuthTokenAdmin(admin.ModelAdmin):
-    """Admin interface for OAuthToken model - manage OAuth tokens for users"""
-
     list_display = (
         "user",
         "token_type",

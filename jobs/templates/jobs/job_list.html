@@ -81,7 +81,9 @@
                                 {% endfor %}
                             </select>
                         </div>
-
+                        
+                        <br>
+                        
                         <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
                             <div class="d-flex gap-2 h-100 align-items-stretch">
                                 <button class="btn btn-primary w-100 filter-action-btn" type="submit">
@@ -93,7 +95,7 @@
                                         data-bs-target="#advancedFilters">
                                     <i class="fas fa-sliders-h me-1"></i>{% trans "Advanced" %}
                                 </button>
-                                <a class="btn btn-outline-secondary w-100 filter-action-btn" href="{% url 'jobs:list' %}">
+                                <a class="btn btn-outline-secondary filter-action-btn" href="{% url 'jobs:list' %}">
                                     <i class="fas fa-redo me-1"></i>{% trans "Clear" %}
                                 </a>
                             </div>
@@ -211,6 +213,7 @@
         <div class="row g-3 g-md-4" id="jobsContainer">
             {% for job in jobs %}
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 job-item {% if job.is_viewed %}is-viewed{% endif %}"
+                {% if job.is_viewed %}style="filter: brightness(0.8);"{% endif %}
                  data-title="{{ job.title|lower }}"
                  data-market="{{ job.job_market }}"
                  data-company="{{ job.company.name|lower }}"
@@ -1009,7 +1012,7 @@
 
     .job-card__left-actions .btn,
     .job-card__cta {
-        width: 100%;
+        width: auto;
         justify-content: center;
     }
 }
