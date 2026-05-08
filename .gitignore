@@ -5,7 +5,6 @@ venv*/
 
 # python junk
 __pycache__/
-migrations/
 *.pyc
 *.pyo
 *.pyd
@@ -22,3 +21,4 @@ logs/
 
 # DB
 db.sqlite3
+config/db
