@@ -1,4 +1,5 @@
 # venv
+.vscode/
 venv/
 venv*/
 .venv/
@@ -22,4 +23,11 @@ logs/
 
 # DB
 db.sqlite3
+<<<<<<< HEAD
+dump.rdb
+
+# RUN
+run_all_processes.sh
+=======
 config/db
+>>>>>>> 7a7315a3bbb0587c973ac5280729212ac0b5fffa

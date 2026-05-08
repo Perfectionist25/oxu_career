@@ -4,16 +4,16 @@
 {% block title %}{% trans "Create Job as Admin" %} - OXU Career{% endblock %}
 
 {% block content %}
-<div class="container py-4">
+<div class="container-fluid px-3 py-5">
     <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+        <div class="col-12">
+            <div class="card job-form-card shadow-sm border-0">
+                <div class="card-header text-white d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
                     <h4 class="mb-0">
                         <i class="fas fa-shield-alt me-2"></i>
                         {% trans "Create Job for Company" %}
                     </h4>
-                    <a href="{% url 'jobs:list' %}" class="btn btn-outline-light btn-sm">
+                    <a href="{% url 'jobs:list' %}" class="btn btn-light btn-sm">
                         <i class="fas fa-arrow-left me-1"></i>{% trans "Back to Jobs" %}
                     </a>
                 </div>
@@ -160,4 +160,91 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 </script>
+
+<style>
+.form-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.form-control, .form-select {
+    border-radius: 0.75rem;
+    border: 1px solid #dee2e6;
+    padding: 0.85rem 1rem;
+    transition: all 0.2s ease-in-out;
+    background: #fff;
+    display: inline-block;
+    width: auto;
+    min-width: 180px;
+    max-width: 100%;
+}
+
+.form-control:not(textarea), .form-select {
+    width: auto;
+}
+
+textarea.form-control {
+    display: block;
+    width: 100%;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+    transform: translateY(-1px);
+}
+
+.form-control.is-invalid, .form-select.is-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.15);
+}
+
+.form-check-input:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.job-form-card {
+    border-radius: 1.5rem;
+    overflow: hidden;
+}
+
+.job-form-card .card-header {
+    background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+}
+
+.job-form-card .card-body {
+    background: #f8f9ff;
+}
+
+.job-form-card .card-header h4 {
+    color: #fff;
+}
+
+.job-form-card .card-header .btn-light {
+    background-color: rgba(255, 255, 255, 0.92);
+}
+
+.alert {
+    border-radius: 1rem;
+}
+
+.btn {
+    border-radius: 0.75rem;
+}
+
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1.5rem !important;
+    }
+    .d-flex.gap-3 {
+        flex-direction: column;
+        gap: 1rem !important;
+    }
+}
+</style>
 {% endblock %}

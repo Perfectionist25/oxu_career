@@ -499,14 +499,15 @@ class CompanyDocumentForm(forms.ModelForm):
             'file': forms.FileInput(attrs={'class': 'form-control'}),
         }
 
-
 class StudentProfileForm(forms.ModelForm):
-    """Форма профиля студента"""
+    """Форма профиля студента/выпускника"""
     class Meta:
-        model = StudentProfile
+        model = CustomUser
         fields = [
             "student_id",
             "avatar",
+            "email",
+            "gender",
             "faculty",
             "specialty",
             "education_level",
@@ -521,7 +522,7 @@ class StudentProfileForm(forms.ModelForm):
         ]
         widgets = {
             'student_id': forms.TextInput(attrs={'class': 'form-control'}),
-            'avatar': forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': 'image/*'}),
+            'gender': forms.Select(attrs={'class': 'form-select'}),
             'faculty': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': _('Faculty or department')
@@ -558,6 +559,22 @@ class StudentProfileForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         # Student ID is provided externally and must remain read-only for students.
         self.fields["student_id"].disabled = True
+        self.fields["student_id"].widget.attrs["class"] += " bg-light"
+
+        if self.instance and self.instance.oauth_data_locked:
+            locked_fields = [
+                "student_id",
+                "faculty",
+                "specialty",
+                "education_level",
+                "graduation_year",
+            ]
+            for field_name in locked_fields:
+                if field_name in self.fields:
+                    self.fields[field_name].disabled = True
+                    self.fields[field_name].widget.attrs["class"] = (
+                        self.fields[field_name].widget.attrs.get("class", "form-control") + " bg-light"
+                    )
 
 
 class StudentCertificateForm(forms.ModelForm):
@@ -808,7 +825,7 @@ class StudentUserReadonlyNameForm(forms.ModelForm):
         label=_("Full name"),
         required=False,
         disabled=True,
-        widget=forms.TextInput(attrs={'class': 'form-control'})
+        widget=forms.TextInput(attrs={'class': 'form-control bg-light'})
     )
 
     class Meta:
@@ -823,6 +840,10 @@ class StudentUserReadonlyNameForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         self.fields["full_name"].initial = getattr(self.instance, "full_name", "") or self.instance.get_full_name()
+
+        if self.instance and getattr(self.instance, "oauth_data_locked", False):
+            self.fields["phone_number"].disabled = True
+            self.fields["phone_number"].widget.attrs["class"] += " bg-light"
 
     def clean_email(self):
         email = self.cleaned_data.get("email")

@@ -60,12 +60,6 @@ def get_visible_system_notifications(request):
     if request is None:
         return queryset
 
-    if request.user.is_authenticated:
-        dismissed_notification_ids = UserNotificationDismissal.objects.filter(
-            user=request.user
-        ).values_list("notification_id", flat=True)
-        return queryset.exclude(pk__in=dismissed_notification_ids)
-
     anonymous_dismissed_ids = get_anonymous_dismissed_notification_ids(request)
     if anonymous_dismissed_ids:
         queryset = queryset.exclude(pk__in=anonymous_dismissed_ids)

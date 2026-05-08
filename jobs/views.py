@@ -1,9 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.db import transaction
 from django.db.models import Count, Q, Sum
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from datetime import timedelta
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils import timezone
@@ -20,11 +22,7 @@ from .models import *
 
 
 def _is_student_or_alumni(user):
-    return user.is_authenticated and (
-        getattr(user, "is_student", False)
-        or hasattr(user, "student_profile")
-        or hasattr(user, "alumni")
-    )
+    return user.is_authenticated and user.user_type in ["student", "alumni"]
 
 
 def _attach_job_state(user, jobs):
@@ -48,15 +46,19 @@ def _attach_job_state(user, jobs):
     return jobs, saved_job_ids, viewed_job_ids
 
 
-def _get_safe_next_url(request):
-    next_url = request.POST.get("next") or request.GET.get("next")
+def _get_safe_next_url(request, default=None):
+    next_url = (
+        request.POST.get("next")
+        or request.GET.get("next")
+        or request.META.get("HTTP_REFERER")
+    )
     if next_url and url_has_allowed_host_and_scheme(
         next_url,
         allowed_hosts={request.get_host()},
         require_https=request.is_secure(),
     ):
         return next_url
-    return None
+    return default
 
 @login_required
 def employer_applications(request):
@@ -128,11 +130,7 @@ def employer_applications(request):
 @login_required
 def job_create(request):
     """Yangi vakansiya yaratish"""
-    is_admin_user = (
-        request.user.is_staff
-        or request.user.is_superuser
-        or user_has_admin_permission(request.user, "can_create_jobs")
-    )
+    is_admin_user = user_has_admin_permission(request.user, "can_create_jobs")
 
     if not (request.user.is_employer or is_admin_user):
         messages.error(request, _("Faqat ish beruvchilar yoki adminlar vakansiya yarata oladi."))
@@ -252,11 +250,7 @@ def job_edit(request, pk):
     job = get_object_or_404(Job, pk=pk)
 
     employer_profile = None
-    is_job_admin = (
-        request.user.is_staff
-        or request.user.is_superuser
-        or user_has_admin_permission(request.user, "can_manage_jobs")
-    )
+    is_job_admin = user_has_admin_permission(request.user, "can_manage_jobs")
 
     if request.user.is_employer:
         try:
@@ -326,11 +320,7 @@ def job_delete(request, pk):
     """Vakansiyani o'chirish"""
     job = get_object_or_404(Job, pk=pk)
 
-    is_job_admin = (
-        request.user.is_staff
-        or request.user.is_superuser
-        or user_has_admin_permission(request.user, "can_manage_jobs")
-    )
+    is_job_admin = user_has_admin_permission(request.user, "can_manage_jobs")
 
     if request.user.is_employer:
         try:
@@ -469,7 +459,7 @@ def my_jobs(request):
             'employer_profile': employer_profile,
         })
 
-    elif request.user.is_student or hasattr(request.user, 'alumni'):
+    elif _is_student_or_alumni(request.user):
 
         applications = JobApplication.objects.filter(
             user=request.user
@@ -558,9 +548,7 @@ def job_list(request):
     form = JobSearchForm(request.GET or None)
     is_employer_user = getattr(request.user, "is_employer", False)
     is_admin_user = (
-        request.user.is_staff
-        or request.user.is_superuser
-        or user_has_admin_permission(request.user, "can_manage_jobs")
+        user_has_admin_permission(request.user, "can_manage_jobs")
         or user_has_admin_permission(request.user, "can_create_jobs")
     )
 
@@ -718,8 +706,8 @@ def job_list(request):
 def job_detail(request, pk):
     """Vakansiya batafsil sahifasi"""
 
-    has_alumni_profile = hasattr(request.user, 'alumni')
-    has_student_profile = hasattr(request.user, 'student_profile')
+    has_alumni_profile = request.user.user_type == "alumni"
+    has_student_profile = request.user.user_type == "student"
     is_student_or_alumni = _is_student_or_alumni(request.user)
     is_admin_user = (
         request.user.is_staff
@@ -795,9 +783,7 @@ def job_detail(request, pk):
 
     can_edit = False
     if request.user.is_authenticated:
-        if request.user.is_staff or request.user.is_superuser:
-            can_edit = True
-        elif user_has_admin_permission(request.user, "can_manage_jobs"):
+        if user_has_admin_permission(request.user, "can_manage_jobs"):
             can_edit = True
         elif request.user.is_employer:
 
@@ -835,8 +821,8 @@ def apply_for_job(request, pk):
     from django.utils import timezone
 
 
-    has_student_profile = hasattr(request.user, 'student_profile')
-    has_alumni_profile = hasattr(request.user, 'alumni')
+    has_student_profile = request.user.user_type == "student"
+    has_alumni_profile = request.user.user_type == "alumni"
 
     if not (has_student_profile or has_alumni_profile):
         messages.error(request, _("Faqat talabalar va bitiruvchilar ariza topshira oladi."))
@@ -844,6 +830,10 @@ def apply_for_job(request, pk):
 
     job = get_object_or_404(Job, pk=pk, is_active=True)
 
+    allowed, error = job.can_user_apply(request.user)
+    if not allowed:
+        messages.error(request, error)
+        return redirect("jobs:job_detail", pk=job.pk)
 
     if JobApplication.objects.filter(job=job, user=request.user).exists():
         messages.warning(request, _("Siz ushbu vakansiyaga allaqachon ariza topshirgansiz."))
@@ -851,28 +841,28 @@ def apply_for_job(request, pk):
 
 
     if job.expires_at and job.expires_at < timezone.now():
-        messages.error(request, _("Ushbu vakansiyaning muddati tugagan."))
+        messages.error(request, _("This vacancy has expired."))
         return redirect("jobs:job_detail", pk=job.pk)
 
     if request.method == "POST":
         form = JobApplicationForm(request.POST, user=request.user, job=job)
         if form.is_valid():
             try:
-                application = form.save(commit=False)
-                application.job = job
-                application.user = request.user
-                application.save()
+                with transaction.atomic():
+                    application = form.save(commit=False)
+                    application.job = job
+                    application.user = request.user
+                    application.save()
 
-
-                job.applications_count += 1
-                job.save()
+                    job.applications_count += 1
+                    job.save()
 
                 messages.success(
-                    request, _("Arizangiz muvaffaqiyatli yuborildi!")
+                    request, _("Your application has been sent successfully!")
                 )
                 return redirect("jobs:job_detail", pk=job.pk)
             except Exception as e:
-                messages.error(request, f"Xatolik yuz berdi: {str(e)}")
+                messages.error(request, f"An error occurred: {str(e)}")
         else:
 
             for field, errors in form.errors.items():
@@ -908,9 +898,9 @@ def save_job(request, pk):
         })
 
     if created:
-        messages.success(request, _("Vakansiya muvaffaqiyatli saqlandi!"))
+        messages.success(request, _("Vacancy saved successfully!"))
     else:
-        messages.info(request, _("Vakansiya allaqachon saqlangan."))
+        messages.info(request, _("The vacancy has already been saved."))
 
     next_url = _get_safe_next_url(request)
     if next_url:
@@ -938,12 +928,7 @@ def unsave_job(request, pk):
             "saved_jobs_count": saved_jobs_count,
         })
 
-    if deleted_count:
-        messages.success(request, _("Vakansiya saqlanganlardan o'chirildi."))
-    else:
-        messages.info(request, _("Vakansiya saqlanganlarda topilmadi."))
-
-    next_url = _get_safe_next_url(request)
+    next_url = _get_safe_next_url(request, default=reverse("jobs:saved_jobs"))
     if next_url:
         return redirect(next_url)
 
@@ -1024,8 +1009,8 @@ def get_user_cvs(request):
     """Foydalanuvchi rezyumelarini olish (AJAX)"""
     from cvbuilder.models import CV
 
-    has_student_profile = hasattr(request.user, 'student_profile')
-    has_alumni_profile = hasattr(request.user, 'alumni')
+    has_student_profile = request.user.user_type == "student"
+    has_alumni_profile = request.user.user_type == "alumni"
 
     if not (has_student_profile or has_alumni_profile):
         return JsonResponse({"error": "Permission denied"}, status=403)
@@ -1065,7 +1050,7 @@ def application_detail(request, pk):
         return JsonResponse({"error": "Ruxsat rad etildi"}, status=403)
 
     student_certificates = []
-    student_profile = getattr(application.user, "student_profile", None)
+    student_profile = application.user
     if student_profile is not None:
         student_certificates = get_viewable_student_certificates_queryset(
             request.user,
@@ -1117,7 +1102,7 @@ def job_settings(request, pk):
 
 
     can_edit = False
-    if request.user.is_staff:
+    if user_has_admin_permission(request.user, "can_manage_jobs"):
         can_edit = True
     elif request.user.is_employer:
         try:
@@ -1145,15 +1130,11 @@ def update_job_settings(request, pk):
 
 
     can_edit = False
-    if request.user.is_staff:
+    if user_has_admin_permission(request.user, "can_manage_jobs"):
         can_edit = True
     elif request.user.is_employer:
         try:
             employer_profile = EmployerProfile.objects.get(user=request.user)
-            user_companies = Company.objects.filter(owner=request.user, is_active=True)
-            can_edit = job.company in user_companies
-        except EmployerProfile.DoesNotExist:
-            can_edit = False
             user_companies = Company.objects.filter(owner=request.user, is_active=True)
             can_edit = job.company in user_companies
         except EmployerProfile.DoesNotExist:

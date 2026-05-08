@@ -53,8 +53,9 @@ def student_certificate_upload_to(instance, filename):
     extension = Path(filename).suffix.lower().lstrip(".")
     safe_extension = extension if extension in CERTIFICATE_ALLOWED_EXTENSIONS else "bin"
     timestamp = timezone.now()
+    student_pk = getattr(instance.student, "pk", None) or getattr(instance.student, "id", None)
     return (
-        f"student_certificates/student_{instance.student.user_id}/"
+        f"student_certificates/student_{student_pk}/"
         f"{timestamp:%Y/%m}/{uuid.uuid4().hex}.{safe_extension}"
     )
 
@@ -169,7 +170,10 @@ def can_user_view_student_certificate(user, certificate):
     if not getattr(user, "is_authenticated", False):
         return False
 
-    if certificate.student.user_id == user.id:
+    if not certificate.student:
+        return False
+
+    if certificate.student.id == user.id:
         return True
 
     if getattr(user, "is_staff", False) or getattr(user, "is_superuser", False):
@@ -184,13 +188,13 @@ def can_user_view_student_certificate(user, certificate):
     return can_employer_view_student_certificates(user, certificate.student.user)
 
 
-def get_viewable_student_certificates_queryset(user, student_profile):
-    queryset = student_profile.certificates.order_by("-uploaded_at")
+def get_viewable_student_certificates_queryset(user, student_user):
+    queryset = student_user.certificates.order_by("-uploaded_at")
 
     if not getattr(user, "is_authenticated", False):
         return queryset.none()
 
-    if student_profile.user_id == user.id:
+    if student_user.id == user.id:
         return queryset
 
     if getattr(user, "is_staff", False) or getattr(user, "is_superuser", False):
@@ -199,7 +203,7 @@ def get_viewable_student_certificates_queryset(user, student_profile):
     if getattr(user, "is_admin", False):
         return queryset
 
-    if can_employer_view_student_certificates(user, student_profile.user):
+    if can_employer_view_student_certificates(user, student_user):
         return queryset.filter(is_active=True)
 
     return queryset.none()

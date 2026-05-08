@@ -1,0 +1,10 @@
+<html>
+  <body>
+    <p>Hello {{ user.get_full_name|default:user.username }},</p>
+    <p>Thank you for applying for the position "{{ job.title }}" at {{ job.company.name }}.</p>
+    <p>We have received your application and will review it shortly.</p>
+    <h3>Cover Letter</h3>
+    <p>{{ application.cover_letter|linebreaksbr }}</p>
+    <p>Best regards,<br>The {{ job.company.name }} team</p>
+  </body>
+</html>

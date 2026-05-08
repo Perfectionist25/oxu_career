@@ -221,7 +221,7 @@
                                     </button>
 
                                     <ul class="dropdown-menu dropdown-menu-end site-dropdown-menu">
-                                        {% if user.is_student %}
+                                        {% if user.is_student or user.is_alumni %}
                                         <li>
                                             <a class="dropdown-item site-dropdown-item" href="{% url 'accounts:student_dashboard' %}">
                                                 <i class="fas fa-tachometer-alt me-2"></i>
@@ -235,7 +235,7 @@
                                                 <span>{% trans "Company Cabinet" %}</span>
                                             </a>
                                         </li>
-                                        {% elif user.is_admin or user.is_main_admin %}
+                                        {% elif user.is_admin or user.is_international_admin or user.is_main_admin %}
                                         <li>
                                             <a class="dropdown-item site-dropdown-item" href="{% url 'accounts:admin_dashboard' %}">
                                                 <i class="fas fa-cogs me-2"></i>
@@ -363,7 +363,7 @@
                     </a>
                 </li>
 
-                {% if user.is_student %}
+                {% if user.is_student or user.is_alumni %}
                 <li>
                     <a class="site-sidebar__link" href="{% url 'jobs:list' %}">
                         <i class="fas fa-briefcase"></i>
@@ -401,7 +401,7 @@
                         <span>{% trans "Public Resumes" %}</span>
                     </a>
                 </li>
-                {% elif user.is_admin or user.is_main_admin %}
+                {% elif user.is_admin or user.is_international_admin or user.is_main_admin %}
                 <li>
                     <a class="site-sidebar__link" href="{% url 'jobs:list' %}">
                         <i class="fas fa-briefcase"></i>

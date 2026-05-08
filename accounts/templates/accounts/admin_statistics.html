@@ -26,6 +26,7 @@
                 <div class="stats-number">{{ users.total }}</div>
                 <div class="stats-meta">
                     <span>{% trans "Students" %}: <strong>{{ users.students }}</strong></span>
+                    <span>{% trans "Alumni" %}: <strong>{{ users.alumni }}</strong></span>
                     <span>{% trans "Employers" %}: <strong>{{ users.employers }}</strong></span>
                 </div>
             </div>
@@ -87,6 +88,16 @@
                             </div>
                             <div class="progress slim-progress">
                                 <div class="progress-bar bg-primary" style="width: {% widthratio users.students users.total 100 %}%"></div>
+                            </div>
+                        </div>
+
+                        <div class="progress-stat mb-3">
+                            <div class="d-flex justify-content-between small mb-1">
+                                <span>{% trans "Alumni" %}</span>
+                                <strong>{{ users.alumni }}</strong>
+                            </div>
+                            <div class="progress slim-progress">
+                                <div class="progress-bar bg-info" style="width: {% widthratio users.alumni users.total 100 %}%"></div>
                             </div>
                         </div>
 
@@ -312,6 +323,7 @@ document.addEventListener("DOMContentLoaded", function () {
         data: {
             labels: [
                 "{% trans 'Students' %}",
+                "{% trans 'Alumni' %}",
                 "{% trans 'Employers' %}",
                 "{% trans 'Admins' %}",
                 "{% trans 'International Admins' %}",
@@ -322,6 +334,7 @@ document.addEventListener("DOMContentLoaded", function () {
             datasets: [{
                 data: [
                     {{ users.students|default:0 }},
+                    {{ users.alumni|default:0 }},
                     {{ users.employers|default:0 }},
                     {{ users.admins|default:0 }},
                     {{ users.international_admins|default:0 }},
@@ -331,9 +344,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 ],
                 backgroundColor: [
                     '#4f46e5',
+                    '#0ea5e9',
                     '#22c55e',
                     '#f59e0b',
-                    '#0ea5e9',
+                    '#38bdf8',
                     '#ef4444',
                     '#06b6d4',
                     '#94a3b8'

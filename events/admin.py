@@ -99,6 +99,18 @@ class EventAdmin(admin.ModelAdmin):
             },
         ),
         (
+            _("Registration Settings"),
+            {
+                "fields": (
+                    "allow_students",
+                    "allow_alumni",
+                    "allow_employers",
+                    "allow_admins",
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+        (
             _("Media"),
             {
                 "fields": ("banner_image", "thumbnail"),

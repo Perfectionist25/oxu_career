@@ -1,12 +1,16 @@
 import logging
+from django.conf import settings
 from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseServerError, StreamingHttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
+from django.views.static import serve
 
 
 from events.models import Event
@@ -26,7 +30,7 @@ def home(request):
     """Главная страница"""
 
     stats = {
-        "alumni_count": CustomUser.objects.filter(user_type='student').count(),
+        "alumni_count": CustomUser.objects.filter(user_type__in=['student', 'alumni']).count(),
         "jobs_count": Job.objects.filter(is_active=True).count(),
         "companies_count": Company.objects.filter(is_active=True).count(),
         "resources_count": Resource.objects.filter(is_published=True).count(),
@@ -66,6 +70,12 @@ def home(request):
         "resources_admin_stats": resources_admin_stats,
     }
     return render(request, "home.html", context)
+
+
+@login_required(login_url="accounts:login")
+def protected_media(request, path):
+    """Serve protected media only for authenticated users."""
+    return serve(request, path, document_root=settings.PROTECTED_MEDIA_ROOT)
 
 
 def about(request):
@@ -414,3 +424,5 @@ def admin_stats(request):
         "page_title": "Системная статистика",
     }
     return render(request, "core/admin_stats.html", context)
+
+

@@ -58,6 +58,12 @@
                             <span>{% trans "Students" %}</span>
                         </a>
 
+                        <a href="?user_type=alumni{% if search_query %}&search={{ search_query|urlencode }}{% endif %}"
+                           class="filter-pill filter-alumni {% if user_type_filter == 'alumni' %}active{% endif %}">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>{% trans "Alumni" %}</span>
+                        </a>
+
                         <a href="?user_type=employer{% if search_query %}&search={{ search_query|urlencode }}{% endif %}"
                            class="filter-pill filter-employer {% if user_type_filter == 'employer' %}active{% endif %}">
                             <i class="fas fa-building"></i>

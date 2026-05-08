@@ -15,7 +15,7 @@ from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.views.generic import ListView
 
-from accounts.models import StudentProfile, user_has_admin_permission
+from accounts.models import CustomUser, user_has_admin_permission
 
 from .forms import CVForm, EducationForm, ExperienceForm, SkillForm, LanguageForm
 from .models import CV, CVTemplate, Education, Experience, Skill, Language, Project, Certificate
@@ -29,15 +29,13 @@ TEMPLATE_DIR = "cv_render"
 
 def get_student_profile(user):
     """
-    Возвращает StudentProfile текущего пользователя или None.
-    Работает и для admin, если у него есть student_profile.
+    Возвращает CustomUser текущего пользователя или None.
     """
-    return getattr(user, "student_profile", None)
+    return user if user.is_student_or_alumni else None
 
 
 def is_owner(request_user, cv: CV) -> bool:
-    profile = get_student_profile(request_user)
-    return bool(profile) and cv.user_id == profile.id
+    return cv.user_id == request_user.id
 
 
 def can_view_cv(user, cv: CV) -> bool:
@@ -125,16 +123,15 @@ class CVListView(ListView):
 
 @login_required
 def cv_create(request):
-    profile = get_student_profile(request.user)
-    if not profile:
-        messages.error(request, _("Only users with StudentProfile can create CVs."))
+    if not request.user.is_student_or_alumni:
+        messages.error(request, _("Only students and alumni can create CVs."))
         return redirect("cvbuilder:cv_list")
 
     if request.method == "POST":
         form = CVForm(request.POST, request.FILES)
         if form.is_valid():
             cv = form.save(commit=False)
-            cv.user = profile
+            cv.user = request.user
             cv.save()
             messages.success(request, _("Resume successfully created!"))
             return redirect("cvbuilder:cv_edit", pk=cv.pk)
@@ -148,12 +145,11 @@ def cv_create(request):
 
 @login_required
 def cv_edit(request, pk):
-    profile = get_student_profile(request.user)
-    if not profile:
-        messages.error(request, _("You don't have StudentProfile."))
+    if not request.user.is_student_or_alumni:
+        messages.error(request, _("Only students and alumni can edit CVs."))
         return redirect("cvbuilder:cv_list")
 
-    cv = get_object_or_404(CV, pk=pk, user=profile)
+    cv = get_object_or_404(CV, pk=pk, user=request.user)
 
     if request.method == "POST":
         form = CVForm(request.POST, request.FILES, instance=cv)
@@ -243,20 +239,19 @@ def cv_export_pdf(request, pk):
 
 @login_required
 def cv_duplicate(request, pk):
-    profile = get_student_profile(request.user)
-    if not profile:
-        messages.error(request, _("You don't have StudentProfile."))
+    if not request.user.is_student_or_alumni:
+        messages.error(request, _("Only students and alumni can duplicate CVs."))
         return redirect("cvbuilder:cv_list")
 
     original = get_object_or_404(
         CV.objects.prefetch_related("educations", "experiences", "skills", "languages", "projects", "certificates"),
         pk=pk,
-        user=profile,
+        user=request.user,
     )
 
 
     new_cv = CV.objects.create(
-        user=profile,
+        user=request.user,
         title=f"{original.title} (nusxa)",
         template=original.template,
         status="draft",
@@ -384,12 +379,11 @@ def cv_duplicate(request, pk):
 
 @login_required
 def cv_delete(request, pk):
-    profile = get_student_profile(request.user)
-    if not profile:
-        messages.error(request, _("You don't have StudentProfile."))
+    if not request.user.is_student_or_alumni:
+        messages.error(request, _("Only students and alumni can delete CVs."))
         return redirect("cvbuilder:cv_list")
 
-    cv = get_object_or_404(CV, pk=pk, user=profile)
+    cv = get_object_or_404(CV, pk=pk, user=request.user)
 
     if request.method == "POST":
         title = cv.title
@@ -406,12 +400,11 @@ def cv_delete(request, pk):
 
 @login_required
 def update_cv_status(request, pk):
-    profile = get_student_profile(request.user)
-    if not profile:
-        messages.error(request, _("You don't have StudentProfile."))
+    if not request.user.is_student_or_alumni:
+        messages.error(request, _("Only students and alumni can update CV status."))
         return redirect("cvbuilder:cv_list")
 
-    cv = get_object_or_404(CV, pk=pk, user=profile)
+    cv = get_object_or_404(CV, pk=pk, user=request.user)
 
     if request.method == "POST":
         new_status = request.POST.get("status")
@@ -532,12 +525,11 @@ def public_cv_list(request):
 
 @login_required
 def cv_stats(request):
-    profile = get_student_profile(request.user)
-    if not profile:
-        messages.error(request, _("You don't have StudentProfile."))
+    if not request.user.is_student_or_alumni:
+        messages.error(request, _("Only students and alumni can view CV stats."))
         return redirect("cvbuilder:cv_list")
 
-    cvs = CV.objects.filter(user=profile)
+    cvs = CV.objects.filter(user=request.user)
 
     total_cvs = cvs.count()
     published_cvs = cvs.filter(status="published").count()
@@ -571,11 +563,10 @@ def cv_stats(request):
 
 @login_required
 def add_education(request, pk):
-    profile = get_student_profile(request.user)
-    if not profile:
-        return JsonResponse({"success": False, "error": "No StudentProfile"}, status=403)
+    if not request.user.is_student_or_alumni:
+        return JsonResponse({"success": False, "error": "Only students and alumni"}, status=403)
 
-    cv = get_object_or_404(CV, pk=pk, user=profile)
+    cv = get_object_or_404(CV, pk=pk, user=request.user)
 
     if request.method == "POST":
         form = EducationForm(request.POST)
@@ -591,11 +582,10 @@ def add_education(request, pk):
 
 @login_required
 def add_experience(request, pk):
-    profile = get_student_profile(request.user)
-    if not profile:
-        return JsonResponse({"success": False, "error": "No StudentProfile"}, status=403)
+    if not request.user.is_student_or_alumni:
+        return JsonResponse({"success": False, "error": "Only students and alumni"}, status=403)
 
-    cv = get_object_or_404(CV, pk=pk, user=profile)
+    cv = get_object_or_404(CV, pk=pk, user=request.user)
 
     if request.method == "POST":
         form = ExperienceForm(request.POST)
@@ -611,11 +601,10 @@ def add_experience(request, pk):
 
 @login_required
 def add_skill(request, pk):
-    profile = get_student_profile(request.user)
-    if not profile:
-        return JsonResponse({"success": False, "error": "No StudentProfile"}, status=403)
+    if not request.user.is_student_or_alumni:
+        return JsonResponse({"success": False, "error": "Only students and alumni"}, status=403)
 
-    cv = get_object_or_404(CV, pk=pk, user=profile)
+    cv = get_object_or_404(CV, pk=pk, user=request.user)
 
     if request.method == "POST":
         form = SkillForm(request.POST)
@@ -631,11 +620,10 @@ def add_skill(request, pk):
 
 @login_required
 def add_language(request, pk):
-    profile = get_student_profile(request.user)
-    if not profile:
-        return JsonResponse({"success": False, "error": "No StudentProfile"}, status=403)
+    if not request.user.is_student_or_alumni:
+        return JsonResponse({"success": False, "error": "Only students and alumni"}, status=403)
 
-    cv = get_object_or_404(CV, pk=pk, user=profile)
+    cv = get_object_or_404(CV, pk=pk, user=request.user)
 
     if request.method == "POST":
         form = LanguageForm(request.POST)
@@ -651,44 +639,40 @@ def add_language(request, pk):
 
 @login_required
 def delete_education(request, pk):
-    profile = get_student_profile(request.user)
-    if not profile:
-        return JsonResponse({"success": False, "error": "No StudentProfile"}, status=403)
+    if not request.user.is_student_or_alumni:
+        return JsonResponse({"success": False, "error": "Only students and alumni"}, status=403)
 
-    education = get_object_or_404(Education, pk=pk, cv__user=profile)
+    education = get_object_or_404(Education, pk=pk, cv__user=request.user)
     education.delete()
     return JsonResponse({"success": True})
 
 
 @login_required
 def delete_experience(request, pk):
-    profile = get_student_profile(request.user)
-    if not profile:
-        return JsonResponse({"success": False, "error": "No StudentProfile"}, status=403)
+    if not request.user.is_student_or_alumni:
+        return JsonResponse({"success": False, "error": "Only students and alumni"}, status=403)
 
-    experience = get_object_or_404(Experience, pk=pk, cv__user=profile)
+    experience = get_object_or_404(Experience, pk=pk, cv__user=request.user)
     experience.delete()
     return JsonResponse({"success": True})
 
 
 @login_required
 def delete_skill(request, pk):
-    profile = get_student_profile(request.user)
-    if not profile:
-        return JsonResponse({"success": False, "error": "No StudentProfile"}, status=403)
+    if not request.user.is_student_or_alumni:
+        return JsonResponse({"success": False, "error": "Only students and alumni"}, status=403)
 
-    skill = get_object_or_404(Skill, pk=pk, cv__user=profile)
+    skill = get_object_or_404(Skill, pk=pk, cv__user=request.user)
     skill.delete()
     return JsonResponse({"success": True})
 
 
 @login_required
 def delete_language(request, pk):
-    profile = get_student_profile(request.user)
-    if not profile:
-        return JsonResponse({"success": False, "error": "No StudentProfile"}, status=403)
+    if not request.user.is_student_or_alumni:
+        return JsonResponse({"success": False, "error": "Only students and alumni"}, status=403)
 
-    language = get_object_or_404(Language, pk=pk, cv__user=profile)
+    language = get_object_or_404(Language, pk=pk, cv__user=request.user)
     language.delete()
     return JsonResponse({"success": True})
 
@@ -699,15 +683,12 @@ def delete_language(request, pk):
 def template_preview(request, template_id):
     template = get_object_or_404(CVTemplate, pk=template_id, is_active=True)
 
-
-    profile = get_student_profile(request.user)
-    if not profile:
-        messages.error(request, _("Only users with StudentProfile can preview templates."))
+    if not request.user.is_student_or_alumni:
+        messages.error(request, _("Only students and alumni can preview templates."))
         return redirect("cvbuilder:template_selector")
 
-
     cv = (
-        CV.objects.filter(user=profile)
+        CV.objects.filter(user=request.user)
         .select_related("template", "user")
         .prefetch_related("skills", "experiences", "educations", "languages", "projects", "certificates")
         .filter(status="published")

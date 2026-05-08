@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load static %}
+{% load media_extras %}
 
 {% block title %}{% trans "Events" %}{% endblock %}
 
@@ -154,7 +155,7 @@
 
             <div class="banner">
                 {% if event.banner_image %}
-                    <img src="{{ event.banner_image.url }}" alt="{{ event.title }}" loading="lazy">
+                    <img src="{{ event.banner_image|optimized_media:'640x360' }}" alt="{{ event.title }}" loading="lazy" decoding="async">
                 {% else %}
                     <div class="banner-placeholder">
                         <i class="fas fa-calendar-alt"></i>

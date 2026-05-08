@@ -12,10 +12,6 @@ class OAuthBackend(BaseBackend):
     """
 
     def authenticate(self, request, **kwargs):
-        """
-        Аутентификация через OAuth для студентов.
-        Для employer/admin используется стандартная аутентификация.
-        """
 
         code = kwargs.get('code')
         state = kwargs.get('state')

@@ -177,7 +177,9 @@ class Job(models.Model):
 
     company = models.ForeignKey(
         Company,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="jobs",
         verbose_name=_("Company"),
         help_text=_("Company posting this job")
@@ -359,14 +361,18 @@ class JobApplication(models.Model):
 
     job = models.ForeignKey(
         Job,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="applications",
         verbose_name=_("Job"),
         help_text=_("Job position being applied for")
     )
     candidate = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="employer_applications",
         verbose_name=_("Candidate"),
         help_text=_("User applying for the job")
@@ -439,20 +445,24 @@ class CandidateNote(models.Model):
 
     candidate = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="employer_notes",
         verbose_name=_("Candidate"),
         help_text=_("Candidate this note is about")
     )
     employer = models.ForeignKey(
         EmployerProfile,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         verbose_name=_("Employer"),
         help_text=_("Employer who wrote this note")
     )
     job = models.ForeignKey(
         Job,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
         verbose_name=_("Job"),
@@ -501,14 +511,18 @@ class Interview(models.Model):
 
     application = models.ForeignKey(
         JobApplication,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="interviews",
         verbose_name=_("Application"),
         help_text=_("Job application this interview is for")
     )
     interviewer = models.ForeignKey(
         EmployerProfile,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         verbose_name=_("Interviewer"),
         help_text=_("Employer conducting the interview")
     )
@@ -583,14 +597,18 @@ class CompanyReview(models.Model):
 
     company = models.ForeignKey(
         Company,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="reviews",
         verbose_name=_("Company"),
         help_text=_("Company being reviewed")
     )
     author = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="employer_reviews",
         verbose_name=_("Author"),
         help_text=_("User who wrote the review")

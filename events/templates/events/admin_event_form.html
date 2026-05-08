@@ -630,6 +630,41 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <div class="text-danger small mt-1" id="{{ form.max_participants.id_for_label }}_error"></div>
                                 </div>
                                 <div class="col-md-8">
+                                    <label class="form-label fw-bold">
+                                        {% trans "Allowed registration roles" %}
+                                    </label>
+                                    <div class="form-check mb-2">
+                                        {{ form.allow_students }}
+                                        <label class="form-check-label" for="{{ form.allow_students.id_for_label }}">
+                                            {{ form.allow_students.label }}
+                                        </label>
+                                        <div class="form-text">{% trans "Allow students to register for this event" %}</div>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        {{ form.allow_alumni }}
+                                        <label class="form-check-label" for="{{ form.allow_alumni.id_for_label }}">
+                                            {{ form.allow_alumni.label }}
+                                        </label>
+                                        <div class="form-text">{% trans "Allow alumni to register for this event" %}</div>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        {{ form.allow_employers }}
+                                        <label class="form-check-label" for="{{ form.allow_employers.id_for_label }}">
+                                            {{ form.allow_employers.label }}
+                                        </label>
+                                        <div class="form-text">{% trans "Allow employers to register for this event" %}</div>
+                                    </div>
+                                    <div class="form-check">
+                                        {{ form.allow_admins }}
+                                        <label class="form-check-label" for="{{ form.allow_admins.id_for_label }}">
+                                            {{ form.allow_admins.label }}
+                                        </label>
+                                        <div class="form-text">{% trans "Allow admin users to register for this event" %}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-8">
                                     <label for="{{ form.allowed_employer_categories.id_for_label }}" class="form-label fw-bold">
                                         {{ form.allowed_employer_categories.label }}
                                     </label>

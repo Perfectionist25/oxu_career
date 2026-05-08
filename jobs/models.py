@@ -82,7 +82,9 @@ class Job(models.Model):
 
     company = models.ForeignKey(
         "accounts.Company",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="jobs",
         verbose_name=_("Company"),
         help_text=_("The company offering this job")
@@ -99,7 +101,7 @@ class Job(models.Model):
 
     created_by = models.ForeignKey(
         EmployerProfile,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
         verbose_name=_("Created By"),
@@ -153,6 +155,12 @@ class Job(models.Model):
         choices=EDUCATION_LEVEL_CHOICES,
         verbose_name=_("Education Level"),
         help_text=_("Required education level")
+    )
+    target_user_types = models.JSONField(
+        default=list,
+        blank=True,
+        verbose_name=_("Target User Types"),
+        help_text=_("User types this job is targeted for (e.g., ['student', 'alumni'])")
     )
 
 
@@ -340,6 +348,34 @@ class Job(models.Model):
         help_text=_("The industry of the job (e.g., IT, Finance, Healthcare)")
     )
 
+    CANDIDATE_TYPE_CHOICES = [
+        ("all", _("All candidates")),
+        ("students", _("Students")),
+        ("graduates", _("Graduates")),
+    ]
+
+    GENDER_REQUIREMENT_CHOICES = [
+        ("all", _("All genders")),
+        ("female", _("Female only")),
+        ("male", _("Male only")),
+    ]
+
+    candidate_type = models.CharField(
+        max_length=20,
+        choices=CANDIDATE_TYPE_CHOICES,
+        default="all",
+        verbose_name=_("Allowed Candidate Type"),
+        help_text=_("Restrict applications to students, graduates, or allow all."),
+    )
+
+    gender_requirement = models.CharField(
+        max_length=20,
+        choices=GENDER_REQUIREMENT_CHOICES,
+        default="all",
+        verbose_name=_("Applicant Gender"),
+        help_text=_("Restrict applications by candidate gender."),
+    )
+
     class Meta:
         verbose_name = _("Job")
         verbose_name_plural = _("Jobs")
@@ -411,8 +447,44 @@ class Job(models.Model):
         else:
             parts.extend([self.location, self.district, self.region])
 
-        parts = [part for part in parts if part]
-        return ", ".join(parts) if parts else _("Not specified")
+    def get_candidate_type_display_map(self):
+        return {
+            "student": _("Students"),
+            "alumni": _("Alumni"),
+            "employer": _("Employers"),
+            "admin": _("Admins"),
+        }
+
+    def can_user_apply(self, user):
+        """Return a tuple (allowed, error_message) for a user applying to this job."""
+        if not user or not user.is_authenticated:
+            return False, _("You must be logged in to apply.")
+
+        # Check target user types if specified
+        if self.target_user_types:
+            if user.user_type not in self.target_user_types:
+                user_type_display = dict(self.get_candidate_type_display_map()).get(user.user_type, user.user_type)
+                return False, _("This vacancy is open only to {types}.").format(
+                    types=", ".join([dict(self.get_candidate_type_display_map()).get(t, t) for t in self.target_user_types])
+                )
+
+        # Legacy candidate_type check
+        is_student = user.user_type == "student"
+        is_graduate = user.user_type == "alumni"
+
+        if self.candidate_type == "students" and not is_student:
+            return False, _("This vacancy is open only to current students.")
+        if self.candidate_type == "graduates" and not is_graduate:
+            return False, _("This vacancy is open only to graduates.")
+
+        if self.gender_requirement != "all":
+            user_gender = getattr(user, "gender", None)
+            if not user_gender:
+                return False, _("Your profile does not specify a gender required for this vacancy.")
+            if self.gender_requirement != user_gender:
+                return False, _("Your gender does not match the vacancy requirements.")
+
+        return True, None
 
     def short_requirements(self):
         if len(self.requirements) > 150:
@@ -475,7 +547,9 @@ class JobApplication(models.Model):
     )
     user = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         verbose_name=_("Candidate"),
         help_text=_("The user applying for the job"),
         related_name="job_applications"
@@ -497,7 +571,7 @@ class JobApplication(models.Model):
 
 
     expected_salary = models.DecimalField(
-        max_digits=10,
+        max_digits=15,
         decimal_places=2,
         null=True,
         blank=True,
@@ -578,7 +652,9 @@ class SavedJob(models.Model):
 
     user = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="saved_jobs",
         verbose_name=_("User"),
         help_text=_("User who saved the job")
@@ -611,7 +687,9 @@ class ViewedJob(models.Model):
 
     user = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="viewed_jobs",
         verbose_name=_("User"),
         help_text=_("User who viewed the job"),
@@ -655,7 +733,9 @@ class JobAlert(models.Model):
 
     user = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="job_alert_subscriptions",
         verbose_name=_("User"),
         help_text=_("User who created the alert")
@@ -744,14 +824,18 @@ class ApplicationNote(models.Model):
     """Заметки к заявкам на вакансии для работодателей"""
     application = models.ForeignKey(
         JobApplication,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="notes",
         verbose_name=_("Job Application"),
         help_text=_("The job application this note is attached to")
     )
     author = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         verbose_name=_("Author"),
         help_text=_("User who created the note"),
         related_name="application_notes"

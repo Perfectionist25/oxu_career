@@ -42,6 +42,11 @@ REGION_CHOICES = [
     ("Tashkent City", _("Tashkent City")),
 ]
 
+USER_TYPE_CHOICES = [
+    ("student", _("Students")),
+    ("alumni", _("Alumni")),
+]
+
 
 class JobForm(forms.ModelForm):
     """Form for creating/editing jobs with comprehensive validation"""
@@ -75,12 +80,13 @@ class JobForm(forms.ModelForm):
         fields = [
             "title", "short_description", "description", "company", "job_market", "location",
             "region", "district", "work_type", "employment_type", "experience_level",
-            "education_level", "salary_min", "salary_max", "currency", "hide_salary",
+            "education_level", "target_user_types", "salary_min", "salary_max", "currency", "hide_salary",
             "salary_negotiable", "bonus_system", "kpi_bonus", "performance_bonus",
             "requirements", "responsibilities", "benefits", "skills_required",
             "preferred_skills", "language_requirements", "contact_email",
             "contact_phone", "contact_person", "application_url", "work_schedule",
-            "probation_period", "expires_at", "industry"
+            "probation_period", "expires_at", "industry",
+            "candidate_type", "gender_requirement"
         ]
 
 
@@ -100,8 +106,6 @@ class JobForm(forms.ModelForm):
         for field in required_fields:
             if field in self.fields:
                 self.fields[field].required = True
-
-                self.fields[field].label = f"{self.fields[field].label} *"
 
 
         if self.user and self.user.is_authenticated:
@@ -132,22 +136,39 @@ class JobForm(forms.ModelForm):
             else:
 
                 self.fields['company'].widget = forms.HiddenInput()
-                self.fields['company'].required = False
-        else:
-            self.fields['company'].widget = forms.HiddenInput()
-            self.fields['company'].required = False
 
+        # Set up target_user_types field as a single choice selector
+        self.fields['target_user_types'] = forms.ChoiceField(
+            choices=[
+                ('', _('Select target audience...')),
+                ('all', _('Students and Alumni')),
+                ('student', _('Students')),
+                ('alumni', _('Alumni')),
+            ],
+            required=False,
+            widget=forms.Select(attrs={'class': 'form-select'}),
+            label=_("Target Audience"),
+            help_text=_("Choose who can apply for this job.")
+        )
+
+        if self.instance and self.instance.pk:
+            target_types = set(self.instance.target_user_types or [])
+            if target_types == {"student", "alumni"} or not target_types:
+                self.fields['target_user_types'].initial = 'all'
+            elif target_types == {"student"}:
+                self.fields['target_user_types'].initial = 'student'
+            elif target_types == {"alumni"}:
+                self.fields['target_user_types'].initial = 'alumni'
+            else:
+                self.fields['target_user_types'].initial = 'all'
 
         select_fields = ['company', 'job_market', 'work_type', 'employment_type', 'experience_level',
-                        'education_level', 'currency', 'region', 'industry']
+                        'education_level', 'currency', 'region', 'industry', 'candidate_type', 'gender_requirement', 'target_user_types']
         for field in select_fields:
             if field in self.fields:
-                if field == 'industry':
-
-                    self.fields[field].widget.attrs['class'] = 'form-select'
-                elif field != 'company' and hasattr(self.fields[field], 'empty_label'):
+                self.fields[field].widget.attrs['class'] = 'form-select'
+                if field != 'company' and hasattr(self.fields[field], 'empty_label'):
                     self.fields[field].empty_label = _("Please select...")
-                    self.fields[field].widget.attrs['class'] = 'form-select'
                 # Make required select fields more obvious
                 if field in ['work_type', 'employment_type', 'experience_level', 'education_level']:
                     self.fields[field].widget.attrs['required'] = 'required'
@@ -223,6 +244,14 @@ class JobForm(forms.ModelForm):
                 cleaned_data['region'] = 'Tashkent'
             elif 'Samarkand' in location or 'Samarqand' in location:
                 cleaned_data['region'] = 'Samarkand'
+
+        audience = cleaned_data.get('target_user_types')
+        if audience == 'student':
+            cleaned_data['target_user_types'] = ['student']
+        elif audience == 'alumni':
+            cleaned_data['target_user_types'] = ['alumni']
+        else:
+            cleaned_data['target_user_types'] = ['student', 'alumni']
 
         return cleaned_data
 
@@ -455,22 +484,23 @@ class JobApplicationForm(forms.ModelForm):
         if self.user:
             from cvbuilder.models import CV
 
-            student_profile = getattr(self.user, "student_profile", None)
-
-            if student_profile:
-
-                self.fields["cv"].queryset = CV.objects.filter(
-                    user=student_profile,
-                    status="published",
-                )
-            else:
-
-                self.fields["cv"].queryset = CV.objects.none()
+            self.fields["cv"].queryset = CV.objects.filter(
+                user=self.user,
+                status="published",
+            )
 
 
         # Make cover letter and CV required
         self.fields['cover_letter'].required = True
         self.fields['cv'].required = True
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if self.job and self.user:
+            allowed, error = self.job.can_user_apply(self.user)
+            if not allowed:
+                raise forms.ValidationError(error)
+        return cleaned_data
 
     def clean_expected_salary(self):
         expected_salary = self.cleaned_data.get('expected_salary')

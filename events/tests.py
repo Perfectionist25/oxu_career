@@ -74,6 +74,26 @@ class EventParticipationTests(TestCase):
             ).exists()
         )
 
+    def test_alumni_can_register_for_event(self):
+        alumni = CustomUser.objects.create_user(
+            username="alumni1",
+            password="testpass123",
+            user_type="alumni",
+            email="alumni1@example.com",
+        )
+        self.client.login(username="alumni1", password="testpass123")
+
+        response = self.client.post(reverse("events:join_event", args=[self.event.slug]))
+
+        self.assertRedirects(response, reverse("events:event_detail", args=[self.event.slug]))
+        self.assertTrue(
+            EventParticipation.objects.filter(
+                event=self.event,
+                user=alumni,
+                status=EventParticipation.STATUS_REGISTERED,
+            ).exists()
+        )
+
     def test_capacity_is_enforced(self):
         EventParticipation.objects.create(event=self.event, user=self.student, role="student")
         EventParticipation.objects.create(event=self.event, user=self.student_two, role="student")
