@@ -232,18 +232,27 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 
 
+DB_ENGINE = (os.getenv("DB_ENGINE") or "django.db.backends.postgresql").strip()
+DEFAULT_DB_PORT = "3306" if "mysql" in DB_ENGINE else "5432"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("DB_NAME", "mydb"),
-        "USER": os.getenv("DB_USER", "myuser"),
-        "PASSWORD": os.getenv("DB_PASSWORD", "password"),
-        "HOST": os.getenv("DB_HOST", "localhost"),
-        "PORT": os.getenv("DB_PORT", "5432"),
+if not DEBUG:
+    DATABASES = {
+        "default": {
+            "ENGINE": DB_ENGINE,
+            "NAME": os.getenv("DB_NAME", "mydb"),
+            "USER": os.getenv("DB_USER", "myuser"),
+            "PASSWORD": os.getenv("DB_PASSWORD", "password"),
+            "HOST": os.getenv("DB_HOST", "localhost"),
+            "PORT": os.getenv("DB_PORT", DEFAULT_DB_PORT),
+        }
     }
-}
-
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 
 
