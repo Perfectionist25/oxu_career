@@ -59,7 +59,12 @@
             {% if resource.image %}
             <div class="card shadow-sm mb-4">
                 <div class="card-body p-0">
-                    <img src="{{ resource.image.url }}" alt="{{ resource.title }}" class="img-fluid w-100 rounded-top" style="max-height: 400px; object-fit: cover;">
+                    <div class="resource-image-viewer" onclick="openResourceImageModal('{{ resource.image.url }}', '{{ resource.title|escapejs }}')">
+                        <img src="{{ resource.image.url }}" alt="{{ resource.title }}" class="img-fluid w-100 rounded-top">
+                        <div class="resource-zoom-overlay" aria-hidden="true">
+                            <i class="fas fa-expand"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
             {% endif %}
@@ -314,6 +319,21 @@
     </div>
 </div>
 
+{% if resource.image %}
+<div id="resourceImageModal" class="resource-image-modal" aria-hidden="true">
+    <button type="button" class="resource-modal-close" onclick="closeResourceImageModal()" aria-label="{% trans 'Close' %}">
+        {% trans '&times;' %}
+    </button>
+    <div class="resource-modal-content-wrapper">
+        <div class="resource-modal-loader" id="resourceModalLoader">
+            <div class="resource-spinner"></div>
+        </div>
+        <img class="resource-modal-image" id="resourceModalImage" alt="">
+    </div>
+    <div class="resource-modal-caption" id="resourceModalCaption"></div>
+</div>
+{% endif %}
+
 <!-- YouTube IFrame API -->
 {% if resource.url_youtube and youtube_data and youtube_data.is_embeddable %}
 <script src="https://www.youtube.com/iframe_api"></script>
@@ -375,6 +395,150 @@
     color: darkblue;
 }
 
+.resource-image-viewer {
+    position: relative;
+    overflow: hidden;
+    cursor: zoom-in;
+    border-radius: 12px 12px 0 0;
+}
+
+.resource-image-viewer img {
+    max-height: 400px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.resource-image-viewer:hover img {
+    transform: scale(1.03);
+}
+
+.resource-zoom-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 2rem;
+    background: rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.resource-image-viewer:hover .resource-zoom-overlay {
+    opacity: 1;
+}
+
+.resource-image-modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.95);
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.resource-image-modal.active {
+    display: flex;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.resource-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    z-index: 10001;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: #fff;
+    font-size: 40px;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.resource-modal-close:hover {
+    transform: scale(1.1);
+}
+
+.resource-modal-content-wrapper {
+    position: relative;
+    width: 90%;
+    height: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.resource-modal-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.resource-modal-image.loaded {
+    display: block;
+    opacity: 1;
+}
+
+.resource-modal-caption {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 16px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+}
+
+.resource-modal-loader {
+    display: none;
+    position: absolute;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+.resource-modal-loader.active {
+    display: flex;
+}
+
+.resource-spinner {
+    width: 44px;
+    height: 44px;
+    border: 4px solid rgba(255, 255, 255, 0.25);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: resourceSpin 0.8s linear infinite;
+}
+
+@keyframes resourceSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .container {
@@ -398,10 +562,97 @@
     #youtubePlayer {
         min-height: 250px;
     }
+
+    .resource-modal-close {
+        top: 15px;
+        right: 20px;
+        font-size: 34px;
+    }
+
+    .resource-modal-caption {
+        font-size: 14px;
+        bottom: 12px;
+    }
 }
 </style>
 
 <script>
+{% if resource.image %}
+function openResourceImageModal(imageSrc, caption) {
+    const modal = document.getElementById('resourceImageModal');
+    const modalImg = document.getElementById('resourceModalImage');
+    const modalCaption = document.getElementById('resourceModalCaption');
+    const loader = document.getElementById('resourceModalLoader');
+
+    if (!modal || !modalImg || !modalCaption || !loader) {
+        return;
+    }
+
+    loader.classList.add('active');
+    modalImg.classList.remove('loaded');
+    modalImg.removeAttribute('src');
+    modalImg.alt = caption || '';
+    modalCaption.textContent = caption || '';
+
+    const img = new Image();
+    img.onload = function() {
+        modalImg.src = this.src;
+        loader.classList.remove('active');
+        modalImg.classList.add('loaded');
+    };
+
+    img.onerror = function() {
+        modalImg.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect width="400" height="300" fill="%23f0f0f0"/><text x="200" y="150" text-anchor="middle" font-family="Arial" font-size="16" fill="%23999">{% trans 'Image not found' %}</text></svg>';
+        loader.classList.remove('active');
+        modalImg.classList.add('loaded');
+    };
+
+    img.src = imageSrc;
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', handleResourceImageEscape);
+}
+
+function closeResourceImageModal() {
+    const modal = document.getElementById('resourceImageModal');
+
+    if (!modal) {
+        return;
+    }
+
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    document.removeEventListener('keydown', handleResourceImageEscape);
+}
+
+function handleResourceImageEscape(event) {
+    if (event.key === 'Escape') {
+        closeResourceImageModal();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('resourceImageModal');
+    const modalImg = document.getElementById('resourceModalImage');
+
+    if (modal) {
+        modal.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                closeResourceImageModal();
+            }
+        });
+    }
+
+    if (modalImg) {
+        modalImg.addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+    }
+});
+{% endif %}
+
 // Share functionality
 function shareResource() {
     const title = '{{ resource.title }}';
