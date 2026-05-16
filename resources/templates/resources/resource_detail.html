@@ -72,7 +72,7 @@
                         {% trans "About Resource" %}
                     </h3>
                     <div class="description-content">
-                        {{ resource.description|linebreaks }}
+                        {{ resource.description|urlize|linebreaksbr }}
                     </div>
                 </div>
             </div>
@@ -363,6 +363,16 @@
 /* Custom badge colors */
 .badge.bg-warning {
     color: #000;
+}
+
+.description-content a {
+    color: blue;
+    text-decoration: underline;  /* или none, если не хотите подчёркивания */
+}
+
+/* Дополнительно: при наведении можно сделать другой оттенок */
+.description-content a:hover {
+    color: darkblue;
 }
 
 /* Responsive adjustments */

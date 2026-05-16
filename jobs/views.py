@@ -717,15 +717,17 @@ def job_detail(request, pk):
     )
 
 
+    job_queryset = Job.objects.select_related("company")
+
     if is_admin_user:
 
-        job = get_object_or_404(Job, pk=pk)
+        job = get_object_or_404(job_queryset, pk=pk)
     elif request.user.is_employer:
 
-        job = get_object_or_404(Job, pk=pk)
+        job = get_object_or_404(job_queryset, pk=pk)
     elif is_student_or_alumni:
 
-        job = get_object_or_404(Job, pk=pk, is_active=True)
+        job = get_object_or_404(job_queryset, pk=pk, is_active=True)
     else:
         messages.error(request, _("Sizda bu vakansiyani ko'rish huquqi yo'q."))
         return redirect("accounts:login")
@@ -794,6 +796,8 @@ def job_detail(request, pk):
             except EmployerProfile.DoesNotExist:
                 can_edit = False
 
+    company_additional_info = getattr(job.company, "additional_info", None)
+
     context = {
         "job": job,
         "has_applied": has_applied,
@@ -804,6 +808,7 @@ def job_detail(request, pk):
         "application_form": application_form,
         "similar_jobs": similar_jobs,
         "can_edit": can_edit,
+        "company_additional_info": company_additional_info,
     }
     return render(request, "jobs/job_detail.html", context)
 

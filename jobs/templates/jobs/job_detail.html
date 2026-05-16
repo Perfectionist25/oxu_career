@@ -427,144 +427,282 @@
             </div>
 
             <div class="modal fade" id="companyInfoModal" tabindex="-1" aria-labelledby="companyInfoModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-lg">
-                    <div class="modal-content border-0 shadow">
+                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+                    <div class="modal-content border-0 shadow company-profile-modal">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="companyInfoModalLabel">{{ job.company.name }}</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <div>
+                                <p class="text-muted small text-uppercase fw-semibold mb-1">{% trans "Company profile" %}</p>
+                                <h5 class="modal-title" id="companyInfoModalLabel">{{ job.company.name }}</h5>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
                         </div>
+
                         <div class="modal-body">
-                            <div class="row g-4">
-                                <div class="col-md-4 text-center">
+                            {% if company_additional_info.cover_image %}
+                                <div class="company-modal-cover mb-4">
+                                    <img src="{{ company_additional_info.cover_image.url }}" alt="{{ job.company.name }}">
+                                </div>
+                            {% endif %}
+
+                            <div class="company-modal-hero mb-4">
+                                <div class="company-modal-logo">
                                     {% if job.company.logo %}
-                                        <img src="{{ job.company.logo.url }}" alt="{{ job.company.name }}" class="img-fluid rounded-4 mb-3">
-                                    {% endif %}
-
-                                    {% if job.company.is_verified %}
-                                        <span class="badge bg-success mb-3 d-inline-flex align-items-center">
-                                            <i class="fas fa-check-circle me-1"></i>{% trans "Verified" %}
-                                        </span>
-                                    {% endif %}
-
-                                    {% if job.company.short_description %}
-                                        <p class="text-muted small mt-3">{{ job.company.short_description }}</p>
+                                        <img src="{{ job.company.logo.url }}" alt="{{ job.company.name }}">
+                                    {% else %}
+                                        <i class="fas fa-building text-muted fa-3x"></i>
                                     {% endif %}
                                 </div>
-                                <div class="col-md-8">
+
+                                <div class="flex-grow-1">
+                                    <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                                        <h4 class="mb-0">{{ job.company.name }}</h4>
+                                        {% if job.company.is_verified %}
+                                            <span class="badge bg-success d-inline-flex align-items-center">
+                                                <i class="fas fa-check-circle me-1"></i>{% trans "Verified" %}
+                                            </span>
+                                        {% endif %}
+                                    </div>
+
+                                    {% if job.company.short_description %}
+                                        <p class="text-muted mb-0">{{ job.company.short_description|linebreaksbr }}</p>
+                                    {% elif job.company.description %}
+                                        <p class="text-muted mb-0">{{ job.company.description|truncatewords:45 }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            {% if job.company.company_type or company_additional_info.legal_name or company_additional_info.tax_id or job.company.industry or company_additional_info.sub_industry or job.company.company_size or job.company.founded_year or job.company.active_jobs or job.company.total_jobs %}
+                                <div class="company-modal-section mb-4">
+                                    <h6 class="company-modal-section-title">{% trans "Company information" %}</h6>
                                     <div class="row g-3">
                                         {% if job.company.company_type %}
-                                            <div class="col-12 col-sm-6">
-                                                <p class="mb-1 text-muted">{% trans "Type" %}</p>
-                                                <p class="fw-semibold mb-0">{{ job.company.company_type }}</p>
+                                            <div class="col-12 col-md-6 col-xl-4">
+                                                <div class="company-fact">
+                                                    <span>{% trans "Type" %}</span>
+                                                    <strong>{{ job.company.company_type }}</strong>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+
+                                        {% if company_additional_info.legal_name %}
+                                            <div class="col-12 col-md-6 col-xl-4">
+                                                <div class="company-fact">
+                                                    <span>{% trans "Legal name" %}</span>
+                                                    <strong>{{ company_additional_info.legal_name }}</strong>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+
+                                        {% if company_additional_info.tax_id %}
+                                            <div class="col-12 col-md-6 col-xl-4">
+                                                <div class="company-fact">
+                                                    <span>{% trans "Tax ID/INN" %}</span>
+                                                    <strong>{{ company_additional_info.tax_id }}</strong>
+                                                </div>
                                             </div>
                                         {% endif %}
 
                                         {% if job.company.industry %}
-                                            <div class="col-12 col-sm-6">
-                                                <p class="mb-1 text-muted">{% trans "Industry" %}</p>
-                                                <p class="fw-semibold mb-0">{{ job.company.industry }}</p>
+                                            <div class="col-12 col-md-6 col-xl-4">
+                                                <div class="company-fact">
+                                                    <span>{% trans "Industry" %}</span>
+                                                    <strong>{{ job.company.industry }}</strong>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+
+                                        {% if company_additional_info.sub_industry %}
+                                            <div class="col-12 col-md-6 col-xl-4">
+                                                <div class="company-fact">
+                                                    <span>{% trans "Sub-industry" %}</span>
+                                                    <strong>{{ company_additional_info.sub_industry }}</strong>
+                                                </div>
                                             </div>
                                         {% endif %}
 
                                         {% if job.company.company_size %}
-                                            <div class="col-12 col-sm-6">
-                                                <p class="mb-1 text-muted">{% trans "Company size" %}</p>
-                                                <p class="fw-semibold mb-0">{{ job.company.get_company_size_display }}</p>
+                                            <div class="col-12 col-md-6 col-xl-4">
+                                                <div class="company-fact">
+                                                    <span>{% trans "Company size" %}</span>
+                                                    <strong>{{ job.company.get_company_size_display }}</strong>
+                                                </div>
                                             </div>
                                         {% endif %}
 
                                         {% if job.company.founded_year %}
-                                            <div class="col-12 col-sm-6">
-                                                <p class="mb-1 text-muted">{% trans "Founded" %}</p>
-                                                <p class="fw-semibold mb-0">{{ job.company.founded_year }}</p>
+                                            <div class="col-12 col-md-6 col-xl-4">
+                                                <div class="company-fact">
+                                                    <span>{% trans "Founded" %}</span>
+                                                    <strong>{{ job.company.founded_year }}</strong>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+
+                                        {% if job.company.active_jobs %}
+                                            <div class="col-12 col-md-6 col-xl-4">
+                                                <div class="company-fact">
+                                                    <span>{% trans "Active jobs" %}</span>
+                                                    <strong>{{ job.company.active_jobs }}</strong>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+
+                                        {% if job.company.total_jobs %}
+                                            <div class="col-12 col-md-6 col-xl-4">
+                                                <div class="company-fact">
+                                                    <span>{% trans "Total jobs" %}</span>
+                                                    <strong>{{ job.company.total_jobs }}</strong>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            {% if company_additional_info.country or job.company.region or job.company.city or job.company.address %}
+                                <div class="company-modal-section mb-4">
+                                    <h6 class="company-modal-section-title">{% trans "Location" %}</h6>
+                                    <div class="row g-3">
+                                        {% if company_additional_info.country %}
+                                            <div class="col-12 col-md-6 col-xl-4">
+                                                <div class="company-fact">
+                                                    <span>{% trans "Country" %}</span>
+                                                    <strong>{{ company_additional_info.country }}</strong>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+
+                                        {% if job.company.region %}
+                                            <div class="col-12 col-md-6 col-xl-4">
+                                                <div class="company-fact">
+                                                    <span>{% trans "Region" %}</span>
+                                                    <strong>{{ job.company.get_region_display }}</strong>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+
+                                        {% if job.company.city %}
+                                            <div class="col-12 col-md-6 col-xl-4">
+                                                <div class="company-fact">
+                                                    <span>{% trans "City" %}</span>
+                                                    <strong>{{ job.company.get_city_display }}</strong>
+                                                </div>
                                             </div>
                                         {% endif %}
 
                                         {% if job.company.address %}
                                             <div class="col-12">
-                                                <p class="mb-1 text-muted">{% trans "Address" %}</p>
-                                                <p class="fw-semibold mb-0">{{ job.company.address }}</p>
-                                            </div>
-                                        {% endif %}
-
-                                        {% if job.company.website or job.company.email or job.company.phone %}
-                                            <div class="col-12">
-                                                <h6 class="mb-2">{% trans "Contact & website" %}</h6>
-                                                <div class="company-contact-list">
-                                                    {% if job.company.website %}
-                                                        <div class="mb-2">
-                                                            <a href="{{ job.company.website }}" target="_blank" rel="noopener noreferrer" class="text-decoration-none">
-                                                                <i class="fas fa-globe me-2"></i>{{ job.company.website }}
-                                                            </a>
-                                                        </div>
-                                                    {% endif %}
-                                                    {% if job.company.email %}
-                                                        <div class="mb-2">
-                                                            <a href="mailto:{{ job.company.email }}" class="text-decoration-none">
-                                                                <i class="fas fa-envelope me-2"></i>{{ job.company.email }}
-                                                            </a>
-                                                        </div>
-                                                    {% endif %}
-                                                    {% if job.company.phone %}
-                                                        <div class="mb-2">
-                                                            <a href="tel:{{ job.company.phone }}" class="text-decoration-none">
-                                                                <i class="fas fa-phone me-2"></i>{{ job.company.phone }}
-                                                            </a>
-                                                        </div>
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-                                        {% endif %}
-
-                                        {% if job.company.linkedin or job.company.facebook or job.company.instagram or job.company.telegram %}
-                                            <div class="col-12">
-                                                <h6 class="mb-2">{% trans "Social media" %}</h6>
-                                                <div class="d-flex flex-wrap gap-2">
-                                                    {% if job.company.linkedin %}
-                                                        <a href="{{ job.company.linkedin }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-sm">
-                                                            <i class="fab fa-linkedin me-1"></i>{% trans "LinkedIn" %}
-                                                        </a>
-                                                    {% endif %}
-                                                    {% if job.company.facebook %}
-                                                        <a href="{{ job.company.facebook }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-sm">
-                                                            <i class="fab fa-facebook me-1"></i>{% trans "Facebook" %}
-                                                        </a>
-                                                    {% endif %}
-                                                    {% if job.company.instagram %}
-                                                        <a href="{{ job.company.instagram }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-sm">
-                                                            <i class="fab fa-instagram me-1"></i>{% trans "Instagram" %}
-                                                        </a>
-                                                    {% endif %}
-                                                    {% if job.company.telegram %}
-                                                        <a href="{{ job.company.telegram }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-sm">
-                                                            <i class="fas fa-paper-plane me-1"></i>{% trans "Telegram" %}
-                                                        </a>
-                                                    {% endif %}
+                                                <div class="company-fact">
+                                                    <span>{% trans "Address" %}</span>
+                                                    <strong>{{ job.company.address }}</strong>
                                                 </div>
                                             </div>
                                         {% endif %}
                                     </div>
-
-                                    {% if job.company.mission %}
-                                        <div class="mt-4">
-                                            <h6 class="mb-2">{% trans "Mission" %}</h6>
-                                            <p class="mb-0">{{ job.company.mission }}</p>
-                                        </div>
-                                    {% endif %}
-
-                                    {% if job.company.tags %}
-                                        <div class="mt-4">
-                                            <h6 class="mb-2">{% trans "Tags" %}</h6>
-                                            <div class="d-flex flex-wrap gap-2">
-                                                {% for tag in job.company.formatted_tags %}
-                                                    <span class="badge bg-secondary">{{ tag }}</span>
-                                                {% endfor %}
-                                            </div>
-                                        </div>
-                                    {% endif %}
                                 </div>
-                            </div>
+                            {% endif %}
+
+                            {% if job.company.description %}
+                                <div class="company-modal-section mb-4">
+                                    <h6 class="company-modal-section-title">{% trans "Description" %}</h6>
+                                    <div class="job-rich-text mb-0">
+                                        {{ job.company.description|linebreaks }}
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            {% if job.company.mission or company_additional_info.vision %}
+                                <div class="company-modal-section mb-4">
+                                    <div class="row g-3">
+                                        {% if job.company.mission %}
+                                            <div class="col-12 {% if company_additional_info.vision %}col-lg-6{% endif %}">
+                                                <h6 class="company-modal-section-title">{% trans "Mission" %}</h6>
+                                                <div class="job-rich-text mb-0">
+                                                    {{ job.company.mission|linebreaks }}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+
+                                        {% if company_additional_info.vision %}
+                                            <div class="col-12 {% if job.company.mission %}col-lg-6{% endif %}">
+                                                <h6 class="company-modal-section-title">{% trans "Vision" %}</h6>
+                                                <div class="job-rich-text mb-0">
+                                                    {{ company_additional_info.vision|linebreaks }}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            {% if job.company.website or job.company.email or job.company.phone or job.company.linkedin or job.company.facebook or job.company.instagram or job.company.telegram %}
+                                <div class="company-modal-section mb-4">
+                                    <h6 class="company-modal-section-title">{% trans "Contacts and online presence" %}</h6>
+                                    <div class="company-link-list">
+                                        {% if job.company.website %}
+                                            <a href="{{ job.company.website }}" target="_blank" rel="noopener noreferrer" class="company-contact-chip">
+                                                <i class="fas fa-globe"></i>
+                                                <span>{{ job.company.website }}</span>
+                                            </a>
+                                        {% endif %}
+
+                                        {% if job.company.email %}
+                                            <a href="mailto:{{ job.company.email }}" class="company-contact-chip">
+                                                <i class="fas fa-envelope"></i>
+                                                <span>{{ job.company.email }}</span>
+                                            </a>
+                                        {% endif %}
+
+                                        {% if job.company.phone %}
+                                            <a href="tel:{{ job.company.phone }}" class="company-contact-chip">
+                                                <i class="fas fa-phone"></i>
+                                                <span>{{ job.company.phone }}</span>
+                                            </a>
+                                        {% endif %}
+
+                                        {% if job.company.linkedin %}
+                                            <a href="{{ job.company.linkedin }}" target="_blank" rel="noopener noreferrer" class="company-contact-chip">
+                                                <i class="fab fa-linkedin"></i>
+                                                <span>{% trans "LinkedIn" %}</span>
+                                            </a>
+                                        {% endif %}
+
+                                        {% if job.company.facebook %}
+                                            <a href="{{ job.company.facebook }}" target="_blank" rel="noopener noreferrer" class="company-contact-chip">
+                                                <i class="fab fa-facebook"></i>
+                                                <span>{% trans "Facebook" %}</span>
+                                            </a>
+                                        {% endif %}
+
+                                        {% if job.company.instagram %}
+                                            <a href="{{ job.company.instagram }}" target="_blank" rel="noopener noreferrer" class="company-contact-chip">
+                                                <i class="fab fa-instagram"></i>
+                                                <span>{% trans "Instagram" %}</span>
+                                            </a>
+                                        {% endif %}
+
+                                        {% if job.company.telegram %}
+                                            <a href="{{ job.company.telegram }}" target="_blank" rel="noopener noreferrer" class="company-contact-chip">
+                                                <i class="fab fa-telegram"></i>
+                                                <span>{% trans "Telegram" %}</span>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            {% if job.company.tags %}
+                                <div class="company-modal-section">
+                                    <h6 class="company-modal-section-title">{% trans "Tags" %}</h6>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        {% for tag in job.company.formatted_tags %}
+                                            <span class="badge bg-secondary">{{ tag }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
                         </div>
+
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Close" %}</button>
                         </div>
@@ -761,6 +899,129 @@
         object-fit: contain;
     }
 
+    .company-profile-modal {
+        border-radius: 1rem;
+        overflow: hidden;
+    }
+
+    .company-modal-cover {
+        height: 180px;
+        border-radius: 1rem;
+        overflow: hidden;
+        background: #f8f9fa;
+        border: 1px solid #eef1f4;
+    }
+
+    .company-modal-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .company-modal-hero {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1rem;
+        border-radius: 1rem;
+        background: #f8f9fa;
+        border: 1px solid #eef1f4;
+    }
+
+    .company-modal-logo {
+        width: 96px;
+        height: 96px;
+        border-radius: 0.9rem;
+        background: #fff;
+        border: 1px solid #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        overflow: hidden;
+    }
+
+    .company-modal-logo img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        display: block;
+    }
+
+    .company-modal-section {
+        padding: 1rem;
+        border-radius: 1rem;
+        background: #fff;
+        border: 1px solid #eef1f4;
+    }
+
+    .company-modal-section-title {
+        color: #0d6efd;
+        font-weight: 700;
+        margin-bottom: 0.85rem;
+    }
+
+    .company-fact {
+        height: 100%;
+        display: grid;
+        gap: 0.35rem;
+        padding: 0.85rem 0.95rem;
+        border-radius: 0.85rem;
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        overflow-wrap: anywhere;
+    }
+
+    .company-fact span {
+        color: #6c757d;
+        font-size: 0.8rem;
+    }
+
+    .company-fact strong {
+        color: #212529;
+        font-size: 0.95rem;
+        font-weight: 600;
+        overflow-wrap: anywhere;
+    }
+
+    .company-link-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .company-contact-chip {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.8rem 0.9rem;
+        border-radius: 0.85rem;
+        border: 1px solid #e9ecef;
+        background: #f8f9fa;
+        color: #212529;
+        text-decoration: none;
+        transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+
+    .company-contact-chip i {
+        color: #0d6efd;
+        flex: 0 0 auto;
+    }
+
+    .company-contact-chip span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .company-contact-chip:hover {
+        background: #eef5ff;
+        border-color: rgba(13, 110, 253, 0.28);
+        color: #0d6efd;
+    }
+
     .job-stats {
         display: grid;
         gap: 0.65rem;
@@ -923,6 +1184,25 @@
             position: static !important;
         }
     }
+
+    @media (max-width: 575.98px) {
+        .company-modal-cover {
+            height: 140px;
+        }
+
+        .company-modal-hero {
+            flex-direction: column;
+        }
+
+        .company-link-list {
+            grid-template-columns: 1fr;
+        }
+
+        .company-contact-chip span {
+            white-space: normal;
+            overflow-wrap: anywhere;
+        }
+    }
 </style>
 {% endblock %}
 
@@ -958,4 +1238,3 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 {% endblock %}
-```
