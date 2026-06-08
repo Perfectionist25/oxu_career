@@ -1794,29 +1794,29 @@ class OAuthToken(models.Model):
 
     access_token = models.TextField(
         verbose_name=_("Access Token"),
-        help_text=_("Токен для доступа к API")
+        help_text=_("API access token")
     )
 
     refresh_token = models.TextField(
         verbose_name=_("Refresh Token"),
         blank=True,
         null=True,
-        help_text=_("Токен для обновления access token")
+        help_text=_("Token for updating access token")
     )
 
     token_type = models.CharField(
         max_length=50,
         default='Bearer',
-        verbose_name=_("Тип токена")
+        verbose_name=_("Token type")
     )
 
     expires_in = models.IntegerField(
-        verbose_name=_("Срок действия (секунды)"),
+        verbose_name=_("Expiration date (seconds)"),
         default=3600
     )
 
     expires_at = models.DateTimeField(
-        verbose_name=_("Истекает в"),
+        verbose_name=_("Expires on"),
         null=True,
         blank=True
     )
@@ -1824,17 +1824,17 @@ class OAuthToken(models.Model):
     scope = models.TextField(
         blank=True,
         null=True,
-        verbose_name=_("Разрешения")
+        verbose_name=_("Permissions")
     )
 
     created_at = models.DateTimeField(
         auto_now_add=True,
-        verbose_name=_("Создан")
+        verbose_name=_("Created")
     )
 
     updated_at = models.DateTimeField(
         auto_now=True,
-        verbose_name=_("Обновлен")
+        verbose_name=_("Updated")
     )
 
     class Meta:

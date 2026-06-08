@@ -455,6 +455,7 @@ body {
 
                         <div class="col-lg-4">
                             <div class="d-flex flex-column align-items-lg-end gap-3 hero-actions">
+                                {% comment %}
                                 <div class="text-lg-end">
                                     <small class="d-block text-white-50 mb-1">{% trans "Account Status" %}</small>
                                     <span class="badge rounded-pill px-3 py-2 bg-{% if employer_profile.is_verified %}success{% else %}warning text-dark{% endif %}">
@@ -465,6 +466,7 @@ body {
                                         {% endif %}
                                     </span>
                                 </div>
+                                {% endcomment %}
 
                                 <div class="d-flex flex-wrap justify-content-lg-end gap-2">
                                     <a href="{% url 'accounts:company_create' %}" class="btn btn-light">
