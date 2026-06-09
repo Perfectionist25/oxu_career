@@ -55,7 +55,21 @@
                             </div>
                         {% endif %}
 
-                        <!-- Basic Information -->
+                        <div class="card mb-4 shadow-sm border border-2 bg-white">
+                            <div class="card-body">
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <h3 class="text-primary mb-3">
+                                            <i class="fas fa-check-circle me-2"></i>
+                                            {% trans "Required Fields" %}
+                                        </h3>
+                                        <p class="text-muted mb-0">
+                                            {% trans "Fill in the fields below to create a complete job posting." %}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Basic Information -->
                         <div class="row mb-4">
                             <div class="col-12">
                                 <h5 class="text-primary mb-3">
@@ -153,82 +167,6 @@
                                 <div class="form-text">{% trans "Use this to separate vacancies in Uzbekistan from jobs abroad." %}</div>
                             </div>
 
-                            <!-- Region - OPTIONAL -->
-                            <div class="col-md-6 mb-3" id="jobRegionFieldWrap">
-                                <label for="{{ form.region.id_for_label }}" class="form-label fw-semibold">
-                                    {% trans "Region" %}
-                                </label>
-                                <select name="{{ form.region.name }}" 
-                                        id="{{ form.region.id_for_label }}" 
-                                        class="form-select {% if form.region.errors %}is-invalid{% endif %}">
-                                    <option value="">{% trans "Select Region (Optional)" %}</option>
-                                    {% for value, label in form.region.field.choices %}
-                                        {% if value %}
-                                            <option value="{{ value }}" 
-                                                    {% if form.region.value == value %}selected{% endif %}>
-                                                {{ label }}
-                                            </option>
-                                        {% endif %}
-                                    {% endfor %}
-                                </select>
-                                {% if form.region.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        <i class="fas fa-exclamation-circle me-2"></i>
-                                        {% for error in form.region.errors %}
-                                            {{ error }}
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <!-- District - OPTIONAL -->
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.district.id_for_label }}" class="form-label fw-semibold" id="jobDistrictLabel">
-                                    {% trans "District" %}
-                                </label>
-                                <input type="text"
-                                       name="{{ form.district.name }}" 
-                                       id="{{ form.district.id_for_label }}" 
-                                       class="form-control {% if form.district.errors %}is-invalid{% endif %}" 
-                                       value="{{ form.district.value|default:'' }}" 
-                                       placeholder="{% trans 'e.g., Mirzo Ulugbek district' %}">
-                                {% if form.district.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        <i class="fas fa-exclamation-circle me-2"></i>
-                                        {% for error in form.district.errors %}
-                                            {{ error }}
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <!-- Industry -->
-                            <div class="col-12 mb-3">
-                                <label for="{{ form.industry.id_for_label }}" class="form-label fw-semibold">
-                                    {% trans "Industry" %}
-                                </label>
-                                <select name="{{ form.industry.name }}"
-                                        id="{{ form.industry.id_for_label }}"
-                                        class="form-select {% if form.industry.errors %}is-invalid{% endif %}">
-                                    <option value="">{% trans "Select Industry" %}</option>
-                                    {% for value, label in form.industry.field.choices %}
-                                        {% if value %}
-                                            <option value="{{ value }}"
-                                                    {% if form.industry.value == value %}selected{% endif %}>
-                                                {{ label }}
-                                            </option>
-                                        {% endif %}
-                                    {% endfor %}
-                                </select>
-                                {% if form.industry.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        <i class="fas fa-exclamation-circle me-2"></i>
-                                        {% for error in form.industry.errors %}
-                                            {{ error }}
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
 
                             <!-- Location - REQUIRED -->
                             <div class="col-md-6 mb-3">
@@ -339,86 +277,6 @@
                                 {% endif %}
                             </div>
 
-                            <!-- Candidate Type -->
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.candidate_type.id_for_label }}" class="form-label fw-semibold">
-                                    {% trans "Candidate Type" %}
-                                </label>
-                                <select name="{{ form.candidate_type.name }}"
-                                        id="{{ form.candidate_type.id_for_label }}"
-                                        class="form-select {% if form.candidate_type.errors %}is-invalid{% endif %}">
-                                    <option value="">{% trans "Select candidate type" %}</option>
-                                    {% for value, label in form.candidate_type.field.choices %}
-                                        {% if value %}
-                                            <option value="{{ value }}"
-                                                    {% if form.candidate_type.value == value %}selected{% endif %}>
-                                                {{ label }}
-                                            </option>
-                                        {% endif %}
-                                    {% endfor %}
-                                </select>
-                                {% if form.candidate_type.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        <i class="fas fa-exclamation-circle me-2"></i>
-                                        {% for error in form.candidate_type.errors %}
-                                            {{ error }}
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <!-- Target Audience -->
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.target_user_types.id_for_label }}" class="form-label fw-semibold">
-                                    {{ form.target_user_types.label }}
-                                </label>
-                                <select name="{{ form.target_user_types.name }}"
-                                        id="{{ form.target_user_types.id_for_label }}"
-                                        class="form-select {% if form.target_user_types.errors %}is-invalid{% endif %}">
-                                    {% for value, label in form.target_user_types.field.choices %}
-                                        <option value="{{ value }}" {% if form.target_user_types.value == value %}selected{% endif %}>
-                                            {{ label }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                                <div class="form-text">{{ form.target_user_types.help_text }}</div>
-                                {% if form.target_user_types.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        <i class="fas fa-exclamation-circle me-2"></i>
-                                        {% for error in form.target_user_types.errors %}
-                                            {{ error }}
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <!-- Gender Requirement -->
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.gender_requirement.id_for_label }}" class="form-label fw-semibold">
-                                    {% trans "Gender Requirement" %}
-                                </label>
-                                <select name="{{ form.gender_requirement.name }}"
-                                        id="{{ form.gender_requirement.id_for_label }}"
-                                        class="form-select {% if form.gender_requirement.errors %}is-invalid{% endif %}">
-                                    <option value="">{% trans "Select gender requirement" %}</option>
-                                    {% for value, label in form.gender_requirement.field.choices %}
-                                        {% if value %}
-                                            <option value="{{ value }}"
-                                                    {% if form.gender_requirement.value == value %}selected{% endif %}>
-                                                {{ label }}
-                                            </option>
-                                        {% endif %}
-                                    {% endfor %}
-                                </select>
-                                {% if form.gender_requirement.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        <i class="fas fa-exclamation-circle me-2"></i>
-                                        {% for error in form.gender_requirement.errors %}
-                                            {{ error }}
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
 
                             <!-- Short Description -->
                             <div class="col-12 mb-3">
@@ -655,47 +513,6 @@
                                 <div class="form-text">{% trans "Separate skills with commas (e.g., Python, Django, JavaScript)" %}</div>
                             </div>
 
-                            <!-- Preferred Skills -->
-                            <div class="col-12 mb-3">
-                                <label for="{{ form.preferred_skills.id_for_label }}" class="form-label fw-semibold">
-                                    {% trans "Preferred Skills" %}
-                                </label>
-                                <input type="text"
-                                       name="{{ form.preferred_skills.name }}" 
-                                       id="{{ form.preferred_skills.id_for_label }}" 
-                                       class="form-control {% if form.preferred_skills.errors %}is-invalid{% endif %}" 
-                                       value="{{ form.preferred_skills.value|default:'' }}" 
-                                       placeholder="{% trans 'AWS, Docker, PostgreSQL, ...' %}">
-                                {% if form.preferred_skills.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        <i class="fas fa-exclamation-circle me-2"></i>
-                                        {% for error in form.preferred_skills.errors %}
-                                            {{ error }}
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <!-- Language Requirements -->
-                            <div class="col-12 mb-3">
-                                <label for="{{ form.language_requirements.id_for_label }}" class="form-label fw-semibold">
-                                    {% trans "Language Requirements" %}
-                                </label>
-                                <input type="text"
-                                       name="{{ form.language_requirements.name }}" 
-                                       id="{{ form.language_requirements.id_for_label }}" 
-                                       class="form-control {% if form.language_requirements.errors %}is-invalid{% endif %}" 
-                                       value="{{ form.language_requirements.value|default:'' }}" 
-                                       placeholder="{% trans 'English - Intermediate, Russian - Fluent, ...' %}">
-                                {% if form.language_requirements.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        <i class="fas fa-exclamation-circle me-2"></i>
-                                        {% for error in form.language_requirements.errors %}
-                                            {{ error }}
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
                         </div>
 
                         <!-- Job Details -->
@@ -769,8 +586,288 @@
                                 {% endif %}
                             </div>
 
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-envelope me-2"></i>
+                                    {% trans "Contact Information" %}
+                                </h5>
+                            </div>
+
+                            <!-- Contact Email -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.contact_email.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Contact Email" %} *
+                                </label>
+                                <input type="email" 
+                                       name="{{ form.contact_email.name }}" 
+                                       id="{{ form.contact_email.id_for_label }}" 
+                                       class="form-control {% if form.contact_email.errors %}is-invalid{% endif %}" 
+                                       value="{{ form.contact_email.value|default:'' }}" 
+                                       placeholder="{% trans 'email@company.com' %}" 
+                                       required>
+                                {% if form.contact_email.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        {% for error in form.contact_email.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input type="checkbox" 
+                                           name="{{ form.terms_accept.name }}" 
+                                           id="{{ form.terms_accept.id_for_label }}" 
+                                           class="form-check-input {% if form.terms_accept.errors %}is-invalid{% endif %}" 
+                                           {% if form.terms_accept.value %}checked{% endif %}
+                                           required>
+                                    <label class="form-check-label fw-semibold" for="{{ form.terms_accept.id_for_label }}">
+                                        {{ form.terms_accept.label }} *
+                                    </label>
+                                    {% if form.terms_accept.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            <i class="fas fa-exclamation-circle me-2"></i>
+                                            {% for error in form.terms_accept.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <div class="form-text mt-2">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        {% trans "By accepting, you agree to our Terms of Service and confirm that all information provided is accurate." %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        </div>
+                        </div>
+
+                        <div class="card mb-4 shadow-sm border border-2 bg-white">
+                            <div class="card-body">
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <h4 class="text-secondary mb-3">
+                                            <i class="fas fa-ellipsis-h me-2"></i>
+                                            {% trans "Optional Fields" %}
+                                        </h4>
+                                        <p class="text-muted mb-4">
+                                            {% trans "These fields are optional and can help make your posting more informative." %}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-4">
+
+                            <!-- Region - OPTIONAL -->
+                            <div class="col-md-6 mb-3" id="jobRegionFieldWrap">
+                                <label for="{{ form.region.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Region" %}
+                                </label>
+                                <select name="{{ form.region.name }}" 
+                                        id="{{ form.region.id_for_label }}" 
+                                        class="form-select {% if form.region.errors %}is-invalid{% endif %}">
+                                    <option value="">{% trans "Select Region (Optional)" %}</option>
+                                    {% for value, label in form.region.field.choices %}
+                                        {% if value %}
+                                            <option value="{{ value }}" 
+                                                    {% if form.region.value == value %}selected{% endif %}>
+                                                {{ label }}
+                                            </option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                                {% if form.region.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        {% for error in form.region.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- District - OPTIONAL -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.district.id_for_label }}" class="form-label fw-semibold" id="jobDistrictLabel">
+                                    {% trans "District" %}
+                                </label>
+                                <input type="text"
+                                       name="{{ form.district.name }}" 
+                                       id="{{ form.district.id_for_label }}" 
+                                       class="form-control {% if form.district.errors %}is-invalid{% endif %}" 
+                                       value="{{ form.district.value|default:'' }}" 
+                                       placeholder="{% trans 'e.g., Mirzo Ulugbek district' %}">
+                                {% if form.district.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        {% for error in form.district.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Industry -->
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.industry.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Industry" %}
+                                </label>
+                                <select name="{{ form.industry.name }}"
+                                        id="{{ form.industry.id_for_label }}"
+                                        class="form-select {% if form.industry.errors %}is-invalid{% endif %}">
+                                    <option value="">{% trans "Select Industry" %}</option>
+                                    {% for value, label in form.industry.field.choices %}
+                                        {% if value %}
+                                            <option value="{{ value }}"
+                                                    {% if form.industry.value == value %}selected{% endif %}>
+                                                {{ label }}
+                                            </option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                                {% if form.industry.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        {% for error in form.industry.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Candidate Type -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.candidate_type.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Candidate Type" %}
+                                </label>
+                                <select name="{{ form.candidate_type.name }}"
+                                        id="{{ form.candidate_type.id_for_label }}"
+                                        class="form-select {% if form.candidate_type.errors %}is-invalid{% endif %}">
+                                    <option value="">{% trans "Select candidate type" %}</option>
+                                    {% for value, label in form.candidate_type.field.choices %}
+                                        {% if value %}
+                                            <option value="{{ value }}"
+                                                    {% if form.candidate_type.value == value %}selected{% endif %}>
+                                                {{ label }}
+                                            </option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                                {% if form.candidate_type.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        {% for error in form.candidate_type.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Target Audience -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.target_user_types.id_for_label }}" class="form-label fw-semibold">
+                                    {{ form.target_user_types.label }}
+                                </label>
+                                <select name="{{ form.target_user_types.name }}"
+                                        id="{{ form.target_user_types.id_for_label }}"
+                                        class="form-select {% if form.target_user_types.errors %}is-invalid{% endif %}">
+                                    {% for value, label in form.target_user_types.field.choices %}
+                                        <option value="{{ value }}" {% if form.target_user_types.value == value %}selected{% endif %}>
+                                            {{ label }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <div class="form-text">{{ form.target_user_types.help_text }}</div>
+                                {% if form.target_user_types.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        {% for error in form.target_user_types.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Gender Requirement -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.gender_requirement.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Gender Requirement" %}
+                                </label>
+                                <select name="{{ form.gender_requirement.name }}"
+                                        id="{{ form.gender_requirement.id_for_label }}"
+                                        class="form-select {% if form.gender_requirement.errors %}is-invalid{% endif %}">
+                                    <option value="">{% trans "Select gender requirement" %}</option>
+                                    {% for value, label in form.gender_requirement.field.choices %}
+                                        {% if value %}
+                                            <option value="{{ value }}"
+                                                    {% if form.gender_requirement.value == value %}selected{% endif %}>
+                                                {{ label }}
+                                            </option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                                {% if form.gender_requirement.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        {% for error in form.gender_requirement.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Preferred Skills -->
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.preferred_skills.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Preferred Skills" %}
+                                </label>
+                                <input type="text"
+                                       name="{{ form.preferred_skills.name }}" 
+                                       id="{{ form.preferred_skills.id_for_label }}" 
+                                       class="form-control {% if form.preferred_skills.errors %}is-invalid{% endif %}" 
+                                       value="{{ form.preferred_skills.value|default:'' }}" 
+                                       placeholder="{% trans 'AWS, Docker, PostgreSQL, ...' %}">
+                                {% if form.preferred_skills.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        {% for error in form.preferred_skills.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Language Requirements -->
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.language_requirements.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Language Requirements" %}
+                                </label>
+                                <input type="text"
+                                       name="{{ form.language_requirements.name }}" 
+                                       id="{{ form.language_requirements.id_for_label }}" 
+                                       class="form-control {% if form.language_requirements.errors %}is-invalid{% endif %}" 
+                                       value="{{ form.language_requirements.value|default:'' }}" 
+                                       placeholder="{% trans 'English - Intermediate, Russian - Fluent, ...' %}">
+                                {% if form.language_requirements.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        {% for error in form.language_requirements.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
                             <!-- Benefits -->
-                            <div class="mb-3">
+                            <div class="col-12 mb-3">
                                 <label for="{{ form.benefits.id_for_label }}" class="form-label fw-semibold">
                                     {% trans "Benefits & Perks" %}
                                 </label>
@@ -851,40 +948,17 @@
                                 </h5>
                             </div>
 
-                            <!-- Contact Email -->
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.contact_email.id_for_label }}" class="form-label fw-semibold">
-                                    {% trans "Contact Email" %} *
-                                </label>
-                                <input type="email" 
-                                       name="{{ form.contact_email.name }}" 
-                                       id="{{ form.contact_email.id_for_label }}" 
-                                       class="form-control {% if form.contact_email.errors %}is-invalid{% endif %}" 
-                                       value="{{ form.contact_email.value|default:'' }}" 
-                                       placeholder="{% trans 'email@company.com' %}" 
-                                       required>
-                                {% if form.contact_email.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        <i class="fas fa-exclamation-circle me-2"></i>
-                                        {% for error in form.contact_email.errors %}
-                                            {{ error }}
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-
                             <!-- Contact Phone -->
                             <div class="col-md-6 mb-3">
                                 <label for="{{ form.contact_phone.id_for_label }}" class="form-label fw-semibold">
-                                    {% trans "Contact Phone" %} *
+                                    {% trans "Contact Phone" %}
                                 </label>
                                 <input type="tel" 
                                        name="{{ form.contact_phone.name }}" 
                                        id="{{ form.contact_phone.id_for_label }}" 
                                        class="form-control {% if form.contact_phone.errors %}is-invalid{% endif %}" 
                                        value="{{ form.contact_phone.value|default:'' }}" 
-                                       placeholder="{% trans '+998 XX XXX XX XX' %}" 
-                                       required>
+                                       placeholder="{% trans '+998 XX XXX XX XX' %}">
                                 {% if form.contact_phone.errors %}
                                     <div class="invalid-feedback d-block">
                                         <i class="fas fa-exclamation-circle me-2"></i>
@@ -969,40 +1043,6 @@
                                 <div class="form-text">{% trans "When this job posting should expire" %}</div>
                             </div>
                         </div>
-
-                        <!-- Terms and Conditions -->
-                        <div class="row mb-4">
-                            <div class="col-12">
-                                <h5 class="text-primary mb-3">
-                                    <i class="fas fa-file-contract me-2"></i>
-                                    {% trans "Terms and Conditions" %}
-                                </h5>
-                            </div>
-                            
-                            <div class="col-12">
-                                <div class="form-check">
-                                    <input type="checkbox" 
-                                           name="{{ form.terms_accept.name }}" 
-                                           id="{{ form.terms_accept.id_for_label }}" 
-                                           class="form-check-input {% if form.terms_accept.errors %}is-invalid{% endif %}" 
-                                           {% if form.terms_accept.value %}checked{% endif %}
-                                           required>
-                                    <label class="form-check-label fw-semibold" for="{{ form.terms_accept.id_for_label }}">
-                                        {{ form.terms_accept.label }} *
-                                    </label>
-                                    {% if form.terms_accept.errors %}
-                                        <div class="invalid-feedback d-block">
-                                            <i class="fas fa-exclamation-circle me-2"></i>
-                                            {% for error in form.terms_accept.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                    <div class="form-text mt-2">
-                                        <i class="fas fa-info-circle me-1"></i>
-                                        {% trans "By accepting, you agree to our Terms of Service and confirm that all information provided is accurate." %}
-                                    </div>
-                                </div>
                             </div>
                         </div>
 
