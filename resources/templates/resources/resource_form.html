@@ -767,6 +767,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Image preview
     const imageInput = document.getElementById('{{ form.image.id_for_label }}');
     const imagePreview = document.getElementById('imagePreview');
+    const previewImageCard = document.getElementById('previewImage');
     
     if (imageInput) {
         imageInput.addEventListener('change', function(e) {
@@ -774,13 +775,23 @@ document.addEventListener('DOMContentLoaded', function() {
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    imagePreview.innerHTML = `
+                    const imageHtml = `
                         <img src="${e.target.result}" alt="{% trans 'Preview' %}">
                         <div class="preview-overlay">
                             <i class="fas fa-sync"></i>
                             {% trans 'Replace image' %}
                         </div>
                     `;
+
+                    if (imagePreview) {
+                        imagePreview.innerHTML = imageHtml;
+                    }
+
+                    if (previewImageCard) {
+                        previewImageCard.innerHTML = `
+                            <img src="${e.target.result}" alt="{% trans 'Preview image' %}">
+                        `;
+                    }
                 };
                 reader.readAsDataURL(file);
             }

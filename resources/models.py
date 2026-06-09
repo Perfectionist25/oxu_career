@@ -82,6 +82,11 @@ class Resource(models.Model):
         auto_now=True,
         verbose_name=_("Updated At")
     )
+    views_count = models.PositiveIntegerField(
+        default=0,
+        verbose_name=_("Views Count"),
+        help_text=_("Total number of views for this resource")
+    )
 
     class Meta:
         verbose_name = _("Resource")

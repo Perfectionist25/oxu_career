@@ -62,7 +62,7 @@ class JobAdmin(admin.ModelAdmin):
     fieldsets = (
         (
             _("Job Information"),
-            {"fields": ("title", "description", "employer")},
+            {"fields": ("title", "description", "company")},
         ),
         (
             _("Location & Type"),

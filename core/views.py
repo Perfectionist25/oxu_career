@@ -39,13 +39,11 @@ def home(request):
 
     latest_jobs = Job.objects.filter(is_active=True).select_related("company")[:6]
 
-    latest_resources = Resource.objects.filter(is_published=True).order_by('-created_at')[:3]
-
+    latest_resources = Resource.objects.filter(is_published=True).order_by('-views_count')[:3]
 
     upcoming_events = Event.objects.filter(
         status="published", start_date__gt=timezone.now()
     ).order_by("start_date")[:3]
-
 
     resources_stats = {
         "total_resources": stats["resources_count"],

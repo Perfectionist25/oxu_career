@@ -733,20 +733,23 @@ def job_detail(request, pk):
         return redirect("accounts:login")
 
 
-    viewed_jobs = request.session.get('viewed_jobs', [])
-
-    if pk not in viewed_jobs:
-        job.views_count += 1
-        job.save(update_fields=["views_count"])
-        viewed_jobs.append(pk)
-        request.session['viewed_jobs'] = viewed_jobs
-
     is_viewed = False
-    if is_student_or_alumni:
+
+    if request.user.is_authenticated:
         viewed_job, created = ViewedJob.objects.get_or_create(user=request.user, job=job)
-        if not created:
+        if created:
+            job.views_count += 1
+            job.save(update_fields=["views_count"])
+        else:
             ViewedJob.objects.filter(pk=viewed_job.pk).update(last_viewed_at=timezone.now())
         is_viewed = True
+    else:
+        viewed_jobs = request.session.get('viewed_jobs', [])
+        if pk not in viewed_jobs:
+            job.views_count += 1
+            job.save(update_fields=["views_count"])
+            viewed_jobs.append(pk)
+            request.session['viewed_jobs'] = viewed_jobs
 
 
     has_applied = False
@@ -816,8 +819,20 @@ def job_detail(request, pk):
 def increment_job_views(request, pk):
     """Vakansiya ko'rishlar sonini oshirish (AJAX)"""
     job = get_object_or_404(Job, pk=pk)
-    job.views_count += 1
-    job.save()
+
+    if request.user.is_authenticated:
+        viewed_job, created = ViewedJob.objects.get_or_create(user=request.user, job=job)
+        if created:
+            job.views_count += 1
+            job.save(update_fields=["views_count"])
+    else:
+        viewed_jobs = request.session.get('viewed_jobs', [])
+        if pk not in viewed_jobs:
+            job.views_count += 1
+            job.save(update_fields=["views_count"])
+            viewed_jobs.append(pk)
+            request.session['viewed_jobs'] = viewed_jobs
+
     return JsonResponse({"success": True, "views_count": job.views_count})
 
 @login_required

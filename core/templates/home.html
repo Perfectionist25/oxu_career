@@ -6,25 +6,32 @@
 
 {% block content %}
 {% render_system_notifications %}
-<div class="section py-5" style="padding: 5%;">
+<div class="section py-5 px-3 px-md-5">
   <!-- Hero Section -->
   <section class="text-center mb-5">
     <div class="row justify-content-center">
       <div class="col-lg-8">
         <div class="display-5 h4 fw-bold text-primary mb-4">{% trans "Welcome to OXU Career Center" %}</div>
         <p class="lead mb-4 h6">{% trans "Build your future with us. We help you find your dream job and develop your professional skills." %}</p>
-        {% if user.is_student or user.is_alumni or user.is_staff %}
         <div class="d-flex justify-content-center flex-wrap gap-3 hero-actions">
-          <a href="{% url 'jobs:list' %}" class="btn btn-primary btn-lg px-4 py-3">
+          {% if user.is_authenticated %}
+          <a href="{% url 'jobs:list' %}" class="btn btn-primary btn-lg px-4 py-3 w-auto">
             <i class="fas fa-briefcase me-2"></i>{% trans "Find Jobs" %}
           </a>
           {% if user.is_student or user.is_alumni %}
-          <a href="{% url 'cvbuilder:cv_create' %}" class="btn btn-outline-primary btn-lg px-4 py-3">
+          <a href="{% url 'cvbuilder:cv_create' %}" class="btn btn-outline-primary btn-lg px-4 py-3 w-100 w-md-auto">
             <i class="fas fa-file-alt me-2"></i>{% trans "Create Resume" %}
           </a>
           {% endif %}
+          {% else %}
+          <a href="{% url 'accounts:oauth_login' %}" class="btn btn-primary btn-lg px-4 py-3 w-100 w-md-auto">
+            <i class="fas fa-sign-in-alt me-2"></i>{% trans "Login / Register" %}
+          </a>
+          <a href="{% url 'jobs:list' %}" class="btn btn-outline-primary btn-lg px-4 py-3 w-100 w-md-auto">
+            <i class="fas fa-briefcase me-2"></i>{% trans "Browse Jobs" %}
+          </a>
+          {% endif %}
         </div>
-        {% endif %}
         
         <!-- Quick Stats -->
         <div class="row mt-5 pt-4 border-top">
@@ -234,7 +241,7 @@
   </section>
   {% endif %}
 
-
+  <!-- Popular Resources and New Events -->
 <!-- Latest Jobs Preview -->
 {% if not user.is_employer %}
 <section class="mb-5">
@@ -507,6 +514,28 @@
   .hero-image {
     width: 100%;
     height: auto;
+  }
+
+  .btn-primary,
+  .btn-outline-primary {
+    min-height: 54px;
+    font-size: 1rem;
+  }
+
+  .home-feature-floating-card {
+    position: static !important;
+    transform: none !important;
+    margin-top: 1.25rem;
+  }
+
+  .home-feature-floating-icon {
+    width: 54px;
+    height: 54px;
+    font-size: 1.2rem;
+  }
+
+  .resource-preview-card, .event-preview-card {
+    min-height: 165px;
   }
 
   .section.text-center,

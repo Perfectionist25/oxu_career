@@ -74,6 +74,13 @@ def resource_detail(request, pk):
         category=resource.category
     ).exclude(pk=resource.pk)[:4]
 
+    viewed_resources = request.session.get('viewed_resources', [])
+    if pk not in viewed_resources:
+        resource.views_count += 1
+        resource.save(update_fields=["views_count"])
+        viewed_resources.append(pk)
+        request.session['viewed_resources'] = viewed_resources
+
     context = {
         "resource": resource,
         "similar_resources": similar_resources,
