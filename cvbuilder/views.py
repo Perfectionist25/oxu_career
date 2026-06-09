@@ -277,9 +277,6 @@ def cv_duplicate(request, pk):
         marital_status=original.marital_status,
         nationality=original.nationality,
 
-        passport_series=original.passport_series,
-        passport_number=original.passport_number,
-        tin=original.tin,
         driver_license=original.driver_license,
         driver_license_category=original.driver_license_category,
         military_service=original.military_service,

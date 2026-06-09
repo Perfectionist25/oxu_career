@@ -35,39 +35,54 @@
             <div class="card border-0 shadow-lg">
                 <div class="card-body p-4">
                     <!-- CV Header -->
-                    <div class="text-center mb-4 pb-4 border-bottom">
-                        <h2 class="fw-bold text-dark mb-2">{{ cv.full_name|default:"Full Name" }}</h2>
-                        {% if cv.position %}
-                        <h4 class="text-primary mb-3">{{ cv.position }}</h4>
-                        {% endif %}
-                        
-                        <div class="row justify-content-center">
-                            {% if cv.email %}
-                            <div class="col-auto">
-                                <div class="d-flex align-items-center mb-2">
-                                    <i class="fas fa-envelope text-primary me-2"></i>
-                                    <span>{{ cv.email }}</span>
-                                </div>
-                            </div>
+                    <div class="d-flex flex-column flex-md-row align-items-start gap-4 mb-4 pb-4 border-bottom">
+                        <div class="profile-avatar overflow-hidden rounded-circle border border-3 border-primary bg-white shadow-sm">
+                            {% if cv.photo %}
+                                <img src="{{ cv.photo.url }}" alt="{{ cv.full_name|default:'Avatar' }}" class="w-100 h-100 object-fit-cover" onerror="this.onerror=null;this.src='{% static 'img/default-avatar.png' %}';" />
+                            {% else %}
+                                <img src="{% static 'img/default-avatar.png' %}" alt="Default avatar" class="w-100 h-100 object-fit-cover" />
                             {% endif %}
-                            
-                            {% if cv.phone %}
-                            <div class="col-auto">
-                                <div class="d-flex align-items-center mb-2">
-                                    <i class="fas fa-phone text-primary me-2"></i>
-                                    <span>{{ cv.phone }}</span>
-                                </div>
-                            </div>
+                        </div>
+                        <div class="flex-fill">
+                            <h2 class="fw-bold text-dark mb-2">{{ cv.full_name|default:"Full Name" }}</h2>
+                            {% if cv.position %}
+                            <h4 class="text-primary mb-3">{{ cv.position }}</h4>
                             {% endif %}
-                            
-                            {% if cv.address %}
-                            <div class="col-auto">
-                                <div class="d-flex align-items-center mb-2">
-                                    <i class="fas fa-map-marker-alt text-primary me-2"></i>
-                                    <span>{{ cv.address }}</span>
+
+                            <div class="row row-cols-1 row-cols-md-2 g-2 g-md-3">
+                                {% if cv.email %}
+                                <div class="col">
+                                    <div class="d-flex align-items-center text-muted">
+                                        <i class="fas fa-envelope text-primary me-2"></i>
+                                        <span>{{ cv.email }}</span>
+                                    </div>
                                 </div>
+                                {% endif %}
+                                {% if cv.phone %}
+                                <div class="col">
+                                    <div class="d-flex align-items-center text-muted">
+                                        <i class="fas fa-phone text-primary me-2"></i>
+                                        <span>{{ cv.phone }}</span>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% if cv.address %}
+                                <div class="col">
+                                    <div class="d-flex align-items-center text-muted">
+                                        <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                                        <span>{{ cv.address }}</span>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% if cv.city %}
+                                <div class="col">
+                                    <div class="d-flex align-items-center text-muted">
+                                        <i class="fas fa-city text-primary me-2"></i>
+                                        <span>{{ cv.city }}</span>
+                                    </div>
+                                </div>
+                                {% endif %}
                             </div>
-                            {% endif %}
                         </div>
                     </div>
 
@@ -77,7 +92,19 @@
                         <h5 class="fw-bold text-primary mb-3 border-bottom pb-2">
                             <i class="fas fa-user-tie me-2"></i>{% trans 'Professional Summary' %}
                         </h5>
-                        <p class="text-dark">{{ cv.professional_summary|linebreaks }}</p>
+                        <div class="summary-quote p-3 rounded-3 bg-light border">
+                            {% if cv.professional_summary|length > 500 %}
+                            <div id="summaryPreview" class="text-dark mb-0">
+                                <p class="mb-0">{{ cv.professional_summary|slice:":500" }}…</p>
+                            </div>
+                            <div id="summaryFull" class="text-dark summary-full">
+                                <p class="mb-0">{{ cv.professional_summary|linebreaks }}</p>
+                            </div>
+                            <button type="button" class="btn btn-link btn-sm mt-3 p-0 summary-toggle" onclick="toggleSummary(event)">{% trans 'Read more' %}</button>
+                            {% else %}
+                            <p class="text-dark mb-0">{{ cv.professional_summary|linebreaks }}</p>
+                            {% endif %}
+                        </div>
                     </div>
                     {% endif %}
 
@@ -313,6 +340,35 @@
 .border-bottom {
     border-color: #e9ecef !important;
 }
+
+.profile-avatar {
+    width: 112px;
+    height: 112px;
+    min-width: 112px;
+}
+
+.summary-quote {
+    position: relative;
+    border-left: 4px solid #0d6efd;
+    background: #f8f9ff;
+}
+
+.summary-quote p {
+    margin-bottom: 0;
+}
+
+.summary-full {
+    display: none;
+}
+
+.summary-full.expanded {
+    display: block;
+}
+
+.summary-toggle {
+    color: #0d6efd;
+    font-weight: 600;
+}
 </style>
 
 <script>
@@ -337,12 +393,33 @@ function copyToClipboard() {
     });
 }
 
+// Professional Summary toggle
+function toggleSummary(event) {
+    const button = event.currentTarget;
+    const fullBlock = document.getElementById('summaryFull');
+    const previewBlock = document.getElementById('summaryPreview');
+
+    if (!fullBlock) {
+        return;
+    }
+
+    const expanded = fullBlock.classList.toggle('expanded');
+    if (expanded) {
+        button.textContent = '{{ "Hide"|trans }}';
+        previewBlock.style.display = 'none';
+    } else {
+        button.textContent = '{{ "Read more"|trans }}';
+        previewBlock.style.display = 'block';
+        fullBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
 // Share CV functionality
 function shareCV() {
     if (navigator.share) {
         navigator.share({
-            title: 'My resume - {{ cv.full_name }}',
-            text: '{{ cv.position }} - {{ cv.professional_summary|truncatewords:10 }}',
+            title: 'My resume - {{ cv.full_name|escapejs }}',
+            text: '{{ cv.position|escapejs }} - {{ cv.professional_summary|truncatewords:10|escapejs }}',
             url: window.location.href,
         })
         .then(() => console.log('Successfully shared'))
