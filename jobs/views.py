@@ -231,6 +231,15 @@ def google_form_webhook(request):
     raw_photo_id = payload.get("photo_id")
     photo_id = str(raw_photo_id).strip() if raw_photo_id else ""
 
+    # --- РЕШЕНИЕ ПРОБЛЕМЫ С БАЗОЙ ДАННЫХ ---
+    # Находим дефолтную компанию и профиль автора, чтобы база не ругалась на NULL
+    default_company = Company.objects.filter(is_active=True).first() 
+    if not default_company:
+        return JsonResponse({"detail": "No active company found in database to assign this job."}, status=500)
+    
+    default_employer_profile = default_company.owner.employer_profile if hasattr(default_company.owner, 'employer_profile') else None
+    # ----------------------------------------
+
     try:
         job = Job.objects.create(
             title=title,
@@ -240,7 +249,9 @@ def google_form_webhook(request):
             work_time=work_time,
             contacts=contacts,
             source="google_form",
-            company=None,
+            company=default_company,            # Передаем реальный объект Company
+            created_by=default_employer_profile, # Передаем профиль создателя
+            is_active=True,                     # Сразу делаем активной, чтобы вышла на сайт
             work_type="office",
             employment_type="full_time",
             experience_level="no_experience",
@@ -255,15 +266,17 @@ def google_form_webhook(request):
             region="",
             benefits="",
             contact_phone="",
-            contact_person="",
+            contact_person="OXU Career Center",
             application_url="",
             work_schedule="",
             probation_period=""
         )
     except Exception as exc:
+        # Если снова упадет — в логах сервера (gunicorn/uwsgi) будет видна точная причина
         logger.exception("Database error during Job creation from webhook: %s", exc)
-        return JsonResponse({"detail": "Internal server database error"}, status=500)
+        return JsonResponse({"detail": f"Database integration error: {str(exc)}"}, status=500)
 
+    # Скачивание картинки
     if photo_id and photo_id.lower() != "none":
         image_bytes, filename = _download_google_form_image(photo_id)
         if image_bytes and filename:
@@ -272,6 +285,7 @@ def google_form_webhook(request):
             except Exception as exc:
                 logger.warning("Failed to save Google Form image for job %s: %s", job.pk, exc)
 
+    # Отправка в телеграм
     try:
         _send_job_to_telegram(job)
     except Exception as exc:
