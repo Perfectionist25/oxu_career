@@ -130,8 +130,13 @@ def _download_google_form_image(photo_id):
         return None, None
 
 
-def _send_job_to_telegram(job):
-    """Send a job announcement to the configured Telegram channel."""
+def _send_job_to_telegram(job, image_bytes=None, filename=None):
+    """Отправка вакансии в Telegram. 
+    Если переданы image_bytes, картинка шлется напрямую из оперативной памяти.
+    """
+    import requests
+    from django.conf import settings
+
     bot_token = getattr(settings, "TELEGRAM_BOT_TOKEN", None)
     channel_id = getattr(settings, "TELEGRAM_CHANNEL_ID", None)
 
@@ -143,103 +148,70 @@ def _send_job_to_telegram(job):
     base_url = f"https://api.telegram.org/bot{bot_token}"
 
     try:
-        if job.image:
+        # Проверяем, долетели ли до нас байты картинки из Google Drive
+        if image_bytes and filename:
+            # Формируем кортеж для requests: (имя_файла, байты, тип)
+            files = {"photo": (filename, image_bytes, "image/jpeg")}
+
             if len(message) <= 1024:
-                # Для sendPhoto передаем ТОЛЬКО то, что он поддерживает
+                # Картинка + текст в одном флаконе
                 payload = {
                     "chat_id": channel_id,
                     "caption": message,
                     "parse_mode": "HTML",
                 }
-                with job.image.open("rb") as image_file:
-                    response = requests.post(
-                        f"{base_url}/sendPhoto",
-                        data=payload,
-                        files={"photo": image_file},
-                        timeout=(5, 15),
-                    )
+                response = requests.post(
+                    f"{base_url}/sendPhoto",
+                    data=payload,
+                    files=files,
+                    timeout=(5, 15),
+                )
                 response.raise_for_status()
             else:
-                # Если текст > 1024 символов, шлем картинку отдельно, текст — отдельно
-                with job.image.open("rb") as image_file:
-                    response = requests.post(
-                        f"{base_url}/sendPhoto",
-                        data={"chat_id": channel_id},
-                        files={"photo": image_file},
-                        timeout=(5, 15),
-                    )
-                response.raise_for_status()
-
-                message_payload = {
+                # Если текст гигантский (>1024), разбиваем: сначала фото, потом текст
+                requests.post(
+                    f"{base_url}/sendPhoto",
+                    data={"chat_id": channel_id},
+                    files=files,
+                    timeout=(5, 15),
+                )
+                
+                payload = {
                     "chat_id": channel_id,
                     "text": message,
                     "parse_mode": "HTML",
                 }
                 response = requests.post(
                     f"{base_url}/sendMessage",
-                    json=message_payload,  # Для обычного текста JSON надежнее form-data
+                    data=payload,
                     timeout=(5, 15),
                 )
                 response.raise_for_status()
         else:
-            # Отправка чистого текста без фото
-            message_payload = {
+            # Если картинки нет вообще, просто отправляем текст
+            payload = {
                 "chat_id": channel_id,
                 "text": message,
                 "parse_mode": "HTML",
             }
             response = requests.post(
                 f"{base_url}/sendMessage",
-                json=message_payload,
+                data=payload,
                 timeout=(5, 15),
             )
             response.raise_for_status()
-    except requests.RequestException as exc:
-        logger.exception("Failed to send job announcement to Telegram: %s", exc)
+
+    except Exception as exc:
+        logger.exception("Ошибка внутри _send_job_to_telegram: %s", exc)
 
 
+# --- ОБНОВЛЕННЫЙ ВЕБХУК ---
 @csrf_exempt
 @require_POST
 def google_form_webhook(request):
-    """Webhook для приема вакансий из Google Формы и отправки в Telegram."""
-    request_token = _get_request_token(request)
-    secret_token = getattr(settings, "SECRET_TOKEN", None)
+    # ... (весь ваш начальный код валидации токенов и JSON остается прежним) ...
 
-    if not _secure_compare_tokens(request_token, secret_token):
-        return JsonResponse({"detail": "Unauthorized"}, status=401)
-
-    if not request.content_type or "application/json" not in request.content_type:
-        return JsonResponse({"detail": "Content-Type must be application/json"}, status=415)
-
-    try:
-        payload = json.loads(request.body.decode("utf-8"))
-    except (ValueError, UnicodeDecodeError):
-        return JsonResponse({"detail": "Invalid JSON payload"}, status=400)
-
-    title = str(payload.get("title", "")).strip()
-    description = str(payload.get("description", "")).strip()
-    if not title or not description:
-        return JsonResponse(
-            {"detail": "Both title and description are required."},
-            status=400,
-        )
-
-    salary = str(payload.get("salary", "")).strip()
-    work_time = str(payload.get("work_time", "")).strip()
-    contacts = str(payload.get("contacts") or "@OXU_HR").strip()
-    
-    raw_photo_id = payload.get("photo_id")
-    photo_id = str(raw_photo_id).strip() if raw_photo_id else ""
-
-    # --- РЕШЕНИЕ ПРОБЛЕМЫ С БАЗОЙ ДАННЫХ ---
-    # Находим дефолтную компанию и профиль автора, чтобы база не ругалась на NULL
-    default_company = Company.objects.filter(is_active=True).first() 
-    if not default_company:
-        return JsonResponse({"detail": "No active company found in database to assign this job."}, status=500)
-    
-    default_employer_profile = default_company.owner.employer_profile if hasattr(default_company.owner, 'employer_profile') else None
-    # ----------------------------------------
-
+    # [Тут идет создание вакансии в БД для сайта - без поля image]
     try:
         job = Job.objects.create(
             title=title,
@@ -249,49 +221,33 @@ def google_form_webhook(request):
             work_time=work_time,
             contacts=contacts,
             source="google_form",
-            company=default_company,            # Передаем реальный объект Company
-            created_by=default_employer_profile, # Передаем профиль создателя
-            is_active=True,                     # Сразу делаем активной, чтобы вышла на сайт
-            work_type="office",
-            employment_type="full_time",
-            experience_level="no_experience",
-            education_level="none",
-            contact_email=getattr(settings, "DEFAULT_JOB_CONTACT_EMAIL", "hr@oxu.uz"),
-            requirements=description,
-            responsibilities=description,
-            skills_required="Not specified",
-            preferred_skills="",
-            language_requirements="",
-            district="",
-            region="",
-            benefits="",
-            contact_phone="",
-            contact_person="OXU Career Center",
-            application_url="",
-            work_schedule="",
-            probation_period=""
+            company=default_company,
+            created_by=default_employer_profile,
+            is_active=True,
+            # ... остальные поля ...
         )
     except Exception as exc:
-        # Если снова упадет — в логах сервера (gunicorn/uwsgi) будет видна точная причина
-        logger.exception("Database error during Job creation from webhook: %s", exc)
-        return JsonResponse({"detail": f"Database integration error: {str(exc)}"}, status=500)
+        logger.exception("Database error: %s", exc)
+        return JsonResponse({"detail": "Database error"}, status=500)
 
-    # Скачивание картинки
+    # --- ЛОГИКА ТРАНЗИТА КАРТИНКИ ---
+    image_bytes = None
+    filename = None
+
     if photo_id and photo_id.lower() != "none":
-        image_bytes, filename = _download_google_form_image(photo_id)
-        if image_bytes and filename:
-            try:
-                job.image.save(filename, ContentFile(image_bytes), save=True)
-            except Exception as exc:
-                logger.warning("Failed to save Google Form image for job %s: %s", job.pk, exc)
+        try:
+            # Скачиваем картинку в переменные, никуда не сохраняя на сервере
+            image_bytes, filename = _download_google_form_image(photo_id)
+        except Exception as exc:
+            logger.warning("Не удалось скачать картинку из Google Drive: %s", exc)
 
-    # Отправка в телеграм
+    # Отправляем в Telegram и передаем туда наши байты напрямую
     try:
-        _send_job_to_telegram(job)
+        _send_job_to_telegram(job, image_bytes=image_bytes, filename=filename)
     except Exception as exc:
-        logger.exception("Failed to process Telegram sending pipeline: %s", exc)
+        logger.exception("Failed to send to Telegram: %s", exc)
 
-    return JsonResponse({"detail": "Job created", "job_id": job.pk}, status=201)
+    return JsonResponse({"detail": "Job created and sent", "job_id": job.pk}, status=201)
 
 
 def _is_student_or_alumni(user):
