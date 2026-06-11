@@ -27,9 +27,15 @@ from accounts.views import *
 from .forms import *
 from .models import *
 
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+
 logger = logging.getLogger(__name__)
 
-
+@api_view(['POST'])
+@authentication_classes([])  # Полностью отключаем проверку токенов/сессий для этого запроса
+@permission_classes([AllowAny])
 def _send_job_to_telegram(job):
     """Send a job announcement to the configured Telegram channel."""
     bot_token = getattr(settings, "TELEGRAM_BOT_TOKEN", None)
