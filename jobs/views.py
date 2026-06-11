@@ -223,10 +223,26 @@ def google_form_webhook(request):
     photo_id = str(raw_photo_id).strip() if raw_photo_id else ""
 
     try:
-        # ОБЯЗАТЕЛЬНО: Если поле company в вашей модели Job НЕ поддерживает null=True,
-        # замените None на дефолтную компанию, например: Company.objects.first()
-        default_company = None 
+        # 1. Берем самую первую компанию из базы или создаем системную, если пусто
+        default_company = Company.objects.first()
+        if not default_company:
+            # Если компаний в БД вообще нет, создаем одну заглушку, чтобы база не ругалась
+            default_company = Company.objects.create(name="Osiyo Xalqaro Universiteti")
 
+        # 2. Берем первый профиль работодателя (нужен для поля created_by)
+        default_employer_profile = EmployerProfile.objects.first()
+        if not default_employer_profile:
+            # Если профилей нет, берем первого суперпользователя или любого юзера
+            from django.contrib.auth import get_user_model
+            User = get_user_model()
+            admin_user = User.objects.filter(is_superuser=True).first() or User.objects.first()
+            if admin_user:
+                default_employer_profile = EmployerProfile.objects.create(
+                    user=admin_user, 
+                    company_name="OXU Career Center"
+                )
+
+        # 3. Теперь создаем вакансию со ВСЕМИ обязательными связями
         job = Job.objects.create(
             title=title,
             description=description,
@@ -235,8 +251,10 @@ def google_form_webhook(request):
             work_time=work_time,
             contacts=contacts,
             source="google_form",
-            company=default_company, 
-            is_active=True,  # Вакансия СРАЗУ опубликуется на сайте!
+            company=default_company,            # Передаем реальный объект компании
+            created_by=default_employer_profile, # Передаем реальный профиль автора
+            is_active=True,                     # Вакансия сразу будет активна и видна на сайте!
+            job_market="uzbekistan",            # Обязательное поле-выбор из вашей модели
             work_type="office",
             employment_type="full_time",
             experience_level="no_experience",
@@ -244,7 +262,7 @@ def google_form_webhook(request):
             contact_email=getattr(settings, "DEFAULT_JOB_CONTACT_EMAIL", "hr@oxu.uz"),
             requirements=description,
             responsibilities=description,
-            skills_required="Not specified",
+            skills_required="Не указано",
             preferred_skills="",
             language_requirements="",
             district="",
@@ -257,8 +275,8 @@ def google_form_webhook(request):
             probation_period=""
         )
     except Exception as exc:
-        logger.exception("Database error during Job creation from webhook: %s", exc)
-        return JsonResponse({"detail": "Internal server database error. Check logs for IntegrityError."}, status=500)
+        logger.exception("Критическая ошибка базы данных при создании Job через вебхук: %s", exc)
+        return JsonResponse({"detail": f"Database error: {str(exc)}"}, status=500)
 
     # ЛОГИКА ТРАНЗИТА КАРТИНКИ
     image_bytes = None
