@@ -32,7 +32,7 @@ from .models import *
 
 logger = logging.getLogger(__name__)
 
-MAX_IMAGE_DOWNLOAD_SIZE = 5 * 1024 * 1024  # 5 MB
+MAX_IMAGE_DOWNLOAD_SIZE = 10 * 1024 * 1024  # 10 MB
 ALLOWED_IMAGE_CONTENT_TYPES = {
     "image/jpeg": ".jpg",
     "image/jpg": ".jpg",
