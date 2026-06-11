@@ -222,30 +222,28 @@ def google_form_webhook(request):
     raw_photo_id = payload.get("photo_id")
     photo_id = str(raw_photo_id).strip() if raw_photo_id else ""
 
-# --- НАЧАЛО ФИНАЛЬНОГО ИСПРАВЛЕННОГО БЛОКА СОЗДАНИЯ ВАКАНСИИ ---
+# --- НАЧАЛО ИСПРАВЛЕННОГО БЛОКА СОЗДАНИЯ ВАКАНСИИ ---
     try:
-        # 1. Ищем дефолтную компанию
+        # 1. Автоматически привязываем к первой компании в базе
         default_company = Company.objects.first()
         if not default_company:
             default_company = Company.objects.create(name="Osiyo Xalqaro Universiteti")
 
-        # 2. Ищем или создаем профиль работодателя (EmployerProfile)
+        # 2. Находим или создаем профиль работодателя (для поля created_by)
         default_employer_profile = EmployerProfile.objects.first()
         if not default_employer_profile:
             from django.contrib.auth import get_user_model
             User = get_user_model()
-            # Берем админа или вообще любого первого пользователя системы
             admin_user = User.objects.filter(is_superuser=True).first() or User.objects.first()
             if admin_user:
-                # Создаем профиль привязанный к пользователю
                 default_employer_profile = EmployerProfile.objects.create(
                     user=admin_user, 
                     company_name="OXU Career Center"
                 )
             else:
-                raise ValueError("В базе данных нет ни одного пользователя (User) для создания EmployerProfile!")
+                raise ValueError("В системе нет пользователей для создания EmployerProfile!")
 
-        # 3. Создаем вакансию со всеми обязательными флагами и связями
+        # 3. Создаем вакансию только с реальными полями вашей модели
         job = Job.objects.create(
             title=title,
             description=description,
@@ -256,14 +254,10 @@ def google_form_webhook(request):
             source="google_form",
             company=default_company,            # Передаем реальный объект Company
             created_by=default_employer_profile, # Передаем реальный объект EmployerProfile
-            is_active=True,                     # Вакансия сразу будет активна на сайте
-            job_market="uzbekistan",            # Обязательное поле-выбор из вашей модели
+            is_active=True,                     # Сразу публикуем на сайте career.oxu.uz
+            job_market="uzbekistan",            # Обязательное поле-выбор (Jobs in Uzbekistan)
             
-            # Фикс ошибки со скриншота (явно передаем булевы значения)
-            is_negotiable=False,                
-            hide_salary=False,                  
-            
-            # Остальные текстовые поля по умолчанию
+            # Базовые текстовые поля (значения по умолчанию)
             work_type="office",
             employment_type="full_time",
             experience_level="no_experience",
