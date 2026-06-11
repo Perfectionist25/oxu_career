@@ -106,6 +106,7 @@ class Job(models.Model):
     salary = models.CharField(
         max_length=120,
         blank=True,
+        null=True,
         default="",
         verbose_name=_("Salary"),
         help_text=_("Salary information for the vacancy")
@@ -114,6 +115,7 @@ class Job(models.Model):
     work_time = models.CharField(
         max_length=120,
         blank=True,
+        null=True,
         default="",
         verbose_name=_("Work Time"),
         help_text=_("Working hours or schedule")
@@ -121,6 +123,8 @@ class Job(models.Model):
 
     contacts = models.CharField(
         max_length=200,
+        blank=True,
+        null=True,
         default="@OXU_HR",
         verbose_name=_("Contacts"),
         help_text=_("Contact information for this vacancy")
@@ -148,6 +152,7 @@ class Job(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
+        default=_('Asia International University'),
         verbose_name=_("Created By"),
         related_name="jobs_created",
         help_text=_("User who created this job")
@@ -157,12 +162,14 @@ class Job(models.Model):
         max_length=100,
         verbose_name=_("Location"),
         blank=True,
+        null=True,
         default="",
         help_text=_("Specific location or address")
     )
     district = models.CharField(
         max_length=100,
         blank=True,
+        null=True,
         default="",
         verbose_name=_("District/City"),
         help_text=_("District or city name")
@@ -170,6 +177,7 @@ class Job(models.Model):
     region = models.CharField(
         max_length=100,
         blank=True,
+        null=True,
         default="",
         verbose_name=_("Region"),
         help_text=_("Region or province")
@@ -205,6 +213,7 @@ class Job(models.Model):
     target_user_types = models.JSONField(
         default=list,
         blank=True,
+        null=True,
         verbose_name=_("Target User Types"),
         help_text=_("User types this job is targeted for (e.g., ['student', 'alumni'])")
     )
@@ -272,6 +281,7 @@ class Job(models.Model):
     )
     benefits = models.TextField(
         blank=True,
+        null=True,
         default="",
         verbose_name=_("Benefits"),
         help_text=_("Employee benefits and perks")
@@ -284,6 +294,7 @@ class Job(models.Model):
     )
     preferred_skills = models.TextField(
         blank=True,
+        null=True,
         verbose_name=_("Preferred Skills"),
         help_text=_("List preferred skills separated by commas")
     )
@@ -291,6 +302,7 @@ class Job(models.Model):
 
     language_requirements = models.TextField(
         blank=True,
+        null=True,
         verbose_name=_("Language Requirements"),
         help_text=_("Required language proficiency levels")
     )
@@ -303,17 +315,20 @@ class Job(models.Model):
     contact_phone = models.CharField(
         max_length=20,
         blank=True,
+        null=True,
         verbose_name=_("Contact Phone"),
         help_text=_("Phone number for inquiries")
     )
     contact_person = models.CharField(
         max_length=100,
         blank=True,
+        null=True,
         verbose_name=_("Contact Person"),
         help_text=_("Name of the contact person")
     )
     application_url = models.URLField(
         blank=True,
+        null=True,
         verbose_name=_("Application URL"),
         help_text=_("Direct link to apply")
     )
@@ -322,12 +337,14 @@ class Job(models.Model):
     work_schedule = models.CharField(
         max_length=100,
         blank=True,
+        null=True,
         verbose_name=_("Work Schedule"),
         help_text=_("Working hours and days")
     )
     probation_period = models.CharField(
         max_length=50,
         blank=True,
+        null=True,
         verbose_name=_("Probation Period"),
         help_text=_("Duration of probation period")
     )
@@ -380,8 +397,8 @@ class Job(models.Model):
         verbose_name=_("Updated At")
     )
     expires_at = models.DateTimeField(
-        null=True,
         blank=True,
+        null=True,
         verbose_name=_("Expires At"),
         help_text=_("Job posting expiration date")
     )
