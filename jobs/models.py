@@ -163,12 +163,14 @@ class Job(models.Model):
     district = models.CharField(
         max_length=100,
         blank=True,
+        default="",
         verbose_name=_("District/City"),
         help_text=_("District or city name")
     )
     region = models.CharField(
         max_length=100,
         blank=True,
+        default="",
         verbose_name=_("Region"),
         help_text=_("Region or province")
     )
@@ -270,6 +272,7 @@ class Job(models.Model):
     )
     benefits = models.TextField(
         blank=True,
+        default="",
         verbose_name=_("Benefits"),
         help_text=_("Employee benefits and perks")
     )

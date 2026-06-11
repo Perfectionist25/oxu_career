@@ -217,30 +217,47 @@ def google_form_webhook(request):
     salary = str(payload.get("salary", "")).strip()
     work_time = str(payload.get("work_time", "")).strip()
     contacts = str(payload.get("contacts") or "@OXU_HR").strip()
-    photo_id = str(payload.get("photo_id", "")).strip()
+    
+    # Исправление обработки null/None для photo_id
+    raw_photo_id = payload.get("photo_id")
+    photo_id = str(raw_photo_id).strip() if raw_photo_id else ""
 
-    job = Job.objects.create(
-        title=title,
-        description=description,
-        short_description=description[:300],
-        salary=salary,
-        work_time=work_time,
-        contacts=contacts,
-        source="google_form",
-        company=None,
-        work_type="office",
-        employment_type="full_time",
-        experience_level="no_experience",
-        education_level="none",
-        contact_email=getattr(settings, "DEFAULT_JOB_CONTACT_EMAIL", "hr@oxu.uz"),
-        requirements=description,
-        responsibilities=description,
-        skills_required="Not specified",
-        preferred_skills="",
-        language_requirements="",
-    )
+    try:
+        # Передаем пустые строки для полей без дефолтных значений в БД
+        job = Job.objects.create(
+            title=title,
+            description=description,
+            short_description=description[:300],
+            salary=salary,
+            work_time=work_time,
+            contacts=contacts,
+            source="google_form",
+            company=None,
+            work_type="office",
+            employment_type="full_time",
+            experience_level="no_experience",
+            education_level="none",
+            contact_email=getattr(settings, "DEFAULT_JOB_CONTACT_EMAIL", "hr@oxu.uz"),
+            requirements=description,
+            responsibilities=description,
+            skills_required="Not specified",
+            preferred_skills="",
+            language_requirements="",
+            # Добавленные поля для предотвращения IntegrityError:
+            district="",
+            region="",
+            benefits="",
+            contact_phone="",
+            contact_person="",
+            application_url="",
+            work_schedule="",
+            probation_period=""
+        )
+    except Exception as exc:
+        logger.exception("Database error during Job creation from webhook: %s", exc)
+        return JsonResponse({"detail": "Internal server database error"}, status=500)
 
-    if photo_id:
+    if photo_id and photo_id.lower() != "none":
         image_bytes, filename = _download_google_form_image(photo_id)
         if image_bytes and filename:
             try:
@@ -248,7 +265,10 @@ def google_form_webhook(request):
             except Exception as exc:
                 logger.warning("Failed to save Google Form image for job %s: %s", job.pk, exc)
 
-    _send_job_to_telegram(job)
+    try:
+        _send_job_to_telegram(job)
+    except Exception as exc:
+        logger.exception("Failed to process Telegram sending pipeline: %s", exc)
 
     return JsonResponse({"detail": "Job created", "job_id": job.pk}, status=201)
 
