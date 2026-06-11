@@ -85,7 +85,6 @@ class Job(models.Model):
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
-        default=_('Vacancy from OXU'),
         related_name="jobs",
         verbose_name=_("Company"),
         help_text=_("The company offering this job")

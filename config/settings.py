@@ -59,6 +59,11 @@ if not SECRET_KEY:
     else:
         raise Exception("SECRET_KEY (or DJANGO_SECRET_KEY) environment variable not set")
 
+SECRET_TOKEN = os.getenv("SECRET_TOKEN")
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+TELEGRAM_CHANNEL_ID = os.getenv("TELEGRAM_CHANNEL_ID")
+DEFAULT_JOB_CONTACT_EMAIL = os.getenv("DEFAULT_JOB_CONTACT_EMAIL", "hr@oxu.uz")
+
 
 # HOSTS / CSRF / SITE URL
 

@@ -1,7 +1,10 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+import hmac
+import html
 import json
 import logging
+import re
 from datetime import timedelta
 
 import requests
@@ -27,41 +30,106 @@ from accounts.views import *
 from .forms import *
 from .models import *
 
-from rest_framework.decorators import api_view, permission_classes, authentication_classes
-from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
-
 logger = logging.getLogger(__name__)
 
-@api_view(['POST'])
-@authentication_classes([])  # Полностью отключаем проверку токенов/сессий для этого запроса
-@permission_classes([AllowAny])
+MAX_IMAGE_DOWNLOAD_SIZE = 5 * 1024 * 1024  # 5 MB
+ALLOWED_IMAGE_CONTENT_TYPES = {
+    "image/jpeg": ".jpg",
+    "image/jpg": ".jpg",
+    "image/png": ".png",
+    "image/webp": ".webp",
+}
+PHOTO_ID_PATTERN = re.compile(r"^[A-Za-z0-9_-]+$")
+
+
+def _get_request_token(request):
+    return request.headers.get("X-App-Token") or request.META.get("HTTP_X_APP_TOKEN")
+
+
+def _secure_compare_tokens(request_token, secret_token):
+    if not request_token or not secret_token:
+        return False
+    return hmac.compare_digest(request_token, secret_token)
+
+
+def _build_telegram_message(job):
+    def escape(value):
+        return html.escape(value or "")
+
+    parts = [
+        "Osiyo Xalqaro Universitetida yangi vakansiyalar e'lon qilinadi!...\n\n",
+        "<blockquote>",
+        f"<b>{escape(job.title)}</b>\n",
+        f"{escape(job.salary or 'Maosh: ma\'lumot kiritilmagan')}\n",
+        f"{escape(job.work_time or 'Ish vaqti: ma\'lumot kiritilmagan')}\n",
+        f"{escape(job.description)}",
+        "</blockquote>\n\n",
+        f"<b>Kontaktlar:</b> {escape(job.contacts)}",
+    ]
+    return "".join(parts)
+
+
+def _download_google_form_image(photo_id):
+    if not photo_id or not PHOTO_ID_PATTERN.fullmatch(photo_id):
+        logger.warning("Invalid Google Drive photo_id received: %s", photo_id)
+        return None, None
+
+    image_url = f"https://docs.google.com/uc?export=download&id={photo_id}"
+    try:
+        response = requests.get(
+            image_url,
+            stream=True,
+            timeout=(5, 15),
+            allow_redirects=True,
+        )
+        response.raise_for_status()
+
+        content_type = response.headers.get("Content-Type", "").split(";", 1)[0].strip().lower()
+        file_ext = ALLOWED_IMAGE_CONTENT_TYPES.get(content_type)
+        if not file_ext:
+            logger.warning("Unsupported image content type: %s", content_type)
+            return None, None
+
+        content_length = response.headers.get("Content-Length")
+        if content_length is not None:
+            try:
+                if int(content_length) > MAX_IMAGE_DOWNLOAD_SIZE:
+                    logger.warning("Image content length too large: %s", content_length)
+                    return None, None
+            except ValueError:
+                logger.warning("Invalid Content-Length header: %s", content_length)
+                return None, None
+
+        image_data = bytearray()
+        for chunk in response.iter_content(chunk_size=8192):
+            if not chunk:
+                continue
+            image_data.extend(chunk)
+            if len(image_data) > MAX_IMAGE_DOWNLOAD_SIZE:
+                logger.warning("Image exceeded maximum allowed size (%s bytes)", MAX_IMAGE_DOWNLOAD_SIZE)
+                return None, None
+
+        if not image_data:
+            logger.warning("Downloaded image is empty for photo_id=%s", photo_id)
+            return None, None
+
+        filename = f"google_form_{photo_id}{file_ext}"
+        return bytes(image_data), filename
+    except requests.RequestException as exc:
+        logger.warning("Failed to download Google Form image: %s", exc)
+        return None, None
+
+
 def _send_job_to_telegram(job):
     """Send a job announcement to the configured Telegram channel."""
     bot_token = getattr(settings, "TELEGRAM_BOT_TOKEN", None)
     channel_id = getattr(settings, "TELEGRAM_CHANNEL_ID", None)
 
     if not bot_token or not channel_id:
-        logger.warning("Telegram bot token or channel ID is not configured in settings.")
+        logger.warning("Telegram bot token or channel ID is not configured.")
         return
 
-    def _escape(text):
-        import html
-
-        return html.escape(text or "")
-
-    message_parts = [
-        "Osiyo Xalqaro Universitetida yangi vakansiyalar e'lon qilinadi!...\n\n",
-        "<blockquote>",
-        f"<b>{_escape(job.title)}</b>\n",
-        f"{_escape(job.salary or 'Maosh: ma\'lumot kiritilmagan')}\n",
-        f"{_escape(job.work_time or 'Ish vaqti: ma\'lumot kiritilmagan')}\n",
-        f"{_escape(job.description)}",
-        "</blockquote>\n\n",
-        f"<b>Kontaktlar:</b> {_escape(job.contacts)}",
-    ]
-
-    message = "".join(message_parts)
+    message = _build_telegram_message(job)
     base_url = f"https://api.telegram.org/bot{bot_token}"
     send_photo_url = f"{base_url}/sendPhoto"
     send_message_url = f"{base_url}/sendMessage"
@@ -80,7 +148,7 @@ def _send_job_to_telegram(job):
                         send_photo_url,
                         data=payload,
                         files={"photo": image_file},
-                        timeout=15,
+                        timeout=(5, 15),
                     )
                     response.raise_for_status()
                 else:
@@ -88,22 +156,32 @@ def _send_job_to_telegram(job):
                         send_photo_url,
                         data=payload,
                         files={"photo": image_file},
-                        timeout=15,
+                        timeout=(5, 15),
                     )
                     response.raise_for_status()
-                    message_payload = {**payload, "text": message}
+                    message_payload = {
+                        "chat_id": channel_id,
+                        "text": message,
+                        "parse_mode": "HTML",
+                        "disable_web_page_preview": True,
+                    }
                     response = requests.post(
                         send_message_url,
                         data=message_payload,
-                        timeout=15,
+                        timeout=(5, 15),
                     )
                     response.raise_for_status()
         else:
-            message_payload = {**payload, "text": message}
+            message_payload = {
+                "chat_id": channel_id,
+                "text": message,
+                "parse_mode": "HTML",
+                "disable_web_page_preview": True,
+            }
             response = requests.post(
                 send_message_url,
                 data=message_payload,
-                timeout=15,
+                timeout=(5, 15),
             )
             response.raise_for_status()
     except requests.RequestException as exc:
@@ -114,34 +192,37 @@ def _send_job_to_telegram(job):
 @require_POST
 def google_form_webhook(request):
     """Webhook для приема вакансий из Google Формы и отправки в Telegram."""
-    request_token = request.headers.get("X-App-Token") or request.META.get("HTTP_X_APP_TOKEN")
+    request_token = _get_request_token(request)
     secret_token = getattr(settings, "SECRET_TOKEN", None)
 
-    if not request_token or request_token != secret_token:
+    if not _secure_compare_tokens(request_token, secret_token):
         return JsonResponse({"detail": "Unauthorized"}, status=401)
+
+    if not request.content_type or "application/json" not in request.content_type:
+        return JsonResponse({"detail": "Content-Type must be application/json"}, status=415)
 
     try:
         payload = json.loads(request.body.decode("utf-8"))
     except (ValueError, UnicodeDecodeError):
         return JsonResponse({"detail": "Invalid JSON payload"}, status=400)
 
-    title = payload.get("title", "").strip()
-    description = payload.get("description", "").strip()
+    title = str(payload.get("title", "")).strip()
+    description = str(payload.get("description", "")).strip()
     if not title or not description:
         return JsonResponse(
             {"detail": "Both title and description are required."},
             status=400,
         )
 
-    salary = payload.get("salary", "")
-    work_time = payload.get("work_time", "")
-    contacts = payload.get("contacts") or "@OXU_HR"
-    photo_id = payload.get("photo_id")
+    salary = str(payload.get("salary", "")).strip()
+    work_time = str(payload.get("work_time", "")).strip()
+    contacts = str(payload.get("contacts") or "@OXU_HR").strip()
+    photo_id = str(payload.get("photo_id", "")).strip()
 
     job = Job.objects.create(
         title=title,
         description=description,
-        short_description=description[:250],
+        short_description=description[:300],
         salary=salary,
         work_time=work_time,
         contacts=contacts,
@@ -155,18 +236,17 @@ def google_form_webhook(request):
         requirements=description,
         responsibilities=description,
         skills_required="Not specified",
+        preferred_skills="",
+        language_requirements="",
     )
 
     if photo_id:
-        image_url = f"https://docs.google.com/uc?export=download&id={photo_id}"
-        try:
-            response = requests.get(image_url, timeout=15)
-            response.raise_for_status()
-            if response.content:
-                file_name = f"google_form_{photo_id}.jpg"
-                job.image.save(file_name, ContentFile(response.content), save=True)
-        except requests.RequestException:
-            logger.warning("Could not download Google Form photo for photo_id=%s", photo_id)
+        image_bytes, filename = _download_google_form_image(photo_id)
+        if image_bytes and filename:
+            try:
+                job.image.save(filename, ContentFile(image_bytes), save=True)
+            except Exception as exc:
+                logger.warning("Failed to save Google Form image for job %s: %s", job.pk, exc)
 
     _send_job_to_telegram(job)
 
