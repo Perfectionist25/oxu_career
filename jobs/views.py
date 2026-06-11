@@ -222,27 +222,30 @@ def google_form_webhook(request):
     raw_photo_id = payload.get("photo_id")
     photo_id = str(raw_photo_id).strip() if raw_photo_id else ""
 
+# --- НАЧАЛО ФИНАЛЬНОГО ИСПРАВЛЕННОГО БЛОКА СОЗДАНИЯ ВАКАНСИИ ---
     try:
-        # 1. Берем самую первую компанию из базы или создаем системную, если пусто
+        # 1. Ищем дефолтную компанию
         default_company = Company.objects.first()
         if not default_company:
-            # Если компаний в БД вообще нет, создаем одну заглушку, чтобы база не ругалась
             default_company = Company.objects.create(name="Osiyo Xalqaro Universiteti")
 
-        # 2. Берем первый профиль работодателя (нужен для поля created_by)
+        # 2. Ищем или создаем профиль работодателя (EmployerProfile)
         default_employer_profile = EmployerProfile.objects.first()
         if not default_employer_profile:
-            # Если профилей нет, берем первого суперпользователя или любого юзера
             from django.contrib.auth import get_user_model
             User = get_user_model()
+            # Берем админа или вообще любого первого пользователя системы
             admin_user = User.objects.filter(is_superuser=True).first() or User.objects.first()
             if admin_user:
+                # Создаем профиль привязанный к пользователю
                 default_employer_profile = EmployerProfile.objects.create(
                     user=admin_user, 
                     company_name="OXU Career Center"
                 )
+            else:
+                raise ValueError("В базе данных нет ни одного пользователя (User) для создания EmployerProfile!")
 
-        # 3. Теперь создаем вакансию со ВСЕМИ обязательными связями
+        # 3. Создаем вакансию со всеми обязательными флагами и связями
         job = Job.objects.create(
             title=title,
             description=description,
@@ -251,10 +254,16 @@ def google_form_webhook(request):
             work_time=work_time,
             contacts=contacts,
             source="google_form",
-            company=default_company,            # Передаем реальный объект компании
-            created_by=default_employer_profile, # Передаем реальный профиль автора
-            is_active=True,                     # Вакансия сразу будет активна и видна на сайте!
+            company=default_company,            # Передаем реальный объект Company
+            created_by=default_employer_profile, # Передаем реальный объект EmployerProfile
+            is_active=True,                     # Вакансия сразу будет активна на сайте
             job_market="uzbekistan",            # Обязательное поле-выбор из вашей модели
+            
+            # Фикс ошибки со скриншота (явно передаем булевы значения)
+            is_negotiable=False,                
+            hide_salary=False,                  
+            
+            # Остальные текстовые поля по умолчанию
             work_type="office",
             employment_type="full_time",
             experience_level="no_experience",
@@ -277,6 +286,7 @@ def google_form_webhook(request):
     except Exception as exc:
         logger.exception("Критическая ошибка базы данных при создании Job через вебхук: %s", exc)
         return JsonResponse({"detail": f"Database error: {str(exc)}"}, status=500)
+    # --- КОНЕЦ БЛОКА ---
 
     # ЛОГИКА ТРАНЗИТА КАРТИНКИ
     image_bytes = None
