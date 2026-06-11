@@ -55,19 +55,28 @@ def _secure_compare_tokens(request_token, secret_token):
 
 def _build_telegram_message(job):
     def escape(value):
-        return html.escape(value or "")
+        # На случай, если из Google Form или при экранировании кода прилетели сырые '\n'
+        val = str(value or "").replace("\\n", "\n")
+        return html.escape(val)
 
-    parts = [
-        "Osiyo Xalqaro Universitetida yangi vakansiyalar e'lon qilinadi!...\n\n",
-        "<blockquote>",
-        f"<b>{escape(job.title)}</b>\n",
-        f"{escape(job.salary or 'Maosh: ma\'lumot kiritilmagan')}\n",
-        f"{escape(job.work_time or 'Ish vaqti: ma\'lumot kiritilmagan')}\n",
-        f"{escape(job.description)}",
-        "</blockquote>\n\n",
-        f"<b>Kontaktlar:</b> {escape(job.contacts)}",
-    ]
-    return "".join(parts)
+    title = escape(job.title)
+    salary = escape(job.salary or "Maosh: ma'lumot kiritilmagan")
+    work_time = escape(job.work_time or "Ish vaqti: ma'lumot kiritilmagan")
+    description = escape(job.description)
+    contacts = escape(job.contacts or "@OXU_HR")
+
+    # Собираем сообщение с гарантированными переносами строк
+    message = (
+        "Osiyo Xalqaro Universitetida yangi vakansiyalar e'lon qilinadi!\n\n"
+        "<blockquote>"
+        f"<b>{title}</b>\n"
+        f"{salary}\n"
+        f"{work_time}\n"
+        f"{description}"
+        "</blockquote>\n\n"
+        f"<b>Kontaktlar:</b> {contacts}"
+    )
+    return message
 
 
 def _download_google_form_image(photo_id):
@@ -132,56 +141,56 @@ def _send_job_to_telegram(job):
 
     message = _build_telegram_message(job)
     base_url = f"https://api.telegram.org/bot{bot_token}"
-    send_photo_url = f"{base_url}/sendPhoto"
-    send_message_url = f"{base_url}/sendMessage"
-    payload = {
-        "chat_id": channel_id,
-        "parse_mode": "HTML",
-        "disable_web_page_preview": True,
-    }
 
     try:
         if job.image:
-            with job.image.open("rb") as image_file:
-                if len(message) <= 1024:
-                    payload["caption"] = message
+            if len(message) <= 1024:
+                # Для sendPhoto передаем ТОЛЬКО то, что он поддерживает
+                payload = {
+                    "chat_id": channel_id,
+                    "caption": message,
+                    "parse_mode": "HTML",
+                }
+                with job.image.open("rb") as image_file:
                     response = requests.post(
-                        send_photo_url,
+                        f"{base_url}/sendPhoto",
                         data=payload,
                         files={"photo": image_file},
                         timeout=(5, 15),
                     )
-                    response.raise_for_status()
-                else:
+                response.raise_for_status()
+            else:
+                # Если текст > 1024 символов, шлем картинку отдельно, текст — отдельно
+                with job.image.open("rb") as image_file:
                     response = requests.post(
-                        send_photo_url,
-                        data=payload,
+                        f"{base_url}/sendPhoto",
+                        data={"chat_id": channel_id},
                         files={"photo": image_file},
                         timeout=(5, 15),
                     )
-                    response.raise_for_status()
-                    message_payload = {
-                        "chat_id": channel_id,
-                        "text": message,
-                        "parse_mode": "HTML",
-                        "disable_web_page_preview": True,
-                    }
-                    response = requests.post(
-                        send_message_url,
-                        data=message_payload,
-                        timeout=(5, 15),
-                    )
-                    response.raise_for_status()
+                response.raise_for_status()
+
+                message_payload = {
+                    "chat_id": channel_id,
+                    "text": message,
+                    "parse_mode": "HTML",
+                }
+                response = requests.post(
+                    f"{base_url}/sendMessage",
+                    json=message_payload,  # Для обычного текста JSON надежнее form-data
+                    timeout=(5, 15),
+                )
+                response.raise_for_status()
         else:
+            # Отправка чистого текста без фото
             message_payload = {
                 "chat_id": channel_id,
                 "text": message,
                 "parse_mode": "HTML",
-                "disable_web_page_preview": True,
             }
             response = requests.post(
-                send_message_url,
-                data=message_payload,
+                f"{base_url}/sendMessage",
+                json=message_payload,
                 timeout=(5, 15),
             )
             response.raise_for_status()
