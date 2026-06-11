@@ -53,4 +53,5 @@ urlpatterns = [
         name="add_application_note",
     ),
     path("get-a-resume/", views.get_user_cvs, name="get_user_cvs"),
+    path("api/v1/vacancies/webhook/", views.google_form_webhook, name="google_form_webhook"),
 ]

@@ -83,11 +83,56 @@ class Job(models.Model):
     company = models.ForeignKey(
         "accounts.Company",
         on_delete=models.SET_NULL,
-        null=True,
         blank=True,
+        null=True,
+        default=_('Vacancy from OXU'),
         related_name="jobs",
         verbose_name=_("Company"),
         help_text=_("The company offering this job")
+    )
+
+    SOURCE_CHOICES = [
+        ("platform", _("Platform")),
+        ("google_form", _("Google Form")),
+    ]
+
+    source = models.CharField(
+        max_length=20,
+        choices=SOURCE_CHOICES,
+        default="platform",
+        verbose_name=_("Job Source"),
+        help_text=_("Source of this vacancy")
+    )
+
+    salary = models.CharField(
+        max_length=120,
+        blank=True,
+        default="",
+        verbose_name=_("Salary"),
+        help_text=_("Salary information for the vacancy")
+    )
+
+    work_time = models.CharField(
+        max_length=120,
+        blank=True,
+        default="",
+        verbose_name=_("Work Time"),
+        help_text=_("Working hours or schedule")
+    )
+
+    contacts = models.CharField(
+        max_length=200,
+        default="@OXU_HR",
+        verbose_name=_("Contacts"),
+        help_text=_("Contact information for this vacancy")
+    )
+
+    image = models.ImageField(
+        upload_to="jobs/images/",
+        null=True,
+        blank=True,
+        verbose_name=_("Image"),
+        help_text=_("Optional image attached to the vacancy")
     )
 
     job_market = models.CharField(
@@ -391,7 +436,8 @@ class Job(models.Model):
 
     def __str__(self):
 
-        return f"{self.title} - {self.company.name}"
+        company_name = self.company.name if self.company else "OXU ichki vakansiya"
+        return f"{self.title} - {company_name}"
 
     def get_absolute_url(self):
         return reverse("jobs:job_detail", kwargs={"pk": self.pk})

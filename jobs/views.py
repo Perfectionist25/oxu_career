@@ -1,15 +1,22 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+import json
+import logging
+from datetime import timedelta
+
+import requests
+from django.conf import settings
+from django.core.files.base import ContentFile
 from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Count, Q, Sum
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from datetime import timedelta
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.core.exceptions import ValidationError
 
@@ -19,6 +26,145 @@ from accounts.views import *
 
 from .forms import *
 from .models import *
+
+logger = logging.getLogger(__name__)
+
+
+def _send_job_to_telegram(job):
+    """Send a job announcement to the configured Telegram channel."""
+    bot_token = getattr(settings, "TELEGRAM_BOT_TOKEN", None)
+    channel_id = getattr(settings, "TELEGRAM_CHANNEL_ID", None)
+
+    if not bot_token or not channel_id:
+        logger.warning("Telegram bot token or channel ID is not configured in settings.")
+        return
+
+    def _escape(text):
+        import html
+
+        return html.escape(text or "")
+
+    message_parts = [
+        "Osiyo Xalqaro Universitetida yangi vakansiyalar e'lon qilinadi!...\n\n",
+        "<blockquote>",
+        f"<b>{_escape(job.title)}</b>\n",
+        f"{_escape(job.salary or 'Maosh: ma\'lumot kiritilmagan')}\n",
+        f"{_escape(job.work_time or 'Ish vaqti: ma\'lumot kiritilmagan')}\n",
+        f"{_escape(job.description)}",
+        "</blockquote>\n\n",
+        f"<b>Kontaktlar:</b> {_escape(job.contacts)}",
+    ]
+
+    message = "".join(message_parts)
+    base_url = f"https://api.telegram.org/bot{bot_token}"
+    send_photo_url = f"{base_url}/sendPhoto"
+    send_message_url = f"{base_url}/sendMessage"
+    payload = {
+        "chat_id": channel_id,
+        "parse_mode": "HTML",
+        "disable_web_page_preview": True,
+    }
+
+    try:
+        if job.image:
+            with job.image.open("rb") as image_file:
+                if len(message) <= 1024:
+                    payload["caption"] = message
+                    response = requests.post(
+                        send_photo_url,
+                        data=payload,
+                        files={"photo": image_file},
+                        timeout=15,
+                    )
+                    response.raise_for_status()
+                else:
+                    response = requests.post(
+                        send_photo_url,
+                        data=payload,
+                        files={"photo": image_file},
+                        timeout=15,
+                    )
+                    response.raise_for_status()
+                    message_payload = {**payload, "text": message}
+                    response = requests.post(
+                        send_message_url,
+                        data=message_payload,
+                        timeout=15,
+                    )
+                    response.raise_for_status()
+        else:
+            message_payload = {**payload, "text": message}
+            response = requests.post(
+                send_message_url,
+                data=message_payload,
+                timeout=15,
+            )
+            response.raise_for_status()
+    except requests.RequestException as exc:
+        logger.exception("Failed to send job announcement to Telegram: %s", exc)
+
+
+@csrf_exempt
+@require_POST
+def google_form_webhook(request):
+    """Webhook для приема вакансий из Google Формы и отправки в Telegram."""
+    request_token = request.headers.get("X-App-Token") or request.META.get("HTTP_X_APP_TOKEN")
+    secret_token = getattr(settings, "SECRET_TOKEN", None)
+
+    if not request_token or request_token != secret_token:
+        return JsonResponse({"detail": "Unauthorized"}, status=401)
+
+    try:
+        payload = json.loads(request.body.decode("utf-8"))
+    except (ValueError, UnicodeDecodeError):
+        return JsonResponse({"detail": "Invalid JSON payload"}, status=400)
+
+    title = payload.get("title", "").strip()
+    description = payload.get("description", "").strip()
+    if not title or not description:
+        return JsonResponse(
+            {"detail": "Both title and description are required."},
+            status=400,
+        )
+
+    salary = payload.get("salary", "")
+    work_time = payload.get("work_time", "")
+    contacts = payload.get("contacts") or "@OXU_HR"
+    photo_id = payload.get("photo_id")
+
+    job = Job.objects.create(
+        title=title,
+        description=description,
+        short_description=description[:250],
+        salary=salary,
+        work_time=work_time,
+        contacts=contacts,
+        source="google_form",
+        company=None,
+        work_type="office",
+        employment_type="full_time",
+        experience_level="no_experience",
+        education_level="none",
+        contact_email=getattr(settings, "DEFAULT_JOB_CONTACT_EMAIL", "hr@oxu.uz"),
+        requirements=description,
+        responsibilities=description,
+        skills_required="Not specified",
+    )
+
+    if photo_id:
+        image_url = f"https://docs.google.com/uc?export=download&id={photo_id}"
+        try:
+            response = requests.get(image_url, timeout=15)
+            response.raise_for_status()
+            if response.content:
+                file_name = f"google_form_{photo_id}.jpg"
+                job.image.save(file_name, ContentFile(response.content), save=True)
+        except requests.RequestException:
+            logger.warning("Could not download Google Form photo for photo_id=%s", photo_id)
+
+    _send_job_to_telegram(job)
+
+    return JsonResponse({"detail": "Job created", "job_id": job.pk}, status=201)
 
 
 def _is_student_or_alumni(user):
