@@ -49,7 +49,8 @@ def _get_request_token(request):
 def _secure_compare_tokens(request_token, secret_token):
     if not request_token or not secret_token:
         return False
-    return hmac.compare_digest(request_token, secret_token)
+    # Приведение к str предотвращает TypeError в hmac.compare_digest
+    return hmac.compare_digest(str(request_token), str(secret_token))
 
 
 def _build_telegram_message(job):
@@ -218,12 +219,10 @@ def google_form_webhook(request):
     work_time = str(payload.get("work_time", "")).strip()
     contacts = str(payload.get("contacts") or "@OXU_HR").strip()
     
-    # Исправление обработки null/None для photo_id
     raw_photo_id = payload.get("photo_id")
     photo_id = str(raw_photo_id).strip() if raw_photo_id else ""
 
     try:
-        # Передаем пустые строки для полей без дефолтных значений в БД
         job = Job.objects.create(
             title=title,
             description=description,
@@ -243,7 +242,6 @@ def google_form_webhook(request):
             skills_required="Not specified",
             preferred_skills="",
             language_requirements="",
-            # Добавленные поля для предотвращения IntegrityError:
             district="",
             region="",
             benefits="",
@@ -312,6 +310,7 @@ def _get_safe_next_url(request, default=None):
         return next_url
     return default
 
+
 @login_required
 def employer_applications(request):
     """Ish beruvchilar uchun arizalarni ko'rish"""
@@ -320,10 +319,7 @@ def employer_applications(request):
         return redirect("jobs:list")
 
     try:
-
-        employer_profile = EmployerProfile.objects.get(user=request.user)
-
-
+        EmployerProfile.objects.get(user=request.user)
         owned_companies = Company.objects.filter(owner=request.user, is_active=True)
         user_companies = list(owned_companies)
 
@@ -331,12 +327,12 @@ def employer_applications(request):
             messages.info(request, _("Hali hech qanday kompaniya yaratilmagan."))
             return redirect("accounts:company_create")
 
-
         employer_jobs = Job.objects.filter(company__in=user_companies)
     except EmployerProfile.DoesNotExist:
         messages.error(request, _("Ish beruvchi profili topilmadi."))
         return redirect("accounts:employer_profile_update")
     except Exception as e:
+        logger.error("Error loading employer applications: %s", e)
         messages.error(request, _("Ma'lumotlarni yuklashda xatolik yuz berdi."))
         return redirect("accounts:company_list")
 
@@ -346,18 +342,15 @@ def employer_applications(request):
         )
         return redirect("jobs:job_create")
 
-
     applications = (
         JobApplication.objects.filter(job__in=employer_jobs)
         .select_related("job", "job__company", "user", "cv")
         .order_by("-created_at")
     )
 
-
     status_filter = request.GET.get("status")
     if status_filter:
         applications = applications.filter(status=status_filter)
-
 
     status_counts = {
         "total": applications.count(),
@@ -378,6 +371,7 @@ def employer_applications(request):
     }
 
     return render(request, "jobs/applications.html", context)
+
 
 @login_required
 def job_create(request):
@@ -402,7 +396,6 @@ def job_create(request):
     if is_admin_user and not request.user.is_employer:
         available_companies = Company.objects.filter(is_active=True)
     else:
-
         available_companies = Company.objects.filter(owner=request.user, is_active=True)
 
     if not available_companies.exists():
@@ -420,22 +413,20 @@ def job_create(request):
                 job = form.save(commit=False)
                 selected_company = form.cleaned_data.get('company')
 
-
                 if selected_company not in available_companies:
                     messages.error(request, _("Tanlangan kompaniyaga vakansiya yaratish huquqingiz yo'q."))
                     context = {
                         "form": form,
                         "owned_companies": available_companies,
                         "employer_profile": employer_profile,
+                        "today": timezone.now().date(),
                     }
                     return render(request, template_name, context)
-
 
                 if request.user.is_employer:
                     job.created_by = employer_profile
                 else:
                     job.created_by = EmployerProfile.objects.filter(user=selected_company.owner).first()
-
 
                 if 'save_draft' in request.POST:
                     job.is_active = False
@@ -452,37 +443,23 @@ def job_create(request):
 
             except ValidationError as e:
                 messages.error(request, str(e))
-                context = {
-                    "form": form,
-                    "owned_companies": available_companies,
-                    "employer_profile": employer_profile,
-                }
-                return render(request, template_name, context)
             except Exception as e:
+                logger.error("Error creating job: %s", e)
                 messages.error(request, f"Xatolik yuz berdi: {str(e)}")
-                context = {
-                    "form": form,
-                    "owned_companies": available_companies,
-                    "employer_profile": employer_profile,
-                }
-                return render(request, template_name, context)
-        else:
-
-            context = {
-                "form": form,
-                "owned_companies": available_companies,
-                "employer_profile": employer_profile,
-            }
-            return render(request, template_name, context)
+        
+        context = {
+            "form": form,
+            "owned_companies": available_companies,
+            "employer_profile": employer_profile,
+            "today": timezone.now().date(),
+        }
+        return render(request, template_name, context)
     else:
-
         initial_data = {
             'contact_email': request.user.email,
             'contact_person': request.user.get_full_name() or request.user.username,
         }
         form = form_class(initial=initial_data, user=request.user)
-
-
         form.fields['company'].queryset = available_companies.distinct()
 
         if available_companies and len(available_companies) == 1:
@@ -495,6 +472,7 @@ def job_create(request):
         "employer_profile": employer_profile,
     }
     return render(request, template_name, context)
+
 
 @login_required
 def job_edit(request, pk):
@@ -525,18 +503,23 @@ def job_edit(request, pk):
         messages.error(request, _("Sizda bu vakansiyani tahrirlash huquqi yo'q."))
         return redirect("jobs:job_detail", pk=pk)
 
+    context = {
+        "job": job,
+        "employer_profile": employer_profile,
+        "today": timezone.now().date(),
+    }
+
     if request.method == "POST":
         form = form_class(request.POST, instance=job, user=request.user)
         if form.is_valid():
             try:
-
                 selected_company = form.cleaned_data.get('company')
                 if selected_company not in available_companies:
                     messages.error(request, _("Siz tanlagan kompaniyaga vakansiya tahrirlash huquqingiz yo'q."))
-                    return render(request, template_name, {"form": form, "job": job})
+                    context["form"] = form
+                    return render(request, template_name, context)
 
-                job = form.save()
-
+                job = form.save(commit=False)
                 action = request.POST.get("action")
                 if action == "draft":
                     job.is_active = False
@@ -552,6 +535,7 @@ def job_edit(request, pk):
                 return redirect("jobs:job_detail", pk=job.pk)
 
             except Exception as e:
+                logger.error("Error editing job: %s", e)
                 messages.error(request, f"Xatolik yuz berdi: {str(e)}")
         else:
             messages.error(request, _("Iltimos, xatolarni to'g'rilang."))
@@ -559,19 +543,14 @@ def job_edit(request, pk):
         form = form_class(instance=job, user=request.user)
         form.fields['company'].queryset = available_companies.distinct()
 
-    context = {
-        "form": form,
-        "job": job,
-        "employer_profile": employer_profile,
-        "today": timezone.now().date(),
-    }
+    context["form"] = form
     return render(request, template_name, context)
+
 
 @login_required
 def job_delete(request, pk):
     """Vakansiyani o'chirish"""
     job = get_object_or_404(Job, pk=pk)
-
     is_job_admin = user_has_admin_permission(request.user, "can_manage_jobs")
 
     if request.user.is_employer:
@@ -601,10 +580,8 @@ def job_delete(request, pk):
             return redirect("jobs:my_jobs")
         return redirect("jobs:list")
 
-    context = {
-        "job": job,
-    }
-    return render(request, "jobs/job_confirm_delete.html", context)
+    return render(request, "jobs/job_confirm_delete.html", {"job": job})
+
 
 @login_required
 def my_jobs(request):
@@ -612,17 +589,10 @@ def my_jobs(request):
     context = {}
 
     if request.user.is_employer:
-
         try:
-
             employer_profile = EmployerProfile.objects.get(user=request.user)
-
-
             user_companies = Company.objects.filter(owner=request.user, is_active=True)
-
-
             jobs = Job.objects.filter(company__in=user_companies)
-
 
             company_id = request.GET.get('company_id')
             filtered_company = None
@@ -636,9 +606,9 @@ def my_jobs(request):
             messages.error(request, _("Ish beruvchi profili topilmadi."))
             return redirect("accounts:employer_profile_update")
         except Exception as e:
+            logger.error("Error in my_jobs view: %s", e)
             jobs = Job.objects.none()
             messages.error(request, _("Ma'lumotlarni yuklashda xatolik yuz berdi."))
-
 
         status_filter = request.GET.get('status')
         if status_filter == 'active':
@@ -646,11 +616,9 @@ def my_jobs(request):
         elif status_filter == 'draft':
             jobs = jobs.filter(is_active=False)
 
-
         search_query = request.GET.get('q')
         if search_query:
             jobs = jobs.filter(title__icontains=search_query)
-
 
         sort_by = request.GET.get('sort_by')
         if sort_by == 'title_asc':
@@ -662,34 +630,21 @@ def my_jobs(request):
         elif sort_by == 'date_desc':
             jobs = jobs.order_by('-created_at')
         elif sort_by == 'applications':
-
-            jobs = jobs.annotate(
-                app_count=Count('applications')
-            ).order_by('-app_count')
+            jobs = jobs.annotate(app_count=Count('applications')).order_by('-app_count')
         elif sort_by == 'views':
             jobs = jobs.order_by('-views_count')
         else:
-
             jobs = jobs.order_by('-created_at')
-
 
         total_jobs = jobs.count()
         active_jobs = jobs.filter(is_active=True).count()
         draft_jobs = jobs.filter(is_active=False).count()
-
-
         total_views = jobs.aggregate(total=Sum('views_count'))['total'] or 0
-
-
-        total_applications_count = JobApplication.objects.filter(
-            job__company__in=user_companies
-        ).count()
-
+        total_applications_count = JobApplication.objects.filter(job__company__in=user_companies).count()
 
         paginator = Paginator(jobs, 10)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
-
 
         for job in page_obj:
             job.applications_count = JobApplication.objects.filter(job=job).count()
@@ -712,23 +667,17 @@ def my_jobs(request):
         })
 
     elif _is_student_or_alumni(request.user):
-
-        applications = JobApplication.objects.filter(
-            user=request.user
-        ).select_related('job', 'job__company').order_by('-created_at')
-
+        applications = JobApplication.objects.filter(user=request.user).select_related('job', 'job__company').order_by('-created_at')
 
         sort_by = request.GET.get('sort_by')
-        if sort_by:
-            if sort_by == 'date_asc':
-                applications = applications.order_by('created_at')
-            elif sort_by == 'date_desc':
-                applications = applications.order_by('-created_at')
-            elif sort_by == 'job_title_asc':
-                applications = applications.order_by('job__title')
-            elif sort_by == 'job_title_desc':
-                applications = applications.order_by('-job__title')
-
+        if sort_by == 'date_asc':
+            applications = applications.order_by('created_at')
+        elif sort_by == 'date_desc':
+            applications = applications.order_by('-created_at')
+        elif sort_by == 'job_title_asc':
+            applications = applications.order_by('job__title')
+        elif sort_by == 'job_title_desc':
+            applications = applications.order_by('-job__title')
 
         total_applications = applications.count()
         pending_applications = applications.filter(status='applied').count()
@@ -736,7 +685,6 @@ def my_jobs(request):
         interview_applications = applications.filter(status='interview').count()
         accepted_applications = applications.filter(status='hired').count()
         rejected_applications = applications.filter(status='rejected').count()
-
 
         paginator = Paginator(applications, 10)
         page_number = request.GET.get('page')
@@ -753,12 +701,12 @@ def my_jobs(request):
             'sort_by': sort_by,
             'is_employer_view': False,
         })
-
     else:
         messages.error(request, _("У вас нет доступа к этой странице"))
         return redirect('accounts:home')
 
     return render(request, 'jobs/my_jobs.html', context)
+
 
 @login_required
 def saved_jobs(request):
@@ -772,7 +720,6 @@ def saved_jobs(request):
         .select_related("job", "job__company")
         .order_by("-created_at")
     )
-
 
     paginator = Paginator(saved_jobs_qs, 12)
     page_number = request.GET.get("page")
@@ -791,8 +738,8 @@ def saved_jobs(request):
         "total_saved": saved_jobs_qs.count(),
         "viewed_jobs_count": ViewedJob.objects.filter(user=request.user).count(),
     }
-
     return render(request, "jobs/saved_jobs.html", context)
+
 
 @login_required
 def job_list(request):
@@ -804,17 +751,10 @@ def job_list(request):
         or user_has_admin_permission(request.user, "can_create_jobs")
     )
 
-
-    if is_admin_user:
-
-        jobs = Job.objects.all()
-    elif is_employer_user:
-
+    if is_admin_user or is_employer_user:
         jobs = Job.objects.all()
     else:
-
         jobs = Job.objects.filter(is_active=True)
-
 
     query = request.GET.get("query", "").strip()
     job_market = request.GET.get("job_market", "").strip()
@@ -872,7 +812,6 @@ def job_list(request):
     elif date_posted == "month":
         jobs = jobs.filter(created_at__gte=timezone.now() - timedelta(days=30))
 
-
     sort = request.GET.get("sort", "newest")
     if sort in {"salary_high", "salary"}:
         jobs = jobs.order_by("-salary_max", "-salary_min")
@@ -887,14 +826,10 @@ def job_list(request):
     else:
         jobs = jobs.order_by("-created_at")
 
-
     paginator = Paginator(jobs, 15)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
-
-
     total_jobs = jobs.count()
-
 
     featured_jobs = []
     is_student_or_alumni = _is_student_or_alumni(request.user)
@@ -904,17 +839,12 @@ def job_list(request):
     page_jobs, _saved_job_ids, _viewed_job_ids = _attach_job_state(request.user, page_obj.object_list)
     page_obj.object_list = page_jobs
 
-
     all_industries = Job.objects.filter(
         is_active=True,
         industry__isnull=False
     ).exclude(industry='').values_list('industry', flat=True).distinct().order_by('industry')
 
-
-    companies_count = Company.objects.filter(
-        jobs__is_active=True,
-        is_active=True
-    ).distinct().count()
+    companies_count = Company.objects.filter(jobs__is_active=True, is_active=True).distinct().count()
 
     query_params = request.GET.copy()
     query_params.pop("page", None)
@@ -954,12 +884,10 @@ def job_list(request):
     }
     return render(request, "jobs/job_list.html", context)
 
+
 @login_required
 def job_detail(request, pk):
     """Vakansiya batafsil sahifasi"""
-
-    has_alumni_profile = request.user.user_type == "alumni"
-    has_student_profile = request.user.user_type == "student"
     is_student_or_alumni = _is_student_or_alumni(request.user)
     is_admin_user = (
         request.user.is_staff
@@ -968,25 +896,16 @@ def job_detail(request, pk):
         or user_has_admin_permission(request.user, "can_create_jobs")
     )
 
-
     job_queryset = Job.objects.select_related("company")
-
-    if is_admin_user:
-
-        job = get_object_or_404(job_queryset, pk=pk)
-    elif request.user.is_employer:
-
+    if is_admin_user or request.user.is_employer:
         job = get_object_or_404(job_queryset, pk=pk)
     elif is_student_or_alumni:
-
         job = get_object_or_404(job_queryset, pk=pk, is_active=True)
     else:
         messages.error(request, _("Sizda bu vakansiyani ko'rish huquqi yo'q."))
         return redirect("accounts:login")
 
-
     is_viewed = False
-
     if request.user.is_authenticated:
         viewed_job, created = ViewedJob.objects.get_or_create(user=request.user, job=job)
         if created:
@@ -1003,7 +922,6 @@ def job_detail(request, pk):
             viewed_jobs.append(pk)
             request.session['viewed_jobs'] = viewed_jobs
 
-
     has_applied = False
     application = None
     if request.user.is_authenticated:
@@ -1013,39 +931,26 @@ def job_detail(request, pk):
         except JobApplication.DoesNotExist:
             pass
 
-
     is_saved = False
     if is_student_or_alumni:
         is_saved = SavedJob.objects.filter(job=job, user=request.user).exists()
 
-
-    application_form = None
-    if is_student_or_alumni:
-        application_form = JobApplicationForm()
-
+    application_form = JobApplicationForm() if is_student_or_alumni else None
 
     similar_jobs = []
     if job.is_active:
         if job.industry:
-            similar_jobs = Job.objects.filter(
-                is_active=True,
-                industry__icontains=job.industry
-            ).exclude(pk=job.pk)[:4]
+            similar_jobs = Job.objects.filter(is_active=True, industry__icontains=job.industry).exclude(pk=job.pk)[:4]
         else:
-            similar_jobs = Job.objects.filter(
-                is_active=True,
-                experience_level=job.experience_level
-            ).exclude(pk=job.pk)[:4]
-
+            similar_jobs = Job.objects.filter(is_active=True, experience_level=job.experience_level).exclude(pk=job.pk)[:4]
 
     can_edit = False
     if request.user.is_authenticated:
         if user_has_admin_permission(request.user, "can_manage_jobs"):
             can_edit = True
         elif request.user.is_employer:
-
             try:
-                employer_profile = EmployerProfile.objects.get(user=request.user)
+                EmployerProfile.objects.get(user=request.user)
                 user_companies = Company.objects.filter(owner=request.user, is_active=True)
                 can_edit = job.company in user_companies
             except EmployerProfile.DoesNotExist:
@@ -1067,6 +972,7 @@ def job_detail(request, pk):
     }
     return render(request, "jobs/job_detail.html", context)
 
+
 @require_POST
 def increment_job_views(request, pk):
     """Vakansiya ko'rishlar sonini oshirish (AJAX)"""
@@ -1087,12 +993,10 @@ def increment_job_views(request, pk):
 
     return JsonResponse({"success": True, "views_count": job.views_count})
 
+
 @login_required
 def apply_for_job(request, pk):
     """Vakansiyaga ariza topshirish"""
-    from django.utils import timezone
-
-
     has_student_profile = request.user.user_type == "student"
     has_alumni_profile = request.user.user_type == "alumni"
 
@@ -1111,7 +1015,6 @@ def apply_for_job(request, pk):
         messages.warning(request, _("Siz ushbu vakansiyaga allaqachon ariza topshirgansiz."))
         return redirect("jobs:job_detail", pk=job.pk)
 
-
     if job.expires_at and job.expires_at < timezone.now():
         messages.error(request, _("This vacancy has expired."))
         return redirect("jobs:job_detail", pk=job.pk)
@@ -1129,25 +1032,20 @@ def apply_for_job(request, pk):
                     job.applications_count += 1
                     job.save()
 
-                messages.success(
-                    request, _("Your application has been sent successfully!")
-                )
+                messages.success(request, _("Your application has been sent successfully!"))
                 return redirect("jobs:job_detail", pk=job.pk)
             except Exception as e:
+                logger.error("Application processing failed: %s", e)
                 messages.error(request, f"An error occurred: {str(e)}")
         else:
-
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f"{field}: {error}")
     else:
         form = JobApplicationForm(user=request.user, job=job)
 
-    context = {
-        "job": job,
-        "form": form,
-    }
-    return render(request, "jobs/apply_for_job.html", context)
+    return render(request, "jobs/apply_for_job.html", {"job": job, "form": form})
+
 
 @login_required
 @require_POST
@@ -1180,6 +1078,7 @@ def save_job(request, pk):
 
     return redirect("jobs:job_detail", pk=job.pk)
 
+
 @login_required
 @require_POST
 def unsave_job(request, pk):
@@ -1206,6 +1105,7 @@ def unsave_job(request, pk):
 
     return redirect("jobs:job_detail", pk=job.pk)
 
+
 @login_required
 def my_applications(request):
     """Mening arizalarim"""
@@ -1218,7 +1118,6 @@ def my_applications(request):
     status_filter = request.GET.get("status")
     if status_filter in dict(JobApplication.STATUS_CHOICES):
         applications = applications.filter(status=status_filter)
-
 
     user_applications = JobApplication.objects.filter(user=request.user)
     stats = {
@@ -1243,16 +1142,11 @@ def my_applications(request):
 @login_required
 def update_application_status(request, pk):
     """Ariza statusini yangilash (AJAX)"""
-    if (
-        request.method == "POST"
-        and request.headers.get("X-Requested-With") == "XMLHttpRequest"
-    ):
+    if request.method == "POST" and request.headers.get("X-Requested-With") == "XMLHttpRequest":
         application = get_object_or_404(JobApplication, pk=pk)
 
-
-
         try:
-            employer_profile = EmployerProfile.objects.get(user=request.user)
+            EmployerProfile.objects.get(user=request.user)
             user_companies = Company.objects.filter(owner=request.user, is_active=True)
         except EmployerProfile.DoesNotExist:
             return JsonResponse({"success": False, "error": "Permission denied"})
@@ -1261,20 +1155,17 @@ def update_application_status(request, pk):
             return JsonResponse({"success": False, "error": "Permission denied"})
 
         new_status = request.POST.get("status")
-
         if new_status in dict(JobApplication.STATUS_CHOICES):
             application.status = new_status
             application.save()
 
-            return JsonResponse(
-                {
-                    "success": True,
-                    "new_status": application.get_status_display(),
-                    "status_class": new_status,
-                }
-            )
-
+            return JsonResponse({
+                "success": True,
+                "new_status": application.get_status_display(),
+                "status_class": new_status,
+            })
     return JsonResponse({"success": False})
+
 
 @login_required
 def get_user_cvs(request):
@@ -1288,31 +1179,21 @@ def get_user_cvs(request):
         return JsonResponse({"error": "Permission denied"}, status=403)
 
     cvs = CV.objects.filter(user=request.user, status="published")
-
-    cv_list = [
-        {
-            "id": cv.id,
-            "title": cv.title,
-            "full_name": cv.full_name,
-        }
-        for cv in cvs
-    ]
+    cv_list = [{"id": cv.id, "title": cv.title, "full_name": cv.full_name} for cv in cvs]
 
     return JsonResponse({"cvs": cv_list})
+
 
 @login_required
 def application_detail(request, pk):
     """Ariza batafsil (AJAX uchun)"""
     application = get_object_or_404(JobApplication, pk=pk)
-
-
     is_owner = application.user == request.user
     is_employer_allowed = False
 
     if request.user.is_employer:
-
         try:
-            employer_profile = EmployerProfile.objects.get(user=request.user)
+            EmployerProfile.objects.get(user=request.user)
             user_companies = Company.objects.filter(owner=request.user, is_active=True)
             is_employer_allowed = application.job.company in user_companies
         except EmployerProfile.DoesNotExist:
@@ -1324,10 +1205,7 @@ def application_detail(request, pk):
     student_certificates = []
     student_profile = application.user
     if student_profile is not None:
-        student_certificates = get_viewable_student_certificates_queryset(
-            request.user,
-            student_profile,
-        )
+        student_certificates = get_viewable_student_certificates_queryset(request.user, student_profile)
 
     context = {
         "application": application,
@@ -1336,6 +1214,7 @@ def application_detail(request, pk):
     }
     return render(request, "jobs/application_detail.html", context)
 
+
 @login_required
 @require_POST
 def add_application_note(request, pk):
@@ -1343,10 +1222,10 @@ def add_application_note(request, pk):
     if request.headers.get("X-Requested-With") == "XMLHttpRequest":
         application = get_object_or_404(JobApplication, pk=pk)
 
-
         try:
-            employer_profile = EmployerProfile.objects.get(user=request.user)
-            user_companies = Company.objects.filter(owner=employer_profile, is_active=True)
+            EmployerProfile.objects.get(user=request.user)
+            # ИСПРАВЛЕНО: фильтрация по owner=request.user, а не по объекту профиля
+            user_companies = Company.objects.filter(owner=request.user, is_active=True)
         except EmployerProfile.DoesNotExist:
             return JsonResponse({"success": False, "error": "Ruxsat rad etildi"})
 
@@ -1355,30 +1234,28 @@ def add_application_note(request, pk):
 
         note = request.POST.get("note")
         if note:
-
             ApplicationNote.objects.create(
                 application=application,
                 author=request.user,
                 note=note
             )
             return JsonResponse({"success": True})
-
         return JsonResponse({"success": False, "error": "Izoh kiritish majburiy"})
 
     return JsonResponse({"success": False, "error": "Noto'g'ri so'rov"})
+
 
 @login_required
 def job_settings(request, pk):
     """Get job settings for modal"""
     job = get_object_or_404(Job, pk=pk)
-
-
     can_edit = False
+
     if user_has_admin_permission(request.user, "can_manage_jobs"):
         can_edit = True
     elif request.user.is_employer:
         try:
-            employer_profile = EmployerProfile.objects.get(user=request.user)
+            EmployerProfile.objects.get(user=request.user)
             user_companies = Company.objects.filter(owner=request.user, is_active=True)
             can_edit = job.company in user_companies
         except EmployerProfile.DoesNotExist:
@@ -1399,14 +1276,13 @@ def job_settings(request, pk):
 def update_job_settings(request, pk):
     """Update job settings from modal"""
     job = get_object_or_404(Job, pk=pk)
-
-
     can_edit = False
+
     if user_has_admin_permission(request.user, "can_manage_jobs"):
         can_edit = True
     elif request.user.is_employer:
         try:
-            employer_profile = EmployerProfile.objects.get(user=request.user)
+            EmployerProfile.objects.get(user=request.user)
             user_companies = Company.objects.filter(owner=request.user, is_active=True)
             can_edit = job.company in user_companies
         except EmployerProfile.DoesNotExist:
@@ -1414,7 +1290,6 @@ def update_job_settings(request, pk):
 
     if not can_edit:
         return JsonResponse({"success": False, "error": "Permission denied"})
-
 
     job.is_urgent = request.POST.get('is_urgent') == 'on'
     job.is_active = request.POST.get('is_active') == 'on'
@@ -1426,6 +1301,7 @@ def update_job_settings(request, pk):
         "is_active": job.is_active,
     })
 
+
 @login_required
 def dashboard_statistics(request):
     """Dashboard statistikasi"""
@@ -1433,29 +1309,21 @@ def dashboard_statistics(request):
         return JsonResponse({"error": "Permission denied"}, status=403)
 
     try:
-        employer_profile = EmployerProfile.objects.get(user=request.user)
+        EmployerProfile.objects.get(user=request.user)
     except EmployerProfile.DoesNotExist:
         return JsonResponse({"error": "Employer profile not found"}, status=403)
 
-
     user_companies = Company.objects.filter(owner=request.user, is_active=True)
-
-
     jobs = Job.objects.filter(company__in=user_companies)
+    
     total_jobs = jobs.count()
     active_jobs = jobs.filter(is_active=True).count()
     draft_jobs = jobs.filter(is_active=False).count()
 
-
     applications = JobApplication.objects.filter(job__company__in=user_companies)
     total_applications = applications.count()
-
-
     application_status_stats = applications.values('status').annotate(count=Count('id'))
-
-
     total_views = jobs.aggregate(total=Sum('views_count'))['total'] or 0
-
 
     recent_applications = applications.select_related('user', 'job').order_by('-created_at')[:5]
     recent_applications_list = [
