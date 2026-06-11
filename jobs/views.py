@@ -131,62 +131,71 @@ def _download_google_form_image(photo_id):
 
 
 def _send_job_to_telegram(job, image_bytes=None, filename=None):
-    """Отправка вакансии в Telegram-канал.
-    Если переданы image_bytes, картинка отправляется напрямую из памяти без сохранения на сайт.
-    """
+    """Отправка вакансии в Telegram-канал с транзитной картинкой из памяти."""
+    import requests
+    from django.conf import settings
+
     bot_token = getattr(settings, "TELEGRAM_BOT_TOKEN", None)
     channel_id = getattr(settings, "TELEGRAM_CHANNEL_ID", None)
 
     if not bot_token or not channel_id:
-        logger.warning("Telegram bot token or channel ID is not configured.")
+        logger.warning("[TG] Bot token or channel ID is missing in settings.")
         return
 
     message = _build_telegram_message(job)
     base_url = f"https://api.telegram.org/bot{bot_token}"
-    send_photo_url = f"{base_url}/sendPhoto"
-    send_message_url = f"{base_url}/sendMessage"
 
     try:
-        # Проверяем, есть ли транзитные байты картинки из Google Drive
+        # Проверяем, переданы ли байты картинки
         if image_bytes and filename:
-            # Формируем структуру файла для библиотеки requests
-            files = {"photo": (filename, image_bytes, "image/jpeg")}
+            logger.info(f"[TG] Попытка отправить фото. Размер байт: {len(image_bytes)}, Имя файла: {filename}")
+            
+            # Важно: Передаем байты через io.BytesIO, чтобы requests правильно их прочитал как файл
+            import io
+            photo_file = io.BytesIO(image_bytes)
+            files = {"photo": (filename, photo_file, "image/jpeg")}
 
             if len(message) <= 1024:
-                # Картинка и текст уходят одним красивым постом
                 payload = {
                     "chat_id": channel_id,
                     "caption": message,
                     "parse_mode": "HTML",
                 }
-                response = requests.post(send_photo_url, data=payload, files=files, timeout=(5, 15))
+                logger.info("[TG] Отправка sendPhoto (текст до 1024 символов)...")
+                response = requests.post(f"{base_url}/sendPhoto", data=payload, files=files, timeout=(5, 15))
+                logger.info(f"[TG] Ответ sendPhoto: {response.status_code} - {response.text}")
                 response.raise_for_status()
             else:
-                # Если текст > 1024 символов: сначала шлем фото, затем текст следом
-                response = requests.post(send_photo_url, data={"chat_id": channel_id}, files=files, timeout=(5, 15))
-                response.raise_for_status()
-
-                message_payload = {
+                # Если текст длиннее 1024 символов
+                logger.info("[TG] Текст > 1024. Отправка фото отдельно...")
+                response_photo = requests.post(f"{base_url}/sendPhoto", data={"chat_id": channel_id}, files=files, timeout=(5, 15))
+                logger.info(f"[TG] Ответ sendPhoto (только фото): {response_photo.status_code} - {response_photo.text}")
+                
+                logger.info("[TG] Отправка текста следом...")
+                payload = {
                     "chat_id": channel_id,
                     "text": message,
                     "parse_mode": "HTML",
                     "disable_web_page_preview": True,
                 }
-                response = requests.post(send_message_url, data=message_payload, timeout=(5, 15))
-                response.raise_for_status()
+                response_text = requests.post(f"{base_url}/sendMessage", data=payload, timeout=(5, 15))
+                logger.info(f"[TG] Ответ sendMessage: {response_text.status_code} - {response_text.text}")
+                response_text.raise_for_status()
         else:
-            # Если картинки нет вообще (ошибка скачивания или её не прикрепили) — отправляем только текст
-            message_payload = {
+            # Если картинки нет
+            logger.info("[TG] Байты картинки отсутствуют или равны None. Отправка только текста.")
+            payload = {
                 "chat_id": channel_id,
                 "text": message,
                 "parse_mode": "HTML",
                 "disable_web_page_preview": True,
             }
-            response = requests.post(send_message_url, data=message_payload, timeout=(5, 15))
+            response = requests.post(f"{base_url}/sendMessage", data=payload, timeout=(5, 15))
+            logger.info(f"[TG] Ответ sendMessage (без фото): {response.status_code} - {response.text}")
             response.raise_for_status()
 
-    except requests.RequestException as exc:
-        logger.exception("Failed to send job announcement to Telegram: %s", exc)
+    except Exception as exc:
+        logger.exception(f"[TG] Критическая ошибка внутри _send_job_to_telegram: {exc}")
 
 
 @csrf_exempt
@@ -282,20 +291,31 @@ def google_form_webhook(request):
         return JsonResponse({"detail": f"Database error: {str(exc)}"}, status=500)
     # --- КОНЕЦ БЛОКА ---
 
-    # ЛОГИКА ТРАНЗИТА КАРТИНКИ
     image_bytes = None
     filename = None
 
     if photo_id and photo_id.lower() != "none":
-        # Скачиваем картинку в оперативную память
-        image_bytes, filename = _download_google_form_image(photo_id)
-        # ВНИМАНИЕ: job.image.save() больше НЕ вызывается. На сайт картинка не попадет!
+        try:
+            logger.info(f"[WEBHOOK] Запрос на скачивание картинки для photo_id: {photo_id}")
+            download_result = _download_google_form_image(photo_id)
+            
+            if download_result and isinstance(download_result, tuple):
+                image_bytes, filename = download_result
+                if image_bytes:
+                    logger.info(f"[WEBHOOK] Картинка успешно скачана. Байт: {len(image_bytes)}")
+                else:
+                    logger.warning("[WEBHOOK] Функция скачивания вернула пустые байты.")
+            else:
+                logger.warning(f"[WEBHOOK] _download_google_form_image вернула некорректный результат: {download_result}")
+                
+        except Exception as exc:
+            logger.warning(f"[WEBHOOK] Не удалось скачать картинку из Google Drive: {exc}")
 
-    # Отправляем в Telegram, передавая байты картинки (если они успешно скачались)
+    # Отправляем в Telegram
     try:
         _send_job_to_telegram(job, image_bytes=image_bytes, filename=filename)
     except Exception as exc:
-        logger.exception("Failed to process Telegram sending pipeline: %s", exc)
+        logger.exception(f"[WEBHOOK] Ошибка пайплайна Telegram: {exc}")
 
     return JsonResponse({"detail": "Job created and sent", "job_id": job.pk}, status=201)
 
