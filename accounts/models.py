@@ -1897,7 +1897,6 @@ class OAuthToken(models.Model):
 
 
 class CompanyAdditionalInfo(models.Model):
-    """Модель для хранения дополнительной информации о компании"""
     company = models.OneToOneField(
         Company,
         on_delete=models.CASCADE,

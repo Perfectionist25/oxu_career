@@ -929,6 +929,7 @@ def student_dashboard(request):
     """Student dashboard"""
 
     resumes = CV.objects.filter(user=request.user)
+    student = StudentProfile.objects.filter(user=request.user)
 
     applications = JobApplication.objects.filter(user=request.user)
     saved_jobs = SavedJob.objects.filter(user=request.user).select_related("job", "job__company")
@@ -947,6 +948,9 @@ def student_dashboard(request):
         item.job.is_saved = item.job_id in saved_job_ids
 
     context = {
+        "quick_overview": {
+            "faculty": student.first().faculty if student.exists() else "",            
+        },
         "stats": {
             "resumes_created": resumes.count(),
             "active_resumes": resumes.filter(status='published').count(),
