@@ -1075,7 +1075,7 @@ class StudentProfile(models.Model):
         previous_avatar_name = None
 
         if self.pk:
-            previous_avatar_name = CustomUser.objects.filter(pk=self.pk).values_list("avatar", flat=True).first()
+            previous_avatar_name = StudentProfile.objects.filter(pk=self.pk).values_list("avatar", flat=True).first()
 
         if self.avatar and self.avatar.name and not self.avatar.name.lower().endswith(".webp"):
             if self.avatar.name != previous_avatar_name:
@@ -1092,12 +1092,12 @@ class StudentProfile(models.Model):
                     countdown=int(os.getenv("AVATAR_COMPRESSION_DELAY_SECONDS", "5")),
                 )
                 logging.getLogger(__name__).info(
-                    "Scheduled avatar compression task for user %s",
+                    "Scheduled avatar compression task for profile %s",
                     self.pk,
                 )
             except Exception as e:
                 logging.getLogger(__name__).error(
-                    "Failed to schedule avatar compression task for user %s: %s",
+                    "Failed to schedule avatar compression task for profile %s: %s",
                     self.pk,
                     e,
                 )
