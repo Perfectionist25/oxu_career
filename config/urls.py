@@ -14,7 +14,6 @@ urlpatterns = [
     path("i18n/", include("django.conf.urls.i18n")),
     path("", include(("core.urls", "core"), namespace="core")),
     path("jobs/", include(("jobs.urls", "jobs"), namespace="jobs")),
-    path("alumni/", include(("alumni.urls", "alumni"), namespace="alumni")),
     path("resources/", include(("resources.urls", "resources"), namespace="resources")),
     path("events/", include(("events.urls", "events"), namespace="events")),
     path("employers/", include(("employers.urls", "employers"), namespace="employers")),

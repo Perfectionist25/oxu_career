@@ -164,7 +164,6 @@ INSTALLED_APPS = [
 
     "accounts",
     "core",
-    "alumni",
     "resources",
     "events",
     "employers",
