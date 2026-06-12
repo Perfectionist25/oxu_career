@@ -14,9 +14,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Favicon -->
     <link rel="icon" href="{% static 'img/logo-oxu.png' %}" type="image/png">
-    <!-- Manifest for PWA -->
-    <!-- <link rel="manifest" href="{% static 'manifest.json' %}"> -->
-    <link rel="manifest" href="/manifest.json">
 
     <style>
         .global-messages-container {
@@ -465,13 +462,6 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body class="{% block body_class %}{% endblock %}" style="{% block body_style %}background-color: #f5f6f7 !important; min-height: 100% !important;{% endblock %}">
-
-<!-- Внутри <body> -->
-<!-- Кнопка установки (Исправлено: изначально скрыта через display: none) -->
-<button id="installAppBtn" class="btn btn-primary" style="display:; position: fixed; bottom: 20px; left: 20px; z-index: 10000;">
-  <i class="fas fa-mobile-alt me-2"></i> Установить на экран телефона
-</button>
-
 <div class="site-shell">
 
 {% if not hide_chrome %}
