@@ -963,13 +963,6 @@ def job_detail(request, pk):
         else:
             ViewedJob.objects.filter(pk=viewed_job.pk).update(last_viewed_at=timezone.now())
         is_viewed = True
-    else:
-        viewed_jobs = request.session.get('viewed_jobs', [])
-        if pk not in viewed_jobs:
-            job.views_count += 1
-            job.save(update_fields=["views_count"])
-            viewed_jobs.append(pk)
-            request.session['viewed_jobs'] = viewed_jobs
 
     has_applied = False
     application = None
