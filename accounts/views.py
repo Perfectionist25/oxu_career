@@ -28,6 +28,7 @@ from rest_framework.response import Response
 from accounts.models import (
     ADMIN_USER_TYPES,
     CustomUser,
+    StudentProfile,
     StudentCertificate,
     EmployerProfile,
     AdminProfile,
@@ -66,6 +67,85 @@ from urllib.parse import urlencode
 from django.conf import settings
 from django.shortcuts import redirect
 from django.utils.crypto import get_random_string
+
+#------------------------------------------------------------------------------
+import logging
+from django.db import transaction
+
+logger = logging.getLogger(__name__)
+
+def handle_oauth_user_login(request, oauth_data):
+    """
+    Обработчик OAuth payload. Создает или обновляет CustomUser и StudentProfile.
+    """
+    # Предположим, уникальный ID пользователя в OAuth называется 'uid' или 'id'
+    oauth_uid = oauth_data.get("uid") or oauth_data.get("id")
+    username = oauth_data.get("username") or f"user_{oauth_uid}"
+    email = oauth_data.get("email")
+
+    if not oauth_uid:
+        raise ValueError("OAuth payload does not contain a unique user identifier.")
+
+    # Используем транзакцию, чтобы данные сохранились атомарно (все или ничего)
+    with transaction.atomic():
+        # 1. Находим или создаем пользователя
+        user, created = CustomUser.objects.get_or_create(
+            oauth_uid=oauth_uid,
+            defaults={
+                "username": username,
+                "email": email,
+                "user_type": "student",  # По умолчанию ставим student
+            }
+        )
+
+        # 2. Обновляем данные пользователя (если они не заблокированы админом)
+        if not user.oauth_data_locked:
+            user.oauth_provider = "university_oauth"
+            user.oauth_payload = oauth_data  # Сохраняем сырой JSON для аудита
+            user.oauth_last_synced = timezone.now()
+            
+            # Маппинг ФИО
+            if not user.full_name_locked:
+                user.full_name = oauth_data.get("full_name", "").strip()
+            
+            # Безопасный маппинг пола (избавляемся от багов с "0" / "1" / "male")
+            raw_gender = str(oauth_data.get("gender", "")).lower()
+            if raw_gender in ["male", "1", "m"]:
+                user.gender = "male"
+            elif raw_gender in ["female", "2", "f"]:
+                user.gender = "female"
+            
+            user.phone_number = oauth_data.get("phone_number")
+            user.student_id = oauth_data.get("student_id", "")
+            
+            # Сохраняем общие OAuth-поля в модель юзера
+            user.oauth_university = oauth_data.get("university_name", "")
+            user.oauth_degree = oauth_data.get("degree_name", "")
+            user.oauth_specialization = oauth_data.get("specialty_name", "")
+            
+            # Валидация GPA (переводим в float, если пришла строка)
+            raw_gpa = oauth_data.get("gpa")
+            user.oauth_gpa = float(raw_gpa) if raw_gpa else None
+            
+            user.save()
+
+        # 3. Находим или создаем StudentProfile для этого пользователя
+        profile, profile_created = StudentProfile.objects.get_or_create(user=user)
+        
+        # Заполняем профиль детальными академическими данными
+        profile.student_id = user.student_id
+        profile.university = oauth_data.get("university_name", "")
+        profile.faculty = oauth_data.get("faculty_name", "")
+        profile.specialty = oauth_data.get("specialty_name", "")
+        profile.specialty_code = oauth_data.get("specialty_code", "")
+        profile.course_year = oauth_data.get("course_level", "")
+        profile.gpa = user.oauth_gpa
+        profile.father_name = oauth_data.get("patronymic", "")
+        
+        profile.save()
+        
+    return user
+#------------------------------------------------------------------------------
 
 
 def oauth_login(request):
