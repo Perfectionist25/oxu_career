@@ -14,9 +14,9 @@
         <div class="display-5 h4 fw-bold text-primary mb-4">{% trans "Welcome to OXU Career Center" %}</div>
         <p class="lead mb-4 h6">{% trans "Build your future with us. We help you find your dream job and develop your professional skills." %}</p>
         <div class="d-flex justify-content-center flex-wrap gap-3 hero-actions">
-          {% if user.is_authenticated %}
+          {% if user.is_student or user.is_alumni %}
           <a href="{% url 'jobs:list' %}" class="btn btn-primary btn-lg px-4 py-3 w-auto">
-            <i class="fas fa-briefcase me-2"></i>{% trans "Find Jobs" %}
+            <i class="fas fa-briefcase me-2"></i>{% trans "Browse jobs" %}
           </a>
           {% if user.is_student or user.is_alumni %}
           <a href="{% url 'cvbuilder:cv_create' %}" class="btn btn-primary btn-lg px-4 py-3 w-auto">
@@ -24,12 +24,9 @@
           </a>
           {% endif %}
           {% else %}
-          <a href="{% url 'accounts:oauth_login' %}" class="btn btn-primary btn-lg px-4 py-3 w-auto">
+          <button type="button" class="btn btn-outline-primary btn-lg px-4 py-3 w-auto btn-animate-pulse" data-bs-toggle="modal" data-bs-target="#authChoiceModal">
             <i class="fas fa-sign-in-alt me-2"></i>{% trans "Login / Register" %}
-          </a>
-          <a href="{% url 'jobs:list' %}" class="btn btn-primary btn-lg px-4 py-3 w-auto">
-            <i class="fas fa-briefcase me-2"></i>{% trans "Browse Jobs" %}
-          </a>
+          </button>
           {% endif %}
         </div>
         
@@ -379,6 +376,49 @@
     </div>
   </section>
   {% endif %}
+
+<!-- Modal for Authentication Choice -->
+<div class="modal fade" id="authChoiceModal" tabindex="-1" aria-labelledby="authChoiceModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+      
+      <div class="modal-header border-0 pb-0 justify-content-end">
+        <button type="button" class="btn-close" data-bs-shadow="none" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      
+      <div class="modal-body text-center pt-0 px-4 pb-5">
+        <h3 class="modal-title fw-bold mb-2" id="authChoiceModalLabel">{% trans "Welcome!" %}</h3>
+        <p class="text-muted mb-4">{% trans "Please choose how you want to log in or register" %}</p>
+        
+        <div class="row g-3">
+          
+          <div class="col-sm-6">
+            <a href="{% url 'accounts:oauth_login' %}" class="text-decoration-none role-choice-card d-block p-4 h-100 border rounded-4 text-center">
+              <div class="role-icon-wrapper student-bg mb-3 mx-auto d-flex align-items-center justify-content-center">
+                <i class="fas fa-user-graduate fa-2x text-primary"></i>
+              </div>
+              <h5 class="fw-bold text-dark mb-2">{% trans "Student" %}</h5>
+              <small class="text-muted d-block">{% trans "Find jobs, internships and build your career" %}</small>
+            </a>
+          </div>
+          
+          <div class="col-sm-6">
+            <a href="{% url 'accounts:employer_login' %}" class="text-decoration-none role-choice-card d-block p-4 h-100 border rounded-4 text-center">
+              <div class="role-icon-wrapper employer-bg mb-3 mx-auto d-flex align-items-center justify-content-center">
+                <i class="fas fa-briefcase fa-2x text-success"></i>
+              </div>
+              <h5 class="fw-bold text-dark mb-2">{% trans "Employer" %}</h5>
+              <small class="text-muted d-block">{% trans "Post vacancies and hire the best talents" %}</small>
+            </a>
+          </div>
+          
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
 </div>
 
 <style>
@@ -388,6 +428,73 @@
 .quick-link-card:hover, .resource-preview-card:hover, .category-card:hover, .job-preview-card:hover, .event-preview-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+}
+
+/* Базовый стиль карточки выбора */
+.role-choice-card {
+    background-color: #ffffff;
+    border: 2px solid #f0f2f5 !important;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    cursor: pointer;
+}
+
+/* Эффект при наведении на карточку */
+.role-choice-card:hover {
+    transform: translateY(-5px);
+    border-color: #0d6efd !important; /* Меняет цвет рамки на синий при ховере */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+    background-color: #f8f9fa;
+}
+
+/* Стили для кругов под иконками */
+.role-icon-wrapper {
+    width: 70px;
+    height: 70px;
+    border-radius: 50px;
+    transition: transform 0.3s ease;
+}
+
+.student-bg { background-color: rgba(13, 110, 253, 0.1); }
+.employer-bg { background-color: rgba(25, 135, 84, 0.1); }
+
+/* Легкое вращение/движение иконок при наведении */
+.role-choice-card:hover .role-icon-wrapper {
+    transform: scale(1.1);
+}
+
+/* Эффект бесконечной пульсации для привлечения внимания */
+@keyframes pulse-glow {
+    0% {
+        box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.7); /* Цвет Bootstrap primary (синий) с прозрачностью */
+    }
+    70% {
+        box-shadow: 0 0 0 12px rgba(13, 110, 253, 0); /* Радиус рассеивания волны */
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(13, 110, 253, 0);
+    }
+}
+
+.btn-animate-pulse {
+    position: relative;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    animation: pulse-glow 2s infinite ease-in-out;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    color: #fff;
+    background: #14a7e0;
+    background: linear-gradient(146deg,rgba(20, 167, 224, 1) 0%, rgba(87, 199, 133, 1) 58%);
+}
+
+.btn-animate-pulse:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 10px 20px rgba(13, 110, 253, 0.4) !important;
+    background-color: #0b5ed7 !important;
+}
+
+.btn-animate-pulse:active {
+    transform: translateY(-1px) scale(1.01);
+    box-shadow: 0 5px 10px rgba(13, 110, 253, 0.3) !important;
 }
 
 .hover-card {
