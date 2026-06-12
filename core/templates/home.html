@@ -14,14 +14,16 @@
         <div class="display-5 h4 fw-bold text-primary mb-4">{% trans "Welcome to OXU Career Center" %}</div>
         <p class="lead mb-4 h6">{% trans "Build your future with us. We help you find your dream job and develop your professional skills." %}</p>
         <div class="d-flex justify-content-center flex-wrap gap-3 hero-actions">
-          {% if user.is_student or user.is_alumni and user.is_authenticated %}
-          <a href="{% url 'jobs:list' %}" class="btn btn-primary btn-lg px-4 py-3 w-auto">
-            <i class="fas fa-briefcase me-2"></i>{% trans "Browse jobs" %}
-          </a>
-          {% if user.is_student or user.is_alumni and user.is_authenticated %}
-          <a href="{% url 'cvbuilder:cv_create' %}" class="btn btn-primary btn-lg px-4 py-3 w-auto">
-            <i class="fas fa-file-alt me-2"></i>{% trans "Create Resume" %}
-          </a>
+          {% if user.is_authenticated %}
+            {% if user.is_student or user.is_alumni and user.is_authenticated %}
+            <a href="{% url 'jobs:list' %}" class="btn btn-primary btn-lg px-4 py-3 w-auto">
+              <i class="fas fa-briefcase me-2"></i>{% trans "Browse jobs" %}
+            </a>
+            {% if user.is_student or user.is_alumni and user.is_authenticated %}
+            <a href="{% url 'cvbuilder:cv_create' %}" class="btn btn-primary btn-lg px-4 py-3 w-auto">
+              <i class="fas fa-file-alt me-2"></i>{% trans "Create Resume" %}
+            </a>
+            {% endif %}
           {% endif %}
           {% else %}
           <button type="button" class="btn btn-outline-primary btn-lg px-4 py-3 w-auto btn-animate-pulse" data-bs-toggle="modal" data-bs-target="#authChoiceModal">
