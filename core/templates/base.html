@@ -14,6 +14,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Favicon -->
     <link rel="icon" href="{% static 'img/logo-oxu.png' %}" type="image/png">
+    <!-- Manifest for PWA -->
+    <!-- <link rel="manifest" href="{% static 'manifest.json' %}"> -->
+    <link rel="manifest" href="manifest.json">
 
     <style>
         .global-messages-container {
@@ -462,7 +465,9 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body class="{% block body_class %}{% endblock %}" style="{% block body_style %}background-color: #f5f6f7 !important; min-height: 100% !important;{% endblock %}">
-
+<button id="installAppBtn" class="btn btn-primary" style="display: ; position: fixed; bottom: 20px; left: 20px; z-index: 10000;">
+  <i class="fas fa-mobile-alt me-2"></i> Установить на экран телефона
+</button>
 <div class="site-shell">
 
 {% if not hide_chrome %}
@@ -568,6 +573,54 @@ $(document).ready(function() {
         }
     });
 
+});
+
+let deferredPrompt;
+const installBtn = document.getElementById('installAppBtn');
+
+// Проверяем, это iOS (iPhone) или нет
+const isIos = () => {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+};
+
+// Если это iOS, мы можем показать кнопку сразу, но с другой логикой
+if (isIos()) {
+  installBtn.style.display = 'inline-block';
+  installBtn.addEventListener('click', () => {
+    alert('Чтобы добавить сайт на рабочий стол:\n1. Нажмите кнопку «Поделиться» внизу экрана Safari.\n2. Выберите «На экран "Домой"».');
+  });
+}
+
+// Логика для Android (ловим системное событие)
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Блокируем стандартное появление баннера браузера
+  e.preventDefault();
+  // Сохраняем событие, чтобы вызвать его по клику на НАШУ кнопку
+  deferredPrompt = e;
+  // Показываем нашу кнопку
+  installBtn.style.display = 'inline-block';
+});
+
+installBtn.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  
+  // Показываем встроенное окно установки браузера
+  deferredPrompt.prompt();
+  
+  // Ждем ответа от пользователя (установил или нажал отмену)
+  const { outcome } = await deferredPrompt.userChoice;
+  if (outcome === 'accepted') {
+    console.log('Пользователь установил ярлык!');
+  }
+  
+  // Очищаем переменную, кнопка больше не нужна
+  deferredPrompt = null;
+  installBtn.style.display = 'none';
+});
+
+// Скрываем кнопку, если приложение НАЖЕ и так запущено как ярлык
+window.addEventListener('appinstalled', () => {
+  installBtn.style.display = 'none';
 });
 </script>
 </body>
