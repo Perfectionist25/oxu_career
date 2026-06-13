@@ -23,9 +23,6 @@ urlpatterns = [
     path("oauth/callback/", oauth_callback, name="oauth_callback"),
     path("admin/stats/", core_views.admin_stats, name="admin_stats"),
     path('api/accounts/', include(('accounts.api.urls','accounts_api'), namespace='accounts_api')),
-
-    path('manifest.json', TemplateView.as_view(template_name="manifest.json", content_type="application/json")),
-    path('sw.js', TemplateView.as_view(template_name="sw.js", content_type="application/javascript")),
 ]
 
 urlpatterns += [

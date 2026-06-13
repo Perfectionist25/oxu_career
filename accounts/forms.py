@@ -850,3 +850,77 @@ class StudentUserReadonlyNameForm(forms.ModelForm):
         if email and CustomUser.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
             raise forms.ValidationError(_("This email is already in use by another user."))
         return email
+
+
+class SelfEmployerRegisterForm(UserCreationForm):
+    """
+    Форма самостоятельной регистрации работодателя с каптчей и валидацией email.
+    """
+    email = forms.EmailField(
+        required=True,
+        label=_("Email"),
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': _('your@email.com'),
+        })
+    )
+    captcha_answer = forms.IntegerField(
+        label=_("Security question"),
+        min_value=0,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'placeholder': _('Enter the answer'),
+            'autocomplete': 'off',
+        }),
+        error_messages={
+            'required': _("Please solve the security question."),
+            'invalid': _("Enter a valid number."),
+        }
+    )
+
+    class Meta:
+        model = CustomUser
+        fields = ("username", "email", "password1", "password2")
+
+    def __init__(self, *args, request=None, **kwargs):
+        self.request = request
+        super().__init__(*args, **kwargs)
+
+        # Стилизация полей
+        for field_name in ['username', 'password1', 'password2']:
+            self.fields[field_name].widget.attrs.update({
+                'class': 'form-control',
+                'placeholder': self.fields[field_name].label,
+            })
+
+        # Генерация вопроса каптчи
+        question = ensure_login_captcha(self.request)
+        self.fields['captcha_answer'].label = question
+
+        # Добавляем звёздочки к обязательным полям
+        for field_name in self.fields:
+            if self.fields[field_name].required:
+                self.fields[field_name].label = f"{self.fields[field_name].label} *"
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        if not email:
+            raise forms.ValidationError(_("Email is required."))
+        # Проверка на существование
+        if CustomUser.objects.filter(email=email).exists():
+            raise forms.ValidationError(_("A user with that email already exists."))
+        return email
+
+    def clean_captcha_answer(self):
+        answer = self.cleaned_data.get("captcha_answer")
+        if not validate_login_captcha(self.request, answer):
+            raise forms.ValidationError(_("Incorrect answer to the security question."))
+        return answer
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.user_type = "employer"
+        user.is_active = True
+        if commit:
+            user.save()
+        return user

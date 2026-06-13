@@ -19,6 +19,10 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView, D
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth import update_session_auth_hash
 from django.core.cache import cache
+from django.contrib.auth.forms import UserCreationForm
+from django import forms
+from django.utils.crypto import get_random_string
+from urllib.parse import urlencode
 
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -57,28 +61,81 @@ from .forms import (
     AdminProfileForm, CompanyForm, CompanyDocumentForm,
     EmployerRegistrationForm, AdminCompanyForm, AdminEmployerProfileForm,
     StudentCertificateForm, StudentUserReadonlyNameForm,
-    EmployerLoginForm, AdminLoginForm
+    EmployerLoginForm, AdminLoginForm, SelfEmployerRegisterForm,
 )
 
-from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework import serializers
-from urllib.parse import urlencode
-from django.conf import settings
-from django.shortcuts import redirect
-from django.utils.crypto import get_random_string
-
-#------------------------------------------------------------------------------
 import logging
 from django.db import transaction
 
 logger = logging.getLogger(__name__)
 
+# ------------------------------------------------------------------------------
+# ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+# ------------------------------------------------------------------------------
+def get_client_ip(request=None):
+    if request is None:
+        return None
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+def create_user_activity(user, activity_type, description="", ip_address=None,
+                        user_agent="", related_company=None):
+    try:
+        activity = UserActivity.objects.create(
+            user=user,
+            activity_type=activity_type,
+            description=description,
+            ip_address=ip_address or get_client_ip(),
+            user_agent=user_agent or "",
+        )
+        if related_company:
+            activity.related_company = related_company
+            activity.save()
+        return activity
+    except Exception as e:
+        print(f"Error creating activity: {e}")
+        return None
+
+def employer_register(request):
+    if request.user.is_authenticated:
+        return redirect("accounts:home_redirect")
+
+    if request.method == "POST":
+        form = SelfEmployerRegisterForm(request.POST, request=request)
+        if form.is_valid():
+            user = form.save()
+            user.backend = settings.AUTHENTICATION_BACKENDS[0]
+            login(request, user)
+
+            create_user_activity(
+                user,
+                "profile_update",
+                _("Employer registered via self-service form"),
+                get_client_ip(request),
+                request.META.get("HTTP_USER_AGENT", "")
+            )
+
+            messages.success(request, _("Registration successful! You are now logged in."))
+            return redirect("accounts:employer_dashboard")
+        else:
+            for error in form.non_field_errors():
+                messages.error(request, error)
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
+    else:
+        form = SelfEmployerRegisterForm(request=request)
+
+    return render(request, "accounts/employer_register.html", {"form": form})
+
 def handle_oauth_user_login(request, oauth_data):
     """
     Синхронизирует данные из OAuth payload с моделями CustomUser и StudentProfile.
     """
-    # Извлекаем уникальный ID (в HEMIS OAuth это может быть 'id' или 'uuid')
     oauth_uid = oauth_data.get("uid") or oauth_data.get("id")
     username = oauth_data.get("username") or f"user_{oauth_uid}"
     email = oauth_data.get("email")
@@ -87,51 +144,43 @@ def handle_oauth_user_login(request, oauth_data):
         raise ValueError("OAuth payload does not contain a unique user identifier.")
 
     with transaction.atomic():
-        # 1. Находим или создаем пользователя по уникальному OAuth UID
         user, created = CustomUser.objects.get_or_create(
             oauth_uid=oauth_uid,
             defaults={
                 "username": username,
                 "email": email,
-                "user_type": "student",  # Автоматически определяем тип
+                "user_type": "student",
             }
         )
 
-        # 2. Если данные не заблокированы админом, обновляем CustomUser
         if not user.oauth_data_locked:
             user.oauth_provider = "university_oauth"
-            user.oauth_payload = oauth_data  # Сохраняем сырой JSON для истории
+            user.oauth_payload = oauth_data
             user.oauth_last_synced = timezone.now()
             
-            # ФИО
             if not user.full_name_locked:
                 user.full_name = oauth_data.get("full_name", "").strip()
             
-            # Обработка пола (приводим к 'male'/'female' в соответствии с choices)
             raw_gender = str(oauth_data.get("gender", "")).lower()
             if raw_gender in ["male", "1", "m"]:
                 user.gender = "male"
             elif raw_gender in ["female", "2", "f"]:
                 user.gender = "female"
             
-            # Базовые данные в CustomUser
             user.phone_number = oauth_data.get("phone_number")
             user.student_id = oauth_data.get("student_id", "")
             user.faculty = oauth_data.get("faculty_name", "")
             user.specialty = oauth_data.get("specialty_name", "")
             user.education_level = oauth_data.get("education_level", "")
-            user.status = oauth_data.get("status", "student")  # 'student' или 'graduate'
+            user.status = oauth_data.get("status", "student")
             
-            # Заполняем специфичные для OAuth поля в CustomUser
             user.oauth_university = oauth_data.get("university_name", "")
             user.oauth_degree = oauth_data.get("degree_name", "")
             user.oauth_specialization = oauth_data.get("specialty_name", "")
             
-            # Валидация GPA
             raw_gpa = oauth_data.get("gpa")
             user.oauth_gpa = float(raw_gpa) if raw_gpa else None
             
-            # Год поступления / выпуска (если прилетают из OAuth)
             if oauth_data.get("enrollment_year"):
                 user.oauth_enrollment_year = int(oauth_data.get("enrollment_year"))
             if oauth_data.get("graduation_year"):
@@ -139,7 +188,6 @@ def handle_oauth_user_login(request, oauth_data):
 
             user.save()
 
-        # 3. Синхронизируем StudentProfile
         profile, profile_created = StudentProfile.objects.get_or_create(user=user)
         
         profile.student_id = user.student_id
@@ -147,7 +195,7 @@ def handle_oauth_user_login(request, oauth_data):
         profile.faculty = user.faculty
         profile.specialty = user.specialty
         profile.specialty_code = oauth_data.get("specialty_code", "")
-        profile.course_year = oauth_data.get("course_level", "")  # Например, "3"
+        profile.course_year = oauth_data.get("course_level", "")
         profile.education_level = user.education_level
         profile.graduation_year = user.graduation_year
         profile.status = user.status
@@ -158,7 +206,6 @@ def handle_oauth_user_login(request, oauth_data):
         profile.save()
         
     return user
-#------------------------------------------------------------------------------
 
 def oauth_login(request):
     state = get_random_string(40)
@@ -177,26 +224,15 @@ def oauth_login(request):
     url = settings.OAUTH_AUTHORIZE_URL + "?" + urlencode(params)
     return redirect(url)
 
-
-
-
 class CustomTokenObtainSerializer(TokenObtainPairSerializer):
-    """
-    Кастомный сериализатор токенов с проверкой типа пользователя.
-    """
-
     def validate(self, attrs):
         data = super().validate(attrs)
-
-
         user = self.user
-
 
         if user.user_type == 'student':
             raise serializers.ValidationError({
                 "detail": "Студенты должны использовать OAuth авторизацию через /oauth/login/"
             })
-
 
         data.update({
             'user_id': user.id,
@@ -206,9 +242,7 @@ class CustomTokenObtainSerializer(TokenObtainPairSerializer):
             'first_name': user.first_name,
             'last_name': user.last_name,
         })
-
         return data
-
 
 class CustomTokenObtainView(TokenObtainPairView):
     serializer_class = CustomTokenObtainSerializer
@@ -245,80 +279,59 @@ class CustomTokenObtainView(TokenObtainPairView):
 
         return response
 
-
-
-
 def is_student(user):
     return user.is_authenticated and getattr(user, "user_type", None) == "student"
-
 
 def is_student_or_alumni(user):
     return user.is_authenticated and getattr(user, "user_type", None) in ["student", "alumni"]
 
-
 def is_employer(user):
     return user.is_authenticated and getattr(user, "user_type", None) == "employer"
-
 
 def is_admin(user):
     return is_admin_user(user)
 
-
 def is_main_admin(user):
     return is_main_admin_user(user)
-
 
 def can_manage_employers(user):
     return user_has_admin_permission(user, "can_manage_employers")
 
-
 def can_create_employers(user):
     return user_has_admin_permission(user, "can_create_employers")
-
 
 def can_change_user_status(user):
     return user_has_admin_permission(user, "can_change_user_status")
 
-
 def can_manage_students(user):
     return user_has_admin_permission(user, "can_manage_students")
-
 
 def can_manage_companies(user):
     return user_has_admin_permission(user, "can_manage_companies")
 
-
 def can_view_company_details(user):
     return user_has_admin_permission(user, "can_view_company_details")
-
 
 def can_verify_companies(user):
     return user_has_admin_permission(user, "can_verify_companies")
 
-
 def can_change_company_status(user):
     return user_has_admin_permission(user, "can_change_company_status")
-
 
 def can_manage_jobs(user):
     return user_has_admin_permission(user, "can_manage_jobs")
 
-
 def can_create_jobs(user):
     return user_has_admin_permission(user, "can_create_jobs")
-
 
 def can_manage_resumes(user):
     return user_has_admin_permission(user, "can_manage_resumes")
 
-
 def can_manage_events(user):
     return user_has_admin_permission(user, "can_manage_events")
 
-
 def can_view_statistics(user):
     return user_has_admin_permission(user, "can_view_statistics")
-
 
 def managed_user_types_for_admin(user):
     if not is_admin(user):
@@ -342,7 +355,6 @@ def managed_user_types_for_admin(user):
 
     return managed_types
 
-
 def can_view_managed_user(user, target_user):
     if not getattr(user, "is_authenticated", False):
         return False
@@ -358,7 +370,6 @@ def can_view_managed_user(user, target_user):
 
     return target_user.user_type in managed_user_types_for_admin(user)
 
-
 def can_change_managed_user_status(user, target_user):
     if not can_change_user_status(user):
         return False
@@ -368,41 +379,8 @@ def can_change_managed_user_status(user, target_user):
 
     return can_view_managed_user(user, target_user)
 
-
 def can_manage_users(user):
     return bool(managed_user_types_for_admin(user) or is_main_admin(user))
-
-
-def create_user_activity(user, activity_type, description="", ip_address=None,
-                        user_agent="", related_company=None):
-    try:
-        activity = UserActivity.objects.create(
-            user=user,
-            activity_type=activity_type,
-            description=description,
-            ip_address=ip_address or get_client_ip(),
-            user_agent=user_agent or "",
-        )
-        if related_company:
-            activity.related_company = related_company
-            activity.save()
-        return activity
-    except Exception as e:
-        print(f"Error creating activity: {e}")
-        return None
-
-
-def get_client_ip(request=None):
-    if request is None:
-        return None
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
-    else:
-        ip = request.META.get('REMOTE_ADDR')
-    return ip
-
-
 
 def home(request):
     if request.user.is_authenticated:
@@ -419,7 +397,6 @@ def home(request):
 
     return render(request, "home.html", context)
 
-
 def home_redirect(request):
     if request.user.is_authenticated:
         user_type = getattr(request.user, "user_type", None)
@@ -432,7 +409,6 @@ def home_redirect(request):
             return redirect("accounts:admin_dashboard")
 
     return redirect("home")
-
 
 def employer_login(request):
     if request.user.is_authenticated and request.user.user_type == "employer":
@@ -486,7 +462,6 @@ def employer_login(request):
 
     return render(request, "accounts/employer_login.html", {"form": form})
 
-
 def admin_login(request):
     """Admin login page with brute force protection"""
 
@@ -532,12 +507,9 @@ def admin_login(request):
             messages.error(request, "Ваш аккаунт деактивирован. Обратитесь к главному администратору.")
             return render(request, "accounts/admin_login.html", {"form": form})
 
-
         login(request, user)
 
-
         BruteForceProtectionMiddleware.clear_attempts(ip_address, username)
-
 
         create_user_activity(
             user,
@@ -552,11 +524,9 @@ def admin_login(request):
 
     return render(request, "accounts/admin_login.html", {"form": form})
 
-
 def admin_logout(request):
     """Admin logout with enhanced security"""
     if request.user.is_authenticated:
-
         create_user_activity(
             request.user,
             "logout",
@@ -567,12 +537,10 @@ def admin_logout(request):
 
     logout(request)
 
-
     request.session.flush()
 
     messages.success(request, _("You have been logged out successfully"))
     return redirect("accounts:admin_login")
-
 
 @login_required
 @user_passes_test(is_admin, login_url="accounts:admin_login")
@@ -582,7 +550,6 @@ def admin_change_password(request):
         old_password = request.POST.get("old_password")
         new_password1 = request.POST.get("new_password1")
         new_password2 = request.POST.get("new_password2")
-
 
         if not all([old_password, new_password1, new_password2]):
             messages.error(request, _("All fields are required"))
@@ -596,18 +563,14 @@ def admin_change_password(request):
             messages.error(request, _("Password must be at least 8 characters long"))
             return render(request, "accounts/admin_change_password.html")
 
-
         if not request.user.check_password(old_password):
             messages.error(request, _("Current password is incorrect"))
             return render(request, "accounts/admin_change_password.html")
 
-
         request.user.set_password(new_password1)
         request.user.save()
 
-
         update_session_auth_hash(request, request.user)
-
 
         create_user_activity(
             request.user,
@@ -622,7 +585,6 @@ def admin_change_password(request):
 
     return render(request, "accounts/admin_change_password.html")
 
-
 @login_required
 @user_passes_test(is_main_admin, login_url="accounts:admin_login")
 def admin_session_management(request):
@@ -633,7 +595,6 @@ def admin_session_management(request):
 
     active_sessions = []
     now = timezone.now()
-
 
     admins = CustomUser.objects.filter(user_type__in=ADMIN_USER_TYPES)
 
@@ -661,7 +622,6 @@ def admin_session_management(request):
 
     return render(request, "accounts/admin_session_management.html", context)
 
-
 @login_required
 @user_passes_test(is_main_admin, login_url="accounts:admin_login")
 def terminate_admin_session(request, session_key):
@@ -675,13 +635,10 @@ def terminate_admin_session(request, session_key):
 
     return redirect("accounts:admin_session_management")
 
-
 @login_required
 @user_passes_test(is_admin, login_url="accounts:admin_login")
 def admin_two_factor_setup(request):
     """Setup two-factor authentication for admin"""
-
-
 
     context = {
         'two_factor_enabled': False,
@@ -689,7 +646,6 @@ def admin_two_factor_setup(request):
     }
 
     return render(request, "accounts/admin_two_factor_setup.html", context)
-
 
 @login_required
 @user_passes_test(is_admin, login_url="accounts:admin_login")
@@ -711,7 +667,6 @@ def admin_login_history(request):
             activity_type="failed_login"
         ).count(),
     })
-
 
 def hemis_login(request):
     """Student login via external OAuth microservice"""
@@ -789,7 +744,6 @@ def hemis_login(request):
         email = user_data.get("email", "") or ""
         gender = normalize_gender(user_data.get("jinsi") or user_data.get("gender"))
         
-        # Set user_type based on bitiruvchi: 0 = student, 1 = alumni
         bitiruvchi_value = user_data.get("bitiruvchi")
         if bitiruvchi_value is not None:
             try:
@@ -800,7 +754,6 @@ def hemis_login(request):
         else:
             user_type = "student"
 
-        # Extract OAuth data for immutable fields
         oauth_university = user_data.get("university") or user_data.get("universitetining_nomi") or ""
         oauth_degree = user_data.get("degree") or user_data.get("darajasi") or ""
         oauth_specialization = user_data.get("specialty") or user_data.get("yunalish_nomi") or ""
@@ -843,14 +796,12 @@ def hemis_login(request):
                 "oauth_last_synced": timezone.now(),
                 "gender": gender,
                 "phone_number": user_data.get("phone_number") or None,
-                # Profile fields
                 "faculty": user_data.get("fakultet") or user_data.get("faculty") or "",
                 "specialty": user_data.get("yunalish_nomi") or user_data.get("specialty") or "",
                 "student_id": user_data.get("student_id") or user_data.get("login") or "",
             },
         )
 
-        # Update graduation_year if provided
         if user_data.get("graduation_year"):
             try:
                 user.graduation_year = int(user_data.get("graduation_year"))
@@ -866,17 +817,11 @@ def hemis_login(request):
 
     return render(request, "accounts/hemis_login.html")
 
-
 def hemis_callback(request):
-    """OAuth callback from HEMIS/external service (if using redirect flow)"""
-
-
     messages.info(request, _("Please use the login form to authenticate"))
     return redirect("accounts:hemis_login")
 
-
 def temp_student_login_view(request):
-    """Temporary endpoint for testing student login without OAuth microservice"""
     if request.method == "POST":
         username = request.POST.get("username", "").strip()
         password = request.POST.get("password", "")
@@ -884,7 +829,6 @@ def temp_student_login_view(request):
         if not username or not password:
             messages.error(request, _("Please provide username and password"))
             return render(request, "accounts/temp_student_login.html")
-
 
         user = authenticate(request, username=username, password=password)
 
@@ -900,15 +844,12 @@ def temp_student_login_view(request):
 
     return render(request, "accounts/temp_student_login.html")
 
-
 @require_http_methods(["GET", "POST"])
 def logout_view(request):
-    """Logout user"""
     if request.user.is_authenticated:
         try:
             create_user_activity(request.user, "logout", "User logged out")
         except Exception as e:
-
             print(f"Error creating user activity: {e}")
 
     logout(request)
@@ -921,13 +862,9 @@ def logout_view(request):
     response.delete_cookie(refresh_cookie)
     return response
 
-
-
 @login_required
 @user_passes_test(is_student_or_alumni, login_url="accounts:employer_login")
 def student_dashboard(request):
-    """Student dashboard"""
-
     resumes = CV.objects.filter(user=request.user)
     student = StudentProfile.objects.filter(user=request.user)
 
@@ -979,10 +916,8 @@ def student_dashboard(request):
 
     return render(request, "accounts/student_dashboard.html", context)
 
-
 @login_required
 def student_profile_update(request):
-    """Update student profile"""
     if request.user.user_type not in ["student", "alumni"]:
         return redirect("accounts:login")
 
@@ -1006,7 +941,6 @@ def student_profile_update(request):
         "profile_form": profile_form,
     })
 
-
 @login_required
 @user_passes_test(is_student_or_alumni, login_url="accounts:employer_login")
 def student_certificate_list(request):
@@ -1019,7 +953,6 @@ def student_certificate_list(request):
             "certificates": certificates,
         },
     )
-
 
 @login_required
 @user_passes_test(is_student_or_alumni, login_url="accounts:employer_login")
@@ -1051,7 +984,6 @@ def student_certificate_create(request):
             "is_edit": False,
         },
     )
-
 
 @login_required
 @user_passes_test(is_student_or_alumni, login_url="accounts:employer_login")
@@ -1089,7 +1021,6 @@ def student_certificate_update(request, pk):
         },
     )
 
-
 @login_required
 @user_passes_test(is_student_or_alumni, login_url="accounts:employer_login")
 @require_http_methods(["POST"])
@@ -1118,7 +1049,6 @@ def student_certificate_delete(request, pk):
     ):
         return redirect(next_url)
     return redirect("accounts:student_certificate_list")
-
 
 @login_required
 def student_certificate_file(request, pk):
@@ -1156,13 +1086,9 @@ def student_certificate_file(request, pk):
         response["Content-Disposition"] = f'inline; filename="{certificate.download_filename}"'
     return response
 
-
-
-
 @login_required
 @user_passes_test(is_student, login_url="accounts:hemis_login")
 def student_search(request):
-    """Student job search view"""
     query = request.GET.get('q', '')
     location = request.GET.get('location', '')
     salary_min = request.GET.get('salary_min', '')
@@ -1192,13 +1118,10 @@ def student_search(request):
         'salary_min': salary_min,
     })
 
-
-
 @login_required
 @user_passes_test(is_employer, login_url="accounts:employer_login")
 def employer_dashboard(request):
-    """Employer dashboard"""
-    employer_profile, gettext = EmployerProfile.objects.get_or_create(user=request.user)
+    employer_profile, created = EmployerProfile.objects.get_or_create(user=request.user)
     owned_companies = Company.objects.filter(owner=request.user, is_active=True)
 
     primary_company = None
@@ -1216,7 +1139,6 @@ def employer_dashboard(request):
         elif owned_companies.exists():
             primary_company = owned_companies.first()
 
-
     if primary_company and not primary_company.is_active:
         employer_profile.primary_company_id = None
         employer_profile.save()
@@ -1224,9 +1146,7 @@ def employer_dashboard(request):
         if owned_companies.exists():
             primary_company = owned_companies.first()
 
-
     if primary_company:
-
         active_jobs = Job.objects.filter(
             company=primary_company,
             is_active=True
@@ -1234,10 +1154,8 @@ def employer_dashboard(request):
         total_applications = JobApplication.objects.filter(
             job__company=primary_company
         ).count()
-
         profile_views = primary_company.total_views or 0
     else:
-
         active_jobs = Job.objects.filter(
             company__owner=request.user,
             is_active=True
@@ -1245,7 +1163,6 @@ def employer_dashboard(request):
         total_applications = JobApplication.objects.filter(
             job__company__owner=request.user
         ).count()
-
         profile_views = Company.objects.filter(
             owner=request.user
         ).aggregate(total=Sum('total_views'))['total'] or 0
@@ -1278,12 +1195,11 @@ def employer_dashboard(request):
 
     return render(request, 'accounts/employer_dashboard.html', context)
 
-
 @login_required
 @user_passes_test(is_employer, login_url="accounts:employer_login")
 def employer_profile_update(request):
     """Update employer profile"""
-    employer_profile, gettext = EmployerProfile.objects.get_or_create(user=request.user)
+    employer_profile, created = EmployerProfile.objects.get_or_create(user=request.user)
 
     if request.method == "POST":
         user_form = UserUpdateForm(request.POST, instance=request.user)
@@ -1293,7 +1209,7 @@ def employer_profile_update(request):
             user_form.save()
             profile_form.save()
             create_user_activity(request.user, "profile_update", "Employer profile updated")
-            messages.success(request, gettext("Profile updated successfully!"))
+            messages.success(request, _("Profile updated successfully!"))  # используем _ вместо gettext
             return redirect("accounts:employer_dashboard")
     else:
         user_form = UserUpdateForm(instance=request.user)
@@ -1304,13 +1220,10 @@ def employer_profile_update(request):
         "profile_form": profile_form,
     })
 
-
 @login_required
 @user_passes_test(is_employer, login_url="accounts:employer_login")
 def employer_stats(request):
-    """Employer statistics view"""
     companies = Company.objects.filter(owner=request.user, is_active=True)
-
 
     total_jobs = Job.objects.filter(company__in=companies).count()
     active_jobs = Job.objects.filter(company__in=companies, is_active=True).count()
@@ -1326,16 +1239,14 @@ def employer_stats(request):
 
     return render(request, 'accounts/employer_stats.html', context)
 
-
 @login_required
 def set_primary_company(request, pk):
-    """Set primary company for employer"""
     if not is_employer(request.user):
         return redirect("accounts:employer_login")
 
     try:
         company = Company.objects.get(pk=pk, owner=request.user)
-        employer_profile, gettext = EmployerProfile.objects.get_or_create(user=request.user)
+        employer_profile, created = EmployerProfile.objects.get_or_create(user=request.user)
         employer_profile.primary_company = company
         employer_profile.save()
         messages.success(request, _("Primary company set successfully"))
@@ -1344,10 +1255,7 @@ def set_primary_company(request, pk):
 
     return redirect("accounts:employer_dashboard")
 
-
-
 class CompanyListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
-    """List all companies owned by employer"""
     model = Company
     template_name = 'accounts/company_list.html'
     context_object_name = 'owned_companies'
@@ -1382,9 +1290,7 @@ class CompanyListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
         return context
 
-
 class CompanyCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
-    """Create a new company"""
     model = Company
     template_name = 'accounts/company_form.html'
     form_class = CompanyForm
@@ -1416,9 +1322,7 @@ class CompanyCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     def get_success_url(self):
         return reverse_lazy('accounts:employer_dashboard')
 
-
 class CompanyDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
-    """View company details"""
     model = Company
     template_name = 'accounts/company_detail.html'
     context_object_name = 'company'
@@ -1462,9 +1366,7 @@ class CompanyDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
         return context
 
-
 class CompanyUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    """Update company information"""
     model = Company
     template_name = 'accounts/company_form.html'
     form_class = CompanyForm
@@ -1487,9 +1389,7 @@ class CompanyUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def get_success_url(self):
         return reverse_lazy('accounts:company_detail', kwargs={'pk': self.object.pk})
 
-
 class CompanyDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    """Delete company (soft delete)"""
     model = Company
     template_name = 'accounts/company_confirm_delete.html'
 
@@ -1501,10 +1401,8 @@ class CompanyDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         )
 
     def post(self, request, *args, **kwargs):
-        """Handle POST request for deletion"""
         self.object = self.get_object()
         company_name = self.object.name
-
 
         EmployerProfile.objects.filter(primary_company_id=self.object).update(primary_company_id=None)
 
@@ -1522,7 +1420,6 @@ class CompanyDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         except EmployerProfile.DoesNotExist:
             pass
 
-
         self.object.is_active = False
         self.object.save()
 
@@ -1535,11 +1432,9 @@ class CompanyDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def get_success_url(self):
         return reverse_lazy('accounts:company_list')
 
-
 @login_required
 @user_passes_test(is_employer, login_url="accounts:employer_login")
 def set_primary_company(request, pk):
-    """Set a company as primary"""
     company = get_object_or_404(Company, pk=pk, owner=request.user, is_active=True)
 
     try:
@@ -1555,11 +1450,9 @@ def set_primary_company(request, pk):
 
     return redirect('accounts:company_detail', pk=pk)
 
-
 @login_required
 @user_passes_test(is_employer, login_url="accounts:employer_login")
 def company_documents(request, pk):
-    """Manage company documents"""
     company = get_object_or_404(Company, pk=pk, owner=request.user)
 
     if request.method == "POST":
@@ -1580,11 +1473,9 @@ def company_documents(request, pk):
         "documents": company.documents.all(),
     })
 
-
 @login_required
 @user_passes_test(is_employer, login_url="accounts:employer_login")
 def company_statistics(request, pk):
-    """Company statistics view"""
     company = get_object_or_404(Company, pk=pk, owner=request.user)
 
     jobs = Job.objects.filter(company=company)
@@ -1608,12 +1499,9 @@ def company_statistics(request, pk):
 
     return render(request, 'accounts/company_statistics.html', context)
 
-
-
 @login_required
 @user_passes_test(is_admin, login_url="accounts:admin_login")
 def admin_dashboard(request):
-    """Admin dashboard"""
     admin_profile, _ = AdminProfile.objects.get_or_create(user=request.user)
     today = timezone.now().date()
     permissions = {
@@ -1658,11 +1546,9 @@ def admin_dashboard(request):
 
     return render(request, "accounts/admin_dashboard.html", context)
 
-
 @login_required
 @user_passes_test(can_view_statistics, login_url="accounts:admin_login")
 def admin_statistics(request):
-    """Extended platform statistics for administrators."""
     now = timezone.now()
     period_starts = {
         "day": now - timedelta(days=1),
@@ -1757,11 +1643,9 @@ def admin_statistics(request):
 
     return render(request, "accounts/admin_statistics.html", context)
 
-
 @login_required
 @user_passes_test(is_main_admin, login_url="accounts:admin_login")
 def admin_management(request):
-    """Manage administrators"""
     if not is_main_admin(request.user):
         messages.error(request, _("Access denied"))
         return redirect("accounts:admin_dashboard")
@@ -1774,11 +1658,9 @@ def admin_management(request):
         "main_admins_count": admins.filter(user_type="main_admin").count(),
     })
 
-
 @login_required
 @user_passes_test(can_manage_companies, login_url="accounts:admin_login")
 def admin_company_management(request):
-    """Manage companies"""
     search_query = request.GET.get("q", "")
     verification_filter = request.GET.get("verification", "all")
     active_filter = request.GET.get("active", "all")
@@ -1825,11 +1707,9 @@ def admin_company_management(request):
         "can_change_company_status": can_change_company_status(request.user),
     })
 
-
 @login_required
 @user_passes_test(can_verify_companies, login_url="accounts:admin_login")
 def toggle_company_verification(request, pk):
-    """Toggle company verification status"""
     if request.method == "POST":
         company = get_object_or_404(Company, pk=pk)
         company.is_verified = not company.is_verified
@@ -1850,11 +1730,9 @@ def toggle_company_verification(request, pk):
 
     return redirect("accounts:admin_company_management")
 
-
 @login_required
 @user_passes_test(can_change_company_status, login_url="accounts:admin_login")
 def toggle_company_status(request, pk):
-    """Toggle company active status"""
     if request.method == "POST":
         company = get_object_or_404(Company, pk=pk)
         company.is_active = not company.is_active
@@ -1875,11 +1753,9 @@ def toggle_company_status(request, pk):
 
     return redirect("accounts:admin_company_management")
 
-
 @login_required
 @user_passes_test(can_view_company_details, login_url="accounts:admin_login")
 def company_detail_admin(request, pk):
-    """View company details (admin version)"""
     company = get_object_or_404(Company, pk=pk)
 
     return render(request, "accounts/admin_company_detail.html", {
@@ -1893,16 +1769,13 @@ def company_detail_admin(request, pk):
         "can_change_company_status": can_change_company_status(request.user),
     })
 
-
 @login_required
 @user_passes_test(is_main_admin, login_url="accounts:admin_login")
 def create_admin_account(request):
-    """Create admin account (main admin only)"""
     if request.method == "POST":
         form = AdminProfileForm(request.POST)
         if form.is_valid():
             try:
-
                 if CustomUser.objects.filter(email=form.cleaned_data["email"]).exists():
                     messages.error(request, "Пользователь с таким email уже существует")
                     return render(request, "accounts/create_admin_account.html", {"form": form})
@@ -1910,7 +1783,6 @@ def create_admin_account(request):
                 if CustomUser.objects.filter(username=form.cleaned_data["username"]).exists():
                     messages.error(request, "Пользователь с таким именем уже существует")
                     return render(request, "accounts/create_admin_account.html", {"form": form})
-
 
                 user = CustomUser.objects.create_user(
                     username=form.cleaned_data["username"],
@@ -1921,8 +1793,6 @@ def create_admin_account(request):
                 )
                 user.set_password(form.cleaned_data["password1"])
                 user.save()
-
-
 
                 admin_profile, created = AdminProfile.objects.update_or_create(
                     user=user,
@@ -1951,59 +1821,8 @@ def create_admin_account(request):
 
     return render(request, "accounts/create_admin_account.html", {"form": form})
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @login_required
 def profile_view(request, user_id=None):
-    """View user profile"""
     user = request.user if not user_id else get_object_or_404(CustomUser, id=user_id)
     is_own_profile = (user == request.user)
 
@@ -2040,13 +1859,11 @@ def profile_view(request, user_id=None):
 
         owned_companies = Company.objects.filter(owner=user, is_active=True)
 
-
         primary_company = None
         if profile.primary_company_id and profile.primary_company_id.is_active:
             primary_company = profile.primary_company_id
         elif owned_companies.exists():
             primary_company = owned_companies.first()
-
 
         if primary_company:
             active_jobs = Job.objects.filter(
@@ -2054,7 +1871,6 @@ def profile_view(request, user_id=None):
                 is_active=True
             ).select_related('company')
             active_jobs_count = active_jobs.count()
-
 
             jobs_posted = Job.objects.filter(company=primary_company).count()
             total_views = primary_company.total_views or 0
@@ -2089,10 +1905,8 @@ def profile_view(request, user_id=None):
 
     return render(request, template_name, context)
 
-
 @login_required
 def notifications(request):
-    """User notifications"""
     notifications_list = Notification.objects.filter(user=request.user).order_by("-created_at")
     notification_type = request.GET.get("type", "")
 
@@ -2118,10 +1932,8 @@ def notifications(request):
         },
     })
 
-
 @login_required
 def mark_notification_read(request, notification_id):
-    """Mark a specific notification as read"""
     notification = get_object_or_404(Notification, id=notification_id, user=request.user)
     notification.is_read = True
     notification.save()
@@ -2129,36 +1941,17 @@ def mark_notification_read(request, notification_id):
     next_url = request.GET.get('next', 'accounts:notifications')
     return redirect(next_url)
 
-
 @login_required
 def mark_all_notifications_read(request):
-    """Mark all notifications as read for current user"""
     Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
     messages.success(request, _("All notifications marked as read"))
 
     next_url = request.GET.get('next', 'accounts:notifications')
     return redirect(next_url)
 
-
-
 @login_required
 @require_http_methods(["GET"])
 def user_stats_api(request):
-    """
-    API endpoint to get authenticated user statistics.
-
-    Returns user stats based on their role (student/employer/admin).
-    Requires authentication.
-
-    Returns JSON with:
-    - user_id: User's ID
-    - username: User's username
-    - email: User's email
-    - user_type: Type of user (student/employer/admin/main_admin)
-    - is_staff: Whether user is staff
-    - is_superuser: Whether user is superuser
-    - role-specific statistics based on user type
-    """
     user = request.user
     user_type = getattr(user, "user_type", None)
 
@@ -2170,7 +1963,6 @@ def user_stats_api(request):
         "is_staff": user.is_staff,
         "is_superuser": user.is_superuser,
     }
-
 
     if user_type in ["student", "alumni"]:
         stats.update({
@@ -2205,12 +1997,9 @@ def user_stats_api(request):
 
     return JsonResponse(stats, status=200)
 
-
-
 @login_required
 @user_passes_test(can_manage_employers, login_url="accounts:admin_login")
 def admin_employer_management(request):
-    """Manage employers and their accounts"""
     employers = (
         CustomUser.objects.filter(user_type="employer")
         .select_related("employer_profile")
@@ -2239,11 +2028,9 @@ def admin_employer_management(request):
         "total_employers": CustomUser.objects.filter(user_type="employer").count(),
     })
 
-
 @login_required
 @user_passes_test(can_manage_users, login_url="accounts:admin_login")
 def user_management(request):
-    """Manage user accounts"""
     allowed_user_types = managed_user_types_for_admin(request.user)
     if request.user.is_main_admin:
         allowed_user_types = set(ADMIN_USER_TYPES) | {"student", "alumni", "employer"}
@@ -2251,7 +2038,6 @@ def user_management(request):
     users = CustomUser.objects.filter(user_type__in=allowed_user_types).order_by("-date_joined")
     total_visible_users = users.count()
 
-    # Support both legacy `type` and canonical `user_type` query params.
     user_type_filter = request.GET.get("user_type") or request.GET.get("type", "")
     user_type_mapping = {
         "all": "",
@@ -2291,18 +2077,14 @@ def user_management(request):
         "can_change_user_status": can_change_user_status(request.user),
     })
 
-
 @login_required
 @user_passes_test(can_manage_users, login_url="accounts:admin_login")
 def user_detail(request, user_id):
-    """View user details"""
     user = get_object_or_404(CustomUser, id=user_id)
-
 
     if not can_view_managed_user(request.user, user):
         messages.error(request, _("You don't have permission to view this profile"))
         return redirect("accounts:user_management")
-
 
     profile = None
     if user.user_type in ["student", "alumni"]:
@@ -2338,11 +2120,9 @@ def user_detail(request, user_id):
 
     return render(request, "accounts/user_detail.html", context)
 
-
 @login_required
 @user_passes_test(can_manage_users, login_url="accounts:admin_login")
 def toggle_user_status(request, user_id):
-    """Toggle user active/inactive status"""
     user = get_object_or_404(CustomUser, id=user_id)
 
     if not can_change_managed_user_status(request.user, user):
@@ -2360,7 +2140,6 @@ def toggle_user_status(request, user_id):
 
     return redirect("accounts:user_detail", user_id=user_id)
 
-
 @login_required
 @user_passes_test(can_create_employers, login_url="accounts:admin_login")
 def create_employer_account(request):
@@ -2370,7 +2149,6 @@ def create_employer_account(request):
         profile_form = AdminEmployerProfileForm(request.POST, request.FILES, prefix='profile')
 
         if user_form.is_valid() and company_form.is_valid() and profile_form.is_valid():
-
             user = user_form.save(commit=False)
             user.user_type = "employer"
             user.save()
@@ -2402,7 +2180,6 @@ def create_employer_account(request):
             profile.primary_company = company
             profile.save()
 
-
             create_user_activity(
                 request.user,
                 "user_create",
@@ -2421,7 +2198,6 @@ def create_employer_account(request):
         'company_form': company_form,
         'profile_form': profile_form
     })
-
 
 def handler403(request, exception=None):
     return render(request, 'errors/403.html', status=403)
@@ -2503,24 +2279,17 @@ def initial_setup(request):
 
     return render(request, "accounts/initial_setup.html")
 
-
-
 @login_required(login_url='accounts:employer_login')
 def activity_log(request):
-    """Display user activity log with pagination and filtering"""
-
     activities = UserActivity.objects.filter(user=request.user).order_by('-created_at')
-
 
     activity_type = request.GET.get('type')
     if activity_type:
         activities = activities.filter(activity_type=activity_type)
 
-
     paginator = Paginator(activities, 20)
     page_number = request.GET.get('page', 1)
     page_obj = paginator.get_page(page_number)
-
 
     activity_types = UserActivity.ACTIVITY_TYPES
 
@@ -2533,32 +2302,17 @@ def activity_log(request):
 
     return render(request, 'accounts/activity_log.html', context)
 
-
-
-
 def student_oauth_login(request):
-    """
-    Перенаправление на страницу авторизации OAuth сервиса.
-
-    Этапы:
-    1. Генерация state параметра для защиты от CSRF
-    2. Формирование URL для перенаправления
-    3. Сохранение state в сессии
-    4. Redirect к OAuth провайдеру
-    """
     from django.utils.crypto import get_random_string
     from urllib.parse import urlencode
 
     try:
         oauth_config = settings.OAUTH_PROVIDER
 
-
         state = get_random_string(length=32)
-
 
         request.session['oauth_state'] = state
         request.session.set_expiry(600)
-
 
         params = {
             'client_id': oauth_config['CLIENT_ID'],
@@ -2567,7 +2321,6 @@ def student_oauth_login(request):
             'scope': oauth_config.get('SCOPE', 'profile email'),
             'state': state,
         }
-
 
         authorize_url = f"{oauth_config['AUTHORIZE_URL']}?{urlencode(params)}"
 
@@ -2580,29 +2333,15 @@ def student_oauth_login(request):
         messages.error(request, _("Failed to start OAuth authentication. Please try again."))
         return redirect("accounts:hemis_login")
 
-
 def oauth_callback(request):
-    """
-    Callback endpoint для обработки ответа от OAuth сервиса.
-
-    Этапы:
-    1. Проверка наличия ошибок
-    2. Проверка state параметра
-    3. Извлечение authorization code
-    4. Аутентификация через бэкенд
-    5. Вход пользователя в систему
-    6. Перенаправление на dashboard
-    """
     from django.contrib.auth import authenticate
 
     try:
-
         error = request.GET.get('error')
         if error:
             error_description = request.GET.get('error_description', 'Unknown error')
             messages.error(request, _("OAuth error: %(error)s") % {'error': error_description})
             return redirect("accounts:hemis_login")
-
 
         state = request.GET.get('state')
         session_state = request.session.get('oauth_state')
@@ -2611,15 +2350,12 @@ def oauth_callback(request):
             messages.error(request, _("Invalid state parameter. Please try again."))
             return redirect("accounts:hemis_login")
 
-
         del request.session['oauth_state']
-
 
         code = request.GET.get('code')
         if not code:
             messages.error(request, _("No authorization code received. Please try again."))
             return redirect("accounts:hemis_login")
-
 
         user = authenticate(request, code=code, state=state)
 
@@ -2627,9 +2363,7 @@ def oauth_callback(request):
             messages.error(request, _("Failed to authenticate. Please try again."))
             return redirect("accounts:hemis_login")
 
-
         login(request, user)
-
 
         create_user_activity(
             user,
@@ -2641,7 +2375,6 @@ def oauth_callback(request):
 
         messages.success(request, _("Successfully logged in!"))
 
-
         return redirect("accounts:student_dashboard")
 
     except Exception as e:
@@ -2651,21 +2384,12 @@ def oauth_callback(request):
         messages.error(request, _("An error occurred during authentication. Please try again."))
         return redirect("accounts:hemis_login")
 
-
-
 def check_bruteforce_protection(ip_address, username=None):
-    """
-    Проверка защиты от брутфорс-атак.
-    Возвращает (is_allowed, error_message, remaining_time)
-    """
-
     ip_block_key = f'ip_blocked_{ip_address}'
     if cache.get(ip_block_key):
-
         ttl = cache.ttl(ip_block_key)
         remaining_minutes = max(1, ttl // 60)
         return False, f"IP адрес заблокирован на {remaining_minutes} минут", remaining_minutes
-
 
     if username:
         user_block_key = f'user_blocked_{username}'
@@ -2673,7 +2397,6 @@ def check_bruteforce_protection(ip_address, username=None):
             ttl = cache.ttl(user_block_key)
             remaining_minutes = max(1, ttl // 60)
             return False, f"Аккаунт заблокирован на {remaining_minutes} минут", remaining_minutes
-
 
     ip_attempts_key = f'login_attempts_ip_{ip_address}'
     attempts_ip = cache.get(ip_attempts_key, 0)
@@ -2687,16 +2410,13 @@ def check_bruteforce_protection(ip_address, username=None):
     max_attempts = 10
     warning_threshold = 5
 
-
     if attempts_ip >= max_attempts or attempts_user >= max_attempts:
-
         block_time = 900
         cache.set(ip_block_key, True, block_time)
         if username:
             cache.set(user_block_key, True, block_time)
 
         return False, "Слишком много неудачных попыток. Доступ заблокирован на 15 минут.", 15
-
 
     if attempts_ip >= warning_threshold or attempts_user >= warning_threshold:
         remaining = max_attempts - max(attempts_ip, attempts_user)
@@ -2705,7 +2425,6 @@ def check_bruteforce_protection(ip_address, username=None):
     return True, None, None
 
 def record_failed_login_attempt(ip_address, username=None):
-    """Запись неудачной попытки входа"""
     ip_key = f'login_attempts_ip_{ip_address}'
     attempts = cache.get(ip_key, 0) + 1
     cache.set(ip_key, attempts, 300)
@@ -2715,11 +2434,9 @@ def record_failed_login_attempt(ip_address, username=None):
         user_attempts = cache.get(user_key, 0) + 1
         cache.set(user_key, user_attempts, 300)
 
-
     print(f"Failed login attempt: IP={ip_address}, User={username}, Attempts={attempts}")
 
 def clear_login_attempts(ip_address, username=None):
-    """Очистка счетчиков при успешном входе"""
     cache.delete(f'login_attempts_ip_{ip_address}')
     cache.delete(f'ip_blocked_{ip_address}')
 
@@ -2728,7 +2445,6 @@ def clear_login_attempts(ip_address, username=None):
         cache.delete(f'user_blocked_{username}')
 
 def get_login_attempts_info(ip_address, username=None):
-    """Получение информации о попытках входа"""
     ip_attempts = cache.get(f'login_attempts_ip_{ip_address}', 0)
     user_attempts = cache.get(f'login_attempts_user_{username}', 0) if username else 0
 
@@ -2743,42 +2459,3 @@ def get_login_attempts_info(ip_address, username=None):
         'ip_block_ttl': cache.ttl(f'ip_blocked_{ip_address}') if ip_blocked else None,
         'user_block_ttl': cache.ttl(f'user_blocked_{username}') if user_blocked else None,
     }
-
-
-
-class CustomTokenObtainSerializer(TokenObtainPairSerializer):
-    """
-    Кастомный сериализатор токенов с проверкой типа пользователя.
-    """
-
-    def validate(self, attrs):
-        data = super().validate(attrs)
-
-
-        user = self.user
-
-
-        if user.user_type == 'student':
-            raise serializers.ValidationError({
-                "detail": "Студенты должны использовать OAuth авторизацию через /accounts/oauth/login/"
-            })
-
-
-        data.update({
-            'user_id': user.id,
-            'username': user.username,
-            'email': user.email,
-            'user_type': user.user_type,
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-        })
-
-        return data
-
-
-class CustomTokenObtainView(TokenObtainPairView):
-    """
-    Получение JWT токенов ТОЛЬКО для работодателей и администраторов.
-    Студентам запрещено использовать этот endpoint.
-    """
-    serializer_class = CustomTokenObtainSerializer

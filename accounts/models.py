@@ -2,6 +2,7 @@ import io
 import os
 import uuid
 import logging
+import requests
 
 from datetime import timedelta
 from django.contrib.auth.models import AbstractUser
