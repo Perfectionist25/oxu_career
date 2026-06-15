@@ -76,7 +76,7 @@
             </div>
             <div class="row">
               <div class="col-md-6 mb-3">
-                <label class="form-label">{% trans "Status" %}</label>
+                <label for="{{ profile_form.instance.get_status_display }}" class="form-label">{% trans "Status" %}</label>
                 {{ profile_form.instance.get_status_display }}
               </div>
               <div class="col-md-6 mb-3">
