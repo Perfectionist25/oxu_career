@@ -126,6 +126,12 @@ class CustomUser(AbstractUser):
     )
 
     # OAuth linking (provider + unique remote id)
+    oauth_data_locked = models.BooleanField(
+        default=False,
+        verbose_name=_("OAuth Data Locked"),
+        help_text=_("When enabled, OAuth-provided profile data cannot be changed by the user")
+    )
+
     oauth_provider = models.CharField(
         max_length=50,
         blank=True,
