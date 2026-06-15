@@ -546,9 +546,7 @@ class StudentProfileForm(forms.ModelForm):
                 'placeholder': _('About yourself, skills, experience...')
             }),
             'graduation_year': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'min': 1900,
-                'max': 2100
+                'class': 'form-control'
             }),
             'website': forms.URLInput(attrs={'class': 'form-control'}),
             'linkedin': forms.URLInput(attrs={'class': 'form-control'}),

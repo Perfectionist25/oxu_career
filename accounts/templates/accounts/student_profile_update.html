@@ -207,7 +207,7 @@
               </label>
               {{ profile_form.faculty }}
               {% if profile_form.faculty.errors %}
-                <div class="text-danger small mt-1">{{ profile_form.faculty.errors }}</div>
+                <div class="text-danger small mt-1" readonly>{{ profile_form.faculty.errors }}</div>
               {% endif %}
             </div>
 
