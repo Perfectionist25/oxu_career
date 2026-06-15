@@ -1853,7 +1853,7 @@ def profile_view(request, user_id=None):
         owned_companies = Company.objects.filter(owner=user, is_active=True)
         primary_company = (
             employer_profile.company
-            if employer_profile.primary_company_id and employer_profile.primary_company_id.is_active
+            if employer_profile.company and employer_profile.company.is_active
             else (owned_companies.first() if owned_companies.exists() else None)
         )
 
