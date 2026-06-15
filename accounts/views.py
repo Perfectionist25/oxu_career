@@ -1082,6 +1082,7 @@ def employer_dashboard(request):
     employer_profile, created = EmployerProfile.objects.get_or_create(user=request.user)
     owned_companies = Company.objects.filter(owner=request.user, is_active=True)
 
+    # Теперь первичная компания хранится в employer_profile.company (ForeignKey)
     primary_company = None
     company_id = request.GET.get('company_id')
 
@@ -1092,13 +1093,15 @@ def employer_dashboard(request):
             pass
 
     if not primary_company:
-        if employer_profile.primary_company_id and employer_profile.primary_company_id in owned_companies:
-            primary_company = employer_profile.primary_company_id
+        # используем company (или свойство primary_company)
+        if employer_profile.company and employer_profile.company in owned_companies:
+            primary_company = employer_profile.company
         elif owned_companies.exists():
             primary_company = owned_companies.first()
 
+    # Если текущая первичная компания неактивна, сбрасываем её
     if primary_company and not primary_company.is_active:
-        employer_profile.primary_company_id = None
+        employer_profile.company = None
         employer_profile.save()
         primary_company = None
         if owned_companies.exists():
@@ -1136,6 +1139,7 @@ def employer_dashboard(request):
     }
 
     return render(request, 'accounts/employer_dashboard.html', context)
+
 
 
 @login_required
@@ -1196,16 +1200,14 @@ def employer_stats(request):
 def set_primary_company(request, pk):
     if not is_employer(request.user):
         return redirect("accounts:employer_login")
-
     try:
         company = Company.objects.get(pk=pk, owner=request.user)
         employer_profile, created = EmployerProfile.objects.get_or_create(user=request.user)
-        employer_profile.primary_company = company
+        employer_profile.company = company          # <-- было employer_profile.primary_company_id = company
         employer_profile.save()
         messages.success(request, _("Primary company set successfully"))
     except Company.DoesNotExist:
         messages.error(request, _("Company not found"))
-
     return redirect("accounts:employer_dashboard")
 
 class CompanyListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
@@ -1236,8 +1238,9 @@ class CompanyListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
             job__company__owner=self.request.user, status='pending'
         ).count()
 
+        # В get_context_data():
         try:
-            context['primary_company'] = self.request.user.employer_profile.primary_company_id
+            context['primary_company'] = self.request.user.employer_profile.company
         except EmployerProfile.DoesNotExist:
             context['primary_company'] = None
 
@@ -1264,7 +1267,7 @@ class CompanyCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         if not had_companies_before:
             try:
                 employer_profile = self.request.user.employer_profile
-                employer_profile.primary_company = company
+                employer_profile.company = company
                 employer_profile.save()
             except EmployerProfile.DoesNotExist:
                 pass
@@ -1304,7 +1307,7 @@ class CompanyDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         if self.request.user.user_type == 'employer':
             try:
                 employer_profile = self.request.user.employer_profile
-                is_primary = employer_profile.primary_company_id == company
+                is_primary = (employer_profile.company == company)
             except EmployerProfile.DoesNotExist:
                 pass
 
@@ -1362,16 +1365,16 @@ class CompanyDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         self.object = self.get_object()
         company_name = self.object.name
 
-        EmployerProfile.objects.filter(primary_company_id=self.object).update(primary_company_id=None)
+        EmployerProfile.objects.filter(company=self.object).update(company=None)
 
         try:
             employer_profile = request.user.employer_profile
-            if employer_profile.primary_company_id == self.object:
+            if employer_profile.company == self.object:
                 other_companies = Company.objects.filter(
                     owner=request.user, is_active=True
                 ).exclude(id=self.object.id)
                 if other_companies.exists():
-                    employer_profile.primary_company_id = other_companies.first()
+                    employer_profile.company = other_companies.first()
                 else:
                     employer_profile.primary_company_id = None
                 employer_profile.save()
@@ -1849,7 +1852,7 @@ def profile_view(request, user_id=None):
     elif employer_profile:
         owned_companies = Company.objects.filter(owner=user, is_active=True)
         primary_company = (
-            employer_profile.primary_company_id
+            employer_profile.company
             if employer_profile.primary_company_id and employer_profile.primary_company_id.is_active
             else (owned_companies.first() if owned_companies.exists() else None)
         )
@@ -2161,7 +2164,7 @@ def create_employer_account(request):
             )
 
             profile = profile_form.save(commit=False)
-            profile.primary_company = company
+            profile.company = company
             profile.save()
 
             create_user_activity(
