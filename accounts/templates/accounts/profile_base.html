@@ -15,8 +15,12 @@
                     <div class="d-flex flex-column flex-md-row align-items-md-center gap-4">
                         <div class="profile-avatar-wrap">
                             <div class="profile-avatar placeholder-avatar" style="width: 23vh; height: 23vh;">
-                                {% if profile_user.avatar %}
-                                    <img src="{{ profile_user.avatar.url }}" alt="Not found" class="profile-avatar-img" style="border-radius: 100%;">
+                                {% if profile_user.is_student_or_alumni and profile_user.student_profile.avatar %}
+                                    <img src="{{ profile_user.student_profile.avatar.url }}" alt="Avatar" class="profile-avatar-img" style="border-radius: 100%;">
+                                {% elif profile_user.is_employer and profile_user.employer_profile.avatar %}
+                                    <img src="{{ profile_user.employer_profile.avatar.url }}" alt="Avatar" class="profile-avatar-img" style="border-radius: 100%;">
+                                {% elif profile_user.is_employer and profile_user.employer_profile.photo %}
+                                    <img src="{{ profile_user.employer_profile.photo.url }}" alt="Photo" class="profile-avatar-img" style="border-radius: 100%;">
                                 {% else %}
                                     <i class="fas fa-user"></i>
                                 {% endif %}
@@ -39,7 +43,7 @@
                             <div class="hero-badges">
                                 <span class="hero-badge">
                                     <i class="fas fa-eye"></i>
-                                    {{ profile_user.profile_views }} {% trans "views" %}
+                                    {{ profile_views }} {% trans "views" %}
                                 </span>
 
                                 <span class="hero-badge">
@@ -81,7 +85,7 @@
 
                         <div class="hero-stat-grid">
                             <div class="hero-stat-card">
-                                <strong>{{ profile_user.profile_views }}</strong>
+                                <strong>{{ profile_views }}</strong>
                                 <span>{% trans "Views" %}</span>
                             </div>
                             <div class="hero-stat-card">
@@ -98,7 +102,7 @@
 
                         <div class="hero-action mt-3">
                             {% if is_own_profile %}
-                                {% if profile_user.user_type == 'employer' %}
+                                {% if profile_user.is_employer %}
                                     <a href="{% url 'accounts:employer_profile_update' %}" class="btn btn-light btn-modern w-100">
                                         <i class="fas fa-edit me-2"></i>{% trans "Edit Profile" %}
                                     </a>
@@ -109,10 +113,6 @@
                                 {% elif profile_user.is_admin or profile_user.is_international_admin %}
                                     <a href="{% url 'accounts:admin_dashboard' %}" class="btn btn-light btn-modern w-100">
                                         <i class="fas fa-gauge-high me-2"></i>{% trans "Admin Dashboard" %}
-                                    </a>
-                                {% else %}
-                                    <a href="{% url 'accounts:profile_view' %}" class="btn btn-light btn-modern w-100">
-                                        <i class="fas fa-edit me-2"></i>{% trans "Edit Profile" %}
                                     </a>
                                 {% endif %}
                             {% else %}
@@ -193,15 +193,6 @@
                                 </div>
                             </div>
 
-                            {% if profile_user.country %}
-                            <div class="col-md-6">
-                                <div class="info-card">
-                                    <span class="info-label">{% trans "Country" %}</span>
-                                    <div class="info-value">{{ profile_user.country.name }}</div>
-                                </div>
-                            </div>
-                            {% endif %}
-
                             {% if profile_user.date_of_birth %}
                             <div class="col-md-6">
                                 <div class="info-card">
@@ -212,29 +203,47 @@
                             {% endif %}
                         </div>
 
-                        {% if profile_user.display_bio %}
+                        {% if profile_user.is_student_or_alumni and profile_user.student_profile.bio %}
                         <div class="feature-block mt-4">
                             <div class="feature-title">{% trans "Bio" %}</div>
-                            <div class="feature-text">{{ profile_user.display_bio|linebreaks }}</div>
+                            <div class="feature-text">{{ profile_user.student_profile.bio|linebreaks }}</div>
+                        </div>
+                        {% elif profile_user.is_employer and profile_user.employer_profile.bio %}
+                        <div class="feature-block mt-4">
+                            <div class="feature-title">{% trans "Bio" %}</div>
+                            <div class="feature-text">{{ profile_user.employer_profile.bio|linebreaks }}</div>
                         </div>
                         {% endif %}
 
-                        {% if profile_user.city or profile_user.address %}
+                        {% if profile_user.is_student_or_alumni and profile_user.student_profile.city or profile_user.student_profile.address %}
                         <div class="feature-block mt-3">
                             <div class="feature-title">{% trans "Location" %}</div>
                             <div class="feature-text">
-                                {% if profile_user.city %}{{ profile_user.city }}{% endif %}
-                                {% if profile_user.city and profile_user.address %}, {% endif %}
-                                {% if profile_user.address %}{{ profile_user.address }}{% endif %}
+                                {% with sp=profile_user.student_profile %}
+                                    {% if sp.city %}{{ sp.city }}{% endif %}
+                                    {% if sp.city and sp.address %}, {% endif %}
+                                    {% if sp.address %}{{ sp.address }}{% endif %}
+                                {% endwith %}
+                            </div>
+                        </div>
+                        {% elif profile_user.is_employer and profile_user.employer_profile.city or profile_user.employer_profile.address %}
+                        <div class="feature-block mt-3">
+                            <div class="feature-title">{% trans "Location" %}</div>
+                            <div class="feature-text">
+                                {% with ep=profile_user.employer_profile %}
+                                    {% if ep.city %}{{ ep.city }}{% endif %}
+                                    {% if ep.city and ep.address %}, {% endif %}
+                                    {% if ep.address %}{{ ep.address }}{% endif %}
+                                {% endwith %}
                             </div>
                         </div>
                         {% endif %}
 
-                        {% if profile_user.is_employer and profile_user.companies.exists %}
+                        {% if profile_user.is_employer and profile_user.companies_owned.exists %}
                         <div class="feature-block mt-3">
                             <div class="feature-title">{% trans "Companies" %}</div>
                             <div class="company-list mt-3">
-                                {% for company in profile_user.companies.all|slice:":3" %}
+                                {% for company in profile_user.companies_owned.all|slice:":3" %}
                                 <div class="company-item">
                                     <div class="company-logo-wrap">
                                         {% if company.logo %}
@@ -259,16 +268,16 @@
                                 {% endfor %}
                             </div>
 
-                            {% if profile_user.companies.count > 3 %}
+                            {% if profile_user.companies_owned.count > 3 %}
                             <div class="more-note mt-2">
-                                + {{ profile_user.companies.count|add:"-3" }} {% trans "more companies" %}
+                                + {{ profile_user.companies_owned.count|add:"-3" }} {% trans "more companies" %}
                             </div>
                             {% endif %}
                         </div>
                         {% endif %}
 
-                        {% if profile_user.is_student or profile_user.is_alumni %}
-                        {% with student=profile_user %}
+                        {% if profile_user.is_student_or_alumni %}
+                        {% with student=profile_user.student_profile %}
                         <div class="feature-block mt-3">
                             <div class="feature-title">{% trans "Education" %}</div>
                             <div class="feature-text">
@@ -292,17 +301,20 @@
                         {% endwith %}
                         {% endif %}
 
-                        {% if profile_user.is_employer and profile_user.employer_profile %}
+                        {% if profile_user.is_employer %}
                         {% with employer=profile_user.employer_profile %}
-                            {% if employer.job_title or employer.department %}
+                            {% if employer.job_title or employer.profession or employer.industry %}
                             <div class="feature-block mt-3">
                                 <div class="feature-title">{% trans "Professional Information" %}</div>
                                 <div class="feature-text">
                                     {% if employer.job_title %}
                                         <div class="mb-1 fw-semibold text-dark">{{ employer.job_title }}</div>
                                     {% endif %}
-                                    {% if employer.department %}
-                                        <div class="text-muted">{{ employer.department }}</div>
+                                    {% if employer.profession %}
+                                        <div class="text-muted">{{ employer.profession }}</div>
+                                    {% endif %}
+                                    {% if employer.industry %}
+                                        <div class="text-muted">{{ employer.industry }}</div>
                                     {% endif %}
                                 </div>
                             </div>
@@ -359,70 +371,14 @@
                 {% endif %}
 
                 <!-- Social links -->
-                {% if profile_user.website or profile_user.linkedin or profile_user.github or profile_user.telegram %}
-                <div class="content-panel mb-4">
-                    <div class="panel-header">
-                        <div>
-                            <h5 class="panel-title mb-1">
-                                <i class="fas fa-share-nodes me-2"></i>{% trans "Social Media & Links" %}
-                            </h5>
-                            <p class="panel-subtitle mb-0">{% trans "External links and public contact channels" %}</p>
-                        </div>
-                    </div>
-
-                    <div class="panel-body">
-                        <div class="row g-3">
-                            {% if profile_user.website %}
-                            <div class="col-md-6">
-                                <a href="{{ profile_user.website }}" target="_blank" class="social-card">
-                                    <div class="social-icon"><i class="fas fa-globe"></i></div>
-                                    <div class="social-meta">
-                                        <div class="social-title">{% trans "Website" %}</div>
-                                        <div class="social-link">{{ profile_user.website|truncatechars:40 }}</div>
-                                    </div>
-                                </a>
-                            </div>
-                            {% endif %}
-
-                            {% if profile_user.linkedin %}
-                            <div class="col-md-6">
-                                <a href="{{ profile_user.linkedin }}" target="_blank" class="social-card">
-                                    <div class="social-icon"><i class="fab fa-linkedin-in"></i></div>
-                                    <div class="social-meta">
-                                        <div class="social-title">{% trans "LinkedIn" %}</div>
-                                        <div class="social-link">{{ profile_user.linkedin|truncatechars:40 }}</div>
-                                    </div>
-                                </a>
-                            </div>
-                            {% endif %}
-
-                            {% if profile_user.github %}
-                            <div class="col-md-6">
-                                <a href="{{ profile_user.github }}" target="_blank" class="social-card">
-                                    <div class="social-icon"><i class="fab fa-github"></i></div>
-                                    <div class="social-meta">
-                                        <div class="social-title">{% trans "GitHub" %}</div>
-                                        <div class="social-link">{{ profile_user.github|truncatechars:40 }}</div>
-                                    </div>
-                                </a>
-                            </div>
-                            {% endif %}
-
-                            {% if profile_user.telegram %}
-                            <div class="col-md-6">
-                                <a href="{{ profile_user.telegram }}" target="_blank" class="social-card">
-                                    <div class="social-icon"><i class="fab fa-telegram-plane"></i></div>
-                                    <div class="social-meta">
-                                        <div class="social-title">{% trans "Telegram" %}</div>
-                                        <div class="social-link">{{ profile_user.telegram|truncatechars:40 }}</div>
-                                    </div>
-                                </a>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
+                {% with sp=profile_user.student_profile ep=profile_user.employer_profile %}
+                {% if profile_user.is_student_or_alumni and sp.website or sp.linkedin or sp.github or sp.telegram %}
+                    {% include "accounts/includes/social_links.html" with website=sp.website linkedin=sp.linkedin github=sp.github telegram=sp.telegram %}
+                {% elif profile_user.is_employer and ep.website or ep.linkedin or ep.github or ep.telegram %}
+                    {% include "accounts/includes/social_links.html" with website=ep.website linkedin=ep.linkedin github=ep.github telegram=ep.telegram %}
                 {% endif %}
+                {% endwith %}
+
             </div>
 
             <!-- Sidebar -->
@@ -443,13 +399,13 @@
                         <div class="stat-list">
                             <div class="stat-row">
                                 <span>{% trans "Profile Views" %}</span>
-                                <strong>{{ profile_user.profile_views }}</strong>
+                                <strong>{{ profile_views }}</strong>
                             </div>
 
-                            {% if profile_user.is_employer and profile_user.employer_profile %}
+                            {% if profile_user.is_employer %}
                             <div class="stat-row">
                                 <span>{% trans "Companies" %}</span>
-                                <strong>{{ profile_user.employer_profile.total_companies }}</strong>
+                                <strong>{{ profile_user.companies_owned.count }}</strong>
                             </div>
                             <div class="stat-row">
                                 <span>{% trans "Jobs Posted" %}</span>
@@ -457,22 +413,7 @@
                             </div>
                             {% endif %}
 
-                            {% if profile_user.is_student or profile_user.is_alumni %}
-                            <div class="stat-row">
-                                <span>{% trans "Resumes" %}</span>
-                                <strong>{{ profile_user.resumes_created }}</strong>
-                            </div>
-                            <div class="stat-row">
-                                <span>{% trans "Jobs Applied" %}</span>
-                                <strong>{{ profile_user.jobs_applied }}</strong>
-                            </div>
-                            {% endif %}
-
                             {% if profile_user.is_admin or profile_user.is_international_admin and profile_user.admin_profile %}
-                            <div class="stat-row">
-                                <span>{% trans "Students Managed" %}</span>
-                                <strong>{{ profile_user.admin_profile.students_managed }}</strong>
-                            </div>
                             <div class="stat-row">
                                 <span>{% trans "Companies Verified" %}</span>
                                 <strong>{{ profile_user.admin_profile.companies_verified }}</strong>
@@ -526,31 +467,28 @@
                             </div>
                             {% endif %}
 
-                            {% if profile_user.city %}
+                            {% with location=profile_user.is_student_or_alumni|yesno:profile_user.student_profile.city,profile_user.employer_profile.city %}
+                            {% if location %}
                             <div class="contact-item">
                                 <div class="contact-icon"><i class="fas fa-location-dot"></i></div>
                                 <div class="contact-meta">
                                     <div class="contact-label">{% trans "Location" %}</div>
                                     <div class="contact-value">
-                                        {% if profile_user.city %}{{ profile_user.city }}{% endif %}
-                                        {% if profile_user.country %}, {{ profile_user.country.name }}{% endif %}
+                                        {{ location }}
                                     </div>
                                 </div>
                             </div>
                             {% endif %}
+                            {% endwith %}
 
-                            {% if profile_user.is_employer and profile_user.employer_profile %}
-                            {% with employer=profile_user.employer_profile %}
-                            {% if employer.preferred_contact_method %}
+                            {% if profile_user.is_employer and profile_user.employer_profile.preferred_contact_method %}
                             <div class="contact-item">
                                 <div class="contact-icon"><i class="fas fa-comments"></i></div>
                                 <div class="contact-meta">
                                     <div class="contact-label">{% trans "Preferred Contact" %}</div>
-                                    <div class="contact-value">{{ employer.get_preferred_contact_method_display }}</div>
+                                    <div class="contact-value">{{ profile_user.employer_profile.get_preferred_contact_method_display }}</div>
                                 </div>
                             </div>
-                            {% endif %}
-                            {% endwith %}
                             {% endif %}
                         </div>
                     </div>
@@ -570,13 +508,13 @@
 
                     <div class="panel-body">
                         <div class="quick-actions-grid">
-                            {% if profile_user.user_type == 'employer' %}
+                            {% if profile_user.is_employer %}
                                 <a href="{% url 'accounts:employer_profile_update' %}" class="quick-action-btn">
                                     <i class="fas fa-edit"></i>
                                     <span>{% trans "Edit Profile" %}</span>
                                 </a>
 
-                                {% if profile_user.companies.exists %}
+                                {% if profile_user.companies_owned.exists %}
                                 <a href="{% url 'accounts:company_list' %}" class="quick-action-btn">
                                     <i class="fas fa-building"></i>
                                     <span>{% trans "My Companies" %}</span>
@@ -611,11 +549,6 @@
                                     <span>{% trans "Manage Admins" %}</span>
                                 </a>
                                 {% endif %}
-                            {% else %}
-                                <a href="{% url 'accounts:profile_view' %}" class="quick-action-btn">
-                                    <i class="fas fa-edit"></i>
-                                    <span>{% trans "Edit Profile" %}</span>
-                                </a>
                             {% endif %}
 
                             <a href="{% url 'accounts:password_change' %}" class="quick-action-btn">
@@ -639,7 +572,7 @@
                             </a>
                             {% endif %}
 
-                            {% if profile_user.user_type == 'employer' %}
+                            {% if profile_user.is_employer %}
                             <a href="{% url 'jobs:my_jobs' %}" class="quick-action-btn">
                                 <i class="fas fa-briefcase"></i>
                                 <span>{% trans "My Jobs" %}</span>

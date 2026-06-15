@@ -1797,32 +1797,54 @@ def profile_view(request, user_id=None):
             StudentProfile.objects.filter(user=user).update(profile_views=F('profile_views') + 1)
         elif user.is_employer:
             EmployerProfile.objects.filter(user=user).update(profile_views=F('profile_views') + 1)
-
         create_user_activity(request.user, "profile_view", f"Viewed {user.username}'s profile")
+
+    # Получаем актуальные профили (после возможного обновления счетчика)
+    student_profile = None
+    employer_profile = None
+    admin_profile = None
+
+    if user.is_student_or_alumni:
+        student_profile = StudentProfile.objects.filter(user=user).first()
+    elif user.is_employer:
+        employer_profile = EmployerProfile.objects.filter(user=user).first()
+    elif user.is_admin:
+        admin_profile, _ = AdminProfile.objects.get_or_create(user=user)
+
+    # Вычисляем количество просмотров для отображения
+    profile_views = 0
+    if student_profile:
+        profile_views = student_profile.profile_views
+    elif employer_profile:
+        profile_views = employer_profile.profile_views
+    # админы пока без просмотров
 
     context = {
         "profile_user": user,
         "is_own_profile": is_own_profile,
+        "profile_views": profile_views,
         "event_participations": EventParticipation.objects.filter(user=user).select_related("event").order_by("-registered_at")[:6],
     }
 
-    if user.is_student_or_alumni:
-        student_profile = StudentProfile.objects.filter(user=user).first()
+    if student_profile:
         profile_certificates = get_viewable_student_certificates_queryset(request.user, user)
         resumes = CV.objects.filter(user=user, status='published')
         context.update({
+            "student_profile": student_profile,
             "resumes": resumes,
             "applications_count": JobApplication.objects.filter(user=user).count(),
             "profile_certificates": profile_certificates[:6],
             "profile_certificates_count": profile_certificates.count(),
             "can_manage_certificates": is_own_profile,
-            "student_profile": student_profile,
         })
         template_name = "accounts/student_profile.html"
-    elif user.is_employer:
-        employer_profile, _ = EmployerProfile.objects.get_or_create(user=user)
+    elif employer_profile:
         owned_companies = Company.objects.filter(owner=user, is_active=True)
-        primary_company = employer_profile.primary_company_id if employer_profile.primary_company_id and employer_profile.primary_company_id.is_active else (owned_companies.first() if owned_companies.exists() else None)
+        primary_company = (
+            employer_profile.primary_company_id
+            if employer_profile.primary_company_id and employer_profile.primary_company_id.is_active
+            else (owned_companies.first() if owned_companies.exists() else None)
+        )
 
         if primary_company:
             active_jobs = Job.objects.filter(company=primary_company, is_active=True).select_related('company')
@@ -1838,7 +1860,7 @@ def profile_view(request, user_id=None):
             total_applications = 0
 
         context.update({
-            "profile": employer_profile,
+            "employer_profile": employer_profile,
             "owned_companies": owned_companies,
             "total_companies": owned_companies.count(),
             "primary_company": primary_company,
@@ -1849,8 +1871,7 @@ def profile_view(request, user_id=None):
             "total_applications": total_applications,
         })
         template_name = "accounts/employer_profile.html"
-    elif user.is_admin:
-        admin_profile, _ = AdminProfile.objects.get_or_create(user=user)
+    elif admin_profile:
         context["profile"] = admin_profile
         template_name = "accounts/admin_profile.html"
     else:
