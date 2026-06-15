@@ -322,15 +322,13 @@ def oauth_callback(request):
         profile, _ = StudentProfile.objects.get_or_create(user=user)
         profile_updates = []
         profile_fields = {
-            # 'university': _pick(user_data, 'fakultet', 'university', 'oauth_university'),
-            'faculty': _pick(user_data, 'fakultet', 'faculty'),
-            'specialty': _pick(user_data, 'yunalish_nomi', 'specialty', 'program'),
+            'student_id': _pick(user_data, 'user_id'),
+            'faculty': _pick(user_data, 'fakultet',),
+            'specialty': _pick(user_data, 'yunalish_nomi'),
             'specialty_code': _pick(user_data, 'yunalish_shifri'),
-            # 'graduation_year': _pick(user_data, 'graduation_year'),
             'course_year': _pick(user_data, 'kursi'),
             'phone_number': _pick(user_data, 'phone_number', 'phone'),
             'father_name': _pick(user_data, 'otasi'),
-            # 'skills': _pick(user_data, 'skills'),
         }
 
         if user_type == 'alumni':
