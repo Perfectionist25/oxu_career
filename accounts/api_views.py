@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from urllib.parse import urlparse
 import base64
+import traceback
 
 import requests
 from django.conf import settings
@@ -422,15 +423,14 @@ def oauth_login(request):
         }, status=500)
 
 
-@api_view(["POST"])
+@api_view(["GET", "POST"])
 @permission_classes([AllowAny])
 @csrf_exempt
 def oauth_callback(request):
-    """OAuth Callback Handler"""
     try:
-        code = request.data.get("code")
-        state = request.data.get("state")
-
+    # Поддержка и GET, и POST
+        code = request.query_params.get("code") or request.data.get("code")
+        state = request.query_params.get("state") or request.data.get("state")
         if not code:
             return Response({"error": "Authorization code is required"}, status=status.HTTP_400_BAD_REQUEST)
         if not state:

@@ -234,6 +234,21 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    },
+}
 
 
 DB_ENGINE = (os.getenv("DB_ENGINE") or "django.db.backends.postgresql").strip()
