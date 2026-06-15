@@ -1209,7 +1209,7 @@ def employer_profile_update(request):
             user_form.save()
             profile_form.save()
             create_user_activity(request.user, "profile_update", "Employer profile updated")
-            messages.success(request, _("Profile updated successfully!"))  # используем _ вместо gettext
+            messages.success(request, _("Profile updated successfully!"))
             return redirect("accounts:employer_dashboard")
     else:
         user_form = UserUpdateForm(instance=request.user)
