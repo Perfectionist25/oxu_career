@@ -872,6 +872,7 @@ def logout_view(request):
     response.delete_cookie(refresh_cookie)
     return response
 
+
 @login_required
 @user_passes_test(is_student_or_alumni, login_url="accounts:employer_login")
 def student_dashboard(request):
@@ -901,9 +902,7 @@ def student_dashboard(request):
     )[:5] if specialty else Job.objects.none()
 
     context = {
-        "quick_overview": {
-            "faculty": student_profile.faculty if student_profile else "",
-        },
+        "student_profile": student_profile,          # <-- добавили
         "stats": {
             "resumes_created": resumes.count(),
             "active_resumes": resumes.filter(status='published').count(),
@@ -927,6 +926,7 @@ def student_dashboard(request):
     }
 
     return render(request, "accounts/student_dashboard.html", context)
+
 
 @login_required
 def student_profile_update(request):
