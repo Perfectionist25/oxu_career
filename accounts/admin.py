@@ -134,7 +134,7 @@ class CompanyDocumentAdmin(admin.ModelAdmin):
     search_fields = (
         "title",
         "company__name",
-        "company__legal_name",
+        # "company__legal_name" – удалено, т.к. поле legal_name теперь в CompanyAdditionalInfo
     )
     readonly_fields = ("created_at", "updated_at")
     list_per_page = 20
@@ -241,10 +241,10 @@ class StudentCertificateAdmin(admin.ModelAdmin):
         "title",
         "issuer",
         "description",
-        "student__user__username",
-        "student__user__email",
-        "student__user__first_name",
-        "student__user__last_name",
+        "student__username",        # исправлено: student ссылается на CustomUser
+        "student__email",
+        "student__first_name",
+        "student__last_name",
     )
     ordering = ("-uploaded_at",)
     readonly_fields = (
@@ -281,9 +281,10 @@ class StudentCertificateAdmin(admin.ModelAdmin):
         ),
     )
 
-    @display(description=_("Student"), ordering="student__user__username")
+    @display(description=_("Student"), ordering="student__username")
     def student_user(self, obj):
-        return obj.student.user.get_full_name() or obj.student.user.username
+        # obj.student – это экземпляр CustomUser
+        return obj.student.get_full_name() or obj.student.username
 
     @display(description=_("File Type"))
     def file_kind(self, obj):
