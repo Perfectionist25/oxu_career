@@ -1,0 +1,64 @@
+{% load i18n %}
+
+<div class="content-panel mb-4">
+  <div class="panel-header">
+    <div>
+      <h5 class="panel-title mb-1">
+        <i class="fas fa-share-nodes me-2"></i>{% trans "Social Media & Links" %}
+      </h5>
+      <p class="panel-subtitle mb-0">{% trans "External links and public contact channels" %}</p>
+    </div>
+  </div>
+
+  <div class="panel-body">
+    <div class="row g-3">
+      {% if website %}
+      <div class="col-md-6">
+        <a href="{{ website }}" target="_blank" class="social-card">
+          <div class="social-icon"><i class="fas fa-globe"></i></div>
+          <div class="social-meta">
+            <div class="social-title">{% trans "Website" %}</div>
+            <div class="social-link">{{ website|truncatechars:40 }}</div>
+          </div>
+        </a>
+      </div>
+      {% endif %}
+
+      {% if linkedin %}
+      <div class="col-md-6">
+        <a href="{{ linkedin }}" target="_blank" class="social-card">
+          <div class="social-icon"><i class="fab fa-linkedin-in"></i></div>
+          <div class="social-meta">
+            <div class="social-title">{% trans "LinkedIn" %}</div>
+            <div class="social-link">{{ linkedin|truncatechars:40 }}</div>
+          </div>
+        </a>
+      </div>
+      {% endif %}
+
+      {% if github %}
+      <div class="col-md-6">
+        <a href="{{ github }}" target="_blank" class="social-card">
+          <div class="social-icon"><i class="fab fa-github"></i></div>
+          <div class="social-meta">
+            <div class="social-title">{% trans "GitHub" %}</div>
+            <div class="social-link">{{ github|truncatechars:40 }}</div>
+          </div>
+        </a>
+      </div>
+      {% endif %}
+
+      {% if telegram %}
+      <div class="col-md-6">
+        <a href="{{ telegram }}" target="_blank" class="social-card">
+          <div class="social-icon"><i class="fab fa-telegram-plane"></i></div>
+          <div class="social-meta">
+            <div class="social-title">{% trans "Telegram" %}</div>
+            <div class="social-link">{{ telegram|truncatechars:40 }}</div>
+          </div>
+        </a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>

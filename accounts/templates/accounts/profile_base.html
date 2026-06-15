@@ -370,14 +370,7 @@
                 </div>
                 {% endif %}
 
-                <!-- Social links -->
-                {% with sp=profile_user.student_profile ep=profile_user.employer_profile %}
-                {% if profile_user.is_student_or_alumni and sp.website or sp.linkedin or sp.github or sp.telegram %}
-                    {% include "accounts/includes/social_links.html" with website=sp.website linkedin=sp.linkedin github=sp.github telegram=sp.telegram %}
-                {% elif profile_user.is_employer and ep.website or ep.linkedin or ep.github or ep.telegram %}
-                    {% include "accounts/includes/social_links.html" with website=ep.website linkedin=ep.linkedin github=ep.github telegram=ep.telegram %}
-                {% endif %}
-                {% endwith %}
+                {% include "accounts/includes/social_links.html" with website=... linkedin=... github=... telegram=... %}
 
             </div>
 
