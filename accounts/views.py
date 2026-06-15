@@ -1786,6 +1786,7 @@ def create_admin_account(request):
     return render(request, "accounts/create_admin_account.html", {"form": form})
 
 
+
 @login_required
 def profile_view(request, user_id=None):
     user = request.user if not user_id else get_object_or_404(CustomUser, id=user_id)
@@ -1817,12 +1818,19 @@ def profile_view(request, user_id=None):
         profile_views = student_profile.profile_views
     elif employer_profile:
         profile_views = employer_profile.profile_views
-    # админы пока без просмотров
+
+    # Город из профиля для отображения в контактах
+    location = None
+    if student_profile and student_profile.city:
+        location = student_profile.city
+    elif employer_profile and employer_profile.city:
+        location = employer_profile.city
 
     context = {
         "profile_user": user,
         "is_own_profile": is_own_profile,
         "profile_views": profile_views,
+        "location": location,   # <-- для шаблона
         "event_participations": EventParticipation.objects.filter(user=user).select_related("event").order_by("-registered_at")[:6],
     }
 
@@ -1878,6 +1886,7 @@ def profile_view(request, user_id=None):
         template_name = "accounts/profile_base.html"
 
     return render(request, template_name, context)
+
 
 
 @login_required

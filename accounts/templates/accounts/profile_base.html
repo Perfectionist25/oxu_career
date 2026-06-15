@@ -467,19 +467,15 @@
                             </div>
                             {% endif %}
 
-                            {% with location=profile_user.is_student_or_alumni|yesno:profile_user.student_profile.city,profile_user.employer_profile.city %}
                             {% if location %}
                             <div class="contact-item">
                                 <div class="contact-icon"><i class="fas fa-location-dot"></i></div>
                                 <div class="contact-meta">
                                     <div class="contact-label">{% trans "Location" %}</div>
-                                    <div class="contact-value">
-                                        {{ location }}
-                                    </div>
+                                    <div class="contact-value">{{ location }}</div>
                                 </div>
                             </div>
                             {% endif %}
-                            {% endwith %}
 
                             {% if profile_user.is_employer and profile_user.employer_profile.preferred_contact_method %}
                             <div class="contact-item">
