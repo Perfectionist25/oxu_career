@@ -68,6 +68,11 @@ ADMIN_USER_TYPES = ("admin", "international_admin", "main_admin")
 
 
 class CustomUser(AbstractUser):
+    """
+    Core user model – contains only essential authentication and basic personal data.
+    All role‑specific information lives in the corresponding profile models:
+    StudentProfile, EmployerProfile, AdminProfile.
+    """
 
     USER_TYPE_CHOICES = [
         ("guest", _("Guest")),
@@ -79,19 +84,6 @@ class CustomUser(AbstractUser):
         ("main_admin", _("Main Admin")),
     ]
 
-    full_name = models.CharField(
-        max_length=255,
-        blank=True,
-        verbose_name=_("Full name"),
-        help_text=_("Full name received from OAuth (read-only)")
-    )
-
-    full_name_locked = models.BooleanField(
-        default=False,
-        verbose_name=_("Full name locked"),
-        help_text=_("If True, full_name cannot be changed")
-    )
-
     user_type = models.CharField(
         max_length=20,
         choices=USER_TYPE_CHOICES,
@@ -100,6 +92,12 @@ class CustomUser(AbstractUser):
         verbose_name=_("User Type"),
         help_text=_("Type of user account (guest, student, employer, admin)")
     )
+
+    full_name = models.CharField(max_length=255, blank=True, verbose_name=_("Full name"))
+
+    full_name_locked = models.BooleanField(default=False)
+
+    is_verified = models.BooleanField(default=False)
 
     phone_number = PhoneNumberField(
         blank=True,
@@ -118,7 +116,6 @@ class CustomUser(AbstractUser):
         ("male", _("Male")),
         ("female", _("Female")),
     ]
-
     gender = models.CharField(
         max_length=10,
         choices=GENDER_CHOICES,
@@ -128,337 +125,20 @@ class CustomUser(AbstractUser):
         help_text=_("Gender provided by OAuth or entered in profile")
     )
 
-    oauth_data_locked = models.BooleanField(
-        default=False,
-        verbose_name=_("OAuth Data Locked"),
-        help_text=_("When enabled, OAuth-provided profile data cannot be changed by the user")
-    )
-
-    oauth_payload = models.JSONField(
-        blank=True,
-        null=True,
-        verbose_name=_("OAuth Payload"),
-        help_text=_("Raw OAuth provider data stored for auditing and synchronization")
-    )
-
-    oauth_university = models.CharField(
-        max_length=255,
-        blank=True,
-        verbose_name=_("OAuth University"),
-        help_text=_("University from OAuth provider")
-    )
-
-    oauth_degree = models.CharField(
-        max_length=100,
-        blank=True,
-        verbose_name=_("OAuth Degree"),
-        help_text=_("Degree from OAuth provider")
-    )
-
-    oauth_specialization = models.CharField(
-        max_length=255,
-        blank=True,
-        verbose_name=_("OAuth Specialization"),
-        help_text=_("Specialization from OAuth provider")
-    )
-
-    oauth_gpa = models.FloatField(
-        null=True,
-        blank=True,
-        verbose_name=_("OAuth GPA"),
-        help_text=_("GPA from OAuth provider")
-    )
-
-    oauth_enrollment_year = models.IntegerField(
-        null=True,
-        blank=True,
-        verbose_name=_("OAuth Enrollment Year"),
-        help_text=_("Year of enrollment from OAuth provider")
-    )
-
-    oauth_last_synced = models.DateTimeField(
-        null=True,
-        blank=True,
-        verbose_name=_("OAuth Last Synced"),
-        help_text=_("Last time OAuth data was synchronized")
-    )
-
-    student_id = models.CharField(
-        max_length=50,
-        blank=True,
-        verbose_name=_("Student ID"),
-        help_text=_("University student identifier"),
-    )
-
-    STATUS_CHOICES = [
-        ("student", _("Student")),
-        ("graduate", _("Graduate")),
-    ]
-
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default="student",
-        verbose_name=_("Status"),
-        help_text=_("Academic status of the user, either current student or graduate"),
-    )
-
-    faculty = models.CharField(
-        max_length=200,
-        blank=True,
-        verbose_name=_("Faculty"),
-        help_text=_("Faculty or department"),
-    )
-
-    specialty = models.CharField(
-        max_length=200,
-        blank=True,
-        verbose_name=_("Specialty"),
-        help_text=_("Field of study or specialization"),
-    )
-
-    education_level = models.CharField(
-        max_length=100,
-        blank=True,
-        verbose_name=_("Education Level"),
-        help_text=_("Bachelor, Master, PhD, etc."),
-    )
-
-    graduation_year = models.IntegerField(
-        null=True,
-        blank=True,
-        verbose_name=_("Graduation Year"),
-        help_text=_("Year of graduation or expected graduation"),
-    )
-
-    desired_position = models.CharField(
-        max_length=200,
-        blank=True,
-        verbose_name=_("Desired Position"),
-        help_text=_("Position the student is seeking"),
-    )
-
-    desired_salary = models.DecimalField(
-        max_digits=12,
-        decimal_places=2,
-        null=True,
-        blank=True,
-        verbose_name=_("Desired Salary"),
-        help_text=_("Expected salary"),
-    )
-
-    WORK_TYPE_CHOICES = [
-        ("full_time", _("Full Time")),
-        ("part_time", _("Part Time")),
-        ("internship", _("Internship")),
-        ("remote", _("Remote")),
-    ]
-
-    work_type = models.CharField(
-        max_length=50,
-        choices=WORK_TYPE_CHOICES,
-        blank=True,
-        verbose_name=_("Work Type"),
-        help_text=_("Preferred work arrangement"),
-    )
-
-    degree = models.CharField(
-        max_length=100,
-        blank=True,
-        verbose_name=_("Degree"),
-        help_text=_("Academic degree"),
-    )
-
-    current_position = models.CharField(
-        max_length=255,
-        blank=True,
-        verbose_name=_("Current Position"),
-        help_text=_("Current job position"),
-    )
-
-    company = models.ForeignKey(
-        "accounts.Company",
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        verbose_name=_("Company"),
-        help_text=_("Current company"),
-    )
-
-    profession = models.CharField(
-        max_length=255,
-        blank=True,
-        verbose_name=_("Profession"),
-        help_text=_("Professional field"),
-    )
-
-    industry = models.CharField(
-        max_length=255,
-        blank=True,
-        verbose_name=_("Industry"),
-        help_text=_("Industry sector"),
-    )
-
-    linkedin = models.URLField(
-        blank=True,
-        verbose_name=_("LinkedIn"),
-        help_text=_("LinkedIn profile URL"),
-    )
-
-    github = models.URLField(
-        blank=True,
-        verbose_name=_("GitHub"),
-        help_text=_("GitHub profile URL"),
-    )
-
-    telegram = models.CharField(
-        max_length=64,
-        blank=True,
-        verbose_name=_("Telegram"),
-        help_text=_("Telegram username"),
-    )
-
-    website = models.URLField(
-        blank=True,
-        verbose_name=_("Website"),
-        help_text=_("Personal or portfolio website"),
-    )
-
-    twitter = models.URLField(
-        blank=True,
-        verbose_name=_("Twitter"),
-        help_text=_("Twitter profile URL"),
-    )
-
-    facebook = models.URLField(
-        blank=True,
-        verbose_name=_("Facebook"),
-        help_text=_("Facebook profile URL"),
-    )
-
-    instagram = models.URLField(
-        blank=True,
-        verbose_name=_("Instagram"),
-        help_text=_("Instagram profile URL"),
-    )
-
-    photo = models.ImageField(
-        upload_to="alumni_photos/",
-        null=True,
-        blank=True,
-        verbose_name=_("Photo"),
-        help_text=_("Profile photo"),
-    )
-
-    resume = models.FileField(
-        upload_to="resumes/",
-        null=True,
-        blank=True,
-        verbose_name=_("Resume"),
-        help_text=_("Resume/CV file"),
-    )
-
-    expertise_areas = models.TextField(
-        blank=True,
-        verbose_name=_("Expertise Areas"),
-        help_text=_("Areas of expertise"),
-    )
-
-    years_of_experience = models.IntegerField(
-        null=True,
-        blank=True,
-        verbose_name=_("Years of Experience"),
-        help_text=_("Years of professional experience"),
-    )
-
-    is_open_to_opportunities = models.BooleanField(
-        default=False,
-        verbose_name=_("Open to Opportunities"),
-        help_text=_("Whether open to new opportunities"),
-    )
-
-    is_mentor = models.BooleanField(
-        default=False,
-        verbose_name=_("Is Mentor"),
-        help_text=_("Whether this user is available as a mentor"),
-    )
-
-    is_visible = models.BooleanField(
-        default=True,
-        verbose_name=_("Is Visible"),
-        help_text=_("Whether profile is visible to others"),
-    )
-
-    show_contact_info = models.BooleanField(
-        default=False,
-        verbose_name=_("Show Contact Info"),
-        help_text=_("Whether to show contact information"),
-    )
-
-    bio = models.TextField(
-        max_length=500,
-        blank=True,
-        verbose_name=_("Bio"),
-        help_text=_("Short biography or description")
-    )
-
-    avatar = models.ImageField(
-        upload_to="avatars/%Y/%m/%d/",
-        null=True,
-        blank=True,
-        verbose_name=_("Avatar"),
-        help_text=_("Profile picture")
-    )
-
-    city = models.CharField(
-        max_length=100,
-        blank=True,
-        verbose_name=_("City"),
-        help_text=_("City of residence")
-    )
-    address = models.CharField(
-        max_length=255,
-        blank=True,
-        verbose_name=_("Address"),
-        help_text=_("Full address")
-    )
-
-    is_verified = models.BooleanField(
-        default=False,
-        verbose_name=_("Verified"),
-        help_text=_("Account verification status")
-    )
-    is_active_employer = models.BooleanField(
-        default=False,
-        verbose_name=_("Active Employer"),
-        help_text=_("Whether this employer account is active")
-    )
-
-    profile_views = models.PositiveIntegerField(
-        default=0,
-        verbose_name=_("Profile Views"),
-        help_text=_("Number of times profile was viewed")
-    )
-    last_activity = models.DateTimeField(
-        null=True,
-        blank=True,
-        verbose_name=_("Last Activity"),
-        help_text=_("Timestamp of last user activity")
-    )
-
+    # OAuth linking (provider + unique remote id)
     oauth_provider = models.CharField(
         max_length=50,
         blank=True,
         null=True,
         verbose_name=_("OAuth Provider")
     )
-
     oauth_uid = models.CharField(
         max_length=255,
         blank=True,
         null=True,
         unique=True,
-        verbose_name=_("OAuth UID")
+        verbose_name=_("OAuth UID"),
+        help_text=_("Unique user identifier from the OAuth provider")
     )
 
     last_login_ip = models.GenericIPAddressField(
@@ -484,8 +164,6 @@ class CustomUser(AbstractUser):
         return f"{self.username} ({self.get_user_type_display()})"
 
     def get_full_name(self):
-        if self.full_name:
-            return self.full_name.strip()
         full_name = f"{self.first_name} {self.last_name}".strip()
         return full_name or self.username
 
@@ -496,6 +174,7 @@ class CustomUser(AbstractUser):
     def unread_notifications_count(self):
         return self.notification_set.filter(is_read=False).count()
 
+    # ---------- role helpers ----------
     @property
     def is_guest(self):
         return self.user_type == "guest"
@@ -528,6 +207,7 @@ class CustomUser(AbstractUser):
     def is_main_admin(self):
         return self.user_type == "main_admin"
 
+    # ---------- permission helpers ----------
     def has_admin_permission(self, permission_name):
         return user_has_admin_permission(self, permission_name)
 
@@ -537,7 +217,17 @@ class CustomUser(AbstractUser):
 
     @property
     def can_create_jobs(self):
-        return self.user_type in ["employer"] and self.is_active_employer
+        return self.is_employer and self.is_active_employer
+
+    @property
+    def is_active_employer(self):
+        """Delegates to EmployerProfile.is_active_employer if the profile exists."""
+        if not self.is_employer:
+            return False
+        try:
+            return self.employer_profile.is_active_employer
+        except EmployerProfile.DoesNotExist:
+            return False
 
     @property
     def can_manage_users(self):
@@ -551,8 +241,13 @@ class CustomUser(AbstractUser):
 
     @property
     def companies(self):
+        """All companies owned by this employer user."""
         return self.companies_owned.all() if self.is_employer else Company.objects.none()
 
+
+# =============================================================================
+# Company and related models (unchanged except for references to CustomUser)
+# =============================================================================
 
 class Company(models.Model):
     """Model representing a company that can be owned by employers"""
@@ -784,8 +479,16 @@ class Company(models.Model):
         return not self.is_active
 
 
+# =============================================================================
+# Role‑specific profiles – all non‑core fields moved here from CustomUser
+# =============================================================================
+
 class EmployerProfile(models.Model):
-    """Profile for employer users with personal information (separate from Company)"""
+    """
+    Profile for employer users.
+    Contains personal information, social links, and the company relationship
+    (previously on CustomUser).
+    """
 
     user = models.OneToOneField(
         CustomUser,
@@ -795,11 +498,42 @@ class EmployerProfile(models.Model):
         help_text=_("Associated user account")
     )
 
+    # --- Company relationship (moved from CustomUser.company) ---
+    company = models.ForeignKey(
+        "Company",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="employer_profiles",
+        verbose_name=_("Company"),
+        help_text=_("Company this employer represents")
+    )
+
+    phone_number = PhoneNumberField(
+        null=True,
+        blank=True,
+        verbose_name=_("Phone Number"),
+        help_text=_("Employer's phone number")
+    )
+
+    # --- Professional details ---
     job_title = models.CharField(
         max_length=100,
         blank=True,
         verbose_name=_("Job Title"),
         help_text=_("Current professional position")
+    )
+    profession = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name=_("Profession"),
+        help_text=_("Professional field")
+    )
+    industry = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name=_("Industry"),
+        help_text=_("Industry sector")
     )
 
     professional_bio = models.TextField(
@@ -807,7 +541,19 @@ class EmployerProfile(models.Model):
         verbose_name=_("Professional Bio"),
         help_text=_("Professional background and experience")
     )
+    expertise_areas = models.TextField(
+        blank=True,
+        verbose_name=_("Expertise Areas"),
+        help_text=_("Areas of expertise")
+    )
+    years_of_experience = models.IntegerField(
+        null=True,
+        blank=True,
+        verbose_name=_("Years of Experience"),
+        help_text=_("Years of professional experience")
+    )
 
+    # --- Contact & social links ---
     preferred_contact_method = models.CharField(
         max_length=20,
         choices=[
@@ -820,37 +566,140 @@ class EmployerProfile(models.Model):
         help_text=_("Preferred way to be contacted")
     )
 
-    phone_number = models.CharField(
-        max_length=20,
+    linkedin = models.URLField(
         blank=True,
-        verbose_name=_("Phone Number"),
-        help_text=_("Employer contact phone number")
+        verbose_name=_("LinkedIn"),
+        help_text=_("LinkedIn profile URL")
+    )
+    github = models.URLField(
+        blank=True,
+        verbose_name=_("GitHub"),
+        help_text=_("GitHub profile URL")
+    )
+    telegram = models.CharField(
+        max_length=64,
+        blank=True,
+        verbose_name=_("Telegram"),
+        help_text=_("Telegram username")
+    )
+    website = models.URLField(
+        blank=True,
+        verbose_name=_("Website"),
+        help_text=_("Personal or portfolio website")
+    )
+    twitter = models.URLField(
+        blank=True,
+        verbose_name=_("Twitter"),
+        help_text=_("Twitter profile URL")
+    )
+    facebook = models.URLField(
+        blank=True,
+        verbose_name=_("Facebook"),
+        help_text=_("Facebook profile URL")
+    )
+    instagram = models.URLField(
+        blank=True,
+        verbose_name=_("Instagram"),
+        help_text=_("Instagram profile URL")
     )
 
-    primary_company_id = models.ForeignKey(
-        "Company",
-        on_delete=models.SET_NULL,
+    # --- Media ---
+    photo = models.ImageField(
+        upload_to="employer_photos/",
         null=True,
         blank=True,
-        related_name="employer_primary",
-        verbose_name=_("Primary Company"),
-        help_text=_("Primary company for this employer")
+        verbose_name=_("Photo"),
+        help_text=_("Profile photo")
+    )
+    avatar = models.ImageField(
+        upload_to="avatars/%Y/%m/%d/",
+        null=True,
+        blank=True,
+        verbose_name=_("Avatar"),
+        help_text=_("Profile picture")
+    )
+    resume = models.FileField(
+        upload_to="resumes/",
+        null=True,
+        blank=True,
+        verbose_name=_("Resume"),
+        help_text=_("Resume/CV file")
     )
 
+    # --- Visibility & opportunities ---
+    is_open_to_opportunities = models.BooleanField(
+        default=False,
+        verbose_name=_("Open to Opportunities"),
+        help_text=_("Whether open to new opportunities")
+    )
+    is_mentor = models.BooleanField(
+        default=False,
+        verbose_name=_("Is Mentor"),
+        help_text=_("Whether this user is available as a mentor")
+    )
+    is_visible = models.BooleanField(
+        default=True,
+        verbose_name=_("Is Visible"),
+        help_text=_("Whether profile is visible to others")
+    )
+    show_contact_info = models.BooleanField(
+        default=False,
+        verbose_name=_("Show Contact Info"),
+        help_text=_("Whether to show contact information")
+    )
+
+    # --- Bio & location ---
+    bio = models.TextField(
+        max_length=500,
+        blank=True,
+        verbose_name=_("Bio"),
+        help_text=_("Short biography or description")
+    )
+    city = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_("City"),
+        help_text=_("City of residence")
+    )
+    address = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name=_("Address"),
+        help_text=_("Full address")
+    )
+
+    # --- Status & stats ---
+    is_verified = models.BooleanField(
+        default=False,
+        verbose_name=_("Verified"),
+        help_text=_("Account verification status")
+    )
+    is_active_employer = models.BooleanField(
+        default=False,
+        verbose_name=_("Active Employer"),
+        help_text=_("Whether this employer account is active")
+    )
+    profile_views = models.PositiveIntegerField(
+        default=0,
+        verbose_name=_("Profile Views"),
+        help_text=_("Number of times profile was viewed")
+    )
+    last_activity = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_("Last Activity"),
+        help_text=_("Timestamp of last user activity")
+    )
+
+    # --- Aggregated stats (kept) ---
     total_jobs_posted = models.PositiveIntegerField(
         default=0,
         verbose_name=_("Total Jobs Posted"),
         help_text=_("Total number of job postings created across all companies")
     )
 
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name=_("Created At")
-    )
-    updated_at = models.DateTimeField(
-        auto_now=True,
-        verbose_name=_("Updated At")
-    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
 
     class Meta:
         verbose_name = _("Employer Profile")
@@ -868,22 +717,25 @@ class EmployerProfile(models.Model):
 
     @property
     def primary_company(self):
-        """Property to access primary_company_id with a more readable name"""
-        return self.primary_company_id
+        """Backward‑compatible alias for the direct company foreign key."""
+        return self.company
 
     @primary_company.setter
     def primary_company(self, value):
-        """Setter for primary_company property"""
-        self.primary_company_id = value
+        self.company = value
 
     @property
     def owned_companies(self):
-        """Get all companies owned by this user"""
+        """All active companies owned by this employer."""
         return self.user.companies_owned.filter(is_active=True)
 
 
 class StudentProfile(models.Model):
-    """Profile for student/graduate users with educational and career information"""
+    """
+    Profile for student/graduate users.
+    Contains all academic, personal and OAuth‑provided data that was previously
+    scattered on CustomUser.
+    """
 
     user = models.OneToOneField(
         CustomUser,
@@ -893,57 +745,77 @@ class StudentProfile(models.Model):
         help_text=_("Associated user account"),
     )
 
-    avatar = models.ImageField(
-        upload_to='student_avatars/%Y/%m/%d/',
-        blank=True, null=True
-    )
-
+    # --- Academic information ---
     student_id = models.CharField(
         max_length=50,
         blank=True,
         verbose_name=_("Student ID"),
         help_text=_("University student identifier"),
     )
-
     university = models.CharField(
         max_length=255,
         blank=True,
         verbose_name=_("University"),
         help_text=_("University name received from OAuth provider"),
     )
-
-    phone_number = PhoneNumberField(
+    faculty = models.CharField(
+        max_length=200,
         blank=True,
-        null=True,
-        verbose_name=_("Phone Number"),
-        help_text=_("Phone number received from OAuth provider"),
+        verbose_name=_("Faculty"),
+        help_text=_("Faculty or department"),
     )
-
-    gpa = models.FloatField(
-        null=True,
+    specialty = models.CharField(
+        max_length=200,
         blank=True,
-        verbose_name=_("GPA"),
-        help_text=_("Grade point average received from OAuth provider"),
+        verbose_name=_("Specialty"),
+        help_text=_("Field of study or specialization"),
     )
-
-    skills = models.TextField(
+    specialty_code = models.CharField(
+        max_length=100,
         blank=True,
-        verbose_name=_("Skills"),
-        help_text=_("Skills or competencies received from OAuth provider"),
+        verbose_name=_("Specialty Code"),
+        help_text=_("Specialty code received from OAuth provider"),
     )
-
+    education_level = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_("Education Level"),
+        help_text=_("Bachelor, Master, PhD, etc."),
+    )
     course_year = models.CharField(
         max_length=20,
         blank=True,
         verbose_name=_("Course Year"),
         help_text=_("Academic course/year received from OAuth provider"),
     )
-
-    specialty_code = models.CharField(
-        max_length=100,
+    graduation_year = models.IntegerField(
+        null=True,
         blank=True,
-        verbose_name=_("Specialty Code"),
-        help_text=_("Specialty code received from OAuth provider"),
+        verbose_name=_("Graduation Year"),
+        help_text=_("Year of graduation or expected graduation"),
+    )
+    gpa = models.FloatField(
+        null=True,
+        blank=True,
+        verbose_name=_("GPA"),
+        help_text=_("Grade point average received from OAuth provider"),
+    )
+    skills = models.TextField(
+        blank=True,
+        verbose_name=_("Skills"),
+        help_text=_("Skills or competencies received from OAuth provider"),
+    )
+
+    STATUS_CHOICES = [
+        ("student", _("Student")),
+        ("graduate", _("Graduate")),
+    ]
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="student",
+        verbose_name=_("Student Status"),
+        help_text=_("Academic status of the user, either current student or graduate"),
     )
 
     father_name = models.CharField(
@@ -953,54 +825,51 @@ class StudentProfile(models.Model):
         help_text=_("Father's name received from OAuth provider"),
     )
 
-    STATUS_CHOICES = [
-        ("student", _("Student")),
-        ("graduate", _("Graduate")),
-    ]
-
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default="student",
-        verbose_name=_("Student Status"),
-        help_text=_("Academic status of the user, either current student or graduate"),
-    )
-
-    faculty = models.CharField(
-        max_length=200,
+    # --- OAuth‑specific academic fields (moved from CustomUser) ---
+    oauth_university = models.CharField(
+        max_length=255,
         blank=True,
-        verbose_name=_("Faculty"),
-        help_text=_("Faculty or department"),
+        verbose_name=_("OAuth University"),
+        help_text=_("University from OAuth provider")
     )
-
-    specialty = models.CharField(
-        max_length=200,
-        blank=True,
-        verbose_name=_("Specialty"),
-        help_text=_("Field of study or specialization"),
-    )
-
-    education_level = models.CharField(
+    oauth_degree = models.CharField(
         max_length=100,
         blank=True,
-        verbose_name=_("Education Level"),
-        help_text=_("Bachelor, Master, PhD, etc."),
+        verbose_name=_("OAuth Degree"),
+        help_text=_("Degree from OAuth provider")
     )
-
-    graduation_year = models.IntegerField(
+    oauth_specialization = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name=_("OAuth Specialization"),
+        help_text=_("Specialization from OAuth provider")
+    )
+    oauth_gpa = models.FloatField(
         null=True,
         blank=True,
-        verbose_name=_("Graduation Year"),
-        help_text=_("Year of graduation or expected graduation"),
+        verbose_name=_("OAuth GPA"),
+        help_text=_("GPA from OAuth provider")
+    )
+    oauth_enrollment_year = models.IntegerField(
+        null=True,
+        blank=True,
+        verbose_name=_("OAuth Enrollment Year"),
+        help_text=_("Year of enrollment from OAuth provider")
+    )
+    oauth_last_synced = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_("OAuth Last Synced"),
+        help_text=_("Last time OAuth data was synchronized")
     )
 
+    # --- Career preferences ---
     desired_position = models.CharField(
         max_length=200,
         blank=True,
         verbose_name=_("Desired Position"),
         help_text=_("Position the student is seeking"),
     )
-
     desired_salary = models.DecimalField(
         max_digits=12,
         decimal_places=2,
@@ -1009,14 +878,12 @@ class StudentProfile(models.Model):
         verbose_name=_("Desired Salary"),
         help_text=_("Expected salary"),
     )
-
     WORK_TYPE_CHOICES = [
         ("full_time", _("Full Time")),
         ("part_time", _("Part Time")),
         ("internship", _("Internship")),
         ("remote", _("Remote")),
     ]
-
     work_type = models.CharField(
         max_length=50,
         choices=WORK_TYPE_CHOICES,
@@ -1025,41 +892,128 @@ class StudentProfile(models.Model):
         help_text=_("Preferred work arrangement"),
     )
 
+    # --- Contact & social links ---
     website = models.URLField(
         blank=True,
         null=True,
         verbose_name=_("Website"),
         help_text=_("Personal or portfolio website"),
     )
-
     linkedin = models.URLField(
         blank=True,
         null=True,
         verbose_name=_("LinkedIn"),
         help_text=_("LinkedIn profile URL"),
     )
-
     github = models.URLField(
         blank=True,
         null=True,
         verbose_name=_("GitHub"),
         help_text=_("GitHub profile URL"),
     )
+    telegram = models.CharField(
+        max_length=64,
+        blank=True,
+        verbose_name=_("Telegram"),
+        help_text=_("Telegram username"),
+    )
+    twitter = models.URLField(
+        blank=True,
+        verbose_name=_("Twitter"),
+        help_text=_("Twitter profile URL"),
+    )
+    facebook = models.URLField(
+        blank=True,
+        verbose_name=_("Facebook"),
+        help_text=_("Facebook profile URL"),
+    )
+    instagram = models.URLField(
+        blank=True,
+        verbose_name=_("Instagram"),
+        help_text=_("Instagram profile URL"),
+    )
 
+    # --- Media ---
+    avatar = models.ImageField(
+        upload_to='student_avatars/%Y/%m/%d/',
+        blank=True, null=True
+    )
+    photo = models.ImageField(
+        upload_to="student_photos/",
+        null=True,
+        blank=True,
+        verbose_name=_("Photo"),
+        help_text=_("Profile photo")
+    )
+    resume = models.FileField(
+        upload_to="resumes/",
+        null=True,
+        blank=True,
+        verbose_name=_("Resume"),
+        help_text=_("Resume/CV file")
+    )
+
+    # --- Visibility & opportunities ---
+    is_open_to_opportunities = models.BooleanField(
+        default=False,
+        verbose_name=_("Open to Opportunities"),
+        help_text=_("Whether open to new opportunities")
+    )
+    is_mentor = models.BooleanField(
+        default=False,
+        verbose_name=_("Is Mentor"),
+        help_text=_("Whether this user is available as a mentor")
+    )
+    is_visible = models.BooleanField(
+        default=True,
+        verbose_name=_("Is Visible"),
+        help_text=_("Whether profile is visible to others")
+    )
+    show_contact_info = models.BooleanField(
+        default=False,
+        verbose_name=_("Show Contact Info"),
+        help_text=_("Whether to show contact information")
+    )
+
+    # --- Bio & location ---
     bio = models.TextField(
         blank=True,
         verbose_name=_("Bio"),
-        help_text=_("Short biography, skills and experience"),
+        help_text=_("Short biography, skills and experience")
+    )
+    city = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_("City"),
+        help_text=_("City of residence")
+    )
+    address = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name=_("Address"),
+        help_text=_("Full address")
+    )
+
+    # --- Stats & status ---
+    is_verified = models.BooleanField(
+        default=False,
+        verbose_name=_("Verified"),
+        help_text=_("Account verification status")
+    )
+    profile_views = models.PositiveIntegerField(
+        default=0,
+        verbose_name=_("Profile Views"),
+        help_text=_("Number of times profile was viewed")
+    )
+    last_activity = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_("Last Activity"),
+        help_text=_("Timestamp of last user activity")
     )
 
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
-
-    def get_education_level_display(self):
-        """
-        Keep template compatibility for a free-text education level field.
-        """
-        return (self.education_level or "").strip()
 
     class Meta:
         verbose_name = _("Student Profile")
@@ -1070,6 +1024,9 @@ class StudentProfile(models.Model):
 
     def get_absolute_url(self):
         return reverse("accounts:profile_detail", kwargs={"user_id": self.user.pk})
+
+    def get_education_level_display(self):
+        return (self.education_level or "").strip()
 
     def save(self, *args, **kwargs):
         queue_avatar_compression = False
@@ -1102,6 +1059,208 @@ class StudentProfile(models.Model):
                     self.pk,
                     e,
                 )
+
+
+class AdminProfile(models.Model):
+    """Profile for admin users with management permissions (unchanged)."""
+
+    PERMISSION_FIELDS = (
+        "can_manage_students",
+        "can_manage_employers",
+        "can_create_employers",
+        "can_change_user_status",
+        "can_manage_companies",
+        "can_view_company_details",
+        "can_verify_companies",
+        "can_change_company_status",
+        "can_manage_jobs",
+        "can_create_jobs",
+        "can_manage_resumes",
+        "can_manage_events",
+        "can_view_statistics",
+    )
+    PERMISSION_GROUPS = (
+        (
+            _("Users and Employers"),
+            "fas fa-users-cog",
+            (
+                "can_manage_students",
+                "can_manage_employers",
+                "can_create_employers",
+                "can_change_user_status",
+            ),
+        ),
+        (
+            _("Companies and Jobs"),
+            "fas fa-briefcase",
+            (
+                "can_manage_companies",
+                "can_view_company_details",
+                "can_verify_companies",
+                "can_change_company_status",
+                "can_manage_jobs",
+                "can_create_jobs",
+            ),
+        ),
+        (
+            _("Content and Analytics"),
+            "fas fa-chart-line",
+            (
+                "can_manage_resumes",
+                "can_manage_events",
+                "can_view_statistics",
+            ),
+        ),
+    )
+
+    user = models.OneToOneField(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name="admin_profile",
+        verbose_name=_("User"),
+        help_text=_("Associated user account")
+    )
+
+    can_manage_students = models.BooleanField(default=True, verbose_name=_("Manage Students"), help_text=_("Permission to manage student accounts and profiles"))
+    can_manage_employers = models.BooleanField(default=True, verbose_name=_("Manage Employers"), help_text=_("Permission to manage employer accounts and profiles"))
+    can_create_employers = models.BooleanField(default=True, verbose_name=_("Create Employers"), help_text=_("Permission to create employer accounts"))
+    can_change_user_status = models.BooleanField(default=True, verbose_name=_("Change User Status"), help_text=_("Permission to activate or deactivate managed users"))
+    can_manage_companies = models.BooleanField(default=True, verbose_name=_("Manage Companies"), help_text=_("Permission to manage company profiles"))
+    can_view_company_details = models.BooleanField(default=True, verbose_name=_("View Company Details"), help_text=_("Permission to view detailed company data in the admin area"))
+    can_verify_companies = models.BooleanField(default=True, verbose_name=_("Verify Companies"), help_text=_("Permission to verify and unverify companies"))
+    can_change_company_status = models.BooleanField(default=True, verbose_name=_("Change Company Status"), help_text=_("Permission to activate or deactivate companies"))
+    can_manage_jobs = models.BooleanField(default=True, verbose_name=_("Manage Jobs"), help_text=_("Permission to manage job postings"))
+    can_create_jobs = models.BooleanField(default=True, verbose_name=_("Create Jobs"), help_text=_("Permission to create jobs from the admin area"))
+    can_manage_resumes = models.BooleanField(default=True, verbose_name=_("Manage Resumes"), help_text=_("Permission to manage resumes and CVs"))
+    can_manage_events = models.BooleanField(default=True, verbose_name=_("Manage Events"), help_text=_("Permission to create, edit and moderate events"))
+    can_view_statistics = models.BooleanField(default=True, verbose_name=_("View Statistics"), help_text=_("Permission to view system statistics and analytics"))
+
+    employers_created = models.PositiveIntegerField(default=0, verbose_name=_("Employers Created"), help_text=_("Number of employer accounts created"))
+    companies_verified = models.PositiveIntegerField(default=0, verbose_name=_("Companies Verified"), help_text=_("Number of company profiles verified"))
+    resources_created = models.PositiveIntegerField(default=0, verbose_name=_("Resources Created"), help_text=_("Number of resources or articles created"))
+    events_created = models.PositiveIntegerField(default=0, verbose_name=_("Events Created"), help_text=_("Number of events or announcements created"))
+
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
+
+    class Meta:
+        verbose_name = _("Admin Profile")
+        verbose_name_plural = _("Admin Profiles")
+
+    def __str__(self):
+        return f"Admin: {self.user.username}"
+
+    @property
+    def permission_sections(self):
+        sections = []
+        for title, icon, field_names in self.PERMISSION_GROUPS:
+            permissions = []
+            for field_name in field_names:
+                field = self._meta.get_field(field_name)
+                permissions.append({
+                    "name": field_name,
+                    "label": field.verbose_name,
+                    "help_text": field.help_text,
+                    "granted": bool(getattr(self, field_name)),
+                })
+            sections.append({"title": title, "icon": icon, "permissions": permissions})
+        return sections
+
+
+# =============================================================================
+# Helper functions for admin permissions (unchanged)
+# =============================================================================
+
+def is_admin_user(user):
+    return bool(
+        user
+        and getattr(user, "is_authenticated", False)
+        and getattr(user, "user_type", None) in ADMIN_USER_TYPES
+    )
+
+
+def is_main_admin_user(user):
+    return bool(
+        user
+        and getattr(user, "is_authenticated", False)
+        and getattr(user, "user_type", None) == "main_admin"
+    )
+
+
+def user_has_admin_permission(user, permission_name):
+    if not is_admin_user(user):
+        return False
+    if is_main_admin_user(user):
+        return True
+    try:
+        admin_profile = user.admin_profile
+    except AdminProfile.DoesNotExist:
+        admin_profile, _ = AdminProfile.objects.get_or_create(user=user)
+    return bool(getattr(admin_profile, permission_name, False))
+
+
+# =============================================================================
+# Supporting models – HemisAuth, Certificates, Activity, Notifications, etc.
+# =============================================================================
+
+class HemisAuth(models.Model):
+    """Model for authentication through Hemis API integration."""
+
+    user = models.OneToOneField(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name="hemis_auth",
+        verbose_name=_("User"),
+        help_text=_("Associated user account")
+    )
+
+    hemis_user_id = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_("Hemis User ID"),
+        help_text=_("User ID from Hemis system")
+    )
+
+    access_token = models.TextField(
+        verbose_name=_("Access Token"),
+        help_text=_("OAuth access token for Hemis API")
+    )
+    refresh_token = models.TextField(
+        verbose_name=_("Refresh Token"),
+        help_text=_("OAuth refresh token for Hemis API")
+    )
+    token_expires = models.DateTimeField(
+        verbose_name=_("Token Expires"),
+        help_text=_("Expiration date of the access token")
+    )
+
+    hemis_user_data = models.JSONField(
+        verbose_name=_("Hemis User Data"),
+        help_text=_("JSON data retrieved from Hemis API")
+    )
+
+    last_sync = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Last Sync"),
+        help_text=_("Timestamp of last data synchronization")
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Created At")
+    )
+
+    class Meta:
+        verbose_name = _("Hemis Authentication")
+        verbose_name_plural = _("Hemis Authentications")
+
+    def __str__(self):
+        return f"Hemis auth for {self.user.username}"
+
+    def is_token_valid(self):
+        """Check if the access token is still valid"""
+        return timezone.now() < self.token_expires
 
 
 class StudentCertificate(models.Model):
@@ -1216,287 +1375,8 @@ class StudentCertificate(models.Model):
         return f"{self.get_file_url()}?download=1"
 
 
-class AdminProfile(models.Model):
-    """Profile for admin users with management permissions"""
-
-    PERMISSION_FIELDS = (
-        "can_manage_students",
-        "can_manage_employers",
-        "can_create_employers",
-        "can_change_user_status",
-        "can_manage_companies",
-        "can_view_company_details",
-        "can_verify_companies",
-        "can_change_company_status",
-        "can_manage_jobs",
-        "can_create_jobs",
-        "can_manage_resumes",
-        "can_manage_events",
-        "can_view_statistics",
-    )
-    PERMISSION_GROUPS = (
-        (
-            _("Users and Employers"),
-            "fas fa-users-cog",
-            (
-                "can_manage_students",
-                "can_manage_employers",
-                "can_create_employers",
-                "can_change_user_status",
-            ),
-        ),
-        (
-            _("Companies and Jobs"),
-            "fas fa-briefcase",
-            (
-                "can_manage_companies",
-                "can_view_company_details",
-                "can_verify_companies",
-                "can_change_company_status",
-                "can_manage_jobs",
-                "can_create_jobs",
-            ),
-        ),
-        (
-            _("Content and Analytics"),
-            "fas fa-chart-line",
-            (
-                "can_manage_resumes",
-                "can_manage_events",
-                "can_view_statistics",
-            ),
-        ),
-    )
-
-    user = models.OneToOneField(
-        CustomUser,
-        on_delete=models.CASCADE,
-        related_name="admin_profile",
-        verbose_name=_("User"),
-        help_text=_("Associated user account")
-    )
-
-    can_manage_students = models.BooleanField(
-        default=True,
-        verbose_name=_("Manage Students"),
-        help_text=_("Permission to manage student accounts and profiles")
-    )
-    can_manage_employers = models.BooleanField(
-        default=True,
-        verbose_name=_("Manage Employers"),
-        help_text=_("Permission to manage employer accounts and profiles")
-    )
-    can_create_employers = models.BooleanField(
-        default=True,
-        verbose_name=_("Create Employers"),
-        help_text=_("Permission to create employer accounts")
-    )
-    can_change_user_status = models.BooleanField(
-        default=True,
-        verbose_name=_("Change User Status"),
-        help_text=_("Permission to activate or deactivate managed users")
-    )
-    can_manage_companies = models.BooleanField(
-        default=True,
-        verbose_name=_("Manage Companies"),
-        help_text=_("Permission to manage company profiles")
-    )
-    can_view_company_details = models.BooleanField(
-        default=True,
-        verbose_name=_("View Company Details"),
-        help_text=_("Permission to view detailed company data in the admin area")
-    )
-    can_verify_companies = models.BooleanField(
-        default=True,
-        verbose_name=_("Verify Companies"),
-        help_text=_("Permission to verify and unverify companies")
-    )
-    can_change_company_status = models.BooleanField(
-        default=True,
-        verbose_name=_("Change Company Status"),
-        help_text=_("Permission to activate or deactivate companies")
-    )
-    can_manage_jobs = models.BooleanField(
-        default=True,
-        verbose_name=_("Manage Jobs"),
-        help_text=_("Permission to manage job postings")
-    )
-    can_create_jobs = models.BooleanField(
-        default=True,
-        verbose_name=_("Create Jobs"),
-        help_text=_("Permission to create jobs from the admin area")
-    )
-    can_manage_resumes = models.BooleanField(
-        default=True,
-        verbose_name=_("Manage Resumes"),
-        help_text=_("Permission to manage resumes and CVs")
-    )
-    can_manage_events = models.BooleanField(
-        default=True,
-        verbose_name=_("Manage Events"),
-        help_text=_("Permission to create, edit and moderate events")
-    )
-    can_view_statistics = models.BooleanField(
-        default=True,
-        verbose_name=_("View Statistics"),
-        help_text=_("Permission to view system statistics and analytics")
-    )
-
-    employers_created = models.PositiveIntegerField(
-        default=0,
-        verbose_name=_("Employers Created"),
-        help_text=_("Number of employer accounts created")
-    )
-    companies_verified = models.PositiveIntegerField(
-        default=0,
-        verbose_name=_("Companies Verified"),
-        help_text=_("Number of company profiles verified")
-    )
-    resources_created = models.PositiveIntegerField(
-        default=0,
-        verbose_name=_("Resources Created"),
-        help_text=_("Number of resources or articles created")
-    )
-    events_created = models.PositiveIntegerField(
-        default=0,
-        verbose_name=_("Events Created"),
-        help_text=_("Number of events or announcements created")
-    )
-
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name=_("Created At")
-    )
-    updated_at = models.DateTimeField(
-        auto_now=True,
-        verbose_name=_("Updated At")
-    )
-
-    class Meta:
-        verbose_name = _("Admin Profile")
-        verbose_name_plural = _("Admin Profiles")
-
-    def __str__(self):
-        return f"Admin: {self.user.username}"
-
-    @property
-    def permission_sections(self):
-        sections = []
-        for title, icon, field_names in self.PERMISSION_GROUPS:
-            permissions = []
-            for field_name in field_names:
-                field = self._meta.get_field(field_name)
-                permissions.append(
-                    {
-                        "name": field_name,
-                        "label": field.verbose_name,
-                        "help_text": field.help_text,
-                        "granted": bool(getattr(self, field_name)),
-                    }
-                )
-            sections.append(
-                {
-                    "title": title,
-                    "icon": icon,
-                    "permissions": permissions,
-                }
-            )
-        return sections
-
-
-def is_admin_user(user):
-    return bool(
-        user
-        and getattr(user, "is_authenticated", False)
-        and getattr(user, "user_type", None) in ADMIN_USER_TYPES
-    )
-
-
-def is_main_admin_user(user):
-    return bool(
-        user
-        and getattr(user, "is_authenticated", False)
-        and getattr(user, "user_type", None) == "main_admin"
-    )
-
-
-def user_has_admin_permission(user, permission_name):
-    if not is_admin_user(user):
-        return False
-
-    if is_main_admin_user(user):
-        return True
-
-    try:
-        admin_profile = user.admin_profile
-    except AdminProfile.DoesNotExist:
-        admin_profile, _ = AdminProfile.objects.get_or_create(user=user)
-
-    return bool(getattr(admin_profile, permission_name, False))
-
-
-class HemisAuth(models.Model):
-    """Model for authentication through Hemis API integration"""
-
-    user = models.OneToOneField(
-        CustomUser,
-        on_delete=models.CASCADE,
-        related_name="hemis_auth",
-        verbose_name=_("User"),
-        help_text=_("Associated user account")
-    )
-
-    hemis_user_id = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        verbose_name=_("Hemis User ID"),
-        help_text=_("User ID from Hemis system")
-    )
-
-    access_token = models.TextField(
-        verbose_name=_("Access Token"),
-        help_text=_("OAuth access token for Hemis API")
-    )
-    refresh_token = models.TextField(
-        verbose_name=_("Refresh Token"),
-        help_text=_("OAuth refresh token for Hemis API")
-    )
-    token_expires = models.DateTimeField(
-        verbose_name=_("Token Expires"),
-        help_text=_("Expiration date of the access token")
-    )
-
-    hemis_user_data = models.JSONField(
-        verbose_name=_("Hemis User Data"),
-        help_text=_("JSON data retrieved from Hemis API")
-    )
-
-    last_sync = models.DateTimeField(
-        auto_now=True,
-        verbose_name=_("Last Sync"),
-        help_text=_("Timestamp of last data synchronization")
-    )
-
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name=_("Created At")
-    )
-
-    class Meta:
-        verbose_name = _("Hemis Authentication")
-        verbose_name_plural = _("Hemis Authentications")
-
-    def __str__(self):
-        return f"Hemis auth for {self.user.username}"
-
-    def is_token_valid(self):
-        """Check if the access token is still valid"""
-        return timezone.now() < self.token_expires
-
-
 class UserActivity(models.Model):
-    """Model for tracking user activities and interactions"""
+    """Model for tracking user activities and interactions."""
 
     ACTIVITY_TYPES = [
         ("login", _("Login")),
@@ -1568,15 +1448,19 @@ class UserActivity(models.Model):
         return f"{self.user.username} — {self.get_activity_type_display()} — {self.created_at}"
 
     def save(self, *args, **kwargs):
-        """Update user's last_activity timestamp when saving activity"""
+        """Update user's last_activity on the appropriate profile."""
         super().save(*args, **kwargs)
         if self.user:
-            self.user.last_activity = self.created_at
-            self.user.save(update_fields=["last_activity"])
+            now = self.created_at or timezone.now()
+            # Update last_activity on the specific profile if it exists
+            if self.user.is_employer and hasattr(self.user, 'employer_profile'):
+                EmployerProfile.objects.filter(pk=self.user.employer_profile.pk).update(last_activity=now)
+            elif self.user.is_student_or_alumni and hasattr(self.user, 'student_profile'):
+                StudentProfile.objects.filter(pk=self.user.student_profile.pk).update(last_activity=now)
 
 
 class Notification(models.Model):
-    """Model for user notifications and system messages"""
+    """Model for user notifications and system messages."""
 
     NOTIFICATION_TYPES = [
         ("job_alert", _("Job Alert")),
@@ -1656,7 +1540,7 @@ class Notification(models.Model):
 
 
 class CompanyDocument(models.Model):
-    """Model for company verification documents and files"""
+    """Model for company verification documents and files."""
 
     DOCUMENT_TYPES = [
         ("license", _("Business License")),
@@ -1733,59 +1617,64 @@ class CompanyDocument(models.Model):
         return f"{self.title} - {self.company.name}"
 
 
-@receiver(post_save, sender=CustomUser)
-def create_user_profile(sender, instance, created, **kwargs):
-    """Create corresponding profile when user is created"""
-    if created:
-        if instance.user_type == "student":
-            StudentProfile.objects.create(user=instance)
-        elif instance.user_type == "employer":
-            EmployerProfile.objects.create(user=instance)
-        elif instance.user_type in ADMIN_USER_TYPES:
-            AdminProfile.objects.create(user=instance)
+class CompanyAdditionalInfo(models.Model):
+    company = models.OneToOneField(
+        Company,
+        on_delete=models.CASCADE,
+        related_name='additional_info',
+        verbose_name=_("Company"),
+        help_text=_("Company additional information")
+    )
+    legal_name = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name=_("Legal Name"),
+        help_text=_("Official legal name of the company")
+    )
+    tax_id = models.CharField(
+        max_length=50,
+        blank=True,
+        verbose_name=_("Tax ID/INN"),
+        help_text=_("Company tax identification number")
+    )
+    cover_image = models.ImageField(
+        upload_to="company_covers/%Y/%m/%d/",
+        null=True,
+        blank=True,
+        verbose_name=_("Cover Image"),
+        help_text=_("Company cover image")
+    )
+    sub_industry = models.CharField(
+        max_length=150,
+        blank=True,
+        verbose_name=_("Sub-Industry"),
+        help_text=_("Specific industry category")
+    )
+    vision = models.TextField(
+        blank=True,
+        verbose_name=_("Vision Statement"),
+        help_text=_("Company vision and future goals")
+    )
+    country = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_("Country"),
+        help_text=_("Country where company is located")
+    )
 
+    class Meta:
+        verbose_name = _("Company Additional Information")
+        verbose_name_plural = _("Companies Additional Information")
 
-@receiver(post_save, sender=CustomUser)
-def create_user_activity_on_signup(sender, instance, created, **kwargs):
-    """Create activity record when user signs up"""
-    if created:
-        UserActivity.objects.create(
-            user=instance,
-            activity_type="profile_update",
-            description=str(_("User registered")),
-        )
-
-
-@receiver(post_save, sender=Company)
-def update_employer_stats(sender, instance, created, **kwargs):
-    """Update employer statistics when company is created/updated"""
-    try:
-        employer_profile = instance.owner.employer_profile
-        # Обновляем количество созданных вакансий (поле существует)
-        from jobs.models import Job
-        employer_profile.total_jobs_posted = Job.objects.filter(company__owner=instance.owner).count()
-        employer_profile.save()
-    except (EmployerProfile.DoesNotExist, AttributeError):
-        pass
-
-
-@receiver(post_save, sender=EmployerProfile)
-def activate_employer_user(sender, instance, created, **kwargs):
-    """Activate employer user when profile is created"""
-    if created:
-        instance.user.is_active_employer = True
-        instance.user.save()
+    def __str__(self):
+        return f"Additional info for {self.company.name}"
 
 
 class OAuthToken(models.Model):
     """
     Модель для хранения OAuth токенов пользователей.
-
-    Хранит:
-    - Access token для API запросов
-    - Refresh token для обновления access token
-    - Срок действия токенов
     """
+
     user = models.OneToOneField(
         CustomUser,
         on_delete=models.CASCADE,
@@ -1847,18 +1736,11 @@ class OAuthToken(models.Model):
         return f"OAuth Token for {self.user.username}"
 
     def is_expired(self):
-        """Проверка истечения срока действия токена."""
         if self.expires_at is None:
             return True
         return timezone.now() >= self.expires_at
 
     def refresh_access_token(self):
-        """
-        Обновление access token с помощью refresh token.
-
-        Returns:
-            bool: True если успешно, False если ошибка
-        """
         if not self.refresh_token:
             return False
 
@@ -1897,54 +1779,48 @@ class OAuthToken(models.Model):
             return False
 
 
-class CompanyAdditionalInfo(models.Model):
-    company = models.OneToOneField(
-        Company,
-        on_delete=models.CASCADE,
-        related_name='additional_info',
-        verbose_name=_("Company"),
-        help_text=_("Company additional information")
-    )
-    legal_name = models.CharField(
-        max_length=255,
-        blank=True,
-        verbose_name=_("Legal Name"),
-        help_text=_("Official legal name of the company")
-    )
-    tax_id = models.CharField(
-        max_length=50,
-        blank=True,
-        verbose_name=_("Tax ID/INN"),
-        help_text=_("Company tax identification number")
-    )
-    cover_image = models.ImageField(
-        upload_to="company_covers/%Y/%m/%d/",
-        null=True,
-        blank=True,
-        verbose_name=_("Cover Image"),
-        help_text=_("Company cover image")
-    )
-    sub_industry = models.CharField(
-        max_length=150,
-        blank=True,
-        verbose_name=_("Sub-Industry"),
-        help_text=_("Specific industry category")
-    )
-    vision = models.TextField(
-        blank=True,
-        verbose_name=_("Vision Statement"),
-        help_text=_("Company vision and future goals")
-    )
-    country = models.CharField(
-        max_length=100,
-        blank=True,
-        verbose_name=_("Country"),
-        help_text=_("Country where company is located")
-    )
+# =============================================================================
+# Signals – profile creation, activation, stats
+# =============================================================================
 
-    class Meta:
-        verbose_name = _("Company Additional Information")
-        verbose_name_plural = _("Companies Additional Information")
+@receiver(post_save, sender=CustomUser)
+def create_user_profile(sender, instance, created, **kwargs):
+    """Create corresponding profile when a user is created."""
+    if created:
+        if instance.user_type in ["student", "alumni"]:
+            StudentProfile.objects.create(user=instance)
+        elif instance.user_type == "employer":
+            EmployerProfile.objects.create(user=instance)
+        elif instance.user_type in ADMIN_USER_TYPES:
+            AdminProfile.objects.create(user=instance)
 
-    def __str__(self):
-        return f"Additional info for {self.company.name}"
+
+@receiver(post_save, sender=CustomUser)
+def create_user_activity_on_signup(sender, instance, created, **kwargs):
+    """Create activity record when user signs up."""
+    if created:
+        UserActivity.objects.create(
+            user=instance,
+            activity_type="profile_update",
+            description=str(_("User registered")),
+        )
+
+
+@receiver(post_save, sender=Company)
+def update_employer_stats(sender, instance, created, **kwargs):
+    """Update employer statistics when company is created/updated."""
+    try:
+        employer_profile = instance.owner.employer_profile
+        from jobs.models import Job
+        employer_profile.total_jobs_posted = Job.objects.filter(company__owner=instance.owner).count()
+        employer_profile.save()
+    except (EmployerProfile.DoesNotExist, AttributeError):
+        pass
+
+
+@receiver(post_save, sender=EmployerProfile)
+def activate_employer_user(sender, instance, created, **kwargs):
+    """Activate employer flag on the profile when it's created."""
+    if created:
+        instance.is_active_employer = True
+        instance.save(update_fields=['is_active_employer'])

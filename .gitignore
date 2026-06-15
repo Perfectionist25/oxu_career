@@ -6,10 +6,12 @@ venv*/
 
 # python junk
 __pycache__/
+__pycache__/*
 *.pyc
 *.pyo
 *.pyd
 migrations/
+migrations/*
 
 # django
 staticfiles/

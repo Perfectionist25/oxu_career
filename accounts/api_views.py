@@ -41,6 +41,9 @@ User = get_user_model()
 logger = logging.getLogger(__name__)
 
 
+# ----------------------------------------------------------------------
+# Помощники
+# ----------------------------------------------------------------------
 def _pick(data, *keys):
     for key in keys:
         value = data.get(key)
@@ -92,11 +95,18 @@ def _guess_ext(content_type=None, source_url=None):
 
 
 def _save_user_avatar(user, picture):
+    """Сохраняет аватар в профиль StudentProfile (если он есть)."""
     if not picture or not isinstance(picture, str):
         return False
 
     picture = picture.strip()
     if not picture:
+        return False
+
+    # Ищем профиль студента
+    try:
+        profile = StudentProfile.objects.get(user=user)
+    except StudentProfile.DoesNotExist:
         return False
 
     content = None
@@ -119,20 +129,14 @@ def _save_user_avatar(user, picture):
         return False
 
     filename = f"oauth_avatar_{user.pk}_{timezone.now().strftime('%Y%m%d%H%M%S')}{ext}"
-    user.avatar.save(filename, ContentFile(content), save=False)
-    user.save(update_fields=["avatar", "updated_at"])
-
-    profile = StudentProfile.objects.filter(user=user).first()
-    if profile:
-        profile.avatar = user.avatar
-        profile.save(update_fields=["avatar", "updated_at"])
+    profile.avatar.save(filename, ContentFile(content), save=False)
+    profile.save(update_fields=["avatar", "updated_at"])
     return True
 
 
-
-
-
-
+# ----------------------------------------------------------------------
+# OAuth конфигурация
+# ----------------------------------------------------------------------
 def get_oauth_config(request=None):
     """Get OAuth configuration from settings"""
     return {
@@ -151,13 +155,11 @@ def build_oauth_authorize_url(request):
     """Build OAuth authorization URL with state parameter"""
     config = get_oauth_config(request=request)
 
-    # Generate state parameter for CSRF protection
     import secrets
     state = secrets.token_urlsafe(32)
     request.session['oauth_state'] = state
     request.session['oauth_redirect'] = request.GET.get('next', reverse('accounts:student_dashboard'))
     remember_oauth_redirect_uri(request)
-
 
     params = {
         'client_id': config['client_id'],
@@ -165,7 +167,6 @@ def build_oauth_authorize_url(request):
         'response_type': 'code',
         'scope': 'openid profile email phone',
         'state': state,
-
         'prompt': 'select_account',
         'access_type': 'offline',
     }
@@ -174,14 +175,8 @@ def build_oauth_authorize_url(request):
     return f"{config['authorize_url']}?{urlencode(params)}"
 
 
-
-
-
-
 def exchange_code_for_token(code: str, request=None) -> dict:
-    """
-    Exchange authorization code for access token
-    """
+    """Exchange authorization code for access token"""
     config = get_oauth_config(request=request)
 
     try:
@@ -212,9 +207,7 @@ def exchange_code_for_token(code: str, request=None) -> dict:
 
 
 def fetch_oauth_user_info(access_token: str) -> dict:
-    """
-    Get user info from OAuth provider using access token
-    """
+    """Get user info from OAuth provider using access token"""
     config = get_oauth_config()
 
     try:
@@ -239,7 +232,7 @@ def fetch_oauth_user_info(access_token: str) -> dict:
 
 def find_or_create_student_user(oauth_user_data: dict) -> tuple:
     """
-    Find or create student user based on OAuth data
+    Find or create student user based on OAuth data.
     Returns: (user, created)
     """
     external_id = _pick(oauth_user_data, "user_id", "sub", "id", "uid")
@@ -291,6 +284,8 @@ def find_or_create_student_user(oauth_user_data: dict) -> tuple:
             )
             user.set_unusable_password()
             user.save()
+
+            # Создаём и заполняем профиль студента
             profile = StudentProfile.objects.create(user=user)
             profile_fields = {
                 'university': _pick(oauth_user_data, 'fakultet', 'university', 'oauth_university'),
@@ -305,20 +300,25 @@ def find_or_create_student_user(oauth_user_data: dict) -> tuple:
             }
             if user_type == 'alumni':
                 profile_fields['status'] = 'graduate'
-            if any(profile_fields.values()):
-                for field, value in profile_fields.items():
-                    if value is None or not hasattr(profile, field):
+
+            # student_id теперь в профиле
+            profile.student_id = str(external_id)
+
+            for field, value in profile_fields.items():
+                if value is None or not hasattr(profile, field):
+                    continue
+                if field == 'graduation_year':
+                    try:
+                        value = int(value)
+                    except (TypeError, ValueError):
                         continue
-                    if field == 'graduation_year':
-                        try:
-                            value = int(value)
-                        except (TypeError, ValueError):
-                            continue
-                    setattr(profile, field, value)
-                profile.save()
+                setattr(profile, field, value)
+            profile.save()
+
             created = True
             logger.info(f"Created new student user: {user.username}")
 
+    # Обновление существующего пользователя
     updates = []
     if username and user.username != username and not User.objects.filter(username=username).exclude(pk=user.pk).exists():
         user.username = username
@@ -348,10 +348,7 @@ def find_or_create_student_user(oauth_user_data: dict) -> tuple:
     if updates:
         user.save(update_fields=list(set(updates)))
 
-    if external_id and not getattr(user, 'student_id', None):
-        user.student_id = str(external_id)
-        user.save(update_fields=["student_id", "updated_at"])
-
+    # Обновляем профиль
     profile, _ = StudentProfile.objects.get_or_create(user=user)
     profile_updates = []
     profile_fields = {
@@ -369,6 +366,12 @@ def find_or_create_student_user(oauth_user_data: dict) -> tuple:
         profile_fields['status'] = 'graduate'
     elif profile.status not in {'student', 'graduate'}:
         profile_fields['status'] = 'student'
+
+    # student_id
+    if not profile.student_id and external_id:
+        profile.student_id = str(external_id)
+        profile_updates.append('student_id')
+
     for field, value in profile_fields.items():
         if value is None or not hasattr(profile, field):
             continue
@@ -380,6 +383,7 @@ def find_or_create_student_user(oauth_user_data: dict) -> tuple:
         if getattr(profile, field) != value:
             setattr(profile, field, value)
             profile_updates.append(field)
+
     if profile_updates:
         profile.save(update_fields=profile_updates)
 
@@ -390,12 +394,8 @@ def find_or_create_student_user(oauth_user_data: dict) -> tuple:
 
 
 def generate_jwt_tokens_for_user(user):
-    """
-    Generate JWT tokens manually (not through /api/token/)
-    """
+    """Generate JWT tokens manually (not through /api/token/)"""
     refresh = RefreshToken.for_user(user)
-
-
     refresh['user_type'] = user.user_type
     refresh['username'] = user.username
 
@@ -405,18 +405,12 @@ def generate_jwt_tokens_for_user(user):
     }
 
 
-
-
-
-
+# ----------------------------------------------------------------------
+# API представления
+# ----------------------------------------------------------------------
 @require_http_methods(["GET"])
 def oauth_login(request):
-    """
-    OAuth Login Redirect
-    GET /oauth/login/
-
-    Redirects to OAuth provider's authorization endpoint
-    """
+    """OAuth Login Redirect"""
     try:
         auth_url = build_oauth_authorize_url(request)
         return redirect(auth_url)
@@ -432,111 +426,61 @@ def oauth_login(request):
 @permission_classes([AllowAny])
 @csrf_exempt
 def oauth_callback(request):
-    """
-    OAuth Callback Handler
-    POST /oauth/callback/
-
-    Handles authorization code exchange, user creation, and JWT issuance
-    """
+    """OAuth Callback Handler"""
     try:
-
         code = request.data.get("code")
         state = request.data.get("state")
 
-
         if not code:
-            return Response(
-                {"error": "Authorization code is required"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
+            return Response({"error": "Authorization code is required"}, status=status.HTTP_400_BAD_REQUEST)
         if not state:
-            return Response(
-                {"error": "State parameter is required"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
+            return Response({"error": "State parameter is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         session_state = request.session.get('oauth_state')
         if not session_state or state != session_state:
-            return Response(
-                {"error": "Invalid state parameter"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
+            return Response({"error": "Invalid state parameter"}, status=status.HTTP_400_BAD_REQUEST)
 
         if 'oauth_state' in request.session:
             del request.session['oauth_state']
-
 
         try:
             token_data = exchange_code_for_token(code, request=request)
         except Exception as e:
             logger.error(f"Token exchange error: {str(e)}")
-            return Response(
-                {"error": "OAuth token service unavailable"},
-                status=status.HTTP_503_SERVICE_UNAVAILABLE
-            )
+            return Response({"error": "OAuth token service unavailable"}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
         finally:
             clear_oauth_redirect_uri(request)
 
         access_token = token_data.get("access_token")
         if not access_token:
-            return Response(
-                {"error": "No access token received from OAuth provider"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
+            return Response({"error": "No access token received from OAuth provider"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             oauth_user_data = fetch_oauth_user_info(access_token)
         except Exception as e:
             logger.error(f"User info fetch error: {str(e)}")
-            return Response(
-                {"error": "OAuth userinfo service unavailable"},
-                status=status.HTTP_503_SERVICE_UNAVAILABLE
-            )
-
+            return Response({"error": "OAuth userinfo service unavailable"}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
         try:
             user, created = find_or_create_student_user(oauth_user_data)
         except ValueError as e:
-            return Response(
-                {"error": str(e)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             logger.error(f"User creation error: {str(e)}")
-            return Response(
-                {"error": "Failed to create or find user"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-
+            return Response({"error": "Failed to create or find user"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         try:
             tokens = generate_jwt_tokens_for_user(user)
         except Exception as e:
             logger.error(f"JWT generation error: {str(e)}")
-            return Response(
-                {"error": "Failed to generate authentication tokens"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-
+            return Response({"error": "Failed to generate authentication tokens"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         try:
             ip_address = get_client_ip(request)
             user_agent = request.META.get('HTTP_USER_AGENT', '')
-
-            create_user_activity(
-                user,
-                "login",
-                f"{user.user_type.title()} logged in via OAuth",
-                ip_address,
-                user_agent
-            )
+            create_user_activity(user, "login", f"{user.user_type.title()} logged in via OAuth", ip_address, user_agent)
         except Exception as e:
             logger.warning(f"Failed to log user activity: {str(e)}")
-
 
         response_data = {
             "access": tokens['access'],
@@ -554,7 +498,6 @@ def oauth_callback(request):
                 "created": created,
             }
         }
-
 
         if user.user_type in {"student", "alumni"}:
             try:
@@ -580,21 +523,14 @@ def oauth_callback(request):
 
     except Exception as e:
         logger.error(f"Unhandled error in oauth_callback: {str(e)}", exc_info=True)
-        return Response(
-            {"error": "Internal server error", "message": str(e)},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+        return Response({"error": "Internal server error", "message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def oauth_user_info(request):
-    """
-    Get authenticated user information
-    GET /oauth/user-info/
-    """
+    """Get authenticated user information"""
     user = request.user
-
 
     data = {
         "id": user.id,
@@ -612,7 +548,6 @@ def oauth_user_info(request):
         "oauth_provider": user.oauth_provider,
         "phone_number": user.phone_number,
     }
-
 
     if user.user_type in {"student", "alumni"}:
         try:
@@ -643,9 +578,11 @@ def oauth_user_info(request):
             data.update({
                 "role": "employer",
                 "profile": {
-                    "company_count": profile.companies.count() if hasattr(profile, 'companies') else 0,
-                    "position": profile.position,
-                    "department": profile.department,
+                    "company_count": user.companies_owned.filter(is_active=True).count(),
+                    "job_title": profile.job_title,
+                    "profession": profile.profession,
+                    "industry": profile.industry,
+                    "phone_number": profile.phone_number,
                 }
             })
         except EmployerProfile.DoesNotExist:
@@ -681,73 +618,44 @@ def oauth_user_info(request):
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def oauth_refresh_token(request):
-    """
-    Refresh JWT token
-    POST /oauth/refresh/
-    """
+    """Refresh JWT token"""
     refresh_token = request.data.get("refresh")
 
     if not refresh_token:
-        return Response(
-            {"error": "Refresh token is required"},
-            status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response({"error": "Refresh token is required"}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
-
         from rest_framework_simplejwt.serializers import TokenRefreshSerializer
-
         serializer = TokenRefreshSerializer(data={'refresh': refresh_token})
         if serializer.is_valid():
             data = serializer.validated_data
-            response_payload = {
-                "access": data['access'],
-            }
+            response_payload = {"access": data['access']}
             if "refresh" in data:
                 response_payload["refresh"] = data["refresh"]
             return Response(response_payload, status=status.HTTP_200_OK)
         else:
-            return Response(
-                {"error": "Invalid refresh token"},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
+            return Response({"error": "Invalid refresh token"}, status=status.HTTP_401_UNAUTHORIZED)
     except Exception as e:
         logger.error(f"Token refresh error: {str(e)}")
-        return Response(
-            {"error": "Failed to refresh token"},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+        return Response({"error": "Failed to refresh token"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def oauth_logout(request):
-    """
-    Logout user (invalidate tokens on client side)
-    POST /oauth/logout/
-    """
+    """Logout user (invalidate tokens on client side)"""
     user = request.user
-
 
     try:
         ip_address = get_client_ip(request)
-        create_user_activity(
-            user,
-            "logout",
-            "User logged out",
-            ip_address,
-            request.META.get('HTTP_USER_AGENT', '')
-        )
+        create_user_activity(user, "logout", "User logged out", ip_address, request.META.get('HTTP_USER_AGENT', ''))
     except Exception as e:
         logger.warning(f"Failed to log logout activity: {str(e)}")
 
     if request.user.is_authenticated:
         logout(request)
 
-    response = Response({
-        "message": "Logged out successfully"
-    }, status=status.HTTP_200_OK)
-
+    response = Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)
     access_cookie = getattr(settings, "OAUTH_ACCESS_COOKIE_NAME", "student_access")
     refresh_cookie = getattr(settings, "OAUTH_REFRESH_COOKIE_NAME", "student_refresh")
     response.delete_cookie(access_cookie)
@@ -755,18 +663,12 @@ def oauth_logout(request):
     return response
 
 
-
-
-
-
 from rest_framework.views import APIView
 from rest_framework.permissions import BasePermission
 
 
 class IsStudentUser(BasePermission):
-    """
-    Permission check for student users only
-    """
+    """Permission check for student users only"""
     def has_permission(self, request, view):
         return bool(
             request.user and
@@ -776,15 +678,11 @@ class IsStudentUser(BasePermission):
 
 
 class StudentDashboardAPI(APIView):
-    """
-    Example: Student-only API endpoint
-    """
+    """Example: Student-only API endpoint"""
     permission_classes = [IsAuthenticated, IsStudentUser]
 
     def get(self, request):
-
         user = request.user
-
 
         from jobs.models import JobApplication
         from cvbuilder.models import CV
@@ -792,11 +690,17 @@ class StudentDashboardAPI(APIView):
         applications = JobApplication.objects.filter(user=user).count()
         cvs = CV.objects.filter(user=user).count()
 
+        # Получаем количество просмотров профиля из StudentProfile
+        try:
+            profile_views = StudentProfile.objects.get(user=user).profile_views
+        except StudentProfile.DoesNotExist:
+            profile_views = 0
+
         return Response({
             "message": f"Welcome, {user.full_name}!",
             "stats": {
                 "applications": applications,
                 "cvs": cvs,
-                "profile_views": user.profile_views,
+                "profile_views": profile_views,
             }
         })

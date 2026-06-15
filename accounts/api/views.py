@@ -76,11 +76,17 @@ def _guess_ext(content_type=None, source_url=None):
 
 
 def _save_avatar_from_picture(user, picture):
+    """Сохраняет аватар в StudentProfile.avatar, если профиль существует."""
     if not picture or not isinstance(picture, str):
         return False
 
     picture = picture.strip()
     if not picture:
+        return False
+
+    # Получаем профиль студента (если есть)
+    profile = StudentProfile.objects.filter(user=user).first()
+    if not profile:
         return False
 
     content = None
@@ -109,17 +115,9 @@ def _save_avatar_from_picture(user, picture):
         return False
 
     filename = f"oauth_avatar_{user.pk}_{uuid.uuid4().hex[:10]}{ext}"
-    user.avatar.save(filename, ContentFile(content), save=False)
-    user.save(update_fields=["avatar", "updated_at"])
-
-    try:
-        profile = StudentProfile.objects.filter(user=user).first()
-        if profile:
-            profile.avatar = user.avatar
-            profile.save(update_fields=["avatar", "updated_at"])
-    except Exception:
-        pass
-
+    # Сохраняем файл в поле профиля
+    profile.avatar.save(filename, ContentFile(content), save=False)
+    profile.save(update_fields=["avatar", "updated_at"])
     return True
 
 
@@ -315,15 +313,17 @@ def oauth_callback(request):
         if updates:
             user.save(update_fields=list(set(updates)))
 
-        if oauth_uid and not getattr(user, 'student_id', None):
-            user.student_id = str(oauth_uid)
-            user.save(update_fields=["student_id", "updated_at"])
-
+        # --- ИСПРАВЛЕНО: student_id теперь только в профиле ---
         profile, _ = StudentProfile.objects.get_or_create(user=user)
         profile_updates = []
+
+        # Обязательно заполняем student_id из oauth_uid
+        if oauth_uid and not profile.student_id:
+            profile.student_id = str(oauth_uid)
+            profile_updates.append("student_id")
+
         profile_fields = {
-            'student_id': _pick(user_data, 'user_id'),
-            'faculty': _pick(user_data, 'fakultet',),
+            'faculty': _pick(user_data, 'fakultet'),
             'specialty': _pick(user_data, 'yunalish_nomi'),
             'specialty_code': _pick(user_data, 'yunalish_shifri'),
             'course_year': _pick(user_data, 'kursi'),
@@ -350,6 +350,8 @@ def oauth_callback(request):
 
         if profile_updates:
             profile.save(update_fields=profile_updates)
+
+        # --- КОНЕЦ ИСПРАВЛЕНИЯ ---
 
         oauth_token, _ = OAuthToken.objects.get_or_create(user=user)
         oauth_token.access_token = access_token
