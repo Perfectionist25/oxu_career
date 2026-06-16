@@ -16,11 +16,11 @@
                         <div class="profile-avatar-wrap">
                             <div class="profile-avatar placeholder-avatar" style="width: 23vh; height: 23vh;">
                                 {% if profile_user.is_student_or_alumni and profile_user.student_profile.avatar %}
-                                    <img src="{{ profile_user.student_profile.avatar.url }}" alt="Avatar" class="profile-avatar-img" style="border-radius: 100%;">
+                                    <img src="{{ profile_user.student_profile.avatar.url }}" alt="Avatar" class="profile-avatar-img" style="border-radius: 100%; width: 100%; height: 100%; object-fit: cover;">
                                 {% elif profile_user.is_employer and profile_user.employer_profile.avatar %}
-                                    <img src="{{ profile_user.employer_profile.avatar.url }}" alt="Avatar" class="profile-avatar-img" style="border-radius: 100%;">
+                                    <img src="{{ profile_user.employer_profile.avatar.url }}" alt="Avatar" class="profile-avatar-img" style="border-radius: 100%; width: 100%; height: 100%; object-fit: cover;">
                                 {% elif profile_user.is_employer and profile_user.employer_profile.photo %}
-                                    <img src="{{ profile_user.employer_profile.photo.url }}" alt="Photo" class="profile-avatar-img" style="border-radius: 100%;">
+                                    <img src="{{ profile_user.employer_profile.photo.url }}" alt="Photo" class="profile-avatar-img" style="border-radius: 100%; width: 100%; height: 100%; object-fit: cover;">
                                 {% else %}
                                     <i class="fas fa-user"></i>
                                 {% endif %}
