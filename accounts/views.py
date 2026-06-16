@@ -1843,6 +1843,7 @@ def profile_view(request, user_id=None):
         facebook = student_profile.facebook
         twitter = student_profile.twitter
         github = student_profile.github
+        telegram = student_profile.telegram
     elif employer_profile:
         website = employer_profile.website
         instagram = employer_profile.instagram
@@ -1850,6 +1851,7 @@ def profile_view(request, user_id=None):
         facebook = employer_profile.facebook
         twitter = employer_profile.twitter
         github = employer_profile.github
+        telegram = employer_profile.telegram
 
     context = {
         "profile_user": user,
@@ -1862,6 +1864,7 @@ def profile_view(request, user_id=None):
         "facebook": facebook,
         "twitter": twitter,
         "github": github,
+        "telegram": telegram,
         "event_participations": EventParticipation.objects.filter(user=user).select_related("event").order_by("-registered_at")[:6],
     }
 
