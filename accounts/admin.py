@@ -169,6 +169,15 @@ class CompanyDocumentAdmin(admin.ModelAdmin):
 class EmployerProfileAdmin(admin.ModelAdmin):
     list_display = (
         "user",
+        "phone_number",
+        "linkedin",
+        "github",
+        "telegram",
+        "instagram",
+        "website",
+        "twitter",
+        "facebook",
+        "company",
         "created_at",
     )
     search_fields = (
