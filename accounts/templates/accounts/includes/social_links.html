@@ -61,6 +61,54 @@
         </a>
       </div>
       {% endif %}
+
+      {% if instagram %}
+      <div class="col-md-6">
+        <a href="{{ instagram }}" target="_blank" class="social-card">
+          <div class="social-icon"><i class="fab fa-instagram"></i></div>
+          <div class="social-meta">
+            <div class="social-title">{% trans "Instagram" %}</div>
+            <div class="social-link">{{ instagram|truncatechars:40 }}</div>
+          </div>
+        </a>
+      </div>
+      {% endif %}
+
+      {% if linkedin %}
+      <div class="col-md-6">
+        <a href="{{ linkedin }}" target="_blank" class="social-card">
+          <div class="social-icon"><i class="fab fa-linkedin-in"></i></div>
+          <div class="social-meta">
+            <div class="social-title">{% trans "LinkedIn" %}</div>
+            <div class="social-link">{{ linkedin|truncatechars:40 }}</div>
+          </div>
+        </a>
+      </div>
+      {% endif %}
+
+      {% if facebook %}
+      <div class="col-md-6">
+        <a href="{{ facebook }}" target="_blank" class="social-card">
+          <div class="social-icon"><i class="fab fa-facebook-f"></i></div>
+          <div class="social-meta">
+            <div class="social-title">{% trans "Facebook" %}</div>
+            <div class="social-link">{{ facebook|truncatechars:40 }}</div>
+          </div>
+        </a>
+      </div>
+      {% endif %}
+
+      {% if twitter %}
+      <div class="col-md-6">
+        <a href="{{ twitter }}" target="_blank" class="social-card">
+          <div class="social-icon"><i class="fab fa-twitter"></i></div>
+          <div class="social-meta">
+            <div class="social-title">{% trans "Twitter" %}</div>
+            <div class="social-link">{{ twitter|truncatechars:40 }}</div>
+          </div>
+        </a>
+      </div>
+      {% endif %}
     </div>
   </div>
 </div>

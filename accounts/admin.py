@@ -195,7 +195,11 @@ class EmployerProfileAdmin(admin.ModelAdmin):
     fieldsets = (
         (
             _("User Information"),
-            {"fields": ("user",)},
+            {"fields": ("user", "phone_number", "company")},
+        ),
+        (
+            _("Social links"),
+            {"fields": ("website", "instagram", "telegram","linkedin", "facebook", "twitter", "github")},
         ),
         (
             _("Timestamps"),
