@@ -1803,7 +1803,6 @@ def profile_view(request, user_id=None):
             EmployerProfile.objects.filter(user=user).update(profile_views=F('profile_views') + 1)
         create_user_activity(request.user, "profile_view", f"Viewed {user.username}'s profile")
 
-    # Получаем актуальные профили (после возможного обновления счетчика)
     student_profile = None
     employer_profile = None
     admin_profile = None
@@ -1829,11 +1828,40 @@ def profile_view(request, user_id=None):
     elif employer_profile and employer_profile.city:
         location = employer_profile.city
 
+    # Получаем ссылки из профиля (если профиль существует)
+    website = None
+    instagram = None
+    linkedin = None
+    facebook = None
+    twitter = None
+    github = None
+
+    if student_profile:
+        website = student_profile.website
+        instagram = student_profile.instagram
+        linkedin = student_profile.linkedin
+        facebook = student_profile.facebook
+        twitter = student_profile.twitter
+        github = student_profile.github
+    elif employer_profile:
+        website = employer_profile.website
+        instagram = employer_profile.instagram
+        linkedin = employer_profile.linkedin
+        facebook = employer_profile.facebook
+        twitter = employer_profile.twitter
+        github = employer_profile.github
+
     context = {
         "profile_user": user,
         "is_own_profile": is_own_profile,
         "profile_views": profile_views,
-        "location": location,   # <-- для шаблона
+        "location": location,
+        "website": website,
+        "instagram": instagram,
+        "linkedin": linkedin,
+        "facebook": facebook,
+        "twitter": twitter,
+        "github": github,
         "event_participations": EventParticipation.objects.filter(user=user).select_related("event").order_by("-registered_at")[:6],
     }
 
