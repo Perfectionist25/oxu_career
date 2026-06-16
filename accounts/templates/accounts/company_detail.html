@@ -8,9 +8,6 @@
 <div class="container py-5">
     <!-- Back and Edit Buttons -->
     <div class="mb-4">
-        <a href="{% url 'accounts:admin_company_management' %}" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-2"></i>{% trans "Back to Companies" %}
-        </a>
         <a href="{% url 'accounts:company_update' object.pk %}" class="btn btn-primary">
             <i class="fas fa-edit me-2"></i>{% trans "Edit Company" %}
         </a>
