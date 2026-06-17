@@ -29,13 +29,21 @@ class Job(models.Model):
 
     EXPERIENCE_LEVEL_CHOICES = [
         ("no_experience", _("No Experience Required")),
+        ("another", _("Another Experience Level")),
         ("intern", _("Intern")),
-        ("junior", _("Junior")),
-        ("middle", _("Middle")),
-        ("senior", _("Senior")),
-        ("lead", _("Lead")),
-        ("manager", _("Manager")),
-        ("director", _("Director")),
+        ("1-3", _("1-3 years")),
+        ("3-5", _("3-5 years")),
+        ("5+", _("5+ years")),
+    ]
+
+
+    EDUCATION_LEVEL_CHOICES = [
+        ("none", _("No Education Required")),
+        ("school", _("High School")),
+        ("college", _("College")),
+        ("bachelor", _("Bachelor's Degree")),
+        ("master", _("Master's Degree")),
+        ("phd", _("PhD")),
     ]
 
 
@@ -270,15 +278,11 @@ class Job(models.Model):
         help_text=_("Bonuses based on overall performance")
     )
 
-
-    requirements = models.TextField(
-        verbose_name=_("Requirements"),
-        help_text=_("Job requirements and qualifications")
-    )
     responsibilities = models.TextField(
         verbose_name=_("Responsibilities"),
         help_text=_("Job duties and responsibilities")
     )
+
     benefits = models.TextField(
         blank=True,
         null=True,

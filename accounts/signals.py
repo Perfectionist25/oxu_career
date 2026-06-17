@@ -42,21 +42,9 @@ def create_profile(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=Company)
 def cleanup_inactive_primary_company(sender, instance, **kwargs):
-    """Очистить primary_company_id при деактивации компании
-
-    Внимание: в модели EmployerProfile поле называется primary_company_id,
-    а не primary_company!
-    """
+    """При деактивации компании убираем её из профилей работодателей"""
     if not instance.is_active:
-
-
-        EmployerProfile.objects.filter(primary_company_id=instance).update(primary_company_id=None)
-
-
-        if instance.pk:
-            count = EmployerProfile.objects.filter(primary_company_id=instance).count()
-            if count > 0:
-                print(f"Cleared primary_company_id for {count} employer profiles (company: {instance.name})")
+        EmployerProfile.objects.filter(company=instance).update(company=None)
 
 
 @receiver(pre_save, sender=StudentProfile)

@@ -82,7 +82,7 @@ class JobForm(forms.ModelForm):
             "region", "district", "work_type", "employment_type", "experience_level",
             "education_level", "target_user_types", "salary_min", "salary_max", "currency", "hide_salary",
             "salary_negotiable", "bonus_system", "kpi_bonus", "performance_bonus",
-            "requirements", "responsibilities", "benefits", "skills_required",
+            "responsibilities", "benefits", "skills_required",
             "preferred_skills", "language_requirements", "contact_email",
             "contact_phone", "contact_person", "application_url", "work_schedule",
             "probation_period", "expires_at", "industry",
@@ -98,7 +98,7 @@ class JobForm(forms.ModelForm):
         required_fields = [
             'title', 'short_description', 'description', 'company',
             'location', 'work_type', 'employment_type', 'experience_level',
-            'education_level', 'requirements', 'responsibilities',
+            'education_level', 'responsibilities',
             'skills_required', 'contact_email'
         ]
 
@@ -254,23 +254,6 @@ class JobForm(forms.ModelForm):
             cleaned_data['target_user_types'] = ['student', 'alumni']
 
         return cleaned_data
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

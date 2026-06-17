@@ -261,31 +261,19 @@
                     </div>
                 </div>
                 <div class="card-body pt-3">
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <h6 class="text-primary fw-semibold mb-3">{% trans "Required skills" %}</h6>
-                            <div class="skills-tags">
-                                {% for skill in job.skills_required.split %}
-                                    <span class="badge skill-badge bg-primary-subtle text-primary-emphasis border border-primary-subtle mb-2 me-2">
-                                        {{ skill.strip }}
-                                    </span>
-                                {% endfor %}
-                            </div>
+                    {% if job.skills_required %}
+                        <h6 class="text-primary fw-semibold mb-2">{% trans "Required skills" %}</h6>
+                        <div class="job-rich-text">
+                            {{ job.skills_required|linebreaks }}
                         </div>
+                    {% endif %}
 
-                        {% if job.preferred_skills %}
-                            <div class="col-md-6">
-                                <h6 class="text-primary fw-semibold mb-3">{% trans "Preferred skills" %}</h6>
-                                <div class="skills-tags">
-                                    {% for skill in job.preferred_skills.split %}
-                                        <span class="badge skill-badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle mb-2 me-2">
-                                            {{ skill.strip }}
-                                        </span>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        {% endif %}
-                    </div>
+                    {% if job.preferred_skills %}
+                        <h6 class="text-primary fw-semibold mb-2 mt-3">{% trans "Preferred skills" %}</h6>
+                        <div class="job-rich-text">
+                            {{ job.preferred_skills|linebreaks }}
+                        </div>
+                    {% endif %}
                 </div>
             </div>
 
@@ -771,8 +759,8 @@
                 <div class="card-body pt-3">
                     <div class="contact-info small">
                         <div class="mb-2">
-                            <i class="fas fa-envelope me-2 text-muted"></i>
-                            <a class="text-dark text-decoration-none" href="mailto:{{ job.contact_email }}">{{ job.contact_email }}</a>
+                            <i class="fas fa-envelope me-2 text-primary"></i>
+                            <a class="text-primary text-decoration-none" href="mailto:{{ job.contact_email }}">{{ job.contact_email }}</a>
                         </div>
 
                         {% if job.contact_person %}
@@ -1040,24 +1028,6 @@
         margin-bottom: 0.75rem;
     }
 
-    .skills-tags {
-        display: flex;
-        flex-wrap: wrap;
-    }
-
-    .skill-badge {
-        font-size: 0.82rem;
-        padding: 0.55rem 0.8rem;
-        border-radius: 999px;
-        font-weight: 600;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .skill-badge:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 0.25rem 0.85rem rgba(0, 0, 0, 0.06);
-    }
-
     .company-info,
     .job-details {
         display: grid;
@@ -1167,18 +1137,6 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const skillBadges = document.querySelectorAll('.skills-tags .badge');
-    skillBadges.forEach(function(badge) {
-        badge.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-1px) scale(1.03)';
-            this.style.transition = 'transform 0.2s ease, box-shadow 0.2s ease';
-        });
-
-        badge.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0) scale(1)';
-        });
-    });
-
     const sectionLinks = document.querySelectorAll('a[href^="#"]');
     sectionLinks.forEach(function(link) {
         link.addEventListener('click', function(e) {
