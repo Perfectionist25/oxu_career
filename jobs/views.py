@@ -1064,6 +1064,10 @@ def apply_for_job(request, pk):
     if request.method == "POST":
         form = JobApplicationForm(request.POST, user=request.user, job=job)
         if form.is_valid():
+            cv = form.cleaned_data.get('cv')
+            if cv is not None and cv.user != request.user:
+                messages.error(request, _("Вы можете прикреплять только собственные резюме."))
+                return redirect("jobs:apply_for_job", pk=job.pk)
             try:
                 with transaction.atomic():
                     application = form.save(commit=False)
