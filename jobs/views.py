@@ -537,25 +537,26 @@ def job_edit(request, pk):
         except EmployerProfile.DoesNotExist:
             messages.error(request, _("Ish beruvchi profili topilmadi."))
             return redirect("accounts:employer_profile_update")
-        available_companies = Company.objects.filter(owner=request.user, is_active=True)
+        available_companies = list(Company.objects.filter(owner=request.user, is_active=True))
         form_class = JobForm
         template_name = "jobs/job_form.html"
     elif is_job_admin:
-        available_companies = Company.objects.filter(is_active=True)
+        available_companies = list(Company.objects.filter(is_active=True))
         form_class = AdminJobForm
         template_name = "jobs/admin_job_form.html"
     else:
         messages.error(request, _("Sizda bu vakansiyani tahrirlash huquqi yo'q."))
         return redirect("jobs:job_detail", pk=pk)
 
+    # Добавляем текущую компанию вакансии, даже если она неактивна
     if job.company not in available_companies:
-        messages.error(request, _("Sizda bu vakansiyani tahrirlash huquqi yo'q."))
-        return redirect("jobs:job_detail", pk=pk)
+        available_companies.append(job.company)
 
     context = {
         "job": job,
         "employer_profile": employer_profile,
         "today": timezone.now().date(),
+        "owned_companies": available_companies,   # теперь передаётся в шаблон
     }
 
     if request.method == "POST":
@@ -582,7 +583,6 @@ def job_edit(request, pk):
                 if request.user.is_employer:
                     return redirect("jobs:my_jobs")
                 return redirect("jobs:job_detail", pk=job.pk)
-
             except Exception as e:
                 logger.error("Error editing job: %s", e)
                 messages.error(request, f"Xatolik yuz berdi: {str(e)}")
@@ -590,10 +590,15 @@ def job_edit(request, pk):
             messages.error(request, _("Iltimos, xatolarni to'g'rilang."))
     else:
         form = form_class(instance=job, user=request.user)
-        form.fields['company'].queryset = available_companies.distinct()
+        # Дополнительно корректируем queryset в поле company
+        if 'company' in form.fields and hasattr(form.fields['company'], 'queryset'):
+            form.fields['company'].queryset = Company.objects.filter(
+                pk__in=[c.id for c in available_companies]
+            ).distinct()
 
     context["form"] = form
     return render(request, template_name, context)
+
 
 
 @login_required
