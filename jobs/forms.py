@@ -96,6 +96,7 @@ class JobForm(forms.ModelForm):
             "description": CKEditor5Widget(config_name='extends'),
             "responsibilities": CKEditor5Widget(config_name='extends'),
             "requirements": CKEditor5Widget(config_name='extends'),
+            "skills_required": CKEditor5Widget(config_name='default'),
             "benefits": CKEditor5Widget(config_name='extends'),
         }
 
