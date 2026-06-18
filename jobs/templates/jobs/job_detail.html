@@ -204,7 +204,7 @@
 
             <!-- Responsibilities and requirements -->
             <div class="row g-4 mb-4">
-                <div class="col-md-6">
+                <div class="col-md-12">
                     <div class="card border-0 shadow-sm h-100 section-card">
                         <div class="card-header bg-white border-0 pb-0">
                             <div class="section-header">
@@ -212,7 +212,7 @@
                                     <i class="fas fa-tasks text-primary"></i>
                                 </div>
                                 <div>
-                                    <h6 class="mb-1">{% trans "Main responsibilities" %}</h6>
+                                    <h6 class="mb-1">{% trans "Main responsibilities and requirements" %}</h6>
                                     <p class="text-muted small mb-0">{% trans "What the role includes" %}</p>
                                 </div>
                             </div>
@@ -220,27 +220,6 @@
                         <div class="card-body pt-3">
                             <div class="job-rich-text job-responsibilities">
                                 {{ job.responsibilities|linebreaks }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="card border-0 shadow-sm h-100 section-card">
-                        <div class="card-header bg-white border-0 pb-0">
-                            <div class="section-header">
-                                <div class="section-icon">
-                                    <i class="fas fa-graduation-cap text-primary"></i>
-                                </div>
-                                <div>
-                                    <h6 class="mb-1">{% trans "Requirements" %}</h6>
-                                    <p class="text-muted small mb-0">{% trans "What the candidate should know" %}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body pt-3">
-                            <div class="job-rich-text job-requirements">
-                                {{ job.requirements|linebreaks }}
                             </div>
                         </div>
                     </div>
