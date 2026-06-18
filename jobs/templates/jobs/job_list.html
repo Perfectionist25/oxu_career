@@ -263,7 +263,7 @@
                                     {% endif %}
                                 </div>
 
-                                <h3 class="job-card__title line-clamp-2">{{ job.title }}</h3>
+                                <h3 class="job-card__title line-clamp-2">{{ job.title|safe }}</h3>
 
                                 <div class="job-card__submeta">
                                     <span>
@@ -362,7 +362,7 @@
 
                         {% if job.short_description %}
                             <div class="job-card__description">
-                                {{ job.short_description|truncatewords:24 }}
+                                {{ job.short_description|safe|truncatechars_html:150  }}
                             </div>
                         {% endif %}
 
@@ -370,7 +370,7 @@
                             <div class="job-card__skills">
                                 <div class="job-card__skills-title">{% trans "Required Skills:" %}</div>
                                 <div class="job-card__skills-list">
-                                    <span class="job-skill">{{ job.skills_required }}</span>
+                                    <span class="job-skill">{{ job.skills_required|safe }}</span>
                                 </div>
                             </div>
                         {% endif %}
