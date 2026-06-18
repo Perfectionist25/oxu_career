@@ -196,7 +196,7 @@
                     <div>
                         <h6 class="text-primary fw-semibold mb-2">{% trans "Detailed description" %}</h6>
                         <div class="job-rich-text job-description">
-                            {{ job.description|linebreaks }}
+                            {{ job.description|safe }}
                         </div>
                     </div>
                 </div>
@@ -219,7 +219,7 @@
                         </div>
                         <div class="card-body pt-3">
                             <div class="job-rich-text job-responsibilities">
-                                {{ job.responsibilities|linebreaks }}
+                                {{ job.responsibilities|safe }}
                             </div>
                         </div>
                     </div>
@@ -243,14 +243,14 @@
                     {% if job.skills_required %}
                         <h6 class="text-primary fw-semibold mb-2">{% trans "Required skills" %}</h6>
                         <div class="job-rich-text">
-                            {{ job.skills_required|linebreaks }}
+                            {{ job.skills_required|safe }}
                         </div>
                     {% endif %}
 
                     {% if job.preferred_skills %}
                         <h6 class="text-primary fw-semibold mb-2 mt-3">{% trans "Preferred skills" %}</h6>
                         <div class="job-rich-text">
-                            {{ job.preferred_skills|linebreaks }}
+                            {{ job.preferred_skills|safe }}
                         </div>
                     {% endif %}
                 </div>
@@ -272,7 +272,7 @@
                     </div>
                     <div class="card-body pt-3">
                         <div class="job-rich-text job-benefits">
-                            {{ job.benefits|linebreaks }}
+                            {{ job.benefits|safe }}
                         </div>
                     </div>
                 </div>
@@ -431,9 +431,9 @@
                                     </div>
 
                                     {% if job.company.short_description %}
-                                        <p class="text-muted mb-0">{{ job.company.short_description|linebreaksbr }}</p>
+                                        <p class="text-muted mb-0">{{ job.company.short_description|safe }}</p>
                                     {% elif job.company.description %}
-                                        <p class="text-muted mb-0">{{ job.company.description|truncatewords:45 }}</p>
+                                        <p class="text-muted mb-0">{{ job.company.description|truncatewords:45|safe }}</p>
                                     {% endif %}
                                 </div>
                             </div>
@@ -573,7 +573,7 @@
                                 <div class="company-modal-section mb-4">
                                     <h6 class="company-modal-section-title">{% trans "Description" %}</h6>
                                     <div class="job-rich-text mb-0">
-                                        {{ job.company.description|linebreaks }}
+                                        {{ job.company.description|safe }}
                                     </div>
                                 </div>
                             {% endif %}
@@ -585,7 +585,7 @@
                                             <div class="col-12 {% if company_additional_info.vision %}col-lg-6{% endif %}">
                                                 <h6 class="company-modal-section-title">{% trans "Mission" %}</h6>
                                                 <div class="job-rich-text mb-0">
-                                                    {{ job.company.mission|linebreaks }}
+                                                    {{ job.company.mission|safe }}
                                                 </div>
                                             </div>
                                         {% endif %}
@@ -594,7 +594,7 @@
                                             <div class="col-12 {% if job.company.mission %}col-lg-6{% endif %}">
                                                 <h6 class="company-modal-section-title">{% trans "Vision" %}</h6>
                                                 <div class="job-rich-text mb-0">
-                                                    {{ company_additional_info.vision|linebreaks }}
+                                                    {{ company_additional_info.vision|safe }}
                                                 </div>
                                             </div>
                                         {% endif %}
