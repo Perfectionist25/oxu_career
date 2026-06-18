@@ -864,7 +864,7 @@ body {
                         <div class="list-item-clean mb-3">
                             <div class="d-flex justify-content-between align-items-start gap-3">
                                 <div class="flex-grow-1">
-                                    <div class="fw-bold mb-1">{{ job.title|truncatechars:40 }}</div>
+                                    <div class="fw-bold mb-1">{{ job.title|safe|truncatechars_html:40 }}</div>
                                     <div class="small text-muted mb-2">{{ job.company.name|default:"-" }}</div>
                                     <div class="d-flex flex-wrap align-items-center gap-2">
                                         <span class="soft-badge {% if job.is_active %}success{% else %}dark{% endif %}">
