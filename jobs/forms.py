@@ -3,6 +3,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from .models import Job, JobApplication, JobAlert
 from accounts.models import Company, user_has_admin_permission
+from django_ckeditor_5.widgets import CKEditor5Widget
 
 
 INDUSTRY_CHOICES = [
@@ -88,6 +89,15 @@ class JobForm(forms.ModelForm):
             "probation_period", "expires_at", "industry",
             "candidate_type", "gender_requirement"
         ]
+
+        widgets = {
+            "title": CKEditor5Widget(config_name='default'),
+            "short_description": CKEditor5Widget(config_name='extends'),
+            "description": CKEditor5Widget(config_name='extends'),
+            "responsibilities": CKEditor5Widget(config_name='extends'),
+            "requirements": CKEditor5Widget(config_name='extends'),
+            "benefits": CKEditor5Widget(config_name='extends'),
+        }
 
 
     def __init__(self, *args, **kwargs):

@@ -38,6 +38,8 @@
 
                     <form method="post" novalidate id="job-form">
                         {% csrf_token %}
+                        {{ form.media }}
+                        {{ form.as_p }}
 
                         {% if form.non_field_errors %}
                             <div class="alert alert-danger border-0 shadow-sm mb-4">
