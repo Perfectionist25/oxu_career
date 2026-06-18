@@ -190,7 +190,7 @@
                 <div class="card-body pt-3">
                     <div class="mb-4">
                         <h6 class="text-primary fw-semibold mb-2">{% trans "Short description" %}</h6>
-                        <p class="lead mb-0 job-lead">{{ job.short_description }}</p>
+                        <p class="lead mb-0 job-lead">{{ job.short_description|safe }}</p>
                     </div>
 
                     <div>
@@ -358,7 +358,7 @@
 
                     {% if job.company.description %}
                         <p class="small text-muted mb-3">
-                            {{ job.company.description|truncatewords:30 }}
+                            {{ job.company.description|safe|truncatewords:30 }}
                         </p>
                     {% endif %}
 
@@ -433,7 +433,7 @@
                                     {% if job.company.short_description %}
                                         <p class="text-muted mb-0">{{ job.company.short_description|safe }}</p>
                                     {% elif job.company.description %}
-                                        <p class="text-muted mb-0">{{ job.company.description|truncatewords:45|safe }}</p>
+                                        <p class="text-muted mb-0">{{ job.company.description|safe|truncatewords:45 }}</p>
                                     {% endif %}
                                 </div>
                             </div>
