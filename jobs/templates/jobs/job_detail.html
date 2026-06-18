@@ -2,7 +2,7 @@
 {% load static %}
 {% load i18n %}
 
-{% block title %}{{ job.title }} - {{ job.company.name }} - OXU Career{% endblock %}
+{% block title %}{{ job.title|safe }} - {{ job.company.name }} - OXU Career{% endblock %}
 
 {% block content %}
 <div class="container-fluid py-4 job-detail-page">
@@ -17,7 +17,7 @@
                             {% trans "Jobs" %}
                         </a>
                     </li>
-                    <li class="breadcrumb-item active" aria-current="page">{{ job.title }}</li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ job.title|safe }}</li>
                 </ol>
             </nav>
 
@@ -48,7 +48,7 @@
                             </div>
 
                             <h1 class="display-6 fw-bold mb-3 text-primary-emphasis job-title">
-                                {{ job.title }}
+                                {{ job.title|safe }}
                             </h1>
 
                             <div class="d-flex flex-wrap gap-3 gap-lg-4 text-muted small mb-3 mb-lg-4">
