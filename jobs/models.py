@@ -71,7 +71,7 @@ class Job(models.Model):
     ]
 
 
-    title = models.CharField(
+    title = models.TextField(
         max_length=200,
         verbose_name=_("Job Title"),
         help_text=_("Enter the position title")
@@ -80,7 +80,7 @@ class Job(models.Model):
         verbose_name=_("Job Description"),
         help_text=_("Detailed description of the job responsibilities")
     )
-    short_description = models.CharField(
+    short_description = models.TextField(
         max_length=300,
         verbose_name=_("Short Description"),
         help_text=_("Brief summary of the job")
