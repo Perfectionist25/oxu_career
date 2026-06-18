@@ -105,50 +105,60 @@ class JobForm(forms.ModelForm):
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
 
-        # Set required fields
+        # Обязательные поля
         required_fields = [
             'title', 'short_description', 'description', 'company',
             'location', 'work_type', 'employment_type', 'experience_level',
             'education_level', 'responsibilities',
             'skills_required', 'contact_email'
         ]
-
-        # Make fields required
         for field in required_fields:
             if field in self.fields:
                 self.fields[field].required = True
 
-
         if self.user and self.user.is_authenticated:
             if self.user.is_employer:
-
+                # Все компании работодателя (активные)
                 user_companies = Company.objects.filter(owner=self.user, is_active=True)
+
+                # Если редактируем существующую вакансию, добавляем её компанию в queryset,
+                # даже если она по какой-то причине неактивна
+                if self.instance.pk and self.instance.company:
+                    # Объединяем queryset'ы, чтобы включить текущую компанию
+                    user_companies = user_companies | Company.objects.filter(pk=self.instance.company.pk)
+                    user_companies = user_companies.distinct()
+
                 self.fields['company'].queryset = user_companies
 
+                # Для новой вакансии задаём первую компанию по умолчанию
                 if not self.instance.pk:
-                    user_company = user_companies.first()
-                    if user_company:
-                        self.fields['company'].initial = user_company
+                    first_company = user_companies.filter(is_active=True).first()
+                    if first_company:
+                        self.fields['company'].initial = first_company
 
-
-                if user_companies.count() == 1:
+                # Если у работодателя только одна активная компания – делаем поле readonly
+                if user_companies.filter(is_active=True).count() == 1:
                     self.fields['company'].widget.attrs['readonly'] = True
                     self.fields['company'].widget.attrs['class'] = 'form-control bg-light'
                     self.fields['company'].help_text = _("Your company")
                 else:
                     self.fields['company'].help_text = _("Select one of your companies")
-            elif (
-                user_has_admin_permission(self.user, 'can_create_jobs')
-                or user_has_admin_permission(self.user, 'can_manage_jobs')
-            ):
 
-                self.fields['company'].queryset = Company.objects.filter(is_active=True)
+            elif user_has_admin_permission(self.user, 'can_create_jobs') or user_has_admin_permission(self.user, 'can_manage_jobs'):
+                # Администратор: все активные компании
+                admin_qs = Company.objects.filter(is_active=True)
+
+                # При редактировании добавляем текущую компанию вакансии (даже неактивную)
+                if self.instance.pk and self.instance.company:
+                    admin_qs = admin_qs | Company.objects.filter(pk=self.instance.company.pk)
+                    admin_qs = admin_qs.distinct()
+
+                self.fields['company'].queryset = admin_qs.order_by('name')
                 self.fields['company'].help_text = _("Select a company")
             else:
-
                 self.fields['company'].widget = forms.HiddenInput()
 
-        # Set up target_user_types field as a single choice selector
+        # Настройка поля target_user_types (оставляем как было)
         self.fields['target_user_types'] = forms.ChoiceField(
             choices=[
                 ('', _('Select target audience...')),
@@ -173,6 +183,7 @@ class JobForm(forms.ModelForm):
             else:
                 self.fields['target_user_types'].initial = 'all'
 
+        # Стилизация select-полей
         select_fields = ['company', 'job_market', 'work_type', 'employment_type', 'experience_level',
                         'education_level', 'currency', 'region', 'industry', 'candidate_type', 'gender_requirement', 'target_user_types']
         for field in select_fields:
@@ -180,20 +191,18 @@ class JobForm(forms.ModelForm):
                 self.fields[field].widget.attrs['class'] = 'form-select'
                 if field != 'company' and hasattr(self.fields[field], 'empty_label'):
                     self.fields[field].empty_label = _("Please select...")
-                # Make required select fields more obvious
                 if field in ['work_type', 'employment_type', 'experience_level', 'education_level']:
                     self.fields[field].widget.attrs['required'] = 'required'
 
-
+        # Предзаполнение email и телефона для новой вакансии
         if self.user and not self.instance.pk:
             self.fields['contact_email'].initial = self.user.email
             if hasattr(self.user, 'get_full_name') and self.user.get_full_name():
                 self.fields['contact_person'].initial = self.user.get_full_name()
-
             if self.user.phone_number:
                 self.fields['contact_phone'].initial = self.user.phone_number
 
-
+        # Placeholder'ы
         self.fields['title'].widget.attrs['placeholder'] = _('e.g., Senior Software Engineer')
         self.fields['short_description'].widget.attrs['placeholder'] = _('Brief summary (max 300 characters)')
         self.fields['skills_required'].widget.attrs['placeholder'] = _('Python, Django, JavaScript, React, ...')
@@ -202,12 +211,11 @@ class JobForm(forms.ModelForm):
         self.fields['contact_email'].widget.attrs['placeholder'] = _('email@company.com')
         self.fields['contact_phone'].widget.attrs['placeholder'] = _('+998 XX XXX XX XX')
 
-
+        # Datepicker для expires_at
         if 'expires_at' in self.fields:
             self.fields['expires_at'].widget = forms.DateInput(
                 attrs={'type': 'date', 'class': 'form-control'}
             )
-
             from django.utils import timezone
             import datetime
             tomorrow = (timezone.now() + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
