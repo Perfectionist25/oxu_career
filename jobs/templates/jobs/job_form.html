@@ -295,13 +295,7 @@
                                         <label for="{{ form.skills_required.id_for_label }}" class="form-label fw-semibold">
                                             {% trans "Required Skills" %} *
                                         </label>
-                                        <input type="text"
-                                               name="{{ form.skills_required.name }}"
-                                               id="{{ form.skills_required.id_for_label }}"
-                                               class="form-control {% if form.skills_required.errors %}is-invalid{% endif %}"
-                                               value="{{ form.skills_required.value|default:'' }}"
-                                               placeholder="{% trans 'Python, Django, JavaScript, React, ...' %}"
-                                               required>
+                                        {{ form.skills_required }}
                                         {% if form.skills_required.errors %}
                                             <div class="invalid-feedback d-block">
                                                 <i class="fas fa-exclamation-circle me-2"></i>
