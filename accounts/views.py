@@ -1835,6 +1835,7 @@ def profile_view(request, user_id=None):
     facebook = None
     twitter = None
     github = None
+    telegram = None
 
     if student_profile:
         website = student_profile.website
