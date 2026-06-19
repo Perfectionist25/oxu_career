@@ -373,7 +373,7 @@
                                     </thead>
                                     <tbody>
                                         {% for job in jobs %}
-                                        <tr data-job-title="{{ job.title|lower }}">
+                                        <tr data-job-title="{{ job.title|safe|lower }}">
                                             <td>
                                                 <div>
                                                     <h6 class="mb-1">
@@ -466,7 +466,7 @@
                                                             data-bs-toggle="modal" 
                                                             data-bs-target="#jobSettingsModal"
                                                             data-job-id="{{ job.id }}"
-                                                            data-job-title="{{ job.title }}"
+                                                            data-job-title="{{ job.title|safe }}"
                                                             title="{% trans 'Settings' %}">
                                                         <i class="fas fa-cog"></i>
                                                     </button>
@@ -583,7 +583,7 @@
                                                 <div>
                                                     <h6 class="mb-1">
                                                         <a href="{% url 'jobs:job_detail' application.job.id %}" class="text-decoration-none text-dark">
-                                                            {{ application.job.title|truncatechars:50 }}
+                                                            {{ application.job.title|safe|truncatechars_html:50 }}
                                                         </a>
                                                     </h6>
                                                     <small class="text-muted d-flex align-items-center">
