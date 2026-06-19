@@ -378,7 +378,7 @@
                                                 <div>
                                                     <h6 class="mb-1">
                                                         <a href="{% url 'jobs:job_detail' job.id %}" class="text-decoration-none text-dark">
-                                                            {{ job.title|truncatechars:60 }}
+                                                            {{ job.title|safe|truncatechars_html:60 }}
                                                         </a>
                                                         {% if job.is_urgent %}
                                                             <span class="badge bg-danger ms-1">{% trans "Urgent" %}</span>
