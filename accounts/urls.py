@@ -84,7 +84,7 @@ urlpatterns = [
     path("notifications/<int:notification_id>/read/", views.mark_notification_read, name="mark_notification_read"),
     path("notifications/mark-all-read/", views.mark_all_notifications_read, name="mark_all_notifications_read"),
 
-    path("password_change/", views.admin_change_password, name="password_change"),
+    # path("password_change/", views.admin_change_password, name="password_change"),
     path("password_change/done/", auth_views.PasswordChangeDoneView.as_view(
         template_name="accounts/password_change_done.html"
     ), name="password_change_done"),
