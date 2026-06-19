@@ -548,50 +548,6 @@ def admin_logout(request):
     return redirect("accounts:admin_login")
 
 
-# @login_required
-# @user_passes_test(is_admin, login_url="accounts:admin_login")
-# def admin_change_password(request):
-#     """Admin change password page"""
-#     if request.method == "POST":
-#         old_password = request.POST.get("old_password")
-#         new_password1 = request.POST.get("new_password1")
-#         new_password2 = request.POST.get("new_password2")
-
-#         if not all([old_password, new_password1, new_password2]):
-#             messages.error(request, _("All fields are required"))
-#             return render(request, "accounts/admin_change_password.html")
-
-#         if new_password1 != new_password2:
-#             messages.error(request, _("New passwords don't match"))
-#             return render(request, "accounts/admin_change_password.html")
-
-#         if len(new_password1) < 8:
-#             messages.error(request, _("Password must be at least 8 characters long"))
-#             return render(request, "accounts/admin_change_password.html")
-
-#         if not request.user.check_password(old_password):
-#             messages.error(request, _("Current password is incorrect"))
-#             return render(request, "accounts/admin_change_password.html")
-
-#         request.user.set_password(new_password1)
-#         request.user.save()
-
-#         update_session_auth_hash(request, request.user)
-
-#         create_user_activity(
-#             request.user,
-#             "password_change",
-#             "Admin changed password",
-#             get_client_ip(request),
-#             request.META.get("HTTP_USER_AGENT", "")
-#         )
-
-#         messages.success(request, _("Password changed successfully!"))
-#         return redirect("accounts:admin_dashboard")
-
-#     return render(request, "accounts/admin_change_password.html")
-
-
 @login_required
 @user_passes_test(is_main_admin, login_url="accounts:admin_login")
 def admin_session_management(request):
