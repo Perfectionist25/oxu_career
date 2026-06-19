@@ -212,6 +212,7 @@ class EmployerProfileAdmin(admin.ModelAdmin):
 class StudentProfileAdmin(admin.ModelAdmin):
     list_display = (
         "user",
+        "avatar",
         "faculty",
         "specialty",
         "education_level",
@@ -225,7 +226,7 @@ class StudentProfileAdmin(admin.ModelAdmin):
     fieldsets = (
         (
             _("Student Information"),
-            {"fields": ("user", "student_id", "faculty", "specialty")},
+            {"fields": ("user", "avatar", "student_id", "faculty", "specialty")},
         ),
         (_("Education"), {"fields": ("education_level", "graduation_year")},
         ),
