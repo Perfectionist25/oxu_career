@@ -135,6 +135,14 @@
                 </div>
 
                 <div class="col-xl-2 col-md-4 col-6">
+                    <a href="{% url 'cvbuilder:cv_list' %}" class="action-card action-primary">
+                        <div class="action-icon"><i class="fas fa-list"></i></div>
+                        <div class="action-title">{% trans "My Resumes" %}</div>
+                        <div class="action-text">{% trans "Manage your CVs" %}</div>
+                    </a>
+                </div>
+
+                <div class="col-xl-2 col-md-4 col-6">
                     <a href="{% url 'jobs:list' %}" class="action-card action-success">
                         <div class="action-icon"><i class="fas fa-search"></i></div>
                         <div class="action-title">{% trans "Job Search" %}</div>
