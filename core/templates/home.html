@@ -150,6 +150,7 @@
       </div>
       {% endif %}
 
+      {% if user.is_staff or user.is_employer %}
       <div class="col-xl col-md">
         <div class="card border-0 shadow-sm h-100 quick-link-card">
           <div class="card-body text-center p-4">
@@ -164,6 +165,7 @@
           </div>
         </div>
       </div>
+      {% endif %}
 
       <div class="col-xl col-md">
         <div class="card border-0 shadow-sm h-100 quick-link-card">
