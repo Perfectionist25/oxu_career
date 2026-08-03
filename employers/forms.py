@@ -26,6 +26,7 @@ class CompanyForm(forms.ModelForm):
         model = Company
         fields = [
             "name",
+            "company_type",
             "description",
             "website",
             "logo",
@@ -54,7 +55,12 @@ class CompanyForm(forms.ModelForm):
             "website": forms.URLInput(
                 attrs={"class": "form-control", "placeholder": "https://example.com"}
             ),
-            "industry": forms.Select(attrs={"class": "form-control"}),
+            "company_type": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": _("Legal structure, e.g. ООО")}
+            ),
+            "industry": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": _("Industry or business activity")}
+            ),
             "company_size": forms.Select(attrs={"class": "form-control"}),
             "founded_year": forms.NumberInput(
                 attrs={"class": "form-control", "min": "1900", "max": "2024"}
@@ -94,6 +100,7 @@ class CompanyForm(forms.ModelForm):
         }
         labels = {
             "name": _("Company Name"),
+            "company_type": _("Company Type"),
             "description": _("Description"),
             "website": _("Website"),
             "logo": _("Logo"),
