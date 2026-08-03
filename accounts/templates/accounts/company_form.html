@@ -10,7 +10,7 @@
         <div class="col-md-10 col-lg-8">
             <center>
                 <button type="button" class="btn btn-outline-primary btn-lg" data-bs-toggle="modal" data-bs-target="#innSearchModal">
-                    <i class="fas fa-search me-1"></i> {% trans "Search by INN" %}
+                    <i class="fas fa-search me-1"></i> {% trans "Search by INN/Name" %}
                 </button>
                 <br>
                 <br>
@@ -293,12 +293,12 @@
                         <div class="modal-dialog modal-lg modal-dialog-centered">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="innSearchModalLabel">{% trans "Search Company by INN" %}</h5>
+                                    <h5 class="modal-title" id="innSearchModalLabel">{% trans "Search Company by INN/Name" %}</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <div class="mb-3">
-                                        <label for="orginfoInn" class="form-label">{% trans "Enter INN" %}</label>
+                                        <label for="orginfoInn" class="form-label">{% trans "Enter INN/Name" %}</label>
                                         <input type="text" class="form-control" id="orginfoInn" placeholder="313134799">
                                     </div>
                                     <div class="d-flex gap-2 mb-3">
