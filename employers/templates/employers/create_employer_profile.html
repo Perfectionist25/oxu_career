@@ -2,22 +2,191 @@
 {% load i18n %}
 {% block content %}
 <div class="container py-5">
-	<h1 class="display-5 fw-bold text-primary mb-4">{% trans "Create Employer Profile" %}</h1>
-	<div class="card shadow-sm mb-4">
-		<div class="card-body">
-			<form method="post">
-				{% csrf_token %}
-				<div class="mb-3">
-					<label for="companyName" class="form-label">{% trans "Company Name" %}</label>
-					<input type="text" class="form-control" id="companyName" name="company_name">
-				</div>
-				<div class="mb-3">
-					<label for="contactEmail" class="form-label">{% trans "Contact Email" %}</label>
-					<input type="email" class="form-control" id="contactEmail" name="contact_email">
-				</div>
-				<button type="submit" class="btn btn-primary">{% trans "Create Profile" %}</button>
-			</form>
-		</div>
-	</div>
+    <h1 class="display-5 fw-bold text-primary mb-4">{% trans "Create Employer Profile" %}</h1>
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3 mb-4">
+                <div>
+                    <h5 class="mb-2">{% trans "Company information" %}</h5>
+                    <p class="text-muted mb-0">{% trans "You can quickly populate company details from orginfo.uz by INN." %}</p>
+                </div>
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#innSearchModal">
+                    {% trans "Search by INN" %}
+                </button>
+            </div>
+
+            <form method="post" enctype="multipart/form-data" id="employerProfileForm">
+                {% csrf_token %}
+                {% if company_form.non_field_errors or profile_form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ company_form.non_field_errors }}
+                        {{ profile_form.non_field_errors }}
+                    </div>
+                {% endif %}
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="mb-3">{{ company_form.name.label_tag }}{{ company_form.name }}</div>
+                        <div class="mb-3">{{ company_form.company_type.label_tag }}{{ company_form.company_type }}</div>
+                        <div class="mb-3">{{ company_form.description.label_tag }}{{ company_form.description }}</div>
+                        <div class="mb-3">{{ company_form.website.label_tag }}{{ company_form.website }}</div>
+                        <div class="mb-3">{{ company_form.logo.label_tag }}{{ company_form.logo }}</div>
+                        <div class="mb-3">{{ company_form.industry.label_tag }}{{ company_form.industry }}</div>
+                        <div class="mb-3">{{ company_form.company_size.label_tag }}{{ company_form.company_size }}</div>
+                        <div class="mb-3">{{ company_form.founded_year.label_tag }}{{ company_form.founded_year }}</div>
+                        <div class="mb-3">{{ company_form.address.label_tag }}{{ company_form.address }}</div>
+                        <div class="mb-3">{{ company_form.email.label_tag }}{{ company_form.email }}</div>
+                        <div class="mb-3">{{ company_form.phone.label_tag }}{{ company_form.phone }}</div>
+                        <div class="mb-3">{{ company_form.linkedin.label_tag }}{{ company_form.linkedin }}</div>
+                        <div class="mb-3">{{ company_form.facebook.label_tag }}{{ company_form.facebook }}</div>
+                        <div class="mb-3">{{ company_form.telegram.label_tag }}{{ company_form.telegram }}</div>
+                        <div class="mb-3">{{ company_form.instagram.label_tag }}{{ company_form.instagram }}</div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="mb-3">{{ profile_form.job_title.label_tag }}{{ profile_form.job_title }}</div>
+                        <div class="mb-3">{{ profile_form.professional_bio.label_tag }}{{ profile_form.professional_bio }}</div>
+                        <div class="mb-3">{{ profile_form.preferred_contact_method.label_tag }}{{ profile_form.preferred_contact_method }}</div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">{% trans "Create Profile" %}</button>
+            </form>
+        </div>
+    </div>
 </div>
+
+<div class="modal fade" id="innSearchModal" tabindex="-1" aria-labelledby="innSearchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="innSearchModalLabel">{% trans "Search Company by INN" %}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="orginfoInn" class="form-label">{% trans "Enter INN" %}</label>
+                    <input type="text" class="form-control" id="orginfoInn" placeholder="313134799">
+                </div>
+                <div class="d-flex gap-2 mb-3">
+                    <button type="button" id="orginfoSearchButton" class="btn btn-primary">{% trans "Search" %}</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Close" %}</button>
+                </div>
+                <div id="orginfoSearchStatus" class="mb-3"></div>
+                <div id="orginfoSearchResults" class="list-group"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function _getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return '';
+}
+
+function _showInnStatus(message, klass) {
+    const status = document.getElementById('orginfoSearchStatus');
+    status.innerHTML = `<div class="alert ${klass}" role="alert">${message}</div>`;
+}
+
+function _clearInnResults() {
+    document.getElementById('orginfoSearchResults').innerHTML = '';
+}
+
+function _fillCompanyForm(data) {
+    const mapping = {
+        name: 'id_name',
+        company_type: 'id_company_type',
+        description: 'id_description',
+        website: 'id_website',
+        industry: 'id_industry',
+        founded_year: 'id_founded_year',
+        address: 'id_address',
+        email: 'id_email',
+        phone: 'id_phone',
+    };
+    Object.entries(mapping).forEach(([key, fieldId]) => {
+        const field = document.getElementById(fieldId);
+        if (field && data[key]) {
+            field.value = data[key];
+        }
+    });
+    _showInnStatus('{% trans "Company data loaded. Please review and submit the profile." %}', 'alert-success');
+}
+
+function _renderOrginfoResults(companies) {
+    const container = document.getElementById('orginfoSearchResults');
+    container.innerHTML = '';
+    if (!companies.length) {
+        container.innerHTML = '<div class="alert alert-warning" role="alert">{% trans "No companies found for this INN." %}</div>';
+        return;
+    }
+    companies.forEach((company) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'list-group-item list-group-item-action';
+        button.innerHTML = `
+            <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">${company.name}</h6>
+                <small>${company.inn || ''}</small>
+            </div>
+            <p class="mb-1">${company.address || ''}</p>
+            <small>${company.created_at || ''}</small>
+        `;
+        button.addEventListener('click', function() {
+            _fetchOrginfoCompanyDetails(company.detail_url);
+        });
+        container.appendChild(button);
+    });
+}
+
+function _fetchOrginfoCompanyDetails(detailUrl) {
+    _showInnStatus('{% trans "Loading company details..." %}', 'alert-info');
+    const encoded = encodeURIComponent(detailUrl);
+    fetch(`{% url 'employers:fetch_orginfo_company' %}?detail_url=${encoded}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                _fillCompanyForm(data.company);
+            } else {
+                _showInnStatus(data.message || '{% trans "Failed to load company details." %}', 'alert-danger');
+            }
+        })
+        .catch(() => {
+            _showInnStatus('{% trans "Failed to load company details." %}', 'alert-danger');
+        });
+}
+
+document.getElementById('orginfoSearchButton').addEventListener('click', function() {
+    const inn = document.getElementById('orginfoInn').value.trim();
+    if (!inn) {
+        _showInnStatus('{% trans "Please enter a valid INN." %}', 'alert-warning');
+        return;
+    }
+    _showInnStatus('{% trans "Searching for companies..." %}', 'alert-info');
+    _clearInnResults();
+    const encoded = encodeURIComponent(inn);
+    fetch(`{% url 'employers:search_orginfo_company' %}?inn=${encoded}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                _renderOrginfoResults(data.companies);
+                if (data.companies.length) {
+                    _showInnStatus('{% trans "Select a company from the list to fill the form." %}', 'alert-success');
+                } else {
+                    _showInnStatus('{% trans "No companies found for this INN." %}', 'alert-warning');
+                }
+            } else {
+                _showInnStatus(data.message || '{% trans "Search failed." %}', 'alert-danger');
+            }
+        })
+        .catch(() => {
+            _showInnStatus('{% trans "Search failed." %}', 'alert-danger');
+        });
+});
+</script>
 {% endblock %}

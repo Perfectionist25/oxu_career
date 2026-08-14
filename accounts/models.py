@@ -274,7 +274,8 @@ class Company(models.Model):
     )
 
     company_type = models.CharField(
-        max_length=50,
+        max_length=100,
+        blank=True,
         verbose_name=_("Company Type"),
         help_text=_("Legal structure of the company")
     )

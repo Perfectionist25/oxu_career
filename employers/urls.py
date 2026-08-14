@@ -10,6 +10,8 @@ urlpatterns = [
     path(
         "profile/create/", views.create_employer_profile, name="create_employer_profile"
     ),
+    path("company/search/", views.search_orginfo_company, name="search_orginfo_company"),
+    path("company/fetch/", views.fetch_orginfo_company_details, name="fetch_orginfo_company"),
 
     path("jobs/", views.job_list, name="job_list"),
     path("jobs/<int:pk>/", views.job_detail, name="job_detail"),

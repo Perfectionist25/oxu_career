@@ -22,8 +22,9 @@ from django.core.cache import cache
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from django.utils.crypto import get_random_string
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urljoin
 
+from bs4 import BeautifulSoup
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
@@ -68,6 +69,147 @@ import logging
 from django.db import transaction
 
 logger = logging.getLogger(__name__)
+
+ORGINFO_BASE_URL = "https://orginfo.uz"
+ORGINFO_SEARCH_URL = "https://orginfo.uz/ru/search/organizations/?q="
+
+
+def _normalize_text(value):
+    return " ".join(value.split()).strip() if value else ""
+
+
+def _find_pair(parts, key):
+    try:
+        index = parts.index(key)
+        return parts[index + 1].strip()
+    except (ValueError, IndexError):
+        return None
+
+
+def _parse_orginfo_search(html):
+    soup = BeautifulSoup(html, "html.parser")
+    results = []
+    for link in soup.select('a.og-card[href^="/ru/organization/"]'):
+        inn_tag = link.select_one("span.bg-success")
+        inn = _normalize_text(inn_tag.get_text()) if inn_tag else None
+        title_tag = link.select_one("h6.card-title")
+        name = _normalize_text(title_tag.get_text()) if title_tag else _normalize_text(link.get_text())
+        address_tag = link.select_one("p.text-body-tertiary")
+        address = _normalize_text(address_tag.get_text()) if address_tag else None
+        date_tag = link.select_one("span.text-body-tertiary")
+        created_at = _normalize_text(date_tag.get_text()) if date_tag else None
+        detail_url = urljoin(ORGINFO_BASE_URL, link["href"])
+        results.append({
+            "name": name,
+            "inn": inn,
+            "address": address,
+            "created_at": created_at,
+            "detail_url": detail_url,
+        })
+    return results
+
+
+def _parse_orginfo_company(html):
+    soup = BeautifulSoup(html, "html.parser")
+    parsed = {
+        "name": "",
+        "company_type": "",
+        "description": "",
+        "short_description": "",
+        "industry": "",
+        "founded_year": None,
+        "address": "",
+        "email": "",
+        "phone": "",
+        "website": "",
+    }
+    name_tag = soup.find("h1")
+    if name_tag:
+        parsed["name"] = _normalize_text(name_tag.get_text())
+
+    first_block = None
+    for div in soup.select("div.card-body"):
+        if "Официальное название организации" in div.get_text():
+            first_block = div
+            break
+    if first_block:
+        text = _normalize_text(first_block.get_text(separator="|"))
+        parts = [part.strip() for part in text.split("|") if part.strip()]
+        parsed["description"] = _find_pair(parts, "Официальное название организации") or parsed["name"]
+        parsed["short_description"] = _find_pair(parts, "Краткое название организации") or parsed["short_description"]
+        parsed["company_type"] = _find_pair(parts, "ОПФ") or parsed["company_type"]
+        parsed["industry"] = _find_pair(parts, "Деятельность в области компьютерного программирования") or _find_pair(parts, "ОКЭД") or parsed["industry"]
+        registration = _find_pair(parts, "Дата регистрации")
+        if registration:
+            import re
+            match = re.search(r"(\d{2})\.(\d{2})\.(\d{4})", registration)
+            if match:
+                parsed["founded_year"] = int(match.group(3))
+        if not parsed["company_type"] and parsed["name"]:
+            if "ООО" in parsed["name"]:
+                parsed["company_type"] = "ООО"
+
+    contact_block = None
+    for div in soup.select("div.card-body.py-3"):
+        if "Контактные данные" in div.get_text():
+            contact_block = div
+            break
+    if contact_block:
+        contact_text = _normalize_text(contact_block.get_text(separator="|"))
+        parts = [part.strip() for part in contact_text.split("|") if part.strip()]
+        parsed["email"] = _find_pair(parts, "Электронная почта") or parsed["email"]
+        parsed["phone"] = _find_pair(parts, "Номер телефона") or parsed["phone"]
+        parsed["address"] = _find_pair(parts, "Адрес") or parsed["address"]
+        parsed["website"] = _find_pair(parts, "Веб-сайт") or _find_pair(parts, "Интернет сайт") or parsed["website"]
+
+    if not parsed["short_description"]:
+        parsed["short_description"] = parsed["description"]
+    return parsed
+
+
+def _orginfo_error_response(message, status=502):
+    return JsonResponse({"success": False, "message": message}, status=status)
+
+
+@login_required
+@require_http_methods(["GET"])
+def search_orginfo_company(request):
+    inn = request.GET.get("inn", "").strip()
+    if not inn:
+        return _orginfo_error_response("INN is required", 400)
+    try:
+        response = requests.get(
+            f"{ORGINFO_SEARCH_URL}{requests.utils.quote(inn)}",
+            timeout=15,
+            headers={"User-Agent": "Mozilla/5.0 (compatible; OxuCareerBot/1.0)"},
+        )
+        response.raise_for_status()
+        results = _parse_orginfo_search(response.text)
+        return JsonResponse({"success": True, "companies": results})
+    except requests.RequestException:
+        return _orginfo_error_response("Unable to query orginfo.uz.")
+
+
+@login_required
+@require_http_methods(["GET"])
+def fetch_orginfo_company_details(request):
+    detail_url = request.GET.get("detail_url", "").strip()
+    if not detail_url:
+        return _orginfo_error_response("Detail URL is required", 400)
+    if not detail_url.startswith("http"):
+        detail_url = urljoin(ORGINFO_BASE_URL, detail_url)
+    try:
+        response = requests.get(
+            detail_url,
+            timeout=15,
+            headers={"User-Agent": "Mozilla/5.0 (compatible; OxuCareerBot/1.0)"},
+        )
+        response.raise_for_status()
+        company = _parse_orginfo_company(response.text)
+        company["detail_url"] = detail_url
+        return JsonResponse({"success": True, "company": company})
+    except requests.RequestException:
+        return _orginfo_error_response("Unable to fetch organization details.")
 
 # ------------------------------------------------------------------------------
 # ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
