@@ -308,20 +308,7 @@ PHONENUMBER_DEFAULT_REGION = "UZ"
 
 CKEDITOR_5_CONFIGS = {
     "default": {
-        "toolbar": [
-            "heading",
-            "bold",
-            "italic",
-            "underline",
-            "strikethrough",
-            "bulletedList",
-            "numberedList",
-            "blockQuote",
-            "imageUpload",
-            "link",
-            "undo",
-            "redo",
-        ],
+        "toolbar": "full",
         "language": "ru",
         "height": "300px",
         "width": "100%",
