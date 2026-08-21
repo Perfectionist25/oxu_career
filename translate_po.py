@@ -4,10 +4,10 @@ import polib
 from deep_translator import GoogleTranslator
 
 
-PO_FILE = "locale/ru/LC_MESSAGES/django.po"
+PO_FILE = str(input("Введите путь к .po файлу (locale/ru/LC_MESSAGES/django.po): "))
 
 SOURCE_LANG = "en"
-TARGET_LANG = "ru"
+TARGET_LANG = str(input("Введите язык перевода (например, 'ru'): "))
 
 
 def translate_po_file():
