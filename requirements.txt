@@ -21,6 +21,7 @@ celery==5.6.3
 censys==2.2.18
 certifi==2025.11.12
 cffi==2.0.0
+chardet==3.0.4
 charset-normalizer==3.4.4
 click==8.1.8
 click-didyoumean==0.3.1
@@ -57,12 +58,16 @@ fonttools==4.60.1
 frozenlist==1.8.0
 greenlet==3.3.2
 gunicorn==23.0.0
-h11==0.16.0
+h11==0.9.0
+h2==3.2.0
 holehe==1.61
-httpcore==1.0.9
-httpx==0.28.1
+hpack==3.0.0
+hstspreload==2025.1.1
+httpcore==0.9.1
+httpx==0.13.3
 humanize==4.15.0
-idna==3.11
+hyperframe==5.2.0
+idna==2.10
 ignorant==1.2
 jwcrypto==1.5.6
 kombu==5.6.2
@@ -104,6 +109,7 @@ redis==7.1.0
 requests==2.33.1
 requests-file==3.0.1
 retrying==1.4.2
+rfc3986==1.5.0
 rich==14.2.0
 shodan==1.31.0
 six==1.17.0
@@ -128,7 +134,7 @@ tzlocal==5.3.1
 ujson==5.11.0
 urllib3==2.5.0
 uvicorn==0.38.0
-uvloop==0.22.1; sys_platform != "win32"
+uvloop==0.22.1
 vine==5.1.0
 wcwidth==0.6.0
 weasyprint==66.0
